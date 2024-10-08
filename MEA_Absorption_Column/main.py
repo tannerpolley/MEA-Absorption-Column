@@ -15,8 +15,8 @@ df = pd.read_csv('data/LHC_design_w_SRP_cases.csv', index_col=0)
 for i in range(0, 1):
     try:
         CO2_cap, shooter_message = run_model(df, run=i, save_run_results=True)
-    except TypeError:
-        pass
+    # except TypeError:
+    #     pass
     # except ValueError:
     #     print('Error: NaN detected')
     except AssertionError:

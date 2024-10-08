@@ -1,9 +1,9 @@
 import numpy as np
 from numpy import sum
-from MEA_Absorption_Column.Kinetics.Enhancement_Factor import enhancement_factor
+from MEA_Absorption_Column.Kinetics.Enhancement_Factor import enhancement_factor, enhancement_factor_2
 from MEA_Absorption_Column.Transport.Solve_MassTransfer import solve_masstransfer
 from MEA_Absorption_Column.Thermodynamics.Solve_Driving_Force import solve_driving_force
-from MEA_Absorption_Column.Thermodynamics.Solve_ChemEQ import solve_ChemEQ
+from MEA_Absorption_Column.Thermodynamics.Solve_ChemEQ import solve_ChemEQ, solve_ChemEQ_2
 from MEA_Absorption_Column.Properties.Henrys_Law import henrys_law
 from MEA_Absorption_Column.Properties.Density import liquid_density, vapor_density
 from MEA_Absorption_Column.Properties.Viscosity import viscosity
@@ -50,7 +50,7 @@ def abs_column(zi, Y, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type):
     sigma = surface_tension(Tl, x, w_MEA, alpha, df_param)
 
     # Diffusion
-    Dl_CO2 = liquid_diffusivity(Tl, rho_mol_l * x[1], df_param)
+    Dl_CO2, Dl_MEA, Dl_ion = liquid_diffusivity(Tl, rho_mol_l * x[1], mul_mix)
     Dv_CO2, Dv_H2O, Dv_N2, Dv_O2, Dv_T = vapor_diffusivity(Tv, y, P, df_param)
 
     # Heat Capacity
@@ -74,7 +74,8 @@ def abs_column(zi, Y, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type):
     Cl = [x[i] * rho_mol_l for i in range(len(x))]
     Cv = [y[i] * rho_mol_v for i in range(len(y))]
 
-    Cl_true = solve_ChemEQ(Cl, Tl)
+    Cl_true = solve_ChemEQ_2(alpha, w_MEA, Tl)
+    # Cl_true = solve_ChemEQ(Cl, Tl)
     x_true = Cl_true / (sum(Cl_true)).astype('float')
 
     Cl_MEA_true = Cl_true[1]
@@ -89,17 +90,18 @@ def abs_column(zi, Y, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type):
 
     # Mass Transfer Coefficients and Properties
     kl_CO2, kv_CO2, kv_H2O, kv_T, k_mxs, uv, a_e, hydr = solve_masstransfer(rho_mass_l, rho_mass_v, mul_mix,
-                                                                                muv_mix,
-                                                                                sigma, Dl_CO2, Dv_CO2, Dv_H2O, Dv_T, A,
-                                                                                Tl, Tv,
-                                                                                ul, uv, H_CO2_mix, Cl_MEA_true)
+                                                                            muv_mix,
+                                                                            sigma, Dl_CO2, Dv_CO2, Dv_H2O, Dv_T, A,
+                                                                            Tl, Tv,
+                                                                            ul, uv, H_CO2_mix, Cl_MEA_true)
 
     # Heat Transfer Coefficient
     UT = heat_transfer(P, kv_CO2, kt_CO2, Cpv_T, rho_mol_v, Dv_CO2) * .7
 
     # ------------------------------ Kinetics -------------------------------------------
-
-    E, kinetics = enhancement_factor(Tl, Cl, Cl_MEA_true, kl_CO2, Dl_CO2)
+    # E, kinetics = enhancement_factor(Tl, Cl, Cl_MEA_true, kl_CO2, Dl_CO2)
+    E, kinetics = enhancement_factor_2(Tl, y[0], P, Cl_true, H_CO2_mix, kl_CO2, kv_CO2,
+                                       Dl_CO2, Dl_MEA, Dl_ion)
 
     # ------------------------------ Thermodynamics --------------------------------------
 

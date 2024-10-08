@@ -68,13 +68,25 @@ def convert_SRP_data(X, n, mass):
     else:
         Tl_z, Tv_0, Fl_z, Fv_0, alpha, w_MEA, y_H2O, y_CO2 = X
 
-        x_MEA = ((1 + alpha + (MW_MEA/MW_H2O))*(1-w_MEA)/w_MEA)**-1
-        x_CO2 = x_MEA*alpha
-        x_H2O = 1 - x_CO2 - x_MEA
+        # x_MEA = ((1 + alpha + (MW_MEA/MW_H2O))*(1-w_MEA)/w_MEA)**-1
+        # x_CO2 = x_MEA*alpha
+        # x_H2O = 1 - x_CO2 - x_MEA
 
-        Fl_CO2_z = x_CO2*Fl_z
-        Fl_MEA_z = x_MEA*Fl_z
-        Fl_H2O_z = x_H2O*Fl_z
+        # Fl_CO2_z = x_CO2*Fl_z
+        # Fl_MEA_z = x_MEA*Fl_z
+        # Fl_H2O_z = x_H2O*Fl_z
+
+        x_MEA_unloaded = w_MEA / (MW_MEA / MW_H2O + w_MEA * (1 - MW_MEA / MW_H2O))
+        x_H2O_unloaded = 1 - x_MEA_unloaded
+
+        Fl_MEA_z = Fl_z * x_MEA_unloaded
+        Fl_H2O_z = Fl_z * x_H2O_unloaded
+
+        Fl_CO2_z = Fl_MEA_z*alpha
+
+        x_CO2 = Fl_CO2_z/Fl_z
+        x_MEA = Fl_MEA_z/Fl_z
+        x_H2O = Fl_H2O_z/Fl_z
 
         ml_CO2_z = Fl_CO2_z * MW_CO2
         ml_MEA_z = Fl_MEA_z * MW_MEA
