@@ -3,7 +3,7 @@ from MEA_Absorption_Column.Thermodynamics.NRTL import nrtl
 from MEA_Absorption_Column.Thermodynamics.Fugacities_Coeff import fugacity_coeff
 
 
-def solve_driving_force(x, y, x_true, Cl_true, Tl, a0, alpha, H_CO2_mix, P, E, kl_CO2, kv_CO2):
+def solve_driving_force(x, y, x_true, Cl_true, Tl, alpha, H_CO2_mix, P, Psi):
     y_CO2 = y[0]
     y_H2O = y[1]
     x_H2O_true = x_true[2]
@@ -12,9 +12,19 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, a0, alpha, H_CO2_mix, P, E, k
     # IDAES Parameters for Psat H2O
     Psat_H2O = np.exp(72.55 + -7206.70 / Tl + -7.1385 * np.log(Tl) + 4.05e-6 * Tl ** 2)
 
-    method = 'Surr'
+    method = 'ideal'
 
-    if method == 'NRTL':
+    if method == 'ideal':
+
+        Pv_CO2 = y[0] * P
+
+        # From Xu and Rochelle
+        Pl_CO2 = Cl_CO2_true * H_CO2_mix
+
+        Pv_H2O = y[1] * P
+        Pl_H2O = x_true[2] * Psat_H2O
+
+    elif method == 'NRTL':
 
         # ----------- NRTL Method -------------
 
@@ -54,11 +64,11 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, a0, alpha, H_CO2_mix, P, E, k
 
         # --------------- PC-SAFT Method ----------------------- #
 
-        φl_CO2, φl_MEA, φl_H2O = fugacity_coeff(x, 'liquid', Tl, P)
-        φv_CO2, φv_H2O, φv_Ν2, φv_Ο2 = fugacity_coeff(y, 'vapor', Tl, P)
+        φl_CO2, φl_H2O = fugacity_coeff(x_true, 'liq', Tl, P)
+        φv_CO2, φv_H2O = 1, 1
 
-        fl_CO2, fl_H2O = P * φl_CO2, P * φl_H2O
-        fv_CO2, fv_H2O = P * φv_CO2, P * φv_H2O
+        fl_CO2, fl_H2O = P * φl_CO2 * x_true[0], P * φl_H2O * x_true[2]
+        fv_CO2, fv_H2O = P * φv_CO2 * y[0], P * φv_H2O * y[1]
 
         Pv_CO2 = fv_CO2
         Pl_CO2 = fl_CO2
@@ -69,9 +79,7 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, a0, alpha, H_CO2_mix, P, E, k
     else:
         raise ValueError('Wrong method chosen or spelled incorrectly, chose NRTL, Surr, or ePC-SAFT')
 
-    KH = E * kl_CO2 / kv_CO2 / (E * kl_CO2 / kv_CO2 + H_CO2_mix)
-
-    DF_CO2 = (Pv_CO2 - Pl_CO2) * KH
+    DF_CO2 = (Pv_CO2 - Pl_CO2)*Psi
     DF_H2O = (Pv_H2O - Pl_H2O)
 
     return DF_CO2, DF_H2O, [DF_CO2, Pv_CO2, Pl_CO2, H_CO2_mix, DF_H2O, Pv_H2O, Pl_H2O, Psat_H2O]

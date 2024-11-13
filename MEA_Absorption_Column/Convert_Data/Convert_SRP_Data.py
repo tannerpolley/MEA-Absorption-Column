@@ -1,8 +1,8 @@
-from MEA_Absorption_Column.Parameters import MWs_l, MWs_v
+from MEA_Absorption_Column.Parameters import MWs_l, MWs_v, n, column_params
 import numpy as np
 
 
-def convert_SRP_data(X, n, mass):
+def convert_SRP_data(X, mass):
 
     MW_CO2 = MWs_l[0]
     MW_MEA = MWs_l[1]
@@ -12,8 +12,8 @@ def convert_SRP_data(X, n, mass):
 
     alpha_O2_N2 = 0.085
     P = 109180
-    D = .43
-    H = 6
+    D = column_params['SRP']['D']
+    H = column_params['SRP']['H']
     A = np.pi * D ** 2 / 4
     z = np.linspace(0, H, n)
 
@@ -113,8 +113,8 @@ def convert_SRP_data(X, n, mass):
 
         # print(m_T_l, m_T_v)
 
-        Fl = Fl_CO2_z, Fl_MEA_z, Fl_H2O_z
-        Fv = Fv_CO2_0, Fv_H2O_0, Fv_N2_0, Fv_O2_0
+        Fl = [Fl_CO2_z, Fl_MEA_z, Fl_H2O_z]
+        Fv = [Fv_CO2_0, Fv_H2O_0, Fv_N2_0, Fv_O2_0]
 
     return Fl, Fv, Tl_z, Tv_0, z, A, P
 

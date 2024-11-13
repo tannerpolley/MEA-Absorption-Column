@@ -27,11 +27,10 @@ def make_dfs_dict(output_dict, keys_dict, stages):
     return dfs_dict
 
 
-def save_run_outputs(Y, Fl_MEA, Fv_N2, Fv_O2, z, A, P, df_param, n):
+def save_run_outputs(Y_scaled, Fl_MEA, Fv_N2, Fv_O2, scales, z, A, P, df_param, n):
 
     run_type = 'saving'
-
-    outputs_0, keys_dict = abs_column(z[0], Y.T[0], Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type)
+    outputs_0, keys_dict = abs_column(z[0], Y_scaled.T[0], scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type, column_names=True)
 
     sheetnames = list(keys_dict.keys())
 
@@ -42,8 +41,9 @@ def save_run_outputs(Y, Fl_MEA, Fv_N2, Fv_O2, z, A, P, df_param, n):
         output_dict[k] = np.zeros((n, len(outputs_0[k])))
 
     # Updates each output array and the (i, j) height step (i) for relevant group (j)
+    column_names = False
     for i in range(n):
-        outputs, _ = abs_column(z[i], Y.T[i], Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type)
+        outputs, _ = abs_column(z[i], Y_scaled.T[i], scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type)
 
         for k in sheetnames:
             output_dict[k][i] = outputs[k]
@@ -53,7 +53,6 @@ def save_run_outputs(Y, Fl_MEA, Fv_N2, Fv_O2, z, A, P, df_param, n):
 
     # Updates each sheet in the Excel file with the new data from the df
     wb = xw.Book('data/Results/Profiles.xlsx', read_only=False)
-
     for sheetname, df in dfs_dict.items():
         try:
             wb.sheets[sheetname].clear()

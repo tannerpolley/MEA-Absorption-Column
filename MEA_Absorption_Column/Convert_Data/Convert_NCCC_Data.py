@@ -1,9 +1,16 @@
-from MEA_Absorption_Column.Parameters import MWs_l, MWs_v
+import numpy as np
+
+from MEA_Absorption_Column.Parameters import MWs_l, MWs_v, column_params, n
 
 
-def convert_NCCC_data(X):
+def convert_NCCC_data(X, case='18'):
+    m_T_l, m_T_v, alpha, w_MEA, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
 
-    m_T_l, m_T_v, alpha, w_MEA, y_CO2 = X[:5]
+    D = column_params['NCCC']['D']
+    H = column_params['NCCC']['H']*beds
+
+    A = np.pi * D ** 2 / 4
+    z = np.linspace(0, H, n)
 
     # Molecular Weights
     MW_CO2 = MWs_l[0]
@@ -13,7 +20,7 @@ def convert_NCCC_data(X):
     MW_O2 = MWs_v[3]
 
     alpha_O2_N2 = 0.08485753604
-    alpha_H2O_CO2 = 0.75
+    alpha_H2O_CO2 = 0.7626010166
 
     # Liquid Calculations
 
@@ -30,7 +37,7 @@ def convert_NCCC_data(X):
     # Vapor Calculations
 
     # Find Vapor Mole Fractions
-    y_H2O = y_CO2*alpha_H2O_CO2
+    y_H2O = y_CO2 * alpha_H2O_CO2
     y_N2 = (1 - y_CO2 - y_H2O) / (1 + alpha_O2_N2)
     y_O2 = y_N2 * alpha_O2_N2
     sigma = y_N2 * MW_N2 + y_O2 * MW_O2 + y_CO2 * MW_CO2 + y_H2O * MW_H2O
@@ -56,4 +63,19 @@ def convert_NCCC_data(X):
     Fl = [Fl_CO2, Fl_MEA, Fl_H2O]
     Fv = [Fv_CO2, Fv_H2O, Fv_N2, Fv_O2]
 
-    return Fl, Fv
+    if case == '18':
+        Fl_T = 80.6281332727093
+        Fl_CO2 = 0.0210508190313722 * Fl_T  # mole/s
+        Fl_MEA = 0.113282040368075 * Fl_T  # mole/s
+        Fl_H2O = 0.865667140600553 * Fl_T  # mole/s
+
+        Fl = [Fl_CO2, Fl_MEA, Fl_H2O]
+
+        Fv_T = 21.7367507327159
+        Fv_CO2 = 0.101947863634366 * Fv_T  # mole/s
+        Fv_H2O = 0.0912918913073196 * Fv_T  # mole/s
+        Fv_N2 = 0.734006946649283 * Fv_T  # mole/s
+        Fv_O2 = 0.072753298409031 * Fv_T  # mole/s
+        Fv = [Fv_CO2, Fv_H2O, Fv_N2, Fv_O2]
+
+    return Fl, Fv, Tl_z, Tv_0, z, A, P
