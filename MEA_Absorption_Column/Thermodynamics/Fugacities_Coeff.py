@@ -26,7 +26,8 @@ def fugacity_coeff(z, phase, T, P):
         # # 'dipm': np.array([0, 2, 9, 2, 2, 2]),
         'z': np.array([0, 0, 0, +1, -1, -1])
     }
-
+    if P < 0:
+        P = 109180
     rho = pcsaft_den(t=T, p=P, x=z, params=prop_dic, phase=phase)
     φ = pcsaft_fugcoef(t=T, rho=rho, x=z, params=prop_dic)
     return φ[0], φ[2]

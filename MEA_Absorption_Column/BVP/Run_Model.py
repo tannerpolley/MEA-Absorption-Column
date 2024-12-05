@@ -2,7 +2,6 @@ import numpy as np
 import time
 from collections import defaultdict
 
-from MEA_Absorption_Column.Parameters import n
 from MEA_Absorption_Column.BVP.Methods.Single_Shoot_Solve import single_shoot_solve
 from MEA_Absorption_Column.BVP.Methods.Multiple_Shoot_Solve_2 import multiple_shoot_solve
 from MEA_Absorption_Column.BVP.Methods.Collocation_Solve import collocation_solve
@@ -23,8 +22,10 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
     # Create an input list for the values that are used in the simulation
     if data_source == 'NCCC':
         # Tl_z, Tv_0, L, G, alpha, w_MEA, y_CO2, y_H2O, H
+
         X = df.iloc[run, :9].to_numpy()
         # X = [314, 320, 29.0, 3.52, 0.279, 0.325, 0.013, 0.100]
+        # X = [315.39, 330.489245103823, 29.0, 22.80194758, 0.279, 0.325, 0.0856390806700391, 0.0598166656728878]
         parameters = df.iloc[run, 9:].to_dict()
         # Convert the parameters to a nested dictionary based on type (VLE, Surface Tension, Viscosity)
         df_param = defaultdict(dict)
@@ -39,9 +40,10 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
     # ---- SRP Data Runs ---
     # Create an input list for the values that are used in the simulation
     elif data_source == 'SRP':
-        # Tl_z, Tv_0, L, G, alpha, w_MEA, y_CO2, y_H2O
+        # Tl_z, Tv_0, L, G, alpha, w_MEA, y_H2O, y_CO2
         X = df.iloc[run, :8].to_numpy()
-        X = [314, 320, 29.0, 3.52, 0.279, 0.325, 0.013, 0.100]
+        # X = [314, 320, 29.0, 3.52, 0.279, 0.325, 0.013, 0.100]
+        X = [314, 322.717468719381, 29.0, 3.653690241, 0.279, 0.325, 0.0856390806700391, 0.0598166656728878]
         parameters = df.iloc[run, 8:].to_dict()
         # Convert the parameters to a nested dictionary based on type (VLE, Surface Tension, Viscosity)
         df_param = defaultdict(dict)
@@ -52,25 +54,13 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
 
         inputs = convert_SRP_data(X, mass=False)
 
+
     else:
         raise ValueError('Data source must be either NCCC or SRP')
     # print(inputs)
-    # Determine Scaling values
-    Fl_CO2_scaling = 1.0
-    Fl_H2O_scaling = 25
-    Fv_CO2_scaling = .2
-    Fv_H2O_scaling = .2
-    Tl_scaling = 300
-    Tv_scaling = 300
 
-    scales = [Fl_CO2_scaling, Fl_H2O_scaling, Fv_CO2_scaling, Fv_H2O_scaling, Tl_scaling, Tv_scaling]
-    # scales = [1, 1, 1, 1, 1, 1]
-
-    if show_info:
-        print(f'Run #{run + 1:03d} --- ', end='')
-
-    # Starts the time tracker for the total computation time for one simulation run
-    start = time.time()
+    L, G = sum(inputs[0]), sum(inputs[1])
+    L_G = L/G
 
     # Simulate the Absorption Column from start to finish given
     # the inlet concentrations of the top liquid and bottom vapor streams
@@ -88,9 +78,10 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
         raise ValueError('Wrong method chosen, choose from the available')
 
     if data_source == 'NCCC':
-        Fl_CO2_0_guess = 3.554499396
-        Fl_H2O_0_guess = 69.68405525
-        Tl_0_guess = 323.646741247888
+        Fl_CO2_0_guess = 3.555068738
+        Fl_H2O_0_guess = 69.0279605112458
+        Tl_0_guess = 323.2
+        # Tl_0_guess = 330.7
 
         Fl_CO2_scaling = 1.5
         Fl_H2O_scaling = 70
@@ -98,12 +89,14 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
         Fv_H2O_scaling = 5
         Tl_scaling = 300
         Tv_scaling = 300
+        P_scaling = 100000
 
-        scales = [Fl_CO2_scaling, Fl_H2O_scaling, Fv_CO2_scaling, Fv_H2O_scaling, Tl_scaling, Tv_scaling]
+        # scales = np.array([Fl_CO2_scaling, Fl_H2O_scaling, Fv_CO2_scaling, Fv_H2O_scaling, Tl_scaling, Tv_scaling, P_scaling])
+        scales = np.array([1, 1, 1, 1, 1, 1, 1])
     elif data_source == 'SRP':
-        Fl_CO2_0_guess = 1.3
-        Fl_H2O_0_guess = 25.0
-        Tl_0_guess = 320.0
+        Fl_CO2_0_guess = 1.358357515
+        Fl_H2O_0_guess = 25.231885278694
+        Tl_0_guess = 323.319317
 
         Fl_CO2_scaling = 1.0
         Fl_H2O_scaling = 25
@@ -111,13 +104,20 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
         Fv_H2O_scaling = .3
         Tl_scaling = 300
         Tv_scaling = 300
+        P_scaling = 100000
 
-        scales = [Fl_CO2_scaling, Fl_H2O_scaling, Fv_CO2_scaling, Fv_H2O_scaling, Tl_scaling, Tv_scaling]
+        scales = [Fl_CO2_scaling, Fl_H2O_scaling, Fv_CO2_scaling, Fv_H2O_scaling, Tl_scaling, Tv_scaling, P_scaling]
     else:
         raise ValueError('Data source must be either NCCC or SRP')
     guesses = [Fl_CO2_0_guess, Fl_H2O_0_guess, Tl_0_guess]
 
-    Y_scaled, solving_type, success, message = solving_function(inputs, guesses, df_param, scales)
+    if show_info:
+        print(f'Run #{run + 1:03d} --- ', end='')
+
+    # Starts the time tracker for the total computation time for one simulation run
+    start = time.time()
+
+    Y_scaled, z_new, solving_type, success, message = solving_function(inputs, guesses, df_param, scales)
 
     Y = []
     for i in range(len(Y_scaled)):
@@ -133,10 +133,12 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
 
     # Collects data from the final integration output
 
-    Fl_z, Fv_0, Tl_z, Tv_0, z, A, P = inputs
+    Fl_z, Fv_0, Tl_z, Tv_0, z, A, P, packing = inputs
 
     Fl_CO2_z_act, Fl_H2O_z_act = Fl_z[0], Fl_z[2]
     Tl_z_act = Tl_z
+
+    Fv_H2O_0 = Fv_0[1]
 
     Fv_CO2_z, Fv_H2O_z = Y[2, -1], Y[3, -1]
     CO2_cap = abs(Fv_0[0] - Fv_CO2_z) / Fv_0[0] * 100
@@ -151,15 +153,20 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
     # Prints out relevant info such as simulation time, relative errors, CO2% captured, if max iterations were reached, and number of Nan's counted
     if show_info:
         print(f'''
-        - CO2 % Cap: {CO2_cap:.2f}% - Time: {total_time:0>{4}.1f} sec
+        - {data_source}
+        - L/G = {L_G}
+        - CO2 % Cap: {CO2_cap:.2f}% 
+        - Time: {total_time:0>{4}.1f} sec
+        - Water Ratio {Fl_H2O_z_act/Fv_H2O_0}
         - % Error: [Simulated, Actual]
             - CO2 = {CO2_rel_err:0>{5}.2f}% [{Fl_CO2_z_sim:.3f}, {Fl_CO2_z_act:.3f}]
             - H2O = {H2O_rel_err:0>{5}.2f}% [{Fl_H2O_z_sim:.3f}, {Fl_H2O_z_act:.3f}]
             - Tl = {Tl_rel_err:0>{5}.2f}% [{Tl_z_sim:.3f}, {Tl_z_act:.3f}]
-        - {solving_type} - {message}
+        - {solving_type} - Solved? {success} - {message}
         ''')
     # Stores output data into text files (concentrations, mole fractions, and temperatures) (can also plot)
+
     if save_run_results:
-        save_run_outputs(Y_scaled, Fl_z[1], Fv_0[2], Fv_0[3], scales, z, A, P, df_param, n)
+        save_run_outputs(Y_scaled, Fl_z[1], Fv_0[2], Fv_0[3], scales, z_new, A, packing, df_param)
 
     return CO2_cap, message

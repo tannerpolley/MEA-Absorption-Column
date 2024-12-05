@@ -13,22 +13,29 @@ from MEA_Absorption_Column.Properties.Heat_Capacity import heat_capacity
 from MEA_Absorption_Column.Properties.Thermal_Conductivity import thermal_conductivity
 from MEA_Absorption_Column.Parameters import MWs_l
 from MEA_Absorption_Column.Transport.Heat_Transfer import heat_transfer
+from MEA_Absorption_Column.Thermodynamics.Enthalpy import liquid_enthalpy, vapor_enthalpy
+from MEA_Absorption_Column.Thermodynamics.Get_Temperature_Enthalpy import get_liquid_temperature, get_vapor_temperature
 
 
-def abs_column(zi, Y_scaled, scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type, column_names=False):
+def abs_column(zi, Y_scaled, scales, Fl_MEA, Fv_N2, Fv_O2, A, packing, df_param, run_type, column_names=False):
+    Y = np.array(Y_scaled) * np.array(scales)
+    # print(Y)
+    # Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Tl, Tv, P = Y
 
-    Y = np.array(Y_scaled)*np.array(scales)
-    # print(Y_scaled)
+    Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Hlf, Hvf, P = Y
 
-    Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Tl, Tv = Y
+    # print(Y)
     # print()
     # print(Y_scaled)
     # print(Y)
     # print()
 
-    # if Tl >= 380 or Tl <= 280:
-    #     print('TL')
-    #     print(Tl)
+    # if run_type == 'simulation':
+    # if Tl >= 355:
+    #     Tl = 355
+    #     Tv = 355
+    # elif Tl <= 273.15:
+    #     Tl = 273.15
     #
     # if Fl_CO2 > 10 or Fl_CO2 < 0:
     #     print("Fl_CO2")
@@ -44,6 +51,14 @@ def abs_column(zi, Y_scaled, scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_t
 
     x = [Fl[i] / Fl_T for i in range(len(Fl))]
     y = [Fv[i] / Fv_T for i in range(len(Fv))]
+
+    Hl = Hlf / Fl_T
+    Hv = Hvf / Fv_T
+
+    Tl = get_liquid_temperature(x, Hl)
+    Tv = get_vapor_temperature(y, Hv)
+
+    print(Tl, Tv)
 
     w = [MWs_l[i] * x[i] / sum([MWs_l[j] * x[j] for j in range(len(Fl))]) for i in range(len(Fl))]
 
@@ -85,7 +100,7 @@ def abs_column(zi, Y_scaled, scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_t
     Sigma_Fv_Cpv = Cpv_T * Fv_T
 
     # Thermal Conductivity
-    kt_CO2 = thermal_conductivity(Tv, 'CO2', 'vapor')
+    kt_vap = thermal_conductivity(y, Tv, 'vapor')
 
     # Henry's Law
     H_CO2_mix = henrys_law(x, Tl, df_param)
@@ -97,11 +112,13 @@ def abs_column(zi, Y_scaled, scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_t
     uv = Fv_T / (A * rho_mol_v)
 
     # Mass Transfer Coefficients and Properties
-    kl_CO2, kv_CO2, kv_H2O, kv_T, k_mxs, uv, a_e, hydr = solve_masstransfer(rho_mass_l, rho_mass_v,
-                                                                            mul_mix, muv_mix, mul_H2O,
-                                                                            sigma, Dl_CO2, Dv_CO2, Dv_H2O, Dv_T, A,
-                                                                            Tl, Tv,
-                                                                            ul, uv, Fl_T, Fv_T)
+    ΔP_H, kl_CO2, kv_CO2, kv_H2O, kv_T, k_mxs, uv, a_e, hydr = solve_masstransfer(rho_mass_l, rho_mass_v,
+                                                                                  mul_mix, muv_mix, mul_H2O,
+                                                                                  sigma, Dl_CO2, Dv_CO2, Dv_H2O, Dv_T,
+                                                                                  A,
+                                                                                  Tl, Tv,
+                                                                                  ul, uv, Fl_T, Fv_T,
+                                                                                  packing)
 
     # Enhancement Factor
     Psi, enhance_factor = enhancement_factor(Tl, y[0], P, Cl_true, H_CO2_mix, kl_CO2, kv_CO2,
@@ -114,46 +131,67 @@ def abs_column(zi, Y_scaled, scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_t
 
     # ------------------------------ Material and Energy Flux Setup --------------------------------------
 
-    a_eA = a_e * A
+    a_eA = a_e * A  # m
 
     # Molar Flux
-    N_CO2 = kv_CO2 * DF_CO2 * a_eA
-    N_H2O = kv_H2O * DF_H2O * a_eA
+    Nl_CO2 = kv_CO2 * DF_CO2 * a_eA  # mol/(s*m)
+    Nl_H2O = kv_H2O * DF_H2O * a_eA  # mol/(s*m)
+
+    Nv_CO2 = -Nl_CO2
+    Nv_H2O = -Nl_H2O
 
     # Heat Transfer Coefficient
-    UT = heat_transfer(P, kv_CO2, kt_CO2, Cpv_T, rho_mol_v, Dv_CO2, N_CO2, N_H2O, Cpv, a_e, A)
+    UT = heat_transfer(P, kv_CO2, kt_vap, Cpv_T, rho_mol_v, Dv_CO2, a_eA)  # J/(s*K*m) or W/(K*m)
 
     # Enthalpy Transfer
-    Hl_CO2 = -82000
-    Hl_H2O = -48000
 
-    q_abs = N_CO2 * Hl_CO2
-    q_vap = N_H2O * Hl_H2O
+    Hl_CO2, _, Hl_H2O = liquid_enthalpy(Tl, )
+    Hv_CO2, Hv_H2O = vapor_enthalpy(Tv)[:2]
+
+    Hl_CO2_trn, Hl_H2O_trn = Nl_CO2 * Hl_CO2, Nl_H2O * Hl_H2O
+    Hv_CO2_trn, Hv_H2O_trn = Nv_CO2 * Hv_CO2, Nv_H2O * Hv_H2O
+
+    Hl_trn = Hl_CO2_trn + Hl_H2O_trn
+    Hv_trn = Hv_CO2_trn + Hv_H2O_trn
+    # Hl_trn = -Hv_trn
+
+    # q_abs = N_CO2 * Hl_CO2 # J/(s*m) or W/m
+    # q_vap = N_H2O * Hl_H2O # J/(s*m) or W/m
 
     # Heat Transfer
-    q_trn = UT * (Tv - Tl) * a_eA
+    Ql_trn = UT * (Tv - Tl)  # J/(s*m) =  J/(s*K*m) * K * m or W/(K*m) * K
+    Qv_trn = -UT * (Tv - Tl)
 
     # Liquid and Vapor Energy Flux
 
-    ql = q_trn - q_abs - q_vap
-    qv = q_trn
+    # ql = q_trn - q_abs - q_vap # J/(s*m)
+    # qv = q_trn # J/(s*m)
 
-    kE_l = a_e * A / Sigma_Fl_Cpl
-    kE_v = a_e * A / Sigma_Fv_Cpv
-    a_eA = a_e * A
+    # ------------------------------ Material Balance --------------------------------------
 
-    # ------------------------------ Material and Energy Balance --------------------------------------
+    dFl_CO2_dz = -Nl_CO2 + 1e-10  # mol/(s*m)
+    dFl_H2O_dz = -Nl_H2O + 1e-10  # mol/(s*m)
 
-    dFl_CO2_dz = -N_CO2/scales[0]
-    dFl_H2O_dz = -N_H2O/scales[1]
+    dFv_CO2_dz = Nv_CO2 + 1e-10  # mol/(s*m)
+    dFv_H2O_dz = Nv_H2O + 1e-10  # mol/(s*m)
 
-    dFv_CO2_dz = -N_CO2/scales[2]
-    dFv_H2O_dz = -N_H2O/scales[3]
+    # ------------------------------ Energy Balance --------------------------------------
 
-    dTl_dz = -(q_trn - q_vap - q_abs) / (Cpl_T * Fl_T)/scales[4]
-    dTv_dz = -q_trn / (Cpv_T * Fv_T)/scales[5]
+    # dTl_dz = -ql / (Cpl_T * Fl_T) / scales[4] # K/m
+    # dTv_dz = -qv / (Cpv_T * Fv_T) / scales[5] # K/m
 
-    diffeqs = [dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, dTl_dz, dTv_dz]
+    dHlf_dz = -(Hl_trn + Ql_trn)
+    dHvf_dz = Hv_trn + Qv_trn
+
+    dTl_dz = dHlf_dz / Sigma_Fl_Cpl  # K/m
+    dTv_dz = dHvf_dz / Sigma_Fv_Cpv  # K/m
+
+    # ------------------------------ Momentum Balance --------------------------------------
+
+    dP_dz = -ΔP_H / scales[6]  # Pa/m
+
+    diffeqs = np.array([dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, dHlf_dz, dHvf_dz, dP_dz])
+    diffeqs_scaled = diffeqs / scales
 
     # ------------------------------ Run Output Code Setup --------------------------------------
 
@@ -174,9 +212,8 @@ def abs_column(zi, Y_scaled, scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_t
         Cpl_CO2, Cpl_MEA, Cpl_H2O = Cpl
         Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2 = Cpv
         V_l, V_CO2, V_MEA, V_H2O = volume
-        dTl_dz = -ql * kE_l
-        dTv_dz = -qv * kE_v
         T_diff = Tl - Tv
+        Hl_CO2 = Hl_CO2 + 1e-5
 
         output_dict = {'Fl': [Fl_CO2, Fl_MEA, Fl_H2O,
                               Fl_CO2_true, Fl_MEA_true, Fl_H2O_true, Fl_MEAH_true, Fl_MEACOO_true, Fl_HCO3_true],
@@ -188,15 +225,17 @@ def abs_column(zi, Y_scaled, scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_t
                              x_CO2_true, x_MEA_true, x_H2O_true, x_MEAH_true, x_MEACOO_true, x_HCO3_true],
                        'y': [y_CO2, y_H2O, y_N2, y_O2],
                        'T': [Tl, Tv],
-                       'CO2': [N_CO2, DF_CO2, Pv_CO2, Pl_CO2, H_CO2_mix],
-                       'H2O': [N_H2O, DF_H2O, Pv_H2O, Pl_H2O, Psat_H2O],
+                       'ql': [Tl, Hl_CO2, Hl_H2O, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, Ql_trn, dHlf_dz, dTl_dz],
+                       'qv': [Tv, Hv_CO2, Hv_H2O, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, Qv_trn, dHvf_dz, dTv_dz],
+                       'CO2': [Nl_CO2, Nv_CO2, DF_CO2, Pv_CO2, Pl_CO2, H_CO2_mix],
+                       'H2O': [Nl_H2O, Nv_H2O, DF_H2O, Pv_H2O, Pl_H2O, y_H2O, P, x_H2O_true, Psat_H2O],
                        'k_mx': [kl_CO2, kv_CO2, kv_H2O],
                        'enhance_factor': [k_rxn, Ha, E, Psi],
-                       'hydr': [ul, uv, uv_FL, h_L, a_e, flood_fraction, UT],
-                       'Prop_l': [rho_mol_l, rho_mass_l, V_l, V_CO2, V_MEA, V_H2O, mul_mix, sigma, Dl_CO2, Cpl_CO2, Cpl_MEA, Cpl_H2O],
-                       'Prop_v': [rho_mol_v, rho_mass_v, muv_mix, Dv_CO2, Dv_H2O, Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2],
-                       'ql': [Tl, q_abs, q_vap, dTl_dz],
-                       'qv': [Tv, q_trn, dTv_dz],
+                       'transport': [kl_CO2, kv_CO2, kv_H2O, ul, uv, uv_FL, flood_fraction, h_L, a_e, UT, P],
+                       'Prop_l': [rho_mol_l, rho_mass_l, V_l, V_CO2, V_MEA, V_H2O, mul_mix, sigma, Dl_CO2, Cpl_CO2,
+                                  Cpl_MEA, Cpl_H2O, Sigma_Fl_Cpl],
+                       'Prop_v': [rho_mol_v, rho_mass_v, muv_mix, Dv_CO2, Dv_H2O, Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2,
+                                  Sigma_Fv_Cpv],
                        }
 
         if zi == 0 and column_names:

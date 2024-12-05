@@ -27,10 +27,10 @@ def make_dfs_dict(output_dict, keys_dict, stages):
     return dfs_dict
 
 
-def save_run_outputs(Y_scaled, Fl_MEA, Fv_N2, Fv_O2, scales, z, A, P, df_param, n):
-
+def save_run_outputs(Y_scaled, Fl_MEA, Fv_N2, Fv_O2, scales, z, A, packing, df_param):
+    n = len(z)
     run_type = 'saving'
-    outputs_0, keys_dict = abs_column(z[0], Y_scaled.T[0], scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type, column_names=True)
+    outputs_0, keys_dict = abs_column(z[0], Y_scaled.T[0], scales, Fl_MEA, Fv_N2, Fv_O2, A, packing, df_param, run_type, column_names=True)
 
     sheetnames = list(keys_dict.keys())
 
@@ -41,9 +41,8 @@ def save_run_outputs(Y_scaled, Fl_MEA, Fv_N2, Fv_O2, scales, z, A, P, df_param, 
         output_dict[k] = np.zeros((n, len(outputs_0[k])))
 
     # Updates each output array and the (i, j) height step (i) for relevant group (j)
-    column_names = False
     for i in range(n):
-        outputs, _ = abs_column(z[i], Y_scaled.T[i], scales, Fl_MEA, Fv_N2, Fv_O2, P, A, df_param, run_type)
+        outputs, _ = abs_column(z[i], Y_scaled.T[i], scales, Fl_MEA, Fv_N2, Fv_O2, A, packing, df_param, run_type)
 
         for k in sheetnames:
             output_dict[k][i] = outputs[k]

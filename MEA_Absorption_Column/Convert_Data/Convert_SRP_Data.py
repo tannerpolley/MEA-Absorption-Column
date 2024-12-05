@@ -1,4 +1,4 @@
-from MEA_Absorption_Column.Parameters import MWs_l, MWs_v, n, column_params
+from MEA_Absorption_Column.Parameters import MWs_l, MWs_v, n, column_params, packing_params
 import numpy as np
 
 
@@ -14,6 +14,24 @@ def convert_SRP_data(X, mass):
     P = 109180
     D = column_params['SRP']['D']
     H = column_params['SRP']['H']
+    # a_p = packing_params['IMTP-40']['a_e']
+    # ϵ = packing_params['IMTP-40']['eps']
+    # Clp = packing_params['IMTP-40']['Cl']
+    # Cvp = packing_params['IMTP-40']['Cv']
+    # S = packing_params['IMTP-40']['S']
+
+    a_p = packing_params['MellapakPlus252Y']['a_e']
+    ϵ = packing_params['MellapakPlus252Y']['eps']
+    Clp = packing_params['MellapakPlus252Y']['Cl']
+    Cvp = packing_params['MellapakPlus252Y']['Cv']
+    Cs = packing_params['MellapakPlus252Y']['Cs']
+    Cp_0 = packing_params['MellapakPlus252Y']['Cp_0']
+    Ch = packing_params['MellapakPlus252Y']['Ch']
+
+    packing = a_p, ϵ, Clp, Cvp, Cs, Cp_0, Ch
+
+    # packing = a_p, ϵ, Clp, Cvp, S
+
     A = np.pi * D ** 2 / 4
     z = np.linspace(0, H, n)
 
@@ -84,6 +102,8 @@ def convert_SRP_data(X, mass):
 
         Fl_CO2_z = Fl_MEA_z*alpha
 
+        Fl_z = Fl_CO2_z + Fl_MEA_z + Fl_H2O_z
+
         x_CO2 = Fl_CO2_z/Fl_z
         x_MEA = Fl_MEA_z/Fl_z
         x_H2O = Fl_H2O_z/Fl_z
@@ -116,7 +136,7 @@ def convert_SRP_data(X, mass):
         Fl = [Fl_CO2_z, Fl_MEA_z, Fl_H2O_z]
         Fv = [Fv_CO2_0, Fv_H2O_0, Fv_N2_0, Fv_O2_0]
 
-    return Fl, Fv, Tl_z, Tv_0, z, A, P
+    return Fl, Fv, Tl_z, Tv_0, z, A, P, packing
 
 
 
