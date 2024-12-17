@@ -3,80 +3,65 @@ from scipy.integrate import solve_bvp
 import matplotlib.pyplot as plt
 from MEA_Absorption_Column.BVP.ABS_Column import abs_column
 
-def scipy_BVP_solve(inputs, guesses, df_param, scales):
+def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
 
-    Fl_z, Fv_0, Tl_z, Tv_0, z, A, P = inputs
+    Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a, Hlf_a_guess, Hvf_a, P_a = Y_a_scaled
+    Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess, Hlf_b, Hvf_b_guess, P_b = Y_b_scaled
 
-    Fl_CO2_z, Fl_MEA_z, Fl_H2O_z = Fl_z
-    Fv_CO2_0, Fv_H2O_0, Fv_N2_0, Fv_O2_0 = Fv_0
-
-    Fl_CO2_0_guess, Fl_H2O_0_guess, Tl_0_guess = guesses
-
-    run_type = 'simulating'
+    scales = parameters[0]
 
     # Parameters (example values, typically column-specific data and parameters)
-    stages = len(z)  # Number of stages in the column (z-axis)
+
 
     # Define the system of differential equations for the absorption column
     def column_odes(z, w):
         differentials = np.zeros_like(w.T)
         for i in range(len(differentials)):
-            print(w[:, i])
             # Flow rate changes
-            differentials_i = np.array(
-                abs_column(0, w[:, i], scales, Fl_MEA_z, Fv_N2_0, Fv_O2_0, P, A, df_param, run_type))
+            differentials[i] = abs_column(z, w[:, i], parameters)
 
-            dF_CO2_l_dz = differentials_i[0]
-            dF_H2O_l_dz = differentials_i[1]
-            dF_CO2_v_dz = -differentials_i[2]
-            dF_H2O_v_dz = -differentials_i[3]
-
-            # Liquid and vapor temperature changes
-            dT_l_dz = differentials_i[4]
-            dT_v_dz = -differentials_i[5]
-            differentials[i] = np.array([dF_CO2_l_dz, dF_H2O_l_dz, dF_CO2_v_dz, dF_H2O_v_dz, dT_l_dz, dT_v_dz])
-        print()
         return differentials.T
 
     # Define the boundary conditions
     def boundary_conditions(bottom, top):
         # Enforce the boundary conditions at the bottom (vapor) and top (liquid)
-        Fl_CO2_0_bc, Fl_H2O_0_bc, Fv_CO2_0_bc, Fv_H2O_0_bc, Tl_0_bc, Tv_0_bc = bottom
-        Fl_CO2_z_bc, Fl_H2O_z_bc, Fv_CO2_z_bc, Fv_H2O_z_bc, Tl_z_bc, Tv_z_bc = top
+        Fl_CO2_a_bc, Fl_H2O_a_bc, Fv_CO2_a_bc, Fv_H2O_a_bc, Hlf_a_bc, Hvf_a_bc, P_a_bc = bottom
+        Fl_CO2_b_bc, Fl_H2O_b_bc, Fv_CO2_b_bc, Fv_H2O_b_bc, Hlf_b_bc, Hvf_b_bc, P_b_bc = top
 
         # Boundary conditions at the bottom for vapor and at the top for liquid
         return np.array([
-            Fl_CO2_z_bc/scales[0] - Fl_CO2_z/scales[0],  # CO2 liquid flow rate at the top
-            Fl_H2O_z_bc/scales[1] - Fl_H2O_z/scales[1],  # H2O liquid flow rate at the top
-            Fv_CO2_0_bc/scales[2] - Fv_CO2_0/scales[2],  # CO2 vapor flow rate at the bottom
-            Fv_H2O_0_bc/scales[3] - Fv_H2O_0/scales[3],  # H2O vapor flow rate at the bottom
-            Tl_z_bc/scales[4] - Tl_z/scales[4],  # Liquid temperature at the top
-            Tv_0_bc/scales[5] - Tv_0/scales[5],  # Vapor temperature at the bottom
+            Fl_CO2_b_bc - Fl_CO2_b,  # CO2 liquid flow rate at the top
+            Fl_H2O_b_bc- Fl_H2O_b,  # H2O liquid flow rate at the top
+            Fv_CO2_a_bc - Fv_CO2_a,  # CO2 vapor flow rate at the bottom
+            Fv_H2O_a_bc - Fv_H2O_a,  # H2O vapor flow rate at the bottom
+            Hlf_b_bc - Hlf_b,  # Liquid temperature at the top
+            Hvf_a_bc - Hvf_a,  # Vapor temperature at the bottom
+            P_a_bc - P_a
         ])
 
     # Initial guess for the solution (constant profiles as initial guess)
-    z = np.linspace(0, 6, stages)
-    w_guess = np.zeros((6, stages))
-    w_guess[0] = Fl_CO2_0_guess/scales[0]  # Initial guess for CO2 liquid flow rate profile
-    w_guess[1] = Fl_H2O_0_guess/scales[1]  # Initial guess for H2O liquid flow rate profile
-    w_guess[2] = Fv_CO2_0/scales[2]  # Initial guess for CO2 vapor flow rate profile
-    w_guess[3] = Fv_H2O_0/scales[3]  # Initial guess for H2O vapor flow rate profile
-    w_guess[4] = Tl_0_guess/scales[4]  # Initial guess for liquid temperature profile
-    w_guess[5] = Tv_0/scales[5]  # Initial guess for vapor temperature profile
 
-    w_guess[0, -1] = Fl_CO2_z/scales[0]
-    w_guess[1, -1] = Fl_H2O_z/scales[1]
-    w_guess[4, -1] = Tl_z/scales[4]
+    m = len(Y_a_scaled)
+    w_guess_scaled = np.zeros((m, len(z)))
+
+    print(len(z))
+
+    for i in range(m):
+        w_guess_scaled[i] = np.linspace(Y_a_scaled[i], Y_b_scaled[i], len(z))
+
+
 
     # Solve the BVP
-    solution = solve_bvp(column_odes, boundary_conditions, z, w_guess, max_nodes=2000, tol=1e-1, bc_tol=1e-1)
+    solution = solve_bvp(column_odes, boundary_conditions, z, w_guess_scaled, max_nodes=2000)
 
     Y_scaled = solution.y
+    z = solution.x
+    print(len(z))
 
     success = solution.success
     message = solution.message
 
 
-    return Y_scaled, 'Scipy BVP Method', success, message
+    return Y_scaled, z, 'Scipy BVP Method', success, message
 
 

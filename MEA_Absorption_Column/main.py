@@ -27,12 +27,12 @@ for i in range(0, 1):
         df = df_SRP
     else:
         raise ValueError('Data source must be either NCCC or SRP')
-    try:
-        CO2_cap, shooter_message = run_model(df, method='single', data_source=data_source, run=i, save_run_results=True)
+    # try:
+    CO2_cap, shooter_message = run_model(df, method='scipy', data_source=data_source, run=i, save_run_results=True)
     # CO2_cap, shooter_message = run_model(df, method='collocation', data_source=data_source, run=i, save_run_results=True, )
-    except TypeError:
-        print('NAN detected in integrator')
-        pass
+    # except TypeError:
+    #     print('NAN detected in integrator')
+    #     pass
 
 
 # def optimize(x):

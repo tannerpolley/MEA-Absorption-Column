@@ -27,10 +27,9 @@ def make_dfs_dict(output_dict, keys_dict, stages):
     return dfs_dict
 
 
-def save_run_outputs(Y_scaled, Fl_MEA, Fv_N2, Fv_O2, scales, z, A, packing, df_param):
+def save_run_outputs(Y_scaled, z, parameters):
     n = len(z)
-    run_type = 'saving'
-    outputs_0, keys_dict = abs_column(z[0], Y_scaled.T[0], scales, Fl_MEA, Fv_N2, Fv_O2, A, packing, df_param, run_type, column_names=True)
+    outputs_0, keys_dict = abs_column(z[0], Y_scaled.T[0], parameters, run_type='saving', column_names=True)
 
     sheetnames = list(keys_dict.keys())
 
@@ -42,7 +41,7 @@ def save_run_outputs(Y_scaled, Fl_MEA, Fv_N2, Fv_O2, scales, z, A, packing, df_p
 
     # Updates each output array and the (i, j) height step (i) for relevant group (j)
     for i in range(n):
-        outputs, _ = abs_column(z[i], Y_scaled.T[i], scales, Fl_MEA, Fv_N2, Fv_O2, A, packing, df_param, run_type)
+        outputs, _ = abs_column(z[i], Y_scaled.T[i], parameters, run_type='saving')
 
         for k in sheetnames:
             output_dict[k][i] = outputs[k]
@@ -57,7 +56,18 @@ def save_run_outputs(Y_scaled, Fl_MEA, Fv_N2, Fv_O2, scales, z, A, packing, df_p
             wb.sheets[sheetname].clear()
         except:
             wb.sheets.add(sheetname)
+
         wb.sheets[sheetname].range("A1").value = df
+
+    #     wb.sheets[sheetname].activate()
+    #     wb.sheets[sheetname].api.Application.ActiveWindow.SplitRow = 1
+    #     wb.sheets[sheetname].api.Application.ActiveWindow.SplitColumn = 0
+    #     wb.sheets[sheetname].api.Application.ActiveWindow.FreezePanes = True
+    #
+    # for i, sheet_name in enumerate(dfs_dict.keys()):
+    #     sheet = wb.sheets[sheet_name]
+    #     sheet.api.Move(Before=wb.sheets[i].api)
+
     for sheet in wb.sheets:
         if sheet.name not in sheetnames:
             sheet.delete()

@@ -13,14 +13,14 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, alpha, H_CO2_mix, P, Psi):
     # IDAES Parameters for Psat H2O
     Psat_H2O = np.exp(72.55 + -7206.70 / Tl + -7.1385 * np.log(Tl) + 4.05e-6 * Tl ** 2)
 
-    method = 'ideal'
+    method = 'ePC-SAFT'
 
     if method == 'ideal':
 
         Pv_CO2 = y_CO2 * P
 
         # From Xu and Rochelle
-        Pl_CO2 = Cl_CO2_true * H_CO2_mix
+        Pl_CO2 = Cl_CO2_true * H_CO2_mix / 1.04542981654115
 
         Pv_H2O = y_H2O * P
         Pl_H2O = x_H2O_true * Psat_H2O
@@ -67,4 +67,4 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, alpha, H_CO2_mix, P, Psi):
     DF_CO2 = Psi/(Psi + H_CO2_mix)*(Pv_CO2 - Pl_CO2)
     DF_H2O = (Pv_H2O - Pl_H2O)
 
-    return DF_CO2, DF_H2O, [DF_CO2, Pv_CO2, Pl_CO2, H_CO2_mix, DF_H2O, Pv_H2O, Pl_H2O, Psat_H2O]
+    return DF_CO2, DF_H2O, [DF_CO2, Pv_CO2, Pl_CO2, Psi, H_CO2_mix], [DF_H2O, Pv_H2O, Pl_H2O, Psat_H2O]

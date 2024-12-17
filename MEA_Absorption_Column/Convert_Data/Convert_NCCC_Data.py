@@ -22,7 +22,7 @@ def convert_NCCC_data(X, case='18'):
 
     packing = a_p, ϵ, Clp, Cvp, Cs, Cp_0, Ch
 
-    A = np.pi * D ** 2 / 4
+    A = np.pi * .25 * D ** 2
     z = np.linspace(0, H, n)
 
     # Molecular Weights
@@ -86,30 +86,45 @@ def convert_NCCC_data(X, case='18'):
     Fl = [Fl_CO2_z, Fl_MEA_z, Fl_H2O_z]
     Fv = [Fv_CO2, Fv_H2O, Fv_N2, Fv_O2]
 
-    # if case == '18':
-    #     Fl_T = 81.3551492717131
-    #     x_CO2 = 0.0164615447958917
-    #     x_MEA = 0.111188005429196
-    #     x_H2O = 0.872350449774912
-    #     Fl_CO2 = x_CO2 * Fl_T  # mole/s
-    #     Fl_MEA = x_MEA * Fl_T  # mole/s
-    #     Fl_H2O = x_H2O * Fl_T  # mole/s
-    #
-    #     Fl = [Fl_CO2, Fl_MEA, Fl_H2O]
-    #
-    #     # L_G_ratio = 8.7093001738919638
-    #
-    #     Fv_T = 22.80194758
-    #     y_CO2 = 0.081104826
-    #     y_H2O = 0.14982287
-    #     y_N2 = 0.699717688
-    #     y_O2 = 0.069354616
-    #     Tv_0 = 330.489245103823
-    #
-    #     Fv_CO2 = y_CO2 * Fv_T  # mole/s
-    #     Fv_H2O = y_H2O * Fv_T  # mole/s
-    #     Fv_N2 = y_N2 * Fv_T  # mole/s
-    #     Fv_O2 = y_O2 * Fv_T  # mole/s
-    #     Fv = [Fv_CO2, Fv_H2O, Fv_N2, Fv_O2]
+    if case == '18':
+        Fl_T = 81.3551492717131
+        x_CO2 = 0.0164615447958917
+        x_MEA = 0.111188005429196
+        x_H2O = 0.872350449774912
+        Fl_CO2 = x_CO2 * Fl_T  # mole/s
+        Fl_MEA = x_MEA * Fl_T  # mole/s
+        Fl_H2O = x_H2O * Fl_T  # mole/s
+
+        Fl = [Fl_CO2, Fl_MEA, Fl_H2O]
+
+        # L_G_ratio = 8.7093001738919638
+
+        Fv_T = 21.7367507327159
+        y_CO2 = 0.101947864
+        y_H2O = 0.091291891
+        y_N2 = 0.734006947
+        y_O2 = 0.072753298
+        Tv_0 = 319.22
+
+        # With explicit enhancement factor
+        # Fv_T = 22.163104235595
+        # y_CO2 = 0.095046837
+        # y_H2O = 0.113712633
+        # y_N2 = 0.719886793
+        # y_O2 = 0.071353737
+        # Tv_0 = 323.889022602209
+
+        # With implicit enhancement factor
+        # y_CO2 = 0.096679388
+        # y_H2O = 0.110202318
+        # y_N2 = 0.721595221
+        # y_O2 = 0.071523073
+        # Tv_0 = 323.889022602209
+
+        Fv_CO2 = y_CO2 * Fv_T  # mole/s
+        Fv_H2O = y_H2O * Fv_T  # mole/s
+        Fv_N2 = y_N2 * Fv_T  # mole/s
+        Fv_O2 = y_O2 * Fv_T  # mole/s
+        Fv = [Fv_CO2, Fv_H2O, Fv_N2, Fv_O2]
 
     return Fl, Fv, Tl_z, Tv_0, z, A, P, packing
