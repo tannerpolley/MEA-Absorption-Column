@@ -186,7 +186,6 @@ def run_model(df, method='single', data_source='NCCC', run=0, show_info=True, sa
     Hl_b = Y[4, -1] / sum(Fl)
     Tl_b_sim = (get_liquid_temperature(x, Hl_b))
 
-
     # Computes the relative error between the solution that the shooter found to the actual inlet concentration for the relevant liquid species
     CO2_rel_err = abs(Fl_CO2_b_act - Fl_CO2_b_sim) / Fl_CO2_b_act * 100
     H2O_rel_err = abs(Fl_H2O_b_act - Fl_H2O_b_sim) / Fl_H2O_b_act * 100

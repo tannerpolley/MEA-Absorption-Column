@@ -3,7 +3,7 @@ from MEA_Absorption_Column.Thermodynamics.NRTL import nrtl
 from MEA_Absorption_Column.Thermodynamics.Fugacities_Coeff import fugacity_coeff
 
 
-def solve_driving_force(x, y, x_true, Cl_true, Tl, alpha, H_CO2_mix, P, Psi):
+def solve_driving_force(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P, Psi):
     y_CO2 = y[0]
     y_H2O = y[1]
     x_CO2_true = x_true[0]
@@ -13,14 +13,15 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, alpha, H_CO2_mix, P, Psi):
     # IDAES Parameters for Psat H2O
     Psat_H2O = np.exp(72.55 + -7206.70 / Tl + -7.1385 * np.log(Tl) + 4.05e-6 * Tl ** 2)
 
-    method = 'ePC-SAFT'
+    method = 'ideal'
+    # method = 'ePC-SAFT'
 
     if method == 'ideal':
 
         Pv_CO2 = y_CO2 * P
 
         # From Xu and Rochelle
-        Pl_CO2 = Cl_CO2_true * H_CO2_mix / 1.04542981654115
+        Pl_CO2 = Cl_CO2_true * H_CO2_mix
 
         Pv_H2O = y_H2O * P
         Pl_H2O = x_H2O_true * Psat_H2O
@@ -48,7 +49,7 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, alpha, H_CO2_mix, P, Psi):
         # --------------- PC-SAFT Method ----------------------- #
 
         φl_CO2, φl_H2O = fugacity_coeff(x_true, 'liq', Tl, P)
-        φv_CO2, φv_H2O = 1, 1
+        φv_CO2, φv_H2O = fugacity_coeff(y, 'vap', Tv, P)
 
         fl_CO2 = P * φl_CO2 * x_CO2_true
         fl_H2O = P * φl_H2O * x_H2O_true

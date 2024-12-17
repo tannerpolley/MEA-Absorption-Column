@@ -8,92 +8,51 @@ import numpy as np
 
 
 def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters):
-#     Fl_z, Fv_0, Tl_z, Tv_0, z, A, P, packing = inputs
 
-    # Fv_CO2_0, Fv_H2O_0, Fv_N2_0, Fv_O2_0 = Fv_0
-    # Fl_CO2_0_guess, Fl_H2O_0_guess, Tl_0_guess = Y_0_scaled[0], Y_0_scaled[1], Y_0_scaled[4]
-
-    shoot = False
-
-    if shoot:
-        pass
-        # def shooter(X, inputs, df_param, scales):
-        #
-        #     Fl_CO2_0, Fl_H2O_0, Tl_0 = X
-        #
-        #     Fl_z, Fv_0, Tl_z, Tv_0, z, A, P, packing = inputs
-        #
-        #     Fl_CO2_z, Fl_MEA_z, Fl_H2O_z = Fl_z
-        #     Fv_CO2_0, Fv_H2O_0, Fv_N2_0, Fv_O2_0 = Fv_0
-        #
-        #     Y_0_scaled = [Fl_CO2_0, Fl_H2O_0,
-        #                   Fv_CO2_0 / scales[2], Fv_H2O_0 / scales[3],
-        #                   Tl_0, Tv_0 / scales[5], P / scales[6]]
-        #
-        #     run_type = 'shooting'
-        #
-        #     result = solve_ivp(abs_column, [z[0], z[-1]], Y_0_scaled,
-        #                        args=(scales, Fl_MEA_z, Fv_N2_0, Fv_O2_0, A, packing, df_param, run_type),
-        #                        method='Radau', t_eval=z)
-        #
-        #     Y_scaled = result.y
-        #
-        #     Fl_CO2_z_sim, Fl_H2O_z_sim, Tl_z_sim = Y_scaled[0, -1], Y_scaled[1, -1], Y_scaled[4, -1]
-        #
-        #     eq1 = Fl_CO2_z_sim - Fl_CO2_z / scales[0]
-        #     eq2 = Fl_H2O_z_sim - Fl_H2O_z / scales[1]
-        #     eq3 = Tl_z_sim - Tl_z / scales[4]
-        #
-        #     eqs = [eq1, eq2, eq3]
-        #     # print(eqs)
-        #     return eqs
-        #
-        # Y_0_guess = np.array([Fl_CO2_0_guess / scales[0],
-        #                       Fl_H2O_0_guess / scales[1],
-        #                       Tl_0_guess / scales[4]])
-        #
-        # method = 'Krylov'
-        # display = False
-        #
-        # options = {'fatol': .1, 'maxiter': 50, 'line_search': 'armijo', 'disp': display, }
-        # # options = {}
-        #
-        # root_output = root(shooter, Y_0_guess, args=(inputs, scales, const_flow), method=method, options=options)
-        #
-        # solved_initials_scaled, success, message, n_eval = root_output.x, root_output.success, root_output.message, root_output.nit
-        #
-        # Fl_CO2_0_scaled, Fl_H2O_0_scaled, Tl_0_scaled = solved_initials_scaled
-        # Y_0_scaled = [Fl_CO2_0_scaled, Fl_H2O_0_scaled,
-        #               Fv_CO2_0 / scales[2], Fv_H2O_0 / scales[3],
-        #               Tl_0_scaled, Tv_0 / scales[5], P / scales[6]]
-
-    else:
-        message = 'No shooting'
-        success = 'No shooting'
-
-
-    run_type = 'simulating'
-
-    # Fl_z, Fv_0, Tl_z, Tv_0, z, A, P, packing = inputs
-    # obj = solve_ivp(abs_column, [z[0], z[-1]], Y_0_scaled,
-    #                 args=(scales, Fl_z[1], Fv_0[2], Fv_0[3], A, packing, df_param, run_type),
-    #                 method='Radau', t_eval=z,
-    #                 vectorized=False,
-    #                 # options={'first_step': 1e-10,
-    #                 #          'max_step': 1e-5,
-    #                 #          'rtol': 1e-0,
-    #                 #          'atol': 1e-0}
-    #                 )
-
-    # Y_scaled = obj.y
-    # success = obj.success
-    # message = obj.message
-    # z = obj.t
+    Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a, Hlf_a_guess, Hvf_a, P_a = Y_a_scaled
+    Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess, Hlf_b, Hvf_b_guess, P_b = Y_b_scaled
 
     # integrater = scipy_integrate
     # integrater = runge_kutta
     # integrater = radau
     integrater = eulers
+
+    shoot = False
+
+    if shoot:
+        def shooter(X):
+
+            Fl_CO2_a, Fl_H2O_a, Hlf_a = X
+
+            Y_a_scaled = [Fl_CO2_a, Fl_H2O_a,
+                          Fv_CO2_a, Fv_H2O_a,
+                          Hlf_a,  Hvf_a, P_a]
+
+            Y_scaled, _, _, _ = integrater(abs_column, Y_a_scaled, z, args=parameters)
+
+            Fl_CO2_b_sim, Fl_H2O_b_sim, Hlf_b_sim = Y_scaled[0, -1], Y_scaled[1, -1], Y_scaled[4, -1]
+
+            eq1 = Fl_CO2_b_sim - Fl_CO2_b
+            eq2 = Fl_H2O_b_sim - Fl_H2O_b
+            eq3 = Hlf_b_sim - Hlf_b
+
+            eqs = [eq1, eq2, eq3]
+
+            return eqs
+
+        Y_0_guess = np.array([Y_a_scaled[0], Y_a_scaled[1], Y_a_scaled[4]])
+
+        method = 'Krylov'
+        display = False
+        options = {'fatol': .1, 'maxiter': 50, 'line_search': 'armijo', 'disp': display}
+        root_output = root(shooter, Y_0_guess, method=method, options=options)
+
+        solved_initials_scaled, success, message, n_eval = root_output.x, root_output.success, root_output.message, root_output.nit
+
+        Fl_CO2_a, Fl_H2O_a, Hlf_a = solved_initials_scaled
+        Y_a_scaled = [Fl_CO2_a, Fl_H2O_a,
+                      Fv_CO2_a, Fv_H2O_a,
+                      Hlf_a, Hvf_a, P_a]
 
     Y_scaled, z, success, message = integrater(abs_column, Y_a_scaled, z, args=parameters)
 

@@ -21,7 +21,6 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     scales, const_flow, A, packing = parameters
     Fl_MEA, Fv_N2, Fv_O2 = const_flow
-
     Y = np.array(Y_scaled) * np.array(scales)
 
     Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Hlf, Hvf, P = Y
@@ -116,7 +115,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # ------------------------------ Thermodynamics --------------------------------------
 
-    DF_CO2, DF_H2O, CO2, H2O = solve_driving_force(x, y, x_true, Cl_true, Tl, alpha, H_CO2_mix, P, Psi)
+    DF_CO2, DF_H2O, CO2, H2O = solve_driving_force(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P, Psi)
 
     # ------------------------------ Material and Energy Flux Setup --------------------------------------
 

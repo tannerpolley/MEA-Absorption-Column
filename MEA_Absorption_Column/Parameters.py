@@ -53,19 +53,6 @@ packing_params = {
         }
 }
 
-# Packing Coefficients MellapakPlus 252Y
-# a_p = 250  # Packing Surface Area/Volume (m^2/m^3)
-# a_p = packing_params['MellapakPlus252Y']['a_e']
-# a_p = 143.9
-# 'Cfl': 2.558,
-# 'Cp0': .292
-# Clp = .5  # Packing Coefficient
-# Chp = .554  # Packing Coefficient
-# Cvp = .357  # Packing Coefficient
-# ϵ = .970  # Packing Void Fraction
-# ϵ = packing_params['MellapakPlus252Y']['eps']
-# S = .017 # Channel Side (m)
-
 # Other Constants
 g = 9.80665  # Gravitational Constant
 R = 8.314462618  # J/mol-K
