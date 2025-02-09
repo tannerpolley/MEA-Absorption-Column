@@ -1,5 +1,5 @@
 from PC_SAFT import flash
-from MEA_Absorption_Column.Thermodynamics.Solve_ChemEQ import solve_ChemEQ
+from MEA_Absorption_Column.Thermodynamics.Chemical_Equilibrium import solve_ChemEQ
 import matplotlib.pyplot as plt
 import numpy as np
 from MEA_Absorption_Column.Properties.Density import liquid_density

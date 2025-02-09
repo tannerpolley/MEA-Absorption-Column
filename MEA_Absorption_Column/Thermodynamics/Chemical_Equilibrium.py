@@ -5,10 +5,10 @@ from scipy.interpolate import interp1d
 # From Akula Appendix of Model Development, Validation, and Part-Load Optimization of a
 # MEA-Based Post-Combustion CO2 Capture Process Under SteadyState Flexible Capture Operation
 
-from MEA_Absorption_Column.Properties.Density import liquid_density
+from MEA_Absorption_Column.Properties.Thermophysical_Properties import density
 
 
-def solve_ChemEQ(Fl, Tl):
+def chemical_equilibrium(Fl, Tl):
 
     # Constants and initial guesses provided
     a1, b1, c1, d1 = 164.039636, -707.0056712, -26.40136817, 0
@@ -18,7 +18,7 @@ def solve_ChemEQ(Fl, Tl):
     Fl_0_T = sum(Fl)
     x_0 = [Fl[i] / Fl_0_T for i in range(len(Fl))]
     alpha = x_0[0]/x_0[1]
-    rho_mol_l, _, _ = liquid_density(Tl, x_0[:3])
+    rho_mol_l, _, _ = density(Tl, x_0[:3], 0, phase='liquid')
     Cl_0 = [x_0[i]*rho_mol_l for i in range(len(x_0))]
 
     # Compute log(K) values

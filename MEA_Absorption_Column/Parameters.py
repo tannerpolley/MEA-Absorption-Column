@@ -58,4 +58,4 @@ g = 9.80665  # Gravitational Constant
 R = 8.314462618  # J/mol-K
 
 # Integration Parameters
-n = 51  # Number of points to evaluate for the integral
+n = 201  # Number of points to evaluate for the integral

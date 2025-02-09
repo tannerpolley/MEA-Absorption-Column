@@ -14,21 +14,18 @@ results_array = []
 inputs_array = []
 
 # LHC_design(25)
-df_SRP = pd.read_csv('data/LHC_design_w_SRP_cases.csv', index_col=0)
-df_NCCC = pd.read_csv('data/runs_file_NCCC_case_18.csv', index_col=0)
+# df_SRP = pd.read_csv('data/LHC_design_w_SRP_cases.csv', index_col=0)
+# df_NCCC = pd.read_csv('data/runs_file_NCCC_case_18.csv', index_col=0)
+df_NCCC = pd.read_csv('data/runs_file_NCCC_LHC.csv', index_col=0)
 # df = LHC_design(25)
 # data_source = 'SRP'
-data_source = 'NCCC'
+data_type = 'mole'
+
+df = df_NCCC
 
 for i in range(0, 1):
-    if data_source == 'NCCC':
-        df = df_NCCC
-    elif data_source == 'SRP':
-        df = df_SRP
-    else:
-        raise ValueError('Data source must be either NCCC or SRP')
     # try:
-    CO2_cap, shooter_message = run_model(df, method='scipy', data_source=data_source, run=i, save_run_results=True)
+    CO2_cap, shooter_message = run_model(df, method='scipy', data_type=data_type, run=i, save_run_results=True, plot_temperature=True)
     # CO2_cap, shooter_message = run_model(df, method='collocation', data_source=data_source, run=i, save_run_results=True, )
     # except TypeError:
     #     print('NAN detected in integrator')

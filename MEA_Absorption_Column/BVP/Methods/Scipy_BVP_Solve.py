@@ -28,35 +28,43 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
     # Initial guess for the solution (constant profiles as initial guess)
 
     m = len(Y_a_scaled)
-    w_guess_scaled = np.zeros((m, len(z)))
+    n = 21 # mesh points
+    z_2 = np.linspace(z[0], z[-1], n)
+    w_guess_scaled = np.zeros((m, n))
 
-    peak_values = np.array([1, 76, 1, 9.25, -3620000, 42500, 1])/parameters[0]
+    peak_values = np.array([1, 80, 1, 9.25, -3620000, 42500, 1]) / parameters[0]
+    print(peak_values)
 
     for i in range(m):
         if i == 0 or i == 2 or i == 6:
-            w_guess_scaled[i] = np.linspace(Y_a_scaled[i], Y_b_scaled[i], len(z))
+            w_guess_scaled[i] = np.linspace(Y_a_scaled[i], Y_b_scaled[i], n)
         else:
             start = [z[0], Y_a_scaled[i]]
             stop = [z[-1], Y_b_scaled[i]]
-            control = [z[-1]*.8, peak_values[i]*1.05]
+            control = [z[-1] * .8, peak_values[i] * 1.05]
 
-            w_guess_scaled[i] = quadratic_arc(start, stop, control, num_points=len(z))
+            w_guess_scaled[i] = quadratic_arc(start, stop, control, num_points=n)
 
     # Solve the BVP
-    solution = solve_bvp(column_odes, boundary_conditions, z, w_guess_scaled, max_nodes=2000, tol=1e-1)
 
-    Y_scaled = solution.y
-    z = solution.x
+    sol = solve_bvp(column_odes, boundary_conditions, z_2, w_guess_scaled,
+                    max_nodes=1000, tol=2e-1,
+                    verbose=0)
+    Y_scaled = sol.sol(z)
+    z = sol.x
 
-    success = solution.success
-    message = solution.message
+    success = sol.success
+    message = sol.message
 
     return Y_scaled, z, 'Scipy BVP Method', success, message
 
-
+import matplotlib.pyplot as plt
 def quadratic_arc(start, end, control, num_points=100):
     t = np.linspace(0, 1, num_points)
-    curve = (1 - t)[:, None]**2 * np.array(start) + \
+    curve = (1 - t)[:, None] ** 2 * np.array(start) + \
             2 * t[:, None] * (1 - t)[:, None] * np.array(control) + \
-            t[:, None]**2 * np.array(end)
+            t[:, None] ** 2 * np.array(end)
+
+    plt.plot(t, curve.T[1])
+    plt.show()
     return curve.T[1]

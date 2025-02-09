@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from MEA_Absorption_Column.BVP.ABS_Column import abs_column
 import xlwings as xw
+import matplotlib.pyplot as plt
 
 # Put outputs into dictionary and dataframe
 
@@ -27,7 +28,7 @@ def make_dfs_dict(output_dict, keys_dict, stages):
     return dfs_dict
 
 
-def save_run_outputs(Y_scaled, z, parameters):
+def save_run_outputs(Y_scaled, z, parameters, save_run_results=True, plot_temperature=False):
     n = len(z)
     outputs_0, keys_dict = abs_column(z[0], Y_scaled.T[0], parameters, run_type='saving', column_names=True)
 
@@ -49,27 +50,34 @@ def save_run_outputs(Y_scaled, z, parameters):
     # Converts the Outputs dictionary into a dictionary of dataframes
     dfs_dict = make_dfs_dict(output_dict, keys_dict, z)
 
-    # Updates each sheet in the Excel file with the new data from the df
-    wb = xw.Book('data/Results/Profiles.xlsx', read_only=False)
-    for sheetname, df in dfs_dict.items():
-        try:
-            wb.sheets[sheetname].clear()
-        except:
-            wb.sheets.add(sheetname)
 
-        wb.sheets[sheetname].range("A1").value = df
+    if plot_temperature:
+        dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
+        plt.ylabel('Temperature [K]')
+        plt.show()
 
-    #     wb.sheets[sheetname].activate()
-    #     wb.sheets[sheetname].api.Application.ActiveWindow.SplitRow = 1
-    #     wb.sheets[sheetname].api.Application.ActiveWindow.SplitColumn = 0
-    #     wb.sheets[sheetname].api.Application.ActiveWindow.FreezePanes = True
-    #
-    # for i, sheet_name in enumerate(dfs_dict.keys()):
-    #     sheet = wb.sheets[sheet_name]
-    #     sheet.api.Move(Before=wb.sheets[i].api)
+    if save_run_results:
+        # Updates each sheet in the Excel file with the new data from the df
+        wb = xw.Book('data/Results/Profiles.xlsx', read_only=False)
+        for sheetname, df in dfs_dict.items():
+            try:
+                wb.sheets[sheetname].clear()
+            except:
+                wb.sheets.add(sheetname)
 
-    for sheet in wb.sheets:
-        if sheet.name not in sheetnames:
-            sheet.delete()
-    wb.save(path=r'data/Results/Profiles.xlsx')
+            wb.sheets[sheetname].range("A1").value = df
+
+        #     wb.sheets[sheetname].activate()
+        #     wb.sheets[sheetname].api.Application.ActiveWindow.SplitRow = 1
+        #     wb.sheets[sheetname].api.Application.ActiveWindow.SplitColumn = 0
+        #     wb.sheets[sheetname].api.Application.ActiveWindow.FreezePanes = True
+        #
+        # for i, sheet_name in enumerate(dfs_dict.keys()):
+        #     sheet = wb.sheets[sheet_name]
+        #     sheet.api.Move(Before=wb.sheets[i].api)
+
+        for sheet in wb.sheets:
+            if sheet.name not in sheetnames:
+                sheet.delete()
+        wb.save(path=r'data/Results/Profiles.xlsx')
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def nrtl(x, Tl):
+def nrtl(Tl, x):
 
     # From Morgan 2017 Thermodynamic modeling and uncertainty quantification of CO2-loaded
     # aqueous MEA solutions

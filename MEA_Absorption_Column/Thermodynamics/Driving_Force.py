@@ -1,9 +1,9 @@
 import numpy as np
-from MEA_Absorption_Column.Thermodynamics.NRTL import nrtl
-from MEA_Absorption_Column.Thermodynamics.Fugacities_Coeff import fugacity_coeff
+from MEA_Absorption_Column.Thermodynamics.Fugacity_Coeff import fugacity_coeff
 
 
-def solve_driving_force(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P, Psi):
+def driving_force(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P):
+
     y_CO2 = y[0]
     y_H2O = y[1]
     x_CO2_true = x_true[0]
@@ -15,18 +15,31 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P, Psi)
 
     method = 'ideal'
     # method = 'ePC-SAFT'
+    # method = 'surrogate'
 
     if method == 'ideal':
 
-        Pv_CO2 = y_CO2 * P
-
         # From Xu and Rochelle
         Pl_CO2 = Cl_CO2_true * H_CO2_mix
+        Pv_CO2 = y_CO2 * P
 
         Pv_H2O = y_H2O * P
         Pl_H2O = x_H2O_true * Psat_H2O
 
-    elif method == 'Surr':
+    elif method == 'ePC-SAFT':
+
+        # --------------- PC-SAFT Method ----------------------- #
+
+        φl_CO2, φl_H2O = fugacity_coeff(x_true, 'liq', Tl, P)
+        φv_CO2, φv_H2O = fugacity_coeff(y, 'vap', Tv, P)
+
+        Pl_CO2 = P * φl_CO2 * x_CO2_true
+        Pl_H2O = P * φl_H2O * x_H2O_true
+
+        Pv_CO2 = P * φv_CO2 * y_CO2
+        Pv_H2O = P * φv_H2O * y_H2O
+
+    elif method == 'surrogate':
 
         # -------- Gabrielsen Approximation Method --------------
 
@@ -44,28 +57,10 @@ def solve_driving_force(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P, Psi)
         Pv_H2O = y_H2O * P
         Pl_H2O = x_H2O_true * Psat_H2O
 
-    elif method == 'ePC-SAFT':
-
-        # --------------- PC-SAFT Method ----------------------- #
-
-        φl_CO2, φl_H2O = fugacity_coeff(x_true, 'liq', Tl, P)
-        φv_CO2, φv_H2O = fugacity_coeff(y, 'vap', Tv, P)
-
-        fl_CO2 = P * φl_CO2 * x_CO2_true
-        fl_H2O = P * φl_H2O * x_H2O_true
-        fv_CO2 = P * φv_CO2 * y_CO2
-        fv_H2O = P * φv_H2O * y_H2O
-
-        Pv_CO2 = fv_CO2
-        Pl_CO2 = fl_CO2
-
-        Pv_H2O = fv_H2O
-        Pl_H2O = fl_H2O
-
     else:
-        raise ValueError('Wrong method chosen or spelled incorrectly, chose ideal, Surr, or ePC-SAFT')
+        raise ValueError('Choose ideal, ePC-SAFT, or surrogate')
 
-    DF_CO2 = Psi/(Psi + H_CO2_mix)*(Pv_CO2 - Pl_CO2)
+    DF_CO2 = (Pv_CO2 - Pl_CO2)
     DF_H2O = (Pv_H2O - Pl_H2O)
 
-    return DF_CO2, DF_H2O, [DF_CO2, Pv_CO2, Pl_CO2, Psi, H_CO2_mix], [DF_H2O, Pv_H2O, Pl_H2O, Psat_H2O]
+    return DF_CO2, DF_H2O, [DF_CO2, Pv_CO2, Pl_CO2, H_CO2_mix], [DF_H2O, Pv_H2O, Pl_H2O, Psat_H2O]
