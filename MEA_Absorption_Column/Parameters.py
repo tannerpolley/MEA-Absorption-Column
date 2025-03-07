@@ -17,7 +17,7 @@ column_params = {
 
 packing_params = {
     'MellapakPlus252Y2': {
-        'a_e': 250.0, # Akula 2022 Table 14
+        'a_p': 250.0, # Akula 2022 Table 14
         'eps': .970, # Akula 2022 Table 14
         'Cl': .203, # Regressed from Chinen 2018 Supporting Information Table S3
         'Cv': .35, # Regressed from Chinen 2018 Supporting Information Table S3
@@ -29,7 +29,7 @@ packing_params = {
 
     },
     'MellapakPlus252Y': {
-        'a_e': 250.0,  # Akula 2022 Table 14
+        'a_p': 250.0,  # Akula 2022 Table 14
         'eps': .970,  # Akula 2022 Table 14
         'Cl': .5,  # Regressed from Chinen 2018 Supporting Information Table S3
         'Cv': .357,  # Regressed from Chinen 2018 Supporting Information Table S3
@@ -41,7 +41,7 @@ packing_params = {
 
     },
     'IMTP-40': {
-        'a_e': 145.0,
+        'a_p': 145.0,
         'eps': .98,
         'Cl': .203,  # Regressed from Chinen 2018 Supporting Information Table S3
         'Cv': .35,  # Regressed from Chinen 2018 Supporting Information Table S3

@@ -136,7 +136,7 @@ def convert_mole_data(X):
     D = column_params['NCCC']['D']
     H = column_params['NCCC']['H'] * beds
 
-    a_p = packing_params['MellapakPlus252Y']['a_e']
+    a_p = packing_params['MellapakPlus252Y']['a_p']
     ϵ = packing_params['MellapakPlus252Y']['eps']
     Clp = packing_params['MellapakPlus252Y']['Cl']
     Cvp = packing_params['MellapakPlus252Y']['Cv']

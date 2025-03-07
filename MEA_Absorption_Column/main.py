@@ -23,7 +23,7 @@ data_type = 'mole'
 
 df = df_NCCC
 
-for i in range(0, 1):
+for i in range(len(df)):
     # try:
     CO2_cap, shooter_message = run_model(df, method='scipy', data_type=data_type, run=i, save_run_results=True, plot_temperature=True)
     # CO2_cap, shooter_message = run_model(df, method='collocation', data_source=data_source, run=i, save_run_results=True, )

@@ -78,6 +78,6 @@ def chemical_equilibrium(Fl, Tl):
 if __name__ == '__main__':
     Fl = [3.5544993956757, 9.045716779, 69.6840552543039]
     Tl = 333.646741247888
-    Fl_true, x_true = solve_ChemEQ(Fl, Tl)
+    Fl_true, x_true = chemical_equilibrium(Fl, Tl)
     print(Fl_true)
     print(x_true)

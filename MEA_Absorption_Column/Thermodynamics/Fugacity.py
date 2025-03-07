@@ -2,7 +2,7 @@ import numpy as np
 from MEA_Absorption_Column.Thermodynamics.Fugacity_Coeff import fugacity_coeff
 
 
-def driving_force(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P):
+def fugacity(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P):
 
     y_CO2 = y[0]
     y_H2O = y[1]
@@ -60,7 +60,11 @@ def driving_force(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P):
     else:
         raise ValueError('Choose ideal, ePC-SAFT, or surrogate')
 
-    DF_CO2 = (Pv_CO2 - Pl_CO2)
-    DF_H2O = (Pv_H2O - Pl_H2O)
+    fl_CO2 = Pl_CO2
+    fv_CO2 = Pv_CO2
+    fl_H2O = Pl_H2O
+    fv_H2O = Pv_H2O
+    DF_CO2 = (fv_CO2 - fl_CO2)
+    DF_H2O = (fv_H2O - fl_H2O)
 
-    return DF_CO2, DF_H2O, [DF_CO2, Pv_CO2, Pl_CO2, H_CO2_mix], [DF_H2O, Pv_H2O, Pl_H2O, Psat_H2O]
+    return fl_CO2, fv_CO2, fl_H2O, fv_H2O, [DF_CO2, H_CO2_mix], [DF_H2O, Psat_H2O]

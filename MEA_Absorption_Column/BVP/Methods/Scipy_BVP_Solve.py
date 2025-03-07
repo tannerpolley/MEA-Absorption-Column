@@ -33,7 +33,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
     w_guess_scaled = np.zeros((m, n))
 
     peak_values = np.array([1, 80, 1, 9.25, -3620000, 42500, 1]) / parameters[0]
-    print(peak_values)
+    # print(peak_values)
 
     for i in range(m):
         if i == 0 or i == 2 or i == 6:
@@ -65,6 +65,6 @@ def quadratic_arc(start, end, control, num_points=100):
             2 * t[:, None] * (1 - t)[:, None] * np.array(control) + \
             t[:, None] ** 2 * np.array(end)
 
-    plt.plot(t, curve.T[1])
-    plt.show()
+    # plt.plot(t, curve.T[1])
+    # plt.show()
     return curve.T[1]
