@@ -1,5 +1,4 @@
-from MEA_Absorption_Column.BVP.Methods.Integration_Methods import (
-    eulers)
+from MEA_Absorption_Column.BVP.Methods.Integration_Methods import eulers, scipy_integrate, runge_kutta, radau
 from scipy.optimize import root
 from MEA_Absorption_Column.BVP.ABS_Column import abs_column
 import numpy as np
@@ -10,12 +9,12 @@ def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters):
     Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a, Hlf_a_guess, Hvf_a, P_a = Y_a_scaled
     Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess, Hlf_b, Hvf_b_guess, P_b = Y_b_scaled
 
-    # integrater = scipy_integrate
+    integrater = scipy_integrate
     # integrater = runge_kutta
     # integrater = radau
-    integrater = eulers
+    # integrater = eulers
 
-    shoot = False
+    shoot = True
 
     if shoot:
         def shooter(X):

@@ -12,19 +12,24 @@ from MEA_Absorption_Column.Thermodynamics.Chemical_Equilibrium import chemical_e
 from MEA_Absorption_Column.misc.Get_Temperature_Enthalpy import get_liquid_temperature, get_vapor_temperature
 
 from MEA_Absorption_Column.Transport.Hydraulic_Variables_Correlations import (velocity, holdup, interfacial_area,
-                                                                              flooding_fraction,
-                                                                              mass_transfer_coeff, heat_transfer_coeff,
-                                                                              pressure_drop,enhancement_factor)
+                                                                              flooding_fraction)
+from MEA_Absorption_Column.Transport.Transfer_Coefficients import mass_transfer_coeff, heat_transfer_coeff
+from MEA_Absorption_Column.Transport.Pressure_Drop import pressure_drop
+from MEA_Absorption_Column.Transport.Enhancement_Factor import enhancement_factor
+from MEA_Absorption_Column.Transport.Flux import molar_flux, enthalpy_flux
+
 
 def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False):
-
     # region - Unpack System Parameters
-    scales, const_flow, A, packing = parameters
+    scales, eq_scales, const_flow, H, A, packing = parameters
     Fl_MEA, Fv_N2, Fv_O2 = const_flow
     # endregion
 
     # region - Define System Variables
     Y = np.array(Y_scaled) * np.array(scales)
+
+    # print(Y)
+
     Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Hlf, Hvf, P = Y
 
     Fl_T = Fl_CO2 + Fl_MEA + Fl_H2O
@@ -86,7 +91,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region --- Diffusivity
-    Dl_CO2, Dl_MEA, Dl_ion = diffusivity(Tl, x, P, mul_mix, rho_mol_l,phase='liquid')
+    Dl_CO2, Dl_MEA, Dl_ion = diffusivity(Tl, x, P, mul_mix, rho_mol_l, phase='liquid')
     Dv_CO2, Dv_H2O, Dv_N2, Dv_O2, Dv_T = diffusivity(Tv, y, P, mul_mix, rho_mol_l, phase='vapor')
     # endregion
 
@@ -120,7 +125,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # region - Transport
 
-    # region -- Hydraulic Variables and Correlations
+    # region -- Hydraulic Variables
 
     # region --- Velocity
     ul, uv = velocity(rho_mol_l, rho_mol_v, A, Fl_T, Fv_T)
@@ -138,70 +143,43 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     fl_frac = flooding_fraction(rho_mass_l, rho_mass_v, mul_mix, mul_H2O, Fl_T, Fv_T, uv, packing)
     # endregion
 
+    # endregion
+
+    # region -- Transfer Coefficients
     # region --- Mass Transfer Coefficients
 
     kl_CO2, kv_CO2, kv_H2O, kv_T, const = mass_transfer_coeff(h_L, h_V, rho_mass_v, muv_mix, Dl_CO2, Dv_CO2, Dv_H2O,
                                                               Dv_T, A, Tv, ul, uv, packing)
-
     # endregion
 
     # region --- Heat Transfer Coefficient
     UT = heat_transfer_coeff(P, kv_CO2, kt_vap, Cpv_T, rho_mol_v, Dv_CO2, a_eA)  # J/(s*K*m) or W/(K*m)
     # endregion
+    # endregion
 
-    # region --- Pressure Drop
+    # region -- Pressure Drop
 
     ΔP_H = pressure_drop(h_L, rho_mass_l, rho_mass_v, mul_mix, muv_mix, A, ul, uv, packing)
 
     # endregion
 
-    # region --- Enhancement Factor
+    # region -- Enhancement Factor
 
     E, Psi, Psi_H, enhance_factor = enhancement_factor(Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
-                                                    Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit')
-
-    # endregion
+                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='implicit')
 
     # endregion
 
     # region -- Flux
 
     # region --- Molar Flux
-
-    # Liquid
-    Nv_CO2 = -kv_CO2 * a_eA * (fv_CO2 - fl_CO2) * Psi_H  # mol/(s*m)
-    Nv_H2O = -kv_H2O * a_eA * (fv_H2O - fl_H2O)  # mol/(s*m)
-
-    # Vapor
-    Nl_CO2 = -Nv_CO2  # mol/(s*m)
-    Nl_H2O = -Nv_H2O  # mol/(s*m)
+    Nv_CO2, Nv_H2O, Nl_CO2, Nl_H2O = molar_flux(fl_CO2, fv_CO2, fl_H2O, fv_H2O, kv_CO2, kv_H2O, a_eA, Psi_H)
 
     # endregion
 
     # region --- Enthalpy Flux
 
-    # region ---- Enthalpy Transfer
-
-    Hl_CO2_trn = Nl_CO2 * Hl_CO2  # J/(s*m)
-    Hl_H2O_trn = Nl_H2O * Hl_H2O  # J/(s*m)
-    Hv_CO2_trn = Nv_CO2 * Hv_CO2  # J/(s*m)
-    Hv_H2O_trn = Nv_H2O * Hv_H2O  # J/(s*m)
-
-    Hv_trn = Nv_CO2 * Hv_CO2 + Nv_H2O * Hv_H2O  # J/(s*m)
-    # Hl_trn = Nl_CO2 * Hl_CO2 + Nl_H2O * Hl_H2O  # J/(s*m)
-    Hl_trn = -Hv_trn  # J/(s*m)
-
-    # endregion
-
-    # region ---- Heat Transfer
-    qv = -UT * a_eA * (Tv - Tl)  # J/(s*m) =  J/(s*K*m) * K * m or W/(K*m) * K
-    # ql =  UT * a_eA * (Tv - Tl)  # J/(s*m) =  J/(s*K*m) * K * m or W/(K*m) * K
-    ql = -qv  # J/(s*m) =  J/(s*K*m) * K * m or W/(K*m) * K
-
-    Hv_flux = Hv_trn + qv
-    Hl_flux = Hl_trn + ql
-
-    # endregion
+    Hv_flux, Hl_flux, qv, ql, Hv_trn, Hl_trn, Hv_CO2_trn, Hv_H2O_trn, Hl_CO2_trn, Hl_H2O_trn = enthalpy_flux(Nl_CO2, Hl_CO2, Nl_H2O, Hl_H2O, Nv_CO2, Hv_CO2, Nv_H2O, Hv_H2O, UT, a_eA, Tv, Tl)
 
     # endregion
 
@@ -210,14 +188,6 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region - Balance Equations
-
-    # region -- Balance Equation Setup
-
-
-
-    # endregion
-    
-    # end region
 
     # region -- Mass Balance
     dFl_CO2_dz = -Nl_CO2 + 1e-10  # mol/(s*m)
@@ -228,15 +198,15 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region -- Energy Balance
-    dHlf_dz = Hl_flux
-    dHvf_dz = Hv_flux + 1e-8
+    dHlf_dz = Hl_flux + 1e-10
+    dHvf_dz = Hv_flux + 1e-10
 
     dTl_dz = dHlf_dz / (Cpl_T * Fl_T)  # K/m
     dTv_dz = dHvf_dz / (Cpv_T * Fv_T)  # K/m
     # endregion
 
     # region -- Momentum Balance
-    dP_dz = 0 / scales[6]  # Pa/m
+    dP_dz = 0  # Pa/m
     # endregion
 
     # endregion
@@ -246,7 +216,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     if run_type == 'simulating':
         # Combine Differentials and Scale
         diffeqs = np.array([dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, dHlf_dz, dHvf_dz, dP_dz])
-        diffeqs_scaled = diffeqs / scales
+        # eq_scales = np.array([1, 1, 50, 50, 200000, 200000, P])
+        diffeqs_scaled = diffeqs / scales * H
         return diffeqs_scaled
 
     elif run_type == 'saving':
@@ -282,8 +253,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                   x_CO2_true, x_MEA_true, x_H2O_true, x_MEAH_true, x_MEACOO_true, x_HCO3_true],
             'y': [y_CO2, y_H2O, y_N2, y_O2],
             'T': [Tl, Tv],
-            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, dHlf_dz, Hlf],
-            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, dHvf_dz, Hvf],
+            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, Hlf],
+            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, Hvf],
             'CO2': [Nl_CO2, Nv_CO2, kv_CO2, a_eA, DF_CO2, fv_CO2, fl_CO2, Psi, H_CO2_mix],
             'H2O': [Nl_H2O, Nv_H2O, kv_H2O, a_eA, DF_H2O, fv_H2O, fl_H2O, Psat_H2O],
             'enhance_factor': [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi, Psi_H],

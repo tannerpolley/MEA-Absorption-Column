@@ -4,6 +4,7 @@ from scipy.integrate import solve_ivp
 from pcsaft import InputError
 from scipy.linalg import solve
 from scipy.optimize import root
+from MEA_Absorption_Column.Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
 
 
 def eulers(fxn, y, t_eval, args=None):
@@ -20,6 +21,7 @@ def eulers(fxn, y, t_eval, args=None):
         y_prev = results[i-1]
         # Compute derivatives using the provided function
         dydt_scaled = np.array(fxn(t, y_prev, args))
+        del chemical_equilibrium.cache
         # Update the dependent variables
         results[i] = y_prev + step_size * dydt_scaled
 
@@ -140,7 +142,7 @@ def runge_kutta(fxn, y0, t_eval, args=None):
         if type == 'explicit':
             k = np.zeros((s, len(y)))
             for i in range(s):
-                k[i] = fxn(t + c[i] * h, y + h*sum([A[i, j] * k[j] for j in range(i)]), *args)
+                k[i] = fxn(t + c[i] * h, y + h*sum([A[i, j] * k[j] for j in range(i)]), args)
         elif type == 'implicit':
             k = np.zeros((s, len(y)))
 
@@ -174,7 +176,7 @@ def runge_kutta(fxn, y0, t_eval, args=None):
 def scipy_integrate(fxn, y0, t_eval, args=None):
 
     obj = solve_ivp(fxn, [t_eval[0], t_eval[-1]], y0,
-                    args=args,
+                    args=(args,),
                     method='RK45', t_eval=t_eval,
                     vectorized=False,
                     # options={'first_step': 1e-10,
@@ -256,7 +258,7 @@ def radau(fxn, y0, t_eval, args=None):
         #     return jacobian_fd(fxn, y_stage, *args)
 
         # Use a nonlinear solver
-        sol = root(residual, g.flatten(), method='df-sane', args=args)
+        sol = root(residual, g.flatten(), method='df-sane', args=(args,))
         if not sol.success:
             raise RuntimeError("Stage solve failed: " + sol.message)
         return sol.x.reshape(s, -1)

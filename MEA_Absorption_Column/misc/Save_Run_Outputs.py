@@ -41,6 +41,7 @@ def save_run_outputs(Y_scaled, z, parameters, save_run_results=True, plot_temper
         output_dict[k] = np.zeros((n, len(outputs_0[k])))
 
     # Updates each output array and the (i, j) height step (i) for relevant group (j)
+
     for i in range(n):
         outputs, _ = abs_column(z[i], Y_scaled.T[i], parameters, run_type='saving')
 
@@ -49,12 +50,6 @@ def save_run_outputs(Y_scaled, z, parameters, save_run_results=True, plot_temper
 
     # Converts the Outputs dictionary into a dictionary of dataframes
     dfs_dict = make_dfs_dict(output_dict, keys_dict, z)
-
-
-    if plot_temperature:
-        dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
-        plt.ylabel('Temperature [K]')
-        plt.show()
 
     if save_run_results:
         # Updates each sheet in the Excel file with the new data from the df
@@ -80,4 +75,6 @@ def save_run_outputs(Y_scaled, z, parameters, save_run_results=True, plot_temper
             if sheet.name not in sheetnames:
                 sheet.delete()
         wb.save(path=r'data/Results/Profiles.xlsx')
+
+    return dfs_dict
 
