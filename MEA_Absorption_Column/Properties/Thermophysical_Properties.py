@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import log, exp
-from MEA_Absorption_Column.Parameters import MWs_l, MWs_v, R
-from numdifftools import Derivative
+from MEA_Absorption_Column.Parameters import MWs_l, MWs_v, R, MWs_l_dict
+from scipy.integrate import quad
 
 
 def henrys_law(T, z):
@@ -75,6 +75,7 @@ def density(T, z, P, phase='liquid'):
         rho_mass_v = rho_mol_v * MWT_v  # Vapor Mass Density (mol/m3 --> kg/m3)
 
         return rho_mol_v, rho_mass_v
+    return None
 
 
 def surface_tension(T, z, w_MEA, w_H2O):
@@ -108,11 +109,15 @@ def surface_tension(T, z, w_MEA, w_H2O):
     return sigma_l
 
 
-def heat_capacity(T, z, w, phase='liquid'):
+def heat_capacity(T, z, phase='liquid'):
 
     if phase == 'liquid':
+
+
         Tl = T
         x = z
+
+        w = [MWs_l[i] * x[i] / sum([MWs_l[j] * x[j] for j in range(len(x))]) for i in range(len(x))]
 
         coefficients = {'CO2': np.array([276370, -2090.1, 8.125, -.014116, 9.3701e-6]),
                         'MEA': np.array([2.6161, 3.706e-3, 3.787e-6, 0, 0]),
@@ -122,7 +127,7 @@ def heat_capacity(T, z, w, phase='liquid'):
         for j, sp in enumerate(coefficients.keys()):
             A, B, C, D, E = coefficients[sp]
             T_C = Tl - 273.15
-            Cpl.append(MWs_l[j] * (A + B * T_C + C * T_C ** 2 + D * T_C ** 3 + E * T_C ** 4) * 1000)
+            Cpl.append(MWs_l[j]*1000 * (A + B * T_C + C * T_C ** 2 + D * T_C ** 3 + E * T_C ** 4))
 
         Cpl_CO2 = (x[2] * Cpl[2] + x[1] * Cpl[1])/ x[0] * (1 / (1 - w[0]) - 1)
 
@@ -155,7 +160,6 @@ def heat_capacity(T, z, w, phase='liquid'):
         raise ValueError('Wrong phase either liquid or vapor')
 
 
-
 def enthalpy(T, z, phase='liquid'):
 
     if phase == 'liquid':
@@ -163,64 +167,37 @@ def enthalpy(T, z, phase='liquid'):
         x = z
         rho_mol_l, _, _ = density(float(Tl), x, 0, phase=phase)
 
-        Tr = 298.15 - 273.15
-        Pref = 101325.0
-        P = 109180.0
+        A, B, C, D = 82393000, 0.59045, - 0.43602, 0.37843
+        Tr = Tl/678.2
+        dh_vap_MEA = (A*(1 - Tr)**(B + C*Tr + D*Tr**2))/1000
 
-        dh_vap_MEA = 58000
-        dh_vap_H2O = 43.99e3
-        t = float(Tl) - 273.15
-        Hl_CO2 = -83999.8249763614
+        A, B, C, D = 56600000, 0.612041, -0.625697, 0.398804
+        Tr = Tl / 647.096
+        dh_vap_H2O = (A * (1 - Tr) ** (B + C * Tr + D * Tr ** 2))/1000
 
+        ΔH_abs = -83999.8249763614
+        A, B, C = 5.457, 1.045e-3, -1.157e5
+        Tv = Tl
+        Tr = 298.15
 
-        
-        # t1 = 100
-        # tc = 373.946
-        # a = .3106
-        # b = 0
-        #
-        # dh_vap_H2O = 40655*((1 - t/tc)/(1 - t1/tc))**(a + b*(1 - t/tc))
-        #
-        # t1 = 126.67
-        # tc = 398.25
-        # a = .3288
-        # b = -.0857
-        #
-        # dh_vap_MEA = 54835 * ((1 - t / tc) / (1 - t1 / tc)) ** (a + b * (1 - t / tc))
+        Hv_CO2 = (A * (Tv - Tr) + .5 * B * (Tv ** 2 - Tr ** 2) - C * (Tv ** -1 - Tr ** -1)) * R
+        Hl_CO2 = Hv_CO2 + R*2113 + ΔH_abs
 
-        #
-        # Tv = float(Tl)
-        # coefficients = {'CO2': np.array([5.457, 1.045e-3, -1.157e5]),
-        #                 'H2O': np.array([3.47, 1.45e-3, 0.121e5]),
-        #                 'N2': np.array([3.28, 0.593e-3, 0.04e5]),
-        #                 'O2': np.array([3.639, 0.506e-3, -0.227e5]),
-        #                 }
-        # Tr = 298.15
-        #
-        # def vapor_enthalpy(species):
-        #     A, B, C = coefficients[species]
-        #     return (A * (Tv - Tr) + .5 * B * (Tv ** 2 - Tr ** 2) - C * (Tv ** -1 - Tr ** -1)) * R
-        #
-        # Hv_CO2 = vapor_enthalpy('CO2')
-        #
-        # b, c, d = -5876, -8.598, -.012
-        # 3.52e6 * exp(-2113 / Tl)
-        #
-        # def f(Tl):
-        #     return np.log(3.52e6 * exp(-2113 / Tl))
-        #
-        # Hl_CO2 = Hv_CO2 - R*2113
-      #
         coefficients = {'CO2': np.array([276370, -2090.1, 8.125, -.014116, 9.3701e-6]),
                         'MEA': np.array([2.6161, 3.706e-3, 3.787e-6, 0, 0]),
                         'H2O': np.array([4.2107, -1.696e-3, 2.568e-5, -1.095e-7, 3.038e-10])
                         }
 
-        Hl_MEA = MWs_l[1] * 1000 * sum([coefficients['MEA'][i] / (i + 1) * (t ** (i + 1) - Tr ** (i + 1)) for i in
-                                        range(len(coefficients['MEA']))]) - dh_vap_MEA + (P - Pref) / rho_mol_l
-        Hl_H2O = MWs_l[2] * 1000 * sum([coefficients['H2O'][i] / (i + 1) * (t ** (i + 1) - Tr ** (i + 1)) for i in
-                                        range(len(coefficients['H2O']))]) - dh_vap_H2O + (P - Pref) / rho_mol_l
+        def Σ_Cp(T, species):
+            t = T - 273.15
+            tr = 298.15 - 273.15
+            return MWs_l_dict[species] * 1000 * sum([coefficients[species][i] / (i + 1) * (t ** (i + 1) - tr ** (i + 1))
+                                                     for i in range(len(coefficients[species]))])
 
+        Hl_MEA = Σ_Cp(Tl, 'MEA') - dh_vap_MEA # + (P - Pref) / rho_mol_l
+        Hl_H2O = Σ_Cp(Tl, 'H2O') - dh_vap_H2O  # + (P - Pref) / rho_mol_l
+
+        # print(Hl_CO2, Hl_MEA, Hl_H2O)
         Hl = np.array([Hl_CO2, Hl_MEA, Hl_H2O])
         Hl_T = sum([x[i] * Hl[i] for i in range(len(x))])
         return Hl, Hl_T

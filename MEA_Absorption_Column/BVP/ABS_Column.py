@@ -72,8 +72,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region --- Heat Capacity
-    Cpl, Cpl_T = heat_capacity(Tl, x, w, phase='liquid')
-    Cpv, Cpv_T = heat_capacity(Tv, y, w, phase='vapor')
+    Cpl, Cpl_T = heat_capacity(Tl, x, phase='liquid')
+    Cpv, Cpv_T = heat_capacity(Tv, y, phase='vapor')
     # endregion
 
     # region --- Enthalpy

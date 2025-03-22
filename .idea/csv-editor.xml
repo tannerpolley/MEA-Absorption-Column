@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="\MEA_Absorption_Column\data\C_cases_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\MEA_Absorption_Column\data\Interpolations.csv">
           <value>
             <Attribute>
@@ -18,6 +25,13 @@
           </value>
         </entry>
         <entry key="\MEA_Absorption_Column\data\NCCC_Data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\MEA_Absorption_Column\data\NCCC_Data_mole_based.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -45,7 +59,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\MEA_Absorption_Column\data\Tl_matrix.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\MEA_Absorption_Column\data\fitted_coefficients.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\MEA_Absorption_Column\data\runs_file_NCCC_1_bed_cases.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

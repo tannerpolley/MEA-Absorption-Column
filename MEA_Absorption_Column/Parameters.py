@@ -4,6 +4,11 @@ import numpy as np
 MWs_l = np.array([.04401, .06108, .01802]) # kg/mol
 MWs_v = np.array([.04401, .01802, .02801, .032])  # kg/mol
 
+MWs_l_dict = {'CO2': .04401,
+         'MEA': .06108,
+         'H2O': .01802
+         } # kg/mol
+
 column_params = {
     'NCCC': {
         'D': .64,
