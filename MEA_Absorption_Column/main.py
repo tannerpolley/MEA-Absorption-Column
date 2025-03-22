@@ -26,7 +26,7 @@ data_type = 'mole'
 
 df = df_NCCC_full
 
-for i in range(len(df)):
+for i in range(1, 2):
     dfs_dict = run_model(df,
                          method='collocation',
                          data_type=data_type,

@@ -239,6 +239,7 @@ Run #{run + 1:03d}:
     Tl = df2['Tl'].to_numpy()[::-1]
     Tv = df2['Tv'].to_numpy()[::-1]
     x = [0, .2, .4, .6, .8]
+    print(df.iloc[run, -5:])
     if plot_temperature:
         dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
         # plt.plot(z, Tl, 'k--', label='Tl - IDAES')
