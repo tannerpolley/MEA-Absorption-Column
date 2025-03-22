@@ -19,13 +19,12 @@ np.set_printoptions(suppress=True)
 
 def run_model(df,
               method='single',
-              data_type='mass',
+              data_type='mole',
               run=0,
               show_info=False,
               save_run_results=False,
               plot_temperature=False
               ):
-
     inputs, X = convert_data(df, run=run, type=data_type)
 
     L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
@@ -56,43 +55,49 @@ def run_model(df,
     Fv_N2_b, Fv_O2_b = Fv_N2_a, Fv_O2_a
 
     # Guesses
-    CO2_cap_guess = 95 # Guess for the percentage of CO2 transferred from Vapor to Liquid
-    H2O_cap_guess = -100 # Guess for the percentage of H2O transferred from Vapor to Liquid
+    CO2_cap_guess = 95  # Guess for the percentage of CO2 transferred from Vapor to Liquid
+    H2O_cap_guess = -100  # Guess for the percentage of H2O transferred from Vapor to Liquid
 
-    Fv_CO2_b_guess = (1 - (CO2_cap_guess/100))*Fv_CO2_a # 0.000126993312499947
-    Fv_H2O_b_guess = (1 - (H2O_cap_guess/100))*Fv_H2O_a # 5
+    Fv_CO2_b_guess = (1 - (CO2_cap_guess / 100)) * Fv_CO2_a  # 0.000126993312499947
+    Fv_H2O_b_guess = (1 - (H2O_cap_guess / 100)) * Fv_H2O_a  # 5
     Tv_b_guess = 335.
 
-    Fl_CO2_a_guess = Fl_CO2_b + (Fv_CO2_a - Fv_CO2_b_guess) # 3.55511974035339
-    Fl_H2O_a_guess = Fl_H2O_b + (Fv_H2O_a - Fv_H2O_b_guess) # 55.2093581436551
+    Fl_CO2_a_guess = Fl_CO2_b + (Fv_CO2_a - Fv_CO2_b_guess)  # 3.55511974035339
+    Fl_H2O_a_guess = Fl_H2O_b + (Fv_H2O_a - Fv_H2O_b_guess)  # 55.2093581436551
     Tl_a_guess = 325.
 
     # Convert from Temperature to Enthalpy
-
-    Fl_a_guess = [Fl_CO2_a_guess, Fl_MEA_a, Fl_H2O_a_guess]
-    Hlt_a_guess = get_liquid_enthalpy(Fl_a_guess, Tl_a_guess)
-    Hlf_a_guess = Hlt_a_guess * sum(Fl_a_guess)
-
-    Hlt_b = get_liquid_enthalpy(Fl_b, Tl_b)
-    Hlf_b = Hlt_b * sum(Fl_b)
-
-    Hvt_a = get_vapor_enthalpy(Fv_a, Tv_a)
-    Hvf_a = Hvt_a * sum(Fv_a)
-
-    Fv_b_guess = [Fv_CO2_b_guess, Fv_H2O_b_guess, Fv_N2_b, Fv_N2_b]
-    Hvt_b_guess = get_vapor_enthalpy(Fv_b_guess, Tv_b_guess)
-    Hvf_b_guess = Hvt_b_guess * sum(Fv_b_guess)
+    #
+    # Fl_a_guess = [Fl_CO2_a_guess, Fl_MEA_a, Fl_H2O_a_guess]
+    # Hlt_a_guess = get_liquid_enthalpy(Fl_a_guess, Tl_a_guess)
+    # Hlf_a_guess = Hlt_a_guess * sum(Fl_a_guess)
+    #
+    # Hlt_b = get_liquid_enthalpy(Fl_b, Tl_b)
+    # Hlf_b = Hlt_b * sum(Fl_b)
+    #
+    # Hvt_a = get_vapor_enthalpy(Fv_a, Tv_a)
+    # Hvf_a = Hvt_a * sum(Fv_a)
+    #
+    # Fv_b_guess = [Fv_CO2_b_guess, Fv_H2O_b_guess, Fv_N2_b, Fv_N2_b]
+    # Hvt_b_guess = get_vapor_enthalpy(Fv_b_guess, Tv_b_guess)
+    # Hvf_b_guess = Hvt_b_guess * sum(Fv_b_guess)
 
     P_a = P
     P_b = P
 
     # Scaling
+    #
+    # Y_a_unscaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
+    #                        Hlf_a_guess, Hvf_a, P_a])
 
     Y_a_unscaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
-                           Hlf_a_guess, Hvf_a, P_a])
+                             Tl_a_guess, Tv_a, P_a])
+
+    Y_b_unscaled = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess,
+                             Tl_b, Tv_b_guess, P_b])
 
     scales = scaling(z, Y_a_unscaled)
-
+    scales[4], scales[5] = 360, 360
 
     # Fl_CO2_scaling = round(Fl_CO2_a_guess) # 2.0
     # Fl_H2O_scaling = round(Fl_H2O_b) # 60.
@@ -105,20 +110,15 @@ def run_model(df,
     # scales = np.array(
     #     [Fl_CO2_scaling, Fl_H2O_scaling, Fv_CO2_scaling, Fv_H2O_scaling, Hl_scaling, Hv_scaling, P_scaling])
 
-    Y_a_scaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
-                           Hlf_a_guess, Hvf_a, P_a]) / scales
+    Y_a_scaled = Y_a_unscaled / scales
 
-    Y_b_scaled = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess,
-                           Hlf_b, Hvf_b_guess, P_b]) / scales
+    Y_b_scaled = Y_b_unscaled / scales
     # [3., 43., 2., 12., -1903434., 48404., 109180.]
     # eq_scales = [3., 43., 2., 12., -1903434., 48404., 109180.]
     # eq_scales = [1, 50, 1, 50, 200000, 200000, P]
     eq_scales = scales
 
     const_flow = Fl_MEA_b, Fv_N2_a, Fv_O2_a
-    parameters = scales, eq_scales, const_flow, H, A, packing
-
-    print(eq_scales)
 
     parameters = scales, eq_scales, const_flow, H, A, packing
 
@@ -231,9 +231,9 @@ Run #{run + 1:03d}:
 
     # Stores output data into text files (concentrations, mole fractions, and temperatures) (can also plot)
     dfs_dict = save_run_outputs(Y_scaled, z, parameters,
-                          save_run_results=save_run_results,
-                          plot_temperature=plot_temperature,
-                          )
+                                save_run_results=save_run_results,
+                                plot_temperature=plot_temperature,
+                                )
     filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
     df2 = pd.read_excel(filename, sheet_name='T')
     Tl = df2['Tl'].to_numpy()[::-1]
@@ -243,7 +243,7 @@ Run #{run + 1:03d}:
         dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
         # plt.plot(z, Tl, 'k--', label='Tl - IDAES')
         # plt.plot(z, Tv, 'k--', label='Tv - IDAES')
-        plt.plot(x, df.iloc[run, -5:], 'kx', label='data')
+        # plt.plot(x, df.iloc[run, -5:], 'kx', label='data')
         plt.ylabel('Temperature [K]')
         plt.legend()
         plt.title(f'L/G Ratio: {L_G:.2f}, alpha: {alpha:.2f}, y_CO2: {y_CO2:.2f}, CO2 %: {CO2_cap:.2f}')
