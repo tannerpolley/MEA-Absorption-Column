@@ -18,6 +18,8 @@ from MEA_Absorption_Column.Transport.Pressure_Drop import pressure_drop
 from MEA_Absorption_Column.Transport.Enhancement_Factor import enhancement_factor
 from MEA_Absorption_Column.Transport.Flux import molar_flux, enthalpy_flux
 
+from MEA_Absorption_Column.misc.special_functions import finite_difference
+
 
 def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False):
     # region - Unpack System Parameters
