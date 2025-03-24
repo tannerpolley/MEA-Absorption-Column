@@ -118,7 +118,7 @@ def run_model(df,
     const_flow = Fl_MEA_b, Fv_N2_a, Fv_O2_a
     parameters = scales, eq_scales, const_flow, H, A, packing
 
-    print(eq_scales)
+    # print(eq_scales)
 
     parameters = scales, eq_scales, const_flow, H, A, packing
 
@@ -239,16 +239,16 @@ Run #{run + 1:03d}:
     Tl = df2['Tl'].to_numpy()[::-1]
     Tv = df2['Tv'].to_numpy()[::-1]
     x = [0, .2, .4, .6, .8]
-    print(df.iloc[run, -5:])
+    # print(df.iloc[run, -5:])
     if plot_temperature:
         dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
         # plt.plot(z, Tl, 'k--', label='Tl - IDAES')
         # plt.plot(z, Tv, 'k--', label='Tv - IDAES')
-        plt.plot(x, df.iloc[run, -5:], 'kx', label='data')
+        # plt.plot(x, df.iloc[run, -5:], 'kx', label='data')
         plt.ylabel('Temperature [K]')
         plt.legend()
         plt.title(f'L/G Ratio: {L_G:.2f}, alpha: {alpha:.2f}, y_CO2: {y_CO2:.2f}, CO2 %: {CO2_cap:.2f}')
         plt.show()
 
     # return CO2_cap, message
-    return dfs_dict
+    return CO2_cap

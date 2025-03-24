@@ -2,16 +2,13 @@ from BVP.Run_Model import run_model
 import pandas as pd
 import warnings
 import numpy as np
+from scipy.optimize import minimize
 from Parameters import n, column_params
 import matplotlib.pyplot as plt
 
 np.set_printoptions(legacy='1.25')
 
 warnings.filterwarnings("ignore")
-
-CO2_cap_array = []
-results_array = []
-inputs_array = []
 
 # LHC_design(25)
 # df_SRP = pd.read_csv('data/LHC_design_w_SRP_cases.csv', index_col=0)
@@ -24,19 +21,27 @@ df_NCCC_full = pd.read_csv('data/C_cases_data.csv', index_col=0)
 # data_source = 'SRP'
 data_type = 'mole'
 
-df = df_NCCC_1
+def model(x):
+    x1, x2 = x
 
-for i in range(len(df)):
+    df = df_NCCC_1
+    df.iloc[0, 1] = x1
+    df.iloc[0, 3] = x2
+
+    print(df.iloc[0, 1])
+
+    print(df.iloc[0, :])
+
+
     CO2_cap = run_model(df,
                          method='collocation',
                          data_type=data_type,
-                         run=i,
+                         run=0,
                          # save_run_results=True,
                          # plot_temperature=True,
-                         show_info=True,
+                         # show_info=True
                          )
-    print(CO2_cap)
-    # print(Tl_matrix[:, i])
 
-# np.savetxt("data/Tl_matrix.csv", Tl_matrix, delimiter=',')
-# np.savetxt("data/Tv_matrix.csv", Tv_matrix, delimiter=',')
+    return CO2_cap
+print(model([3, .3]))
+res = minimize(model, [3, .3])

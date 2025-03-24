@@ -58,7 +58,6 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
             f_new2 = fun(x, y_new2)
 
             df_dy[:, i, :] = (f_new - f_new2) / (2*hi)
-            print(df_dy[:, i, :] - (f_new - f0) / (hi))
 
         return df_dy
 
