@@ -131,6 +131,26 @@ Run #{run + 1:03d}:
     # Starts the time tracker for the total computation time for one simulation run
     start = time.time()
 
+    keys = {
+        'Fl_CO2': 'Fl',
+        'Fl_H2O': 'Fl',
+        'Fv_CO2': 'Fv',
+        'Fv_H2O': 'Fv',
+        'Tl': 'T',
+        'Tv': 'T',
+        'P': 'transport',
+    }
+    # Y_scaled = np.zeros((7, len(z)))
+    # filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
+    # success = True
+    # solving_type = 'broken'
+    # message = 'stop'
+    # for i, (k, v) in enumerate(keys.items()):
+    #     df = pd.read_excel(filename, sheet_name=v)
+    #     Y_scaled[i] = df[k].to_numpy()[::-1]/scales[i]
+
+
+
     Y_scaled, z_new, solving_type, success, message = solving_function(Y_a_scaled, Y_b_scaled, z, parameters)
 
     Y = []
@@ -167,15 +187,22 @@ Run #{run + 1:03d}:
     y_b = [Fv_b[i] / sum(Fv_b) for i in range(len(Fv_b))]
 
     # Temperature
-    Hl_a_sim = Y[4, 0] / sum(Fl_a)
-    Hl_b_sim = Y[4, -1] / sum(Fl_b)
-    Hv_a_sim = Y[5, 0] / sum(Fv_a)
-    Hv_b_sim = Y[5, -1] / sum(Fv_b)
+    # Hl_a_sim = Y[4, 0] / sum(Fl_a)
+    # Hl_b_sim = Y[4, -1] / sum(Fl_b)
+    # Hv_a_sim = Y[5, 0] / sum(Fv_a)
+    # Hv_b_sim = Y[5, -1] / sum(Fv_b)
+    #
+    # Tl_a_sim = (get_liquid_temperature(x_a, Hl_a_sim))
+    # Tl_b_sim = (get_liquid_temperature(x_b, Hl_b_sim))
+    # Tv_a_sim = (get_vapor_temperature(y_a, Hv_a_sim))
+    # Tv_b_sim = (get_vapor_temperature(y_b, Hv_b_sim))
 
-    Tl_a_sim = (get_liquid_temperature(x_a, Hl_a_sim))
-    Tl_b_sim = (get_liquid_temperature(x_b, Hl_b_sim))
-    Tv_a_sim = (get_vapor_temperature(y_a, Hv_a_sim))
-    Tv_b_sim = (get_vapor_temperature(y_b, Hv_b_sim))
+    Tl_a_sim = Y[4, 0]
+    Tl_b_sim = Y[4, -1]
+    Tv_a_sim = Y[5, 0]
+    Tv_b_sim = Y[5, -1]
+
+    print(Tl_a_sim)
 
     # Computes the relative error between the solution that the shooter found to the actual inlet concentration for the
     # relevant liquid species

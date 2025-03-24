@@ -17,6 +17,7 @@ from MEA_Absorption_Column.Transport.Transfer_Coefficients import mass_transfer_
 from MEA_Absorption_Column.Transport.Pressure_Drop import pressure_drop
 from MEA_Absorption_Column.Transport.Enhancement_Factor import enhancement_factor
 from MEA_Absorption_Column.Transport.Flux import molar_flux, enthalpy_flux
+from MEA_Absorption_Column.misc.special_functions import finite_difference
 
 from numdifftools import Derivative
 
@@ -223,12 +224,15 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     def dHv_O2_dT(T):
         return enthalpy(T, y, phase='vapor')[0][3]
+    # print(Hl_flux)
+    # print((Fl_CO2 * finite_difference(dHl_CO2_dT, Tl) + Fl_MEA * finite_difference(dHl_MEA_dT,Tl) + Fl_H2O * finite_difference(dHl_H2O_dT, Tl)))
+    # print(Hv_flux)
+    # print((Fv_CO2 * finite_difference(dHv_CO2_dT, Tv) + Fv_H2O * finite_difference(dHv_H2O_dT, Tv) + Fv_N2 * finite_difference(dHv_N2_dT, Tv) + Fv_O2 * finite_difference(dHv_O2_dT, Tv)))
 
-
-    dTl_dz = ((-ql + Hl_flux)/
-              (Fl_CO2*Derivative(dHl_CO2_dT)(Tl) + Fl_MEA*Derivative(dHl_MEA_dT)(Tl) + Fl_H2O*Derivative(dHl_H2O_dT)(Tl)))
-    dTv_dz = ((-qv + Hv_flux) /
-              (Fv_CO2 * Derivative(dHv_CO2_dT)(Tv) + Fv_H2O * Derivative(dHv_H2O_dT)(Tv) + Fv_N2 * Derivative(dHv_N2_dT)(Tv) + Fv_O2 * Derivative(dHv_O2_dT)(Tv)))
+    dTl_dz = (Hl_flux /
+              (Fl_CO2*finite_difference(dHl_CO2_dT, Tl) + Fl_MEA*finite_difference(dHl_MEA_dT, Tl) + Fl_H2O*finite_difference(dHl_H2O_dT, Tl)))
+    dTv_dz = (Hv_flux /
+              (Fv_CO2 * finite_difference(dHv_CO2_dT, Tv) + Fv_H2O * finite_difference(dHv_H2O_dT, Tv) + Fv_N2 * finite_difference(dHv_N2_dT, Tv) + Fv_O2 * finite_difference(dHv_O2_dT, Tv)))
     # endregion
 
     # region -- Momentum Balance
