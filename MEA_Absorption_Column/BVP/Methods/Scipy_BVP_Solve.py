@@ -92,8 +92,6 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
 
         # y = df_2.iloc[:, i].to_numpy()[::-1]
 
-
-
         y = polynomial_fit(z_2, Y_a_scaled[i]*scales[i], i)
         # plt.plot(z_2, y)
         # plt.show()

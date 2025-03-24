@@ -31,7 +31,7 @@ for i in range(len(df)):
                          method='collocation',
                          data_type=data_type,
                          run=i,
-                         # save_run_results=True,
+                         save_run_results=True,
                          plot_temperature=True,
                          show_info=True,
                          )

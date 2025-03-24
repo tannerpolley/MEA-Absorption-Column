@@ -10,6 +10,7 @@ from MEA_Absorption_Column.Properties.Transport_Properties import viscosity, dif
 from MEA_Absorption_Column.Thermodynamics.Fugacity import fugacity
 from MEA_Absorption_Column.Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
 from MEA_Absorption_Column.misc.Get_Temperature_Enthalpy import get_liquid_temperature, get_vapor_temperature
+from MEA_Absorption_Column.misc.Finite_Difference import finite_difference
 
 from MEA_Absorption_Column.Transport.Hydraulic_Variables_Correlations import (velocity, holdup, interfacial_area,
                                                                               flooding_fraction)
@@ -18,7 +19,7 @@ from MEA_Absorption_Column.Transport.Pressure_Drop import pressure_drop
 from MEA_Absorption_Column.Transport.Enhancement_Factor import enhancement_factor
 from MEA_Absorption_Column.Transport.Flux import molar_flux, enthalpy_flux
 
-from MEA_Absorption_Column.misc.special_functions import finite_difference
+# from MEA_Absorption_Column.misc.special_functions import finite_difference
 
 
 def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False):
@@ -79,8 +80,10 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region --- Enthalpy
-    Hl_CO2, Hl_MEA, Hl_H2O = enthalpy(Tl, x, phase='liquid')[0]  # J/mol
-    Hv_CO2, Hv_H2O, Hv_N2, Hv_O2 = enthalpy(Tv, y, phase='vapor')[0]  # J/mol
+    Hl, Hl_T = enthalpy(Tl, x, phase='liquid') # J/mol
+    Hl_CO2, Hl_MEA, Hl_H2O = Hl
+    Hv, Hv_T = enthalpy(Tv, y, phase='vapor')  # J/mol
+    Hv_CO2, Hv_H2O, Hv_N2, Hv_O2 = Hv
     # endregion
 
     # endregion
@@ -203,8 +206,22 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     dHlf_dz = Hl_flux + 1e-10
     dHvf_dz = Hv_flux + 1e-10
 
-    dTl_dz = dHlf_dz / (Cpl_T * Fl_T)  # K/m
-    dTv_dz = dHvf_dz / (Cpv_T * Fv_T)  # K/m
+    def f_Hl_T(T, x):
+        return enthalpy(T, x, phase='liquid')[1]
+
+    dHl_dT = finite_difference(f_Hl_T, Tl, x)
+
+    def f_Hv_T(T, y):
+        return enthalpy(T, y, phase='vapor')[1]
+
+    dHv_dT = finite_difference(f_Hv_T, Tv, y)
+
+    dTl_dz = -H*(Hl_flux - Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
+    dTv_dz = H*(Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dT)
+
+    # dTl_dz = 0.0
+    # dTv_dz = 0.06
+
     # endregion
 
     # region -- Momentum Balance
@@ -255,8 +272,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                   x_CO2_true, x_MEA_true, x_H2O_true, x_MEAH_true, x_MEACOO_true, x_HCO3_true],
             'y': [y_CO2, y_H2O, y_N2, y_O2],
             'T': [Tl, Tv],
-            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, Hlf],
-            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, Hvf],
+            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl_T, Fl_T, Hlf, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, dHlf_dz, dTl_dz, dHl_dT],
+            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv_T, Fv_T, Hvf, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, dHvf_dz, dTv_dz, dHv_dT],
             'CO2': [Nl_CO2, Nv_CO2, kv_CO2, a_eA, DF_CO2, fv_CO2, fl_CO2, Psi, H_CO2_mix],
             'H2O': [Nl_H2O, Nv_H2O, kv_H2O, a_eA, DF_H2O, fv_H2O, fl_H2O, Psat_H2O],
             'enhance_factor': [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi, Psi_H],
