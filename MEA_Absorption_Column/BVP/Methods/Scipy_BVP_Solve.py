@@ -87,8 +87,8 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
         'P': 'transport',
     }
     filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
-    filename2 = 'data/test.csv'
-    df_2 = pd.read_csv(filename2)
+    # filename2 = 'data/test.csv'
+    # df_2 = pd.read_csv(filename2)
 
     for i, (k, v) in enumerate(keys.items()):
         df = pd.read_excel(filename, sheet_name=v)
