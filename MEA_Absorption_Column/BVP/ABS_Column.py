@@ -17,9 +17,8 @@ from MEA_Absorption_Column.Transport.Transfer_Coefficients import mass_transfer_
 from MEA_Absorption_Column.Transport.Pressure_Drop import pressure_drop
 from MEA_Absorption_Column.Transport.Enhancement_Factor import enhancement_factor
 from MEA_Absorption_Column.Transport.Flux import molar_flux, enthalpy_flux
-from MEA_Absorption_Column.misc.special_functions import finite_difference
+from MEA_Absorption_Column.misc.special_functions import finite_difference, complex_step
 
-from numdifftools import Derivative
 
 
 def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False):
@@ -174,7 +173,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region -- Enhancement Factor
 
     E, Psi, Psi_H, enhance_factor = enhancement_factor(Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
-                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='implicit')
+                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit')
 
     # endregion
 
@@ -212,15 +211,22 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     def f_Hl_T(T, x):
         return enthalpy(T, x, phase='liquid')[1]
 
-    dHl_dT = finite_difference(f_Hl_T, Tl, x)
+
+    dHl_dT = complex_step(f_Hl_T, Tl.copy(), x)
+    # dHl_dT = finite_difference(f_Hl_T, Tl.copy(), x)
+    # if dHl_dT < 129:
+    dHl_dTa = 132.0
 
     def f_Hv_T(T, y):
         return enthalpy(T, y, phase='vapor')[1]
 
-    dHv_dT = finite_difference(f_Hv_T, Tv, y)
+    dHv_dT = complex_step(f_Hv_T, Tv, y)
+    # dHv_dT = finite_difference(f_Hv_T, Tv, y)
+    # if dHv_dT < 129:
+    dHv_dTa = 31
 
-    dTl_dz = (Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
-    dTv_dz = (Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dT)
+    dTl_dz = (Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dTa) # K/m
+    dTv_dz = (Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dTa)
     # endregion
 
     # region -- Momentum Balance
@@ -273,8 +279,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                   x_CO2_true, x_MEA_true, x_H2O_true, x_MEAH_true, x_MEACOO_true, x_HCO3_true],
             'y': [y_CO2, y_H2O, y_N2, y_O2],
             'T': [Tl, Tv],
-            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl_T, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, dHlf_dz, dTl_dz],
-            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv_T, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, dHvf_dz, dTv_dz],
+            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl_T, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, dHlf_dz, dTl_dz, dHl_dT],
+            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv_T, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, dHvf_dz, dTv_dz, dHv_dT],
             'CO2': [Nl_CO2, Nv_CO2, kv_CO2, a_eA, DF_CO2, fv_CO2, fl_CO2, Psi, H_CO2_mix],
             'H2O': [Nl_H2O, Nv_H2O, kv_H2O, a_eA, DF_H2O, fv_H2O, fl_H2O, Psat_H2O],
             'enhance_factor': [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi, Psi_H],

@@ -2,7 +2,7 @@ import numpy as np
 EPS = np.finfo(float).eps
 
 
-def finite_difference(f, x, *args, h=1e-7):
+def finite_difference(f, x, *args, h=1e-5):
 
     x_forward = np.copy(x)
     x_backward = np.copy(x)
@@ -12,7 +12,7 @@ def finite_difference(f, x, *args, h=1e-7):
 
     # Central difference formula for the partial derivative
 
-    grad = (f(x_forward, *args) - f(x_backward, *args)) / (2 * h)
+    grad = (f(x_forward, *args) - f(x, *args)) / (h)
 
     return grad
 
@@ -36,3 +36,20 @@ def jac(f, x, y):
         df_dy[:, i, :] = (f_new - f_new2) / (2*hi)
 
     return df_dy
+
+
+# def complex_step(f, x, *args, h=1e-30):
+#
+#     imag = 1j
+#     x_copy = np.copy(x)
+#     print(x_copy)
+#     x_copy += x_copy + imag * h
+#     f_eval = f(x, *args)
+#     dy_dt = np.imag(f_eval) / h
+#     x_copy += x_copy - imag * h
+#
+#     return np.real(dy_dt)
+
+def complex_step(f, x, *args, h=1e-200):
+
+    return np.real(np.imag(f(x + 1j * h, *args)) / h)

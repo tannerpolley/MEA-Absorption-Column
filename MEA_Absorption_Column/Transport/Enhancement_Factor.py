@@ -64,7 +64,7 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
         E = Ha
 
     Psi = E * kl_CO2 / kv_CO2
-    Psi_H = Psi / (Psi + H_CO2_mix)
+    Psi_H = Psi / (Psi + H_CO2_mix)*.6
 
     enhance_factor = [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi_H, Psi]
 

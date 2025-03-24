@@ -27,14 +27,17 @@ data_type = 'mole'
 df = df_NCCC_full
 
 for i in range(len(df)):
-    dfs_dict = run_model(df,
-                         method='collocation',
-                         data_type=data_type,
-                         run=i,
-                         save_run_results=True,
-                         plot_temperature=True,
-                         show_info=True
-                         )
+    CO2_cap, dfs_dict, info = run_model(df,
+                                        method='collocation',
+                                        data_type=data_type,
+                                        run=i,
+                                        save_run_results=True,
+                                        plot_temperature=True,
+                                        show_info=True
+                                        )
+    plt.plot([0, .2, .4, .6, .8], df.iloc[i, -5:], 'kx', label='Data')
+    plt.legend()
+    plt.show()
     # print(Tl_matrix[:, i])
 
 # np.savetxt("data/Tl_matrix.csv", Tl_matrix, delimiter=',')

@@ -9,8 +9,10 @@ from MEA_Absorption_Column.BVP.Methods.Finite_Difference_Solve import finite_dif
 
 from MEA_Absorption_Column.misc.Convert_Data import convert_data
 from MEA_Absorption_Column.misc.Save_Run_Outputs import save_run_outputs
+from MEA_Absorption_Column.Properties.Thermophysical_Properties import enthalpy
 
 from MEA_Absorption_Column.misc.Scaling import scaling
+from numdifftools import Derivative
 
 np.set_printoptions(suppress=True)
 
@@ -169,7 +171,7 @@ Run #{run + 1:03d}:
         dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
         plt.ylabel('Temperature [K]')
         plt.legend()
-        plt.title(f'L/G Ratio: {L_G:.2f}, alpha: {alpha:.2f}, y_CO2: {y_CO2:.2f}, CO2 %: {CO2_cap:.2f}')
-        plt.show()
+        plt.title(f'$\\frac{{L}}{{G}}$ Ratio: {L_G:.2f}, $\\alpha$: {alpha:.2f}, $y_{{CO2}}$: {y_CO2:.2f}')
+        # plt.show()
 
     return CO2_cap, dfs_dict, [success, message]

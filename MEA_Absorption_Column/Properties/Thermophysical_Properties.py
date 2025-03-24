@@ -163,9 +163,10 @@ def heat_capacity(T, z, phase='liquid'):
 def enthalpy(T, z, phase='liquid'):
 
     if phase == 'liquid':
-        Tl = float(T)
+        # Tl = float(T)
+        Tl = T
+
         x = z
-        rho_mol_l, _, _ = density(float(Tl), x, 0, phase=phase)
 
         ΔH_abs = -83999.8249763614
         A, B, C = 5.457, 1.045e-3, -1.157e5
@@ -175,19 +176,14 @@ def enthalpy(T, z, phase='liquid'):
         Hv_CO2 = (A * (Tv - Tr) + .5 * B * (Tv ** 2 - Tr ** 2) - C * (Tv ** -1 - Tr ** -1)) * R
         Hl_CO2 = Hv_CO2 + R*2113 + ΔH_abs
 
-        if Tl > 400 or Tl < 0 or np.isnan(Tl):
-            dh_vap_MEA = 58000
-            dh_vap_H2O = 43.99e3
+        A, B, C, D = 82393000, 0.59045, - 0.43602, 0.37843
 
-        else:
-            A, B, C, D = 82393000, 0.59045, - 0.43602, 0.37843
+        Tr = Tl/678.2
+        dh_vap_MEA = (A*(1 - Tr)**(B + C*Tr + D*Tr**2))/1000
 
-            Tr = Tl/678.2
-            dh_vap_MEA = (A*(1 - Tr)**(B + C*Tr + D*Tr**2))/1000
-
-            A, B, C, D = 56600000, 0.612041, -0.625697, 0.398804
-            Tr = Tl / 647.096
-            dh_vap_H2O = (A * (1 - Tr) ** (B + C * Tr + D * Tr ** 2))/1000
+        A, B, C, D = 56600000, 0.612041, -0.625697, 0.398804
+        Tr = Tl / 647.096
+        dh_vap_H2O = (A * (1 - Tr) ** (B + C * Tr + D * Tr ** 2))/1000
 
         def Σ_Cp(T, species):
 
@@ -201,8 +197,8 @@ def enthalpy(T, z, phase='liquid'):
             return MWs_l_dict[species] * 1000 * sum([coefficients[species][i] / (i + 1) * (t ** (i + 1) - tr ** (i + 1))
                                                      for i in range(len(coefficients[species]))])
 
-        Hl_MEA = Σ_Cp(Tl, 'MEA') - dh_vap_MEA # + (P - Pref) / rho_mol_l
-        Hl_H2O = Σ_Cp(Tl, 'H2O') - dh_vap_H2O  # + (P - Pref) / rho_mol_l
+        Hl_MEA = Σ_Cp(Tl, 'MEA') - dh_vap_MEA
+        Hl_H2O = Σ_Cp(Tl, 'H2O') - dh_vap_H2O
 
         Hl = np.array([Hl_CO2, Hl_MEA, Hl_H2O])
         Hl_T = sum([x[i] * Hl[i] for i in range(len(x))])
