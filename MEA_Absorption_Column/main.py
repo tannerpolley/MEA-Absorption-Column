@@ -1,30 +1,20 @@
-from BVP.Run_Model import run_model
 import pandas as pd
 import warnings
 import numpy as np
-from Parameters import n, column_params
-import matplotlib.pyplot as plt
+from BVP.Run_Model import run_model
 
 np.set_printoptions(legacy='1.25')
-
 warnings.filterwarnings("ignore")
 
-CO2_cap_array = []
-results_array = []
-inputs_array = []
 
-# LHC_design(25)
-# df_SRP = pd.read_csv('data/LHC_design_w_SRP_cases.csv', index_col=0)
-# df_NCCC = pd.read_csv('data/runs_file_NCCC_case_18.csv', index_col=0)
 df_NCCC_1 = pd.read_csv('data/runs_file_NCCC_LHC.csv', index_col=0)
 df_NCCC_2 = pd.read_csv('data/runs_file_NCCC_1_bed_cases.csv', index_col=0)
 df_NCCC_full = pd.read_csv('data/NCCC_Data.csv', index_col=0)
-df_NCCC_full = pd.read_csv('data/C_cases_data.csv', index_col=0)
-# df = LHC_design(25)
-# data_source = 'SRP'
+df_NCCC_C_cases = pd.read_csv('data/C_cases_data.csv', index_col=0)
+
 data_type = 'mole'
 
-df = df_NCCC_full
+df = df_NCCC_1
 
 for i in range(len(df)):
     CO2_cap, dfs_dict, info = run_model(df,
@@ -33,12 +23,5 @@ for i in range(len(df)):
                                         run=i,
                                         save_run_results=True,
                                         plot_temperature=True,
-                                        show_info=True
+                                        show_info=True,
                                         )
-    plt.plot([0, .2, .4, .6, .8], df.iloc[i, -5:], 'kx', label='Data')
-    plt.legend()
-    plt.show()
-    # print(Tl_matrix[:, i])
-
-# np.savetxt("data/Tl_matrix.csv", Tl_matrix, delimiter=',')
-# np.savetxt("data/Tv_matrix.csv", Tv_matrix, delimiter=',')

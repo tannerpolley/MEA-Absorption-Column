@@ -15,15 +15,14 @@ names = {
     'Fl_H2O': 'Fl',
     'Fv_CO2': 'Fv',
     'Fv_H2O': 'Fv',
-    # 'Hlf': 'ql',
-    # 'Hvf': 'qv',
-    'Tl': 'ql',
-    'Tv': 'qv',
+    'Tl': 'T',
+    'Tv': 'T',
     'P': 'transport'
          }
 
 fitted_coeffs = {}
 i = 0
+degree = 10
 
 
 def exp_decay(x, a, b):
@@ -37,12 +36,12 @@ for k, v in names.items():
 
     # Fit polynomial to normalized data
     if k == 'Fv_CO2':
-        coeffs, _ = curve_fit(exp_decay, x, y)
+        coeffs = curve_fit(exp_decay, x, y)[0]
         y_fit = exp_decay(x_fit, *coeffs)
 
-        coeffs = list(coeffs) + [0]*(6 - len(list(coeffs)))
+        coeffs = list(coeffs) + [0]*(degree - len(list(coeffs)))
     else:
-        coeffs = np.polyfit(x, y, deg=6)
+        coeffs = np.polyfit(x, y, deg=degree)
 
         y_fit = np.polyval(coeffs, x_fit)
         coeffs = coeffs[:-1]

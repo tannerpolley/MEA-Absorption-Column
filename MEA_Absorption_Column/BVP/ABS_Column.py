@@ -4,21 +4,18 @@ from numpy import sum
 from MEA_Absorption_Column.Parameters import MWs_l
 
 from MEA_Absorption_Column.Properties.Thermophysical_Properties import (density, surface_tension, heat_capacity,
-                                                                        thermal_conductivity, henrys_law, enthalpy)
+                                                                        thermal_conductivity, henrys_law, enthalpy,)
 from MEA_Absorption_Column.Properties.Transport_Properties import viscosity, diffusivity
 
 from MEA_Absorption_Column.Thermodynamics.Fugacity import fugacity
 from MEA_Absorption_Column.Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
-from MEA_Absorption_Column.misc.Get_Temperature_Enthalpy import get_liquid_temperature, get_vapor_temperature
-
 from MEA_Absorption_Column.Transport.Hydraulic_Variables_Correlations import (velocity, holdup, interfacial_area,
                                                                               flooding_fraction)
 from MEA_Absorption_Column.Transport.Transfer_Coefficients import mass_transfer_coeff, heat_transfer_coeff
 from MEA_Absorption_Column.Transport.Pressure_Drop import pressure_drop
 from MEA_Absorption_Column.Transport.Enhancement_Factor import enhancement_factor
 from MEA_Absorption_Column.Transport.Flux import molar_flux, enthalpy_flux
-from MEA_Absorption_Column.misc.special_functions import finite_difference, complex_step
-
+from MEA_Absorption_Column.misc.special_functions import finite_difference, complex_step, f_dHl_dT
 
 
 def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False):
@@ -81,8 +78,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region --- Enthalpy
-    Hl, Hl_T = enthalpy(Tl, x, phase='liquid') # J/mol
-    Hv, Hv_T = enthalpy(Tv, y, phase='vapor')  # J/mol
+    Hl, Hl_T = enthalpy(Tl, Tv, x, y,phase='liquid') # J/mol
+    Hv, Hv_T = enthalpy(Tl, Tv, x, y, phase='vapor')  # J/mol
 
     Hl_CO2, Hl_MEA, Hl_H2O = Hl
     Hv_CO2, Hv_H2O, Hv_N2, Hv_O2 = Hv
@@ -208,25 +205,11 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     dHlf_dz = Hl_flux + 1e-10
     dHvf_dz = Hv_flux + 1e-10
 
-    def f_Hl_T(T, x):
-        return enthalpy(T, x, phase='liquid')[1]
+    dHl_dT = f_dHl_dT(Tl, x)
+    dHv_dT = Cpv_T + 1e-10
 
-
-    dHl_dT = complex_step(f_Hl_T, Tl.copy(), x)
-    # dHl_dT = finite_difference(f_Hl_T, Tl.copy(), x)
-    # if dHl_dT < 129:
-    dHl_dTa = 132.0
-
-    def f_Hv_T(T, y):
-        return enthalpy(T, y, phase='vapor')[1]
-
-    dHv_dT = complex_step(f_Hv_T, Tv, y)
-    # dHv_dT = finite_difference(f_Hv_T, Tv, y)
-    # if dHv_dT < 129:
-    dHv_dTa = 31
-
-    dTl_dz = (Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dTa) # K/m
-    dTv_dz = (Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dTa)
+    dTl_dz = (Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
+    dTv_dz = (Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dT)
     # endregion
 
     # region -- Momentum Balance
@@ -287,10 +270,9 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
             'transport': [kl_CO2, kv_CO2, kv_H2O, ul, uv, h_L, h_V, a_e, UT, P,
                           Clp, Cvp, eps, a_p, A, Lp, d_h],
             'Prop_l': [rho_mol_l, rho_mass_l, V_l, V_CO2, V_MEA, V_H2O, mul_mix, sigma, Dl_CO2, Dl_MEA,
-                       Dl_ion, Cpl_CO2,
-                       Cpl_MEA, Cpl_H2O],
+                       Dl_ion, Cpl_CO2, Cpl_MEA, Cpl_H2O, Cpl_T],
             'Prop_v': [rho_mol_v, rho_mass_v, muv_CO2, muv_H2O, muv_N2, muv_O2, muv_mix, Dv_CO2, Dv_H2O,
-                       Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2, kt_vap],
+                       Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2, Cpv_T, kt_vap],
         }
 
         if zi == 0 and column_names:

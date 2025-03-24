@@ -4,6 +4,7 @@ from MEA_Absorption_Column.BVP.ABS_Column import abs_column
 from MEA_Absorption_Column.misc.Polynomial_Fit import polynomial_fit
 from MEA_Absorption_Column.Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
 from MEA_Absorption_Column.misc.special_functions import jac
+import matplotlib.pyplot as plt
 
 
 def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
@@ -16,6 +17,10 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
 
     # Define the system of differential equations for the absorption column
     def odes(z, w):
+        #
+        # plt.plot(z, w[4, :]*scales[4])
+        # plt.plot(z, w[5, :]*scales[5])
+        # plt.show()
 
         differentials = [abs_column(z[i], w[:, i], parameters) for i in range(np.shape(w)[1])]
         del chemical_equilibrium.cache
@@ -38,7 +43,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
 
     # Initial guess for the solution (constant profiles as initial guess)
     m = len(Y_a_scaled)
-    n = 51 # mesh points
+    n = 101 # mesh points
     z_2 = np.linspace(z[0], z[-1], n)
     w_guess_scaled = np.array([polynomial_fit(z_2, Y_a_scaled[i]*scales[i], i)/scales[i] for i in range(m)])
 
@@ -46,8 +51,8 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
     sol = solve_bvp(odes, boundary_conditions, z_2, w_guess_scaled,
                     fun_jac=fun_jac,
                     max_nodes=1000,
-                    tol=5e-1,
-                    bc_tol=1e-3,
+                    tol=8e-1,
+                    bc_tol=1e-1,
                     verbose=0,
                     )
     Y_scaled = sol.sol(z)

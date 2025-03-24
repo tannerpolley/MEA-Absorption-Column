@@ -172,6 +172,6 @@ Run #{run + 1:03d}:
         plt.ylabel('Temperature [K]')
         plt.legend()
         plt.title(f'$\\frac{{L}}{{G}}$ Ratio: {L_G:.2f}, $\\alpha$: {alpha:.2f}, $y_{{CO2}}$: {y_CO2:.2f}')
-        # plt.show()
+        plt.show()
 
     return CO2_cap, dfs_dict, [success, message]
