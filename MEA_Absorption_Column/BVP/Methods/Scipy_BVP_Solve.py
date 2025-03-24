@@ -17,9 +17,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
 
     # Define the system of differential equations for the absorption column
     def column_odes(z, w):
-        plt.plot(z, w[4, :]*scales[4])
-        plt.plot(z, w[5, :]*scales[5])
-        plt.show()
+
         differentials = [abs_column(z[i], w[:, i], parameters) for i in range(np.shape(w)[1])]
         del chemical_equilibrium.cache
         arr = np.array(differentials).T
@@ -61,7 +59,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
             f_new2 = fun(x, y_new2)
 
             df_dy[:, i, :] = (f_new - f_new2) / (2*hi)
-            print(df_dy[:, i, :] - (f_new - f0) / (hi))
+            # print(df_dy[:, i, :] - (f_new - f0) / (hi))
 
         return df_dy
 
@@ -69,7 +67,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
     # Initial guess for the solution (constant profiles as initial guess)
 
     m = len(Y_a_scaled)
-    n = 101 # mesh points
+    n = 51 # mesh points
     # z_2 = np.linspace(0, .8, n)
     # z_2 = np.append(z_2, np.linspace(.81, 1, (3 * n) - 3))
     # n = len(z_2)
@@ -82,6 +80,8 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
         'Fl_H2O': 'Fl',
         'Fv_CO2': 'Fv',
         'Fv_H2O': 'Fv',
+        # 'Hlf': 'ql',
+        # 'Hvf': 'qv',
         'Tl': 'T',
         'Tv': 'T',
         'P': 'transport',
@@ -91,25 +91,22 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
     # df_2 = pd.read_csv(filename2)
 
     for i, (k, v) in enumerate(keys.items()):
-        df = pd.read_excel(filename, sheet_name=v)
-        y = df[k].to_numpy()[::-1]
-
+        # df = pd.read_excel(filename, sheet_name=v)
+        # y = df[k].to_numpy()[::-1]
         # y = df_2.iloc[:, i].to_numpy()[::-1]
 
-        # plt.plot(z_2, y)
-        # plt.show()
+        y = polynomial_fit(z_2, Y_a_scaled[i]*scales[i], i)
 
-        # y = polynomial_fit(z_2, Y_a_scaled[i]*scales[i], i)
-        # print(y)
         w_guess_scaled[i] = y/scales[i]
 
 
     # Solve the BVP
 
+
     sol = solve_bvp(column_odes, boundary_conditions, z_2, w_guess_scaled,
                     fun_jac=fun_jac,
                     max_nodes=1000,
-                    tol=1e-1,
+                    tol=5e-1,
                     bc_tol=1e-3,
                     verbose=0,
                     )

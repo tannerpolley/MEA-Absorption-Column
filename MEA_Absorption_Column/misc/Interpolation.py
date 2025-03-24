@@ -15,8 +15,10 @@ names = {
     'Fl_H2O': 'Fl',
     'Fv_CO2': 'Fv',
     'Fv_H2O': 'Fv',
-    'Hlf': 'ql',
-    'Hvf': 'qv',
+    # 'Hlf': 'ql',
+    # 'Hvf': 'qv',
+    'Tl': 'ql',
+    'Tv': 'qv',
     'P': 'transport'
          }
 

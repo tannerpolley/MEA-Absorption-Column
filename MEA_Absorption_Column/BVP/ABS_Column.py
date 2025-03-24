@@ -34,6 +34,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # print(Y)
 
     Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Tl, Tv, P = Y
+    # Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Hlf, Hvf, P = Y
 
     Fl_T = Fl_CO2 + Fl_MEA + Fl_H2O
     Fv_T = Fv_CO2 + Fv_H2O + Fv_N2 + Fv_O2
@@ -44,11 +45,11 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     x = [Fl[i] / Fl_T for i in range(len(Fl))]
     y = [Fv[i] / Fv_T for i in range(len(Fv))]
 
-    # Hl = Hlf / Fl_T
-    # Hv = Hvf / Fv_T
+    # Hl_T = Hlf / Fl_T
+    # Hv_T = Hvf / Fv_T
     #
-    # Tl = get_liquid_temperature(x, Hl)
-    # Tv = get_vapor_temperature(y, Hv)
+    # Tl = get_liquid_temperature(x, Hl_T)
+    # Tv = get_vapor_temperature(y, Hv_T)
 
     w = [MWs_l[i] * x[i] / sum([MWs_l[j] * x[j] for j in range(len(Fl))]) for i in range(len(Fl))]
 
@@ -80,8 +81,11 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region --- Enthalpy
-    [Hl_CO2, Hl_MEA, Hl_H2O], Hl = enthalpy(Tl, x, phase='liquid') # J/mol
-    [Hv_CO2, Hv_H2O, Hv_N2, Hv_O2], Hv = enthalpy(Tv, y, phase='vapor')  # J/mol
+    Hl, Hl_T = enthalpy(Tl, x, phase='liquid') # J/mol
+    Hv, Hv_T = enthalpy(Tv, y, phase='vapor')  # J/mol
+
+    Hl_CO2, Hl_MEA, Hl_H2O = Hl
+    Hv_CO2, Hv_H2O, Hv_N2, Hv_O2 = Hv
     # endregion
 
     # endregion
@@ -204,40 +208,18 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     dHlf_dz = Hl_flux + 1e-10
     dHvf_dz = Hv_flux + 1e-10
 
-    def dHl_CO2_dT(T):
-        return enthalpy(T, x, phase='liquid')[0][0]
-
-    def dHl_MEA_dT(T):
-        return enthalpy(T, x, phase='liquid')[0][1]
-
-    def dHl_H2O_dT(T):
-        return enthalpy(T, x, phase='liquid')[0][2]
-
-    def dHv_CO2_dT(T):
-        return enthalpy(T, y, phase='vapor')[0][0]
-
-    def dHv_H2O_dT(T):
-        return enthalpy(T, y, phase='vapor')[0][1]
-
-    def dHv_N2_dT(T):
-        return enthalpy(T, y, phase='vapor')[0][2]
-
-    def dHv_O2_dT(T):
-        return enthalpy(T, y, phase='vapor')[0][3]
-
-    def dHl_dT(T):
+    def f_Hl_T(T, x):
         return enthalpy(T, x, phase='liquid')[1]
 
-    def dHv_dT(T):
-        return enthalpy(T, x, phase='vapor')[1]
-    
-    # print(Hl_flux)
-    # print((Fl_CO2 * finite_difference(dHl_CO2_dT, Tl) + Fl_MEA * finite_difference(dHl_MEA_dT,Tl) + Fl_H2O * finite_difference(dHl_H2O_dT, Tl)))
-    # print(Hv_flux)
-    # print((Fv_CO2 * finite_difference(dHv_CO2_dT, Tv) + Fv_H2O * finite_difference(dHv_H2O_dT, Tv) + Fv_N2 * finite_difference(dHv_N2_dT, Tv) + Fv_O2 * finite_difference(dHv_O2_dT, Tv)))
+    dHl_dT = finite_difference(f_Hl_T, Tl, x)
 
-    dTl_dz = (Hl_flux - Hl * (Nl_CO2 + Nl_CO2))/(Fl_T*finite_difference(dHl_dT, Tl))
-    dTv_dz = (Hv_flux - Hv * (Nv_CO2 + Nv_CO2))/(Fv_T*finite_difference(dHv_dT, Tv))
+    def f_Hv_T(T, y):
+        return enthalpy(T, y, phase='vapor')[1]
+
+    dHv_dT = finite_difference(f_Hv_T, Tv, y)
+
+    dTl_dz = (Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
+    dTv_dz = (Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dT)
     # endregion
 
     # region -- Momentum Balance
@@ -251,6 +233,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     if run_type == 'simulating':
         # Combine Differentials and Scale
         diffeqs = np.array([dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, dTl_dz, dTv_dz, dP_dz])
+        # diffeqs = np.array([dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, dHlf_dz, dHvf_dz, dP_dz])
 
         # eq_scales = np.array([1, 1, 50, 50, 200000, 200000, P])
         diffeqs_scaled = diffeqs / scales * H
@@ -289,8 +272,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                   x_CO2_true, x_MEA_true, x_H2O_true, x_MEAH_true, x_MEACOO_true, x_HCO3_true],
             'y': [y_CO2, y_H2O, y_N2, y_O2],
             'T': [Tl, Tv],
-            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, dTl_dz],
-            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, dTv_dz],
+            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl_T, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, dHlf_dz, dTl_dz],
+            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv_T, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, dHvf_dz, dTv_dz],
             'CO2': [Nl_CO2, Nv_CO2, kv_CO2, a_eA, DF_CO2, fv_CO2, fl_CO2, Psi, H_CO2_mix],
             'H2O': [Nl_H2O, Nv_H2O, kv_H2O, a_eA, DF_H2O, fv_H2O, fl_H2O, Psat_H2O],
             'enhance_factor': [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi, Psi_H],

@@ -68,27 +68,33 @@ def run_model(df,
 
     # Convert from Temperature to Enthalpy
     #
-    # Fl_a_guess = [Fl_CO2_a_guess, Fl_MEA_a, Fl_H2O_a_guess]
-    # Hlt_a_guess = get_liquid_enthalpy(Fl_a_guess, Tl_a_guess)
-    # Hlf_a_guess = Hlt_a_guess * sum(Fl_a_guess)
-    #
-    # Hlt_b = get_liquid_enthalpy(Fl_b, Tl_b)
-    # Hlf_b = Hlt_b * sum(Fl_b)
-    #
-    # Hvt_a = get_vapor_enthalpy(Fv_a, Tv_a)
-    # Hvf_a = Hvt_a * sum(Fv_a)
-    #
-    # Fv_b_guess = [Fv_CO2_b_guess, Fv_H2O_b_guess, Fv_N2_b, Fv_N2_b]
-    # Hvt_b_guess = get_vapor_enthalpy(Fv_b_guess, Tv_b_guess)
-    # Hvf_b_guess = Hvt_b_guess * sum(Fv_b_guess)
+    Fl_a_guess = [Fl_CO2_a_guess, Fl_MEA_a, Fl_H2O_a_guess]
+    Hlt_a_guess = get_liquid_enthalpy(Fl_a_guess, Tl_a_guess)
+    Hlf_a_guess = Hlt_a_guess * sum(Fl_a_guess)
+
+    Hlt_b = get_liquid_enthalpy(Fl_b, Tl_b)
+    Hlf_b = Hlt_b * sum(Fl_b)
+
+    Hvt_a = get_vapor_enthalpy(Fv_a, Tv_a)
+    Hvf_a = Hvt_a * sum(Fv_a)
+
+    Fv_b_guess = [Fv_CO2_b_guess, Fv_H2O_b_guess, Fv_N2_b, Fv_N2_b]
+    Hvt_b_guess = get_vapor_enthalpy(Fv_b_guess, Tv_b_guess)
+    Hvf_b_guess = Hvt_b_guess * sum(Fv_b_guess)
 
     P_a = P
     P_b = P
 
     # Scaling
     #
-    # Y_a_unscaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
-    #                        Hlf_a_guess, Hvf_a, P_a])
+
+
+
+    Y_a_unscaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
+                             Hlf_a_guess, Hvf_a, P_a])
+
+    Y_b_unscaled = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess,
+                             Hlf_b, Hvf_b_guess, P_b])
 
     Y_a_unscaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
                              Tl_a_guess, Tv_a, P_a])
@@ -202,7 +208,7 @@ Run #{run + 1:03d}:
     Tv_a_sim = Y[5, 0]
     Tv_b_sim = Y[5, -1]
 
-    print(Tl_a_sim)
+    # print(Tl_a_sim)
 
     # Computes the relative error between the solution that the shooter found to the actual inlet concentration for the
     # relevant liquid species

@@ -20,11 +20,11 @@ def enthalpy_flux(Nl_CO2, Hl_CO2, Nl_H2O, Hl_H2O, Nv_CO2, Hv_CO2, Nv_H2O, Hv_H2O
     Hv_H2O_trn = Nv_H2O * Hv_H2O  # J/(s*m)
 
     Hv_trn = Nv_CO2 * Hv_CO2 + Nv_H2O * Hv_H2O  # J/(s*m)
-    # Hl_trn = Nl_CO2 * Hl_CO2 + Nl_H2O * Hl_H2O  # J/(s*m)
-    Hl_trn = -Hv_trn  # J/(s*m)
+    Hl_trn = Nl_CO2 * Hl_CO2 + Nl_H2O * Hl_H2O  # J/(s*m)
+    # Hl_trn = -Hv_trn  # J/(s*m)
 
     qv = -UT * a_eA * (Tv - Tl)  # J/(s*m) =  J/(s*K*m) * K * m or W/(K*m) * K
-    ql = UT * a_eA * (Tv - Tl)  # J/(s*m) =  J/(s*K*m) * K * m or W/(K*m) * K
+    ql = -UT * a_eA * (Tl - Tv)  # J/(s*m) =  J/(s*K*m) * K * m or W/(K*m) * K
     # ql = -qv  # J/(s*m) =  J/(s*K*m) * K * m or W/(K*m) * K
 
     Hv_flux = Hv_trn + qv

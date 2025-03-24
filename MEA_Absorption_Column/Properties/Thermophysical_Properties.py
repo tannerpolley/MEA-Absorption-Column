@@ -244,9 +244,9 @@ def enthalpy(T, z, phase='liquid'):
 #                         }
 #
 #         Hl_MEA = MWs_l[1] * 1000 * sum([coefficients['MEA'][i] / (i + 1) * (t ** (i + 1) - Tr ** (i + 1)) for i in
-#                                         range(len(coefficients['MEA']))]) - dh_vap_MEA + (P - Pref) / rho_mol_l
+#                                         range(len(coefficients['MEA']))]) - dh_vap_MEA # + (P - Pref) / rho_mol_l
 #         Hl_H2O = MWs_l[2] * 1000 * sum([coefficients['H2O'][i] / (i + 1) * (t ** (i + 1) - Tr ** (i + 1)) for i in
-#                                         range(len(coefficients['H2O']))]) - dh_vap_H2O + (P - Pref) / rho_mol_l
+#                                         range(len(coefficients['H2O']))]) - dh_vap_H2O # + (P - Pref) / rho_mol_l
 #
 #         Hl = np.array([Hl_CO2, Hl_MEA, Hl_H2O])
 #         Hl_T = sum([x[i] * Hl[i] for i in range(len(x))])
