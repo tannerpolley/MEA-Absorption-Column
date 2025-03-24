@@ -32,10 +32,9 @@ for i in range(len(df)):
                          data_type=data_type,
                          run=i,
                          # save_run_results=True,
-                         # plot_temperature=True,
+                         plot_temperature=True,
                          show_info=True,
                          )
-    print(CO2_cap)
     # print(Tl_matrix[:, i])
 
 # np.savetxt("data/Tl_matrix.csv", Tl_matrix, delimiter=',')

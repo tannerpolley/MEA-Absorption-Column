@@ -124,8 +124,6 @@ def convert_data(df, run=0, type='mole'):
 
         L_G = Fl_T_unloaded/Fv_T
 
-        print(L_G , Fv_T)
-
         X = L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds
 
     else:

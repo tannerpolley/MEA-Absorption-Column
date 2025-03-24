@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def polynomial_fit(z, y_int, i):
 
-    df = pd.read_csv('data/fitted_coefficients.csv')
+    df = pd.read_csv(r'C:\Users\Tanner\Documents\git\MEA_Absorption_Column\MEA_Absorption_Column\data\fitted_coefficients.csv')
 
     p = df.iloc[:, 1+i].to_numpy()
 

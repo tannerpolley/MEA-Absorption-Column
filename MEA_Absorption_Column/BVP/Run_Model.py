@@ -30,6 +30,7 @@ def run_model(df,
 
     L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
 
+
     # return X
 
     # Simulate the Absorption Column from start to finish given
@@ -250,5 +251,5 @@ Run #{run + 1:03d}:
         plt.title(f'L/G Ratio: {L_G:.2f}, alpha: {alpha:.2f}, y_CO2: {y_CO2:.2f}, CO2 %: {CO2_cap:.2f}')
         plt.show()
 
-    # return CO2_cap, message
-    return CO2_cap
+    return CO2_cap, success
+    # return CO2_cap

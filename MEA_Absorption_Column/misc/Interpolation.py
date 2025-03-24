@@ -3,7 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
-filename = r'C:\Users\Tanner\Documents\git\MEA_Absorption_Column\MEA_Absorption_Column\data\Results\Profiles.xlsx'
+# filename = r'C:\Users\Tanner\Documents\git\MEA_Absorption_Column\MEA_Absorption_Column\data\Results\Profiles.xlsx'
+filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
 
 # Load your datasets from Excel
 data = pd.read_excel(filename, sheet_name='Fv')
@@ -14,8 +15,8 @@ names = {
     'Fl_H2O': 'Fl',
     'Fv_CO2': 'Fv',
     'Fv_H2O': 'Fv',
-    'Hlf': 'Hl',
-    'Hvf': 'Hv',
+    'Hlf': 'ql',
+    'Hvf': 'qv',
     'P': 'transport'
          }
 
