@@ -167,14 +167,6 @@ def enthalpy(T, z, phase='liquid'):
         x = z
         rho_mol_l, _, _ = density(float(Tl), x, 0, phase=phase)
 
-        A, B, C, D = 82393000, 0.59045, - 0.43602, 0.37843
-        Tr = Tl/678.2
-        dh_vap_MEA = (A*(1 - Tr)**(B + C*Tr + D*Tr**2))/1000
-
-        A, B, C, D = 56600000, 0.612041, -0.625697, 0.398804
-        Tr = Tl / 647.096
-        dh_vap_H2O = (A * (1 - Tr) ** (B + C * Tr + D * Tr ** 2))/1000
-
         ΔH_abs = -83999.8249763614
         A, B, C = 5.457, 1.045e-3, -1.157e5
         Tv = Tl
@@ -183,12 +175,27 @@ def enthalpy(T, z, phase='liquid'):
         Hv_CO2 = (A * (Tv - Tr) + .5 * B * (Tv ** 2 - Tr ** 2) - C * (Tv ** -1 - Tr ** -1)) * R
         Hl_CO2 = Hv_CO2 + R*2113 + ΔH_abs
 
-        coefficients = {'CO2': np.array([276370, -2090.1, 8.125, -.014116, 9.3701e-6]),
-                        'MEA': np.array([2.6161, 3.706e-3, 3.787e-6, 0, 0]),
-                        'H2O': np.array([4.2107, -1.696e-3, 2.568e-5, -1.095e-7, 3.038e-10])
-                        }
+        if Tl > 400 or Tl < 0 or np.isnan(Tl):
+            dh_vap_MEA = 58000
+            dh_vap_H2O = 43.99e3
+
+        else:
+            A, B, C, D = 82393000, 0.59045, - 0.43602, 0.37843
+
+            Tr = Tl/678.2
+            dh_vap_MEA = (A*(1 - Tr)**(B + C*Tr + D*Tr**2))/1000
+
+            A, B, C, D = 56600000, 0.612041, -0.625697, 0.398804
+            Tr = Tl / 647.096
+            dh_vap_H2O = (A * (1 - Tr) ** (B + C * Tr + D * Tr ** 2))/1000
 
         def Σ_Cp(T, species):
+
+            coefficients = {'CO2': np.array([276370, -2090.1, 8.125, -.014116, 9.3701e-6]),
+                            'MEA': np.array([2.6161, 3.706e-3, 3.787e-6, 0, 0]),
+                            'H2O': np.array([4.2107, -1.696e-3, 2.568e-5, -1.095e-7, 3.038e-10])
+                            }
+
             t = T - 273.15
             tr = 298.15 - 273.15
             return MWs_l_dict[species] * 1000 * sum([coefficients[species][i] / (i + 1) * (t ** (i + 1) - tr ** (i + 1))
@@ -197,7 +204,6 @@ def enthalpy(T, z, phase='liquid'):
         Hl_MEA = Σ_Cp(Tl, 'MEA') - dh_vap_MEA # + (P - Pref) / rho_mol_l
         Hl_H2O = Σ_Cp(Tl, 'H2O') - dh_vap_H2O  # + (P - Pref) / rho_mol_l
 
-        # print(Hl_CO2, Hl_MEA, Hl_H2O)
         Hl = np.array([Hl_CO2, Hl_MEA, Hl_H2O])
         Hl_T = sum([x[i] * Hl[i] for i in range(len(x))])
 

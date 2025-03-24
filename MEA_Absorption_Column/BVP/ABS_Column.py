@@ -24,7 +24,7 @@ from numdifftools import Derivative
 
 def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False):
     # region - Unpack System Parameters
-    scales, eq_scales, const_flow, H, A, packing = parameters
+    scales, const_flow, H, A, packing = parameters
     Fl_MEA, Fv_N2, Fv_O2 = const_flow
     # endregion
 
@@ -34,6 +34,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # print(Y)
 
     Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Tl, Tv, P = Y
+
     # Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O, Hlf, Hvf, P = Y
 
     Fl_T = Fl_CO2 + Fl_MEA + Fl_H2O
