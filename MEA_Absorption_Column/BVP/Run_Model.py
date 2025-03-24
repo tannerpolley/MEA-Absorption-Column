@@ -19,7 +19,7 @@ np.set_printoptions(suppress=True)
 
 def run_model(df,
               method='single',
-              data_type='mass',
+              data_type='mole',
               run=0,
               show_info=False,
               save_run_results=False,
@@ -236,19 +236,27 @@ Run #{run + 1:03d}:
                           plot_temperature=plot_temperature,
                           )
     filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
-    df2 = pd.read_excel(filename, sheet_name='T')
-    Tl = df2['Tl'].to_numpy()[::-1]
-    Tv = df2['Tv'].to_numpy()[::-1]
+    dfs = pd.read_excel(filename, sheet_name='T')
+    # Tl = df2['Tl'].to_numpy()[::-1]
+    # Tv = df2['Tv'].to_numpy()[::-1]
     x = [0, .2, .4, .6, .8]
     # print(df.iloc[run, -5:])
+    method_key = {
+        'single': 'Shooting',
+        'collocation': 'Collocation',
+        'finite-difference': 'Finite Difference',
+    }
+    # method = 'finite-difference'
+    Tl = dfs['Tl'].to_numpy()[::-1]
+    Tv = dfs['Tv'].to_numpy()[::-1]
+    z = dfs['Position'].to_numpy()[::-1]
     if plot_temperature:
         dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
-        # plt.plot(z, Tl, 'k--', label='Tl - IDAES')
-        # plt.plot(z, Tv, 'k--', label='Tv - IDAES')
-        # plt.plot(x, df.iloc[run, -5:], 'kx', label='data')
+        # plt.plot(z, Tl, label='Tl')
+        # plt.plot(z, Tv, label='Tv')
         plt.ylabel('Temperature [K]')
         plt.legend()
-        plt.title(f'L/G Ratio: {L_G:.2f}, alpha: {alpha:.2f}, y_CO2: {y_CO2:.2f}, CO2 %: {CO2_cap:.2f}')
+        plt.title(f'{method_key[method]} Method | Simulation Time: {total_time:.1f} sec \n $\\frac{{L}}{{G}}$ Ratio: {L_G:.2f}, $\\alpha$: {alpha:.2f}, $y_{{CO2}}$: {y_CO2:.2f}')
         plt.show()
 
     return CO2_cap, success
