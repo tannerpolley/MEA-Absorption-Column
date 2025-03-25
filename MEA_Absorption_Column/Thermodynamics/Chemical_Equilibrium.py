@@ -83,11 +83,11 @@ def chemical_equilibrium(Fl, Tl):
         
         Cl = guesses
         #
-        Kee1 = float(np.prod([Cl[i]**v_ij[0, i] for i in range(len(Cl))]))
-        Kee2 = float(np.prod([Cl[i]**v_ij[1, i] for i in range(len(Cl))]))
+        Q1 = float(np.prod([Cl[i]**v_ij[0, i] for i in range(len(Cl))]))
+        Q2 = float(np.prod([Cl[i]**v_ij[1, i] for i in range(len(Cl))]))
 
-        eq1 = (Kee1 - np.exp(log_K[0])) / Kee1
-        eq2 = (Kee2 - np.exp(log_K[1])) / Kee2
+        eq1 = (Q1 - np.exp(log_K[0])) / Q1
+        eq2 = (Q2 - np.exp(log_K[1])) / Q2
         eq3 = (Cl_CO2_0 - (Cl_CO2 + Cl_MEAH)) / Cl_CO2_0
         eq4 = (Cl_MEA_0 - (Cl_MEA + Cl_MEAH + Cl_MEACOO)) / Cl_MEA_0
         eq5 = (Cl_H2O_0 - (Cl_H2O + Cl_MEAH - Cl_MEACOO)) / Cl_H2O_0
