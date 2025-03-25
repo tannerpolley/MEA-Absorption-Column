@@ -170,9 +170,9 @@ def enthalpy(T, z, phase='liquid'):
         P = 109180.0
 
         dh_vap_MEA = 58000
-        dh_vap_H2O = 43.99e3
+        dh_vap_H2O = 49.99e3
         t = float(Tl) - 273.15
-        Hl_CO2 = -83999.8249763614
+        Hl_CO2 = -63999.8249763614
 
         coefficients = {'CO2': np.array([276370, -2090.1, 8.125, -.014116, 9.3701e-6]),
                         'MEA': np.array([2.6161, 3.706e-3, 3.787e-6, 0, 0]),

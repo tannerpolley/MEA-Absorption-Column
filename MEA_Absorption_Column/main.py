@@ -24,9 +24,9 @@ df_NCCC_full = pd.read_csv('data/C_cases_data.csv', index_col=0)
 # data_source = 'SRP'
 data_type = 'mole'
 
-df = df_NCCC_1
+df = df_NCCC_full
 
-for i in range(len(df)):
+for i in range(2, 3):
     CO2_cap = run_model(df,
                          method='collocation',
                          data_type=data_type,

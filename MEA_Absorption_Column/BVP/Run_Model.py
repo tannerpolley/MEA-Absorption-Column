@@ -235,8 +235,8 @@ Run #{run + 1:03d}:
                           save_run_results=save_run_results,
                           plot_temperature=plot_temperature,
                           )
-    filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
-    dfs = pd.read_excel(filename, sheet_name='T')
+    # filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
+    # dfs = pd.read_excel(filename, sheet_name='T')
     # Tl = df2['Tl'].to_numpy()[::-1]
     # Tv = df2['Tv'].to_numpy()[::-1]
     x = [0, .2, .4, .6, .8]
@@ -247,16 +247,15 @@ Run #{run + 1:03d}:
         'finite-difference': 'Finite Difference',
     }
     # method = 'finite-difference'
-    Tl = dfs['Tl'].to_numpy()[::-1]
-    Tv = dfs['Tv'].to_numpy()[::-1]
-    z = dfs['Position'].to_numpy()[::-1]
+    # Tl = dfs['Tl'].to_numpy()[::-1]
+    # Tv = dfs['Tv'].to_numpy()[::-1]
+    # z = dfs['Position'].to_numpy()[::-1]
     if plot_temperature:
         dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
-        # plt.plot(z, Tl, label='Tl')
-        # plt.plot(z, Tv, label='Tv')
+        plt.plot(x, df.iloc[run, -5:], 'kx', label='NCCC Data')
         plt.ylabel('Temperature [K]')
         plt.legend()
-        plt.title(f'{method_key[method]} Method | Simulation Time: {total_time:.1f} sec \n $\\frac{{L}}{{G}}$ Ratio: {L_G:.2f}, $\\alpha$: {alpha:.2f}, $y_{{CO2}}$: {y_CO2:.2f}')
+        plt.title(f'{method_key[method]} Method | Simulation Time: {total_time:.1f} sec \n $\\frac{{L}}{{G}}$ Ratio: {L_G:.2f}, $\\alpha$: {alpha:.2f}, $y_{{CO2}}$: {y_CO2:.2f}, CO2%: {CO2_cap:.2f}')
         plt.show()
 
     return CO2_cap, success
