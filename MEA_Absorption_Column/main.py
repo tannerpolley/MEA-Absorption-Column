@@ -14,9 +14,9 @@ df_NCCC_C_cases = pd.read_csv('data/C_cases_data.csv', index_col=0)
 
 data_type = 'mole'
 
-df = df_NCCC_1
+df = df_NCCC_C_cases
 
-for i in range(len(df)):
+for i in range(2, 3):
     CO2_cap, dfs_dict, info = run_model(df,
                                         method='collocation',
                                         data_type=data_type,
