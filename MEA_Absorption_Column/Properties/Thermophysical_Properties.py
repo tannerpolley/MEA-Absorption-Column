@@ -75,6 +75,7 @@ def density(T, z, P, phase='liquid'):
         rho_mass_v = rho_mol_v * MWT_v  # Vapor Mass Density (mol/m3 --> kg/m3)
 
         return rho_mol_v, rho_mass_v
+    return None
 
 
 def surface_tension(T, z, w_MEA, w_H2O):
@@ -157,6 +158,16 @@ def heat_capacity(T, z, phase='liquid'):
     else:
         raise ValueError('Wrong phase either liquid or vapor')
 
+def heat_of_vaporization(Tl, species):
+
+    coefficients = {'CO2': np.array([21730000, 0.382, -0.4339, 0.42213, 304.21]),
+                    'MEA': np.array([82393000, 0.59045, - 0.43602, 0.37843, 678.2]),
+                    'H2O': np.array([56600000, 0.612041, -0.625697, 0.398804, 647.096])
+                    }
+    A, B, C, D, Tc = coefficients[species]
+    Tr = Tl/Tc
+    return (A * (1 - Tr) ** (B + C * Tr + D * Tr ** 2)) / 1000
+
 
 def enthalpy(T, z, phase='liquid'):
 
@@ -210,9 +221,9 @@ def enthalpy(T, z, phase='liquid'):
 
 def thermal_conductivity(T, z, muv):
     coefficients = {'CO2': np.array([3.69, -0.3838, 964., 1.86e6]),
-                    'H2O': np.array([6.204e-6, 1.3973, 0, 0]),
-                    'N2': np.array([.000331, .7722, 16.323, 373.72]),
-                    'O2': np.array([.00045, .7456, 56.699, 0])
+                    'H2O': np.array([6.204e-6, 1.3973, 0, 0,]),
+                    'N2': np.array([.000331, .7722, 16.323, 373.72,]),
+                    'O2': np.array([.00045, .7456, 56.699, 0,])
                     }
 
     kt_i = []
@@ -230,3 +241,7 @@ def thermal_conductivity(T, z, muv):
             sum_ij += Aij * z[j]
         k_vap += z[i] * kt_i[i] / sum_ij
     return k_vap
+
+def vapor_pressure(Tl):
+    A, B, C, D = 72.55, -7206.70, -7.1385, 4.05e-6
+    return np.exp(A + B / Tl + C * np.log(Tl) + D * Tl ** 2)

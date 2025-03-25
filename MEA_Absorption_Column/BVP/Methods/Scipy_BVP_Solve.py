@@ -20,11 +20,6 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
 
         differentials = [abs_column(z[i], w[:, i], parameters) for i in range(np.shape(w)[1])]
         del chemical_equilibrium.cache
-        arr = np.array(differentials).T
-        has_nan = np.isnan(arr).any()
-        # for i in range(np.shape(arr)[1]):
-        #     if  w[3, i] < 0:
-        #         print(f'{z[i]:.4f}, {w[3, i]:.4f}, {arr[3, i]:.4f}, {arr[3, i-1]:.4f}')
         return np.array(differentials).T
 
     # Define the boundary conditions
@@ -42,7 +37,6 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
 
         fun = column_odes
         n, m = y.shape
-        f0 = fun(x, y)
 
         dtype = y.dtype
 
@@ -66,43 +60,14 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters):
 
     m = len(Y_a_scaled)
     n = 51 # mesh points
-    # z_2 = np.linspace(0, .8, n)
-    # z_2 = np.append(z_2, np.linspace(.81, 1, (3 * n) - 3))
-    # n = len(z_2)
     z_2 = np.linspace(z[0], z[-1], n)
-    w_guess_scaled = np.zeros((m, n))
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    keys = {
-        'Fl_CO2': 'Fl',
-        'Fl_H2O': 'Fl',
-        'Fv_CO2': 'Fv',
-        'Fv_H2O': 'Fv',
-        'Hlf': 'ql',
-        'Hvf': 'qv',
-        'P': 'transport',
-    }
-    filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
-    # filename2 = 'data/test.csv'
-    # df_2 = pd.read_csv(filename2)
-
-    for i, (k, v) in enumerate(keys.items()):
-        # df = pd.read_excel(filename, sheet_name=v)
-        # y = df[k].to_numpy()
-
-        # y = df_2.iloc[:, i].to_numpy()[::-1]
-
-        y = polynomial_fit(z_2, Y_a_scaled[i]*scales[i], i)
-        # plt.plot(z_2, y)
-        # plt.show()
-        # print(y)
-        w_guess_scaled[i] = y/scales[i]
+    w_guess_scaled = np.array([polynomial_fit(z_2, Y_a_scaled[i] * scales[i], i) / scales[i] for i in range(m)])
 
 
     # Solve the BVP
 
     sol = solve_bvp(column_odes, boundary_conditions, z_2, w_guess_scaled,
-                    # fun_jac=fun_jac,
+                    fun_jac=fun_jac,
                     max_nodes=1000,
                     tol=5e-1,
                     bc_tol=1e-3,

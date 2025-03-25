@@ -30,17 +30,10 @@ def run_model(df,
 
     L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
 
-
-    # return X
-
     # Simulate the Absorption Column from start to finish given
     # the inlet concentrations of the top liquid and bottom vapor streams
     if method == 'single':
         solving_function = single_shoot_solve
-    # elif method == 'multiple':
-    #     solving_function = multiple_shoot_solve
-    # elif method == 'collocation':
-    #     solving_function = orthogonal_collocation
     elif method == 'collocation':
         solving_function = scipy_BVP_solve
     elif method == 'finite':
@@ -94,32 +87,14 @@ def run_model(df,
 
     scales = scaling(z, Y_a_unscaled)
 
-
-    # Fl_CO2_scaling = round(Fl_CO2_a_guess) # 2.0
-    # Fl_H2O_scaling = round(Fl_H2O_b) # 60.
-    # Fv_CO2_scaling = round(Fv_CO2_a) # 1.
-    # Fv_H2O_scaling = round(Fv_H2O_a) # 5.
-    # Hl_scaling = round(np.abs(Hlf_b)) # 2800000.
-    # Hv_scaling = round(Hvf_a)
-    # P_scaling = round(P) # 100000.
-    #
-    # scales = np.array(
-    #     [Fl_CO2_scaling, Fl_H2O_scaling, Fv_CO2_scaling, Fv_H2O_scaling, Hl_scaling, Hv_scaling, P_scaling])
-
     Y_a_scaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
                            Hlf_a_guess, Hvf_a, P_a]) / scales
 
     Y_b_scaled = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess,
                            Hlf_b, Hvf_b_guess, P_b]) / scales
-    # [3., 43., 2., 12., -1903434., 48404., 109180.]
-    # eq_scales = [3., 43., 2., 12., -1903434., 48404., 109180.]
-    # eq_scales = [1, 50, 1, 50, 200000, 200000, P]
     eq_scales = scales
 
     const_flow = Fl_MEA_b, Fv_N2_a, Fv_O2_a
-    parameters = scales, eq_scales, const_flow, H, A, packing
-
-    # print(eq_scales)
 
     parameters = scales, eq_scales, const_flow, H, A, packing
 
@@ -235,21 +210,13 @@ Run #{run + 1:03d}:
                           save_run_results=save_run_results,
                           plot_temperature=plot_temperature,
                           )
-    # filename = r'C:\Users\Tanner\Documents\git\IDAES_MEA_Flowsheet_Tanner\Simulation_Results\Profiles_IDAES.xlsx'
-    # dfs = pd.read_excel(filename, sheet_name='T')
-    # Tl = df2['Tl'].to_numpy()[::-1]
-    # Tv = df2['Tv'].to_numpy()[::-1]
-    x = [0, .2, .4, .6, .8]
-    # print(df.iloc[run, -5:])
+
     method_key = {
         'single': 'Shooting',
         'collocation': 'Collocation',
         'finite-difference': 'Finite Difference',
     }
-    # method = 'finite-difference'
-    # Tl = dfs['Tl'].to_numpy()[::-1]
-    # Tv = dfs['Tv'].to_numpy()[::-1]
-    # z = dfs['Position'].to_numpy()[::-1]
+
     if plot_temperature:
         dfs_dict['T'].plot(kind='line', y=['Tl', 'Tv'])
         plt.plot(x, df.iloc[run, -5:], 'kx', label='NCCC Data')

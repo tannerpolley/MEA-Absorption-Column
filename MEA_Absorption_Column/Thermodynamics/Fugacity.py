@@ -2,16 +2,13 @@ import numpy as np
 from MEA_Absorption_Column.Thermodynamics.Fugacity_Coeff import fugacity_coeff
 
 
-def fugacity(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P):
+def fugacity(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P, P_sat_H2O):
 
     y_CO2 = y[0]
     y_H2O = y[1]
     x_CO2_true = x_true[0]
     x_H2O_true = x_true[2]
     Cl_CO2_true = Cl_true[0]
-
-    # IDAES Parameters for Psat H2O
-    Psat_H2O = np.exp(72.55 + -7206.70 / Tl + -7.1385 * np.log(Tl) + 4.05e-6 * Tl ** 2)
 
     method = 'ideal'
     # method = 'ePC-SAFT'
