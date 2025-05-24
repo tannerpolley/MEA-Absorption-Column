@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MEA-Absorption-Column"
+version = "0.1.0"
+description = "A Python based MEA Absorption Column model"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{ name = "Tanner Polley", email = "tannerwpolley@gmail.com" }]
+dependencies = []
