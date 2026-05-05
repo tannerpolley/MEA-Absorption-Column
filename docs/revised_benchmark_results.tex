@@ -1,0 +1,62 @@
+    \subsection{Revised Benchmark Scope}
+        The revised contribution of this work is the construction of a reproducible benchmark for a transparent MEA absorber model rather than the introduction of a new high-fidelity thermodynamic model. The same governing balances, reaction-enhancement model, transport-property correlations, and hydraulic calculations are used when comparing numerical solution methods and thermodynamic driving-force assumptions. This framing directly addresses the reproducibility and validation concerns raised during review: each reported result is tied to a generated benchmark row that includes the case identifier, solver settings, thermodynamic model, convergence message, boundary residual, runtime, and validation error.
+
+        The benchmark is therefore intended to answer two narrower questions. First, it evaluates how shooting, finite-difference, and SciPy collocation-style BVP solution paths behave when applied to the same column equations and NCCC operating conditions. Second, it evaluates how replacing the baseline Henry-law CO$_2$ fugacity driving force with a neutral ePC-SAFT fugacity-coefficient calculation changes capture predictions, temperature profiles, convergence, and runtime. The benchmark should not be interpreted as evidence that the current model is ready for industrial scale-up or process optimization without additional validation.
+
+    \subsection{Thermodynamic Driving-Force Comparison}
+        The baseline thermodynamic lane uses the existing Henry-law calculation for the liquid CO$_2$ fugacity and an ideal vapor partial-pressure expression for the vapor fugacity. The ePC-SAFT lane uses the external ePC-SAFT package read-only and computes the CO$_2$ fugacity coefficient for neutral \COtwo--\MEA--\HtwoO mixtures. The PC-SAFT and ePC-SAFT formulations are well established for associating and electrolyte-containing systems \cite{Gross2001PC-SAFT:Molecules,Cameretti2005ModelingOriginal}, and PC-SAFT parameters for CO$_2$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh \cite{FakouriBaygi2015ApplicationSolutions}.
+
+        In the present benchmark, only the CO$_2$ fugacity driving force is changed:
+        \begin{align}
+            f_{\COtwo}^{v} &= y_{\COtwo}\phi_{\COtwo}^{v}P,\\
+            f_{\COtwo}^{\liq} &= x_{\COtwo}^{\liq}\phi_{\COtwo}^{\liq}P.
+        \end{align}
+        Chemical equilibrium, ionic speciation, enhancement factors, transport properties, heat-transfer correlations, and column balances are otherwise held fixed. The ePC-SAFT results are consequently reported as a neutral thermodynamic sensitivity study, not as a full electrolyte-reactive ePC-SAFT MEA absorber model.
+
+    \subsection{Staged and Intercooled NCCC Cases}
+        The original single-bed validation is extended with an explicit staged-bed representation for the intercooled NCCC cases. In this configuration, each packed bed is represented by its own BVP segment. Vapor states are continuous upward from one bed to the next, while liquid states are continuous downward except at intercooler locations. Intercoolers are modeled as liquid thermal resets between adjacent packed beds. When measured inter-stage target temperatures or heat duties are unavailable, the lean-solvent feed temperature is used as the liquid reset target and the benchmark row records this assumption.
+
+        This treatment is intentionally limited. It captures the first-order effect of solvent cooling on the downstream driving force, but it does not model detailed heat-exchanger approach temperatures, pressure losses through intercooler equipment, tray holdup, redistribution maldistribution, or measured heat duty. Those additions would require additional plant data and should be separated from the current numerical and thermodynamic benchmark.
+
+    \subsection{Generated Validation Metrics}
+        Table~\ref{tab:verified-one-bed-thermo-benchmark} summarizes the verified one-bed C-case thermodynamic benchmark generated from the \path{physical_domain_c_cases} artifact. Both thermodynamic lanes solved all seven one-bed cases in this artifact. The ePC-SAFT lane gives nearly the same aggregate capture error as the Henry-law lane, but it is slower in the median runtime because each residual evaluation requires ePC-SAFT fugacity-coefficient calculations.
+
+        \begin{table}[htbp]
+            \centering
+            \small
+            \caption{Verified one-bed C-case benchmark summary for the Henry-law and neutral ePC-SAFT thermodynamic lanes.}
+            \label{tab:verified-one-bed-thermo-benchmark}
+            \renewcommand{\arraystretch}{1.2}
+            \begin{tabular}{lccccc}
+                \toprule
+                \textbf{Thermo model} & \textbf{Runs} & \textbf{Successes} & \textbf{Capture MAE (\%)} & \textbf{Temp. RMSE (K)} & \textbf{Median runtime (s)} \\
+                \midrule
+                Henry-law baseline & 7 & 7 & 9.36 & 6.44 & 9.92 \\
+                Neutral ePC-SAFT & 7 & 7 & 9.34 & 8.16 & 20.33 \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+
+        Table~\ref{tab:verified-staged-kcase-benchmark} reports the verified staged/intercooled K-case runs currently available from the \path{goal_k1_k3_flux_strength_factor_multistart_v2} artifact. These rows show that the explicit staged-bed solver can reproduce the high-capture K1 and K2 cases and can solve the lower-capture K3 case with a reduced mass-transfer factor. The full K4--K5 and broader NCCC staged/intercooled validation remains unfinished and should not be used for final predictive claims until the benchmark artifacts are regenerated and reviewed.
+
+        \begin{table}[htbp]
+            \centering
+            \small
+            \caption{Verified staged/intercooled NCCC benchmark rows currently available for the Henry-law thermodynamic lane.}
+            \label{tab:verified-staged-kcase-benchmark}
+            \renewcommand{\arraystretch}{1.2}
+            \begin{tabular}{lcccccc}
+                \toprule
+                \textbf{Case} & \textbf{Beds} & \textbf{Intercoolers} & \textbf{Capture (\%)} & \textbf{Capture error (\%)} & \textbf{Residual norm} & \textbf{Runtime (s)} \\
+                \midrule
+                K1 & 3 & 2 & 100.00 & 0.09 & $1.69\times10^{-4}$ & 637.08 \\
+                K2 & 3 & 2 & 100.00 & 0.51 & $6.61\times10^{-10}$ & 129.52 \\
+                K3 & 3 & 2 & 85.00 & 1.43 & $2.80\times10^{-13}$ & 253.03 \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+
+        The selected generated temperature-profile PNG files are included in Figure~\ref{fig:generated-temperature-profiles}. These profiles are intentionally presented with the exact thermodynamic lane identified in the caption so that profile agreement, capture agreement, and solver convergence can be evaluated separately.
+
+        \subsubsection*{Open Benchmark Items}
+            The following items remain open before the revised manuscript can make stronger predictive claims: regenerate the K4--K5 staged/intercooled cases after the subprocess case-selection fix, run the full NCCC staged/intercooled set with structured failure diagnostics, regenerate the ePC-SAFT staged/intercooled sensitivity rows, and decide which generated temperature-profile PNGs should become paper figures. Until those artifacts are complete, the results above should be interpreted as verified partial evidence for the revised benchmark workflow.

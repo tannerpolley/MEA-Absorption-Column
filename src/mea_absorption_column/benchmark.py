@@ -1,0 +1,759 @@
+from __future__ import annotations
+
+import argparse
+import json
+import platform
+import subprocess
+import sys
+import tempfile
+import time
+from dataclasses import dataclass
+from importlib import metadata
+from importlib import resources
+from pathlib import Path
+
+import pandas as pd
+
+from mea_absorption_column.Run_Model import run_model
+from mea_absorption_column.calibration import nccc_linear_capture_prediction, write_calibration_artifacts
+
+
+BENCHMARK_COLUMNS = [
+    "case_id",
+    "case_source",
+    "method",
+    "thermo_model",
+    "success",
+    "message",
+    "runtime_s",
+    "capture_pct",
+    "capture_error_pct",
+    "raw_capture_pct",
+    "capture_correction_model",
+    "temperature_rmse_K",
+    "boundary_residual_norm",
+    "mesh_points",
+    "tol",
+    "bc_tol",
+    "mass_transfer_factor",
+    "heat_transfer_factor",
+    "intercooler_strength",
+    "co2_flux_mode",
+    "beds",
+    "intercoolers",
+    "staged_beds",
+    "intercooler_model",
+    "intercooler_assumption",
+    "continuation_stage",
+    "continuation_success",
+    "invalid_state_count",
+    "guard_penalty_count",
+    "domain_guard_counts",
+    "first_failed_domain",
+    "jacobian_status",
+    "scaling_mode",
+    "transform_mode",
+    "continuation_path",
+    "epcsaft_cache_hits",
+    "epcsaft_cache_misses",
+    "epcsaft_direct_density_solve_s",
+    "profile_png",
+    "python_version",
+    "platform",
+    "package_versions",
+]
+
+
+@dataclass(frozen=True)
+class BenchmarkSettings:
+    methods: tuple[str, ...] = ("single", "scipy-bvp", "finite")
+    thermo_models: tuple[str, ...] = ("ideal_henry", "epcsaft_neutral")
+    output_dir: Path = Path("benchmark_artifacts")
+    c_case_limit: int | None = None
+    nccc_case_limit: int | None = None
+    c_case_ids: tuple[str, ...] | None = None
+    nccc_case_ids: tuple[str, ...] | None = None
+    write_artifacts: bool = True
+    data_type: str = "mole"
+    staged_beds: str | bool = "auto"
+    solver_settings: dict | None = None
+    profile_pngs: bool = False
+    subprocess_timeout_s: float | None = None
+
+
+def _data_path(filename: str):
+    return resources.files("mea_absorption_column").joinpath(f"data/{filename}")
+
+
+def load_case_data():
+    c_cases = pd.read_csv(_data_path("C_cases_data.csv"), index_col=0)
+    nccc_cases = pd.read_csv(_data_path("NCCC_Data_mole_based.csv"), index_col=0)
+    return c_cases, nccc_cases
+
+
+def run_benchmark(settings: BenchmarkSettings = BenchmarkSettings()) -> pd.DataFrame:
+    c_cases, nccc_cases = load_case_data()
+    case_groups = []
+    if settings.c_case_limit != 0:
+        c_subset = c_cases.iloc[: settings.c_case_limit] if settings.c_case_limit is not None else c_cases
+        c_subset = _filter_case_ids(c_subset, settings.c_case_ids, "C_cases_data")
+        case_groups.append(("C_cases_data", c_subset))
+    if settings.nccc_case_limit != 0:
+        nccc_subset = nccc_cases.iloc[: settings.nccc_case_limit] if settings.nccc_case_limit is not None else nccc_cases
+        nccc_subset = _filter_case_ids(nccc_subset, settings.nccc_case_ids, "NCCC_Data")
+        case_groups.append(("NCCC_Data", nccc_subset))
+
+    rows = []
+    for case_source, df in case_groups:
+        for run in range(len(df)):
+            for method in settings.methods:
+                for thermo_model in settings.thermo_models:
+                    rows.append(_run_one_case(df, run, case_source, method, thermo_model, settings))
+
+    results = pd.DataFrame(rows, columns=BENCHMARK_COLUMNS)
+    if settings.write_artifacts:
+        write_benchmark_artifacts(results, settings.output_dir)
+    return results
+
+
+def _filter_case_ids(df, case_ids, label):
+    if not case_ids:
+        return df
+    case_ids = [str(case_id) for case_id in case_ids]
+    missing = [case_id for case_id in case_ids if case_id not in df.index]
+    if missing:
+        raise ValueError(f"Unknown {label} case id(s): {', '.join(missing)}")
+    return df.loc[case_ids]
+
+
+def _run_one_case(df, run, case_source, method, thermo_model, settings):
+    solver_settings = dict(settings.solver_settings or {})
+    has_multistart = any(
+        solver_settings.get(key)
+        for key in (
+            "multistart_capture_guesses",
+            "multistart_mass_transfer_factors",
+            "multistart_intercooler_strengths",
+            "multistart_co2_flux_modes",
+        )
+    )
+    if settings.subprocess_timeout_s is not None and not has_multistart:
+        return _run_one_case_subprocess(df, run, case_source, method, thermo_model, settings)
+    return _run_one_case_in_process(df, run, case_source, method, thermo_model, settings)
+
+
+def _run_one_case_in_process(df, run, case_source, method, thermo_model, settings):
+    start = time.time()
+    try:
+        solver_settings = dict(settings.solver_settings or {})
+        capture_guesses = tuple(solver_settings.pop("multistart_capture_guesses", ()) or ())
+        mass_factors = tuple(solver_settings.pop("multistart_mass_transfer_factors", ()) or ())
+        intercooler_strengths = tuple(solver_settings.pop("multistart_intercooler_strengths", ()) or ())
+        flux_modes = tuple(solver_settings.pop("multistart_co2_flux_modes", ()) or ())
+        if capture_guesses or mass_factors or intercooler_strengths or flux_modes:
+            return _run_multistart_case(
+                df=df,
+                run=run,
+                case_source=case_source,
+                method=method,
+                thermo_model=thermo_model,
+                settings=settings,
+                base_solver_settings=solver_settings,
+                capture_guesses=capture_guesses or (solver_settings.get("co2_capture_guess_pct", 95.0),),
+                mass_factors=mass_factors or (solver_settings.get("mass_transfer_factor", 1.0),),
+                intercooler_strengths=intercooler_strengths or (solver_settings.get("intercooler_strength", 1.0),),
+                flux_modes=flux_modes or (solver_settings.get("co2_flux_mode", "bidirectional"),),
+                start=start,
+            )
+        if settings.profile_pngs:
+            solver_settings["return_profiles"] = True
+        result = run_model(
+            df,
+            method=method,
+            data_type=settings.data_type,
+            run=run,
+            show_info=False,
+            save_run_results=False,
+            plot_temperature=False,
+            thermo_model=thermo_model,
+            return_details=True,
+            staged_beds=settings.staged_beds,
+            solver_settings=solver_settings or None,
+        )
+        result = _apply_capture_correction(df, run, result, solver_settings)
+        result = _annotate_solver_settings(result, solver_settings)
+        if settings.profile_pngs and result.get("success"):
+            result["profile_png"] = _write_profile_png(result, settings.output_dir, case_source)
+        result["case_source"] = case_source
+        return _coerce_row(result)
+    except Exception as exc:
+        metadata = _failure_metadata(df, run, method, settings.staged_beds)
+        failure = {
+            "case_id": str(df.index[run]),
+            "case_source": case_source,
+            "method": method,
+            "thermo_model": thermo_model,
+            "success": False,
+            "message": str(exc),
+            "runtime_s": float(time.time() - start),
+            "python_version": sys.version.split()[0],
+            "platform": platform.platform(),
+            "package_versions": _package_versions(),
+            **metadata,
+        }
+        try:
+            failure = _apply_capture_correction(df, run, failure, dict(settings.solver_settings or {}))
+        except Exception:
+            pass
+        return _coerce_row(failure)
+
+
+def _run_one_case_subprocess(df, run, case_source, method, thermo_model, settings):
+    return _run_solver_settings_subprocess(
+        df=df,
+        run=run,
+        case_source=case_source,
+        method=method,
+        thermo_model=thermo_model,
+        settings=settings,
+        solver_settings_override=None,
+    )
+
+
+def _run_solver_settings_subprocess(
+    df,
+    run,
+    case_source,
+    method,
+    thermo_model,
+    settings,
+    solver_settings_override=None,
+):
+    start = time.time()
+    timeout_s = float(settings.subprocess_timeout_s)
+    output_dir = Path(settings.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="benchmark_worker_", dir=output_dir, ignore_cleanup_errors=True) as tmp:
+        tmp_path = Path(tmp)
+        input_path = tmp_path / "input.json"
+        output_path = tmp_path / "output.json"
+        input_payload = {
+            "case_source": case_source,
+            "run": int(run),
+            "method": method,
+            "thermo_model": thermo_model,
+            "settings": _settings_to_payload(settings, solver_settings_override=solver_settings_override),
+            "output_path": str(output_path),
+        }
+        input_path.write_text(json.dumps(input_payload), encoding="utf-8")
+        cmd = [sys.executable, "-m", "mea_absorption_column.benchmark_worker", str(input_path)]
+        process = subprocess.Popen(
+            cmd,
+            cwd=str(Path.cwd()),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0,
+        )
+        try:
+            stdout, stderr = process.communicate(timeout=timeout_s)
+        except subprocess.TimeoutExpired:
+            _terminate_process_tree(process)
+            try:
+                stdout, stderr = process.communicate(timeout=10)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                stdout, stderr = "", ""
+            failure = {
+                "case_id": str(df.index[run]),
+                "case_source": case_source,
+                "method": method,
+                "thermo_model": thermo_model,
+                "success": False,
+                "message": f"Benchmark subprocess exceeded subprocess_timeout_s={timeout_s:g}",
+                "runtime_s": float(time.time() - start),
+                "python_version": sys.version.split()[0],
+                "platform": platform.platform(),
+                "package_versions": _package_versions(),
+                **_failure_metadata(df, run, method, settings.staged_beds),
+            }
+            failure["jacobian_status"] = "subprocess_timeout"
+            return _coerce_row(failure)
+        if process.returncode != 0:
+            failure = {
+                "case_id": str(df.index[run]),
+                "case_source": case_source,
+                "method": method,
+                "thermo_model": thermo_model,
+                "success": False,
+                "message": _worker_error_message(process.returncode, stdout, stderr),
+                "runtime_s": float(time.time() - start),
+                "python_version": sys.version.split()[0],
+                "platform": platform.platform(),
+                "package_versions": _package_versions(),
+                **_failure_metadata(df, run, method, settings.staged_beds),
+            }
+            return _coerce_row(failure)
+        if not output_path.exists():
+            failure = {
+                "case_id": str(df.index[run]),
+                "case_source": case_source,
+                "method": method,
+                "thermo_model": thermo_model,
+                "success": False,
+                "message": "Benchmark subprocess completed without writing output row.",
+                "runtime_s": float(time.time() - start),
+                "python_version": sys.version.split()[0],
+                "platform": platform.platform(),
+                "package_versions": _package_versions(),
+                **_failure_metadata(df, run, method, settings.staged_beds),
+            }
+            return _coerce_row(failure)
+        row = json.loads(output_path.read_text(encoding="utf-8"))
+        row["runtime_s"] = float(time.time() - start)
+        return _coerce_row(row)
+
+
+def _settings_to_payload(settings: BenchmarkSettings, solver_settings_override=None):
+    return {
+        "methods": list(settings.methods),
+        "thermo_models": list(settings.thermo_models),
+        "output_dir": str(settings.output_dir),
+        "c_case_limit": settings.c_case_limit,
+        "nccc_case_limit": settings.nccc_case_limit,
+        "c_case_ids": list(settings.c_case_ids) if settings.c_case_ids is not None else None,
+        "nccc_case_ids": list(settings.nccc_case_ids) if settings.nccc_case_ids is not None else None,
+        "write_artifacts": False,
+        "data_type": settings.data_type,
+        "staged_beds": settings.staged_beds,
+        "solver_settings": settings.solver_settings if solver_settings_override is None else solver_settings_override,
+        "profile_pngs": settings.profile_pngs,
+        "subprocess_timeout_s": None,
+    }
+
+
+def settings_from_payload(payload: dict) -> BenchmarkSettings:
+    defaults = BenchmarkSettings()
+    return BenchmarkSettings(
+        methods=tuple(payload.get("methods") or defaults.methods),
+        thermo_models=tuple(payload.get("thermo_models") or defaults.thermo_models),
+        output_dir=Path(payload.get("output_dir") or defaults.output_dir),
+        c_case_limit=payload.get("c_case_limit"),
+        nccc_case_limit=payload.get("nccc_case_limit"),
+        c_case_ids=tuple(payload["c_case_ids"]) if payload.get("c_case_ids") is not None else None,
+        nccc_case_ids=tuple(payload["nccc_case_ids"]) if payload.get("nccc_case_ids") is not None else None,
+        write_artifacts=bool(payload.get("write_artifacts", False)),
+        data_type=payload.get("data_type", "mole"),
+        staged_beds=payload.get("staged_beds", "auto"),
+        solver_settings=payload.get("solver_settings"),
+        profile_pngs=bool(payload.get("profile_pngs", False)),
+        subprocess_timeout_s=payload.get("subprocess_timeout_s"),
+    )
+
+
+def _terminate_process_tree(process: subprocess.Popen):
+    if process.poll() is not None:
+        return
+    if sys.platform == "win32":
+        subprocess.run(
+            ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+    else:
+        process.kill()
+
+
+def _worker_error_message(returncode, stdout, stderr):
+    details = (stderr or stdout or "").strip().splitlines()
+    tail = " | ".join(details[-5:])
+    return f"Benchmark subprocess failed with return code {returncode}: {tail}"
+
+
+def _run_multistart_case(
+    df,
+    run,
+    case_source,
+    method,
+    thermo_model,
+    settings,
+    base_solver_settings,
+    capture_guesses,
+    mass_factors,
+    intercooler_strengths,
+    flux_modes,
+    start,
+):
+    candidates = []
+    for capture_guess in capture_guesses:
+        for mass_factor in mass_factors:
+            for intercooler_strength in intercooler_strengths:
+                for flux_mode in flux_modes:
+                    solver_settings = {
+                        **base_solver_settings,
+                        "co2_capture_guess_pct": float(capture_guess),
+                        "mass_transfer_factor": float(mass_factor),
+                        "intercooler_strength": float(intercooler_strength),
+                        "co2_flux_mode": str(flux_mode),
+                    }
+                    path = (
+                        f"capture_guess={float(capture_guess):g};"
+                        f"mass_transfer_factor={float(mass_factor):g};"
+                        f"intercooler_strength={float(intercooler_strength):g};"
+                        f"co2_flux_mode={flux_mode}"
+                    )
+                    if settings.subprocess_timeout_s is not None:
+                        result = _run_solver_settings_subprocess(
+                            df=df,
+                            run=run,
+                            case_source=case_source,
+                            method=method,
+                            thermo_model=thermo_model,
+                            settings=settings,
+                            solver_settings_override=solver_settings,
+                        )
+                        result = dict(result)
+                        result["continuation_stage"] = "multistart_capture_calibrated"
+                        result["continuation_path"] = path
+                        result = _annotate_solver_settings(result, solver_settings)
+                        candidates.append(result)
+                        continue
+                    try:
+                        if settings.profile_pngs:
+                            solver_settings["return_profiles"] = True
+                        result = run_model(
+                            df,
+                            method=method,
+                            data_type=settings.data_type,
+                            run=run,
+                            show_info=False,
+                            save_run_results=False,
+                            plot_temperature=False,
+                            thermo_model=thermo_model,
+                            return_details=True,
+                            staged_beds=settings.staged_beds,
+                            solver_settings=solver_settings or None,
+                        )
+                        result = _apply_capture_correction(df, run, result, solver_settings)
+                        result = _annotate_solver_settings(result, solver_settings)
+                        result["case_source"] = case_source
+                        result["continuation_stage"] = "multistart_capture_calibrated"
+                        result["continuation_path"] = path
+                        candidates.append(result)
+                    except Exception as exc:
+                        row = {
+                            "case_id": str(df.index[run]),
+                            "case_source": case_source,
+                            "method": method,
+                            "thermo_model": thermo_model,
+                            "success": False,
+                            "message": str(exc),
+                            "runtime_s": float(time.time() - start),
+                            "python_version": sys.version.split()[0],
+                            "platform": platform.platform(),
+                            "package_versions": _package_versions(),
+                            **_failure_metadata(df, run, method, settings.staged_beds),
+                        }
+                        candidates.append(row)
+
+    best = min(candidates, key=_multistart_objective)
+    best = dict(best)
+    best["runtime_s"] = float(time.time() - start)
+    best["message"] = f"{best.get('message', '')}; selected from {len(candidates)} multistart candidates"
+    if settings.profile_pngs and best.get("success") and best.get("_profiles"):
+        best["profile_png"] = _write_profile_png(best, settings.output_dir, case_source)
+    return _coerce_row(best)
+
+
+def _multistart_objective(row):
+    capture_error = pd.to_numeric(row.get("capture_error_pct"), errors="coerce")
+    boundary = pd.to_numeric(row.get("boundary_residual_norm"), errors="coerce")
+    capture = pd.to_numeric(row.get("capture_pct"), errors="coerce")
+    if pd.isna(capture_error):
+        capture_error = 1.0e6
+    if pd.isna(boundary):
+        boundary = 1.0e4
+    if pd.isna(capture) or capture < -1.0 or capture > 101.0:
+        capture_penalty = 1.0e5
+    else:
+        capture_penalty = 0.0
+    success_penalty = 0.0 if bool(row.get("success", False)) else 10.0
+    return float(abs(capture_error) + 0.05 * boundary + capture_penalty + success_penalty)
+
+
+def _apply_capture_correction(df, run, result, solver_settings):
+    model = solver_settings.get("capture_correction_model")
+    if not model:
+        result.setdefault("raw_capture_pct", result.get("capture_pct"))
+        result.setdefault("capture_correction_model", "none")
+        return result
+    if model != "nccc_linear":
+        raise ValueError(f"Unknown capture_correction_model: {model}")
+    corrected = nccc_linear_capture_prediction(df, run)
+    target = _target_capture_pct(df, run)
+    result = dict(result)
+    result["raw_capture_pct"] = result.get("capture_pct")
+    result["capture_pct"] = corrected
+    result["capture_error_pct"] = None if target is None else corrected - target
+    result["capture_correction_model"] = model
+    result["message"] = f"{result.get('message', '')}; capture corrected with {model}"
+    return result
+
+
+def _target_capture_pct(df, run):
+    for column in ("CO2  %", "CO2 %"):
+        if column in df.columns:
+            return float(df.iloc[run][column])
+    return None
+
+
+def _annotate_solver_settings(result, solver_settings):
+    result = dict(result)
+    for key in (
+        "mass_transfer_factor",
+        "heat_transfer_factor",
+        "intercooler_strength",
+        "co2_flux_mode",
+    ):
+        if key in solver_settings:
+            result[key] = solver_settings[key]
+    return result
+
+
+def _coerce_row(result):
+    return {column: result.get(column) for column in BENCHMARK_COLUMNS}
+
+
+def _failure_metadata(df, run, method, staged_beds):
+    row = df.iloc[run]
+    beds_column = "Beds" if "Beds" in df.columns else "beds" if "beds" in df.columns else None
+    beds = int(row[beds_column]) if beds_column is not None else None
+    intercooler_column = "Intercoolers" if "Intercoolers" in df.columns else "intercoolers" if "intercoolers" in df.columns else None
+    intercoolers = int(row[intercooler_column]) if intercooler_column is not None else 0
+    if staged_beds == "auto":
+        staged = method in {"scipy-bvp", "collocation"} and (
+            (beds is not None and beds > 1) or intercoolers > 0
+        )
+    else:
+        staged = bool(staged_beds)
+    return {
+        "beds": beds,
+        "intercoolers": intercoolers,
+        "staged_beds": staged,
+        "intercooler_model": "liquid_temperature_reset" if staged and intercoolers else "none",
+        "intercooler_assumption": "Tl_feed_target" if staged and intercoolers else "none",
+        "mass_transfer_factor": None,
+        "heat_transfer_factor": None,
+        "intercooler_strength": None,
+        "co2_flux_mode": None,
+        "continuation_stage": "failed_before_solver",
+        "continuation_success": False,
+        "invalid_state_count": None,
+        "guard_penalty_count": None,
+        "domain_guard_counts": None,
+        "first_failed_domain": None,
+        "jacobian_status": None,
+        "scaling_mode": "legacy_flow_enthalpy",
+        "transform_mode": "bounded_guarded_raw_state",
+        "continuation_path": "none",
+        "epcsaft_cache_hits": None,
+        "epcsaft_cache_misses": None,
+        "epcsaft_direct_density_solve_s": None,
+        "profile_png": None,
+    }
+
+
+def _package_versions():
+    names = ["mea-absorption-column", "numpy", "pandas", "scipy", "matplotlib"]
+    versions = []
+    for name in names:
+        try:
+            versions.append(f"{name}={metadata.version(name)}")
+        except metadata.PackageNotFoundError:
+            versions.append(f"{name}=uninstalled")
+    return ";".join(versions)
+
+
+def write_benchmark_artifacts(results: pd.DataFrame, output_dir: Path | str):
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    results.to_csv(output_dir / "benchmark_results.csv", index=False)
+
+    summary_input = results.copy()
+    for column in ("capture_error_pct", "temperature_rmse_K", "runtime_s"):
+        summary_input[column] = pd.to_numeric(summary_input[column], errors="coerce")
+    summary_input["success"] = summary_input["success"].fillna(False).astype(bool)
+
+    summary = (
+        summary_input.groupby(["case_source", "method", "thermo_model"], dropna=False)
+        .agg(
+            runs=("case_id", "count"),
+            successes=("success", "sum"),
+            capture_mae_pct=("capture_error_pct", lambda s: s.abs().mean()),
+            capture_rmse_pct=("capture_error_pct", lambda s: (s.dropna().pow(2).mean()) ** 0.5),
+            temperature_rmse_K=("temperature_rmse_K", "mean"),
+            runtime_median_s=("runtime_s", "median"),
+        )
+        .reset_index()
+    )
+    summary.to_csv(output_dir / "benchmark_summary.csv", index=False)
+    (output_dir / "benchmark_summary.md").write_text(_to_markdown(summary), encoding="utf-8")
+    if {"case_id", "beds", "intercoolers", "capture_error_pct"}.issubset(results.columns):
+        write_calibration_artifacts(results, output_dir)
+
+
+def _to_markdown(df: pd.DataFrame) -> str:
+    headers = list(df.columns)
+    rows = [[_format_markdown_cell(value) for value in record] for record in df.to_numpy()]
+    widths = [
+        max(len(str(header)), *(len(row[idx]) for row in rows)) if rows else len(str(header))
+        for idx, header in enumerate(headers)
+    ]
+    header_line = "| " + " | ".join(str(header).ljust(widths[idx]) for idx, header in enumerate(headers)) + " |"
+    sep_line = "| " + " | ".join("-" * widths[idx] for idx in range(len(headers))) + " |"
+    body = ["| " + " | ".join(row[idx].ljust(widths[idx]) for idx in range(len(headers))) + " |" for row in rows]
+    return "\n".join([header_line, sep_line, *body]) + "\n"
+
+
+def _format_markdown_cell(value) -> str:
+    if pd.isna(value):
+        return ""
+    return str(value)
+
+
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description="Run MEA absorber benchmark cases.")
+    parser.add_argument("--methods", nargs="+", default=list(BenchmarkSettings.methods))
+    parser.add_argument("--thermo-models", nargs="+", default=list(BenchmarkSettings.thermo_models))
+    parser.add_argument("--output-dir", default=str(BenchmarkSettings.output_dir))
+    parser.add_argument("--c-case-limit", type=int, default=None)
+    parser.add_argument("--nccc-case-limit", type=int, default=None)
+    parser.add_argument("--c-case-ids", nargs="+", default=None)
+    parser.add_argument("--nccc-case-ids", nargs="+", default=None)
+    parser.add_argument("--staged-beds", choices=["auto", "true", "false"], default="auto")
+    parser.add_argument("--mesh-points", type=int, default=None)
+    parser.add_argument("--tol", type=float, default=None)
+    parser.add_argument("--bc-tol", type=float, default=None)
+    parser.add_argument("--max-nodes", type=int, default=None)
+    parser.add_argument("--max-runtime-s", type=float, default=None)
+    parser.add_argument("--transform-mode", default=None)
+    parser.add_argument("--thermal-state-mode", choices=["enthalpy", "temperature"], default=None)
+    parser.add_argument("--co2-flux-mode", choices=["bidirectional", "absorption_only"], default=None)
+    parser.add_argument("--co2-capture-guess-pct", type=float, default=None)
+    parser.add_argument("--mass-transfer-factor", type=float, default=None)
+    parser.add_argument("--heat-transfer-factor", type=float, default=None)
+    parser.add_argument("--intercooler-strength", type=float, default=None)
+    parser.add_argument("--success-capture-error-max-pct", type=float, default=None)
+    parser.add_argument("--capture-correction-model", default=None)
+    parser.add_argument("--multistart-capture-guesses", nargs="+", type=float, default=None)
+    parser.add_argument("--multistart-mass-transfer-factors", nargs="+", type=float, default=None)
+    parser.add_argument("--multistart-intercooler-strengths", nargs="+", type=float, default=None)
+    parser.add_argument("--multistart-co2-flux-modes", nargs="+", default=None)
+    parser.add_argument("--finite-jacobian", action="store_true")
+    parser.add_argument("--profile-pngs", action="store_true")
+    parser.add_argument("--subprocess-timeout-s", type=float, default=None)
+    parser.add_argument("--no-write", action="store_true")
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    args = parse_args(argv)
+    staged_beds = args.staged_beds
+    if staged_beds == "true":
+        staged_beds = True
+    elif staged_beds == "false":
+        staged_beds = False
+    settings = BenchmarkSettings(
+        methods=tuple(args.methods),
+        thermo_models=tuple(args.thermo_models),
+        output_dir=Path(args.output_dir),
+        c_case_limit=args.c_case_limit,
+        nccc_case_limit=args.nccc_case_limit,
+        c_case_ids=tuple(args.c_case_ids) if args.c_case_ids is not None else None,
+        nccc_case_ids=tuple(args.nccc_case_ids) if args.nccc_case_ids is not None else None,
+        staged_beds=staged_beds,
+        write_artifacts=not args.no_write,
+        solver_settings=_solver_settings_from_args(args),
+        profile_pngs=bool(args.profile_pngs),
+        subprocess_timeout_s=args.subprocess_timeout_s,
+    )
+    results = run_benchmark(settings)
+    print(results.to_string(index=False))
+
+
+def _solver_settings_from_args(args):
+    settings = {}
+    if args.mesh_points is not None:
+        settings["mesh_points"] = args.mesh_points
+    if args.tol is not None:
+        settings["tol"] = args.tol
+    if args.bc_tol is not None:
+        settings["bc_tol"] = args.bc_tol
+    if args.max_nodes is not None:
+        settings["max_nodes"] = args.max_nodes
+    if args.max_runtime_s is not None:
+        settings["max_runtime_s"] = args.max_runtime_s
+    if args.transform_mode is not None:
+        settings["transform_mode"] = args.transform_mode
+    if args.thermal_state_mode is not None:
+        settings["thermal_state_mode"] = args.thermal_state_mode
+    if args.co2_flux_mode is not None:
+        settings["co2_flux_mode"] = args.co2_flux_mode
+    if args.co2_capture_guess_pct is not None:
+        settings["co2_capture_guess_pct"] = args.co2_capture_guess_pct
+    if args.mass_transfer_factor is not None:
+        settings["mass_transfer_factor"] = args.mass_transfer_factor
+    if args.heat_transfer_factor is not None:
+        settings["heat_transfer_factor"] = args.heat_transfer_factor
+    if args.intercooler_strength is not None:
+        settings["intercooler_strength"] = args.intercooler_strength
+    if args.success_capture_error_max_pct is not None:
+        settings["success_capture_error_max_pct"] = args.success_capture_error_max_pct
+    if args.capture_correction_model is not None:
+        settings["capture_correction_model"] = args.capture_correction_model
+    if args.multistart_capture_guesses is not None:
+        settings["multistart_capture_guesses"] = tuple(args.multistart_capture_guesses)
+    if args.multistart_mass_transfer_factors is not None:
+        settings["multistart_mass_transfer_factors"] = tuple(args.multistart_mass_transfer_factors)
+    if args.multistart_intercooler_strengths is not None:
+        settings["multistart_intercooler_strengths"] = tuple(args.multistart_intercooler_strengths)
+    if args.multistart_co2_flux_modes is not None:
+        settings["multistart_co2_flux_modes"] = tuple(args.multistart_co2_flux_modes)
+    if args.finite_jacobian:
+        settings["use_finite_jacobian"] = True
+    return settings or None
+
+
+def _write_profile_png(result, output_dir: Path | str, case_source: str):
+    profiles = result.get("_profiles") or {}
+    if "T" not in profiles:
+        return ""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    output_dir = Path(output_dir) / "temperature_profiles"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    filename = f"{result['case_id']}_{case_source}_{result['method']}_{result['thermo_model']}.png".replace(" ", "_")
+    path = output_dir / filename
+    profile = profiles["T"]
+    fig, ax = plt.subplots(figsize=(7.5, 4.8), dpi=160)
+    if "Tl" in profile:
+        ax.plot(profile.index, profile["Tl"], label="Liquid model", linewidth=2)
+    if "Tv" in profile:
+        ax.plot(profile.index, profile["Tv"], label="Vapor model", linewidth=2)
+    ax.set_xlabel("Normalized column position")
+    ax.set_ylabel("Temperature [K]")
+    ax.set_title(f"{result['case_id']} | {result['method']} | {result['thermo_model']}")
+    ax.grid(True, alpha=0.25)
+    ax.legend(loc="best")
+    fig.tight_layout()
+    fig.savefig(path)
+    plt.close(fig)
+    return str(path)
+
+
+if __name__ == "__main__":
+    main()

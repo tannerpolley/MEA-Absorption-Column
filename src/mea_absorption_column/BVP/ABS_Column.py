@@ -13,11 +13,23 @@ from ..Transport.Enhancement_Factor import enhancement_factor
 from ..Transport.Flux import molar_flux, enthalpy_flux
 from ..misc.Get_Temperature_Enthalpy import get_liquid_temperature, get_vapor_temperature
 from ..misc.special_functions import f_dHl_dT
+from .robust_core import record_domain_guard
 
 
 def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False):
     # region - Unpack System Parameters
-    scales, eq_scales, const_flow, H, A, packing = parameters
+    if len(parameters) == 6:
+        scales, eq_scales, const_flow, H, A, packing = parameters
+        model_options = {}
+    else:
+        scales, eq_scales, const_flow, H, A, packing, model_options = parameters
+    thermo_model = model_options.get('thermo_model', 'ideal_henry')
+    solver_diagnostics = model_options.get('solver_diagnostics')
+    guard_invalid_states = model_options.get('guard_invalid_states', True)
+    mass_transfer_factor = float(model_options.get('mass_transfer_factor', 1.0))
+    heat_transfer_factor = float(model_options.get('heat_transfer_factor', 1.0))
+    thermal_state_mode = model_options.get('thermal_state_mode', 'enthalpy')
+    co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
     Fl_MEA, Fv_N2, Fv_O2 = const_flow
     # endregion
 
@@ -35,11 +47,22 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     x = [Fl[i] / Fl_T for i in range(len(Fl))]
     y = [Fv[i] / Fv_T for i in range(len(Fv))]
 
-    Hl = Hlf / Fl_T
-    Hv = Hvf / Fv_T
-
-    Tl = get_liquid_temperature(x, Hl)
-    Tv = get_vapor_temperature(y, Hv)
+    if thermal_state_mode == 'temperature':
+        Tl = float(Hlf)
+        Tv = float(Hvf)
+    else:
+        Hl = Hlf / Fl_T
+        Hv = Hvf / Fv_T
+        Tl = get_liquid_temperature(x, Hl)
+        Tv = get_vapor_temperature(y, Hv)
+    temperature_bounds = model_options.get('temperature_bounds_K', (250.0, 500.0))
+    if guard_invalid_states and not _temperatures_in_bounds(Tl, Tv, temperature_bounds):
+        record_domain_guard(
+            solver_diagnostics,
+            "thermal_state",
+            f"temperature outside bounds {temperature_bounds}: Tl={Tl!r}, Tv={Tv!r}",
+        )
+        raise ValueError("thermal_state: temperature outside absorber correlation bounds")
 
     w = [MWs_l[i] * x[i] / sum([MWs_l[j] * x[j] for j in range(len(Fl))]) for i in range(len(Fl))]
 
@@ -75,6 +98,9 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     Hl_CO2, Hl_MEA, Hl_H2O = Hl
     Hv, Hv_T = enthalpy(Tv, y, phase='vapor')  # J/mol
     Hv_CO2, Hv_H2O, Hv_N2, Hv_O2 = Hv
+    if thermal_state_mode == 'temperature':
+        Hlf = Hl_T * Fl_T
+        Hvf = Hv_T * Fv_T
     # endregion
 
     #region --- Vapor Pressure
@@ -119,7 +145,21 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # region -- Vapor-Liquid Equilibrium
 
-    fl_CO2, fv_CO2, fl_H2O, fv_H2O, CO2, H2O = fugacity(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P, P_sat_H2O)
+    fl_CO2, fv_CO2, fl_H2O, fv_H2O, CO2, H2O = fugacity(
+        x,
+        y,
+        x_true,
+        Cl_true,
+        Tl,
+        Tv,
+        alpha,
+        H_CO2_mix,
+        P,
+        P_sat_H2O,
+        thermo_model=thermo_model,
+        diagnostics=solver_diagnostics,
+        guard_invalid_states=guard_invalid_states,
+    )
 
     # endregion
 
@@ -130,19 +170,19 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region -- Hydraulic Variables
 
     # region --- Velocity
-    ul, uv = velocity(rho_mol_l, rho_mol_v, A, Fl_T, Fv_T)
+    ul, uv = velocity(rho_mol_l, rho_mol_v, A, Fl_T, Fv_T, diagnostics=solver_diagnostics)
     # endregion
 
     # region --- Interfacial Area
-    a_e, a_eA = interfacial_area(rho_mass_l, sigma, ul, A, packing)
+    a_e, a_eA = interfacial_area(rho_mass_l, sigma, ul, A, packing, diagnostics=solver_diagnostics)
     # endregion
 
     # region --- Holdup
-    h_L, h_V = holdup(ul, mul_mix, rho_mass_l, packing)
+    h_L, h_V = holdup(ul, mul_mix, rho_mass_l, packing, diagnostics=solver_diagnostics)
     # endregion
 
     # region --- Flooding Fraction
-    fl_frac = flooding_fraction(rho_mass_l, rho_mass_v, mul_mix, mul_H2O, Fl_T, Fv_T, uv, packing)
+    fl_frac = flooding_fraction(rho_mass_l, rho_mass_v, mul_mix, mul_H2O, Fl_T, Fv_T, uv, packing, diagnostics=solver_diagnostics)
     # endregion
 
     # endregion
@@ -151,24 +191,24 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region --- Mass Transfer Coefficients
 
     kl_CO2, kv_CO2, kv_H2O, kv_T, const = mass_transfer_coeff(h_L, h_V, rho_mass_v, muv_mix, Dl_CO2, Dv_CO2, Dv_H2O,
-                                                              Dv_T, A, Tv, ul, uv, packing)
+                                                              Dv_T, A, Tv, ul, uv, packing, diagnostics=solver_diagnostics)
     # endregion
 
     # region --- Heat Transfer Coefficient
-    UT = heat_transfer_coeff(P, kv_CO2, kt_vap, Cpv_T, rho_mol_v, Dv_CO2, a_eA)  # J/(s*K*m) or W/(K*m)
+    UT = heat_transfer_coeff(P, kv_CO2, kt_vap, Cpv_T, rho_mol_v, Dv_CO2, a_eA, diagnostics=solver_diagnostics)  # J/(s*K*m) or W/(K*m)
     # endregion
     # endregion
 
     # region -- Pressure Drop
 
-    ΔP_H = pressure_drop(h_L, rho_mass_l, rho_mass_v, mul_mix, muv_mix, A, ul, uv, packing)
+    ΔP_H = pressure_drop(h_L, rho_mass_l, rho_mass_v, mul_mix, muv_mix, A, ul, uv, packing, diagnostics=solver_diagnostics)
 
     # endregion
 
     # region -- Enhancement Factor
 
     E, Psi, Psi_H, enhance_factor = enhancement_factor(Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
-                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='implicit')
+                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='implicit', diagnostics=solver_diagnostics)
 
     # endregion
 
@@ -176,12 +216,19 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # region --- Molar Flux
     Nv_CO2, Nv_H2O, Nl_CO2, Nl_H2O = molar_flux(fl_CO2, fv_CO2, fl_H2O, fv_H2O, kv_CO2, kv_H2O, a_eA, Psi_H)
+    if co2_flux_mode == 'absorption_only':
+        Nv_CO2 = _smooth_absorption_only_vapor_flux(Nv_CO2)
+        Nl_CO2 = -Nv_CO2
+    Nv_CO2 *= mass_transfer_factor
+    Nv_H2O *= mass_transfer_factor
+    Nl_CO2 *= mass_transfer_factor
+    Nl_H2O *= mass_transfer_factor
 
     # endregion
 
     # region --- Enthalpy Flux
 
-    Hv_flux, Hl_flux, qv, ql, Hv_trn, Hl_trn, Hv_CO2_trn, Hv_H2O_trn, Hl_CO2_trn, Hl_H2O_trn = enthalpy_flux(Nl_CO2, Hl_CO2, Nl_H2O, Hl_H2O, Nv_CO2, Hv_CO2, Nv_H2O, Hv_H2O, UT, a_eA, Tv, Tl)
+    Hv_flux, Hl_flux, qv, ql, Hv_trn, Hl_trn, Hv_CO2_trn, Hv_H2O_trn, Hl_CO2_trn, Hl_H2O_trn = enthalpy_flux(Nl_CO2, Hl_CO2, Nl_H2O, Hl_H2O, Nv_CO2, Hv_CO2, Nv_H2O, Hv_H2O, UT * heat_transfer_factor, a_eA, Tv, Tl)
 
     # endregion
 
@@ -222,9 +269,20 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     if run_type == 'simulating':
         # Combine Differentials and Scale
-        diffeqs = np.array([dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, dHlf_dz, dHvf_dz, dP_dz])
-        # eq_scales = np.array([1, 1, 50, 50, 200000, 200000, P])
-        diffeqs_scaled = diffeqs / scales * H
+        if thermal_state_mode == 'temperature':
+            diffeqs_scaled = np.array([
+                dFl_CO2_dz / scales[0] * H,
+                dFl_H2O_dz / scales[1] * H,
+                dFv_CO2_dz / scales[2] * H,
+                dFv_H2O_dz / scales[3] * H,
+                dTl_dz / scales[4],
+                dTv_dz / scales[5],
+                dP_dz / scales[6] * H,
+            ])
+        else:
+            diffeqs = np.array([dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, dHlf_dz, dHvf_dz, dP_dz])
+            # eq_scales = np.array([1, 1, 50, 50, 200000, 200000, P])
+            diffeqs_scaled = diffeqs / scales * H
         return diffeqs_scaled
 
     elif run_type == 'saving':
@@ -292,3 +350,21 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     else:
         raise ValueError('Choose correct run type')
     # endregion
+
+
+def _temperatures_in_bounds(Tl, Tv, bounds):
+    low, high = bounds
+    return (
+        np.isfinite(Tl)
+        and np.isfinite(Tv)
+        and low <= float(Tl) <= high
+        and low <= float(Tv) <= high
+    )
+
+
+def _smooth_absorption_only_vapor_flux(nv_co2):
+    # Vapor z-direction flux is negative for CO2 absorption.  This smooth cap
+    # removes the desorption branch without introducing a hard kink at zero.
+    smoothing = 1.0e-10
+    x = -float(nv_co2) / smoothing
+    return -smoothing * np.logaddexp(0.0, x)

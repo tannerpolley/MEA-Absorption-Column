@@ -1,16 +1,29 @@
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+import platform
+import sys
+from importlib import metadata
 
-from mea_absorption_column.BVP.Methods.Single_Shoot_Solve import single_shoot_solve
-from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import scipy_BVP_solve
-from mea_absorption_column.BVP.Methods.Finite_Difference_Solve import finite_difference_solve
+from mea_absorption_column.BVP.Methods.Single_Shoot_Solve import DEFAULT_SINGLE_SHOOT_SETTINGS, single_shoot_solve
+from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import DEFAULT_SCIPY_BVP_SETTINGS, scipy_BVP_solve
+from mea_absorption_column.BVP.Methods.Segmented_Scipy_BVP_Solve import (
+    external_profile_from_stacked_solution,
+    segmented_scipy_BVP_solve,
+)
+from mea_absorption_column.BVP.Methods.Finite_Difference_Solve import (
+    DEFAULT_FINITE_DIFFERENCE_SETTINGS,
+    finite_difference_solve,
+)
+from mea_absorption_column.BVP.robust_core import make_solver_diagnostics
+from mea_absorption_column.intercooling import build_bed_stack_spec
 from mea_absorption_column.misc.Convert_Data import convert_data
 from mea_absorption_column.misc.Save_Run_Outputs import save_run_outputs
 from mea_absorption_column.misc.Get_Temperature_Enthalpy import (
     get_liquid_enthalpy, get_vapor_enthalpy, get_liquid_temperature, get_vapor_temperature
 )
 from mea_absorption_column.misc.Scaling import scaling
+from mea_absorption_column.Thermodynamics.thermo_models import epcsaft_cache_stats
 
 np.set_printoptions(suppress=True)
 
@@ -21,18 +34,42 @@ def run_model(df,
               run=0,
               show_info=False,
               save_run_results=False,
-              plot_temperature=False
+              plot_temperature=False,
+              thermo_model='ideal_henry',
+              solver_settings=None,
+              return_details=False,
+              staged_beds='auto',
+              intercooler_settings=None,
               ):
 
-    inputs, X = convert_data(df, run=run, type=data_type)
+    inputs, X, case_metadata = convert_data(df, run=run, type=data_type, return_metadata=True)
 
     L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
 
     # Simulate the Absorption Column from start to finish given
     # the inlet concentrations of the top liquid and bottom vapor streams
+    method_aliases = {
+        'single': 'single',
+        'shooting': 'single',
+        'collocation': 'scipy-bvp',
+        'scipy-bvp': 'scipy-bvp',
+        'finite': 'finite',
+        'finite-difference': 'finite',
+    }
+    method = method_aliases.get(method, method)
+    beds_count = int(case_metadata["beds"])
+    intercoolers_count = int(case_metadata["intercoolers"])
+    use_staged_beds = (
+        bool(staged_beds)
+        if staged_beds != "auto"
+        else method == "scipy-bvp" and (beds_count > 1 or intercoolers_count > 0)
+    )
+    solver_settings_for_run = dict(solver_settings or {})
+    thermal_state_mode = solver_settings_for_run.get("thermal_state_mode", "enthalpy")
+
     if method == 'single':
         solving_function = single_shoot_solve
-    elif method == 'collocation':
+    elif method == 'scipy-bvp':
         solving_function = scipy_BVP_solve
     elif method == 'finite':
         solving_function = finite_difference_solve
@@ -48,8 +85,8 @@ def run_model(df,
     Fv_N2_b, Fv_O2_b = Fv_N2_a, Fv_O2_a
 
     # Guesses
-    CO2_cap_guess = 95 # Guess for the percentage of CO2 transferred from Vapor to Liquid
-    H2O_cap_guess = -100 # Guess for the percentage of H2O transferred from Vapor to Liquid
+    CO2_cap_guess = float(solver_settings_for_run.get("co2_capture_guess_pct", 95.0)) # Guess for the percentage of CO2 transferred from Vapor to Liquid
+    H2O_cap_guess = float(solver_settings_for_run.get("h2o_capture_guess_pct", -100.0)) # Guess for the percentage of H2O transferred from Vapor to Liquid
 
     Fv_CO2_b_guess = (1 - (CO2_cap_guess/100))*Fv_CO2_a # 0.000126993312499947
     Fv_H2O_b_guess = (1 - (H2O_cap_guess/100))*Fv_H2O_a # 5
@@ -71,7 +108,7 @@ def run_model(df,
     Hvt_a = get_vapor_enthalpy(Fv_a, Tv_a)
     Hvf_a = Hvt_a * sum(Fv_a)
 
-    Fv_b_guess = [Fv_CO2_b_guess, Fv_H2O_b_guess, Fv_N2_b, Fv_N2_b]
+    Fv_b_guess = [Fv_CO2_b_guess, Fv_H2O_b_guess, Fv_N2_b, Fv_O2_b]
     Hvt_b_guess = get_vapor_enthalpy(Fv_b_guess, Tv_b_guess)
     Hvf_b_guess = Hvt_b_guess * sum(Fv_b_guess)
 
@@ -80,21 +117,117 @@ def run_model(df,
 
     # Scaling
 
+    if thermal_state_mode == "temperature":
+        thermal_a = Tl_a_guess
+        thermal_vapor_a = Tv_a
+        thermal_b = Tl_b
+        thermal_vapor_b = Tv_b_guess
+    else:
+        thermal_a = Hlf_a_guess
+        thermal_vapor_a = Hvf_a
+        thermal_b = Hlf_b
+        thermal_vapor_b = Hvf_b_guess
+
     Y_a_unscaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
-                           Hlf_a_guess, Hvf_a, P_a])
+                           thermal_a, thermal_vapor_a, P_a])
 
     scales = scaling(z, Y_a_unscaled)
+    if thermal_state_mode == "temperature":
+        scales[4] = 400.0
+        scales[5] = 400.0
 
     Y_a_scaled = np.array([Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a,
-                           Hlf_a_guess, Hvf_a, P_a]) / scales
+                           thermal_a, thermal_vapor_a, P_a]) / scales
 
     Y_b_scaled = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess,
-                           Hlf_b, Hvf_b_guess, P_b]) / scales
+                           thermal_b, thermal_vapor_b, P_b]) / scales
     eq_scales = scales
 
     const_flow = Fl_MEA_b, Fv_N2_a, Fv_O2_a
 
-    parameters = scales, eq_scales, const_flow, H, A, packing
+    solver_diagnostics = make_solver_diagnostics()
+    epcsaft_cache_start = epcsaft_cache_stats()
+    model_options = {
+        'thermo_model': thermo_model,
+        'solver_diagnostics': solver_diagnostics,
+        'guard_invalid_states': True,
+        'mass_transfer_factor': float(solver_settings_for_run.get('mass_transfer_factor', 1.0)),
+        'heat_transfer_factor': float(solver_settings_for_run.get('heat_transfer_factor', 1.0)),
+        'thermal_state_mode': thermal_state_mode,
+        'co2_flux_mode': solver_settings_for_run.get('co2_flux_mode', 'bidirectional'),
+    }
+    parameters = scales, eq_scales, const_flow, H, A, packing, model_options
+    intercooler_settings = intercooler_settings or {}
+    stack_spec = build_bed_stack_spec(
+        beds=beds_count if use_staged_beds else 1,
+        intercoolers=intercoolers_count if use_staged_beds else 0,
+        single_bed_height_m=case_metadata["single_bed_height_m"],
+        liquid_feed_temperature_K=Tl_z,
+        target_temperatures_K=intercooler_settings.get("target_temperatures_K"),
+        intercooler_strength=float(intercooler_settings.get("strength", solver_settings_for_run.get("intercooler_strength", 1.0))),
+    )
+    if (
+        method == "scipy-bvp"
+        and use_staged_beds
+        and thermo_model == "ideal_henry"
+        and solver_settings_for_run.get("seed_from_collapsed", False)
+        and "initial_guess_scaled" not in solver_settings_for_run
+    ):
+        collapsed_seed_settings = {
+            **solver_settings_for_run,
+            "seed_from_collapsed": False,
+            "return_internal_profile": True,
+            "continuation_stage": "collapsed_henry_seed",
+            "continuation_path": "collapsed_henry",
+        }
+        collapsed_seed = run_model(
+            df,
+            method=method,
+            data_type=data_type,
+            run=run,
+            show_info=False,
+            save_run_results=False,
+            plot_temperature=False,
+            thermo_model="ideal_henry",
+            solver_settings=collapsed_seed_settings,
+            return_details=True,
+            staged_beds=False,
+            intercooler_settings=intercooler_settings,
+        )
+        if collapsed_seed.get("success") and collapsed_seed.get("_raw_solution_scaled") is not None:
+            solver_settings_for_run["initial_guess_scaled"] = collapsed_seed["_raw_solution_scaled"]
+            solver_settings_for_run.setdefault("continuation_stage", "staged_from_collapsed_henry")
+            solver_settings_for_run.setdefault("continuation_path", "collapsed_henry->staged_henry")
+    if (
+        method == "scipy-bvp"
+        and use_staged_beds
+        and thermo_model == "epcsaft_neutral"
+        and solver_settings_for_run.get("seed_from_henry", True)
+        and "initial_guess_scaled" not in solver_settings_for_run
+    ):
+        seed_settings = {
+            **solver_settings_for_run,
+            "seed_from_henry": False,
+            "return_internal_profile": True,
+        }
+        henry_seed = run_model(
+            df,
+            method=method,
+            data_type=data_type,
+            run=run,
+            show_info=False,
+            save_run_results=False,
+            plot_temperature=False,
+            thermo_model="ideal_henry",
+            solver_settings=seed_settings,
+            return_details=True,
+            staged_beds=use_staged_beds,
+            intercooler_settings=intercooler_settings,
+        )
+        if henry_seed.get("success") and henry_seed.get("_raw_solution_scaled") is not None:
+            solver_settings_for_run["initial_guess_scaled"] = henry_seed["_raw_solution_scaled"]
+            solver_settings_for_run["continuation_stage"] = "henry_seeded_epcsaft"
+            solver_settings_for_run["continuation_path"] = "ideal_henry->epcsaft_neutral"
 
     if show_info:
         print(f'''
@@ -105,11 +238,30 @@ Run #{run + 1:03d}:
     # Starts the time tracker for the total computation time for one simulation run
     start = time.time()
 
-    Y_scaled, z_new, solving_type, success, message = solving_function(Y_a_scaled, Y_b_scaled, z, parameters)
+    if method == "scipy-bvp" and use_staged_beds:
+        Y_scaled, z_new, solving_type, success, message = segmented_scipy_BVP_solve(
+            Y_a_scaled,
+            Y_b_scaled,
+            z,
+            parameters,
+            stack_spec=stack_spec,
+            settings=solver_settings_for_run,
+        )
+    else:
+        Y_scaled, z_new, solving_type, success, message = solving_function(
+            Y_a_scaled, Y_b_scaled, z, parameters, settings=solver_settings_for_run
+        )
+
+    raw_Y_scaled = np.array(Y_scaled)
+    if use_staged_beds and raw_Y_scaled.shape[0] > 7:
+        Y_scaled_for_outputs = external_profile_from_stacked_solution(raw_Y_scaled, stack_spec.beds)
+    else:
+        Y_scaled_for_outputs = raw_Y_scaled
+    z_outputs = np.linspace(z[0], z[-1], Y_scaled_for_outputs.shape[1])
 
     Y = []
-    for i in range(len(Y_scaled)):
-        Y.append(Y_scaled[i] * scales[i])
+    for i in range(len(Y_scaled_for_outputs)):
+        Y.append(Y_scaled_for_outputs[i] * scales[i])
     Y = np.array(Y)
 
     # Ends the time tracker for the total computation time for one simulation run
@@ -141,15 +293,21 @@ Run #{run + 1:03d}:
     y_b = [Fv_b[i] / sum(Fv_b) for i in range(len(Fv_b))]
 
     # Temperature
-    Hl_a_sim = Y[4, 0] / sum(Fl_a)
-    Hl_b_sim = Y[4, -1] / sum(Fl_b)
-    Hv_a_sim = Y[5, 0] / sum(Fv_a)
-    Hv_b_sim = Y[5, -1] / sum(Fv_b)
+    if thermal_state_mode == "temperature":
+        Tl_a_sim = Y[4, 0]
+        Tl_b_sim = Y[4, -1]
+        Tv_a_sim = Y[5, 0]
+        Tv_b_sim = Y[5, -1]
+    else:
+        Hl_a_sim = Y[4, 0] / sum(Fl_a)
+        Hl_b_sim = Y[4, -1] / sum(Fl_b)
+        Hv_a_sim = Y[5, 0] / sum(Fv_a)
+        Hv_b_sim = Y[5, -1] / sum(Fv_b)
 
-    Tl_a_sim = (get_liquid_temperature(x_a, Hl_a_sim))
-    Tl_b_sim = (get_liquid_temperature(x_b, Hl_b_sim))
-    Tv_a_sim = (get_vapor_temperature(y_a, Hv_a_sim))
-    Tv_b_sim = (get_vapor_temperature(y_b, Hv_b_sim))
+        Tl_a_sim = (get_liquid_temperature(x_a, Hl_a_sim))
+        Tl_b_sim = (get_liquid_temperature(x_b, Hl_b_sim))
+        Tv_a_sim = (get_vapor_temperature(y_a, Hv_a_sim))
+        Tv_b_sim = (get_vapor_temperature(y_b, Hv_b_sim))
 
     # Computes the relative error between the solution that the shooter found to the actual inlet concentration for the
     # relevant liquid species
@@ -161,7 +319,10 @@ Run #{run + 1:03d}:
     Fv_H2O_rel_err = abs(Fv_H2O_a - Fv_H2O_a_sim) / Fv_H2O_a * 100
     Tv_rel_err = abs(Tv_a - Tv_a_sim) / Tv_a * 100
 
-    CO2_cap = abs(Fv_CO2_a_sim - Fv_CO2_b_sim) / Fv_CO2_a_sim * 100
+    # Report capture against the known inlet vapor feed.  Failed BVP iterates can
+    # miss the bottom boundary badly; using the simulated inlet in the denominator
+    # turns those diagnostics into meaningless trillion-percent captures.
+    CO2_cap = (Fv_CO2_a - Fv_CO2_b_sim) / Fv_CO2_a * 100
 
     # Prints out relevant info such as simulation time, relative errors, CO2% captured, if max iterations were reached,
     # and number of Nan's counted
@@ -204,15 +365,29 @@ Run #{run + 1:03d}:
 ''')
 
     # Stores output data into text files (concentrations, mole fractions, and temperatures) (can also plot)
-    dfs_dict = save_run_outputs(Y_scaled, z, parameters,
-                          save_run_results=save_run_results,
-                          plot_temperature=plot_temperature,
-                          )
+    return_profiles = bool(solver_settings_for_run.get("return_profiles"))
+    return_internal_profile = bool(solver_settings_for_run.get("return_internal_profile"))
+    output_message_suffix = ""
+    if (
+        (use_staged_beds and stack_spec.beds > 1 and not save_run_results and not plot_temperature and not return_profiles)
+        or (return_internal_profile and not save_run_results and not plot_temperature and not return_profiles)
+        or (not success and not save_run_results and not plot_temperature and not return_profiles)
+    ):
+        dfs_dict = {}
+    else:
+        try:
+            dfs_dict = save_run_outputs(Y_scaled_for_outputs, z_outputs, parameters,
+                                  save_run_results=save_run_results,
+                                  plot_temperature=plot_temperature,
+                                  )
+        except Exception as exc:
+            dfs_dict = {}
+            output_message_suffix = f"; profile output generation failed: {exc}"
 
     method_key = {
         'single': 'Shooting',
-        'collocation': 'Collocation',
-        'finite-difference': 'Finite Difference',
+        'scipy-bvp': 'SciPy BVP',
+        'finite': 'Finite Difference',
     }
 
     if plot_temperature:
@@ -223,5 +398,186 @@ Run #{run + 1:03d}:
         plt.title(f'{method_key[method]} Method | Simulation Time: {total_time:.1f} sec \n $\\frac{{L}}{{G}}$ Ratio: {L_G:.2f}, $\\alpha$: {alpha:.2f}, $y_{{CO2}}$: {y_CO2:.2f}, CO2%: {CO2_cap:.2f}')
         plt.show()
 
+    if return_details:
+        target_capture = _target_capture_pct(df, run)
+        temperature_rmse = _temperature_rmse(df, run, dfs_dict)
+        boundary_residual_norm = float(np.linalg.norm([
+            Fl_CO2_rel_err,
+            Fl_H2O_rel_err,
+            Tl_rel_err,
+            Fv_CO2_rel_err,
+            Fv_H2O_rel_err,
+            Tv_rel_err,
+        ]))
+        settings = _effective_solver_settings(method, solver_settings_for_run)
+        capture_error_pct = None if target_capture is None else float(CO2_cap - target_capture)
+        method_success, gated_message = _apply_method_success_gates(
+            method=method,
+            solver_success=bool(success),
+            message=str(message),
+            boundary_residual_norm=boundary_residual_norm,
+            capture_error_pct=capture_error_pct,
+            settings=solver_settings_for_run,
+        )
+        cache_stats = _epcsaft_cache_delta(epcsaft_cache_start, epcsaft_cache_stats())
+        result = {
+            'case_id': str(df.index[run]),
+            'method': method,
+            'thermo_model': thermo_model,
+            'success': method_success,
+            'message': f"{gated_message}{output_message_suffix}",
+            'runtime_s': float(total_time),
+            'capture_pct': float(CO2_cap),
+            'capture_error_pct': capture_error_pct,
+            'temperature_rmse_K': temperature_rmse,
+            'boundary_residual_norm': boundary_residual_norm,
+            'mesh_points': int(settings.get('mesh_points', len(z))),
+            'tol': settings.get('tol'),
+            'bc_tol': settings.get('bc_tol'),
+            'beds': beds_count,
+            'intercoolers': intercoolers_count,
+            'staged_beds': bool(use_staged_beds),
+            'intercooler_model': 'liquid_temperature_reset' if stack_spec.intercoolers else 'none',
+            'intercooler_assumption': (
+                f"{stack_spec.assumption};strength={stack_spec.intercoolers[0].strength:g}"
+                if stack_spec.intercoolers
+                else 'none'
+            ),
+            'continuation_stage': solver_settings_for_run.get('continuation_stage', 'direct'),
+            'continuation_success': bool(method_success and solver_settings_for_run.get('continuation_stage', 'direct') != 'failed'),
+            'invalid_state_count': int(solver_diagnostics.get('invalid_state_count', 0)),
+            'guard_penalty_count': int(solver_diagnostics.get('guard_penalty_count', 0)),
+            'domain_guard_counts': _format_domain_guard_counts(solver_diagnostics.get('domain_guard_counts', {})),
+            'first_failed_domain': solver_diagnostics.get('first_failed_domain', ''),
+            'jacobian_status': solver_diagnostics.get('jacobian_status', ''),
+            'scaling_mode': solver_settings_for_run.get('scaling_mode', 'legacy_flow_enthalpy'),
+            'transform_mode': solver_settings_for_run.get('transform_mode', 'bounded_guarded_raw_state'),
+            'continuation_path': solver_settings_for_run.get('continuation_path', 'none'),
+            'epcsaft_cache_hits': int(cache_stats.get('epcsaft_cache_hits', 0)),
+            'epcsaft_cache_misses': int(cache_stats.get('epcsaft_cache_misses', 0)),
+            'epcsaft_direct_density_solve_s': float(cache_stats.get('epcsaft_direct_density_solve_s', 0.0)),
+            'profile_png': solver_settings_for_run.get('profile_png', ''),
+            'python_version': sys.version.split()[0],
+            'platform': platform.platform(),
+            'package_versions': _package_versions(),
+        }
+        if return_internal_profile:
+            result["_raw_solution_scaled"] = raw_Y_scaled
+        if return_profiles:
+            result["_profiles"] = dfs_dict
+        return result
+
     return CO2_cap, success
     # return CO2_cap
+
+
+def _target_capture_pct(df, run):
+    for column in ('CO2 %', 'CO2  %'):
+        if column in df.columns:
+            value = df.iloc[run][column]
+            return None if value is None or np.isnan(value) else float(value)
+    return None
+
+
+def _temperature_rmse(df, run, dfs_dict):
+    tap_columns = [column for column in df.columns if _is_temperature_tap(column)]
+    if not tap_columns or 'T' not in dfs_dict or 'Tl' not in dfs_dict['T']:
+        return None
+    positions = np.asarray([float(column) for column in tap_columns], dtype=float)
+    observed = df.iloc[run][tap_columns].astype(float).to_numpy()
+    profile = dfs_dict['T']['Tl'].sort_index()
+    predicted = np.interp(positions, profile.index.to_numpy(dtype=float), profile.to_numpy(dtype=float))
+    return float(np.sqrt(np.mean((predicted - observed) ** 2)))
+
+
+def _is_temperature_tap(column):
+    try:
+        float(column)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def _package_versions():
+    names = ['mea-absorption-column', 'numpy', 'pandas', 'scipy', 'matplotlib']
+    versions = []
+    for name in names:
+        try:
+            versions.append(f'{name}={metadata.version(name)}')
+        except metadata.PackageNotFoundError:
+            versions.append(f'{name}=uninstalled')
+    return ';'.join(versions)
+
+
+def _format_domain_guard_counts(counts):
+    if not counts:
+        return ""
+    return ";".join(f"{key}={int(value)}" for key, value in sorted(counts.items()))
+
+
+def _epcsaft_cache_delta(start, end):
+    return {
+        key: end.get(key, 0) - start.get(key, 0)
+        for key in {
+            "epcsaft_cache_hits",
+            "epcsaft_cache_misses",
+            "epcsaft_direct_density_solve_s",
+        }
+    }
+
+
+def _apply_method_success_gates(
+    method,
+    solver_success,
+    message,
+    boundary_residual_norm,
+    capture_error_pct,
+    settings,
+):
+    method_success = bool(solver_success)
+    gate_messages = []
+    if method in {"single", "finite"} and boundary_residual_norm > float(settings.get("success_boundary_residual_max", 1.0)):
+        method_success = False
+        gate_messages.append(f"Rejected by strict boundary residual gate: {boundary_residual_norm:.6g}")
+    if (
+        method in {"single", "finite"}
+        and capture_error_pct is not None
+        and abs(float(capture_error_pct)) > float(settings.get("success_capture_error_max_pct", 10.0))
+    ):
+        method_success = False
+        gate_messages.append(f"Rejected by strict capture gate: {capture_error_pct:.6g} pct")
+    if (
+        method == "scipy-bvp"
+        and "success_capture_error_max_pct" in settings
+        and capture_error_pct is not None
+        and abs(float(capture_error_pct)) > float(settings["success_capture_error_max_pct"])
+    ):
+        method_success = False
+        gate_messages.append(f"Rejected by collocation capture gate: {capture_error_pct:.6g} pct")
+    if (
+        method == "scipy-bvp"
+        and not method_success
+        and "max_runtime_s" not in str(message)
+        and settings.get("accept_low_residual_final_iterate", True)
+        and boundary_residual_norm <= float(settings.get("accept_boundary_residual_max", 10.0))
+        and (
+            capture_error_pct is None
+            or abs(float(capture_error_pct)) <= float(settings.get("accept_capture_error_max_pct", 5.0))
+        )
+    ):
+        method_success = True
+        gate_messages.append(
+            "Accepted low-residual collocation final iterate despite solver status"
+        )
+    if gate_messages:
+        return method_success, f"{message}; {'; '.join(gate_messages)}"
+    return method_success, message
+
+
+def _effective_solver_settings(method, solver_settings):
+    defaults = {
+        'single': DEFAULT_SINGLE_SHOOT_SETTINGS,
+        'scipy-bvp': DEFAULT_SCIPY_BVP_SETTINGS,
+        'finite': DEFAULT_FINITE_DIFFERENCE_SETTINGS,
+    }.get(method, {})
+    return {**defaults, **(solver_settings or {})}

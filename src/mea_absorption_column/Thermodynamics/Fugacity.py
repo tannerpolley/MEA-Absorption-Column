@@ -1,61 +1,40 @@
 import numpy as np
-from mea_absorption_column.Thermodynamics.Fugacity_Coeff import fugacity_coeff
+from mea_absorption_column.Thermodynamics.thermo_models import compute_fugacity, guarded_compute_fugacity
 
 
-def fugacity(x, y, x_true, Cl_true, Tl, Tv, alpha, H_CO2_mix, P, P_sat_H2O):
+def fugacity(
+    x,
+    y,
+    x_true,
+    Cl_true,
+    Tl,
+    Tv,
+    alpha,
+    H_CO2_mix,
+    P,
+    P_sat_H2O,
+    thermo_model='ideal_henry',
+    diagnostics=None,
+    guard_invalid_states=False,
+):
 
-    y_CO2 = y[0]
-    y_H2O = y[1]
-    x_CO2_true = x_true[0]
-    x_H2O_true = x_true[2]
-    Cl_CO2_true = Cl_true[0]
-
-    method = 'ideal'
-    # method = 'ePC-SAFT'
-    # method = 'surrogate'
-
-    if method == 'ideal':
-
-        # From Xu and Rochelle
-        Pl_CO2 = Cl_CO2_true * H_CO2_mix
-        Pv_CO2 = y_CO2 * P
-
-        Pv_H2O = y_H2O * P
-        Pl_H2O = x_H2O_true * P_sat_H2O
-
-    elif method == 'ePC-SAFT':
-
-        # --------------- PC-SAFT Method ----------------------- #
-
-        φl_CO2, φl_H2O = fugacity_coeff(x_true, 'liq', Tl, P)
-        φv_CO2, φv_H2O = fugacity_coeff(y, 'vap', Tv, P)
-
-        Pl_CO2 = P * φl_CO2 * x_CO2_true
-        Pl_H2O = P * φl_H2O * x_H2O_true
-
-        Pv_CO2 = P * φv_CO2 * y_CO2
-        Pv_H2O = P * φv_H2O * y_H2O
-
-    elif method == 'surrogate':
-
-        # -------- Gabrielsen Approximation Method --------------
-
-        # Combined Henry's Law and chemical equilibrium constant for MEA-CO2 Eq. 14 and Table 1
-        # From Gabrielsen: A Model for Estimating CO2 Solubility in Aqueous Alkanolamines Eq. 11
-
-        # K_CO2 = np.exp(30.96 + -10584 / Tl + -7.187 * a0 * alpha)
-        # Pl_CO2 = K_CO2 * x[0] * a0 * alpha / (a0 * (1 - 2 * alpha)) ** 2
-
-        Pv_CO2 = y_CO2 * P
-
-        # From Xu and Rochelle
-        Pl_CO2 = np.exp(39.3 - 12155 / Tl - 19.0 * alpha ** 2 + 1105 * alpha / Tl + 12800 * alpha ** 2 / Tl)
-
-        Pv_H2O = y_H2O * P
-        Pl_H2O = x_H2O_true * P_sat_H2O
-
-    else:
-        raise ValueError('Choose ideal, ePC-SAFT, or surrogate')
+    compute = guarded_compute_fugacity if guard_invalid_states else compute_fugacity
+    kwargs = {
+        "model": thermo_model,
+        "y": y,
+        "x_true": x_true,
+        "Cl_true": Cl_true,
+        "Tl": Tl,
+        "Tv": Tv,
+        "H_CO2_mix": H_CO2_mix,
+        "P": P,
+        "P_sat_H2O": P_sat_H2O,
+    }
+    if guard_invalid_states:
+        kwargs["diagnostics"] = diagnostics
+    Pl_CO2, Pv_CO2, Pl_H2O, Pv_H2O = compute(
+        **kwargs,
+    )
 
     fl_CO2 = Pl_CO2
     fv_CO2 = Pv_CO2

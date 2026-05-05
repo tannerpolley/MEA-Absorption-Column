@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
-from pcsaft import InputError
 from scipy.linalg import solve
 from scipy.optimize import root
 from ...Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
@@ -21,7 +20,8 @@ def eulers(fxn, y, t_eval, args=None):
         y_prev = results[i-1]
         # Compute derivatives using the provided function
         dydt_scaled = np.array(fxn(t, y_prev, args))
-        del chemical_equilibrium.cache
+        if hasattr(chemical_equilibrium, "cache"):
+            del chemical_equilibrium.cache
         # Update the dependent variables
         results[i] = y_prev + step_size * dydt_scaled
 
@@ -158,7 +158,7 @@ def runge_kutta(fxn, y0, t_eval, args=None):
             k.reshape(s, -1)
             # print(k)
         else:
-            raise InputError('Type must be explicit or implicit.')
+            raise ValueError('Type must be explicit or implicit.')
         y += h * sum([b[i] * k[i] for i in range(s)])
         # print(y*args[0])
         t += h

@@ -1,6 +1,9 @@
 from ..Properties.Thermophysical_Properties import enthalpy
 from scipy.optimize import root
+from scipy.optimize import least_squares
 import numpy as np
+
+TEMPERATURE_BOUNDS_K = (250.0, 500.0)
 
 
 def get_liquid_temperature(x, Hl_T_given):
@@ -9,8 +12,7 @@ def get_liquid_temperature(x, Hl_T_given):
 
         return Hl_T - Hl_T_given
 
-    Tl = root(solve, np.array([333.0])).x[0]
-    return Tl
+    return _solve_temperature(solve, initial_guess=333.0)
 
 
 def get_vapor_temperature(y, Hv_T_given):
@@ -19,9 +21,23 @@ def get_vapor_temperature(y, Hv_T_given):
 
         return Hv_T - Hv_T_given
 
-    Tv = root(solve, np.array([320.0])).x[0]
+    return _solve_temperature(solve, initial_guess=320.0)
 
-    return Tv
+
+def _solve_temperature(residual, initial_guess):
+    lower, upper = TEMPERATURE_BOUNDS_K
+    root_result = root(residual, np.array([initial_guess]))
+    candidate = float(np.asarray(root_result.x).ravel()[0])
+    if root_result.success and lower <= candidate <= upper and np.isfinite(candidate):
+        return candidate
+
+    bounded = least_squares(
+        lambda T: np.asarray(residual(T), dtype=float).ravel(),
+        x0=np.array([np.clip(initial_guess, lower, upper)], dtype=float),
+        bounds=(np.array([lower]), np.array([upper])),
+        max_nfev=100,
+    )
+    return float(np.clip(bounded.x[0], lower, upper))
 
 
 def get_liquid_enthalpy(Fl, Tl):

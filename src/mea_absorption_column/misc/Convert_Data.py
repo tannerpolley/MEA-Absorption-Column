@@ -4,9 +4,11 @@ from scipy.optimize import root
 from ..config.Constants import MWs_l, MWs_v, column_params, packing_params, n
 
 
-def convert_data(df, run=0, type='mole'):
+def convert_data(df, run=0, type='mole', return_metadata=False):
 
     X = df.iloc[run, :].to_numpy()
+    case_id = str(df.index[run])
+    intercoolers = int(df.iloc[run]["Intercoolers"]) if "Intercoolers" in df.columns else 0
 
     if type == 'mole':
         L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
@@ -146,4 +148,15 @@ def convert_data(df, run=0, type='mole'):
     z = np.linspace(0, 1, n)
 
 
-    return [Fl, Fv, Tl_z, Tv_0, z, H, A, P, packing], X
+    inputs = [Fl, Fv, Tl_z, Tv_0, z, H, A, P, packing]
+    if return_metadata:
+        single_bed_height = column_params['NCCC']['H']
+        metadata = {
+            "case_id": case_id,
+            "beds": int(beds),
+            "intercoolers": intercoolers,
+            "single_bed_height_m": float(single_bed_height),
+            "total_packed_height_m": float(H),
+        }
+        return inputs, X, metadata
+    return inputs, X

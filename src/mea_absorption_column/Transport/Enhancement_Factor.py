@@ -1,16 +1,37 @@
+import numpy as np
 from numpy import exp, array
-from scipy.optimize import root
+from scipy.optimize import least_squares
+
+from mea_absorption_column.BVP.robust_core import record_domain_guard
+from .domain_guards import DomainGuardError, require_positive
 
 
 def enhancement_factor(Tl, Cl_true, y_CO2, P,
                        H_CO2_mix, kl_CO2, kv_CO2,
-                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit'):
+                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None):
     enable_enhancement_factor = True
 
     Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true = Cl_true
     Cl_CO2_true = Cl_CO2_true / 1.04542981654115
     Dl_MEAH = Dl_ion
     Dl_MEACOO = Dl_ion
+    require_positive(
+        "enhancement_factor",
+        diagnostics,
+        Tl=Tl,
+        P=P,
+        H_CO2_mix=H_CO2_mix,
+        kl_CO2=kl_CO2,
+        kv_CO2=kv_CO2,
+        Dl_CO2=Dl_CO2,
+        Dl_MEA=Dl_MEA,
+        Dl_ion=Dl_ion,
+        Cl_CO2_true=Cl_CO2_true,
+        Cl_MEA_true=Cl_MEA_true,
+        Cl_H2O_true=Cl_H2O_true,
+        Cl_MEAH_true=Cl_MEAH_true,
+        Cl_MEACOO_true=Cl_MEACOO_true,
+    )
 
     # Based On Putta from IDAES
     k_MEA = 3.1732e3 * exp(-4936.6 / Tl) # m^6/(mol^2*s)
@@ -44,16 +65,47 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
                 eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
                 eq2 = E - (1 + (E_inst - 1) * (1 - Υ_MEA_int) / (1 - Υ_CO2_bulk))
 
-                return eq1, eq2
+                return np.nan_to_num(array((eq1, eq2), dtype=float), nan=1.0e6, posinf=1.0e6, neginf=-1.0e6)
 
-            E, Cl_MEA_int = root(solve, array((65., .9))).x
+            solution = least_squares(
+                solve,
+                array((max(1.0, float(Ha)), .9)),
+                bounds=(array((1.0, 1.0e-8)), array((1.0e4, 1.0))),
+                max_nfev=100,
+            )
+            if not solution.success or not np.all(np.isfinite(solution.x)):
+                record_domain_guard(
+                    diagnostics,
+                    "enhancement_factor",
+                    f"implicit subsolve fallback: {solution.message}",
+                )
+                E = _explicit_enhancement_factor(
+                    Ha=Ha,
+                    Dl_MEA=Dl_MEA,
+                    Cl_MEA_true=Cl_MEA_true,
+                    Dl_MEAH=Dl_MEAH,
+                    Cl_MEAH_true=Cl_MEAH_true,
+                    Dl_MEACOO=Dl_MEACOO,
+                    Cl_MEACOO_true=Cl_MEACOO_true,
+                    Dl_CO2=Dl_CO2,
+                    Cl_CO2_true=Cl_CO2_true,
+                )
+            else:
+                E, Cl_MEA_int = solution.x
 
         elif E_type == 'explicit':
 
-            R_plus = (Dl_MEA * Cl_MEA_true) / (2 * Dl_MEAH * Cl_MEAH_true)
-            R_minus = (Dl_MEA * Cl_MEA_true) / (2 * Dl_MEACOO * Cl_MEACOO_true)
-            E_hat = (Dl_MEA * Cl_MEA_true) / (2 * Dl_CO2 * Cl_CO2_true)
-            E = 1 + (Ha - 1) / (Ha * (R_plus + R_minus + 2) / E_hat + 1)
+            E = _explicit_enhancement_factor(
+                Ha=Ha,
+                Dl_MEA=Dl_MEA,
+                Cl_MEA_true=Cl_MEA_true,
+                Dl_MEAH=Dl_MEAH,
+                Cl_MEAH_true=Cl_MEAH_true,
+                Dl_MEACOO=Dl_MEACOO,
+                Cl_MEACOO_true=Cl_MEACOO_true,
+                Dl_CO2=Dl_CO2,
+                Cl_CO2_true=Cl_CO2_true,
+            )
 
         else:
             raise ValueError('E_type must be explicit or explicit')
@@ -63,7 +115,30 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
 
     Psi = E * kl_CO2 / kv_CO2
     Psi_H = Psi / (Psi + H_CO2_mix)*.3
+    require_positive("enhancement_factor", diagnostics, Ha=Ha, E=E, Psi=Psi, Psi_H=Psi_H)
 
     enhance_factor = [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi_H, Psi]
 
     return E, Psi, Psi_H, enhance_factor
+
+
+def _explicit_enhancement_factor(
+    Ha,
+    Dl_MEA,
+    Cl_MEA_true,
+    Dl_MEAH,
+    Cl_MEAH_true,
+    Dl_MEACOO,
+    Cl_MEACOO_true,
+    Dl_CO2,
+    Cl_CO2_true,
+):
+    floor = 1.0e-30
+    R_plus = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_MEAH * Cl_MEAH_true, floor))
+    R_minus = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_MEACOO * Cl_MEACOO_true, floor))
+    E_hat = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_CO2 * Cl_CO2_true, floor))
+    denominator = Ha * (R_plus + R_minus + 2) / max(E_hat, floor) + 1
+    E = 1 + (Ha - 1) / denominator
+    if not np.isfinite(E):
+        E = 1.0
+    return float(np.clip(E, 1.0, 1.0e4))

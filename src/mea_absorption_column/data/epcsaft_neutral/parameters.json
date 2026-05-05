@@ -1,0 +1,44 @@
+{
+  "species": ["CO2", "MEA", "H2O"],
+  "basis": "neutral_epcsaft_sensitivity",
+  "notes": [
+    "Neutral-only CO2/MEA/H2O parameter set for the reviewer-response thermodynamic sensitivity lane.",
+    "These values intentionally exclude ions and reaction products. They are not a full electrolyte-reactive ePC-SAFT model.",
+    "Pure-component parameters are taken from Table 2 of Baygi and Pahlavanzadeh (2015).",
+    "The selected neutral-comparison association schemes follow that paper's ternary CO2-MEA-H2O calculation: nonassociating CO2, 3B MEA, and 4C water.",
+    "Binary interaction parameters follow the paper's ternary setup: CO2-MEA and CO2-H2O are predictive with k_ij = 0, and MEA-H2O uses k_ij = -0.0520 from the 3B MEA / 4C water binary VLE fit."
+  ],
+  "sources": [
+    {
+      "label": "Baygi_Pahlavanzadeh_2015_Table_2",
+      "detail": "Pure component PC-SAFT parameters for CO2, MEA, and H2O. Local source: C:\\Users\\Tanner\\Documents\\git\\MEA-Thermodynamics\\docs\\Baygi and Pahlavanzadeh - 2015 - Application of the PC-SAFT equation of state for modeling CO2 solub.md"
+    },
+    {
+      "label": "Baygi_Pahlavanzadeh_2015_Table_3",
+      "detail": "MEA-H2O binary interaction parameter k_ij = -0.0520 for 3B MEA and 4C water."
+    },
+    {
+      "label": "Baygi_Pahlavanzadeh_2015_Section_3_3",
+      "detail": "Ternary CO2-MEA-H2O prediction uses k_ij = 0 for CO2-H2O and CO2-MEA, and k_ij = -0.0520 for MEA-H2O."
+    }
+  ],
+  "temperature_validity_K": {
+    "min": 298.0,
+    "max": 443.15,
+    "status": "Baygi_Pahlavanzadeh_2015_reported_range"
+  },
+  "parameters": {
+    "m": [2.0729, 4.5354, 2.1945],
+    "s": [2.7852, 2.6019, 2.229],
+    "e": [169.21, 204.0438, 141.66],
+    "vol_a": [0.0, 0.118488, 0.2039],
+    "e_assoc": [0.0, 2383.4744, 1804.17],
+    "assoc_scheme": [null, "3b", "4c"],
+    "MW": [0.04401, 0.06108, 0.01802],
+    "k_ij": [
+      [0.0, 0.0, 0.0],
+      [0.0, 0.0, -0.052],
+      [0.0, -0.052, 0.0]
+    ]
+  }
+}

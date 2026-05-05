@@ -6,15 +6,15 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     install_requires=[
-        "numpy",
-        "pandas",
-        "scipy",
-        "matplotlib",
-        # …any other runtime deps…
+        "numpy>=1.26",
+        "pandas>=2.1",
+        "scipy>=1.11",
+        "matplotlib>=3.8",
+        "openpyxl>=3.1",
     ],
     include_package_data=True,
     package_data={
         # include all CSVs in your data/ folder
-        "mea_absorption_column": ["data/*.csv"],
+        "mea_absorption_column": ["data/*.csv", "data/epcsaft_neutral/*.json"],
     },
 )

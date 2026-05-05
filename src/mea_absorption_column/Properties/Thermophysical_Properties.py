@@ -171,9 +171,9 @@ def heat_of_vaporization(Tl, species):
 def enthalpy(T, z, phase='liquid'):
 
     if phase == 'liquid':
-        Tl = float(T)
+        Tl = float(np.asarray(T, dtype=float).reshape(-1)[0])
         x = z
-        rho_mol_l, _, _ = density(float(Tl), x, 0, phase=phase)
+        rho_mol_l, _, _ = density(Tl, x, 0, phase=phase)
 
         Tr = 298.15 - 273.15
         Pref = 101325.0

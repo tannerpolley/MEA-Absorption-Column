@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.optimize import root
+from scipy.optimize import least_squares, root
 
 # From Akula Appendix of Model Development, Validation, and Part-Load Optimization of a
 # MEA-Based Post-Combustion CO2 Capture Process Under SteadyState Flexible Capture Operation
@@ -21,7 +21,12 @@ def chemical_equilibrium(Fl, Tl):
 
     use_previous = True
 
-    if "prev_value" in chemical_equilibrium.cache and use_previous:
+    if (
+        "prev_value" in chemical_equilibrium.cache
+        and use_previous
+        and np.all(np.isfinite(chemical_equilibrium.cache["prev_value"]))
+        and np.all(np.asarray(chemical_equilibrium.cache["prev_value"]) > 0.0)
+    ):
         guesses = chemical_equilibrium.cache["prev_value"]
         # print(zi, guesses)
         # use old_val in your calculation...
@@ -65,11 +70,11 @@ def chemical_equilibrium(Fl, Tl):
 
     v_ij = np.array([[-1, -2, 0, 1, 1, 0], [-1, -1, -1, 1, 0, 1]])
 
-    scales = np.array(guesses)
-    guesses_scaled = guesses/scales
+    scales = np.maximum(np.array(guesses, dtype=float), 1.0e-12)
+    guesses_scaled = np.clip(guesses / scales, 1.0e-12, np.inf)
 
     def root_solve(guesses_scaled, Cl_0, scales):
-        guesses = guesses_scaled*scales
+        guesses = np.maximum(guesses_scaled*scales, 1.0e-30)
         Cl_CO2_0 = Cl_0[0]
         Cl_MEA_0 = Cl_0[1]
         Cl_H2O_0 = Cl_0[2]
@@ -82,24 +87,46 @@ def chemical_equilibrium(Fl, Tl):
         
         Cl = guesses
         #
-        Kee1 = float(np.prod([Cl[i]**v_ij[0, i] for i in range(len(Cl))]))
-        Kee2 = float(np.prod([Cl[i]**v_ij[1, i] for i in range(len(Cl))]))
+        Kee1 = float(np.exp(np.sum(v_ij[0] * np.log(Cl))))
+        Kee2 = float(np.exp(np.sum(v_ij[1] * np.log(Cl))))
 
-        eq1 = (Kee1 - np.exp(log_K[0])) / Kee1
-        eq2 = (Kee2 - np.exp(log_K[1])) / Kee2
-        eq3 = (Cl_CO2_0 - (Cl_CO2 + Cl_MEAH)) / Cl_CO2_0
-        eq4 = (Cl_MEA_0 - (Cl_MEA + Cl_MEAH + Cl_MEACOO)) / Cl_MEA_0
-        eq5 = (Cl_H2O_0 - (Cl_H2O + Cl_MEAH - Cl_MEACOO)) / Cl_H2O_0
-        eq6 = (Cl_MEAH - (Cl_MEACOO + Cl_HCO3)) / Cl_MEAH
+        eq1 = (Kee1 - np.exp(log_K[0])) / max(abs(Kee1), 1.0e-30)
+        eq2 = (Kee2 - np.exp(log_K[1])) / max(abs(Kee2), 1.0e-30)
+        eq3 = (Cl_CO2_0 - (Cl_CO2 + Cl_MEAH)) / max(abs(Cl_CO2_0), 1.0e-30)
+        eq4 = (Cl_MEA_0 - (Cl_MEA + Cl_MEAH + Cl_MEACOO)) / max(abs(Cl_MEA_0), 1.0e-30)
+        eq5 = (Cl_H2O_0 - (Cl_H2O + Cl_MEAH - Cl_MEACOO)) / max(abs(Cl_H2O_0), 1.0e-30)
+        eq6 = (Cl_MEAH - (Cl_MEACOO + Cl_HCO3)) / max(abs(Cl_MEAH), 1.0e-30)
         eqs = np.array([eq1, eq2, eq3, eq4, eq5, eq6])
 
-        return eqs
+        return np.nan_to_num(eqs, nan=1.0e6, posinf=1.0e6, neginf=-1.0e6)
 
-    result = root(root_solve, guesses_scaled, args=(Cl_0, scales), tol=1e-10)
+    total_concentration = max(float(sum(Cl_0[:3])), 1.0)
+    lower = np.full(6, 1.0e-16)
+    upper = np.maximum(total_concentration * 2.0 / scales, guesses_scaled * 20.0)
+    fast_result = root(root_solve, guesses_scaled, args=(Cl_0, scales), tol=1.0e-10)
+    fast_Cl = np.asarray(fast_result.x, dtype=float) * scales
+    if (
+        fast_result.success
+        and np.all(np.isfinite(fast_Cl))
+        and np.all(fast_Cl > 0.0)
+        and np.linalg.norm(root_solve(fast_result.x, Cl_0, scales)) < 1.0e-5
+    ):
+        result = fast_result
+    else:
+        result = least_squares(
+            root_solve,
+            np.clip(guesses_scaled, lower * 10.0, upper * 0.5),
+            args=(Cl_0, scales),
+            bounds=(lower, upper),
+            xtol=1.0e-8,
+            ftol=1.0e-8,
+            gtol=1.0e-8,
+            max_nfev=60,
+        )
 
     Cl_true_scaled, solution, success = result.x, result.message, result.success
 
-    Cl_true = Cl_true_scaled*scales
+    Cl_true = np.maximum(Cl_true_scaled*scales, 1.0e-30)
 
     chemical_equilibrium.cache["prev_value"] = Cl_true
 
