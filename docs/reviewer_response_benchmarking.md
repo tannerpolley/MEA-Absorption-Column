@@ -21,10 +21,14 @@ The NCCC broad dataset includes multi-bed and intercooled cases. These are no lo
 ## Reproducible Commands
 
 ```powershell
-uv venv --python 3.12 --clear
+uv venv --python 3.13 --clear
 uv run --group test python -m pytest
 uv run python -m mea_absorption_column.benchmark --methods single scipy-bvp --thermo-models ideal_henry epcsaft_neutral
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds auto --output-dir benchmark_artifacts\intercooled_benchmark
+uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds auto --output-dir analyses\nccc_validation\results\runs\intercooled_benchmark
+uv run python analyses\nccc_validation\scripts\generate_data.py
+uv run python analyses\nccc_validation\scripts\render_figures.py
+uv run python analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
+uv run python analyses\nccc_validation\scripts\validate_results.py
 ```
 
-The Python 3.12 environment matters on this Windows machine because the sibling ePC-SAFT checkout currently contains a CPython 3.12 native extension.
+The paper-facing benchmark artifacts live under `analyses\nccc_validation\results\final\`. Disposable solver output and broad reruns should stay under `analyses\nccc_validation\results\runs\`.

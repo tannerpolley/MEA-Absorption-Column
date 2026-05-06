@@ -13,6 +13,12 @@ import pandas as pd
 
 from mea_absorption_column.Run_Model import run_model
 
+ROOT = Path(__file__).resolve().parents[3]
+ANALYSIS = Path(__file__).resolve().parents[1]
+FINAL = ANALYSIS / "results" / "final"
+PROFILE_ROOT = FINAL / "profiles"
+TABLES = FINAL / "tables"
+
 
 def _data_path(filename: str):
     return resources.files("mea_absorption_column").joinpath(f"data/{filename}")
@@ -59,7 +65,8 @@ def generate_temperature_profiles(
                 profile_path = None
                 profiles = result.get("_profiles") or {}
                 if "T" in profiles:
-                    profile_path = output_dir / _profile_filename(case_id, method, thermo_model)
+                    profile_path = output_dir / case_id / thermo_model / _profile_filename(case_id, method, thermo_model)
+                    profile_path.parent.mkdir(parents=True, exist_ok=True)
                     _write_temperature_plot(
                         profiles["T"],
                         df=df,
@@ -83,12 +90,40 @@ def generate_temperature_profiles(
                         "temperature_rmse_K": result.get("temperature_rmse_K"),
                         "invalid_state_count": result.get("invalid_state_count"),
                         "guard_penalty_count": result.get("guard_penalty_count"),
-                        "profile_png": "" if profile_path is None else str(profile_path),
+                        "profile_png": "" if profile_path is None else profile_path.relative_to(ROOT).as_posix(),
                     }
                 )
     summary = pd.DataFrame(rows)
-    summary.to_csv(output_dir / "temperature_profile_index.csv", index=False)
+    TABLES.mkdir(parents=True, exist_ok=True)
+    summary.to_csv(TABLES / "generated_temperature_profile_index.csv", index=False)
     return summary
+
+
+def collect_existing_profiles(profile_root: Path = PROFILE_ROOT) -> pd.DataFrame:
+    rows = []
+    for path in sorted(profile_root.glob("*/*/*.png")):
+        case_id = path.parents[1].name
+        thermo_model = path.parent.name
+        caveat = _profile_caveat(case_id, thermo_model)
+        rows.append(
+            {
+                "case_id": case_id,
+                "thermo_model": thermo_model,
+                "profile_png": path.relative_to(ROOT).as_posix(),
+                "clean_profile": True,
+                "caveat": caveat,
+            }
+        )
+    index = pd.DataFrame(rows)
+    TABLES.mkdir(parents=True, exist_ok=True)
+    index.to_csv(TABLES / "clean_temperature_profile_index.csv", index=False)
+    return index
+
+
+def _profile_caveat(case_id: str, thermo_model: str) -> str:
+    if case_id == "7C" and thermo_model == "epcsaft_neutral":
+        return "converged profile retained as a difficult one-bed ePC-SAFT diagnostic with substantial validation error"
+    return "accepted clean validation profile"
 
 
 def _write_temperature_plot(profile, df, run, case_id, method, thermo_model, result, output_path):
@@ -131,10 +166,11 @@ def _profile_filename(case_id: str, method: str, thermo_model: str) -> str:
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="Generate temperature-profile PNGs from solved MEA model cases.")
+    parser.add_argument("--collect-existing", action="store_true", help="Index existing final profile PNGs without rerunning simulations.")
     parser.add_argument("--source", choices=["c-cases", "nccc"], default="c-cases")
     parser.add_argument("--methods", nargs="+", default=["scipy-bvp"])
     parser.add_argument("--thermo-models", nargs="+", default=["ideal_henry", "epcsaft_neutral"])
-    parser.add_argument("--output-dir", default="benchmark_artifacts/temperature_profiles")
+    parser.add_argument("--output-dir", default=str(PROFILE_ROOT))
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--staged-beds", choices=["auto", "true", "false"], default="auto")
@@ -143,6 +179,10 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
+    if args.collect_existing:
+        summary = collect_existing_profiles(Path(args.output_dir))
+        print(summary.to_string(index=False))
+        return
     staged_beds = args.staged_beds
     if staged_beds == "true":
         staged_beds = True

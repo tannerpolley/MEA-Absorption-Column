@@ -57,7 +57,7 @@ First implementation:
 - Modify: `tests/test_benchmarking.py`
 - Modify: `README.md`
 - Modify: `docs/reviewer_response_benchmarking.md`
-- Later manuscript edit: `docs/main.tex`
+- Later manuscript edit: `docs/latex/main.tex`
 
 ---
 
@@ -814,14 +814,14 @@ Expected: pass.
 
 **Files:**
 - No code unless tests expose a defect.
-- Artifacts: `benchmark_artifacts/intercooled_smoke/`
+- Artifacts: `analyses/nccc_validation/results/runs/intercooled_smoke/`
 
 - [ ] **Step 1: Run one-bed baseline**
 
 Run:
 
 ```powershell
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds false --output-dir benchmark_artifacts\single_bed_baseline --c-case-limit 7 --nccc-case-limit 0
+uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds false --output-dir analyses\\nccc_validation\\results\\runs\\single_bed_baseline --c-case-limit 7 --nccc-case-limit 0
 ```
 
 Expected: C cases reproduce the current single-bed baseline.
@@ -831,7 +831,7 @@ Expected: C cases reproduce the current single-bed baseline.
 Run:
 
 ```powershell
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds true --output-dir benchmark_artifacts\staged_c_equivalence --c-case-limit 7 --nccc-case-limit 0
+uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds true --output-dir analyses\\nccc_validation\\results\\runs\\staged_c_equivalence --c-case-limit 7 --nccc-case-limit 0
 ```
 
 Expected: C-case capture and temperature RMSE remain close to baseline; this proves the stacked solver does not break one-bed cases.
@@ -841,7 +841,7 @@ Expected: C-case capture and temperature RMSE remain close to baseline; this pro
 Run:
 
 ```powershell
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --staged-beds auto --output-dir benchmark_artifacts\intercooled_smoke --c-case-limit 0 --nccc-case-limit 3
+uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --staged-beds auto --output-dir analyses\\nccc_validation\\results\\runs\\intercooled_smoke --c-case-limit 0 --nccc-case-limit 3
 ```
 
 Expected: artifacts are written even if some cases fail. Failures must include `beds=3`, `intercoolers=2`, `staged_beds=True`, and explicit messages.
@@ -932,7 +932,7 @@ Store the returned stacked profile internally as `initial_guess_scaled`. Do not 
 Run:
 
 ```powershell
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds auto --output-dir benchmark_artifacts\intercooled_epcsaft_seeded --c-case-limit 0 --nccc-case-limit 3
+uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds auto --output-dir analyses\\nccc_validation\\results\\runs\\intercooled_epcsaft_seeded --c-case-limit 0 --nccc-case-limit 3
 ```
 
 Expected: ePC-SAFT failures should shift from invalid-state crashes toward normal solver convergence/failure messages. If they still fail, record the failures and continue with ideal Henry as the publishable intercooled baseline.
@@ -944,7 +944,7 @@ Expected: ePC-SAFT failures should shift from invalid-state crashes toward norma
 **Files:**
 - Modify: `README.md`
 - Modify: `docs/reviewer_response_benchmarking.md`
-- Modify: `docs/main.tex`
+- Modify: `docs/latex/main.tex`
 
 - [ ] **Step 1: Add README command**
 
@@ -956,7 +956,7 @@ Add:
 Multi-bed NCCC cases should be run with staged beds enabled:
 
 ```powershell
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds auto --output-dir benchmark_artifacts\intercooled_benchmark
+uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds auto --output-dir analyses\\nccc_validation\\results\\runs\\intercooled_benchmark
 ```
 
 `--staged-beds auto` uses the stacked solver when a case has `Beds > 1` or `Intercoolers > 0`. Intercoolers are modeled as liquid enthalpy resets between beds. Unless explicit target temperatures are supplied, the first comparison uses the measured liquid feed temperature as the inter-stage target and reports this as `intercooler_assumption=Tl_feed_target`.
@@ -1000,7 +1000,7 @@ Expected: all tests pass.
 Run:
 
 ```powershell
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds auto --output-dir benchmark_artifacts\reviewer_response_staged_beds
+uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --staged-beds auto --output-dir analyses\\nccc_validation\\results\\runs\\reviewer_response_staged_beds
 ```
 
 Expected:
@@ -1015,7 +1015,7 @@ Expected:
 Run a short analysis script:
 
 ```powershell
-uv run python -c "import pandas as pd; p='benchmark_artifacts/reviewer_response_staged_beds/benchmark_results.csv'; df=pd.read_csv(p); print(df.groupby(['case_source','thermo_model','beds','intercoolers'])['success'].agg(['sum','count']))"
+uv run python -c "import pandas as pd; p='analyses/nccc_validation/results/runs/reviewer_response_staged_beds/benchmark_results.csv'; df=pd.read_csv(p); print(df.groupby(['case_source','thermo_model','beds','intercoolers'])['success'].agg(['sum','count']))"
 ```
 
 Expected: output clearly shows whether staged modeling improved the multi-bed/intercooled success rate.

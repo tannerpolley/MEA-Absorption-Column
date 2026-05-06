@@ -5,7 +5,10 @@ import pandas as pd
 import pytest
 
 from mea_absorption_column.benchmark import BENCHMARK_COLUMNS
-from mea_absorption_column.Run_Model import _apply_method_success_gates
+from mea_absorption_column.Run_Model import (
+    _apply_method_success_gates,
+    _fallback_temperature_profile,
+)
 from mea_absorption_column.BVP.ABS_Column import _smooth_absorption_only_vapor_flux
 from mea_absorption_column.BVP.robust_core import (
     BoundedStateSettings,
@@ -34,6 +37,7 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     epcsaft_cache_stats,
     epcsaft_phi_co2,
 )
+from mea_absorption_column.BVP.Methods import Scipy_BVP_Solve as scipy_bvp_module
 
 
 def test_positive_transform_round_trips_and_rejects_nonpositive_values():
@@ -72,6 +76,46 @@ def test_positive_flow_pressure_transform_stays_finite_for_large_newton_trials()
 def test_positive_flow_pressure_transform_rejects_nonpositive_flow():
     with np.testing.assert_raises(ValueError):
         scaled_physical_to_solver([0.0, 1.0, 1.0, 1.0, 5.0, 6.0, 1.0], transform_mode="positive_flow_pressure")
+
+
+def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monkeypatch):
+    captured = {}
+
+    def fake_polynomial_fit(_z, _y_int, _i):
+        return [-1.0, 0.0, 1.0]
+
+    class FakeSolution:
+        success = True
+        message = "ok"
+
+        def __init__(self, x, y):
+            self.x = x
+            self._y = y
+
+        def sol(self, _z):
+            return self._y
+
+    def fake_solve_bvp(_fun, _bc, z, y, **_kwargs):
+        captured["initial_guess"] = y
+        assert np.all(np.isfinite(y))
+        return FakeSolution(z, y)
+
+    monkeypatch.setattr(scipy_bvp_module, "polynomial_fit", fake_polynomial_fit)
+    monkeypatch.setattr(scipy_bvp_module, "solve_bvp", fake_solve_bvp)
+
+    y_a_scaled = np.ones(7)
+    y_b_scaled = np.ones(7)
+    parameters = (np.ones(7),)
+
+    scipy_bvp_module.scipy_BVP_solve(
+        y_a_scaled,
+        y_b_scaled,
+        np.linspace(0.0, 1.0, 3),
+        parameters,
+        settings={"transform_mode": "positive_flow_pressure", "mesh_points": 3},
+    )
+
+    assert "initial_guess" in captured
 
 
 def test_sanitize_scaled_state_clips_flows_and_pressure_without_mutating_input():
@@ -263,18 +307,47 @@ def test_finite_and_shooting_success_gate_rejects_bad_boundary_residual():
     assert "strict boundary residual gate" in message
 
 
-def test_collocation_success_gate_preserves_solver_success():
+def test_collocation_success_gate_preserves_solver_success_with_acceptable_boundary_residual():
     success, message = _apply_method_success_gates(
         method="scipy-bvp",
         solver_success=True,
         message="ok",
-        boundary_residual_norm=25.0,
+        boundary_residual_norm=0.25,
         capture_error_pct=50.0,
         settings={},
     )
 
     assert success is True
     assert message == "ok"
+
+
+def test_collocation_success_gate_rejects_bad_boundary_residual():
+    success, message = _apply_method_success_gates(
+        method="scipy-bvp",
+        solver_success=True,
+        message="ok",
+        boundary_residual_norm=25.0,
+        capture_error_pct=0.2,
+        settings={},
+    )
+
+    assert success is False
+    assert "strict boundary residual gate" in message
+
+
+def test_collocation_low_residual_fallback_cannot_override_strict_boundary_rejection():
+    success, message = _apply_method_success_gates(
+        method="scipy-bvp",
+        solver_success=False,
+        message="A singular Jacobian encountered when solving the collocation system.",
+        boundary_residual_norm=8.0,
+        capture_error_pct=0.2,
+        settings={"success_boundary_residual_max": 1.0, "accept_boundary_residual_max": 10.0},
+    )
+
+    assert success is False
+    assert "strict boundary residual gate" in message
+    assert "Accepted low-residual" not in message
 
 
 def test_collocation_success_gate_accepts_low_residual_final_iterate():
@@ -303,6 +376,39 @@ def test_collocation_success_gate_rejects_large_capture_error_even_with_low_boun
 
     assert success is False
     assert "Accepted low-residual" not in message
+
+
+def test_collocation_low_residual_acceptance_uses_explicit_capture_gate():
+    success, message = _apply_method_success_gates(
+        method="scipy-bvp",
+        solver_success=False,
+        message="A singular Jacobian encountered when solving the collocation system.",
+        boundary_residual_norm=0.04,
+        capture_error_pct=6.5,
+        settings={"success_capture_error_max_pct": 8.0},
+    )
+
+    assert success is True
+    assert "Accepted low-residual collocation final iterate" in message
+
+
+def test_temperature_profile_fallback_uses_solved_temperature_states():
+    Y = np.zeros((7, 3))
+    Y[4] = [314.0, 318.0, 321.0]
+    Y[5] = [316.0, 319.0, 322.0]
+
+    profiles = _fallback_temperature_profile(
+        Y,
+        np.array([0.0, 1.0, 2.0]),
+        thermal_state_mode="temperature",
+        Fl_MEA=1.0,
+        Fv_N2=1.0,
+        Fv_O2=0.1,
+    )
+
+    assert list(profiles) == ["T"]
+    assert profiles["T"]["Tl"].tolist() == [314.0, 318.0, 321.0]
+    assert profiles["T"]["Tv"].tolist() == [316.0, 319.0, 322.0]
 
 
 def test_collocation_success_gate_can_reject_converged_bad_capture():

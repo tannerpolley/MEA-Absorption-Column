@@ -1,11 +1,17 @@
 from mea_absorption_column.BVP.Methods.Integration_Methods import eulers
+from scipy.integrate import solve_ivp
 from scipy.optimize import root
 from mea_absorption_column.BVP.ABS_Column import abs_column
 from mea_absorption_column.BVP.robust_core import guard_column_rhs
 import numpy as np
+import time
 
 
 DEFAULT_SINGLE_SHOOT_SETTINGS = {
+    'integrator': 'euler',
+    'ivp_method': 'BDF',
+    'ivp_rtol': 1e-5,
+    'ivp_atol': 1e-8,
     'root_method': 'Krylov',
     'fatol': 0.1,
     'maxiter': 50,
@@ -16,19 +22,18 @@ DEFAULT_SINGLE_SHOOT_SETTINGS = {
 
 def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     settings = {**DEFAULT_SINGLE_SHOOT_SETTINGS, **(settings or {})}
+    settings["_runtime_start_s"] = time.time()
 
     Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a, Hlf_a_guess, Hvf_a, P_a = Y_a_scaled
     Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess, Hlf_b, Hvf_b_guess, P_b = Y_b_scaled
 
-    # integrater = scipy_integrate
-    # integrater = runge_kutta
-    # integrater = radau
-    integrater = eulers
+    integrater = _select_integrator(settings)
 
     shoot = True
 
     if shoot:
         def shooter(X):
+            _raise_if_timed_out(settings)
 
             Fl_CO2_a, Fl_H2O_a, Hlf_a = X
 
@@ -37,6 +42,7 @@ def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
                           Hlf_a,  Hvf_a, P_a]
 
             Y_scaled, _, _, _ = integrater(_guarded_abs_column, Y_a_scaled, z, args=parameters)
+            _raise_if_timed_out(settings)
 
             Fl_CO2_b_sim, Fl_H2O_b_sim, Hlf_b_sim = Y_scaled[0, -1], Y_scaled[1, -1], Y_scaled[4, -1]
 
@@ -58,6 +64,7 @@ def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
             'disp': settings['display'],
         }
         root_output = root(shooter, Y_0_guess, method=method, options=options)
+        _raise_if_timed_out(settings)
         if len(parameters) > 6 and isinstance(parameters[6], dict):
             parameters[6].get("solver_diagnostics", {})["jacobian_status"] = str(getattr(root_output, "status", ""))
 
@@ -75,3 +82,46 @@ def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
 
 def _guarded_abs_column(zi, y_scaled, parameters):
     return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
+
+
+def _select_integrator(settings):
+    integrator = str(settings.get("integrator", "euler")).lower()
+    if integrator == "euler":
+        return eulers
+    if integrator in {"solve_ivp", "ivp", "bdf", "radau", "rk45"}:
+        method_map = {"bdf": "BDF", "radau": "Radau", "rk45": "RK45"}
+        method = settings.get("ivp_method", method_map.get(integrator, "BDF"))
+        rtol = float(settings.get("ivp_rtol", 1e-5))
+        atol = float(settings.get("ivp_atol", 1e-8))
+
+        def integrate(fxn, y0, t_eval, args=None):
+            def rhs(t, y):
+                _raise_if_timed_out(settings)
+                return np.asarray(fxn(t, y, args), dtype=float)
+
+            obj = solve_ivp(
+                rhs,
+                (float(t_eval[0]), float(t_eval[-1])),
+                np.asarray(y0, dtype=float),
+                method=method,
+                t_eval=t_eval,
+                rtol=rtol,
+                atol=atol,
+            )
+            if obj.y.shape[1] != len(t_eval):
+                return obj.y, obj.t, bool(obj.success), obj.message
+            return obj.y, t_eval, bool(obj.success), obj.message
+
+        return integrate
+    raise ValueError(f"Unknown shooting integrator: {settings.get('integrator')}")
+
+
+def _raise_if_timed_out(settings):
+    max_runtime = settings.get("max_runtime_s")
+    if max_runtime is None:
+        return
+    start = settings.get("_runtime_start_s")
+    if start is None:
+        return
+    if time.time() - float(start) > float(max_runtime):
+        raise TimeoutError(f"Shooting solve exceeded max_runtime_s={float(max_runtime):g}")

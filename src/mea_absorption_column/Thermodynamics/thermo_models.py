@@ -218,12 +218,33 @@ def epcsaft_neutral_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O):
     return fl_co2, fv_co2, fl_h2o, fv_h2o
 
 
-def compute_fugacity(model, y, x_true, Cl_true, Tl, Tv, H_CO2_mix, P, P_sat_H2O):
+def compute_fugacity(
+    model,
+    y,
+    x_true,
+    Cl_true,
+    Tl,
+    Tv,
+    H_CO2_mix,
+    P,
+    P_sat_H2O,
+    epcsaft_fugacity_blend=1.0,
+):
     normalized_model = (model or "ideal_henry").lower()
     if normalized_model in {"ideal", "ideal_henry", "henry"}:
         return ideal_henry_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
     if normalized_model in {"epcsaft", "epcsaft_neutral", "epc-saft"}:
-        return epcsaft_neutral_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O)
+        blend = float(np.clip(epcsaft_fugacity_blend, 0.0, 1.0))
+        epcsaft_values = epcsaft_neutral_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O)
+        if blend >= 1.0:
+            return epcsaft_values
+        henry_values = ideal_henry_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
+        if blend <= 0.0:
+            return henry_values
+        return tuple(
+            (1.0 - blend) * float(henry_value) + blend * float(epcsaft_value)
+            for henry_value, epcsaft_value in zip(henry_values, epcsaft_values)
+        )
     raise ValueError("Choose ideal_henry or epcsaft_neutral.")
 
 
@@ -237,11 +258,23 @@ def guarded_compute_fugacity(
     H_CO2_mix,
     P,
     P_sat_H2O,
+    epcsaft_fugacity_blend=1.0,
     diagnostics=None,
 ):
     try:
         _validate_fugacity_state(y, x_true, Tl, Tv, P)
-        values = compute_fugacity(model, y, x_true, Cl_true, Tl, Tv, H_CO2_mix, P, P_sat_H2O)
+        values = compute_fugacity(
+            model,
+            y,
+            x_true,
+            Cl_true,
+            Tl,
+            Tv,
+            H_CO2_mix,
+            P,
+            P_sat_H2O,
+            epcsaft_fugacity_blend=epcsaft_fugacity_blend,
+        )
         return tuple(_positive_finite(value) for value in values)
     except Exception as exc:
         record_invalid_state(diagnostics, f"fugacity guard: {exc}")

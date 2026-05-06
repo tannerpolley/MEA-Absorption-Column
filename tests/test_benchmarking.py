@@ -8,6 +8,7 @@ from mea_absorption_column.benchmark import (
     load_case_data,
     parse_args,
     run_benchmark,
+    _solver_settings_from_args,
     _settings_to_payload,
     settings_from_payload,
 )
@@ -61,9 +62,13 @@ def test_benchmark_result_columns_round_trip_to_csv(tmp_path, monkeypatch):
             "capture_error_pct": -0.5,
             "temperature_rmse_K": 1.2,
             "boundary_residual_norm": 0.001,
+            "boundary_residual_components": '{"Fv_CO2_pct": 0.0}',
             "mesh_points": 101,
             "tol": 0.1,
             "bc_tol": 0.001,
+            "max_nodes": 250,
+            "co2_capture_guess_pct": 88.0,
+            "h2o_capture_guess_pct": -90.0,
             "beds": 1,
             "intercoolers": 0,
             "staged_beds": False,
@@ -82,6 +87,13 @@ def test_benchmark_result_columns_round_trip_to_csv(tmp_path, monkeypatch):
         c_case_limit=1,
         nccc_case_limit=0,
         output_dir=tmp_path,
+        solver_settings={
+            "co2_vapor_upper_factor": 1.05,
+            "success_boundary_residual_max": 0.5,
+            "max_nodes": 300,
+            "co2_capture_guess_pct": 91.0,
+            "h2o_capture_guess_pct": -80.0,
+        },
     )
 
     results = run_benchmark(settings)
@@ -89,6 +101,11 @@ def test_benchmark_result_columns_round_trip_to_csv(tmp_path, monkeypatch):
 
     assert list(results.columns) == BENCHMARK_COLUMNS
     assert list(loaded.columns) == BENCHMARK_COLUMNS
+    assert loaded.loc[0, "co2_vapor_upper_factor"] == 1.05
+    assert loaded.loc[0, "success_boundary_residual_max"] == 0.5
+    assert loaded.loc[0, "max_nodes"] == 300
+    assert loaded.loc[0, "co2_capture_guess_pct"] == 91.0
+    assert loaded.loc[0, "h2o_capture_guess_pct"] == -80.0
 
 
 def test_benchmark_schema_includes_staged_bed_metadata():
@@ -104,6 +121,14 @@ def test_benchmark_schema_includes_staged_bed_metadata():
         "co2_flux_mode",
     ]:
         assert column in BENCHMARK_COLUMNS
+
+
+def test_benchmark_schema_includes_boundary_residual_components():
+    assert "boundary_residual_components" in BENCHMARK_COLUMNS
+    assert "success_boundary_residual_max" in BENCHMARK_COLUMNS
+    assert "max_nodes" in BENCHMARK_COLUMNS
+    assert "co2_capture_guess_pct" in BENCHMARK_COLUMNS
+    assert "h2o_capture_guess_pct" in BENCHMARK_COLUMNS
 
 
 def test_benchmark_cli_accepts_solver_settings():
@@ -125,12 +150,24 @@ def test_benchmark_cli_accepts_solver_settings():
         "K5",
         "--transform-mode",
         "positive_flow_pressure",
+        "--co2-vapor-upper-factor",
+        "1.05",
+        "--shooting-integrator",
+        "bdf",
+        "--shooting-root-method",
+        "hybr",
         "--co2-capture-guess-pct",
         "85",
+        "--h2o-capture-guess-pct",
+        "-90",
+        "--epcsaft-fugacity-blend",
+        "0.5",
         "--mass-transfer-factor",
         "0.5",
         "--heat-transfer-factor",
         "0.8",
+        "--success-boundary-residual-max",
+        "0.5",
         "--success-capture-error-max-pct",
         "8",
         "--capture-correction-model",
@@ -158,15 +195,29 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.subprocess_timeout_s == 30
     assert args.nccc_case_ids == ["K4", "K5"]
     assert args.transform_mode == "positive_flow_pressure"
+    assert args.co2_vapor_upper_factor == 1.05
+    assert args.shooting_integrator == "bdf"
+    assert args.shooting_root_method == "hybr"
     assert args.co2_capture_guess_pct == 85
+    assert args.h2o_capture_guess_pct == -90
+    assert args.epcsaft_fugacity_blend == 0.5
     assert args.mass_transfer_factor == 0.5
     assert args.heat_transfer_factor == 0.8
+    assert args.success_boundary_residual_max == 0.5
     assert args.success_capture_error_max_pct == 8
     assert args.capture_correction_model == "nccc_linear"
     assert args.multistart_capture_guesses == [60, 85]
     assert args.multistart_mass_transfer_factors == [0.26, 1.0]
     assert args.multistart_intercooler_strengths == [0.25, 1.0]
     assert args.multistart_co2_flux_modes == ["bidirectional", "absorption_only"]
+
+    solver_settings = _solver_settings_from_args(args)
+    assert solver_settings["integrator"] == "bdf"
+    assert solver_settings["ivp_method"] == "BDF"
+    assert solver_settings["root_method"] == "hybr"
+    assert solver_settings["co2_capture_guess_pct"] == 85
+    assert solver_settings["h2o_capture_guess_pct"] == -90
+    assert solver_settings["epcsaft_fugacity_blend"] == 0.5
 
 
 def test_benchmark_multistart_selects_lowest_capture_error(tmp_path, monkeypatch):
@@ -352,6 +403,45 @@ def test_benchmark_worker_preserves_filtered_case_ids(tmp_path, monkeypatch):
 def test_benchmark_schema_includes_capture_correction_columns():
     assert "raw_capture_pct" in BENCHMARK_COLUMNS
     assert "capture_correction_model" in BENCHMARK_COLUMNS
+    assert "co2_vapor_upper_factor" in BENCHMARK_COLUMNS
+
+
+def test_benchmark_writes_profile_png_for_failed_last_iterate(monkeypatch):
+    written = []
+
+    def fake_run_model(*args, **kwargs):
+        return {
+            "case_id": "3C",
+            "method": "scipy-bvp",
+            "thermo_model": "ideal_henry",
+            "success": False,
+            "message": "diagnostic last iterate",
+            "capture_pct": 50.0,
+            "capture_error_pct": -40.0,
+            "_profiles": {"T": pd.DataFrame({"Tl": [315.0], "Tv": [316.0]})},
+        }
+
+    def fake_write_profile_png(result, output_dir, case_source):
+        written.append((result["case_id"], case_source))
+        return str(Path(output_dir) / "diagnostic.png")
+
+    monkeypatch.setattr("mea_absorption_column.benchmark.run_model", fake_run_model)
+    monkeypatch.setattr("mea_absorption_column.benchmark._write_profile_png", fake_write_profile_png)
+
+    settings = BenchmarkSettings(
+        methods=("scipy-bvp",),
+        thermo_models=("ideal_henry",),
+        output_dir=Path("unused-output"),
+        c_case_limit=1,
+        nccc_case_limit=0,
+        profile_pngs=True,
+        write_artifacts=False,
+    )
+
+    results = run_benchmark(settings)
+
+    assert written == [("3C", "C_cases_data")]
+    assert results.loc[0, "profile_png"].endswith("diagnostic.png")
 
 
 def test_benchmark_settings_round_trip_for_worker_payload(tmp_path):

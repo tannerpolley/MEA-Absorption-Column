@@ -14,6 +14,7 @@ def fugacity(
     P,
     P_sat_H2O,
     thermo_model='ideal_henry',
+    epcsaft_fugacity_blend=1.0,
     diagnostics=None,
     guard_invalid_states=False,
 ):
@@ -29,6 +30,7 @@ def fugacity(
         "H_CO2_mix": H_CO2_mix,
         "P": P,
         "P_sat_H2O": P_sat_H2O,
+        "epcsaft_fugacity_blend": epcsaft_fugacity_blend,
     }
     if guard_invalid_states:
         kwargs["diagnostics"] = diagnostics

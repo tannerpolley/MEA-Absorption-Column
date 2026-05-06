@@ -1,0 +1,35 @@
+id: nccc_validation
+title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
+status: active
+summary: Reviewer-response validation artifacts for one-bed C cases, staged/intercooled K cases, and ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons.
+owner: project
+inputs:
+  - path: ../../src/mea_absorption_column/data/C_cases_data.csv
+    kind: packaged_reference_data
+  - path: ../../src/mea_absorption_column/data/NCCC_Data.csv
+    kind: packaged_reference_data
+outputs:
+  - path: results/final/tables/verified_c_case_thermo_benchmark.csv
+    kind: accepted_result_table
+  - path: results/final/tables/verified_staged_kcase_benchmark.csv
+    kind: accepted_result_table
+  - path: results/final/figures/c_case_thermo_benchmark.pdf
+    kind: manuscript_figure
+  - path: results/final/profiles
+    kind: clean_profile_gallery
+commands:
+  generate:
+    - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
+  render:
+    - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
+  profiles:
+    - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
+  validate:
+    - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
+runtime:
+  quick_seconds: 10
+  full_seconds: 600
+tracked_results:
+  - results/final/tables
+  - results/final/figures
+  - results/final/profiles

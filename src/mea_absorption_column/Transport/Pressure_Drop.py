@@ -43,7 +43,7 @@ def pressure_drop(h_L, rho_mass_l, rho_mass_v, mul_mix, muv_mix, A, ul, uv, pack
     K = (1 + 2 / 3 * (1 / (1 - ϵ)) * dp / ds) ** -1
     Re_v = uv * dp / ((1 - ϵ) * νv) * K
     require_positive("pressure_drop", diagnostics, K=K, Re_v=Re_v)
-    C1 = 13300 / (a_p ** 3 / 2)
+    C1 = 13300 / (a_p ** (3 / 2))
     Fr_L = ul ** 2 * a_p / g
     Ψ_L = Cp_0 * (64 / Re_v + 1.8 / Re_v ** .08) * ((ϵ - h_L) / ϵ) ** 1.5 * (h_L / h_Ls) ** .3 * np.exp(
         C1 * np.sqrt(Fr_L))

@@ -1,6 +1,8 @@
 import numpy as np
+import pandas as pd
 import time
 import matplotlib.pyplot as plt
+import json
 import platform
 import sys
 from importlib import metadata
@@ -66,6 +68,12 @@ def run_model(df,
     )
     solver_settings_for_run = dict(solver_settings or {})
     thermal_state_mode = solver_settings_for_run.get("thermal_state_mode", "enthalpy")
+    if (
+        method == "scipy-bvp"
+        and not use_staged_beds
+        and solver_settings_for_run.get("transform_mode") == "case_bounded_flow_pressure"
+    ):
+        solver_settings_for_run["transform_mode"] = "positive_flow_pressure"
 
     if method == 'single':
         solving_function = single_shoot_solve
@@ -155,6 +163,7 @@ def run_model(df,
         'heat_transfer_factor': float(solver_settings_for_run.get('heat_transfer_factor', 1.0)),
         'thermal_state_mode': thermal_state_mode,
         'co2_flux_mode': solver_settings_for_run.get('co2_flux_mode', 'bidirectional'),
+        'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
     }
     parameters = scales, eq_scales, const_flow, H, A, packing, model_options
     intercooler_settings = intercooler_settings or {}
@@ -381,8 +390,20 @@ Run #{run + 1:03d}:
                                   plot_temperature=plot_temperature,
                                   )
         except Exception as exc:
-            dfs_dict = {}
-            output_message_suffix = f"; profile output generation failed: {exc}"
+            dfs_dict = _fallback_temperature_profile(
+                Y,
+                z_outputs,
+                thermal_state_mode=thermal_state_mode,
+                Fl_MEA=Fl_MEA_a,
+                Fv_N2=Fv_N2_a,
+                Fv_O2=Fv_O2_a,
+            )
+            if dfs_dict:
+                output_message_suffix = (
+                    f"; profile output used temperature-only fallback after: {exc}"
+                )
+            else:
+                output_message_suffix = f"; profile output generation failed: {exc}"
 
     method_key = {
         'single': 'Shooting',
@@ -409,6 +430,14 @@ Run #{run + 1:03d}:
             Fv_H2O_rel_err,
             Tv_rel_err,
         ]))
+        boundary_residual_components = {
+            "Fl_CO2_pct": float(Fl_CO2_rel_err),
+            "Fl_H2O_pct": float(Fl_H2O_rel_err),
+            "Tl_pct": float(Tl_rel_err),
+            "Fv_CO2_pct": float(Fv_CO2_rel_err),
+            "Fv_H2O_pct": float(Fv_H2O_rel_err),
+            "Tv_pct": float(Tv_rel_err),
+        }
         settings = _effective_solver_settings(method, solver_settings_for_run)
         capture_error_pct = None if target_capture is None else float(CO2_cap - target_capture)
         method_success, gated_message = _apply_method_success_gates(
@@ -431,9 +460,14 @@ Run #{run + 1:03d}:
             'capture_error_pct': capture_error_pct,
             'temperature_rmse_K': temperature_rmse,
             'boundary_residual_norm': boundary_residual_norm,
+            'boundary_residual_components': json.dumps(boundary_residual_components, sort_keys=True),
             'mesh_points': int(settings.get('mesh_points', len(z))),
             'tol': settings.get('tol'),
             'bc_tol': settings.get('bc_tol'),
+            'max_nodes': settings.get('max_nodes'),
+            'co2_capture_guess_pct': CO2_cap_guess,
+            'h2o_capture_guess_pct': H2O_cap_guess,
+            'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
             'beds': beds_count,
             'intercoolers': intercoolers_count,
             'staged_beds': bool(use_staged_beds),
@@ -490,6 +524,40 @@ def _temperature_rmse(df, run, dfs_dict):
     return float(np.sqrt(np.mean((predicted - observed) ** 2)))
 
 
+def _fallback_temperature_profile(Y, z, thermal_state_mode, Fl_MEA, Fv_N2, Fv_O2):
+    temperatures = []
+    for i in range(Y.shape[1]):
+        if thermal_state_mode == "temperature":
+            Tl = _finite_or_nan(Y[4, i])
+            Tv = _finite_or_nan(Y[5, i])
+        else:
+            Fl = np.asarray([Y[0, i], Fl_MEA, Y[1, i]], dtype=float)
+            Fv = np.asarray([Y[2, i], Y[3, i], Fv_N2, Fv_O2], dtype=float)
+            try:
+                x = Fl / np.sum(Fl)
+                Hl = float(Y[4, i]) / float(np.sum(Fl))
+                Tl = _finite_or_nan(get_liquid_temperature(x, Hl))
+            except Exception:
+                Tl = np.nan
+            try:
+                y = Fv / np.sum(Fv)
+                Hv = float(Y[5, i]) / float(np.sum(Fv))
+                Tv = _finite_or_nan(get_vapor_temperature(y, Hv))
+            except Exception:
+                Tv = np.nan
+        temperatures.append({"Tl": Tl, "Tv": Tv})
+    profile = pd.DataFrame(temperatures, index=np.asarray(z, dtype=float))
+    profile.index.name = "Position"
+    if not np.isfinite(profile[["Tl", "Tv"]].to_numpy(dtype=float)).any():
+        return {}
+    return {"T": profile}
+
+
+def _finite_or_nan(value):
+    value = float(np.asarray(value, dtype=float).reshape(-1)[0])
+    return value if np.isfinite(value) else np.nan
+
+
 def _is_temperature_tap(column):
     try:
         float(column)
@@ -536,8 +604,10 @@ def _apply_method_success_gates(
 ):
     method_success = bool(solver_success)
     gate_messages = []
-    if method in {"single", "finite"} and boundary_residual_norm > float(settings.get("success_boundary_residual_max", 1.0)):
+    boundary_rejected = False
+    if boundary_residual_norm > float(settings.get("success_boundary_residual_max", 1.0)):
         method_success = False
+        boundary_rejected = True
         gate_messages.append(f"Rejected by strict boundary residual gate: {boundary_residual_norm:.6g}")
     if (
         method in {"single", "finite"}
@@ -557,12 +627,19 @@ def _apply_method_success_gates(
     if (
         method == "scipy-bvp"
         and not method_success
+        and not boundary_rejected
         and "max_runtime_s" not in str(message)
         and settings.get("accept_low_residual_final_iterate", True)
         and boundary_residual_norm <= float(settings.get("accept_boundary_residual_max", 10.0))
         and (
             capture_error_pct is None
-            or abs(float(capture_error_pct)) <= float(settings.get("accept_capture_error_max_pct", 5.0))
+            or abs(float(capture_error_pct))
+            <= float(
+                settings.get(
+                    "accept_capture_error_max_pct",
+                    settings.get("success_capture_error_max_pct", 5.0),
+                )
+            )
         )
     ):
         method_success = True

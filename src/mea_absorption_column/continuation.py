@@ -108,6 +108,28 @@ def default_absorber_continuation_steps(include_epcsaft: bool = True) -> tuple[C
         ),
     ]
     if include_epcsaft:
+        epcsaft_path = (
+            "one_bed_henry->staged_henry_no_intercooler_reset->"
+            "staged_henry_weak_intercooler_reset->"
+            "staged_henry_full_intercooler_reset"
+        )
+        for blend in (0.25, 0.5, 0.75):
+            steps.append(
+                ContinuationStep(
+                    name=f"epcsaft_fugacity_blend_{blend:g}",
+                    thermo_model="epcsaft_neutral",
+                    staged_beds="auto",
+                    required=False,
+                    solver_settings={
+                        **common,
+                        "transform_mode": "case_bounded_flow_pressure",
+                        "intercooler_strength": 1.0,
+                        "epcsaft_fugacity_blend": blend,
+                        "continuation_stage": f"epcsaft_fugacity_blend_{blend:g}",
+                        "continuation_path": f"{epcsaft_path}->epcsaft_blend_{blend:g}",
+                    },
+                )
+            )
         steps.append(
             ContinuationStep(
                 name="henry_seeded_epcsaft",
@@ -117,12 +139,9 @@ def default_absorber_continuation_steps(include_epcsaft: bool = True) -> tuple[C
                     **common,
                     "transform_mode": "case_bounded_flow_pressure",
                     "intercooler_strength": 1.0,
+                    "epcsaft_fugacity_blend": 1.0,
                     "continuation_stage": "henry_seeded_epcsaft",
-                    "continuation_path": (
-                        "one_bed_henry->staged_henry_no_intercooler_reset->"
-                        "staged_henry_weak_intercooler_reset->"
-                        "staged_henry_full_intercooler_reset->epcsaft_neutral"
-                    ),
+                    "continuation_path": f"{epcsaft_path}->epcsaft_blend_0.25->epcsaft_blend_0.5->epcsaft_blend_0.75->epcsaft_neutral",
                 },
             )
         )

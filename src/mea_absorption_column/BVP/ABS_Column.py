@@ -30,6 +30,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     heat_transfer_factor = float(model_options.get('heat_transfer_factor', 1.0))
     thermal_state_mode = model_options.get('thermal_state_mode', 'enthalpy')
     co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
+    epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
     Fl_MEA, Fv_N2, Fv_O2 = const_flow
     # endregion
 
@@ -157,6 +158,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         P,
         P_sat_H2O,
         thermo_model=thermo_model,
+        epcsaft_fugacity_blend=epcsaft_fugacity_blend,
         diagnostics=solver_diagnostics,
         guard_invalid_states=guard_invalid_states,
     )

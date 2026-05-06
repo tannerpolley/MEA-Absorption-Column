@@ -58,6 +58,7 @@
 
 \usepackage{color}
 \usepackage{siunitx}
+\graphicspath{{../}{./}{../../}}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -94,7 +95,7 @@
     \shortauthors{Polley et al.}
 
     % Main title of the paper
-    \title [mode = title]{MEA Absorption Column Model Framework and Simulation Method Analysis}
+    \title [mode = title]{\texorpdfstring{MEA Absorption Column Model Framework\\ and Simulation Method Analysis}{MEA Absorption Column Model Framework and Simulation Method Analysis}}
 
     \author[1]{Tanner W. Polley}
     \author[2]{Tyler Garn}
@@ -113,10 +114,12 @@
         Numerical Methods \sep Python \sep Carbon Dioxide Capture \sep Modeling \sep MEA Absorption \sep Post-Combustion Carbon Capture \sep Process Simulation \sep
     \end{keywords}
 
+    \hfuzz=120pt
     \maketitle
+    \hfuzz=0.1pt
 
     \section{Introduction}\label{sec:introduction}
-        Post-combustion carbon capture (PCC) has emerged as a leading approach for reducing CO\textsubscript{2} emissions, particularly in power plants and industrial facilities that rely on fossil fuels. Among the different PCC techniques, amine-based absorption is effective, mature, and relative easy to retrofit into existing infrastructure. However, designing, analyzing, and optimizing these systems is challenging because they involve complex, coupled phenomena such as vapor-liquid equilibrium, chemical reaction kinetics, and transport processes. Over the years, researchers have introduced various model formulations and numerical methods to capture the underlying physics, but a key hurdle remains balancing high-fidelity accuracy against computational efficiency. This tension is especially relevant when evaluating a range of operating conditions, as engineering teams increasingly depend on large sets of simulations (i.e., iterative runs) to explore design alternatives, perform risk assessments, or guide control strategies. Rapid and robust computational models become essential, both in academic investigations and industrial deployments. 
+        Post-combustion carbon capture (PCC) has emerged as a leading approach for reducing CO\textsubscript{2} emissions, particularly in power plants and industrial facilities that rely on fossil fuels. Among the different PCC techniques, amine-based absorption is effective, mature, and relatively easy to retrofit into existing infrastructure. However, designing, analyzing, and optimizing these systems is challenging because they involve complex, coupled phenomena such as vapor-liquid equilibrium, chemical reaction kinetics, and transport processes. Over the years, researchers have introduced various model formulations and numerical methods to capture the underlying physics, but a key hurdle remains balancing high-fidelity accuracy against computational efficiency. This tension is especially relevant when evaluating a range of operating conditions, as engineering teams increasingly depend on large sets of simulations (i.e., iterative runs) to explore design alternatives, perform risk assessments, or guide control strategies. Rapid and robust computational models become essential, both in academic investigations and industrial deployments.
         
         This paper compares three numerical approaches (shooting, finite difference, and SciPy collocation-style BVP solution) within one model implementation so that solver behavior can be evaluated using the same equations, data, and benchmark scripts. The model framework includes mass/energy balances and integrated transport and reaction-enhancement calculations, while the thermodynamic driving force can be switched between the baseline Henry-law model and a neutral ePC-SAFT sensitivity model. The benchmarks focus on reproducible runtime, convergence, boundary residuals, capture-rate error, and temperature-profile error rather than unsupported claims of general industrial accuracy or scale-up readiness.
 
@@ -138,27 +141,27 @@
 
     \subsection{Summary}
     
-        In surveying the broad array of modeling efforts in amine-based PCC, it became evident that many studies have tackled individual elements such as mass transfer kinetics, thermodynamic equilibrium, process dynamics, or process optimization. The gap addressed here is narrower and more reproducible: a transparent MEA absorber implementation is used as a common benchmark for numerical solution methods and thermodynamic driving-force assumptions. The novelty is not that each physical submodel is new. Instead, the contribution is the controlled comparison of solver behavior, validation error, boundary residuals, and runtime when the governing equations, NCCC case data, initialization, and reporting format are held fixed. This also makes it possible to test how the baseline Henry-law fugacity driving force changes when replaced by a neutral ePC-SAFT fugacity-coefficient calculation, while leaving the reaction, enhancement, transport, and balance equations unchanged.
+        In surveying the broad array of modeling efforts in amine-based PCC, it became evident that many studies have tackled individual elements such as mass transfer kinetics, thermodynamic equilibrium, process dynamics, or process optimization. The gap addressed here is narrower and more reproducible: a transparent MEA absorber implementation is used as a common benchmark for numerical solution methods and thermodynamic driving-force assumptions. The novelty is not that each physical submodel is new, and it is not the ePC-SAFT equation of state itself. Instead, the contribution is the controlled comparison of solver behavior, validation error, boundary residuals, and runtime when the governing equations, NCCC case data, initialization, thermodynamic driving-force lane, and reporting format are held fixed. The external ePC-SAFT package is used read-only as a neutral CO$_2$ fugacity-coefficient sensitivity lane, which allows the Henry-law baseline to be compared with an EOS-based driving-force calculation without changing the reaction, enhancement, transport, or balance equations.
     
 
     \section{Model Framework}
         Solvent-based PCC models are built to replicate the absorption phenomena occurring in industrial-packed columns. The dimensions of an absorption column have a certain height and diameter that are scaled on the demand of the input streams of liquid and vapor. The absorption phenomenon occurs when the thermodynamic driving force for $\COtwo$ is pushed from vapor to liquid. This driving force and the speed at which it happens are dependent on multiple factors such as transport, vapor-liquid equilibrium, and the kinetics of the reaction occurring. Accounting for all of these and their interactions together is key to solving this model. Each of these is also dependent on the properties of each stream and element found in the system which are typically dependent on the temperature and composition of the streams. These variables are tracked by the governing equations seen as the mass and energy balances of the system. These governing equations are found as differential equations and solving these is key to simulating the column.
 
-        \begin{figure}[ht]
+        \begin{figure}
             \centering
             \includegraphics[width=12cm]{figs/Model_Framework_Flowchart.png}
             \caption{Model Framework}\label{fig:Model_Framework_Flowchart}
         \end{figure}
-        The diagram in Figure~\ref{fig:Model_Framework_Flowchart} inspired from Luo \cite{Luo2017ImprovingDeployment} outlines the complete 
+        The diagram in Figure~\ref{fig:Model_Framework_Flowchart}, adapted from Luo \cite{Luo2017ImprovingDeployment}, outlines the complete
         model framework developed for simulating the amine-based absorption column model 
         used in post-combustion $\COtwo$ capture. It begins with the specification of flow variables, such as flow rates, compositions, and temperatures for both vapor and 
-        liquid phases. These flow variables are the design variables that the solver, whichever method, is estimating to converge onto the solution and match the boundary conditions. These variables are first used to calculate all physical property calculations, which is divided into thermophysical and transport 
-        properties. Thermophysical properties include Henry’s law constants, density, surface tension, enthalpy, and heat capacity, while transport properties encompass viscosity, diffusivity, and thermal conductivity. These properties are critical for capturing the physical behavior of the system and are used extensively in both thermodynamic and transport modeling.
+        liquid phases. These flow variables are the design variables that each numerical method adjusts to satisfy the boundary conditions. They are first used to evaluate physical properties, which are divided into thermophysical and transport
+        properties. Thermophysical properties include Henry's law constants, density, surface tension, enthalpy, and heat capacity, while transport properties encompass viscosity, diffusivity, and thermal conductivity. These properties are critical for capturing the physical behavior of the system and are used extensively in both thermodynamic and transport modeling.
         
-        Thermodynamic modeling follows, incorporating both the chemical equilibrium and vapor-liquid equilibrium (VLE) of the model. The chemical equilibrium determines the true species concentrations based on the reaction set and apparent mole fractions and its results are quite sensitive to the overall stability and results of the model. The VLE computes the fugacity of the species, the key thermodynamic driving force. The model is setup to be able to switch to any VLE model given, be it an idealized model utilizing only Henry's solubility laws, an activity coefficient such as NRTL, or an equation of state model like ePC-SAFT \cite{Cameretti2005ModelingOriginal}. In this work, the Henry-law model is used as the baseline driving-force calculation and a neutral ePC-SAFT calculation is used as a controlled sensitivity test for the CO$_2$ fugacity coefficient. Once the thermodynamics is evaluated, it is utilized alongside most of the properties in determining the transport phenomena of the model which contains hydraulic variables (e.g., velocity, holdup, interfacial area), transfer coefficients (e.g., mass and heat transfer), and an enhancement factor to quantify reaction-driven mass transfer. All these components, along size the fugacity differential, feed into the calculation of species fluxes, both molar and enthalpic, which in turn define the governing differential equations. These include mass and energy balances, which are numerically solved to predict the column's performance. Once the solver approximates the differential equations congruent with the boundary conditions, a new set of design variables are tested and sent back to the model framework. 
+        Thermodynamic modeling follows, incorporating both the chemical equilibrium and vapor-liquid equilibrium (VLE) of the model. The chemical equilibrium determines the true species concentrations based on the reaction set and apparent mole fractions and its results are quite sensitive to the overall stability and results of the model. The VLE computes the fugacity of the species, the key thermodynamic driving force. The model is setup to be able to switch to any VLE model given, be it an idealized model utilizing only Henry's solubility laws, an activity coefficient such as NRTL, or an equation of state model like ePC-SAFT \cite{Cameretti2005ModelingOriginal}. In this work, the Henry-law model is used as the baseline driving-force calculation and a neutral ePC-SAFT calculation is used as a controlled sensitivity test for the CO$_2$ fugacity coefficient. This is a traceability comparison, not a speed claim: the generated benchmark rows show higher runtime for ePC-SAFT than for Henry because the ePC-SAFT lane evaluates fugacity coefficients through an external equation-of-state state calculation. Once the thermodynamics is evaluated, it is utilized alongside most of the properties in determining the transport phenomena of the model which contains hydraulic variables (e.g., velocity, holdup, interfacial area), transfer coefficients (e.g., mass and heat transfer), and an enhancement factor to quantify reaction-driven mass transfer. All these components, alongside the fugacity differential, feed into the calculation of species fluxes, both molar and enthalpic, which in turn define the governing differential equations. These include mass and energy balances, which are numerically solved to predict the column's performance. Once the solver approximates the differential equations congruent with the boundary conditions, a new set of design variables are tested and sent back to the model framework.
 
         \subsection{Thermodynamics}\label{subsec:thermodynamics}
-            The thermodynamics section of the model establishes the chemical and phase behavior that drives $\COtwo$ absorption in the MEA solvent system. It begins with solving chemical equilibrium by determining the true species concentrations. Once the true concentrations are known, vapor–liquid equilibrium is modeled to determine the fugacities of the species. Together, the chemical equilibrium and VLE models provide the thermodynamic foundation for accurately predicting mass transfer and absorption behavior throughout the column.
+            The thermodynamics section of the model establishes the chemical and phase behavior that drives $\COtwo$ absorption in the MEA solvent system. It begins with solving chemical equilibrium by determining the true species concentrations. Once the true concentrations are known, vapor--liquid equilibrium is modeled to determine the fugacities of the species. Together, the chemical equilibrium and VLE models provide the thermodynamic foundation for predicting mass transfer and absorption behavior throughout the column.
         
             \subsubsection{Chemical Equilibrium}
                 Solving for the chemical equilibrium of the liquid solvent is a key first step in solving for the absorption. Upon solving for the chemical equilibrium, the concentration of the true species are found which are used throughout the rest of the model both in the thermodynamics and transport correlations. The methodology to solve for the true species begins with the concentration of the apparent species and equilibrium constants for the two main reactions found.
@@ -168,7 +171,7 @@
                 \end{align}
                 This reaction set represents a simplification of the solution chemistry that was developed by Hilliard \cite{Hillard2008} for typical $\COtwo$ capture process conditions where concentrations of other ions (${\text{H}_3 \text{O}}^+$,${\text{OH}}^-$,${\text{CO}_3}^{2-}$ ) are negligibly low. 
 
-                This reaction set leads to the following stoichiometric matrix $\mathbf{\nu}_{r,i}$ is then  
+                This reaction set gives the following stoichiometric matrix $\mathbf{\nu}_{i,r}$:
                 \begin{align}
                     \mathbf{\nu}_{i, r} = 
                     \begin{bmatrix}
@@ -193,7 +196,7 @@
                  \begin{align}
                     Q_r &= \prod_i \text{C}_i^{\nu_{i,r}}
                  \end{align}
-                 wherefore the relationship
+                  Therefore, the relationship
                  \begin{align}
                     Q_r &= K_r
                 \end{align}
@@ -207,12 +210,12 @@
                     \textbf{C} &= \left[
                          C^{\liq}_{\COtwo}, C^{\liq}_{\MEA}, C^{\liq}_{\HtwoO}, C^{\liq}_{\MEAH}, C^{\liq}_{\MEACOO}, C^{\liq}_{\HCOthree}\right]
                 \end{align}
-                Where $\textbf{C}$ is the array of unknowns as the concentration of true species.
-                Each equation is then set equal to zero and utilizing a non-linear solver, the true species concentration is found via the roots of the non-linear system of equations. Concentration was chosen as the variable used since this model currently assumed that the activity coefficient of each species is one and concentration is larger in value that mole fraction. Since the true mole fraction of $\COtwo$ can get quite small near near the top of the column, scaling for both the unknowns and each equation is pivotal in allowing the root-finder to converge. Generous initial guesses are also necessary due to the non-linearity of the equations. A technique of utilizing a python functions own attribute to store the previous iterations result in order to use this result as the next iterations guess was utilized. This method proved reliable and efficient, with Newton’s method consistently converging at the column base when $x_{\COtwo, true}$ is larger and will continue to use each result step-wise as it solves up the column.This omitted the need to of having a surrogate model predict the array of initial guesses depending on the current height of the column or apparent mole fractions and temperatures. Another option is to use extent of reactions $(\xi)$ and minimize $\Delta _{rxn} G^{\circ}$ to initialize a set of guesses. Fortunately the previous method was deemed adequate and can save on computational time. Once true species concentrations are known, VLE behavior can be evaluated.
+                where $\textbf{C}$ is the array of unknown true-species concentrations.
+                Each equation is set to zero and the true species concentrations are obtained as the roots of the nonlinear algebraic system. Concentration is used as the unknown variable because the present model assumes unit activity coefficients for the species in this simplified equilibrium calculation and because concentration provides better numerical scaling than mole fraction for dilute $\COtwo$ species. Since the true mole fraction of $\COtwo$ can become small near the top of the column, scaling both the unknowns and equations is important for root-finder convergence. The implementation stores the previous converged chemical-equilibrium solution and reuses it as the next initial guess while marching through the profile. This sequential initialization reduces the need for a separate surrogate model for chemical-equilibrium guesses. A more rigorous alternative would solve for reaction extents $(\xi)$ by minimizing $\Delta _{rxn} G^{\circ}$, but that approach is outside the scope of the present benchmark. Once true species concentrations are known, VLE behavior can be evaluated.
 
 
             \subsubsection{Vapor-Liquid Equilibrium}
-                The vapor-liquid equilibrium of the model is what determines the driving force of the $\COtwo$ absorption that occurs within the column. This driving force is the difference between the vapor and liquid fugacities of $\COtwo$. Significant progress has been made in developing accurate models for phase behavior. Of the most sophisticated is the e-NRTL activity coefficient model originally developed by Zhang at el. \cite{Zhang2011ThermodynamicModel}. In this model, binary electrolyte interactions parameters between molecules and electrolytes are fit with speciation data and many thermodynamic expressions are derived such as heat capacity and excess enthalpy. This model has shown to predict the $\MEA-\HtwoO-\COtwo$ system very well. The only draw back is the amount of parameters required and the complexity of the model, which can be a hindrance to the convergence of the model when running numerous simulations for statistical testing. Other models such as the ePC-SAFT equation of state model are rather new in the field of amine-based absorption and has shown to be promising to reduce the number of required parameters and complexity without losing the required accuracy. Though for this model, a simpler VLE model was chosen in order to maximize the speed and stability of the model since its main objective is running numerous simulations for statistical analysis/uncertainty quantification. The simplified model incorporates complexity into Henry’s Law, using regressed parameters to capture key interactions. The following outlines the derivation and assumptions for relating liquid fugacity to Henry’s Law. First start with the definition of equilibrium for a species between two phases (liquid, vapor):
+                The vapor-liquid equilibrium of the model determines the driving force for $\COtwo$ absorption in the column. This driving force is the difference between the vapor and liquid fugacities of $\COtwo$. Significant progress has been made in developing accurate models for phase behavior. One sophisticated route is the e-NRTL activity coefficient model originally developed by Zhang et al. \cite{Zhang2011ThermodynamicModel}. In this model, binary electrolyte interaction parameters between molecules and electrolytes are fit with speciation data, and many thermodynamic expressions are derived, such as heat capacity and excess enthalpy. This model has shown strong performance for the $\MEA-\HtwoO-\COtwo$ system, but the parameter count and model complexity can be a hindrance when running numerous simulations for statistical testing. PC-SAFT and ePC-SAFT provide an equation-of-state alternative for associating and electrolyte-containing systems \cite{Gross2001PC-SAFT:Molecules,Cameretti2005ModelingOriginal}, and PC-SAFT parameters for $\COtwo$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh \cite{FakouriBaygi2015ApplicationSolutions}. The benchmark therefore keeps the Henry-law model as the fast baseline and adds a neutral ePC-SAFT sensitivity lane to evaluate how an EOS-based CO$_2$ fugacity-coefficient calculation changes the solved column predictions. The following outlines the derivation and assumptions for relating liquid fugacity to Henry's Law. First start with the definition of equilibrium for a species between two phases (liquid, vapor):
                 \begin{equation}
                     f_i^v = f_i^l
                 \end{equation}
@@ -250,7 +253,7 @@
                     \textit{f}^{\:\vap}_{ \COtwo} &= P y_{\COtwo} && \left(\unit{Pa} \right)\\
                     \textit{f}^{\:\liq}_{ \COtwo} &= C^{\liq}_{ \COtwo, \text{true}} H_{\COtwo,\text{mix}} &&\left(\unit{Pa} \right) \label{eq:ideal}
                 \end{align}
-                The parameters used to determine the Henry's Law expression for $\COtwo$ in the liquid mixture are specifically tuned to account for as many interactions as possible and are fitted with speciation data. Unfortunately, this method has the drawback of less potential accuracy compared to a more rigorous model such as e-NRTL activity coefficient model or ePC-SAFT equation of state model. With less rigor, though, brings much more stability and consistency, which is important when attempting to run a model for many simulations. 
+                The parameters used to determine the Henry's Law expression for $\COtwo$ in the liquid mixture are specifically tuned to account for as many interactions as possible and are fitted with speciation data. This baseline remains less rigorous than an e-NRTL activity-coefficient model \cite{Zhang2011ThermodynamicModel} or an ePC-SAFT equation-of-state model, but it is also simpler and more stable when the benchmark needs to run many cases. The neutral ePC-SAFT lane is therefore introduced as a comparison path, not as a claim that it is faster than a full electrolyte model.
                 The following equations for the fugacity of $\HtwoO$ are below
                 \begin{align}
                     \textit{f}^{\:\vap}_{ \HtwoO} &= P y_{\HtwoO} && \left(\unit{Pa} \right)\\
@@ -459,7 +462,7 @@
             \mathbf{y}(0) = \boldsymbol{\alpha}, \quad \mathbf{y}(H) = \boldsymbol{\beta},
             \end{cases}
         \end{align}
-        There are multiple methods that solve the boundary value problem required when simulating an packed-absorption column. Three possible methods are introduced and analyzed: the shooting method, finite difference method, and SciPy collocation-style boundary-value method. The shooting method reformulates the BVP as an Initial Value Problem (IVP) and iteratively adjusts initial conditions to satisfy boundary conditions. The finite difference method discretizes the differential equations in the spatial domain and solves the resulting nonlinear algebraic system. The SciPy BVP method uses a collocation-style adaptive mesh algorithm through \texttt{solve\_bvp}; it should not be described as a custom orthogonal collocation implementation unless a separate orthogonal-collocation discretization is explicitly wired into the benchmark. Depending on the use case, each method can be useful, but the paper reports quantitative settings and residuals before drawing conclusions about speed or robustness.
+        There are multiple methods that solve the boundary value problem required when simulating an packed-absorption column. Three possible methods are introduced and analyzed: the shooting method, finite difference method, and SciPy collocation-style boundary-value method. In this benchmark, shooting and finite difference are comparison methods because they expose different initialization and discretization failure modes on the same equations, while the SciPy \texttt{solve\_bvp} path is the current reference solver because it is the implementation used to generate the benchmark rows and report mesh and residual metadata. The paper therefore treats speed and robustness as empirical outcomes of the recorded runs, not as a priori method rankings.
 
         \subsection{Shooting Method}
             The shooting method is a powerful numerical technique for solving boundary value problems (BVPs) by converting them into an equivalent set of initial value problems (IVPs). The core idea is to guess any unknown initial conditions (such as a missing initial slope) and then integrate the differential equations forward in one ``shot,'' checking at the end whether the boundary conditions are satisfied. If the final boundary conditions are not met, the initial guess is refined, and the process is repeated. This approach leverages well-established methods for solving IVPs (such as the Runge--Kutta family of methods) while systematically adjusting the guess until the boundary constraints are fulfilled, typically by employing a root-finding algorithm (e.g., Newton--Raphson, bisection, or secant method) on the difference between the solution and the desired boundary value at the final point. One of the advantages of the shooting method is its conceptual simplicity: one only needs to implement a standard IVP solver and a root-finding procedure to iteratively converge upon the correct boundary values. However, it can be sensitive to numerical stability issues, especially if the BVP spans a large domain or if the underlying differential equations are stiff. Despite these limitations, the shooting method remains a popular and straightforward choice for many two-point BVPs, offering an intuitive framework to find solutions by effectively ``aiming'' from one boundary toward the other and iterating until the solution ``hits'' the required condition. Below is an overview of how to apply the shooting method to the boundary value problem (BVP):
@@ -488,10 +491,10 @@
                 Any standard root-finding algorithm capable of handling multiple variables can be used here. Each iteration calls the IVP solver anew (the ``shoot''), refines $\mathbf{p}$, and re-checks the mismatch at $z=H$ until $\|\mathbf{F}(\mathbf{p})\|$ is sufficiently small.
 
             \subsubsection*{Summary}
-                The shooting method, while conceptually straightforward, can encounter several complications when applied to a system of this nature. First, if the underlying equations are stiff or exhibit rapid changes, small numerical inaccuracies in the guessed initial conditions can amplify significantly over the integration domain, making the procedure unstable or very sensitive to perturbations. Second, if the domain is large or the solution features steep gradients, one might need a very accurate or adaptive IVP solver for each “shoot,” which can be computationally expensive. Additionally, good initial guesses for the unknown boundary conditions may be hard to find, especially in higher-dimensional problems, risking convergence failures or excessive iteration counts. Finally, repeated integration for each iteration of a root-finding method (e.g., Newton’s method or secant-like approaches) can become costly, and if Jacobian information is not readily available, approximation errors in the gradient of the mismatch function can slow down or prevent convergence. These complications occur when solving for the boundary value problem due to the stiffness and non-linearity of the model and will be further discussed below.
+                The shooting method, while conceptually straightforward, can encounter several complications when applied to a system of this nature. First, if the underlying equations are stiff or exhibit rapid changes, small numerical inaccuracies in the guessed initial conditions can amplify significantly over the integration domain, making the procedure unstable or very sensitive to perturbations. Second, if the domain is large or the solution features steep gradients, one might need a very accurate or adaptive IVP solver for each ``shoot,'' which can be computationally expensive. Additionally, good initial guesses for the unknown boundary conditions may be hard to find, especially in higher-dimensional problems, risking convergence failures or excessive iteration counts. Finally, repeated integration for each iteration of a root-finding method (e.g., Newton's method or secant-like approaches) can become costly, and if Jacobian information is not readily available, approximation errors in the gradient of the mismatch function can slow down or prevent convergence. These complications occur when solving for the boundary value problem due to the stiffness and non-linearity of the model and will be further discussed below.
 
         \subsection{Finite Difference}
-            The finite difference method (FDM) offers a systematic way to approximate derivatives by replacing them with discrete difference quotients across a mesh of points in the solution domain. By discretizing each differential equation at multiple grid points between the boundary conditions, one transforms the original BVP into a system of algebraic equations. Specifically, each unknown function is represented at each node of a spatial grid; central (or forward/backward) finite differences approximate first derivatives, resulting in expressions that link values of the dependent variables at neighboring nodes. The boundary conditions then provide additional constraints, anchoring the solution at the domain edges. This procedure yields a large algebraic system that must be solved simultaneously for all unknown nodal values. For problems such as the one given where multiple species flow rates ($F^{\liq}_{\mathrm{CO_2}}$, $F^{\liq}_{\mathrm{H_2O}}$, etc.) and enthalpy flows ($\dot{H}_l$, $\dot{H}_v$) appear, the FDM approach handles each quantity by setting up its own finite difference relation, and coupling them through the original ODE equations. After assembling these relations for all equations at every interior grid point (along with boundary conditions at the domain ends), the resulting algebraic system is typically solved via iterative methods like Newton’s method. The method’s main advantages are clarity of formulation and straightforward extension to more complex boundary conditions. Its main challenges include ensuring sufficient grid resolution for accuracy, dealing with potential nonlinearity or stiffness, and managing the computational overhead when the system size becomes large. Below is an overview of how to apply the finite difference method to the boundary value problem (BVP):
+            The finite difference method (FDM) offers a systematic way to approximate derivatives by replacing them with discrete difference quotients across a mesh of points in the solution domain. By discretizing each differential equation at multiple grid points between the boundary conditions, one transforms the original BVP into a system of algebraic equations. Specifically, each unknown function is represented at each node of a spatial grid; central (or forward/backward) finite differences approximate first derivatives, resulting in expressions that link values of the dependent variables at neighboring nodes. The boundary conditions then provide additional constraints, anchoring the solution at the domain edges. This procedure yields a large algebraic system that must be solved simultaneously for all unknown nodal values. For problems such as the one given where multiple species flow rates ($F^{\liq}_{\mathrm{CO_2}}$, $F^{\liq}_{\mathrm{H_2O}}$, etc.) and enthalpy flows ($\dot{H}_l$, $\dot{H}_v$) appear, the FDM approach handles each quantity by setting up its own finite difference relation, and coupling them through the original ODE equations. After assembling these relations for all equations at every interior grid point (along with boundary conditions at the domain ends), the resulting algebraic system is typically solved via iterative methods like Newton's method. The method's main advantages are clarity of formulation and straightforward extension to more complex boundary conditions. Its main challenges include ensuring sufficient grid resolution for accuracy, dealing with potential nonlinearity or stiffness, and managing the computational overhead when the system size becomes large. Below is an overview of how to apply the finite difference method to the boundary value problem (BVP):
 
             \subsubsection*{Discretize the Domain}
                 Divide the interval $[0,H]$ into $N$ sub-intervals of equal length $\Delta z = \frac{H}{N}$. Define the grid points:
@@ -533,16 +536,16 @@
                 where $\mathcal{R}$ denotes the collection of finite-difference equations plus boundary conditions.
 
             \subsubsection*{Summary}
-                By ensuring appropriate grid resolution and an effective nonlinear solver, finite difference approximations can provide accurate, stable solutions to this system of differential equations across the domain $0 \le z \le H$. While this technique can be both robust and straightforward conceptually, it comes with its own potential pitfalls. For instance, a too-coarse grid can lead to poor accuracy or even instability when applied to stiff or highly nonlinear systems. As the mesh becomes finer, the number of equations to be solved grows quickly, which can increase computational cost substantially, especially for higher-dimensional systems. Additionally, nonlinearity may require iterative solvers like Newton’s method at each time step or iteration, and assembling and factoring large Jacobians can be computationally intensive. Boundary conditions that are non-standard or mixed in form may also complicate the discretization scheme. Overall, while the finite difference method is a powerful approach, the choice of mesh, solver, and stability considerations must be carefully addressed for each specific problem.
+                By ensuring appropriate grid resolution and an effective nonlinear solver, finite difference approximations can provide accurate, stable solutions to this system of differential equations across the domain $0 \le z \le H$. While this technique can be both robust and straightforward conceptually, it comes with its own potential pitfalls. For instance, a too-coarse grid can lead to poor accuracy or even instability when applied to stiff or highly nonlinear systems. As the mesh becomes finer, the number of equations to be solved grows quickly, which can increase computational cost substantially, especially for higher-dimensional systems. Additionally, nonlinearity may require iterative solvers like Newton's method at each time step or iteration, and assembling and factoring large Jacobians can be computationally intensive. Boundary conditions that are non-standard or mixed in form may also complicate the discretization scheme. Overall, while the finite difference method is a powerful approach, the choice of mesh, solver, and stability considerations must be carefully addressed for each specific problem.
 
         \subsection{SciPy Collocation-Style BVP Method}
-            The current implementation uses \texttt{scipy.integrate.solve\_bvp}, which solves boundary-value problems with a collocation-style residual control algorithm and adaptive mesh refinement. This method is distinct from a custom orthogonal collocation implementation based on explicitly selected Legendre or Chebyshev points. For reproducibility, the benchmark reports the starting mesh size, maximum node count, solver tolerance, boundary-condition tolerance, initialization profile, scaling, and convergence message used for each run.
+            The current implementation uses \texttt{scipy.integrate.solve\_bvp}, which solves boundary-value problems with a collocation-style residual control algorithm and adaptive mesh refinement. This method is distinct from a custom orthogonal collocation implementation based on explicitly selected Legendre or Chebyshev points. For reproducibility, the benchmark reports the starting mesh size, maximum node count, solver tolerance, boundary-condition tolerance, initialization profile, scaling, final residual norm, and convergence message used for each run.
 
             \subsubsection*{Benchmark Role}
                 In this work, the SciPy BVP method is treated as one solver configuration in the benchmark rather than as a separate methodological contribution. The benchmark output records its tolerance settings, adaptive mesh behavior, convergence message, boundary residual norm, runtime, and validation error so that claims about robustness or speed are traceable to generated data.
 
         \subsection{Reproducibility and Numerical Settings}
-            The benchmark implementation is executed with \texttt{uv} and Python 3.13 so that the external ePC-SAFT native extension can be imported without modifying the ePC-SAFT source tree. Benchmark results are generated with \texttt{python -m mea\_absorption\_column.benchmark}. Each result row records the case identifier, data source, numerical method, thermodynamic driving-force model, success flag, solver message, runtime, capture percentage, capture error, temperature RMSE where measured taps are available, boundary residual norm, mesh points, solver tolerances, bed count, intercooler count, staged-bed flag, intercooler assumption, Python version, platform, and package versions. Failed runs are retained in the output table so convergence failures are part of the numerical comparison.
+            The benchmark implementation is executed with \texttt{uv} and Python 3.13 so that the external ePC-SAFT native extension can be imported without modifying the ePC-SAFT source tree. Benchmark results are generated with \texttt{python -m mea\_absorption\_column.benchmark}. Each result row records the case/method configuration, success flag, convergence message, residual diagnostics, capture error, temperature error where measured taps are available, runtime, mesh settings, solver tolerances, bed count, intercooler count, staged-bed flag, and intercooler assumption. Environment metadata, including Python version, platform, and package versions, is recorded in the full benchmark output or run metadata used to generate the reduced paper-facing tables. Failed runs are retained in the output table so convergence failures are part of the numerical comparison.
 
             Multi-bed and intercooled NCCC cases are evaluated with a staged SciPy BVP configuration when \texttt{--staged-beds auto} is used. The staged configuration solves one packed-bed BVP per bed, enforces inter-bed vapor continuity, and represents intercoolers as liquid enthalpy resets between adjacent beds. If no explicit inter-stage target temperatures are supplied, the measured lean-solvent feed temperature is used as the liquid reset target and the benchmark row reports this assumption.
 
@@ -553,15 +556,15 @@
 
         \subsection{Custom Simulation Model Built with Python and Scipy}
     
-            In order to test these methods, an open-source Python-based model was built to simulate amine-based absorption columns for CO\textsubscript{2} capture using pilot plant cases from the National Carbon Capture Center (NCCC). The model’s modular framework accommodates shooting, finite-difference, and SciPy collocation-style BVP solution paths within a single code base. The benchmark scripts regenerate the reported solver and thermodynamic comparison tables from committed data, recording both successful runs and failures. This is an important distinction from a demonstration-only model: the benchmark output preserves solver messages, residual norms, mesh settings, thermodynamic model identifiers, and case metadata so that the results can be traced back to the exact computational configuration.
+            In order to test these methods, an open-source Python-based model was built to simulate amine-based absorption columns for CO\textsubscript{2} capture using pilot plant cases from the National Carbon Capture Center (NCCC). The model's modular framework accommodates shooting, finite-difference, and SciPy collocation-style BVP solution paths within a single code base. The benchmark scripts regenerate the reported solver and thermodynamic comparison tables from committed data, recording both successful runs and failures. This is an important distinction from a demonstration-only model: the benchmark output preserves solver messages, residual norms, mesh settings, thermodynamic model identifiers, and case metadata so that the results can be traced back to the exact computational configuration.
             
-            \begin{figure}[ht]
+            \begin{figure}
                 \centering
                 \includegraphics[width=12cm]{figs/Temperature_LG.png}
                 \caption{3D surface plot of the temperature profile across the column with varying $\frac{L}{G}$ ratio}\label{fig:3D Temperature}
             \end{figure}
     
-            Figure~\ref{fig:3D Temperature} illustrates the model’s expected qualitative behavior when the liquid-to-gas ratio is varied. The temperature bulge moves through the packed height as the driving force and heat-release location change, which provides a useful diagnostic for whether the coupled mass and energy balances are behaving consistently. The revised validation does not rely on this figure as quantitative evidence by itself; quantitative claims are instead made from benchmark artifacts that report capture error, temperature RMSE, residual norm, and runtime.
+            Figure~\ref{fig:3D Temperature} illustrates the model's expected qualitative behavior when the liquid-to-gas ratio is varied. The temperature bulge moves through the packed height as the driving force and heat-release location change, which provides a useful diagnostic for whether the coupled mass and energy balances are behaving consistently. The revised validation does not rely on this figure as quantitative evidence by itself; quantitative claims are instead made from benchmark artifacts that report capture error, temperature RMSE, residual norm, and runtime.
 
         \subsection{NCCC Case Study}
         
@@ -569,7 +572,7 @@
             
             \begin{table}[htbp]
                 \centering
-                \small
+                \scriptsize
                 \caption{2017 MEA campaign at NCCC}
                 \label{tab:mea-data}
                 \renewcommand{\arraystretch}{1.2}
@@ -619,13 +622,13 @@
                 \end{tabularx}
             \end{table}
 
-        \begin{figure}[ht]
+        \begin{figure}
             \centering
             \includegraphics[width=0.9\textwidth]{Figures/Temp_with_data.png}
             \caption{Comparison between modeled temperature profiles and experimental pilot plant column data. The profiles correspond to a liquid-to-gas ratio $\frac{L}{G}$ of 4.70, a CO$_2$ loading $\alpha = 0.25$, and an inlet gas CO$_2$ mole fraction $y_{\mathrm{CO_2}} = 0.08$.}
             \label{fig:temp_profiles}
         \end{figure}
-        Case 3C was used as a benchmark run to test the model’s accuracy and performance since it was a simpler case that only requires one bed and no intercoolers included. The temperature data of this row is shown in Table~\ref{tab:3C-temp-profile} 
+        Case 3C was used as an illustrative benchmark run because it is a single-bed case with no intercoolers. The temperature data for this row are shown in Table~\ref{tab:3C-temp-profile}. It is not the only validation evidence: the verified one-bed C artifact covers all seven C cases, and the staged/intercooled benchmark evidence is currently partial.
         \begin{table}[htbp]
             \centering
             \caption{Absorber temperature profile for Case 3C}
@@ -639,35 +642,35 @@
                 \hline
             \end{tabular}
         \end{table}
-        The temperature profiles of the solved column are useful validation diagnostics because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as an illustrative profile, where the predicted \% of $\COtwo$ captured by the model is $\left(89.33\% \:\:\text{vs}\:\:89.50\%\right)$ for the pilot-plant value. This single agreement is not sufficient by itself to establish predictive reliability; therefore, the revised benchmark reports aggregate capture and temperature metrics across the available NCCC cases before drawing conclusions.
+        The temperature profiles of the solved column are useful validation diagnostics because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as an illustrative profile, where the predicted \% of $\COtwo$ captured by the model is $\left(89.33\% \:\:\text{vs}\:\:89.50\%\right)$ for the pilot-plant value. This single agreement is not sufficient by itself to establish predictive reliability; therefore, the revised benchmark reports aggregate capture and temperature metrics across the verified one-bed C cases and the currently partial staged/intercooled K-case artifact before drawing conclusions.
 
-        \begin{figure}[htbp]
+        \begin{figure}
             \centering
-            \includegraphics[width=0.92\textwidth]{benchmark_figures/out/c_case_thermo_benchmark.pdf}
-            \caption{Generated benchmark comparison for the one-bed NCCC C cases. The left panel reports case-by-case capture error for the Henry-law and neutral ePC-SAFT thermodynamic lanes, and the right panel reports median runtime. The figure is generated from the \texttt{physical\_domain\_c\_cases} benchmark artifact.}
+            \includegraphics[width=0.92\textwidth]{analyses/nccc_validation/results/final/figures/c_case_thermo_benchmark.pdf}
+            \caption{Generated benchmark comparison for the one-bed NCCC C cases. The left panel reports case-by-case capture error for the Henry-law and neutral ePC-SAFT thermodynamic lanes, and the right panel reports median runtime. The plotted rows are generated from \protect\path{analyses/nccc_validation/results/final/tables/plot_c_case_thermo_benchmark.csv}, which is derived from the committed source artifact \protect\path{analyses/nccc_validation/results/final/tables/verified_c_case_thermo_benchmark.csv}.}
             \label{fig:c-case-thermo-benchmark}
         \end{figure}
 
-        Figure~\ref{fig:c-case-thermo-benchmark} expands the validation from one representative case to all seven one-bed C cases in the available benchmark artifact. The Henry-law and neutral ePC-SAFT lanes both converged for all seven cases. Their aggregate capture errors were similar in this benchmark, while the neutral ePC-SAFT lane required a longer median runtime because the fugacity coefficients are computed through the external ePC-SAFT equation-of-state package. This result supports the paper's revised novelty claim: the framework is useful as a controlled thermodynamic sensitivity benchmark, even when the first neutral ePC-SAFT implementation does not by itself improve every validation metric.
+        Figure~\ref{fig:c-case-thermo-benchmark} expands the validation from one representative case to all seven one-bed C cases in the available benchmark artifact. The Henry-law and neutral ePC-SAFT lanes both converged for all seven cases. Their aggregate capture errors were similar in this benchmark, while the neutral ePC-SAFT lane required a longer median runtime because the fugacity coefficients are computed through the external ePC-SAFT equation-of-state package. This result is consistent with the paper's revised benchmark framing: the framework is useful as a controlled thermodynamic sensitivity benchmark, even when the neutral ePC-SAFT lane does not by itself improve every validation metric.
 
-        \begin{figure}[htbp]
+        \begin{figure}
             \centering
             \begin{subfigure}[t]{0.48\textwidth}
                 \centering
-                \includegraphics[width=\textwidth]{Figures/profile_3C_ideal_henry.png}
+                \includegraphics[width=\textwidth]{analyses/nccc_validation/results/final/profiles/3C/ideal_henry/temperature_profile.png}
                 \caption{Case 3C, Henry-law baseline}
                 \label{fig:profile-3c-henry}
             \end{subfigure}
             \hfill
             \begin{subfigure}[t]{0.48\textwidth}
                 \centering
-                \includegraphics[width=\textwidth]{Figures/profile_3C_epcsaft_neutral.png}
+                \includegraphics[width=\textwidth]{analyses/nccc_validation/results/final/profiles/3C/epcsaft_neutral/temperature_profile.png}
                 \caption{Case 3C, neutral ePC-SAFT}
                 \label{fig:profile-3c-epcsaft}
             \end{subfigure}
             \begin{subfigure}[t]{0.48\textwidth}
                 \centering
-                \includegraphics[width=\textwidth]{Figures/profile_7C_epcsaft_neutral.png}
+                \includegraphics[width=\textwidth]{analyses/nccc_validation/results/final/profiles/7C/epcsaft_neutral/temperature_profile.png}
                 \caption{Case 7C, neutral ePC-SAFT}
                 \label{fig:profile-7c-epcsaft}
             \end{subfigure}
@@ -679,16 +682,25 @@
 
         \input{revised_benchmark_results}
 
-        \begin{figure}[htbp]
+        \begin{figure}
             \centering
-            \includegraphics[width=0.68\textwidth]{benchmark_figures/out/staged_kcase_capture_error.pdf}
-            \caption{Generated capture-error summary for the currently verified staged/intercooled NCCC Henry-law runs. The figure is generated from the \texttt{goal\_k1\_k3\_flux\_strength\_factor\_multistart\_v2} benchmark artifact.}
+            \includegraphics[width=0.68\textwidth]{analyses/nccc_validation/results/final/figures/staged_kcase_capture_error.pdf}
+            \caption{Generated capture-error summary for the currently verified NCCC K-case Henry-law runs. The figure is generated from \protect\path{analyses/nccc_validation/results/final/tables/plot_staged_kcase_benchmark.csv}, which is derived from the committed source artifact \protect\path{analyses/nccc_validation/results/final/tables/verified_staged_kcase_benchmark.csv}. It includes accepted rows across one-bed, two-bed, and three-bed configurations.}
             \label{fig:staged-kcase-capture-error}
         \end{figure}
 
-        Figure~\ref{fig:staged-kcase-capture-error} summarizes the staged/intercooled portion of the current benchmark evidence. The explicit bed-stack solver gives low capture error for K1--K3 in the verified artifact, but this is not yet a complete NCCC validation. The K4--K5 and broader intercooled case set are therefore treated as active benchmark work rather than as finished predictive evidence.
+        Figure~\ref{fig:staged-kcase-capture-error} summarizes the broader K-case capture-rate evidence now generated for the Henry-law lane. The primary validation artifact contains 19 of the 23 available K cases, with a mean absolute capture error of 2.81 percentage points and a largest accepted absolute error of 6.40 percentage points. A separate sensitivity-recovery artifact shows that K6, K7, K8, and K20 can also be brought within the capture gate under recovery settings, but those rows require high mass-transfer factors, suppressed intercooler reset strength, large guard counts, or mesh-limit final iterates and are therefore not counted as primary validation. The staged ePC-SAFT lane is also still treated as active benchmark work rather than as finished predictive evidence.
 
-       \begin{figure}[ht]
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.68\textwidth]{analyses/nccc_validation/results/final/figures/staged_epcsaft_smoke_capture_error.pdf}
+            \caption{Generated capture-error summary for the staged neutral ePC-SAFT smoke rows. The figure is generated from \protect\path{analyses/nccc_validation/results/final/tables/plot_staged_epcsaft_smoke.csv}, which is derived from the committed source artifact \protect\path{analyses/nccc_validation/results/final/tables/staged_epcsaft_smoke.csv}. Dashed lines indicate the eight-percentage-point capture-error gate used for benchmark acceptance.}
+            \label{fig:staged-epcsaft-smoke-capture-error}
+        \end{figure}
+
+        Figure~\ref{fig:staged-epcsaft-smoke-capture-error} shows the current staged ePC-SAFT smoke artifact. Fourteen of the 19 selected rows satisfy the strict success definition, including the capture-error gate and boundary-residual gate. K2 falls to the zero-capture branch under the nominal high-capture staged initialization. K4 and K9 are rejected by the capture-error gate, while K19 and K23 are rejected by the boundary-residual gate despite small capture errors. A separate targeted recovery probe using documented capture-initialization and intercooler-strength multistarts recovers K4, K9, and K23 under the same neutral ePC-SAFT fugacity lane, while K2 and K19 remain unresolved for the full neutral ePC-SAFT endpoint. A K2 fugacity-blend diagnostic shows that partial Henry/ePC-SAFT blends can preserve the high-capture branch, but the full ePC-SAFT endpoint returns to the zero-capture branch. This result is useful diagnostic evidence that the Henry-seeded ePC-SAFT pathway can be run through explicit staged beds and intercooler resets, but it is not yet primary predictive validation.
+
+       \begin{figure}
             \centering
             \begin{subfigure}[t]{0.48\textwidth}
                 \centering
@@ -715,45 +727,45 @@
         \end{figure}
 
     \subsection{Simulation Method Comparison}
-        Figure~\ref{fig:method_comparison_figures} illustrates the temperature profiles obtained using three numerical methods: shooting, collocation, and finite difference. At higher $L/G$ ratios, the temperature bulge shifts toward the bottom of the column, which generally results in well-conditioned differential equations that the shooting method can solve efficiently. However, when the bulge appears near the top of the column (commonly associated with thermodynamic pinch points) the shooting method becomes unstable or fails to converge due to the stiffness and sensitivity of the coupled ODEs.
-        
+        Figure~\ref{fig:method_comparison_figures} illustrates the temperature profiles obtained using three numerical methods: shooting, collocation, and finite difference. At higher $L/G$ ratios, the temperature bulge shifts toward the bottom of the column, which generally results in well-conditioned differential equations that the shooting method can solve efficiently. However, when the bulge appears near the top of the column (commonly associated with thermodynamic pinch points) the shooting method becomes unstable or fails to converge due to the stiffness and sensitivity of the coupled ODEs. The shooting path can also be run with stiff IVP integrators for diagnostics, but those runs require explicit runtime limits because poor boundary guesses can otherwise generate long root-search trajectories.
+
         The SciPy BVP method provides an adaptive collocation-style alternative for the same governing equations. Its performance depends on the initialization profile, scaling, mesh limits, and tolerance settings, so the revised benchmark reports those values directly rather than treating robustness as a qualitative observation.
-        
+
         The finite difference method offers another solution strategy by solving the spatially discretized equations as one nonlinear algebraic system. Its usefulness must be evaluated from the same metrics as the other methods: convergence success, boundary residuals, validation error, mesh size, and runtime.
-        
+
         Each method has trade-offs. The shooting method is simple but can be sensitive to stiffness; the SciPy BVP method depends strongly on initialization and mesh controls; and finite difference methods increase the nonlinear system size. Table~\ref{tab:method_comparison_table} should be interpreted alongside the quantitative benchmark outputs.
         \begin{table}[ht]
         \centering
         \scriptsize
         \renewcommand{\arraystretch}{1.5}
-        \caption{Comparison of numerical methods: Shooting, Collocation, and Finite Difference}
+        \caption{Benchmark comparison of numerical methods: Shooting, SciPy collocation-style BVP, and finite difference}
         \label{tab:method_comparison_table}
-        \begin{tabular}{|>{\centering\arraybackslash}m{3.5cm}|p{6cm}|p{6cm}|}
+        \begin{tabular}{|>{\centering\arraybackslash}m{2.8cm}|p{5.2cm}|p{5.2cm}|}
             \hline
             \textbf{Method} & \textbf{Pros} & \textbf{Cons} \\
             \hline
             \textbf{Shooting Method} & 
-            - Simple and fast implementation \newline
-            - Effective for non-stiff systems \newline
-            - Leverages standard IVP solvers
+            - Simple baseline implementation \newline
+            - Useful for diagnosing IVP sensitivity \newline
+            - Reuses standard IVP solvers
             &
             - Struggles with stiff ODE systems \newline
             - Sensitive to initial guesses \newline
             - May fail near thermodynamic pinch \\
             \hline
-            \textbf{Collocation Method} &
-            - Robust for stiff ODEs \newline
-            - Captures sharp gradients effectively \newline
-            - Fewer discretization points needed
+            \textbf{SciPy BVP} &
+            - Adaptive mesh and residual control \newline
+            - Current reference path in the benchmark \newline
+            - Directly records solver metadata
             &
-            - Requires good initial guess across domain \newline
-            - More complex implementation \newline
-            - Can be slower than shooting method \\
+            - Depends on initialization and scaling \newline
+            - Can be slower than shooting on easy cases \newline
+            - Convergence is case dependent \\
             \hline
             \textbf{Finite Difference Method} &
-            - Most numerically stable method \newline
-            - Produces smooth, physical profiles \newline
-            - Well-suited for stiff and nonlinear models
+            - Transparent spatial discretization \newline
+            - Simple to compare against other methods \newline
+            - Works with mixed boundary conditions
             &
             - Computationally intensive \newline
             - Requires solving large nonlinear systems \newline
@@ -762,33 +774,35 @@
         \end{tabular}
         \end{table}
 
-        The revised benchmark should replace qualitative method rankings with generated statistics. A defensible comparison reports where each method succeeds or fails, the residuals it leaves at the boundaries, the validation errors it produces, and the runtime distribution across the case set.
+        The revised benchmark replaces qualitative method rankings with generated statistics. A defensible comparison reports where each method succeeds or fails, the residuals it leaves at the boundaries, the validation errors it produces, and the runtime distribution across the case set. On the current evidence, the SciPy \texttt{solve\_bvp} path is the reference workflow for reported staged/intercooled results because it is the only method currently connected to the explicit bed-stack implementation and post-processing gates. Shooting and finite difference remain useful comparison paths because they expose stiffness, initialization, and nonlinear-system conditioning issues, but they are not used as the primary predictive workflow for the staged NCCC evidence in this revision.
 
 
-    \subsection{Future Work}    
-        Future work includes improving the bounded SciPy BVP and finite-difference solution paths, expanding the neutral ePC-SAFT sensitivity comparison to a fully audited electrolyte ePC-SAFT or eNRTL model, and validating against additional pilot campaigns. For intercooled NCCC cases, the intercoolers are represented as inter-stage liquid enthalpy resets. This captures the first-order effect of solvent cooling on the downstream packed section but does not model detailed heat-exchanger approach temperatures, pressure losses, holdup in collection trays, or maldistribution after redistribution. Optimization and scale-up studies should be treated as future applications and not as conclusions of the present benchmark unless supported by generated validation data.
+    \subsection{Limitations and Future Work}
+        The revised results should be read as a reproducible benchmark of a simplified absorber model, not as a complete predictive process simulator. The staged/intercooled NCCC implementation explicitly represents multiple packed sections and inter-stage liquid thermal resets, which is a substantial improvement over treating bed count as only a height multiplier. However, the intercooler model does not include detailed heat-exchanger approach temperatures, pressure losses through intercooler hardware, collection-tray holdup, redistribution maldistribution, or measured heat duty. The neutral ePC-SAFT lane is likewise limited to the CO$_2$ fugacity-coefficient driving force; it does not replace the chemical-equilibrium model, ionic speciation, reaction-enhancement calculation, or transport-property correlations with a full electrolyte-reactive thermodynamic model. Future work should therefore focus on a documented global calibration, expanded pilot-plant validation, fully audited electrolyte ePC-SAFT or eNRTL comparisons \cite{Zhang2011ThermodynamicModel}, and stronger bounded finite-difference and shooting implementations. Optimization and scale-up studies should remain future applications unless supported by generated validation data.
 
 
     \section{Conclusion}
-        This work presents a transparent Python framework for benchmarking a simplified MEA absorber model, numerical solution methods, and thermodynamic driving-force assumptions. Its value is in reproducibility, explicit solver settings, and controlled comparison across generated NCCC benchmark artifacts. The model can reproduce important absorber trends, including temperature-bulge behavior, but its simplified chemistry and neutral ePC-SAFT sensitivity lane limit the strength of claims that can be made from the current evidence.
-    
-        In addition to model formulation, this study offers a comparative evaluation of three numerical solution paths: shooting, SciPy collocation-style BVP solution, and finite difference. The revised conclusions should be based on the regenerated benchmark tables, including success rate, residuals, runtime, and validation errors. Until those data support a stronger statement, the paper should avoid identifying a universally best method or claiming readiness for industrial design applications.
+        This work presents a transparent Python framework for benchmarking a simplified MEA absorber model, numerical solution methods, staged/intercooled NCCC configurations, and thermodynamic driving-force assumptions. The revised evidence broadens the original single-case validation by adding generated one-bed C-case metrics, a staged/intercooled Henry-law K-case subset, solver metadata, boundary-residual diagnostics, temperature-profile diagnostics, and a neutral ePC-SAFT fugacity-coefficient sensitivity lane. These additions make the contribution more defensible as a reproducible benchmark rather than as a new high-fidelity absorber model.
+
+        The results also define the limits of the current model. The Henry-law lane remains the primary validation path for staged/intercooled NCCC cases, while the neutral ePC-SAFT lane demonstrates how the same model can be run with an EOS-based CO$_2$ fugacity driving force at higher computational cost. The ePC-SAFT comparison is therefore useful for thermodynamic sensitivity and model-development evidence, but it is not yet a full electrolyte-thermodynamic replacement. The paper's central conclusion is that transparent benchmark artifacts, explicit solver settings, and conservative validation gates provide a stronger and more reproducible basis for evaluating this class of absorber model than a single successful case study.
 
     \section*{Code Availability}
         The full Python implementation of the MEA-based absorption column model, including all simulation methods and test data, is available at this
         \href{https://github.com/tannerpolley/MEA_Absorption_Column}{link}
 
     \section*{Disclaimers}
-        The authors declare no financial or commercial conflicts of interest related to this research. One ore more of these authors is a contracted employee with KeyLogic, supporting the National Energy Technology Laboratory (NETL); however, this research was conducted independently and is not associated with their contracted work or responsibilities at NETL.
+        The authors declare no financial or commercial conflicts of interest related to this research. One or more of these authors is a contracted employee with KeyLogic, supporting the National Energy Technology Laboratory (NETL); however, this research was conducted independently and is not associated with their contracted work or responsibilities at NETL.
         \newline
-        During the preparation of this work the author(s) used ChatGPT for grammar refinement, restructuring of complex sentences, and generating formatting suggestions for LaTeX.. After using this tool/service, the author(s) reviewed and edited the content as needed and take(s) full responsibility for the content of the publication.
+        During the preparation of this work the author(s) used ChatGPT for grammar refinement, restructuring of complex sentences, and generating formatting suggestions for LaTeX. After using this tool/service, the author(s) reviewed and edited the content as needed and take(s) full responsibility for the content of the publication.
 
     \clearpage
     \bibliographystyle{model1-num-names}
     \bibliography{mendeley, manual}
 
-    \clearpage
-    \appendix
+\clearpage
+\nolinenumbers
+\raggedbottom
+\appendix
     \vspace{1cm}
     \section{Properties}\label{sec:properties}
         \vspace{1cm}
@@ -914,200 +928,29 @@
                 \end{align}
 
         \newpage
-        \subsection{Constants}
-        
-\begin{longtable}{lll}
-\label{tab:constants_table}\\
-\caption{Constants used in the model} \\
-\hline
-\textbf{Constant}      & \textbf{Variable} & \textbf{Value} \\
-\hline
-\endhead
-%
-Column Diameter         & $D$               & 0.64           \\
-Column Height           & $H$               & 6              \\
-Gas Constant            & $R$               & 8.314463       \\
-Gravitational Constant  & $g$               & 9.806          \\
-Specific Packing        & $a_p$             & 250            \\
-Void Packing            & $\epsilon$        & 0.97           \\
-Liquid Packing          & $C_l$             & 0.203          \\
-Vapor Packing           & $C_v$             & 0.35           \\
-\hline
-\end{longtable}
+        \subsection{Constants and Parameter Reporting}
+            Table~\ref{tab:appendix-parameter-scope} summarizes the parameter groups used by the model implementation. The detailed numerical values are maintained in the Python parameter modules and benchmark input files so that the manuscript does not duplicate a long, error-prone appendix table. This also keeps the paper aligned with the revised reproducibility claim: the benchmark rows, solver settings, and generated artifacts are treated as the authoritative source for validation values.
 
-        \newpage
-        \subsection{Parameters}
+            \begin{table}
+                \centering
+                \small
+                \caption{Parameter and constant groups used by the absorber benchmark implementation.}
+                \label{tab:appendix-parameter-scope}
+                \renewcommand{\arraystretch}{1.2}
+                \begin{tabular}{>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{5.3cm}>{\raggedright\arraybackslash}p{5.5cm}}
+                    \toprule
+                    \textbf{Group} & \textbf{Examples} & \textbf{Implementation source} \\
+                    \midrule
+                    Column geometry and packing & Column diameter, packed height, packing area, packing void fraction & Model constants and NCCC case-conversion metadata \\
+                    Thermodynamics & Henry-law constants, vapor-pressure correlations, neutral ePC-SAFT parameters for \COtwo--\MEA--\HtwoO fugacity coefficients & Thermodynamic adapter and MEA-local parameter dataset \\
+                    Transport properties & Density, viscosity, diffusivity, heat capacity, surface tension, thermal conductivity & Property-correlation modules used by the shared residual engine \\
+                    Mass and heat transfer & Interfacial area, liquid and vapor transfer coefficients, enhancement factor, heat-transfer coefficient & Transport and reaction-enhancement modules with domain guards \\
+                    Numerical settings & Mesh size, tolerance, maximum nodes, scaling, initialization, continuation stage, residual gates & Generated benchmark CSV artifacts and solver settings metadata \\
+                    \bottomrule
+                \end{tabular}
+            \end{table}
 
-\begin{longtable}{lllll}
-% \label{tab:parameters_table}\\
-\caption{Parameters used in the model} \\
-\hline
-\textbf{Parameter Type} & \textbf{Phase} & \textbf{Species}    & \textbf{Variable} & \textbf{Value} \\ \hline
-\endhead
-%
-Henry's Law               & Liquid         & $\ce{N2O},\ce{MEA}$ & $a$               & 2.4480E+05     \\
-Henry's Law               & Liquid         & $\ce{N2O},\ce{MEA}$ & $b$               & 1348           \\
-Henry's Law               & Liquid         & $\ce{CO2},\ce{H2O}$ & $a$               & 3.5200E+06     \\
-Henry's Law               & Liquid         & $\ce{CO2},\ce{H2O}$ & $b$               & 2113           \\
-Henry's Law               & Liquid         & $\ce{N2O},\ce{H2O}$ & $a$               & 8.4490E+06     \\
-Henry's Law               & Liquid         & $\ce{N2O},\ce{H2O}$ & $b$               & 2283           \\
-Henry's Law               & Liquid         & mixture             & $a_1$             & -2.0761        \\
-Henry's Law               & Liquid         & mixture             & $a_2$             & 3.7322E-02     \\
-Henry's Law               & Liquid         & mixture             & $a_3$             & -3.2721E-04    \\
-Henry's Law               & Liquid         & mixture             & $b$               & -0.1111        \\
-Density                   & Liquid         & $\ce{CO2}$          & $a$               & -10.5792       \\
-Density                   & Liquid         & $\ce{CO2}$          & $b$               & 192.0126       \\
-Density                   & Liquid         & $\ce{CO2}$          & $c$               & -695.3849      \\
-Density                   & Liquid         & $\ce{MEA}$          & $a$               & -5.3516E-07    \\
-Density                   & Liquid         & $\ce{MEA}$          & $b$               & -4.5142E-04    \\
-Density                   & Liquid         & $\ce{MEA}$          & $c$               & 1.1945         \\
-Density                   & Liquid         & $\ce{MEA}$          & $d$               & -2.0205        \\
-Density                   & Liquid         & $\ce{MEA}$          & $e$               & 3.1507         \\
-Density                   & Liquid         & $\ce{H2O}$          & $a$               & -3.2484E-06    \\
-Density                   & Liquid         & $\ce{H2O}$          & $b$               & 1.6500E-03     \\
-Density                   & Liquid         & $\ce{H2O}$          & $c$               & 0.793          \\
-Surface Tension           & Liquid         & mixture             & $S_1$             & -5.8993E-03    \\
-Surface Tension           & Liquid         & mixture             & $S_2$             & 1.7502E-03     \\
-Surface Tension           & Liquid         & mixture             & $S_3$             & 0.1297         \\
-Surface Tension           & Liquid         & mixture             & $S_4$             & 1.2644E-05     \\
-Surface Tension           & Liquid         & mixture             & $S_5$             & -5.7395E-06    \\
-Surface Tension           & Liquid         & mixture             & $S_6$             & -1.8969E-04    \\
-Surface Tension           & Liquid         & $\ce{MEA}$          & $c_1$             & 9.9450E-02     \\
-Surface Tension           & Liquid         & $\ce{MEA}$          & $c_2$             & 1.067          \\
-Surface Tension           & Liquid         & $\ce{MEA}$          & $c_3$             & 0              \\
-Surface Tension           & Liquid         & $\ce{MEA}$          & $c_4$             & 0              \\
-Surface Tension           & Liquid         & $\ce{MEA}$          & $T_c$             & 614.45         \\
-Surface Tension           & Liquid         & $\ce{H2O}$          & $c_1$             & 0.1855         \\
-Surface Tension           & Liquid         & $\ce{H2O}$          & $c_2$             & 2.717          \\
-Surface Tension           & Liquid         & $\ce{H2O}$          & $c_3$             & -3.554         \\
-Surface Tension           & Liquid         & $\ce{H2O}$          & $c_4$             & 2.047          \\
-Surface Tension           & Liquid         & $\ce{H2O}$          & $T_c$             & 647.13         \\
-Surface Tension           & Liquid         & mixture             & $a$               & 1070.6567      \\
-Surface Tension           & Liquid         & mixture             & $b$               & -2578.7813     \\
-Surface Tension           & Liquid         & mixture             & $c$               & 3399.2411      \\
-Surface Tension           & Liquid         & mixture             & $d$               & -2352.4741     \\
-Surface Tension           & Liquid         & mixture             & $e$               & 2960.2475      \\
-Surface Tension           & Liquid         & mixture             & $f$               & 3.0668         \\
-Surface Tension           & Liquid         & mixture             & $g$               & -1.7944        \\
-Surface Tension           & Liquid         & mixture             & $h$               & -7.2124        \\
-Surface Tension           & Liquid         & mixture             & $i$               & 2.975          \\
-Surface Tension           & Liquid         & mixture             & $j$               & -10.5739       \\
-Heat Capacity             & Liquid         & $\ce{CO2}$          & $a$               & 2.7637E+05     \\
-Heat Capacity             & Liquid         & $\ce{CO2}$          & $b$               & -2090.1        \\
-Heat Capacity             & Liquid         & $\ce{CO2}$          & $c$               & 8.125          \\
-Heat Capacity             & Liquid         & $\ce{CO2}$          & $d$               & -1.4116E-02    \\
-Heat Capacity             & Liquid         & $\ce{CO2}$          & $e$               & 9.3701E-06     \\
-Heat Capacity             & Liquid         & $\ce{MEA}$          & $a$               & 2.6161         \\
-Heat Capacity             & Liquid         & $\ce{MEA}$          & $b$               & 3.7060E-03     \\
-Heat Capacity             & Liquid         & $\ce{MEA}$          & $c$               & 3.7870E-06     \\
-Heat Capacity             & Liquid         & $\ce{MEA}$          & $d$               & 0              \\
-Heat Capacity             & Liquid         & $\ce{MEA}$          & $e$               & 0              \\
-Heat Capacity             & Liquid         & $\ce{H2O}$          & $a$               & 4.2107         \\
-Heat Capacity             & Liquid         & $\ce{H2O}$          & $b$               & -1.6960E-03    \\
-Heat Capacity             & Liquid         & $\ce{H2O}$          & $c$               & 2.5680E-05     \\
-Heat Capacity             & Liquid         & $\ce{H2O}$          & $d$               & -1.0950E-07    \\
-Heat Capacity             & Liquid         & $\ce{H2O}$          & $e$               & 3.0380E-10     \\
-Heat of Vaporization      & Liquid         & $\ce{CO2}$          & $a$               & 2.1730E+07     \\
-Heat of Vaporization      & Liquid         & $\ce{CO2}$          & $b$               & 0.382          \\
-Heat of Vaporization      & Liquid         & $\ce{CO2}$          & $c$               & -0.4339        \\
-Heat of Vaporization      & Liquid         & $\ce{CO2}$          & $d$               & 0.4221         \\
-Heat of Vaporization      & Liquid         & $\ce{CO2}$          & $T_c$             & 304.21         \\
-Heat of Vaporization      & Liquid         & $\ce{MEA}$          & $a$               & 8.2393E+07     \\
-Heat of Vaporization      & Liquid         & $\ce{MEA}$          & $b$               & 0.5905         \\
-Heat of Vaporization      & Liquid         & $\ce{MEA}$          & $c$               & -0.436         \\
-Heat of Vaporization      & Liquid         & $\ce{MEA}$          & $d$               & 0.3784         \\
-Heat of Vaporization      & Liquid         & $\ce{MEA}$          & $T_c$             & 678.2          \\
-Heat of Vaporization      & Liquid         & $\ce{H2O}$          & $a$               & 5.6600E+07     \\
-Heat of Vaporization      & Liquid         & $\ce{H2O}$          & $b$               & 0.612          \\
-Heat of Vaporization      & Liquid         & $\ce{H2O}$          & $c$               & -0.6257        \\
-Heat of Vaporization      & Liquid         & $\ce{H2O}$          & $d$               & 0.3988         \\
-Heat of Vaporization      & Liquid         & $\ce{H2O}$          & $T_c$             & 647.096        \\
-Heat of Absorption        & Liquid         & $\ce{CO2}$          & $\Delta H_{abs}$  & -8.4000E+04    \\
-Heat Capacity             & Vapor          & $\ce{CO2}$          & $c_1$             & 5.457          \\
-Heat Capacity             & Vapor          & $\ce{CO2}$          & $c_2$             & 1.0450E-03     \\
-Heat Capacity             & Vapor          & $\ce{CO2}$          & $c_3$             & -1.1570E+05    \\
-Heat Capacity             & Vapor          & $\ce{H2O}$          & $c_1$             & 3.47           \\
-Heat Capacity             & Vapor          & $\ce{H2O}$          & $c_2$             & 1.4500E-03     \\
-Heat Capacity             & Vapor          & $\ce{H2O}$          & $c_3$             & 1.2100E+04     \\
-Heat Capacity             & Vapor          & $\ce{N2}$           & $c_1$             & 3.28           \\
-Heat Capacity             & Vapor          & $\ce{N2}$           & $c_2$             & 5.9300E-04     \\
-Heat Capacity             & Vapor          & $\ce{N2}$           & $c_3$             & 4000           \\
-Heat Capacity             & Vapor          & $\ce{O2}$           & $c_1$             & 3.639          \\
-Heat Capacity             & Vapor          & $\ce{O2}$           & $c_2$             & 5.0600E-04     \\
-Heat Capacity             & Vapor          & $\ce{O2}$           & $c_3$             & -2.2700E+04    \\
-Thermal Conductivity      & Vapor          & $\ce{CO2}$          & $a$               & 3.69           \\
-Thermal Conductivity      & Vapor          & $\ce{CO2}$          & $b$               & -0.3838        \\
-Thermal Conductivity      & Vapor          & $\ce{CO2}$          & $c$               & 964            \\
-Thermal Conductivity      & Vapor          & $\ce{CO2}$          & $d$               & 1.8600E+06     \\
-Thermal Conductivity      & Vapor          & $\ce{H2O}$          & $a$               & 6.2040E-06     \\
-Thermal Conductivity      & Vapor          & $\ce{H2O}$          & $b$               & 1.3973         \\
-Thermal Conductivity      & Vapor          & $\ce{H2O}$          & $c$               & 0              \\
-Thermal Conductivity      & Vapor          & $\ce{H2O}$          & $d$               & 0              \\
-Thermal Conductivity      & Vapor          & $\ce{N2}$           & $a$               & 3.3100E-04     \\
-Thermal Conductivity      & Vapor          & $\ce{N2}$           & $b$               & 0.7722         \\
-Thermal Conductivity      & Vapor          & $\ce{N2}$           & $c$               & 16.323         \\
-Thermal Conductivity      & Vapor          & $\ce{N2}$           & $d$               & 373.72         \\
-Thermal Conductivity      & Vapor          & $\ce{O2}$           & $a$               & 4.5000E-04     \\
-Thermal Conductivity      & Vapor          & $\ce{O2}$           & $b$               & 0.7456         \\
-Thermal Conductivity      & Vapor          & $\ce{O2}$           & $c$               & 56.699         \\
-Thermal Conductivity      & Vapor          & $\ce{O2}$           & $d$               & 0              \\
-Vapor Pressure            & Liquid         & $\ce{H2O}$          & $a$               & 72.55          \\
-Vapor Pressure            & Liquid         & $\ce{H2O}$          & $b$               & -7206.7        \\
-Vapor Pressure            & Liquid         & $\ce{H2O}$          & $c$               & -7.1385        \\
-Vapor Pressure            & Liquid         & $\ce{H2O}$          & $d$               & 4.0500E-06     \\
-Viscosity                 & Liquid         & $\ce{H2O}$          & $a$               & 1.0020E-03     \\
-Viscosity                 & Liquid         & $\ce{H2O}$          & $b$               & 1.3272         \\
-Viscosity                 & Liquid         & $\ce{H2O}$          & $c$               & 1.0530E-03     \\
-Viscosity                 & Liquid         & $\ce{H2O}$          & $d$               & 168.15         \\
-Viscosity                 & Liquid         & mixture             & $a$               & -8.5404E-02    \\
-Viscosity                 & Liquid         & mixture             & $b$               & 2.7291         \\
-Viscosity                 & Liquid         & mixture             & $c$               & 35.1159        \\
-Viscosity                 & Liquid         & mixture             & $d$               & 1805.5276      \\
-Viscosity                 & Liquid         & mixture             & $e$               & 7.1603E-03     \\
-Viscosity                 & Liquid         & mixture             & $f$               & 1.0649E-02     \\
-Viscosity                 & Liquid         & mixture             & $g$               & -8.5404E-02    \\
-Viscosity                 & Vapor          & $\ce{CO2}$          & $a$               & 2.1480E-06     \\
-Viscosity                 & Vapor          & $\ce{CO2}$          & $b$               & 0.46           \\
-Viscosity                 & Vapor          & $\ce{CO2}$          & $c$               & 290            \\
-Viscosity                 & Vapor          & $\ce{H2O}$          & $a$               & 1.7096E-08     \\
-Viscosity                 & Vapor          & $\ce{H2O}$          & $b$               & 1.1146         \\
-Viscosity                 & Vapor          & $\ce{N2}$           & $a$               & 1.7810E-05     \\
-Viscosity                 & Vapor          & $\ce{N2}$           & $b$               & 300.55         \\
-Viscosity                 & Vapor          & $\ce{N2}$           & $c$               & 111            \\
-Viscosity                 & Vapor          & $\ce{O2}$           & $a$               & 2.0180E-05     \\
-Viscosity                 & Vapor          & $\ce{O2}$           & $b$               & 292.25         \\
-Viscosity                 & Vapor          & $\ce{O2}$           & $c$               & 127            \\
-Diffusivity               & Liquid         & $\ce{CO2}$          & $a$               & 2.3500E-06     \\
-Diffusivity               & Liquid         & $\ce{CO2}$          & $b$               & 2.9837E-08     \\
-Diffusivity               & Liquid         & $\ce{CO2}$          & $c$               & -9.7078E-09    \\
-Diffusivity               & Liquid         & $\ce{CO2}$          & $d$               & -2119          \\
-Diffusivity               & Liquid         & $\ce{CO2}$          & $e$               & -20.132        \\
-Diffusivity               & Liquid         & $\ce{MEA}$          & $a$               & -13.275        \\
-Diffusivity               & Liquid         & $\ce{MEA}$          & $b$               & -2198.3        \\
-Diffusivity               & Liquid         & $\ce{MEA}$          & $c$               & -7.8142E-05    \\
-Diffusivity               & Liquid         & $\ce{MEA}$          & $a$               & -22.64         \\
-Diffusivity               & Liquid         & $\ce{MEA}$          & $b$               & -1000          \\
-Diffusivity               & Liquid         & $\ce{MEA}$          & $c$               & -0.7           \\
-Diffusivity               & Vapor          & $\ce{CO2}$          & $a$               & 26.7           \\
-Diffusivity               & Vapor          & $\ce{H2O}$          & $b$               & 13.1           \\
-Diffusivity               & Vapor          & $\ce{N2}$           & $c$               & 18.5           \\
-Diffusivity               & Vapor          & $\ce{O2}$           & $d$               & 16.3           \\
-Interfacial Area          &                &                     & $A_1$             & 1.4391         \\
-Interfacial Area          &                &                     & $A_2$             & 0.12           \\
-Liquid Hold Up            &                &                     & $A$               & 11.4474        \\
-Liquid Hold Up            &                &                     & $B$               & 0.6471         \\
-Liquid Hold Up            &                &                     & $\alpha$          & 3.186          \\
-Carbamate Rate Constant   &                &                     & $a$               & 233.4          \\
-Carbamate Rate Constant   &                &                     & $b$               & -3410          \\
-Carbamate Rate Constant   &                &                     & $c$               & -36.8          \\
-Carbamate Rate Constant   &                &                     & $d$               & 0              \\
-Bicarbonate Rate Constant &                &                     & $a$               & 176.72         \\
-Bicarbonate Rate Constant &                &                     & $b$               & -2909          \\
-Bicarbonate Rate Constant &                &                     & $c$               & -28.46         \\
-Bicarbonate Rate Constant &                &                     & $d$               & 0              \\
-\hline
-\end{longtable}
-
+            The fixed constants retained from the original implementation include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, bed counts, and intercooler counts are read from the NCCC benchmark data. This separation prevents inconsistencies between a manuscript appendix and the executable model while still documenting the physical and numerical scope of the simulations.
 \newpage
 \subsection{Code Snippet of Model}
 

@@ -201,7 +201,13 @@ def segmented_scipy_BVP_solve(
     start_time = time.monotonic()
     transform_mode = settings.get("transform_mode", "bounded_guarded_raw_state")
     case_bounds = (
-        _case_state_bounds_scaled(Y_a_scaled, Y_b_scaled, scales, thermal_state_mode=thermal_state_mode)
+        _case_state_bounds_scaled(
+            Y_a_scaled,
+            Y_b_scaled,
+            scales,
+            thermal_state_mode=thermal_state_mode,
+            co2_vapor_upper_factor=float(settings.get("co2_vapor_upper_factor", 1.0)),
+        )
         if transform_mode == "case_bounded_flow_pressure"
         else None
     )
@@ -343,7 +349,13 @@ def _stacked_profile_to_solver(profile, beds, transform_mode, bounds=None):
     )
 
 
-def _case_state_bounds_scaled(Y_a_scaled, Y_b_scaled, scales, thermal_state_mode="enthalpy"):
+def _case_state_bounds_scaled(
+    Y_a_scaled,
+    Y_b_scaled,
+    scales,
+    thermal_state_mode="enthalpy",
+    co2_vapor_upper_factor=1.0,
+):
     y_a = np.asarray(Y_a_scaled, dtype=float)
     y_b = np.asarray(Y_b_scaled, dtype=float)
     scales = np.asarray(scales, dtype=float)
@@ -356,7 +368,7 @@ def _case_state_bounds_scaled(Y_a_scaled, Y_b_scaled, scales, thermal_state_mode
 
     fl_co2_upper_unscaled = max(y_a[0] * scales[0], y_b[0] * scales[0]) + 1.2 * y_a[2] * scales[2]
     fl_h2o_upper_unscaled = max(y_a[1] * scales[1], y_b[1] * scales[1]) + 3.0 * max(y_a[3] * scales[3], y_b[3] * scales[3])
-    fv_co2_upper_unscaled = 1.05 * y_a[2] * scales[2]
+    fv_co2_upper_unscaled = max(float(co2_vapor_upper_factor), 1.0) * y_a[2] * scales[2]
     fv_h2o_upper_unscaled = 3.0 * max(y_a[3] * scales[3], y_b[3] * scales[3])
     pressure_upper_unscaled = 1.2 * max(y_a[6] * scales[6], y_b[6] * scales[6])
 

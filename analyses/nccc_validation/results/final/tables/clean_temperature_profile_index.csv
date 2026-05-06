@@ -1,0 +1,4 @@
+case_id,thermo_model,profile_png,clean_profile,caveat
+3C,epcsaft_neutral,analyses/nccc_validation/results/final/profiles/3C/epcsaft_neutral/temperature_profile.png,True,accepted clean validation profile
+3C,ideal_henry,analyses/nccc_validation/results/final/profiles/3C/ideal_henry/temperature_profile.png,True,accepted clean validation profile
+7C,epcsaft_neutral,analyses/nccc_validation/results/final/profiles/7C/epcsaft_neutral/temperature_profile.png,True,converged profile retained as a difficult one-bed ePC-SAFT diagnostic with substantial validation error

@@ -2,6 +2,9 @@ import numpy as np
 from scipy.integrate import solve_bvp
 from ...BVP.ABS_Column import abs_column
 from ...BVP.robust_core import (
+    POSITIVE_SOLVER_IDXS,
+    POSITIVE_TRANSFORM_CEILING,
+    POSITIVE_TRANSFORM_FLOOR,
     guard_column_rhs,
     scaled_physical_to_solver,
     solver_profile_to_scaled_physical,
@@ -95,6 +98,12 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     n = int(settings['mesh_points'])
     z_2 = np.linspace(z[0], z[-1], n)
     w_guess_scaled = np.array([polynomial_fit(z_2, Y_a_scaled[i] * scales[i], i) / scales[i] for i in range(m)])
+    if transform_mode == "positive_flow_pressure":
+        w_guess_scaled[POSITIVE_SOLVER_IDXS, :] = np.clip(
+            w_guess_scaled[POSITIVE_SOLVER_IDXS, :],
+            POSITIVE_TRANSFORM_FLOOR * 10.0,
+            POSITIVE_TRANSFORM_CEILING * (1.0 - 1.0e-12),
+        )
     w_guess_solver = np.column_stack(
         [scaled_physical_to_solver(w_guess_scaled[:, i], transform_mode=transform_mode) for i in range(w_guess_scaled.shape[1])]
     )

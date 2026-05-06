@@ -50,6 +50,54 @@ def test_pressure_drop_returns_finite_positive_for_valid_domain():
     assert diagnostics["domain_guard_counts"].get("pressure_drop", 0) == 0
 
 
+def test_pressure_drop_uses_grouped_packing_area_exponent():
+    diagnostics = make_solver_diagnostics()
+    h_L = 0.05
+    rho_mass_l = 1050.0
+    rho_mass_v = 1.2
+    mul_mix = 0.003
+    muv_mix = 1.8e-5
+    A = 0.32
+    ul = 0.002
+    uv = 1.5
+
+    value = pressure_drop(
+        h_L=h_L,
+        rho_mass_l=rho_mass_l,
+        rho_mass_v=rho_mass_v,
+        mul_mix=mul_mix,
+        muv_mix=muv_mix,
+        A=A,
+        ul=ul,
+        uv=uv,
+        packing=PACKING,
+        diagnostics=diagnostics,
+    )
+
+    a_p, eps, *_rest, cp_0, ch = PACKING
+    diameter = (A * 4 / np.pi) ** 0.5
+    reynolds_liquid = ul * rho_mass_l / (a_p * mul_mix)
+    wetted_area_ratio = ch * reynolds_liquid ** 0.15 * (uv ** 2 * a_p / 9.80665) ** 0.1
+    static_holdup = (12 / 9.80665 * mul_mix / rho_mass_l * ul * a_p ** 2) ** (1 / 3) * wetted_area_ratio ** (2 / 3)
+    vapor_kinematic_viscosity = muv_mix / rho_mass_v
+    dry_factor = uv * rho_mass_v ** 0.5
+    packing_diameter = 6 * (1 - eps) / a_p
+    wall_factor = (1 + 2 / 3 * (1 / (1 - eps)) * packing_diameter / diameter) ** -1
+    reynolds_vapor = uv * packing_diameter / ((1 - eps) * vapor_kinematic_viscosity) * wall_factor
+    c1 = 13300 / (a_p ** (3 / 2))
+    froude_liquid = ul ** 2 * a_p / 9.80665
+    expected_psi = (
+        cp_0
+        * (64 / reynolds_vapor + 1.8 / reynolds_vapor ** 0.08)
+        * ((eps - h_L) / eps) ** 1.5
+        * (h_L / static_holdup) ** 0.3
+        * np.exp(c1 * np.sqrt(froude_liquid))
+    )
+    expected = expected_psi * a_p / (eps - h_L) ** 3 * dry_factor ** 2 / (2 * wall_factor)
+
+    assert value == pytest.approx(expected)
+
+
 def test_pressure_drop_rejects_liquid_holdup_above_void_fraction():
     diagnostics = make_solver_diagnostics()
 

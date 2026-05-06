@@ -161,13 +161,24 @@ def test_case_bounded_transform_caps_vapor_co2_by_inlet_flow():
     solver = np.array([0.0, 0.0, 1000.0, 0.0, 10.0, 20.0, 0.0])
     physical = _bounded_solver_to_scaled_physical(solver, bounds)
 
-    assert physical[2] <= y_a[2] * 1.05
+    assert physical[2] <= y_a[2]
     assert physical[2] > 0.0
     round_trip = _bounded_solver_to_scaled_physical(
         _bounded_scaled_physical_to_solver(y_a, bounds),
         bounds,
     )
     assert np.allclose(round_trip[[0, 1, 2, 3, 6]], y_a[[0, 1, 2, 3, 6]])
+
+
+def test_case_bounded_transform_can_relax_vapor_co2_upper_bound():
+    y_a = np.array([2.0, 5.0, 1.0, 0.8, 10.0, 20.0, 1.0])
+    y_b = np.array([0.5, 6.0, 0.05, 1.5, 8.0, 18.0, 1.0])
+    bounds = _case_state_bounds_scaled(y_a, y_b, np.ones(7), co2_vapor_upper_factor=1.05)
+    solver = np.array([0.0, 0.0, 1000.0, 0.0, 10.0, 20.0, 0.0])
+    physical = _bounded_solver_to_scaled_physical(solver, bounds)
+
+    assert physical[2] <= y_a[2] * 1.05
+    assert physical[2] > y_a[2]
 
 
 def test_segmented_scipy_bvp_matches_single_bed_scipy_bvp_for_case_3c():
@@ -229,3 +240,24 @@ def test_positive_flow_pressure_transform_reproduces_case_3c_scipy_bvp():
     assert transformed["success"] is True
     assert transformed["transform_mode"] == "positive_flow_pressure"
     assert abs(transformed["capture_pct"] - baseline["capture_pct"]) < 0.5
+
+
+def test_case_bounded_transform_routes_to_positive_transform_for_one_bed_scipy_bvp():
+    df = pd.read_csv(
+        "src/mea_absorption_column/data/C_cases_data.csv",
+        index_col=0,
+    )
+    run = list(df.index).index("3C")
+
+    result = run_model(
+        df,
+        method="scipy-bvp",
+        run=run,
+        thermo_model="ideal_henry",
+        return_details=True,
+        staged_beds=False,
+        solver_settings={"transform_mode": "case_bounded_flow_pressure"},
+    )
+
+    assert result["success"] is True
+    assert result["transform_mode"] == "positive_flow_pressure"
