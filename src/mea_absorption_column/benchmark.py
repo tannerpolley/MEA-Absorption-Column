@@ -17,6 +17,7 @@ import pandas as pd
 
 from mea_absorption_column.Run_Model import run_model
 from mea_absorption_column.calibration import nccc_linear_capture_prediction, write_calibration_artifacts
+from mea_absorption_column.misc.Save_Run_Outputs import build_profile_coordinate_frame, write_profile_csvs
 
 
 BENCHMARK_COLUMNS = [
@@ -69,6 +70,9 @@ BENCHMARK_COLUMNS = [
     "epcsaft_cache_misses",
     "epcsaft_direct_density_solve_s",
     "profile_png",
+    "profile_csv_dir",
+    "profile_csv_status",
+    "profile_csv_files",
     "python_version",
     "platform",
     "package_versions",
@@ -89,6 +93,7 @@ class BenchmarkSettings:
     staged_beds: str | bool = "auto"
     solver_settings: dict | None = None
     profile_pngs: bool = False
+    profile_csvs: bool = False
     subprocess_timeout_s: float | None = None
 
 
@@ -176,8 +181,10 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
                 flux_modes=flux_modes or (solver_settings.get("co2_flux_mode", "bidirectional"),),
                 start=start,
             )
-        if settings.profile_pngs:
+        if settings.profile_pngs or settings.profile_csvs:
             solver_settings["return_profiles"] = True
+        if settings.profile_csvs:
+            solver_settings["case_source"] = case_source
         result = run_model(
             df,
             method=method,
@@ -195,6 +202,8 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
         result = _annotate_solver_settings(result, solver_settings)
         if settings.profile_pngs and result.get("_profiles"):
             result["profile_png"] = _write_profile_png(result, settings.output_dir, case_source)
+        if settings.profile_csvs:
+            result.update(_write_profile_csvs_for_result(result, settings.output_dir, case_source))
         result["case_source"] = case_source
         return _coerce_row(result)
     except Exception as exc:
@@ -345,6 +354,7 @@ def _settings_to_payload(settings: BenchmarkSettings, solver_settings_override=N
         "staged_beds": settings.staged_beds,
         "solver_settings": settings.solver_settings if solver_settings_override is None else solver_settings_override,
         "profile_pngs": settings.profile_pngs,
+        "profile_csvs": settings.profile_csvs,
         "subprocess_timeout_s": None,
     }
 
@@ -364,6 +374,7 @@ def settings_from_payload(payload: dict) -> BenchmarkSettings:
         staged_beds=payload.get("staged_beds", "auto"),
         solver_settings=payload.get("solver_settings"),
         profile_pngs=bool(payload.get("profile_pngs", False)),
+        profile_csvs=bool(payload.get("profile_csvs", False)),
         subprocess_timeout_s=payload.get("subprocess_timeout_s"),
     )
 
@@ -437,8 +448,10 @@ def _run_multistart_case(
                         candidates.append(result)
                         continue
                     try:
-                        if settings.profile_pngs:
+                        if settings.profile_pngs or settings.profile_csvs:
                             solver_settings["return_profiles"] = True
+                        if settings.profile_csvs:
+                            solver_settings["case_source"] = case_source
                         result = run_model(
                             df,
                             method=method,
@@ -480,6 +493,8 @@ def _run_multistart_case(
     best["message"] = f"{best.get('message', '')}; selected from {len(candidates)} multistart candidates"
     if settings.profile_pngs and best.get("_profiles"):
         best["profile_png"] = _write_profile_png(best, settings.output_dir, case_source)
+    if settings.profile_csvs:
+        best.update(_write_profile_csvs_for_result(best, settings.output_dir, case_source))
     return _coerce_row(best)
 
 
@@ -601,6 +616,9 @@ def _failure_metadata(df, run, method, staged_beds):
         "epcsaft_cache_misses": None,
         "epcsaft_direct_density_solve_s": None,
         "profile_png": None,
+        "profile_csv_dir": None,
+        "profile_csv_status": None,
+        "profile_csv_files": None,
     }
 
 
@@ -698,6 +716,7 @@ def parse_args(argv=None):
     parser.add_argument("--multistart-co2-flux-modes", nargs="+", default=None)
     parser.add_argument("--finite-jacobian", action="store_true")
     parser.add_argument("--profile-pngs", action="store_true")
+    parser.add_argument("--profile-csvs", action="store_true")
     parser.add_argument("--subprocess-timeout-s", type=float, default=None)
     parser.add_argument("--no-write", action="store_true")
     return parser.parse_args(argv)
@@ -722,6 +741,7 @@ def main(argv=None):
         write_artifacts=not args.no_write,
         solver_settings=_solver_settings_from_args(args),
         profile_pngs=bool(args.profile_pngs),
+        profile_csvs=bool(args.profile_csvs),
         subprocess_timeout_s=args.subprocess_timeout_s,
     )
     results = run_benchmark(settings)
@@ -813,6 +833,129 @@ def _write_profile_png(result, output_dir: Path | str, case_source: str):
     fig.savefig(path)
     plt.close(fig)
     return str(path)
+
+
+def _write_profile_csvs_for_result(result, output_dir: Path | str, case_source: str):
+    profiles = result.get("_profiles") or {}
+    if not profiles:
+        return {
+            "profile_csv_dir": "",
+            "profile_csv_status": "empty",
+            "profile_csv_files": "",
+        }
+    profile_dir = _profile_csv_dir(result, output_dir, case_source)
+    metadata = {
+        **(result.get("_case_metadata") or {}),
+        "case_id": result.get("case_id", ""),
+        "case_source": case_source,
+        "method": result.get("method", ""),
+        "thermo_model": result.get("thermo_model", ""),
+        "success": bool(result.get("success", False)),
+        "message": result.get("message", ""),
+        "beds": result.get("beds", ""),
+        "intercoolers": result.get("intercoolers", ""),
+        "total_packed_height_m": (result.get("_case_metadata") or {}).get("total_packed_height_m"),
+        "single_bed_height_m": (result.get("_case_metadata") or {}).get("single_bed_height_m"),
+        "intercooler_model": result.get("intercooler_model", ""),
+        "intercooler_assumption": result.get("intercooler_assumption", ""),
+        "profile_status": "clean" if bool(result.get("success", False)) else "diagnostic",
+        "position_orientation": "global_normalized_bottom_to_top",
+    }
+    export = write_profile_csvs(
+        _profiles_with_coordinates(profiles, metadata),
+        profile_dir,
+        metadata,
+    )
+    _write_profile_rerun_files(profile_dir, metadata, output_dir, result)
+    return export
+
+
+def _profiles_with_coordinates(profiles, metadata):
+    converted = {}
+    for sheetname, profile in profiles.items():
+        if "Position" in profile.columns:
+            converted[sheetname] = profile
+            continue
+        positions = profile.index.to_numpy(dtype=float)
+        positions = pd.Series(positions).sort_values(ignore_index=True).to_numpy()
+        coordinate_frame = build_profile_coordinate_frame(
+            positions,
+            total_packed_height_m=metadata.get("total_packed_height_m"),
+            beds=metadata.get("beds", 1),
+        )
+        converted[sheetname] = pd.concat(
+            [coordinate_frame.reset_index(drop=True), profile.reset_index(drop=True)],
+            axis=1,
+        )
+    return converted
+
+
+def _profile_csv_dir(result, output_dir: Path | str, case_source: str):
+    parts = [
+        Path(output_dir),
+        "profiles",
+        _safe_path_part(case_source),
+        _safe_path_part(result.get("case_id", "unknown_case")),
+        _safe_path_part(result.get("method", "unknown_method")),
+        _safe_path_part(result.get("thermo_model", "unknown_thermo")),
+    ]
+    path = parts[0]
+    for part in parts[1:]:
+        path = path / part
+    return path
+
+
+def _safe_path_part(value):
+    return "".join(ch if ch.isalnum() or ch in {"-", "_", "."} else "_" for ch in str(value))
+
+
+def _write_profile_rerun_files(profile_dir: Path, metadata: dict, output_dir: Path | str, result: dict):
+    solver_settings = {}
+    for key in (
+        "mesh_points",
+        "tol",
+        "bc_tol",
+        "max_nodes",
+        "co2_capture_guess_pct",
+        "h2o_capture_guess_pct",
+        "epcsaft_fugacity_blend",
+        "mass_transfer_factor",
+        "heat_transfer_factor",
+        "intercooler_strength",
+        "co2_flux_mode",
+        "co2_vapor_upper_factor",
+        "success_boundary_residual_max",
+        "scaling_mode",
+        "transform_mode",
+        "integrator",
+        "root_method",
+        "ivp_method",
+    ):
+        value = result.get(key)
+        if value is not None and not pd.isna(value):
+            solver_settings[key] = value
+    spec = {
+        "case_source": metadata.get("case_source"),
+        "case_id": metadata.get("case_id"),
+        "method": metadata.get("method"),
+        "thermo_model": metadata.get("thermo_model"),
+        "staged_beds": "auto",
+        "output_dir": str(output_dir),
+        "solver_settings": solver_settings,
+    }
+    spec_path = profile_dir / "run_spec.json"
+    spec_path.write_text(json.dumps(spec, indent=2, sort_keys=True, default=str), encoding="utf-8")
+    repo_root = Path.cwd()
+    runner = repo_root / "analyses" / "nccc_validation" / "scripts" / "run_case_profile.py"
+    script = "\n".join(
+        [
+            "$ErrorActionPreference = 'Stop'",
+            f"Set-Location -LiteralPath '{repo_root}'",
+            f"& '{sys.executable}' '{runner}' --spec '{spec_path}'",
+            "",
+        ]
+    )
+    (profile_dir / "rerun_profile.ps1").write_text(script, encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -143,6 +143,7 @@ def test_benchmark_cli_accepts_solver_settings():
         "200",
         "--finite-jacobian",
         "--profile-pngs",
+        "--profile-csvs",
         "--subprocess-timeout-s",
         "30",
         "--nccc-case-ids",
@@ -192,6 +193,7 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.max_nodes == 200
     assert args.finite_jacobian is True
     assert args.profile_pngs is True
+    assert args.profile_csvs is True
     assert args.subprocess_timeout_s == 30
     assert args.nccc_case_ids == ["K4", "K5"]
     assert args.transform_mode == "positive_flow_pressure"
@@ -218,6 +220,75 @@ def test_benchmark_cli_accepts_solver_settings():
     assert solver_settings["co2_capture_guess_pct"] == 85
     assert solver_settings["h2o_capture_guess_pct"] == -90
     assert solver_settings["epcsaft_fugacity_blend"] == 0.5
+
+
+def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
+    def fake_run_model(df, method, thermo_model, run, solver_settings, **kwargs):
+        assert solver_settings["return_profiles"] is True
+        return {
+            "case_id": "3C",
+            "method": method,
+            "thermo_model": thermo_model,
+            "success": True,
+            "message": "ok",
+            "runtime_s": 0.01,
+            "capture_pct": 89.0,
+            "capture_error_pct": -0.5,
+            "temperature_rmse_K": 1.2,
+            "boundary_residual_norm": 0.001,
+            "boundary_residual_components": '{"Fv_CO2_pct": 0.0}',
+            "mesh_points": 101,
+            "tol": 0.1,
+            "bc_tol": 0.001,
+            "max_nodes": 250,
+            "co2_capture_guess_pct": 88.0,
+            "h2o_capture_guess_pct": -90.0,
+            "beds": 1,
+            "intercoolers": 0,
+            "staged_beds": False,
+            "intercooler_model": "none",
+            "intercooler_assumption": "none",
+            "python_version": "test",
+            "platform": "test",
+            "package_versions": "numpy=test",
+            "_case_metadata": {
+                "case_id": "3C",
+                "beds": 1,
+                "intercoolers": 0,
+                "single_bed_height_m": 10.0,
+                "total_packed_height_m": 10.0,
+            },
+            "_profiles": {
+                "T": pd.DataFrame({"Tl": [320.0, 315.0], "Tv": [318.0, 316.0]}, index=[1.0, 0.0]),
+                "CO2": pd.DataFrame({"DF_CO2": [1.2, 0.8]}, index=[1.0, 0.0]),
+            },
+        }
+
+    monkeypatch.setattr("mea_absorption_column.benchmark.run_model", fake_run_model)
+    settings = BenchmarkSettings(
+        methods=("scipy-bvp",),
+        thermo_models=("ideal_henry",),
+        c_case_ids=("3C",),
+        nccc_case_limit=0,
+        output_dir=tmp_path,
+        profile_csvs=True,
+    )
+
+    results = run_benchmark(settings)
+    row = results.iloc[0]
+    profile_dir = Path(row["profile_csv_dir"])
+
+    assert row["profile_csv_status"] == "written"
+    assert (profile_dir / "T.csv").exists()
+    assert (profile_dir / "CO2.csv").exists()
+    assert (profile_dir / "profile_manifest.json").exists()
+    assert (profile_dir / "run_spec.json").exists()
+    assert pd.read_csv(profile_dir / "T.csv").columns.tolist()[:4] == [
+        "Position",
+        "height_m",
+        "bed_id",
+        "bed_position_m",
+    ]
 
 
 def test_benchmark_multistart_selects_lowest_capture_error(tmp_path, monkeypatch):
@@ -454,6 +525,7 @@ def test_benchmark_settings_round_trip_for_worker_payload(tmp_path):
         staged_beds="auto",
         solver_settings={"mesh_points": 5, "co2_flux_mode": "absorption_only"},
         profile_pngs=True,
+        profile_csvs=True,
         subprocess_timeout_s=30,
     )
 
@@ -464,4 +536,5 @@ def test_benchmark_settings_round_trip_for_worker_payload(tmp_path):
     assert restored.output_dir == Path(tmp_path)
     assert restored.solver_settings["co2_flux_mode"] == "absorption_only"
     assert restored.profile_pngs is True
+    assert restored.profile_csvs is True
     assert restored.subprocess_timeout_s is None

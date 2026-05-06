@@ -23,6 +23,7 @@ def main() -> int:
         _check_staged_kcase_benchmark,
         _check_diagnostic_tables,
         _check_profile_index,
+        _check_referenced_profile_csv_dirs,
         _check_final_tables_do_not_point_to_removed_docs_paths,
         _check_latex_paths,
         _check_old_docs_benchmark_removed,
@@ -46,6 +47,7 @@ def _check_required_files() -> None:
         FIGURES / "staged_kcase_capture_error.pdf",
         FIGURES / "staged_epcsaft_smoke_capture_error.pdf",
         FINAL / "reports" / "validation_summary.md",
+        ANALYSIS / "scripts" / "run_case_profile.py",
     ]
     _require_existing(required)
 
@@ -113,6 +115,22 @@ def _check_profile_index() -> None:
         path = ROOT / raw_path
         if not path.exists():
             raise AssertionError(f"Profile PNG listed in index does not exist: {raw_path}")
+
+
+def _check_referenced_profile_csv_dirs() -> None:
+    for table_path in sorted(TABLES.glob("*.csv")):
+        data = pd.read_csv(table_path)
+        if "profile_csv_dir" not in data.columns:
+            continue
+        for raw_path in data["profile_csv_dir"].dropna():
+            raw_path = str(raw_path)
+            if not raw_path:
+                continue
+            path = ROOT / raw_path
+            if not path.exists():
+                raise AssertionError(f"Profile CSV directory listed in {table_path.name} does not exist: {raw_path}")
+            if not (path / "profile_manifest.json").exists():
+                raise AssertionError(f"Profile CSV directory lacks manifest: {raw_path}")
 
 
 def _check_latex_paths() -> None:

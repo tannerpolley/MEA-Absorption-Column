@@ -1,0 +1,54 @@
+import json
+
+import pandas as pd
+
+from mea_absorption_column.misc.Save_Run_Outputs import (
+    build_profile_coordinate_frame,
+    write_profile_csvs,
+)
+
+
+def test_profile_coordinate_frame_spans_global_staged_height():
+    frame = build_profile_coordinate_frame([0.0, 0.5, 1.0], total_packed_height_m=30.0, beds=3)
+
+    assert list(frame.columns) == ["Position", "height_m", "bed_id", "bed_position_m"]
+    assert frame["Position"].tolist() == [0.0, 0.5, 1.0]
+    assert frame["height_m"].tolist() == [0.0, 15.0, 30.0]
+    assert frame["bed_id"].tolist() == [1, 2, 3]
+
+
+def test_write_profile_csvs_writes_one_file_per_legacy_sheet(tmp_path):
+    profiles = {
+        "T": pd.DataFrame(
+            {
+                "Position": [1.0, 0.0],
+                "height_m": [10.0, 0.0],
+                "bed_id": [1, 1],
+                "bed_position_m": [10.0, 0.0],
+                "Tl": [320.0, 315.0],
+                "Tv": [318.0, 316.0],
+            }
+        ),
+        "CO2": pd.DataFrame({"Position": [1.0, 0.0], "DF_CO2": [1.2, 0.8]}),
+    }
+
+    export = write_profile_csvs(
+        profiles,
+        tmp_path,
+        {
+            "case_id": "3C",
+            "case_source": "C_cases_data",
+            "method": "scipy-bvp",
+            "thermo_model": "ideal_henry",
+            "profile_status": "clean",
+        },
+    )
+
+    assert export["profile_csv_status"] == "written"
+    assert set(export["profile_csv_files"].split(";")) == {"T.csv", "CO2.csv"}
+    assert (tmp_path / "T.csv").exists()
+    assert (tmp_path / "CO2.csv").exists()
+    assert (tmp_path / "profile_manifest.csv").exists()
+    manifest = json.loads((tmp_path / "profile_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["case_id"] == "3C"
+    assert manifest["profile_csv_files"] == ["T.csv", "CO2.csv"]

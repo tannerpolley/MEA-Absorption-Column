@@ -20,7 +20,7 @@ from mea_absorption_column.BVP.Methods.Finite_Difference_Solve import (
 from mea_absorption_column.BVP.robust_core import make_solver_diagnostics
 from mea_absorption_column.intercooling import build_bed_stack_spec
 from mea_absorption_column.misc.Convert_Data import convert_data
-from mea_absorption_column.misc.Save_Run_Outputs import save_run_outputs
+from mea_absorption_column.misc.Save_Run_Outputs import save_run_outputs, write_profile_csvs
 from mea_absorption_column.misc.Get_Temperature_Enthalpy import (
     get_liquid_enthalpy, get_vapor_enthalpy, get_liquid_temperature, get_vapor_temperature
 )
@@ -376,11 +376,12 @@ Run #{run + 1:03d}:
     # Stores output data into text files (concentrations, mole fractions, and temperatures) (can also plot)
     return_profiles = bool(solver_settings_for_run.get("return_profiles"))
     return_internal_profile = bool(solver_settings_for_run.get("return_internal_profile"))
+    profile_csv_dir = solver_settings_for_run.get("profile_csv_dir")
     output_message_suffix = ""
     if (
-        (use_staged_beds and stack_spec.beds > 1 and not save_run_results and not plot_temperature and not return_profiles)
-        or (return_internal_profile and not save_run_results and not plot_temperature and not return_profiles)
-        or (not success and not save_run_results and not plot_temperature and not return_profiles)
+        (use_staged_beds and stack_spec.beds > 1 and not save_run_results and not plot_temperature and not return_profiles and not profile_csv_dir)
+        or (return_internal_profile and not save_run_results and not plot_temperature and not return_profiles and not profile_csv_dir)
+        or (not success and not save_run_results and not plot_temperature and not return_profiles and not profile_csv_dir)
     ):
         dfs_dict = {}
     else:
@@ -388,6 +389,8 @@ Run #{run + 1:03d}:
             dfs_dict = save_run_outputs(Y_scaled_for_outputs, z_outputs, parameters,
                                   save_run_results=save_run_results,
                                   plot_temperature=plot_temperature,
+                                  profile_metadata=case_metadata,
+                                  include_coordinate_columns=bool(profile_csv_dir),
                                   )
         except Exception as exc:
             dfs_dict = _fallback_temperature_profile(
@@ -491,10 +494,38 @@ Run #{run + 1:03d}:
             'epcsaft_cache_misses': int(cache_stats.get('epcsaft_cache_misses', 0)),
             'epcsaft_direct_density_solve_s': float(cache_stats.get('epcsaft_direct_density_solve_s', 0.0)),
             'profile_png': solver_settings_for_run.get('profile_png', ''),
+            'profile_csv_dir': '',
+            'profile_csv_status': '',
+            'profile_csv_files': '',
             'python_version': sys.version.split()[0],
             'platform': platform.platform(),
             'package_versions': _package_versions(),
+            '_case_metadata': case_metadata,
         }
+        if profile_csv_dir:
+            profile_status = "clean" if method_success else "diagnostic"
+            if dfs_dict:
+                export_metadata = {
+                    **case_metadata,
+                    "case_source": solver_settings_for_run.get("case_source", ""),
+                    "method": method,
+                    "thermo_model": thermo_model,
+                    "success": bool(method_success),
+                    "message": result["message"],
+                    "intercooler_model": result["intercooler_model"],
+                    "intercooler_assumption": result["intercooler_assumption"],
+                    "profile_status": profile_status,
+                    "position_orientation": "global_normalized_bottom_to_top",
+                }
+                result.update(write_profile_csvs(dfs_dict, profile_csv_dir, export_metadata))
+            else:
+                result.update(
+                    {
+                        "profile_csv_dir": str(profile_csv_dir),
+                        "profile_csv_status": "empty",
+                        "profile_csv_files": "",
+                    }
+                )
         if return_internal_profile:
             result["_raw_solution_scaled"] = raw_Y_scaled
         if return_profiles:
