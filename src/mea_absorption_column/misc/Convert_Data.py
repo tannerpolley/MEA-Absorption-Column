@@ -131,8 +131,15 @@ def convert_data(df, run=0, type='mole', return_metadata=False):
     else:
         raise ValueError('Wrong Data Type')
 
-    D = column_params['NCCC']['D']
-    H = column_params['NCCC']['H'] * beds
+    D = float(df.iloc[run]["D"]) if "D" in df.columns else column_params['NCCC']['D']
+    single_bed_height = (
+        float(df.iloc[run]["H"])
+        if "H" in df.columns
+        else float(df.iloc[run]["single_bed_height_m"])
+        if "single_bed_height_m" in df.columns
+        else column_params['NCCC']['H']
+    )
+    H = single_bed_height * beds
 
     a_p = packing_params['MellapakPlus252Y']['a_p']
     ϵ = packing_params['MellapakPlus252Y']['eps']
@@ -150,13 +157,13 @@ def convert_data(df, run=0, type='mole', return_metadata=False):
 
     inputs = [Fl, Fv, Tl_z, Tv_0, z, H, A, P, packing]
     if return_metadata:
-        single_bed_height = column_params['NCCC']['H']
         metadata = {
             "case_id": case_id,
             "beds": int(beds),
             "intercoolers": intercoolers,
             "single_bed_height_m": float(single_bed_height),
             "total_packed_height_m": float(H),
+            "diameter_m": float(D),
         }
         return inputs, X, metadata
     return inputs, X

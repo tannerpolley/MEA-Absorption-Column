@@ -25,6 +25,7 @@ BENCHMARK_COLUMNS = [
     "case_source",
     "method",
     "thermo_model",
+    "chemical_equilibrium_model",
     "success",
     "message",
     "runtime_s",
@@ -69,6 +70,11 @@ BENCHMARK_COLUMNS = [
     "epcsaft_cache_hits",
     "epcsaft_cache_misses",
     "epcsaft_direct_density_solve_s",
+    "epcsaft_rho_guess_hits",
+    "epcsaft_rho_guess_misses",
+    "epcsaft_chemistry_cache_hits",
+    "epcsaft_chemistry_cache_misses",
+    "epcsaft_chemistry_solve_s",
     "profile_png",
     "profile_csv_dir",
     "profile_csv_status",
@@ -82,12 +88,14 @@ BENCHMARK_COLUMNS = [
 @dataclass(frozen=True)
 class BenchmarkSettings:
     methods: tuple[str, ...] = ("single", "scipy-bvp", "finite")
-    thermo_models: tuple[str, ...] = ("ideal_henry", "epcsaft_neutral")
+    thermo_models: tuple[str, ...] = ("ideal_henry",)
     output_dir: Path = Path("analyses/nccc_validation/results/runs/benchmark")
     c_case_limit: int | None = None
     nccc_case_limit: int | None = None
+    srp_case_limit: int | None = 0
     c_case_ids: tuple[str, ...] | None = None
     nccc_case_ids: tuple[str, ...] | None = None
+    srp_case_ids: tuple[str, ...] | None = None
     write_artifacts: bool = True
     data_type: str = "mole"
     staged_beds: str | bool = "auto"
@@ -104,11 +112,12 @@ def _data_path(filename: str):
 def load_case_data():
     c_cases = pd.read_csv(_data_path("C_cases_data.csv"), index_col=0)
     nccc_cases = pd.read_csv(_data_path("NCCC_Data_mole_based.csv"), index_col=0)
-    return c_cases, nccc_cases
+    srp_cases = pd.read_csv(_data_path("SRP_method_cases.csv"), index_col=0)
+    return c_cases, nccc_cases, srp_cases
 
 
 def run_benchmark(settings: BenchmarkSettings = BenchmarkSettings()) -> pd.DataFrame:
-    c_cases, nccc_cases = load_case_data()
+    c_cases, nccc_cases, srp_cases = load_case_data()
     case_groups = []
     if settings.c_case_limit != 0:
         c_subset = c_cases.iloc[: settings.c_case_limit] if settings.c_case_limit is not None else c_cases
@@ -118,6 +127,10 @@ def run_benchmark(settings: BenchmarkSettings = BenchmarkSettings()) -> pd.DataF
         nccc_subset = nccc_cases.iloc[: settings.nccc_case_limit] if settings.nccc_case_limit is not None else nccc_cases
         nccc_subset = _filter_case_ids(nccc_subset, settings.nccc_case_ids, "NCCC_Data")
         case_groups.append(("NCCC_Data", nccc_subset))
+    if settings.srp_case_limit != 0:
+        srp_subset = srp_cases.iloc[: settings.srp_case_limit] if settings.srp_case_limit is not None else srp_cases
+        srp_subset = _filter_case_ids(srp_subset, settings.srp_case_ids, "SRP_method_cases")
+        case_groups.append(("SRP_method_cases", srp_subset))
 
     rows = []
     for case_source, df in case_groups:
@@ -225,7 +238,7 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
             failure = _apply_capture_correction(df, run, failure, dict(settings.solver_settings or {}))
         except Exception:
             pass
-        return _coerce_row(failure)
+        return _coerce_row(_annotate_solver_settings(failure, dict(settings.solver_settings or {})))
 
 
 def _run_one_case_subprocess(df, run, case_source, method, thermo_model, settings):
@@ -347,8 +360,10 @@ def _settings_to_payload(settings: BenchmarkSettings, solver_settings_override=N
         "output_dir": str(settings.output_dir),
         "c_case_limit": settings.c_case_limit,
         "nccc_case_limit": settings.nccc_case_limit,
+        "srp_case_limit": settings.srp_case_limit,
         "c_case_ids": list(settings.c_case_ids) if settings.c_case_ids is not None else None,
         "nccc_case_ids": list(settings.nccc_case_ids) if settings.nccc_case_ids is not None else None,
+        "srp_case_ids": list(settings.srp_case_ids) if settings.srp_case_ids is not None else None,
         "write_artifacts": False,
         "data_type": settings.data_type,
         "staged_beds": settings.staged_beds,
@@ -367,8 +382,10 @@ def settings_from_payload(payload: dict) -> BenchmarkSettings:
         output_dir=Path(payload.get("output_dir") or defaults.output_dir),
         c_case_limit=payload.get("c_case_limit"),
         nccc_case_limit=payload.get("nccc_case_limit"),
+        srp_case_limit=payload.get("srp_case_limit", 0),
         c_case_ids=tuple(payload["c_case_ids"]) if payload.get("c_case_ids") is not None else None,
         nccc_case_ids=tuple(payload["nccc_case_ids"]) if payload.get("nccc_case_ids") is not None else None,
+        srp_case_ids=tuple(payload["srp_case_ids"]) if payload.get("srp_case_ids") is not None else None,
         write_artifacts=bool(payload.get("write_artifacts", False)),
         data_type=payload.get("data_type", "mole"),
         staged_beds=payload.get("staged_beds", "auto"),
@@ -542,11 +559,16 @@ def _target_capture_pct(df, run):
 
 def _annotate_solver_settings(result, solver_settings):
     result = dict(result)
+    result.setdefault(
+        "chemical_equilibrium_model",
+        _default_chemical_equilibrium_model(result.get("thermo_model")),
+    )
     for key in (
         "mesh_points",
         "tol",
         "bc_tol",
         "max_nodes",
+        "chemical_equilibrium_model",
         "co2_capture_guess_pct",
         "h2o_capture_guess_pct",
         "epcsaft_fugacity_blend",
@@ -565,6 +587,19 @@ def _annotate_solver_settings(result, solver_settings):
         if key in solver_settings:
             result[key] = solver_settings[key]
     return result
+
+
+def _default_chemical_equilibrium_model(thermo_model):
+    normalized = (thermo_model or "").lower()
+    if normalized in {
+        "epcsaft_reactive_six",
+        "epcsaft_reactive_six_concentration",
+        "epcsaft_reactive_six_activity",
+        "epcsaft_reactive_six_activity_converted",
+        "epcsaft_reactive_six_activity_rebased",
+    }:
+        return normalized
+    return "legacy"
 
 
 def _coerce_row(result):
@@ -615,6 +650,8 @@ def _failure_metadata(df, run, method, staged_beds):
         "epcsaft_cache_hits": None,
         "epcsaft_cache_misses": None,
         "epcsaft_direct_density_solve_s": None,
+        "epcsaft_rho_guess_hits": None,
+        "epcsaft_rho_guess_misses": None,
         "profile_png": None,
         "profile_csv_dir": None,
         "profile_csv_status": None,
@@ -687,8 +724,10 @@ def parse_args(argv=None):
     parser.add_argument("--output-dir", default=str(BenchmarkSettings.output_dir))
     parser.add_argument("--c-case-limit", type=int, default=None)
     parser.add_argument("--nccc-case-limit", type=int, default=None)
+    parser.add_argument("--srp-case-limit", type=int, default=0)
     parser.add_argument("--c-case-ids", nargs="+", default=None)
     parser.add_argument("--nccc-case-ids", nargs="+", default=None)
+    parser.add_argument("--srp-case-ids", nargs="+", default=None)
     parser.add_argument("--staged-beds", choices=["auto", "true", "false"], default="auto")
     parser.add_argument("--mesh-points", type=int, default=None)
     parser.add_argument("--tol", type=float, default=None)
@@ -704,6 +743,7 @@ def parse_args(argv=None):
     parser.add_argument("--co2-capture-guess-pct", type=float, default=None)
     parser.add_argument("--h2o-capture-guess-pct", type=float, default=None)
     parser.add_argument("--epcsaft-fugacity-blend", type=float, default=None)
+    parser.add_argument("--chemical-equilibrium-model", default=None)
     parser.add_argument("--mass-transfer-factor", type=float, default=None)
     parser.add_argument("--heat-transfer-factor", type=float, default=None)
     parser.add_argument("--intercooler-strength", type=float, default=None)
@@ -715,6 +755,12 @@ def parse_args(argv=None):
     parser.add_argument("--multistart-intercooler-strengths", nargs="+", type=float, default=None)
     parser.add_argument("--multistart-co2-flux-modes", nargs="+", default=None)
     parser.add_argument("--finite-jacobian", action="store_true")
+    parser.add_argument("--seed-from-shooting", action="store_true")
+    parser.add_argument(
+        "--unguarded-rhs",
+        action="store_true",
+        help="Bypass domain guard wrappers for legacy favorable-case timing probes.",
+    )
     parser.add_argument("--profile-pngs", action="store_true")
     parser.add_argument("--profile-csvs", action="store_true")
     parser.add_argument("--subprocess-timeout-s", type=float, default=None)
@@ -735,8 +781,10 @@ def main(argv=None):
         output_dir=Path(args.output_dir),
         c_case_limit=args.c_case_limit,
         nccc_case_limit=args.nccc_case_limit,
+        srp_case_limit=args.srp_case_limit,
         c_case_ids=tuple(args.c_case_ids) if args.c_case_ids is not None else None,
         nccc_case_ids=tuple(args.nccc_case_ids) if args.nccc_case_ids is not None else None,
+        srp_case_ids=tuple(args.srp_case_ids) if args.srp_case_ids is not None else None,
         staged_beds=staged_beds,
         write_artifacts=not args.no_write,
         solver_settings=_solver_settings_from_args(args),
@@ -780,6 +828,8 @@ def _solver_settings_from_args(args):
         settings["h2o_capture_guess_pct"] = args.h2o_capture_guess_pct
     if args.epcsaft_fugacity_blend is not None:
         settings["epcsaft_fugacity_blend"] = args.epcsaft_fugacity_blend
+    if args.chemical_equilibrium_model is not None:
+        settings["chemical_equilibrium_model"] = args.chemical_equilibrium_model
     if args.mass_transfer_factor is not None:
         settings["mass_transfer_factor"] = args.mass_transfer_factor
     if args.heat_transfer_factor is not None:
@@ -802,6 +852,11 @@ def _solver_settings_from_args(args):
         settings["multistart_co2_flux_modes"] = tuple(args.multistart_co2_flux_modes)
     if args.finite_jacobian:
         settings["use_finite_jacobian"] = True
+    if args.seed_from_shooting:
+        settings["seed_from_shooting"] = True
+    if args.unguarded_rhs:
+        settings["guard_rhs"] = False
+        settings["strict_domain_guards"] = False
     return settings or None
 
 
@@ -852,6 +907,8 @@ def _write_profile_csvs_for_result(result, output_dir: Path | str, case_source: 
         "thermo_model": result.get("thermo_model", ""),
         "success": bool(result.get("success", False)),
         "message": result.get("message", ""),
+        "runtime_s": result.get("runtime_s"),
+        "runtime_label": _format_runtime_label(result.get("runtime_s")),
         "beds": result.get("beds", ""),
         "intercoolers": result.get("intercoolers", ""),
         "total_packed_height_m": (result.get("_case_metadata") or {}).get("total_packed_height_m"),
@@ -907,6 +964,19 @@ def _profile_csv_dir(result, output_dir: Path | str, case_source: str):
 
 def _safe_path_part(value):
     return "".join(ch if ch.isalnum() or ch in {"-", "_", "."} else "_" for ch in str(value))
+
+
+def _format_runtime_label(runtime_s):
+    try:
+        runtime_s = float(runtime_s)
+    except (TypeError, ValueError):
+        return ""
+    if pd.isna(runtime_s):
+        return ""
+    if runtime_s < 60.0:
+        return f"{runtime_s:.2f} s"
+    minutes, seconds = divmod(runtime_s, 60.0)
+    return f"{int(minutes)} min {seconds:.1f} s"
 
 
 def _write_profile_rerun_files(profile_dir: Path, metadata: dict, output_dir: Path | str, result: dict):

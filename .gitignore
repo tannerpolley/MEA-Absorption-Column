@@ -127,6 +127,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.uv_cache/
 
 # Spyder project settings
 .spyderproject
@@ -156,6 +157,8 @@ cython_debug/
 benchmark_artifacts/
 temp_benchmark_probe/
 .tmp_local/
+.worktrees/
+out/
 analyses/**/results/runs/
 analyses/**/.cache/
 analyses/**/tmp/

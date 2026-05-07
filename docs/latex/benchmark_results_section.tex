@@ -1,0 +1,134 @@
+    \subsection{Benchmark Scope}
+        The contribution of this work is the construction of a reproducible benchmark for a transparent MEA absorber model rather than the introduction of a new high-fidelity thermodynamic model. The same governing balances, reaction-enhancement model, transport-property correlations, and hydraulic calculations are used when comparing numerical solution methods and thermodynamic driving-force assumptions. The ePC-SAFT addition is not claimed as a new equation-of-state method; it is a read-only fugacity-coefficient sensitivity lane inside the same benchmark. The primary ePC-SAFT comparison is neutral \COtwo--\MEA--\HtwoO{}, and a six-species ionic pressure-state lane is retained as diagnostic evidence. This framing makes each reported result traceable to a generated benchmark row that includes the case identifier, solver settings, initialization or scaling notes, thermodynamic model, convergence message, boundary residual, runtime, and validation error.
+
+        The benchmark is therefore intended to answer two narrower questions. First, it evaluates how shooting, finite-difference, and SciPy collocation-style BVP solution paths behave when applied to the same column equations and NCCC operating conditions. Second, it evaluates how replacing the baseline Henry-law CO$_2$ fugacity driving force with a neutral ePC-SAFT fugacity-coefficient calculation changes capture predictions, temperature profiles, convergence, and runtime. The benchmark should not be interpreted as evidence that the model is ready for industrial scale-up or process optimization without additional validation.
+
+    \subsection{Thermodynamic Driving-Force Comparison}
+        The baseline thermodynamic lane uses the existing Henry-law calculation for the liquid CO$_2$ fugacity and an ideal vapor partial-pressure expression for the vapor fugacity. The ePC-SAFT lanes use the external ePC-SAFT package read-only and compute the CO$_2$ fugacity coefficient from pressure-specified phase states. The PC-SAFT and ePC-SAFT formulations are established equation-of-state approaches for associating and electrolyte-containing systems \cite{Gross2001PC-SAFT:Molecules,Cameretti2005ModelingOriginal}. PC-SAFT and SAFT-family parameters for CO$_2$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh and by Najafloo and Zarei \cite{FakouriBaygi2015ApplicationSolutions,Najafloo2018}, and recent ePC-SAFT acid-gas absorption studies provide additional context for EOS-based amine-solution calculations \cite{Cleeton2020CompetitiveEPC-SAFT,Bulow2021PredictingEPC-SAFT}. In the present benchmark, ePC-SAFT is used as an EOS-based sensitivity lane for the CO$_2$ fugacity coefficient. This comparison carries higher computational cost than Henry, so the expected direction is slower runtime, not faster runtime.
+
+        In the present benchmark, only the CO$_2$ fugacity driving force is changed:
+        \begin{align}
+            f_{\COtwo}^{v} &= y_{\COtwo}\phi_{\COtwo}^{v}P,\\
+            f_{\COtwo}^{\liq} &= x_{\COtwo}^{\liq}\phi_{\COtwo}^{\liq}P.
+        \end{align}
+        Chemical equilibrium, ionic speciation, enhancement factors, transport properties, heat-transfer correlations, and column balances are otherwise held fixed. The ePC-SAFT results are consequently reported as thermodynamic sensitivity studies, not as full electrolyte-reactive ePC-SAFT MEA absorber models. The neutral lane uses a neutral-composition proxy. The ionic diagnostic lane uses the six true liquid species $\left(\COtwo,\MEA,\HtwoO,\MEAH,\MEACOO,\HCOthree\right)$ from the existing chemistry model, but does not replace that chemistry model. No speed claim is made against eNRTL in this manuscript; that comparison remains a future, unbenchmarked motivation.
+
+        A diagnostic staged ePC-SAFT subset has also been generated for 19 selected K cases. Thirteen of the 19 rows satisfy the strict success definition used here: solver success after post-processing gates, an eight-percentage-point capture-error gate, and a boundary residual norm below one. K2 collapses to the zero-capture branch under the nominal high-capture staged settings. K4, K9, and K19 are rejected by the capture-error gate, while K22 and K23 are rejected by the strict boundary-residual gate despite small capture errors. A targeted recovery probe covers K2, K4, K9, K19, and K23 using documented capture-initialization and intercooler-strength multistarts. That probe recovers K4, K9, and K23 with low boundary residuals, leaving K2 and K19 unresolved for the full neutral ePC-SAFT endpoint. K22 is retained as an unresolved boundary-residual diagnostic row in the current staged ePC-SAFT subset because it has not yet been accepted by a recovery artifact. A separate K2 fugacity-blend probe shows that partial Henry/ePC-SAFT blends recover the high-capture branch, while the full ePC-SAFT endpoint returns to the zero-capture branch under the same staged absorption-only setting. These rows are useful diagnostic evidence that the Henry-seeded staged ePC-SAFT pathway can run and emit cache/density-solve diagnostics, but they are not yet primary predictive validation.
+
+    \subsection{Staged and Intercooled NCCC Cases}
+        The single-bed validation is extended with an explicit staged-bed representation for the intercooled NCCC cases. In this configuration, each packed bed is represented by its own BVP segment. Vapor states are continuous upward from one bed to the next, while liquid states are continuous downward except at intercooler locations. Intercoolers are modeled as liquid thermal resets between adjacent packed beds. This treatment is consistent with the broader absorber heat-integration literature, where solvent cooling and heat-exchange packing alter the temperature profile and driving-force distribution \cite{Moore2021AdvancedPackings}. When measured inter-stage target temperatures or heat duties are unavailable, the lean-solvent feed temperature is used as the liquid reset target and the benchmark row records this assumption. This is a first-order representation of solvent cooling, not a detailed intercooler plant model.
+
+        This treatment is intentionally limited. It captures the first-order effect of solvent cooling on the downstream driving force, but it does not model detailed heat-exchanger approach temperatures, pressure losses through intercooler equipment, tray holdup, redistribution maldistribution, or measured heat duty. Those additions would require additional plant data and should be separated from the numerical and thermodynamic benchmark. The verified NCCC capture-rate evidence is therefore broader than a single-case demonstration but still partial: 19 of the 23 K cases are accepted as post-processing-gated primary capture-evidence rows under the documented Henry-law staged/single-bed benchmark settings. These include cases with non-ideal solver status notes, such as low-residual final iterates or profile fallbacks, while excluded cases are handled in recovery or diagnostic artifacts. The remaining K6, K7, K8, and K20 cases also have separate diagnostic or sensitivity-recovery rows that fall within the capture-error gate under recovery settings, but those rows require high correction factors, suppressed intercooler strength, or large guard counts and are therefore not counted as primary predictive validation. The full staged ePC-SAFT lane likewise remains active benchmark work.
+
+    \subsection{Generated Validation Metrics}
+        The validation metrics below use the evidence classes defined in Table~\ref{tab:claim-boundary}. This distinction matters because not every row that produces a plausible capture value is counted as primary validation. Rows requiring case-specific recovery settings are retained as diagnostic evidence, while primary rows must satisfy the documented post-processing gates without hiding solver status, boundary residuals, or profile caveats.
+
+        Table~\ref{tab:verified-one-bed-thermo-benchmark} summarizes the verified one-bed C-case thermodynamic benchmark computed from the verified C-case benchmark artifacts. Both thermodynamic lanes solved all seven one-bed cases in this artifact. The ePC-SAFT lane gives nearly the same aggregate capture error as the Henry-law lane, but it is slower in the median runtime because each residual evaluation requires ePC-SAFT fugacity-coefficient calculations. That runtime penalty is expected for the more explicit EOS lane and is part of the benchmark result, not a defect in the table.
+
+        \begin{table}
+            \centering
+            \scriptsize
+            \caption{Verified one-bed C-case benchmark summary for the Henry-law and neutral ePC-SAFT thermodynamic lanes.}
+            \label{tab:verified-one-bed-thermo-benchmark}
+            \renewcommand{\arraystretch}{1.2}
+            \resizebox{\textwidth}{!}{%
+            \begin{tabular}{lccccc}
+                \toprule
+                \textbf{Thermo model} & \textbf{Runs} & \textbf{Successes} & \textbf{Capture MAE, mean $|\epsilon_{\mathrm{cap}}|$ (\%)} & \textbf{Temp. RMSE (K)} & \textbf{Median runtime (s)} \\
+                \midrule
+                Henry-law baseline & 7 & 7 & 9.36 & 6.44 & 9.92 \\
+                Neutral ePC-SAFT & 7 & 7 & 9.37 & 8.17 & 27.63 \\
+                \bottomrule
+            \end{tabular}%
+            }
+        \end{table}
+
+        Table~\ref{tab:verified-staged-kcase-benchmark} reports the verified primary K-case capture-rate rows. The accepted rows include twelve three-bed/two-intercooler cases, one three-bed case without intercooling, two two-bed cases without intercooling, two two-bed/one-intercooler cases, and two one-bed cases. Across these 19 accepted rows, the mean absolute capture error is 2.81 percentage points and the maximum absolute error is 6.40 percentage points. Some accepted rows, including K13, use the temperature-only profile fallback after a transport-property profile diagnostic; those rows are accepted for capture-rate validation but should not be overinterpreted as full transport-profile validation. A separate sensitivity-recovery artifact records K6, K7, K8, and K20. Those rows demonstrate that all 23 K cases can be simulated to a capture error below eight percentage points under recovery settings, but the recovery rows are not treated as primary validation because K6 and K7 require a fivefold mass-transfer factor, K8 requires suppressing the intercooler reset, and K20 retains large guard counts and a mesh-limit status.
+
+        \begin{table}
+            \centering
+            \small
+            \caption{Verified NCCC K-case capture-rate benchmark groups available for the Henry-law thermodynamic lane.}
+            \label{tab:verified-staged-kcase-benchmark}
+            \renewcommand{\arraystretch}{1.2}
+            \begin{tabular}{lcccl}
+                \toprule
+                \textbf{Configuration} & \textbf{Accepted rows} & \textbf{Available rows} & \textbf{Capture MAE (\%)} & \textbf{Largest error (\%)} \\
+                \midrule
+                3 beds, 2 intercoolers & 12 & 15 & 3.53 & 6.40 \\
+                3 beds, 0 intercoolers & 1 & 1 & 2.28 & 2.28 \\
+                2 beds, 0 intercoolers & 2 & 2 & 1.45 & 2.74 \\
+                2 beds, 1 intercooler & 2 & 2 & 0.77 & 1.20 \\
+                1 bed, 0 intercoolers & 2 & 3 & 2.19 & 3.71 \\
+                \midrule
+                All accepted K rows & 19 & 23 & 2.81 & 6.40 \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+
+        Table~\ref{tab:case3c-epcsaft-pressure-state-smoke} reports the pressure-state ePC-SAFT smoke result for Case 3C after adding density-guess reuse to the MEA-side adapter. The density is not specified as the thermodynamic state variable; the previous converged molar density is passed only as an initial guess for the package's internal pressure-density solve. The ionic lane is therefore no longer a large runtime outlier in this smoke test, but it remains a diagnostic thermodynamic lane rather than primary staged validation.
+
+        \begin{table}
+            \centering
+            \scriptsize
+            \caption{Case 3C pressure-state thermodynamic smoke test for Henry-law, neutral ePC-SAFT, and six-species ionic ePC-SAFT lanes.}
+            \label{tab:case3c-epcsaft-pressure-state-smoke}
+            \renewcommand{\arraystretch}{1.2}
+            \resizebox{\textwidth}{!}{%
+            \begin{tabular}{lcccccc}
+                \toprule
+                \textbf{Thermo model} & \textbf{Success} & \textbf{Runtime (s)} & \textbf{Capture (\%)} & \textbf{Capture error (\%)} & \textbf{Temp. RMSE (K)} & \textbf{State time (s)} \\
+                \midrule
+                Henry-law baseline & Yes & 5.95 & 89.40 & -0.10 & 3.94 & 0.00 \\
+                Neutral ePC-SAFT & Yes & 5.92 & 89.70 & 0.20 & 3.97 & 0.50 \\
+                Ionic ePC-SAFT & Yes & 6.15 & 89.83 & 0.33 & 3.97 & 0.34 \\
+                \bottomrule
+            \end{tabular}%
+            }
+        \end{table}
+
+        Table~\ref{tab:staged-epcsaft-recovery-probe} summarizes the targeted recovery probe for staged neutral ePC-SAFT rows that failed the nominal diagnostic settings. K4 and K9 are recovered by moving the initial capture branch toward the measured capture level, and K23 is recovered when the inter-stage liquid cooling reset is weakened. K2 remains a large capture-error failure, and K19 remains a boundary-residual failure. These rows are therefore reported as solver-diagnostic evidence, not as a replacement for a global ePC-SAFT validation set.
+
+        \begin{table}
+            \centering
+            \scriptsize
+            \caption{Targeted staged neutral ePC-SAFT recovery probe for the nominal failed diagnostic rows.}
+            \label{tab:staged-epcsaft-recovery-probe}
+            \renewcommand{\arraystretch}{1.2}
+            \begin{tabular}{lcccl}
+                \toprule
+                \textbf{Case} & \textbf{Accepted} & \textbf{Capture error (\%)} & \textbf{Boundary residual} & \textbf{Recovery setting} \\
+                \midrule
+                K2 & No & -55.96 & $1.00\times10^{-10}$ & capture guess 95, intercooler strength 0.25 \\
+                K4 & Yes & 4.89 & $1.00\times10^{-10}$ & capture guess 78 \\
+                K9 & Yes & 4.58 & $1.00\times10^{-10}$ & capture guess 55 \\
+                K19 & No & 1.79 & $1.00\times10^{2}$ & capture guess 99 \\
+                K23 & Yes & -4.10 & $8.05\times10^{-6}$ & capture guess 99, intercooler strength 0.25 \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+
+        Table~\ref{tab:staged-epcsaft-k2-blend-probe} reports the follow-on K2 thermodynamic continuation diagnostic. The blend parameter is applied only to the fugacity values returned by the thermodynamic driving-force adapter: zero corresponds to the Henry-law fugacity lane and one corresponds to the full neutral ePC-SAFT fugacity lane. The K2 row is accepted at blends of 0.50 and 0.75, and the 0.90 row reaches the capture and residual targets but is retained as a failed row because it exceeded the runtime cap. At blend 1.00, the same case returns to the zero-capture branch. This result supports a narrower interpretation of the staged ePC-SAFT limitation: K2 is not simply missing a high-capture initialization, but remains sensitive to the full neutral ePC-SAFT endpoint used for the CO$_2$ driving force.
+
+        \begin{table}
+            \centering
+            \scriptsize
+            \caption{K2 staged neutral ePC-SAFT fugacity-blend diagnostic.}
+            \label{tab:staged-epcsaft-k2-blend-probe}
+            \renewcommand{\arraystretch}{1.2}
+            \begin{tabular}{ccccl}
+                \toprule
+                \textbf{Blend} & \textbf{Accepted} & \textbf{Capture error (\%)} & \textbf{Boundary residual} & \textbf{Status} \\
+                \midrule
+                0.50 & Yes & 0.51 & $8.68\times10^{-4}$ & partial blend accepted \\
+                0.75 & Yes & 0.51 & $3.44\times10^{-2}$ & partial blend accepted \\
+                0.90 & No & 0.51 & $1.01\times10^{-10}$ & timeout, low-residual final iterate \\
+                1.00 & No & -99.49 & $3.03\times10^{-4}$ & full endpoint, zero-capture branch \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+
+        The selected generated temperature-profile PNG files are included in Figure~\ref{fig:generated-temperature-profiles}. These profiles are intentionally presented with the exact thermodynamic lane identified in the caption so that profile agreement, capture agreement, and solver convergence can be evaluated separately.
+
+        \subsubsection*{Remaining Benchmark Scope}
+        The present artifacts support the benchmark contribution, but they should not be interpreted as full predictive validation across every NCCC condition. The K6, K7, K8, and K20 Henry-law recovery rows require high mass-transfer factors, suppressed intercooler reset strength, or large guard counts, so they are retained as diagnostic and sensitivity evidence rather than primary validation. The staged neutral ePC-SAFT K2, K19, and K22 rows remain unresolved at the full fugacity endpoint under the current acceptance gates, and the K2 blend diagnostic indicates a branch-selection and thermodynamic-continuation limitation rather than a simple missing initial guess. Stronger predictive claims should be deferred until a documented global calibration or expanded thermodynamic model removes those case-specific recovery settings and is validated against additional pilot campaigns.

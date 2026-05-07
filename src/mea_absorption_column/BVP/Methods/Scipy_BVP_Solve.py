@@ -33,6 +33,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
 
     scales = parameters[0]
     transform_mode = settings.get('transform_mode', 'bounded_guarded_raw_state')
+    guard_rhs = bool(settings.get('guard_rhs', True))
 
     bcs_1 = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_a, Fv_H2O_a, Hlf_b, Hvf_a, P_a]) / scales
 
@@ -42,11 +43,12 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
         differentials = [
             _physical_rhs_to_solver_rhs(
                 w[:, i],
-                guard_column_rhs(
+                _column_rhs(
                     z[i],
-                    solver_to_scaled_physical(w[:, i], transform_mode=transform_mode),
+                    w[:, i],
                     parameters,
-                    evaluator=abs_column,
+                    transform_mode=transform_mode,
+                    guard_rhs=guard_rhs,
                 ),
                 transform_mode,
             )
@@ -97,7 +99,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     m = len(Y_a_scaled)
     n = int(settings['mesh_points'])
     z_2 = np.linspace(z[0], z[-1], n)
-    w_guess_scaled = np.array([polynomial_fit(z_2, Y_a_scaled[i] * scales[i], i) / scales[i] for i in range(m)])
+    w_guess_scaled = _initial_guess_profile(settings, z, z_2, Y_a_scaled, scales, m)
     if transform_mode == "positive_flow_pressure":
         w_guess_scaled[POSITIVE_SOLVER_IDXS, :] = np.clip(
             w_guess_scaled[POSITIVE_SOLVER_IDXS, :],
@@ -133,4 +135,25 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
 def _physical_rhs_to_solver_rhs(y_solver, rhs_physical, transform_mode):
     derivative = solver_to_scaled_physical_derivative(y_solver, transform_mode=transform_mode)
     return np.asarray(rhs_physical, dtype=float) / derivative
+
+
+def _column_rhs(zi, y_solver, parameters, transform_mode, guard_rhs):
+    y_scaled = solver_to_scaled_physical(y_solver, transform_mode=transform_mode)
+    if guard_rhs:
+        return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
+    return abs_column(zi, y_scaled, parameters)
+
+
+def _initial_guess_profile(settings, z_source, z_target, Y_a_scaled, scales, m):
+    explicit = settings.get("initial_guess_scaled")
+    if explicit is not None:
+        profile = np.asarray(explicit, dtype=float)
+        if profile.ndim == 2 and profile.shape[0] == m and profile.shape[1] >= 2:
+            source_grid = np.asarray(settings.get("initial_guess_z", np.linspace(z_source[0], z_source[-1], profile.shape[1])), dtype=float)
+            if source_grid.shape[0] == profile.shape[1] and np.all(np.isfinite(profile)):
+                return np.vstack([
+                    np.interp(z_target, source_grid, profile[i])
+                    for i in range(m)
+                ])
+    return np.array([polynomial_fit(z_target, Y_a_scaled[i] * scales[i], i) / scales[i] for i in range(m)])
 

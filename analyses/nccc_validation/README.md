@@ -13,6 +13,33 @@ This analysis owns the reviewer-response validation artifacts for the MEA absorb
 
 ## Commands
 
+When running from a Git worktree with the shared Codex venv, set the source path first so subprocess benchmark workers import this worktree:
+
+```powershell
+$env:PYTHONPATH = "src"
+```
+
+## Script Inventory
+
+| Script | Role | Runs model? | ePC-SAFT dependency |
+| --- | --- | --- | --- |
+| `generate_data.py` | Converts curated run/final CSVs into raw, verified, and plot-ready tables. | No. | No direct dependency; may process existing ePC-SAFT rows. |
+| `render_figures.py` | Renders final manuscript figures from final tables. | No. | No direct dependency; may plot existing ePC-SAFT rows. |
+| `collect_clean_profiles.py` | Refreshes the clean temperature-profile PNG gallery and index. | Sometimes. | Required only when rerunning or collecting `epcsaft_*` lanes. |
+| `run_case_profile.py` | Runs one case and exports dense legacy-`Profiles.xlsx`-style CSVs. | Yes. | Required for `epcsaft_neutral`, `epcsaft_ionic`, and experimental reactive lanes. |
+| `generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and writes dense profile CSV folders. | Yes. | Required only for ePC-SAFT rows in the selected suite. |
+| `probe_reactive_epcsaft_speciation.py` | Experimental reactive-speciation probe using the external ePC-SAFT package and the repo-vendored MEA dataset. | Thermodynamic probe only. | Required. Not a default validation script. |
+| `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
+
+Henry-only validation does not require the external ePC-SAFT checkout. ePC-SAFT diagnostics should be run only after installing or updating the external package. The MEA parameter datasets are vendored in this repo under `src/mea_absorption_column/data/epcsaft_datasets/`.
+
+Typical ePC-SAFT diagnostic environment:
+
+```powershell
+$env:MEA_EPCSAFT_ROOT = "C:\Users\Tanner\Documents\git\ePC-SAFT"
+$env:MEA_EPCSAFT_DATASET_NAME = "MEA_CO2_H2O_draft"
+```
+
 Regenerate plot-ready tables from curated inputs or available run folders:
 
 ```powershell
@@ -40,10 +67,27 @@ C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe anal
 Full benchmark runs can also request these dense profile CSVs:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --c-case-ids 3C --nccc-case-limit 0 --profile-csvs --output-dir analyses\nccc_validation\results\runs\profile_csv_probe
+C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --c-case-ids 3C --nccc-case-limit 0 --profile-csvs --subprocess-timeout-s 60 --output-dir analyses\nccc_validation\results\runs\profile_csv_probe
 ```
 
+Run the favorable SRP-style method-comparison case across shooting, SciPy BVP, and finite difference:
+
+```powershell
+C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe -m mea_absorption_column.benchmark --methods single scipy-bvp finite --thermo-models ideal_henry --c-case-limit 0 --nccc-case-limit 0 --srp-case-limit 1 --mesh-points 21 --tol 0.5 --bc-tol 0.001 --max-runtime-s 30 --seed-from-shooting --subprocess-timeout-s 60 --output-dir analyses\nccc_validation\results\runs\srp_method_slice
+```
+
+The current SRP/NCCC method contrast is summarized in `results/final/reports/solver_method_contrast_srp_3c.md`.
+
 Each generated profile folder includes `profile_manifest.json`, `profile_manifest.csv`, `run_spec.json`, and `rerun_profile.ps1` so a single case can be rerun from that folder without launching the entire benchmark sweep.
+
+Generate dense profile CSVs for the accepted validation rows with 60-second per-case timeouts and an incremental log:
+
+```powershell
+C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\generate_clean_profile_csvs.py --suite all --output-dir analyses\nccc_validation\results\runs\clean_profile_csvs
+```
+
+This script writes each case row as soon as it finishes. If a case exceeds the default 60-second subprocess timeout or errors, the row is logged as a failed diagnostic result and the script continues to the next case. Use `--per-case-timeout-s <seconds>` only when intentionally running a longer diagnostic probe.
+It also writes `profile_runtime_index.csv` and refreshes each profile folder's `profile_manifest.json` / `profile_manifest.csv` with `runtime_s` and a human-readable `runtime_label`.
 
 Validate the analysis artifacts used by the manuscript:
 

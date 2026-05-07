@@ -15,6 +15,13 @@ setup(
     include_package_data=True,
     package_data={
         # include all CSVs in your data/ folder
-        "mea_absorption_column": ["data/*.csv", "data/epcsaft_neutral/*.json"],
+        "mea_absorption_column": [
+            "data/*.csv",
+            "data/epcsaft_neutral/*.json",
+            "data/epcsaft_datasets/*/*.json",
+            "data/epcsaft_datasets/*/pure/*.csv",
+            "data/epcsaft_datasets/*/mixed/binary_interaction/*.csv",
+            "data/epcsaft_datasets/*/mixed/rel_perm/*.csv",
+        ],
     },
 )

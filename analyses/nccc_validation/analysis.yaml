@@ -3,6 +3,11 @@ title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
 summary: Reviewer-response validation artifacts for one-bed C cases, staged/intercooled K cases, and ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons.
 owner: project
+architecture:
+  standard: C:\Users\Tanner\.codex\PROJECT_ARCHITECTURE.md
+  role: self_contained_analysis
+  disposable_outputs: results/runs
+  curated_outputs: results/final
 inputs:
   - path: ../../src/mea_absorption_column/data/C_cases_data.csv
     kind: packaged_reference_data
@@ -28,11 +33,35 @@ commands:
     - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
   case_profile:
     - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses\nccc_validation\results\runs\manual_case_profiles
+  clean_profile_csvs:
+    - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\generate_clean_profile_csvs.py --suite all --output-dir analyses\nccc_validation\results\runs\clean_profile_csvs
   validate:
     - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
 runtime:
   quick_seconds: 10
   full_seconds: 600
+external_dependencies:
+  epcsaft:
+    required_for:
+      - thermo_model: epcsaft_neutral
+      - thermo_model: epcsaft_ionic
+      - thermo_model: epcsaft_reactive_six
+      - thermo_model: epcsaft_reactive_six_concentration
+      - thermo_model: epcsaft_reactive_six_activity
+      - script: scripts/probe_reactive_epcsaft_speciation.py
+    not_required_for:
+      - thermo_model: ideal_henry
+      - script: scripts/generate_data.py
+      - script: scripts/render_figures.py
+      - script: scripts/validate_results.py
+    package_contract: external package is read-only from this repo; adapter, caching, guards, and benchmark scripts live here
+    optional_env:
+      MEA_EPCSAFT_ROOT: C:\Users\Tanner\Documents\git\ePC-SAFT
+      MEA_EPCSAFT_DATASET_NAME: MEA_CO2_H2O_draft
+    repo_owned_datasets:
+      - ../../src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_draft
+      - ../../src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_ionic_fit
+      - ../../src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_neutral_legacy
 tracked_results:
   - results/final/tables
   - results/final/figures

@@ -26,18 +26,32 @@ def get_vapor_temperature(y, Hv_T_given):
 
 def _solve_temperature(residual, initial_guess):
     lower, upper = TEMPERATURE_BOUNDS_K
-    root_result = root(residual, np.array([initial_guess]))
+    safe_residual = _safe_temperature_residual(residual)
+    root_result = root(safe_residual, np.array([initial_guess]))
     candidate = float(np.asarray(root_result.x).ravel()[0])
     if root_result.success and lower <= candidate <= upper and np.isfinite(candidate):
         return candidate
 
     bounded = least_squares(
-        lambda T: np.asarray(residual(T), dtype=float).ravel(),
+        safe_residual,
         x0=np.array([np.clip(initial_guess, lower, upper)], dtype=float),
         bounds=(np.array([lower]), np.array([upper])),
         max_nfev=100,
     )
     return float(np.clip(bounded.x[0], lower, upper))
+
+
+def _safe_temperature_residual(residual):
+    def wrapped(T):
+        try:
+            values = np.asarray(residual(T), dtype=float).ravel()
+        except Exception:
+            return np.array([1.0e12], dtype=float)
+        if values.size == 0 or np.any(~np.isfinite(values)):
+            return np.full(max(values.size, 1), 1.0e12, dtype=float)
+        return values
+
+    return wrapped
 
 
 def get_liquid_enthalpy(Fl, Tl):

@@ -18,8 +18,10 @@ def main(argv=None) -> int:
         output_dir=Path(spec.get("output_dir", "analyses/nccc_validation/results/runs/manual_case_profiles")),
         c_case_limit=0 if case_source != "C_cases_data" else None,
         nccc_case_limit=0 if case_source != "NCCC_Data" else None,
+        srp_case_limit=0 if case_source != "SRP_method_cases" else None,
         c_case_ids=(case_id,) if case_source == "C_cases_data" else None,
         nccc_case_ids=(case_id,) if case_source == "NCCC_Data" else None,
+        srp_case_ids=(case_id,) if case_source == "SRP_method_cases" else None,
         staged_beds=spec.get("staged_beds", "auto"),
         solver_settings=spec.get("solver_settings") or None,
         profile_csvs=True,
@@ -35,7 +37,7 @@ def parse_args(argv=None):
         description="Run one NCCC validation case and export dense profile CSVs."
     )
     parser.add_argument("--spec", type=Path, help="JSON run spec written beside a profile export.")
-    parser.add_argument("--case-source", choices=["C_cases_data", "NCCC_Data"], default="C_cases_data")
+    parser.add_argument("--case-source", choices=["C_cases_data", "NCCC_Data", "SRP_method_cases"], default="C_cases_data")
     parser.add_argument("--case-id", default="3C")
     parser.add_argument("--method", default="scipy-bvp")
     parser.add_argument("--thermo-model", default="ideal_henry")

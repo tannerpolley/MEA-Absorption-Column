@@ -1,3 +1,5 @@
+import importlib.util
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -34,6 +36,19 @@ def test_benchmark_default_output_is_analysis_run_folder():
     default = BenchmarkSettings().output_dir.as_posix()
 
     assert default == "analyses/nccc_validation/results/runs/benchmark"
+
+
+def test_clean_profile_generator_defaults_to_sixty_second_case_timeout():
+    script = ANALYSIS / "scripts" / "generate_clean_profile_csvs.py"
+    spec = importlib.util.spec_from_file_location("generate_clean_profile_csvs", script)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+
+    args = module.parse_args([])
+
+    assert args.per_case_timeout_s == 60.0
 
 
 def test_old_docs_benchmark_gallery_is_removed():

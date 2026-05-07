@@ -135,6 +135,22 @@ def test_hydraulic_guards_reject_nonpositive_inputs():
     assert diagnostics["domain_guard_counts"]["hydraulics"] == 1
 
 
+def test_domain_guards_can_record_without_raising_for_legacy_timing_probe():
+    diagnostics = make_solver_diagnostics()
+    diagnostics["_strict_domain_guards"] = False
+
+    interfacial_area(
+        rho_mass_l=-1.0,
+        sigma=0.07,
+        ul=0.002,
+        A=0.32,
+        packing=PACKING,
+        diagnostics=diagnostics,
+    )
+
+    assert diagnostics["domain_guard_counts"]["hydraulics"] >= 1
+
+
 def test_holdup_clips_flooded_state_with_diagnostic():
     diagnostics = make_solver_diagnostics()
 

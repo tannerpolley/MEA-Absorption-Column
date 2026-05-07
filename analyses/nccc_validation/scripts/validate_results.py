@@ -26,6 +26,7 @@ def main() -> int:
         _check_referenced_profile_csv_dirs,
         _check_final_tables_do_not_point_to_removed_docs_paths,
         _check_latex_paths,
+        _check_latex_pdf_is_current,
         _check_old_docs_benchmark_removed,
     ]
     for check in checks:
@@ -48,6 +49,7 @@ def _check_required_files() -> None:
         FIGURES / "staged_epcsaft_smoke_capture_error.pdf",
         FINAL / "reports" / "validation_summary.md",
         ANALYSIS / "scripts" / "run_case_profile.py",
+        ANALYSIS / "scripts" / "generate_clean_profile_csvs.py",
     ]
     _require_existing(required)
 
@@ -134,22 +136,78 @@ def _check_referenced_profile_csv_dirs() -> None:
 
 
 def _check_latex_paths() -> None:
-    for tex_name in ("main.tex", "revised_benchmark_results.tex"):
+    for tex_name in (
+        "main.tex",
+        "revised_benchmark_results.tex",
+        "benchmark_results_section.tex",
+    ):
         text = (DOCS_LATEX / tex_name).read_text(encoding="utf-8")
         if "docs/benchmark_figures" in text or "benchmark_figures/" in text:
             raise AssertionError(f"{tex_name} still references docs benchmark figure paths.")
-    main = (DOCS_LATEX / "main.tex").read_text(encoding="utf-8")
-    for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", main):
-        target = match.group(1)
-        if target.startswith("Figures/") or target.startswith("figs/"):
+    for tex_name in ("main.tex",):
+        main = (DOCS_LATEX / tex_name).read_text(encoding="utf-8")
+        for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", main):
+            target = match.group(1)
+            if target.startswith("Figures/") or target.startswith("figs/"):
+                continue
+            if not any(path.exists() for path in _latex_graphic_candidates(target)):
+                raise AssertionError(f"LaTeX figure path does not resolve from {tex_name}: {target}")
+
+
+def _check_latex_pdf_is_current() -> None:
+    _check_one_latex_pdf_is_current("main.tex", "main.pdf", "docs\\latex\\build_main.ps1")
+
+
+def _check_one_latex_pdf_is_current(tex_name: str, pdf_name: str, build_command: str) -> None:
+    root_tex = DOCS_LATEX / tex_name
+    pdf = DOCS_LATEX / pdf_name
+    if not pdf.exists():
+        raise AssertionError(f"Missing docs/latex/{pdf_name}. Run {build_command}.")
+    sources = set()
+    for pattern in ("*.bib", "*.bst", "*.cls", "*.sty"):
+        sources.update(DOCS_LATEX.glob(pattern))
+    for tex_path in _tex_dependency_closure(root_tex):
+        sources.add(tex_path)
+        text = tex_path.read_text(encoding="utf-8")
+        for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", text):
+            for candidate in _latex_graphic_candidates(match.group(1)):
+                if candidate.exists():
+                    sources.add(candidate)
+                    break
+
+    newer = [path for path in sources if path.exists() and path.stat().st_mtime > pdf.stat().st_mtime]
+    if newer:
+        names = "\n".join(str(path.relative_to(ROOT)) for path in sorted(newer))
+        raise AssertionError(
+            f"docs/latex/{pdf_name} is older than manuscript inputs. Run {build_command}.\n{names}"
+        )
+
+
+def _latex_graphic_candidates(target: str) -> list[Path]:
+    return [
+        (DOCS_LATEX / target).resolve(),
+        (DOCS_LATEX / ".." / target).resolve(),
+        (DOCS_LATEX / ".." / ".." / target).resolve(),
+        (ROOT / target).resolve(),
+    ]
+
+
+def _tex_dependency_closure(root_tex: Path) -> set[Path]:
+    pending = [root_tex.resolve()]
+    seen: set[Path] = set()
+    while pending:
+        tex_path = pending.pop()
+        if tex_path in seen or not tex_path.exists():
             continue
-        candidates = [
-            (DOCS_LATEX / target).resolve(),
-            (DOCS_LATEX / ".." / target).resolve(),
-            (DOCS_LATEX / ".." / ".." / target).resolve(),
-        ]
-        if not any(path.exists() for path in candidates):
-            raise AssertionError(f"LaTeX figure path does not resolve from docs/latex: {target}")
+        seen.add(tex_path)
+        text = tex_path.read_text(encoding="utf-8")
+        for match in re.finditer(r"\\(?:input|include)\{([^}]+)\}", text):
+            target = match.group(1)
+            candidate = (DOCS_LATEX / target).resolve()
+            if candidate.suffix != ".tex":
+                candidate = candidate.with_suffix(".tex")
+            pending.append(candidate)
+    return seen
 
 
 def _check_final_tables_do_not_point_to_removed_docs_paths() -> None:

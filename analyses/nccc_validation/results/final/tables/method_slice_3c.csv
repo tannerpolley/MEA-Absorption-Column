@@ -1,0 +1,4 @@
+case_id,method,thermo_model,success,runtime_s,capture_pct,capture_error_pct,boundary_residual_norm,message
+3C,single,ideal_henry,False,23.07953429222107,,,,Shooting solve exceeded max_runtime_s=20
+3C,finite,ideal_henry,False,30.128530740737915,,,,Benchmark subprocess exceeded subprocess_timeout_s=30
+3C,scipy-bvp,ideal_henry,True,13.201438665390016,89.39559062882718,-0.1044093711728209,5.9368778156237e-14,The algorithm converged to the desired accuracy.

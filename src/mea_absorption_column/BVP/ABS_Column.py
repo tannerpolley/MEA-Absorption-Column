@@ -5,7 +5,7 @@ from ..Properties.Thermophysical_Properties import (density, surface_tension, he
                                                       thermal_conductivity, henrys_law, enthalpy, vapor_pressure)
 from ..Properties.Transport_Properties import viscosity, diffusivity
 from ..Thermodynamics.Fugacity import fugacity
-from ..Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
+from ..Thermodynamics.Chemical_Equilibrium import chemical_equilibrium_with_model
 from ..Transport.Hydraulic_Variables_Correlations import velocity, holdup, interfacial_area, flooding_fraction
 from ..Transport.Transfer_Coefficients import mass_transfer_coeff, heat_transfer_coeff
 from ..Transport.Pressure_Drop import pressure_drop
@@ -31,6 +31,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     thermal_state_mode = model_options.get('thermal_state_mode', 'enthalpy')
     co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
     epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
+    chemical_equilibrium_model = model_options.get('chemical_equilibrium_model', 'legacy')
     Fl_MEA, Fv_N2, Fv_O2 = const_flow
     # endregion
 
@@ -135,7 +136,13 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region - Thermodynamics
 
     # region -- Chemical Equilibrium
-    Cl_true, x_true = chemical_equilibrium(Fl.copy(), Tl)
+    Cl_true, x_true = chemical_equilibrium_with_model(
+        Fl.copy(),
+        Tl,
+        model=chemical_equilibrium_model,
+        P=P,
+        diagnostics=solver_diagnostics,
+    )
 
     Cl = [x[i] * rho_mol_l for i in range(len(x))]
     Cv = [y[i] * rho_mol_v for i in range(len(y))]

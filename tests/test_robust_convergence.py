@@ -32,10 +32,13 @@ from mea_absorption_column.calibration import (
 from mea_absorption_column.uq import UQPlan, estimate_two_tier_throughput
 from mea_absorption_column.Thermodynamics.thermo_models import guarded_compute_fugacity
 from mea_absorption_column.Thermodynamics.thermo_models import (
+    MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     clear_epcsaft_phi_cache,
+    compute_fugacity,
     ensure_epcsaft_importable,
     epcsaft_cache_stats,
     epcsaft_phi_co2,
+    epcsaft_phi_co2_batch,
 )
 from mea_absorption_column.BVP.Methods import Scipy_BVP_Solve as scipy_bvp_module
 
@@ -193,6 +196,8 @@ def test_benchmark_schema_contains_convergence_diagnostic_columns():
         "epcsaft_cache_hits",
         "epcsaft_cache_misses",
         "epcsaft_direct_density_solve_s",
+        "epcsaft_rho_guess_hits",
+        "epcsaft_rho_guess_misses",
         "profile_png",
     ]:
         assert column in BENCHMARK_COLUMNS
@@ -291,6 +296,98 @@ def test_epcsaft_phi_cache_records_hit_after_repeated_call():
     assert first == second
     assert stats["epcsaft_cache_hits"] >= 1
     assert stats["epcsaft_cache_misses"] == 1
+
+
+def test_epcsaft_phi_cache_uses_coarse_bvp_quantization():
+    try:
+        ensure_epcsaft_importable()
+    except RuntimeError as exc:
+        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
+    clear_epcsaft_phi_cache()
+    first_composition = np.array([0.0200001, 0.2400001, 0.7399998])
+    second_composition = np.array([0.0200002, 0.2400002, 0.7399996])
+
+    first = epcsaft_phi_co2(323.151, 109501.0, first_composition, phase="liq", cache=True)
+    second = epcsaft_phi_co2(323.152, 109504.0, second_composition, phase="liq", cache=True)
+    stats = epcsaft_cache_stats()
+
+    assert first == second
+    assert stats["epcsaft_cache_hits"] >= 1
+    assert stats["epcsaft_cache_misses"] == 1
+
+
+def test_epcsaft_phi_batch_deduplicates_near_duplicate_states():
+    try:
+        ensure_epcsaft_importable()
+    except RuntimeError as exc:
+        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
+    clear_epcsaft_phi_cache()
+    records = [
+        {
+            "T": 323.151,
+            "P": 109501.0,
+            "composition": np.array([0.02, 0.24, 0.74]),
+            "phase": "liq",
+        },
+        {
+            "T": 323.152,
+            "P": 109504.0,
+            "composition": np.array([0.0200001, 0.2400001, 0.7399998]),
+            "phase": "liq",
+        },
+    ]
+
+    values = epcsaft_phi_co2_batch(records)
+    stats = epcsaft_cache_stats()
+
+    assert len(values) == 2
+    assert values[0] == values[1]
+    assert stats["epcsaft_cache_misses"] == 1
+
+
+def test_epcsaft_pressure_state_reuses_density_guess_after_first_miss():
+    try:
+        ensure_epcsaft_importable()
+    except RuntimeError as exc:
+        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
+    clear_epcsaft_phi_cache()
+
+    first = epcsaft_phi_co2(323.15, 109500.0, np.array([0.02, 0.24, 0.74]), phase="liq", cache=True)
+    second = epcsaft_phi_co2(324.35, 109500.0, np.array([0.021, 0.239, 0.74]), phase="liq", cache=True)
+    stats = epcsaft_cache_stats()
+
+    assert math.isfinite(first)
+    assert math.isfinite(second)
+    assert stats["epcsaft_cache_misses"] == 2
+    assert stats["epcsaft_rho_guess_misses"] == 1
+    assert stats["epcsaft_rho_guess_hits"] == 1
+
+
+def test_epcsaft_ionic_fugacity_uses_six_species_liquid_state():
+    try:
+        ensure_epcsaft_importable()
+    except RuntimeError as exc:
+        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
+    assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.exists()
+    clear_epcsaft_phi_cache()
+    y = np.array([0.10, 0.08])
+    x_true = np.array([1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001])
+    Cl_true = np.array([1.0e-4, 2400.0, 39000.0, 1200.0, 1180.0, 20.0])
+
+    values = compute_fugacity(
+        "epcsaft_ionic",
+        y,
+        x_true,
+        Cl_true,
+        Tl=323.15,
+        Tv=323.15,
+        H_CO2_mix=1.0,
+        P=109500.0,
+        P_sat_H2O=12000.0,
+    )
+
+    assert len(values) == 4
+    assert all(np.isfinite(value) and value > 0.0 for value in values)
 
 
 def test_finite_and_shooting_success_gate_rejects_bad_boundary_residual():

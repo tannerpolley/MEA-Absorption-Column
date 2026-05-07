@@ -74,6 +74,37 @@ def run_model(df,
         and solver_settings_for_run.get("transform_mode") == "case_bounded_flow_pressure"
     ):
         solver_settings_for_run["transform_mode"] = "positive_flow_pressure"
+    if (
+        method == "scipy-bvp"
+        and not use_staged_beds
+        and solver_settings_for_run.get("seed_from_shooting", False)
+        and "initial_guess_scaled" not in solver_settings_for_run
+    ):
+        shooting_seed_settings = {
+            **solver_settings_for_run,
+            "seed_from_shooting": False,
+            "return_internal_profile": True,
+            "continuation_stage": "shooting_seed",
+            "continuation_path": "shooting->scipy-bvp",
+        }
+        shooting_seed = run_model(
+            df,
+            method="single",
+            data_type=data_type,
+            run=run,
+            show_info=False,
+            save_run_results=False,
+            plot_temperature=False,
+            thermo_model=thermo_model,
+            solver_settings=shooting_seed_settings,
+            return_details=True,
+            staged_beds=False,
+            intercooler_settings=intercooler_settings,
+        )
+        if shooting_seed.get("success") and shooting_seed.get("_raw_solution_scaled") is not None:
+            solver_settings_for_run["initial_guess_scaled"] = shooting_seed["_raw_solution_scaled"]
+            solver_settings_for_run["continuation_stage"] = "shooting_seeded_scipy_bvp"
+            solver_settings_for_run["continuation_path"] = "shooting->scipy-bvp"
 
     if method == 'single':
         solving_function = single_shoot_solve
@@ -155,16 +186,23 @@ def run_model(df,
 
     solver_diagnostics = make_solver_diagnostics()
     epcsaft_cache_start = epcsaft_cache_stats()
+    guard_rhs = bool(solver_settings_for_run.get('guard_rhs', True))
     model_options = {
         'thermo_model': thermo_model,
+        'chemical_equilibrium_model': solver_settings_for_run.get(
+            'chemical_equilibrium_model',
+            _default_chemical_equilibrium_model(thermo_model),
+        ),
         'solver_diagnostics': solver_diagnostics,
-        'guard_invalid_states': True,
+        'guard_invalid_states': guard_rhs,
+        'strict_domain_guards': bool(solver_settings_for_run.get('strict_domain_guards', guard_rhs)),
         'mass_transfer_factor': float(solver_settings_for_run.get('mass_transfer_factor', 1.0)),
         'heat_transfer_factor': float(solver_settings_for_run.get('heat_transfer_factor', 1.0)),
         'thermal_state_mode': thermal_state_mode,
         'co2_flux_mode': solver_settings_for_run.get('co2_flux_mode', 'bidirectional'),
         'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
     }
+    solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
     parameters = scales, eq_scales, const_flow, H, A, packing, model_options
     intercooler_settings = intercooler_settings or {}
     stack_spec = build_bed_stack_spec(
@@ -377,11 +415,19 @@ Run #{run + 1:03d}:
     return_profiles = bool(solver_settings_for_run.get("return_profiles"))
     return_internal_profile = bool(solver_settings_for_run.get("return_internal_profile"))
     profile_csv_dir = solver_settings_for_run.get("profile_csv_dir")
+    needs_profile_outputs = bool(
+        save_run_results
+        or plot_temperature
+        or return_profiles
+        or profile_csv_dir
+        or _has_temperature_taps(df)
+    )
     output_message_suffix = ""
     if (
         (use_staged_beds and stack_spec.beds > 1 and not save_run_results and not plot_temperature and not return_profiles and not profile_csv_dir)
         or (return_internal_profile and not save_run_results and not plot_temperature and not return_profiles and not profile_csv_dir)
         or (not success and not save_run_results and not plot_temperature and not return_profiles and not profile_csv_dir)
+        or (not needs_profile_outputs)
     ):
         dfs_dict = {}
     else:
@@ -456,6 +502,7 @@ Run #{run + 1:03d}:
             'case_id': str(df.index[run]),
             'method': method,
             'thermo_model': thermo_model,
+            'chemical_equilibrium_model': model_options.get('chemical_equilibrium_model', 'legacy'),
             'success': method_success,
             'message': f"{gated_message}{output_message_suffix}",
             'runtime_s': float(total_time),
@@ -493,6 +540,11 @@ Run #{run + 1:03d}:
             'epcsaft_cache_hits': int(cache_stats.get('epcsaft_cache_hits', 0)),
             'epcsaft_cache_misses': int(cache_stats.get('epcsaft_cache_misses', 0)),
             'epcsaft_direct_density_solve_s': float(cache_stats.get('epcsaft_direct_density_solve_s', 0.0)),
+            'epcsaft_rho_guess_hits': int(cache_stats.get('epcsaft_rho_guess_hits', 0)),
+            'epcsaft_rho_guess_misses': int(cache_stats.get('epcsaft_rho_guess_misses', 0)),
+            'epcsaft_chemistry_cache_hits': int(solver_diagnostics.get('epcsaft_chemistry_cache_hits', 0)),
+            'epcsaft_chemistry_cache_misses': int(solver_diagnostics.get('epcsaft_chemistry_cache_misses', 0)),
+            'epcsaft_chemistry_solve_s': float(solver_diagnostics.get('epcsaft_chemistry_solve_s', 0.0)),
             'profile_png': solver_settings_for_run.get('profile_png', ''),
             'profile_csv_dir': '',
             'profile_csv_status': '',
@@ -512,6 +564,8 @@ Run #{run + 1:03d}:
                     "thermo_model": thermo_model,
                     "success": bool(method_success),
                     "message": result["message"],
+                    "runtime_s": result["runtime_s"],
+                    "runtime_label": _format_runtime_label(result["runtime_s"]),
                     "intercooler_model": result["intercooler_model"],
                     "intercooler_assumption": result["intercooler_assumption"],
                     "profile_status": profile_status,
@@ -553,6 +607,10 @@ def _temperature_rmse(df, run, dfs_dict):
     profile = dfs_dict['T']['Tl'].sort_index()
     predicted = np.interp(positions, profile.index.to_numpy(dtype=float), profile.to_numpy(dtype=float))
     return float(np.sqrt(np.mean((predicted - observed) ** 2)))
+
+
+def _has_temperature_taps(df):
+    return any(_is_temperature_tap(column) for column in df.columns)
 
 
 def _fallback_temperature_profile(Y, z, thermal_state_mode, Fl_MEA, Fv_N2, Fv_O2):
@@ -608,6 +666,14 @@ def _package_versions():
     return ';'.join(versions)
 
 
+def _format_runtime_label(runtime_s):
+    runtime_s = float(runtime_s)
+    if runtime_s < 60.0:
+        return f"{runtime_s:.2f} s"
+    minutes, seconds = divmod(runtime_s, 60.0)
+    return f"{int(minutes)} min {seconds:.1f} s"
+
+
 def _format_domain_guard_counts(counts):
     if not counts:
         return ""
@@ -621,8 +687,23 @@ def _epcsaft_cache_delta(start, end):
             "epcsaft_cache_hits",
             "epcsaft_cache_misses",
             "epcsaft_direct_density_solve_s",
+            "epcsaft_rho_guess_hits",
+            "epcsaft_rho_guess_misses",
         }
     }
+
+
+def _default_chemical_equilibrium_model(thermo_model):
+    normalized = (thermo_model or "").lower()
+    if normalized in {
+        "epcsaft_reactive_six",
+        "epcsaft_reactive_six_concentration",
+        "epcsaft_reactive_six_activity",
+        "epcsaft_reactive_six_activity_converted",
+        "epcsaft_reactive_six_activity_rebased",
+    }:
+        return normalized
+    return "legacy"
 
 
 def _apply_method_success_gates(

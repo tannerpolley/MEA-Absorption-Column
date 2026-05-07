@@ -23,6 +23,7 @@ DEFAULT_SINGLE_SHOOT_SETTINGS = {
 def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     settings = {**DEFAULT_SINGLE_SHOOT_SETTINGS, **(settings or {})}
     settings["_runtime_start_s"] = time.time()
+    rhs = _guarded_abs_column if settings.get("guard_rhs", True) else _raw_abs_column
 
     Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a, Hlf_a_guess, Hvf_a, P_a = Y_a_scaled
     Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess, Hlf_b, Hvf_b_guess, P_b = Y_b_scaled
@@ -41,7 +42,7 @@ def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
                           Fv_CO2_a, Fv_H2O_a,
                           Hlf_a,  Hvf_a, P_a]
 
-            Y_scaled, _, _, _ = integrater(_guarded_abs_column, Y_a_scaled, z, args=parameters)
+            Y_scaled, _, _, _ = integrater(rhs, Y_a_scaled, z, args=parameters)
             _raise_if_timed_out(settings)
 
             Fl_CO2_b_sim, Fl_H2O_b_sim, Hlf_b_sim = Y_scaled[0, -1], Y_scaled[1, -1], Y_scaled[4, -1]
@@ -75,13 +76,17 @@ def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
                       Fv_CO2_a, Fv_H2O_a,
                       Hlf_a, Hvf_a, P_a]
 
-    Y_scaled, z, success, message = integrater(_guarded_abs_column, Y_a_scaled, z, args=parameters)
+    Y_scaled, z, success, message = integrater(rhs, Y_a_scaled, z, args=parameters)
 
     return Y_scaled, z, 'Single Shooting Method', success, message
 
 
 def _guarded_abs_column(zi, y_scaled, parameters):
     return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
+
+
+def _raw_abs_column(zi, y_scaled, parameters):
+    return abs_column(zi, y_scaled, parameters)
 
 
 def _select_integrator(settings):

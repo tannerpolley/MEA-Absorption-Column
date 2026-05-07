@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import root
+import time
 
 from ...BVP.ABS_Column import abs_column
 from ...BVP.robust_core import guard_column_rhs
@@ -24,11 +25,18 @@ def _initial_profile(Y_a_scaled, Y_b_scaled, n_points):
 
 def finite_difference_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     settings = {**DEFAULT_FINITE_DIFFERENCE_SETTINGS, **(settings or {})}
+    start_time = time.monotonic()
+    guard_rhs = bool(settings.get("guard_rhs", True))
     Y_a_scaled = np.asarray(Y_a_scaled, dtype=float)
     Y_b_scaled = np.asarray(Y_b_scaled, dtype=float)
     z = np.asarray(z, dtype=float)
     n_vars = len(Y_a_scaled)
-    n_points = len(z)
+    requested_points = settings.get("mesh_points")
+    if requested_points is None:
+        z_work = z
+    else:
+        z_work = np.linspace(float(z[0]), float(z[-1]), int(requested_points))
+    n_points = len(z_work)
 
     if n_points < 3:
         raise ValueError("Finite difference solve requires at least three mesh points.")
@@ -36,18 +44,22 @@ def finite_difference_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None
     guess = _initial_profile(Y_a_scaled, Y_b_scaled, n_points)
 
     def residual(flat):
+        _raise_if_timed_out(settings, start_time)
         w = flat.reshape(n_vars, n_points)
         eqs = np.zeros_like(w)
-        dz = np.gradient(z)
 
         for i in range(n_points):
             if i == 0:
-                derivative = (w[:, 1] - w[:, 0]) / (z[1] - z[0])
+                derivative = (w[:, 1] - w[:, 0]) / (z_work[1] - z_work[0])
             elif i == n_points - 1:
-                derivative = (w[:, -1] - w[:, -2]) / (z[-1] - z[-2])
+                derivative = (w[:, -1] - w[:, -2]) / (z_work[-1] - z_work[-2])
             else:
-                derivative = (w[:, i + 1] - w[:, i - 1]) / (z[i + 1] - z[i - 1])
-            eqs[:, i] = derivative - guard_column_rhs(z[i], w[:, i], parameters, evaluator=abs_column)
+                derivative = (w[:, i + 1] - w[:, i - 1]) / (z_work[i + 1] - z_work[i - 1])
+            if guard_rhs:
+                rhs = guard_column_rhs(z_work[i], w[:, i], parameters, evaluator=abs_column)
+            else:
+                rhs = abs_column(z_work[i], w[:, i], parameters)
+            eqs[:, i] = derivative - rhs
 
         eqs[2, 0] = w[2, 0] - Y_a_scaled[2]
         eqs[3, 0] = w[3, 0] - Y_a_scaled[3]
@@ -70,4 +82,12 @@ def finite_difference_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None
     Y_scaled = solution.x.reshape(n_vars, n_points)
     if len(parameters) > 6 and isinstance(parameters[6], dict):
         parameters[6].get("solver_diagnostics", {})["jacobian_status"] = str(solution.status)
-    return Y_scaled, z, 'Finite difference BVP', bool(solution.success), str(solution.message)
+    return Y_scaled, z_work, 'Finite difference BVP', bool(solution.success), str(solution.message)
+
+
+def _raise_if_timed_out(settings, start_time):
+    max_runtime = settings.get("max_runtime_s")
+    if max_runtime is None:
+        return
+    if time.monotonic() - start_time > float(max_runtime):
+        raise TimeoutError(f"Finite difference solve exceeded max_runtime_s={float(max_runtime):g}")

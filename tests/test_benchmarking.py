@@ -16,13 +16,22 @@ from mea_absorption_column import benchmark_worker
 
 
 def test_case_data_loads_from_packaged_csvs():
-    c_cases, nccc_cases = load_case_data()
+    c_cases, nccc_cases, srp_cases = load_case_data()
 
     assert len(c_cases) == 7
     assert len(nccc_cases) >= 20
+    assert len(srp_cases) >= 1
     assert "CO2 %" in c_cases.columns
     assert "CO2  %" in nccc_cases.columns
+    assert "case_note" in srp_cases.columns
     assert float(nccc_cases.iloc[0]["L"]) > 3.0
+    assert float(srp_cases.iloc[0]["L_G"]) == 7.0
+
+
+def test_benchmark_defaults_preserve_henry_only_baseline():
+    settings = BenchmarkSettings()
+
+    assert settings.thermo_models == ("ideal_henry",)
 
 
 def test_benchmark_failure_rows_keep_stable_schema(monkeypatch):
@@ -47,6 +56,52 @@ def test_benchmark_failure_rows_keep_stable_schema(monkeypatch):
     assert "synthetic solver failure" in row["message"]
     assert row["beds"] == 1
     assert row["intercoolers"] == 0
+
+
+def test_benchmark_can_run_srp_method_case_source(monkeypatch):
+    seen = {}
+
+    def fake_run_model(df, method, thermo_model, run, **kwargs):
+        seen["case_id"] = str(df.index[run])
+        seen["columns"] = tuple(df.columns)
+        return {
+            "case_id": str(df.index[run]),
+            "method": method,
+            "thermo_model": thermo_model,
+            "success": True,
+            "message": "ok",
+            "runtime_s": 0.02,
+            "capture_pct": 90.0,
+            "capture_error_pct": None,
+            "temperature_rmse_K": None,
+            "boundary_residual_norm": 0.0,
+            "boundary_residual_components": "{}",
+            "beds": 1,
+            "intercoolers": 0,
+            "staged_beds": False,
+            "intercooler_model": "none",
+            "intercooler_assumption": "none",
+            "python_version": "test",
+            "platform": "test",
+            "package_versions": "numpy=test",
+        }
+
+    monkeypatch.setattr("mea_absorption_column.benchmark.run_model", fake_run_model)
+    settings = BenchmarkSettings(
+        methods=("single",),
+        thermo_models=("ideal_henry",),
+        c_case_limit=0,
+        nccc_case_limit=0,
+        srp_case_limit=None,
+        write_artifacts=False,
+    )
+
+    results = run_benchmark(settings)
+
+    assert len(results) == 1
+    assert results.loc[0, "case_source"] == "SRP_method_cases"
+    assert seen["case_id"] == "SRP-LG7"
+    assert "L_G" in seen["columns"]
 
 
 def test_benchmark_result_columns_round_trip_to_csv(tmp_path, monkeypatch):
@@ -142,6 +197,7 @@ def test_benchmark_cli_accepts_solver_settings():
         "--max-nodes",
         "200",
         "--finite-jacobian",
+        "--seed-from-shooting",
         "--profile-pngs",
         "--profile-csvs",
         "--subprocess-timeout-s",
@@ -149,6 +205,10 @@ def test_benchmark_cli_accepts_solver_settings():
         "--nccc-case-ids",
         "K4",
         "K5",
+        "--srp-case-limit",
+        "1",
+        "--srp-case-ids",
+        "SRP-LG7",
         "--transform-mode",
         "positive_flow_pressure",
         "--co2-vapor-upper-factor",
@@ -185,6 +245,7 @@ def test_benchmark_cli_accepts_solver_settings():
         "--multistart-co2-flux-modes",
         "bidirectional",
         "absorption_only",
+        "--unguarded-rhs",
     ])
 
     assert args.mesh_points == 21
@@ -192,10 +253,13 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.bc_tol == 0.01
     assert args.max_nodes == 200
     assert args.finite_jacobian is True
+    assert args.seed_from_shooting is True
     assert args.profile_pngs is True
     assert args.profile_csvs is True
     assert args.subprocess_timeout_s == 30
     assert args.nccc_case_ids == ["K4", "K5"]
+    assert args.srp_case_limit == 1
+    assert args.srp_case_ids == ["SRP-LG7"]
     assert args.transform_mode == "positive_flow_pressure"
     assert args.co2_vapor_upper_factor == 1.05
     assert args.shooting_integrator == "bdf"
@@ -212,14 +276,18 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.multistart_mass_transfer_factors == [0.26, 1.0]
     assert args.multistart_intercooler_strengths == [0.25, 1.0]
     assert args.multistart_co2_flux_modes == ["bidirectional", "absorption_only"]
+    assert args.unguarded_rhs is True
 
     solver_settings = _solver_settings_from_args(args)
+    assert solver_settings["seed_from_shooting"] is True
     assert solver_settings["integrator"] == "bdf"
     assert solver_settings["ivp_method"] == "BDF"
     assert solver_settings["root_method"] == "hybr"
     assert solver_settings["co2_capture_guess_pct"] == 85
     assert solver_settings["h2o_capture_guess_pct"] == -90
     assert solver_settings["epcsaft_fugacity_blend"] == 0.5
+    assert solver_settings["guard_rhs"] is False
+    assert solver_settings["strict_domain_guards"] is False
 
 
 def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
@@ -283,6 +351,9 @@ def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
     assert (profile_dir / "CO2.csv").exists()
     assert (profile_dir / "profile_manifest.json").exists()
     assert (profile_dir / "run_spec.json").exists()
+    manifest = json.loads((profile_dir / "profile_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["runtime_s"] == 0.01
+    assert manifest["runtime_label"] == "0.01 s"
     assert pd.read_csv(profile_dir / "T.csv").columns.tolist()[:4] == [
         "Position",
         "height_m",
@@ -522,6 +593,8 @@ def test_benchmark_settings_round_trip_for_worker_payload(tmp_path):
         output_dir=tmp_path,
         c_case_limit=0,
         nccc_case_limit=2,
+        srp_case_limit=1,
+        srp_case_ids=("SRP-LG7",),
         staged_beds="auto",
         solver_settings={"mesh_points": 5, "co2_flux_mode": "absorption_only"},
         profile_pngs=True,
@@ -534,6 +607,8 @@ def test_benchmark_settings_round_trip_for_worker_payload(tmp_path):
     assert restored.methods == ("scipy-bvp",)
     assert restored.thermo_models == ("ideal_henry",)
     assert restored.output_dir == Path(tmp_path)
+    assert restored.srp_case_limit == 1
+    assert restored.srp_case_ids == ("SRP-LG7",)
     assert restored.solver_settings["co2_flux_mode"] == "absorption_only"
     assert restored.profile_pngs is True
     assert restored.profile_csvs is True

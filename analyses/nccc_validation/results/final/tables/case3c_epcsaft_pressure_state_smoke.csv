@@ -1,0 +1,4 @@
+case_id,method,thermo_model,success,runtime_s,capture_pct,capture_error_pct,temperature_rmse_K,boundary_residual_norm,epcsaft_cache_hits,epcsaft_cache_misses,epcsaft_direct_density_solve_s,epcsaft_rho_guess_hits,epcsaft_rho_guess_misses
+3C,scipy-bvp,ideal_henry,True,5.945507526397705,89.39904372633721,-0.1009562736627884,3.944945781889841,5.6724776741037054e-14,0,0,0.0,0,0
+3C,scipy-bvp,epcsaft_neutral,True,5.918262481689453,89.69999650176878,0.1999965017687799,3.969369368814532,6.69501755457092e-14,771,785,0.5040829999488778,783,2
+3C,scipy-bvp,epcsaft_ionic,True,6.1507203578948975,89.8326294032528,0.3326294032527954,3.971002727045393,1.2123331770265856e-13,768,788,0.3361604000165243,786,2
