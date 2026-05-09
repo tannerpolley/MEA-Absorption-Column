@@ -339,7 +339,7 @@ def _write_uncertainty_plot(cal: pd.DataFrame) -> None:
         ecolor="#7f8c8d",
         elinewidth=1.0,
         capsize=2.5,
-        label="Screened model with residual band",
+        label="Screened model",
     )
     ax.scatter(order, data["measured_capture_pct"], marker="x", color="#b03a2e", label="Measured")
     for split, marker_y in (("train", 101.0), ("holdout", 102.2)):
@@ -406,10 +406,17 @@ def _design_matrix(data: pd.DataFrame, features: list[str]) -> np.ndarray:
 
 
 def _save_figure(fig: plt.Figure, analysis_name: str, doc_name: str) -> None:
+    svg_path = FIGURES / f"{analysis_name}.svg"
     fig.savefig(FIGURES / f"{analysis_name}.pdf")
-    fig.savefig(FIGURES / f"{analysis_name}.svg")
+    fig.savefig(svg_path)
     fig.savefig(DOC_FIGURES / doc_name)
+    _strip_svg_trailing_whitespace(svg_path)
     plt.close(fig)
+
+
+def _strip_svg_trailing_whitespace(path: Path) -> None:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    path.write_text("\n".join(line.rstrip() for line in lines) + "\n", encoding="utf-8")
 
 
 def _round(value: float | int | np.floating) -> float:

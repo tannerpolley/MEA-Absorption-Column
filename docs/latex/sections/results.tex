@@ -1,0 +1,94 @@
+    \section{Results}
+        This section presents the implementation and evaluation of the MEA absorption column model. The results are organized around reproducible benchmark evidence instead of a single illustrative simulation. The primary validation tier uses the one-bed NCCC C cases because temperature-profile data are available for those runs. The thermodynamic comparison is reported separately so that the effect of replacing only the CO$_2$ fugacity driving force can be interpreted without changing the reaction or transport submodels at the same time.
+
+        \subsection{Benchmark Implementation}
+    
+            To evaluate these methods, a modular steady-state absorber implementation was used to simulate amine-based absorption columns for CO\textsubscript{2} capture using pilot-plant cases from the National Carbon Capture Center (NCCC). The framework accommodates shooting, finite-difference, and SciPy collocation-style BVP solution paths within a single governing-equation set. The reported solver and thermodynamic comparison tables are regenerated from fixed input data and preserve the full run history so that solver messages, residual norms, mesh settings, thermodynamic model identifiers, and case metadata remain traceable to the computational configuration.
+            
+            \begin{figure}
+                \centering
+                \includegraphics[width=12cm]{figures/temperature-lg.png}
+                \caption{3D surface plot of the temperature profile across the column with varying $\frac{L}{G}$ ratio}\label{fig:3D Temperature}
+            \end{figure}
+    
+            Figure~\ref{fig:3D Temperature} illustrates the model's expected qualitative behavior when the liquid-to-gas ratio is varied. The temperature bulge moves through the packed height as the driving force and heat-release location change, which provides a useful indicator for whether the coupled mass and energy balances are behaving consistently. The validation does not rely on this figure as quantitative evidence by itself; quantitative claims are instead made from benchmark results that report capture error, temperature RMSE, residual norm, and runtime.
+
+        \subsection{NCCC Case Study}
+        
+            The model is benchmarked against the 2017 MEA test campaign data at the NCCC for the one-bed C cases \cite{Morgan2020}. The runs conducted for this campaign are shown in Table \ref{tab:mea-data}. The validation reports capture-rate error across the benchmark cases and temperature-profile error for the one-bed cases with measured temperature taps. A representative case is retained as a profile comparison, while the broader one-bed set carries the main validation argument.
+            
+            \input{tables/nccc_c_case_campaign}
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.9\textwidth]{figures/case-3c-temperature-validation.png}
+            \caption{Comparison between modeled temperature profiles and experimental pilot plant column data. The profiles correspond to a liquid-to-gas ratio $\frac{L}{G}$ of 4.70, a CO$_2$ loading $\alpha = 0.25$, and an inlet gas CO$_2$ mole fraction $y_{\mathrm{CO_2}} = 0.08$.}
+            \label{fig:temp_profiles}
+        \end{figure}
+        Case 3C was used as an illustrative benchmark run because it has measured temperature taps and a capture value close to the baseline prediction. The temperature data for this row are shown in Table~\ref{tab:3C-temp-profile}. It is not the only validation evidence: the verified one-bed C dataset covers all seven C cases.
+        \input{tables/case_3c_temperature_profile}
+        The temperature profiles of the solved column are useful validation evidence because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as a representative profile, where the predicted \% of $\COtwo$ captured by the model is $\left(89.33\% \:\:\text{vs}\:\:89.50\%\right)$ for the pilot-plant value. The broader benchmark reports aggregate capture and temperature metrics across all verified one-bed C cases, which makes the figure a useful example rather than the sole basis for the validation claim.
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.92\textwidth]{figures/c-case-thermo-benchmark.pdf}
+            \caption{Benchmark comparison for the one-bed NCCC C cases. The left panel reports case-by-case capture error for the Henry-law and neutral ePC-SAFT thermodynamic lanes, and the right panel reports median runtime.}
+            \label{fig:c-case-thermo-benchmark}
+        \end{figure}
+
+        Figure~\ref{fig:c-case-thermo-benchmark} expands the validation from one representative case to all seven one-bed C cases in the benchmark dataset. The Henry-law and neutral ePC-SAFT lanes both converged for all seven cases. Their aggregate capture errors were similar in this benchmark, while the neutral ePC-SAFT lane required a longer median runtime because the fugacity coefficients are computed through the ePC-SAFT equation-of-state package. This result is consistent with the paper's benchmark framing: the framework is useful as a controlled thermodynamic sensitivity benchmark while holding the legacy chemistry fixed.
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.90\textwidth]{figures/case-c-temperature-overlay.pdf}
+            \caption{Temperature-profile overlays for selected one-bed NCCC C cases with measured taps. Case 3C is retained as the anchor validation profile, and Case 6C provides an additional operating point included in the manuscript figure. Markers are measured liquid-temperature taps; model curves show the Henry-law and neutral ePC-SAFT thermodynamic lanes.}
+            \label{fig:generated-temperature-profiles}
+        \end{figure}
+
+        The temperature profiles in Figure~\ref{fig:generated-temperature-profiles} are used as supporting validation evidence because they test the coupled mass-transfer and energy-balance response, not only the outlet capture value. The figure is intentionally limited to cases that support the central benchmark argument; broader sensitivity checks are retained in the analysis artifacts rather than added as manuscript figures.
+
+        \input{sections/results_benchmark_evidence}
+
+       \begin{figure}
+            \centering
+            \begin{subfigure}[t]{0.48\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{figures/method-shooting.png}
+                \caption{Shooting method}
+                \label{fig:shooting}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[t]{0.48\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{figures/method-collocation.png}
+                \caption{Collocation method}
+                \label{fig:collocation}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[t]{0.48\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{figures/method-finite-difference.png}
+                \caption{Finite difference method}
+                \label{fig:finite_difference}
+            \end{subfigure}
+            \caption{Comparison of temperature profiles computed using the shooting method, collocation method, and finite difference method.}
+            \label{fig:method_comparison_figures}
+        \end{figure}
+
+    \subsection{Simulation Method Comparison}
+        Figure~\ref{fig:method_comparison_figures} illustrates the temperature profiles obtained using three numerical methods: shooting, collocation, and finite difference. At higher $L/G$ ratios, the temperature bulge shifts toward the bottom of the column, which generally results in well-conditioned differential equations that the shooting method can solve efficiently. When the bulge appears near the top of the column (commonly associated with thermodynamic pinch points), the shooting path becomes less robust because of the stiffness and sensitivity of the coupled ODEs. The shooting path can also be run with stiff IVP integrators for comparison, but those runs require explicit runtime limits because poor boundary guesses can otherwise generate long root-search trajectories.
+
+        The SciPy BVP method provides an adaptive collocation-style alternative for the same governing equations. Its performance depends on the initialization profile, scaling, mesh limits, and tolerance settings, so the benchmark reports those values directly rather than treating robustness as a qualitative observation.
+
+        The finite difference method offers another solution strategy by solving the spatially discretized equations as one nonlinear algebraic system. Its usefulness must be evaluated from the same metrics as the other methods: convergence success, boundary residuals, validation error, mesh size, and runtime.
+
+        Each method has trade-offs. The shooting method is simple but can be sensitive to stiffness; the SciPy BVP method depends strongly on initialization and mesh controls; and finite difference methods increase the nonlinear system size. Table~\ref{tab:method_comparison_table} should be interpreted alongside the quantitative benchmark outputs.
+        \input{tables/numerical_method_comparison}
+
+        The benchmark replaces qualitative method rankings with reported statistics. A defensible comparison reports convergence behavior, boundary residuals, validation errors, and runtime across representative cases. On the current evidence, the SciPy \texttt{solve\_bvp} path is the reference workflow for the NCCC one-bed validation because it handles the thermal-pinch case more reliably than the shooting and finite-difference paths. Shooting and finite difference remain useful comparison paths for favorable SRP-style one-bed cases because they expose speed, stiffness, initialization, and nonlinear-system conditioning tradeoffs.
+
+
+    \subsection{Limitations and Future Work}
+        The results should be read as a reproducible benchmark of a simplified absorber model, not as a complete predictive process simulator. The ePC-SAFT lanes are limited to the CO$_2$ fugacity-coefficient driving force; they do not replace the chemical-equilibrium model, ionic speciation calculation, reaction-enhancement calculation, or transport-property correlations with a fully coupled electrolyte-reactive thermodynamic model. The one-bed NCCC C cases provide the primary validation set with measured temperature taps, and the benchmark remains most valuable as a documented basis for solver comparison and thermodynamic sensitivity. Future work can extend the same framework to broader calibration, additional pilot-plant validation, and fully audited electrolyte ePC-SAFT or eNRTL \cite{Zhang2011} comparisons. Optimization and scale-up studies should remain future applications unless supported by validation data.
+
+

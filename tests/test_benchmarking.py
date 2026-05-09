@@ -2,6 +2,10 @@ import pandas as pd
 import json
 from pathlib import Path
 
+import pytest
+
+from mea_absorption_column.BVP.ABS_Column import _gas_velocity_area_factor
+from mea_absorption_column.misc.Convert_Data import convert_data
 from mea_absorption_column.benchmark import (
     BENCHMARK_COLUMNS,
     BenchmarkSettings,
@@ -213,6 +217,12 @@ def test_benchmark_cli_accepts_solver_settings():
         "positive_flow_pressure",
         "--co2-vapor-upper-factor",
         "1.05",
+        "--vapor-composition-mode",
+        "input_o2",
+        "--gas-velocity-area-exponent",
+        "1.5",
+        "--gas-velocity-area-reference-m-s",
+        "1.88",
         "--shooting-integrator",
         "bdf",
         "--shooting-root-method",
@@ -262,6 +272,9 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.srp_case_ids == ["SRP-LG7"]
     assert args.transform_mode == "positive_flow_pressure"
     assert args.co2_vapor_upper_factor == 1.05
+    assert args.vapor_composition_mode == "input_o2"
+    assert args.gas_velocity_area_exponent == 1.5
+    assert args.gas_velocity_area_reference_m_s == 1.88
     assert args.shooting_integrator == "bdf"
     assert args.shooting_root_method == "hybr"
     assert args.co2_capture_guess_pct == 85
@@ -286,8 +299,49 @@ def test_benchmark_cli_accepts_solver_settings():
     assert solver_settings["co2_capture_guess_pct"] == 85
     assert solver_settings["h2o_capture_guess_pct"] == -90
     assert solver_settings["epcsaft_fugacity_blend"] == 0.5
+    assert solver_settings["vapor_composition_mode"] == "input_o2"
+    assert solver_settings["gas_velocity_area_exponent"] == 1.5
+    assert solver_settings["gas_velocity_area_reference_m_s"] == 1.88
     assert solver_settings["guard_rhs"] is False
     assert solver_settings["strict_domain_guards"] is False
+
+
+def test_convert_data_defaults_to_legacy_vapor_reconstruction():
+    c_cases, _, _ = load_case_data()
+
+    inputs, _, metadata = convert_data(c_cases, run=0, return_metadata=True)
+    _, vapor_flows, *_ = inputs
+    y = [flow / sum(vapor_flows) for flow in vapor_flows]
+
+    assert metadata["vapor_composition_mode"] == "legacy_ratio"
+    assert round(y[3], 6) == round(0.06655280890171553, 6)
+
+
+def test_convert_data_can_use_input_o2_column():
+    c_cases, _, _ = load_case_data()
+
+    inputs, _, metadata = convert_data(
+        c_cases,
+        run=0,
+        return_metadata=True,
+        vapor_composition_mode="input_o2",
+    )
+    _, vapor_flows, *_ = inputs
+    y = [flow / sum(vapor_flows) for flow in vapor_flows]
+
+    assert metadata["vapor_composition_mode"] == "input_o2"
+    assert round(y[3], 6) == round(float(c_cases.iloc[0]["y_O2"]), 6)
+
+
+def test_gas_velocity_area_factor_is_bounded_and_reference_normalized():
+    assert _gas_velocity_area_factor(1.88, 1.88, 2.0, (0.1, 3.0)) == pytest.approx(1.0)
+    assert _gas_velocity_area_factor(3.76, 1.88, 2.0, (0.1, 3.0)) == pytest.approx(3.0)
+    assert _gas_velocity_area_factor(0.188, 1.88, 2.0, (0.1, 3.0)) == pytest.approx(0.1)
+
+
+def test_gas_velocity_area_factor_rejects_nonpositive_reference():
+    with pytest.raises(ValueError, match="reference"):
+        _gas_velocity_area_factor(1.0, 0.0, 1.0, (0.1, 3.0))
 
 
 def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
@@ -354,12 +408,17 @@ def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
     manifest = json.loads((profile_dir / "profile_manifest.json").read_text(encoding="utf-8"))
     assert manifest["runtime_s"] == 0.01
     assert manifest["runtime_label"] == "0.01 s"
-    assert pd.read_csv(profile_dir / "T.csv").columns.tolist()[:4] == [
+    t_csv = pd.read_csv(profile_dir / "T.csv")
+    assert t_csv.columns.tolist()[:4] == [
         "Position",
         "height_m",
         "bed_id",
         "bed_position_m",
     ]
+    assert t_csv.loc[0, "Position"] == 0.0
+    assert t_csv.loc[0, "Tl"] == 315.0
+    assert t_csv.loc[1, "Position"] == 1.0
+    assert t_csv.loc[1, "Tl"] == 320.0
 
 
 def test_benchmark_multistart_selects_lowest_capture_error(tmp_path, monkeypatch):

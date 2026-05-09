@@ -1,0 +1,41 @@
+\begin{table}[ht]
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.5}
+\caption{Benchmark comparison of numerical methods: Shooting, SciPy collocation-style BVP, and finite difference}
+\label{tab:method_comparison_table}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{|>{\centering\arraybackslash}m{2.8cm}|p{5.2cm}|p{5.2cm}|}
+    \hline
+    \textbf{Method} & \textbf{Pros} & \textbf{Cons} \\
+    \hline
+    \textbf{Shooting Method} &
+    - Simple baseline implementation \newline
+    - Useful for diagnosing IVP sensitivity \newline
+    - Reuses standard IVP solvers
+    &
+    - Struggles with stiff ODE systems \newline
+    - Sensitive to initial guesses \newline
+    - May fail near thermodynamic pinch \\
+    \hline
+    \textbf{SciPy BVP} &
+    - Adaptive mesh and residual control \newline
+    - Current reference path in the benchmark \newline
+    - Directly records solver metadata
+    &
+    - Depends on initialization and scaling \newline
+    - Can be slower than shooting on easy cases \newline
+    - Convergence is case dependent \\
+    \hline
+    \textbf{Finite Difference Method} &
+    - Transparent spatial discretization \newline
+    - Simple to compare against other methods \newline
+    - Works with mixed boundary conditions
+    &
+    - Computationally intensive \newline
+    - Requires solving large nonlinear systems \newline
+    - More difficult to scale for large grids \\
+    \hline
+\end{tabular}
+\end{adjustbox}
+\end{table}

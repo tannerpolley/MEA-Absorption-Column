@@ -1,0 +1,58 @@
+    \subsection{Benchmark Scope and Evidence Classes}
+        The benchmark scope is limited to evidence produced from common settings without case-specific recovery. Primary validation evidence comes from the one-bed NCCC C cases because those cases include both capture-rate measurements and temperature-profile taps. Secondary evidence is retained for solver-method comparison and thermodynamic sensitivity, but it is reported separately from the primary validation statistics.
+
+        Table~\ref{tab:validation-evidence-registry} summarizes the evidence classes used in this study. The one-bed Henry-law and neutral ePC-SAFT C-case results are counted as primary validation because all seven cases converge with the same benchmark settings. The SRP-style solver-method results are classified as secondary method-comparison evidence because they are useful for comparing numerical behavior, but they do not replace NCCC validation data.
+
+        \input{tables/validation_evidence_registry}
+
+    \subsection{Thermodynamic Driving-Force Comparison}
+        The baseline thermodynamic lane uses the existing Henry-law calculation for the liquid CO$_2$ fugacity and an ideal vapor partial-pressure expression for the vapor fugacity. The ePC-SAFT lane uses an ePC-SAFT implementation as a fugacity-coefficient calculator and computes the CO$_2$ fugacity coefficient from pressure-specified phase states. PC-SAFT and ePC-SAFT are established equation-of-state approaches for associating and electrolyte-containing systems \cite{Gross2001,Cameretti2005}. PC-SAFT and SAFT-family parameters for CO$_2$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh and by Najafloo and Zarei \cite{Baygi2015,Najafloo2018}, and ePC-SAFT acid-gas absorption studies provide additional context for EOS-based amine-solution calculations \cite{Cleeton2020,Bulow2021a}. The current ePC-SAFT formulation includes the Born and solvation-shell contribution path described in Eq.~\eqref{eq:epcsaft-born}, but the primary absorber comparison uses it only through $\phi_{\COtwo}$.
+
+        In this work, ePC-SAFT changes only the CO$_2$ fugacity driving force:
+        \begin{align}
+            f_{\COtwo}^{v} &= y_{\COtwo}\phi_{\COtwo}^{v}P,\\
+            f_{\COtwo}^{\liq} &= x_{\COtwo}^{\liq}\phi_{\COtwo}^{\liq}P.
+        \end{align}
+        Chemical equilibrium, ionic speciation, enhancement factors, transport properties, heat-transfer correlations, and column balances are otherwise held fixed. This makes the ePC-SAFT comparison a controlled thermodynamic sensitivity study rather than a fully coupled electrolyte-reactive absorber model. The benchmark therefore evaluates whether replacing the Henry-law driving force changes capture accuracy, temperature error, convergence, and runtime under the same absorber equations.
+
+    \subsection{Accuracy-Credibility Screens}
+        The central validation concern is whether the same model settings provide useful evidence across more than one illustrative case. For this reason, the benchmark includes a no-case-specific-tuning gate, error-regime plots, a small global residual-correction screen, and uncertainty bands. These additions do not claim broad plantwide predictive accuracy. They make the evidence auditable and show how the one-bed model behaves across the supported operating range.
+
+        Figure~\ref{fig:error-regime-capture-error} plots capture error against three operating descriptors: liquid-to-gas ratio, lean loading, and inlet CO$_2$ mole fraction. The purpose is to identify operating regimes instead of reporting only an aggregate mean error. This gives the benchmark a practical role: it shows where the present equation set is useful as a predictive approximation and where future calibration or submodel refinement should be concentrated.
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.92\textwidth]{figures/error-regime-capture-error.pdf}
+            \caption{Capture-error regimes for the one-bed C cases. The plot shows how the Henry-law and neutral ePC-SAFT lanes vary with operating descriptors relevant to absorber performance.}
+            \label{fig:error-regime-capture-error}
+        \end{figure}
+
+        Figure~\ref{fig:calibration-uncertainty-band} reports a small residual-correction screen on the Henry-law one-bed C cases. Five cases are used for fitting and two cases are held out. The correction uses only global terms based on liquid-to-gas ratio, lean loading, and inlet CO$_2$ mole fraction. It is reported as a screening exercise rather than a final mechanistic calibration, because the holdout set is small. Its value is to demonstrate a reproducible path from benchmark evidence to future uncertainty-aware calibration.
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.82\textwidth]{figures/calibration-uncertainty-band.pdf}
+            \caption{One-bed C-case residual-correction screen with uncertainty bands. The bands summarize residual spread from the small training subset and are used to communicate uncertainty rather than exact predictive confidence.}
+            \label{fig:calibration-uncertainty-band}
+        \end{figure}
+
+        Table~\ref{tab:calibration-holdout-screen} summarizes the calibration screen. The training error is reduced because the correction is fitted on those cases, and the holdout rows indicate how much additional validation is still needed before treating the residual model as predictive. This keeps the paper focused on a useful benchmark contribution while documenting a path for future global calibration.
+
+        \input{tables/calibration_holdout_screen}
+
+    \subsection{Solver-Method Contrast}
+        The solver comparison is reported as a method-behavior benchmark rather than as a claim that every method is equally useful for every absorber case. Figure~\ref{fig:method-case-solver-contrast} contrasts a favorable SRP-style one-bed case with the NCCC 3C thermal-pinch case. The shooting and finite-difference paths can produce useful comparison results under favorable conditions, while the SciPy BVP path is the more reliable reference workflow for the NCCC temperature-profile case.
+
+        Table~\ref{tab:method-case-contrast} gives the corresponding method results. The SRP-style case is included because it shows the shooting and finite-difference implementations on a smoother one-bed operating point. The NCCC 3C case is more discriminating because the measured profile contains a sharper temperature feature, and the initial-value character of shooting and the algebraic stiffness of the finite-difference residual are less forgiving than the collocation-style BVP formulation.
+
+        \input{tables/method_case_contrast}
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.78\textwidth]{figures/method-case-solver-contrast.pdf}
+            \caption{Runtime and method comparison for representative one-bed cases. The SRP-style case shows shooting and finite difference on a smoother operating point; the NCCC 3C case shows why collocation-style BVP solution is retained as the reference workflow for the validation set.}
+            \label{fig:method-case-solver-contrast}
+        \end{figure}
+
+    \subsection{Model Adequacy}
+        The model is considered adequate for a validation case when convergence, boundary residuals, capture error, and temperature-profile error are all acceptable for the stated purpose. Under that standard, the present model is best interpreted as a transparent one-bed benchmark and thermodynamic-driving-force sensitivity platform. It provides a stronger basis for comparing solver behavior and thermodynamic assumptions than a single successful case study, while leaving broader predictive calibration as future work.

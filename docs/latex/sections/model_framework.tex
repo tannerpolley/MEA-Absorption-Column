@@ -1,0 +1,348 @@
+    \section{Model Framework}
+        Solvent-based PCC models are built to replicate the absorption phenomena occurring in industrial-packed columns. The dimensions of an absorption column have a certain height and diameter that are scaled on the demand of the input streams of liquid and vapor. The absorption phenomenon occurs when the thermodynamic driving force for $\COtwo$ is pushed from vapor to liquid. This driving force and the speed at which it happens are dependent on multiple factors such as transport, vapor-liquid equilibrium, and the kinetics of the reaction occurring. Accounting for all of these and their interactions together is key to solving this model. Each of these is also dependent on the properties of each stream and element found in the system which are typically dependent on the temperature and composition of the streams. These variables are tracked by the governing equations seen as the mass and energy balances of the system. These governing equations are found as differential equations and solving these is key to simulating the column.
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=12cm]{figures/model-framework-flowchart.png}
+            \caption{Computational structure of the absorber benchmark. Flow, composition, temperature, and pressure variables define thermodynamic and transport properties; those properties determine interfacial fluxes; and the fluxes close the material and energy balances solved by the numerical methods.}\label{fig:Model_Framework_Flowchart}
+        \end{figure}
+        The diagram in Figure~\ref{fig:Model_Framework_Flowchart}, adapted from Luo \cite{Luo2017}, outlines the computational framework used for the MEA absorber benchmark. The calculation begins with flow, composition, pressure, and temperature variables for the vapor and liquid phases. These variables are used to evaluate thermodynamic, transport, and hydraulic properties, which then define interfacial fluxes and close the governing balances. This modular structure is important for the present study because it allows the numerical method and CO$_2$ fugacity model to be changed while the rest of the absorber equations remain fixed.
+        
+        Thermodynamic modeling follows, incorporating both the chemical equilibrium and vapor-liquid equilibrium (VLE) of the model. The chemical equilibrium determines true species concentrations from the reaction set and apparent mole fractions. The VLE calculation then provides the fugacities that define the thermodynamic driving force. The model can switch the CO$_2$ driving-force calculation between the baseline Henry-law expression and an equation-of-state calculation using ePC-SAFT \cite{Cameretti2005}. In this work, the Henry-law model is the fast baseline, while neutral ePC-SAFT is used as a controlled sensitivity test for the CO$_2$ fugacity coefficient. The chemical-equilibrium equations, enhancement factor, transport correlations, and balances remain unchanged so that the thermodynamic comparison isolates the fugacity calculation rather than introducing a second absorber model. The benchmark results show higher runtime for ePC-SAFT than for Henry because the ePC-SAFT lane evaluates fugacity coefficients through an equation-of-state state calculation. Once the thermodynamics is evaluated, it is used alongside hydraulic variables, transfer coefficients, heat transfer, and the enhancement factor to calculate species and enthalpy fluxes. These fluxes close the governing mass and energy balances.
+
+        \subsection{Thermodynamics}\label{subsec:thermodynamics}
+            The thermodynamics section of the model establishes the chemical and phase behavior that drives $\COtwo$ absorption in the MEA solvent system. It begins with solving chemical equilibrium by determining the true species concentrations. Once the true concentrations are known, vapor--liquid equilibrium is modeled to determine the fugacities of the species. Together, the chemical equilibrium and VLE models provide the thermodynamic foundation for predicting mass transfer and absorption behavior throughout the column.
+        
+            \subsubsection{Chemical Equilibrium}
+                Solving for the chemical equilibrium of the liquid solvent is a key first step in solving for the absorption. Upon solving for the chemical equilibrium, the concentration of the true species are found which are used throughout the rest of the model both in the thermodynamics and transport correlations. The methodology to solve for the true species begins with the concentration of the apparent species and equilibrium constants for the two main reactions found.
+                \begin{align}
+                    & 2 \MEA+\COtwo \leftrightarrow \MEAH +\MEACOO \\
+                    & \MEA+\COtwo+\HtwoO \leftrightarrow \MEAH +\HCOthree
+                \end{align}
+                This reaction set represents a simplification of the solution chemistry that was developed by Hilliard \cite{Hilliard2008} for typical $\COtwo$ capture process conditions where concentrations of other ions (${\text{H}_3 \text{O}}^+$,${\text{OH}}^-$,${\text{CO}_3}^{2-}$ ) are negligibly low.
+
+                This reaction set gives the following stoichiometric matrix $\mathbf{\nu}_{i,r}$:
+                \begin{align}
+                    \mathbf{\nu}_{i, r} = 
+                    \begin{bmatrix}
+                    -1 & -1 \\
+                    -2 & -1 \\
+                     0 & -1 \\
+                     1 &  1 \\
+                     1 &  0 \\
+                     0 &  1
+                    \end{bmatrix}
+                \end{align}
+                The equilibrium constants are found through fitting speciation data to the following equation.
+                
+                \begin{align}
+                    \log K_r = a_r + \frac{b_r}{T_l} + c_r \ln(T_l) + d_r T_l
+                \end{align}
+
+                 Where $r$ represents a reaction number. 
+                 
+                 The reaction quotient in terms of concentration is the following. 
+                 
+                 \begin{align}
+                    Q_r &= \prod_i \text{C}_i^{\nu_{i,r}}
+                 \end{align}
+                  Therefore, the relationship
+                 \begin{align}
+                    Q_r &= K_r
+                \end{align}
+                is used for both reactions alongside the material and charge-balance equations derived from Akula \cite{Akula2023}.
+
+                \begin{align}
+                    C^{\liq}_{\ce{CO2},0} &= C^{\liq}_{\ce{CO2}} + C^{\liq}_{\ce{MEAH}^{+}} \\
+                    C^{\liq}_{\ce{MEA},0} &= C^{\liq}_{\ce{MEA}} + C^{\liq}_{\ce{MEAH}^{+}} + C^{\liq}_{\ce{MEACOO}^{-}} \\
+                    C^{\liq}_{\ce{H2O},0} &= C^{\liq}_{\ce{H2O}} + C^{\liq}_{\ce{MEAH}^{+}} - C^{\liq}_{\ce{MEACOO}^{-}} \\
+                    C^{\liq}_{\ce{MEAH}^{+}} &= C^{\liq}_{\ce{MEACOO}^{-}} + C^{\liq}_{\ce{HCO3}^{-}} \\
+                    \textbf{C} &= \left[
+                         C^{\liq}_{\COtwo}, C^{\liq}_{\MEA}, C^{\liq}_{\HtwoO}, C^{\liq}_{\MEAH}, C^{\liq}_{\MEACOO}, C^{\liq}_{\HCOthree}\right]
+                \end{align}
+                where $\textbf{C}$ is the array of unknown true-species concentrations.
+                Each equation is set to zero and the true species concentrations are obtained as the roots of the nonlinear algebraic system. Concentration is used as the unknown variable because the present model assumes unit activity coefficients for the species in this simplified equilibrium calculation and because concentration provides better numerical scaling than mole fraction for dilute $\COtwo$ species. Since the true mole fraction of $\COtwo$ can become small near the top of the column, scaling both the unknowns and equations is important for root-finder convergence. The implementation stores the previous converged chemical-equilibrium solution and reuses it as the next initial guess while marching through the profile. This sequential initialization reduces the need for a separate surrogate model for chemical-equilibrium guesses. A more rigorous alternative would solve for reaction extents $(\xi)$ by minimizing $\Delta _{rxn} G^{\circ}$, but that approach is outside the scope of the present benchmark. Once true species concentrations are known, VLE behavior can be evaluated.
+
+
+            \subsubsection{Vapor-Liquid Equilibrium}
+                The vapor-liquid equilibrium of the model determines the driving force for $\COtwo$ absorption in the column. This driving force is the difference between the vapor and liquid fugacities of $\COtwo$. Significant progress has been made in developing accurate models for phase behavior. One sophisticated route is the e-NRTL activity coefficient model originally developed by Zhang et al. \cite{Zhang2011}. In this model, binary electrolyte interaction parameters between molecules and electrolytes are fit with speciation data, and many thermodynamic expressions are derived, such as heat capacity and excess enthalpy. This model has shown strong performance for the $\MEA-\HtwoO-\COtwo$ system, but the parameter count and model complexity can be a hindrance when running numerous simulations for statistical testing. PC-SAFT and ePC-SAFT provide an equation-of-state alternative for associating and electrolyte-containing systems \cite{Gross2001,Cameretti2005}, and PC-SAFT parameters for $\COtwo$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh \cite{Baygi2015}. The benchmark therefore keeps the Henry-law model as the fast baseline and adds a neutral ePC-SAFT sensitivity lane to evaluate how an EOS-based CO$_2$ fugacity-coefficient calculation changes the solved column predictions. The following outlines the derivation and assumptions for relating liquid fugacity to Henry's Law. The equilibrium definition for a species between liquid and vapor phases is
+                \begin{equation}
+                    f_i^v = f_i^l
+                \end{equation}
+                
+                Evaluate both fugacities in terms of fugacity/activity coefficients:
+                \begin{equation}
+                    y_i \, \hat{\phi}_i^v \, P = x_i \, \gamma_i \, f_i^\circ
+                \end{equation}
+                
+                If $i$ is an infinitely dilute solute such that:
+                \begin{equation}
+                    \lim_{x_i \to 0} \left( \frac{f_i^l}{x_i} \right) = H_{i,j}
+                \end{equation}
+                
+                Then $f_i^l \approx x_i H_{i,j}$, and therefore $H_{i,j} = \gamma_i \, f_i^\circ$. Substituting this relation and assuming an ideal vapor phase gives
+                \begin{equation}
+                    y_i\, P = x_i H_{i,j}
+                \end{equation}
+                
+                We can then change Henry's Law into concentration form:
+                \begin{equation}
+                    y_i \, P = C_i \, H^{c}_{i,j}
+                \end{equation}
+                
+                Therefore, we obtain the simplified expressions:
+                \begin{align}
+                    f_i^v &= y_i P \\
+                    f_i^l &= C_i H^{c}_{i,j}
+                \end{align}
+
+                If using an activity coefficient model, then Henry's Law is also used to determine the activity coefficient of the solute ($\COtwo$) through the infinitely dilute activity coefficient $H_{i,j} = \gamma^{\infty}_i f^{\circ}_i$.
+                
+                The following equations summarize the Henry-law fugacity expressions used in the baseline model for $\COtwo$.
+                \begin{align}
+                    \textit{f}^{\:\vap}_{ \COtwo} &= P y_{\COtwo} && \left(\unit{Pa} \right)\\
+                    \textit{f}^{\:\liq}_{ \COtwo} &= C^{\liq}_{ \COtwo, \text{true}} H_{\COtwo,\text{mix}} &&\left(\unit{Pa} \right) \label{eq:ideal}
+                \end{align}
+                The parameters used to determine the Henry's Law expression for $\COtwo$ in the liquid mixture are specifically tuned to account for as many interactions as possible and are fitted with speciation data. This baseline remains less rigorous than an e-NRTL activity-coefficient model \cite{Zhang2011} or an ePC-SAFT equation-of-state model, but it is also simpler and more stable when the benchmark needs to run many cases. The neutral ePC-SAFT lane is therefore introduced as a comparison path, not as a claim that it is faster than Henry's Law or that it replaces the chemical-equilibrium model.
+
+                \subsubsection*{ePC-SAFT fugacity-coefficient lane}
+                The ePC-SAFT calculation is used here as a residual-Helmholtz equation of state for the fugacity coefficient of $\COtwo$, while the absorber chemistry remains the legacy concentration-based calculation described above. For each pressure-specified phase state $(T,P,\mathbf{x})$, the ePC-SAFT package solves for the phase density and evaluates the residual Helmholtz energy as the sum of physically motivated contributions \cite{Gross2001,Cameretti2005,Bulow2020,Bulow2021a,Figiel2025}:
+                \begin{equation}
+                    \tilde{a}^{res} =
+                    \tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}
+                    +\tilde{a}^{DH}+\tilde{a}^{Born}.
+                    \label{eq:epcsaft-ares}
+                \end{equation}
+                The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, the association term accounts for site-specific association such as hydrogen bonding, the Debye--H{\"u}ckel term accounts for long-range electrostatic screening when charged species are included, and the Born term accounts for ion solvation. The current ePC-SAFT implementation used by this project also supports the modified Born/solvation-shell treatment in which the Born contribution can be evaluated over a set of dielectric-response contributions:
+                \begin{equation}
+                    \tilde{a}^{Born} =
+                    -\frac{e^2}{4\pi\epsilon_0 k_B T}
+                    \sum_i x_i z_i^2
+                    \sum_{\delta\in\mathcal{D}}
+                    \left(1-\frac{1}{\epsilon_{r,m_\delta}}\right)
+                    D_{i,\delta}^{(m_\delta)},
+                    \quad
+                    \mathcal{D}=\{\mathrm{Born}\}\cup\mathcal{D}_{add}.
+                    \label{eq:epcsaft-born}
+                \end{equation}
+                In the present absorber benchmark, this capability is used only through the package fugacity-coefficient interface; the primary paper evidence uses the neutral $\COtwo$--$\MEA$--$\HtwoO$ fugacity lane and does not use ePC-SAFT activity coefficients in the reaction-equilibrium equations.
+
+                The residual Helmholtz energy gives the compressibility factor and residual chemical potential,
+                \begin{align}
+                    Z &= 1+\rho\left(\frac{\partial \tilde{a}^{res}}{\partial \rho}\right)_{T,\mathbf{x}},\\
+                    \tilde{\mu}_k^{res} &= \tilde{a}^{res}+(Z-1)
+                    +\left(\frac{\partial \tilde{a}^{res}}{\partial x_k}\right)_{T,\rho,\mathbf{x}_{j\ne k}}
+                    -\sum_j x_j
+                    \left(\frac{\partial \tilde{a}^{res}}{\partial x_j}\right)_{T,\rho,\mathbf{x}_{i\ne j}},
+                \end{align}
+                and the fugacity coefficient follows as
+                \begin{equation}
+                    \ln\phi_k=\tilde{\mu}_k^{res}-\ln Z.
+                    \label{eq:epcsaft-phi}
+                \end{equation}
+                The ePC-SAFT sensitivity lane then uses
+                \begin{align}
+                    f_{\COtwo}^{\vap} &= y_{\COtwo}\phi_{\COtwo}^{\vap}P,\\
+                    f_{\COtwo}^{\liq} &= x_{\COtwo}^{\liq}\phi_{\COtwo}^{\liq}P.
+                \end{align}
+                This keeps the comparison narrow: only the CO$_2$ fugacity driving force changes, while the same column balances, reaction speciation, enhancement factor, and transport correlations are retained.
+                The following equations for the fugacity of $\HtwoO$ are below
+                \begin{align}
+                    \textit{f}^{\:\vap}_{ \HtwoO} &= P y_{\HtwoO} && \left(\unit{Pa} \right)\\
+                    \textit{f}^{\:\liq}_{ \HtwoO} &= P_{\text{sat}, \HtwoO} x_{\HtwoO, \text{true}} && \left(\unit{Pa} \right)
+                \end{align}
+                and these equations are sufficiently accurate since $\HtwoO$ is the abundant solvent in this liquid mixture and can assume $\gamma_{\HtwoO} = 1$. These fugacities play an important role in the water balance of the column which largely dictates the energy balance and temperature behavior within the column. The differential in fugacity between the vapor and liquid phases represents the thermodynamic driving force for mass transfer, quantifying the imbalance between the phases. When the fugacities are unequal, the system is not at equilibrium, and the magnitude of this difference indicates how far the system is from reaching equilibrium. Alongside the driving force, the transport phenomena, specifically the transfer coefficients, is needed to complete the full picture of the $\COtwo$ absorption.
+
+        \subsection{Transport}\label{subsec:transport}
+            Transport and hydraulic correlations convert local temperature, composition, pressure, and flow rates into interfacial area, liquid holdup, phase velocities, mass-transfer coefficients, heat-transfer coefficients, and pressure drop. These quantities determine both the resistance to $\COtwo$ transfer and the heat exchange between phases. They are also a major source of numerical stiffness because the correlations are meaningful only inside a restricted physical domain: positive densities and viscosities, positive diffusivities, physically meaningful holdup, nonzero vapor void fraction, and bounded temperatures. Successful benchmark rows are therefore interpreted together with boundary residuals and convergence metadata rather than from solver success alone.
+
+            \subsubsection{Hydraulic Variables and Correlations}
+                \paragraph{Velocity}\mbox{}\\[0.5em]
+                The velocities of each phase are a simple derivation from molar flow rate and density
+                \begin{align}
+                    u_l &= \frac{F^{\liq}_{T}}{A \,\rho^{\liq}_{ \text{mol}}} \\
+                    u_v &= \frac{F^{\vap}_{T}}{A \,\rho^{\vap}_{ \text{mol}}}.
+                \end{align}
+
+                \paragraph{Inter-facial Area}\mbox{}\\[0.5em]
+                The interfacial area is the area in which the transfer happens and is dependent on the density, surface tension, and a packing constant. It is found both in the final molar flux equation as well as a part of the mass transfer coefficients given by Tsai~\cite{Tsai2010}.
+                \begin{align}
+                    a_e 
+                    &= 1.42\,a_p\left[\frac{\rho_L}{\sigma_L}\,g^{1/3}\left(\frac{u_L}{a_p}\right)^{4/3}\right]^{0.116} && \left(\frac{\unit{m}^2}{\unit{m}^3} \right)
+                \end{align}
+
+                \paragraph{Liquid Holdup}\mbox{}\\[0.5em]
+                The liquid holdup is the volume of liquid held per volume of a packed bed under operating conditions. It is found in each of the mass transfer coefficient equations given by Chinen and Tsai~\cite{Chinen2018,Tsai2010}
+                \begin{align}
+                    h_L &= A\left[u_L \alpha\left(\frac{\mu_L}{\rho_L}\right)^{1 / 3}\right]^{B} && \left(\unit{m}^3 \right)\\
+                    h_V &= \epsilon - h_L && \left(\unit{m}^3 \right)
+                \end{align}
+                Where $A$ and $B$ are correlation parameters $\alpha$ is a parameter that combines multiple packing-specific constants
+
+                \paragraph{Mass Transfer Coefficients}\mbox{}\\[0.5em]
+                The mass transfer coefficients for vapor and liquid depend on several components such as densities, viscosities, surface tension, flow velocities, specific surface area, void fraction, and other packing-specific constants. These constants are found through regression with a large database for multiple types of packing and sizes by Billet and Chinen\cite{Billet1999, Chinen2018}.
+                \begin{align}
+                    k_l &= C_L \cdot 12^{1 / 6}\left(\frac{u_L}{h_L}\right)^{1 / 2}\left(\frac{D_L}{d_h}\right)^{1 / 2} && \left(\frac{\unit{m} }{\unit{s}} \right)\\
+                    k_v &= \frac{C^{\vap}\,D^{\vap}\,RT_v}{}
+                           \left(\frac{a_p}{d_h\,h_V}\right)^{1/2}  
+                           \left(\frac{u^{\vap}}{\rho^{\vap}\,a_p\,\mu^{\vap}}\right)^{3 / 4}
+                           \left(\frac{\mu^{\vap}}{\rho^{\vap}}\,D^{\vap}\right)^{1 / 3}
+                           && \left(\frac{\unit{mol} }{\unit{Pa} \cdot{m}^2 \cdot \unit{s}} \right)
+                \end{align}
+
+                \paragraph{Heat Transfer Coefficient}\mbox{}\\[0.5em]
+                Here is the overall heat transfer coefficient formulated by the Chilton-Colburn analogy
+                \begin{align}
+                    U_T = \left(\frac{(k^{\vap}_{\COtwo}\,P)^3\,{k_{t}^{\vap}}^{2}\,C^{\vap}_{p,T}}{\rho^{\vap}_{\text{mol}}\,{D^{\vap}_{\COtwo}}^2}\right)^{\frac{1}{3}}
+                \end{align}
+
+                \paragraph{Enhancement Factor}\mbox{}\\[0.5em]
+                The enhancement factor is defined as the ratio of reactive absorption to physical absorption. It accounts for the additional liquid-side driving force introduced by the MEA reaction chemistry without solving a full film reaction-diffusion problem at every axial point. The benchmark uses an explicit pseudo-second-order approximation based on the Gaspar enhancement-factor framework \cite{Gaspar2015}. The rate expression and Hatta number are
+                \begin{align}
+                    k_2 &= 3.1732 \times 10^{9} \exp\left( \frac{-4936.6}{T_l}\right) \\
+                    Ha &= \frac{\sqrt{k_2 C^{\liq}_{\MEA,true} D^{\liq}_{\COtwo}}}{k^{\liq}_{\COtwo}}
+                \end{align}
+                where $k_2$ is the pseudo-second-order rate coefficient and $Ha$ compares the rate of reaction in the liquid film to diffusion through that film. The dimensionless resistance terms are
+                \begin{align}
+                    R_+ &= \frac{D^{\liq}_{\MEA} C^{\liq}_{\MEA,true}}
+                    {2D^{\liq}_{\MEAH} C^{\liq}_{\MEAH,true}} \\
+                    R_- &= \frac{D^{\liq}_{\MEA} C^{\liq}_{\MEA,true}}
+                    {2D^{\liq}_{\MEACOO} C^{\liq}_{\MEACOO,true}} \\
+                    \widehat{E} &= \frac{D^{\liq}_{\MEA} C^{\liq}_{\MEA,true}}
+                    {2D^{\liq}_{\COtwo} C^{\liq}_{\COtwo,true}}
+                \end{align}
+                which gives the explicit enhancement factor
+                \begin{align}
+                    E &= 1+\frac{Ha-1}{1 + Ha(R_+ + R_- + 2)/\widehat{E}}.
+                \end{align}
+                The corresponding CO$_2$ driving-force correction is written as
+                \begin{align}
+                    \Psi &= E \frac{k^{\liq}_{ \COtwo}}{k^{\vap}_{ \COtwo}} \\
+                    \Psi_H &= \eta_{\Psi}\frac{\Psi}{\Psi + H_{\COtwo, \text{mix}}},
+                \end{align}
+                where $\eta_{\Psi}$ is a fixed global driving-force scale used consistently across the reported benchmark cases. This scale is not adjusted case by case.
+
+            \subsubsection{Flux}
+                \paragraph{Molar Flux}\mbox{}\\[0.5em]
+                As shown above, the governing equations are composed of the molar flux of each corresponding species at the phase interface. Quantifying the molar flux is paramount in accurately accounting for the amount of species being transferred from one phase to the other.
+                \begin{align}
+                    N^{\vap}_{ \COtwo} &=  -k^{\vap}_{ \COtwo}  a_e A  \left(\textit{f}^{\:\vap}_{ \COtwo} - \textit{f}^{\:\liq}_{ \COtwo}\right) \Psi _{H} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right) \\
+                    N^{\liq}_{ \COtwo} &= -N^{\vap}_{ \COtwo} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right) \\
+                    N^{\vap}_{ \HtwoO} &= -k^{\vap}_{ \HtwoO} a_e A \left(\textit{f}^{\:\vap}_{ \HtwoO} - \textit{f}^{\:\liq}_{ \HtwoO}\right)  && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right) \\
+                    N^{\liq}_{ \HtwoO} &= -N^{\vap}_{ \HtwoO} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)
+                \end{align}
+                Here flux is defined as a material flux $\left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)$ and is in terms of length rather than area because the interfacial area of the specific packing material truncates the transfer onto the packed element rather than across the whole cross-sectional area of the column. For the flux equations, they are constituted with transport and thermodynamic components, while $\COtwo$ has an additional kinetic component. The transport components consist of the mass-transfer coefficients $\left(k_{j, i} \right)$, interfacial area $\left(a_e\right)$, and cross sectional area $\left(A\right)$. The thermodynamics involved conduct the driving force of the flux which is derived from the fugacity differential between the two phases. Since $\COtwo$ undergoes a reaction once it is absorbed in the liquid phase, a kinetic enhancement factor $\left(\Psi _{H}\right)$ is used to correct for this phenomena.
+
+                \paragraph{Enthalpy Flux}\mbox{}\\[0.5em]
+                The enthalpy flux is the sum of the enthalpy (chemical) and heat (conduction and convection) that is transferred across the interface. There is also a general heat transfer between the two phases where the driving force is the temperature gradient and is contained by the overall heat transfer coefficient $U$.
+                \begin{align}
+                    q^{\vap} &= -U a_e A \left(T_v-T_l\right) && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right) \\
+                    q^{\liq} &= -U a_e A \left(T_l-T_v\right) && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right) \\
+                    \dot{H}^{\vap}_{flux} &=   N^{\vap}_{ \COtwo}H^{\vap}_{ \COtwo} + N^{\vap}_{ \HtwoO}H^{\vap}_{ \HtwoO} +  q^{\vap} && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right) \\
+                    \dot{H}^{\liq}_{flux} &= -\left(N^{\vap}_{ \COtwo}H^{\vap}_{ \COtwo} + N^{\vap}_{ \HtwoO}H^{\vap}_{ \HtwoO}\right) +  q^{\liq} && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right)
+                \end{align}
+
+                The enthalpy transferred is the product of molar enthalpy and molar flux of the transferring species ($\COtwo, \HtwoO$). The liquid-side enthalpy source is written as the negative vapor-side transferred enthalpy plus heat transfer so that interphase enthalpy transfer is conservative. There is also heat transfer governed by the overall heat-transfer coefficient $U$, interfacial area $\left(a_e\right)$, cross-sectional area $\left(A\right)$, and the temperature gradient.
+                
+        \subsection{Governing Equations}\label{subsec:governing-equations}
+            The governing equations combine the absorption thermodynamics, transport correlations, reaction enhancement, and packed-column balances. The solver advances apparent CO$_2$ and H$_2$O molar flows in each phase, phase enthalpy flows, and column pressure. The differential system can be discretized by IVP shooting, finite differences, or collocation-style BVP methods; convergence is evaluated from boundary residuals and validation metrics rather than from the nonlinear solver message alone.
+
+            \subsubsection{Material Balance}\label{subsubsec:material-balance}
+                The material balances are accounted for by molar flow $\left(F_{j, i}\right)$ which equate to the interfacial molar flux $\left(N_{j,i}\right)$. The flux moves across the interfacial phase boundary found on the packed elements within the column.
+                \begin{align}
+                    \frac{d F^{\liq}_{ \COtwo}}{d z} &= -N^{\liq}_{ \COtwo} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)\\
+                    \frac{d F^{\liq}_{ \HtwoO}}{d z} &= -N^{\liq}_{ \HtwoO} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)\\
+                    \frac{d F^{\vap}_{ \COtwo}}{d z} &= N^{\vap}_{ \COtwo} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)\\
+                    \frac{d F^{\vap}_{ \HtwoO}}{d z} &= N^{\vap}_{ \HtwoO} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)
+                \end{align}
+                We can assume that the flow rates of $\MEA$, $\Ntwo$ and $\Otwo$ are steady-state through the column since the flux for these species across the phase boundary is negligible. Though flow rates are being accounted for in the differential equations, the more convenient form of mole fractions is used in the model and can be easily converted from flow rates.
+                \begin{align}
+                    x_i &= \frac{F^{\liq}_{ i}}{F^{\liq}_{ T}} \\
+                    y_i &= \frac{F^{\vap}_{ i}}{F^{\vap}_{ T}} \\
+                    \alpha &= \frac{x_{\COtwo}}{x_{\MEA}}
+                \end{align}
+
+            \subsubsection{Energy Balance}\label{subsubsec:energy-balance}
+                The energy balances are similar to the material balances, but the solved thermal state is phase enthalpy flow. The enthalpy-flow derivatives are governed by the interfacial enthalpy source terms defined above.
+                \begin{align}
+                    \frac{d \dot{H}^{\liq}}{d z} &= \dot{H}^{\liq}_{flux} && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right)\\
+                    \frac{d \dot{H}^{\vap}}{d z} &= \dot{H}^{\vap}_{flux} && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right)
+                \end{align}
+                Temperature profiles are obtained algebraically from the phase enthalpies. Equivalent temperature derivatives can be derived from the same enthalpy balances:
+                Start with the overall energy balance based on enthalpy flow:
+                \begin{equation}
+                    \frac{d\dot{H}^j}{dz} = \dot{H}^{j}_{flux}
+                \end{equation}
+                
+                Separate enthalpy flow into molar enthalpy and molar flow rate and use the product-rule:
+                \begin{align}
+                    \frac{d}{dz}(F^j H^j) &= \dot{H}^{j}_{flux} \\
+                    \frac{dF^j}{dz} H^j + F^j \frac{dH^j}{dz} &= \dot{H}^{j}_{flux}
+                \end{align}
+                
+                Now use chain-rule to convert the enthalpy differential to the temperature differential:
+                \begin{equation}
+                    \frac{dH^j}{dz} = \frac{dH^j}{dT^j} \cdot \frac{dT^j}{dz}
+                \end{equation}
+                
+                Substitute the expression in and simplify:
+                \begin{align}
+                    F^j \cdot \frac{dH^j}{dT^j} \cdot \frac{dT^j}{dz} &= \dot{H}^{j}_{flux} - \frac{dF^j}{dz} H^j \\
+                    \frac{dT^j}{dz} &= \frac{\dot{H}^{j}_{flux} - \frac{dF^j}{dz} H^j}{F^j \cdot \frac{dH^j}{dT^j}}
+                \end{align}
+                
+                The phase-flow derivatives are then substituted:
+                \begin{align}
+                    \frac{dF^j}{dz} &= N_{j, \mathrm{CO}_2} + N_{j, \mathrm{H}_2\mathrm{O}} \\
+                    \frac{dH_v}{dT_v} &= C^{\mathrm{vap}}_{p}
+                \end{align}
+                
+                Final equations:
+                \begin{align}
+                    \frac{dT_l}{dz} &= \frac{\dot{H}^{\mathrm{liq}}_{flux} +  H_l(N^{\mathrm{liq}}_{\mathrm{CO}_2} + N^{\mathrm{liq}}_{\mathrm{H}_2\mathrm{O}})}{F_l \cdot \frac{dH_l}{dT_l}} \\[1em]
+                    \frac{dT_v}{dz} &= \frac{\dot{H}^{\mathrm{vap}}_{flux} -  H_v(N^{\mathrm{vap}}_{\mathrm{CO}_2} + N^{\mathrm{vap}}_{\mathrm{H}_2\mathrm{O}})}{F_v \cdot C^{\mathrm{vap}}_{p}}
+                \end{align}
+
+                Since the vapor enthalpy is based on heat capacity, its temperature derivative reduces to the vapor-phase total heat capacity. The liquid enthalpy expression includes additional temperature-dependent terms, so $\frac{dH_l}{dT_l}$ is evaluated from the liquid enthalpy correlation rather than approximated as a simple heat-capacity sum. If the numerical coordinate is normalized by packed height, the right-hand side of each differential equation is multiplied by the total packed height.
+                
+            \subsubsection{Pressure State}
+                Pressure is retained as a state variable so that the same state vector can be used when pressure variation is included. For the one-bed benchmark calculations reported here, the pressure is held constant:
+                \begin{align}
+                    \frac{dP}{dz} = 0.
+                \end{align}
+
+                In summary, the governing equations are
+                \begin{align}
+                    \mathbf{y}(z) =
+                    \begin{pmatrix}
+                        F^{\liq}_{\mathrm{CO_2}}(z)\\[4pt]
+                        F^{\liq}_{\mathrm{H_2O}}(z)\\[4pt]
+                        F^{\vap}_{\mathrm{CO_2}}(z)\\[4pt]
+                        F^{\vap}_{\mathrm{H_2O}}(z)\\[4pt]
+                        \dot{H}^{\liq}(z)\\[4pt]
+                        \dot{H}^{\vap}(z)\\[4pt]
+                        P(z)
+                    \end{pmatrix},  \quad{} \text{and}
+                    \quad
+                    \frac{d\mathbf{y}}{dz} =
+                    \begin{pmatrix}
+                        \frac{d F^{\liq}_{ \COtwo}}{d z} \\[4pt]
+                        \frac{d F^{\liq}_{ \HtwoO}}{d z} \\[4pt]
+                        \frac{d F^{\vap}_{ \COtwo}}{d z} \\[4pt]
+                        \frac{d F^{\vap}_{ \HtwoO}}{d z} \\[4pt]
+                        \frac{d \dot{H}^{\liq}}{d z} \\[4pt]
+                        \frac{d \dot{H}^{\vap}}{d z}\\[4pt]
+                        \frac{dP}{dz}
+                    \end{pmatrix}
+                    \equiv
+                    \mathbf{f}(z, \mathbf{y}).
+                \end{align}
+                These governing equations are solved as a boundary-value problem because the lean liquid stream enters the top of the column and the flue gas enters from the bottom. For the one-bed benchmark, the pressure equation is retained in the numerical state and set to zero axial gradient.
+
+            \subsubsection{Boundary Conditions}
+                There is a choice on how to set up the boundary conditions based on the direction of flow and the height coordinate. Since $\COtwo$ absorption is the main concern of the problem, the bottom of the column where the vapor enters is taken as $z = a$, and the liquid enters at $z = b$. In this model, $a = 0$ and $b = H$. With the assumption that only $\COtwo$ and $\HtwoO$ cross the phase boundary, the material boundary conditions contain those two species. The seven differential states require seven boundary conditions: vapor composition, vapor enthalpy, and pressure at the bottom; liquid composition and liquid enthalpy at the top.
+                \begin{align}
+                    \boldsymbol{\alpha} &= \left[F^{\vap}_{ \COtwo, a}, F^{\vap}_{ \HtwoO, a}, \dot{H}^{\vap}_{ a}, P_a\right]\\
+                    \boldsymbol{\beta} &= \left[F^{\liq}_{ \COtwo, b}, F^{\liq}_{ \HtwoO, b}, \dot{H}^{\liq}_{ b}\right]
+                \end{align}
+

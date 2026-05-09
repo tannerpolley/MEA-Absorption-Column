@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{One-bed C-case residual-correction screen used as calibration context rather than as a final calibrated model.}
+    \label{tab:calibration-holdout-screen}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{lccccc}
+        \toprule
+        \textbf{Split} & \textbf{Rows} & \textbf{Uncal. MAE (\%)} & \textbf{Corrected MAE (\%)} & \textbf{Uncal. bias (\%)} & \textbf{Corrected bias (\%)} \\
+        \midrule
+        Training & 5 & 6.77 & 0.72 & -3.11 & 0.00 \\
+        Holdout & 2 & 15.86 & 13.32 & 15.86 & 8.89 \\
+        \bottomrule
+    \end{tabular}
+    \end{adjustbox}
+\end{table}
