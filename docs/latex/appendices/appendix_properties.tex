@@ -4,17 +4,17 @@
         \subsection{Thermophysical Properties}
             \vspace{1cm}
             \subsubsection{Henry's Law} 
-                To formulate a Henry's Law for the mixture of the liquid solvent, the N2O analogy is used. Below are the equations that help reach the expressions for the solubility of $\COtwo$ in the $\MEA$ from Jiru et al. \cite{Jiru2012}
+                Henry's Law for the liquid solvent mixture is formulated with the N$_2$O analogy. The expressions used for $\COtwo$ solubility in $\MEA$ follow Jiru et al. \cite{Jiru2012}:
                 \begin{align}
                     H_{\NtwoO,\MEA} &= \left(A_{\NtwoO,\MEA} \times 10^5\right) e^{\frac{-B_{\NtwoO,\MEA}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)\\
                     H_{\NtwoO,\HtwoO} &= \left(A_{\NtwoO,\HtwoO} \times 10^6\right) e^{\frac{-B_{\NtwoO,\HtwoO}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)\\
                     H_{\COtwo,\MEA} &= H_{\NtwoO,\MEA} \frac{H_{\COtwo, \HtwoO}}{H_{\NtwoO,\HtwoO}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)
                 \end{align}
-                And below is the formulation for the solubility of $\COtwo$ in the $\HtwoO$
+                The corresponding expression for $\COtwo$ solubility in $\HtwoO$ is
                 \begin{align}
                     H_{\COtwo, \HtwoO} &= \left(A_{\COtwo, \HtwoO} \times 10^6\right) e^{\frac{-B_{\COtwo, \HtwoO}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)
                 \end{align}
-                Next, a deviation is formulated since the solution is not ideal due to the intermolecular forces between the $\MEA$, $\COtwo$, and water. The $Ra$ term is used as the deviation from ideal solubility and uses terms $a_1$, $a_2$, $a_3$, and $b$ coefficients in the functional form.
+                A deviation term is then added because the solution is not ideal. The $R_a$ term accounts for nonideal solubility using the fitted $a_1$, $a_2$, $a_3$, and $b$ coefficients.
                 \begin{align}
                     R_{a} &= \left(a_1+a_2 \left(T_l-273.15\right)+a_3 \left(T_l-273.15\right)^2+b w_{\HtwoO}\right) w_{\MEA} w_{\HtwoO}
                     && \text{dimensionless}\\
@@ -24,7 +24,7 @@
                 \end{align}
 
             \subsubsection{Density}
-                The density correlations are below and come from Morgan et al. \cite{Morgan2015}. 
+                The density correlations are taken from Morgan et al. \cite{Morgan2015}.
                 \begin{align}
                     \shortintertext{\quad\; Liquid Density}
                     V^{\liq}_{\COtwo} &=  a_{\COtwo} + x_{\MEA} x_{\HtwoO} + (b_{\COtwo} + c_{\COtwo} x_{\MEA}) x_{\MEA} x_{\COtwo}
@@ -47,7 +47,7 @@
                 \end{align}
 
             \subsubsection{Surface Tension} 
-            The surface tension correlation is below and come from Morgan et al. \cite{Morgan2015}. 
+            The surface-tension correlation is taken from Morgan et al. \cite{Morgan2015}.
                 \begin{align}
                     \shortintertext{\quad\; First the pure species surface tension expressions are evaluated}
                     \sigma _{\COtwo} &= S_1 r^2+S_2 r+S_3+T_l \left(S_4 r^2+S_5 r+S_6\right)
@@ -56,7 +56,7 @@
                     && \left(\unit{N\,m^{-1}}\right)\\
                     \sigma _{\HtwoO} &= c_{1,\HtwoO} \left(1-\frac{T_l}{T_{c,\HtwoO}}\right)^{c_{2,\HtwoO}+c_{3,\HtwoO} \frac{T_l}{T_{c,\HtwoO}}+c_{4,\HtwoO} \left(\frac{T_l}{T_{c,\HtwoO}}\right)^2}
                     && \left(\unit{N\,m^{-1}}\right)\\
-                    \shortintertext{\quad\; The following are added equations to allow for continuous values while the older model only fit for discrete values of r}
+                    \shortintertext{\quad\; Additional terms provide continuous values over the fitted range of $r$}
                     A &= a+b \alpha+c {\alpha}^2+d w_{\MEA}+e {w_{\MEA}}^2
                     && \text{dimensionless}\\
                     B &= f+g \alpha+h {\alpha}^2+i w_{\MEA}+j {w_{\MEA}}^2
@@ -67,7 +67,7 @@
                 \end{align}
 
             \subsubsection{Heat Capacity} 
-                A method to calculate heat capacity for solvents originally from Hilliard \cite{Hilliard2008}
+                The solvent heat-capacity method follows Hilliard \cite{Hilliard2008}.
                 \begin{align}
                     C^{\liq}_{p,\MEA} &= 1000 \times \text{\text{MW}}_{\MEA} \sum_{i=0}^{5} {c_{i, \MEA}}^{i}
                     && \left(\unit{J\,mol^{-1}\,K^{-1}}\right)\\
