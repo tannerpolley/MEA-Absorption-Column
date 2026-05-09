@@ -43,37 +43,37 @@ $env:MEA_EPCSAFT_DATASET_NAME = "MEA_CO2_H2O_draft"
 Regenerate plot-ready tables from curated inputs or available run folders:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
 ```
 
 Render final figures from the final tables:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
 ```
 
 Refresh the clean profile index without rerunning simulations:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
 ```
 
 Run one specific case and export dense per-variable profile CSVs:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses\nccc_validation\results\runs\manual_case_profiles
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses\nccc_validation\results\runs\manual_case_profiles
 ```
 
 Full benchmark runs can also request these dense profile CSVs:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --c-case-ids 3C --nccc-case-limit 0 --profile-csvs --subprocess-timeout-s 60 --output-dir analyses\nccc_validation\results\runs\profile_csv_probe
+.\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --c-case-ids 3C --nccc-case-limit 0 --profile-csvs --subprocess-timeout-s 60 --output-dir analyses\nccc_validation\results\runs\profile_csv_probe
 ```
 
 Run the favorable SRP-style method-comparison case across shooting, SciPy BVP, and finite difference:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe -m mea_absorption_column.benchmark --methods single scipy-bvp finite --thermo-models ideal_henry --c-case-limit 0 --nccc-case-limit 0 --srp-case-limit 1 --mesh-points 21 --tol 0.5 --bc-tol 0.001 --max-runtime-s 30 --seed-from-shooting --subprocess-timeout-s 60 --output-dir analyses\nccc_validation\results\runs\srp_method_slice
+.\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods single scipy-bvp finite --thermo-models ideal_henry --c-case-limit 0 --nccc-case-limit 0 --srp-case-limit 1 --mesh-points 21 --tol 0.5 --bc-tol 0.001 --max-runtime-s 30 --seed-from-shooting --subprocess-timeout-s 60 --output-dir analyses\nccc_validation\results\runs\srp_method_slice
 ```
 
 The current SRP/NCCC method contrast is summarized in `results/final/reports/solver_method_contrast_srp_3c.md`.
@@ -83,7 +83,7 @@ Each generated profile folder includes `profile_manifest.json`, `profile_manifes
 Generate dense profile CSVs for the accepted validation rows with 60-second per-case timeouts and an incremental log:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\generate_clean_profile_csvs.py --suite all --output-dir analyses\nccc_validation\results\runs\clean_profile_csvs
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_clean_profile_csvs.py --suite all --output-dir analyses\nccc_validation\results\runs\clean_profile_csvs
 ```
 
 This script writes each case row as soon as it finishes. If a case exceeds the default 60-second subprocess timeout or errors, the row is logged as a failed diagnostic result and the script continues to the next case. Use `--per-case-timeout-s <seconds>` only when intentionally running a longer diagnostic probe.
@@ -92,7 +92,7 @@ It also writes `profile_runtime_index.csv` and refreshes each profile folder's `
 Validate the analysis artifacts used by the manuscript:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
 ```
 
 ## Result Semantics

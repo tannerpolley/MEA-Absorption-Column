@@ -164,7 +164,6 @@ analyses/**/.cache/
 analyses/**/tmp/
 
 # LaTeX manuscript build outputs
-docs/latex/references.bib
 docs/latex/*.abs
 docs/latex/*.aux
 docs/latex/*.bbl

@@ -32,6 +32,9 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
     epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
     chemical_equilibrium_model = model_options.get('chemical_equilibrium_model', 'legacy')
+    gas_velocity_area_exponent = float(model_options.get('gas_velocity_area_exponent', 0.0) or 0.0)
+    gas_velocity_area_reference_m_s = model_options.get('gas_velocity_area_reference_m_s')
+    gas_velocity_area_bounds = model_options.get('gas_velocity_area_bounds', (0.1, 3.0))
     Fl_MEA, Fv_N2, Fv_O2 = const_flow
     # endregion
 
@@ -193,6 +196,18 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region --- Flooding Fraction
     fl_frac = flooding_fraction(rho_mass_l, rho_mass_v, mul_mix, mul_H2O, Fl_T, Fv_T, uv, packing, diagnostics=solver_diagnostics)
     # endregion
+
+    if gas_velocity_area_exponent != 0.0 and gas_velocity_area_reference_m_s is not None:
+        area_factor = _gas_velocity_area_factor(
+            uv,
+            float(gas_velocity_area_reference_m_s),
+            gas_velocity_area_exponent,
+            gas_velocity_area_bounds,
+        )
+        a_e *= area_factor
+        a_eA *= area_factor
+    else:
+        area_factor = 1.0
 
     # endregion
 
@@ -377,3 +392,11 @@ def _smooth_absorption_only_vapor_flux(nv_co2):
     smoothing = 1.0e-10
     x = -float(nv_co2) / smoothing
     return -smoothing * np.logaddexp(0.0, x)
+
+
+def _gas_velocity_area_factor(uv, reference_m_s, exponent, bounds):
+    if reference_m_s <= 0.0:
+        raise ValueError("gas_velocity_area_reference_m_s must be positive")
+    low, high = bounds
+    factor = (float(uv) / reference_m_s) ** exponent
+    return float(np.clip(factor, low, high))

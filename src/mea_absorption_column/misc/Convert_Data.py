@@ -4,7 +4,7 @@ from scipy.optimize import root
 from ..config.Constants import MWs_l, MWs_v, column_params, packing_params, n
 
 
-def convert_data(df, run=0, type='mole', return_metadata=False):
+def convert_data(df, run=0, type='mole', return_metadata=False, vapor_composition_mode='legacy_ratio'):
 
     X = df.iloc[run, :].to_numpy()
     case_id = str(df.index[run])
@@ -38,9 +38,14 @@ def convert_data(df, run=0, type='mole', return_metadata=False):
         # Vapor Calculations
 
         # Find Vapor Mole Fractions
-        y_H2O = y_CO2 * alpha_H2O_CO2
-        y_N2 = (1 - y_CO2 - y_H2O) / (1 + alpha_O2_N2)
-        y_O2 = y_N2 * alpha_O2_N2
+        y_H2O, y_N2, y_O2 = _vapor_mole_fractions(
+            df,
+            run,
+            y_CO2,
+            alpha_H2O_CO2,
+            alpha_O2_N2,
+            vapor_composition_mode,
+        )
 
         # Find Vapor Molar Flow Rates
         Fv_CO2_a = y_CO2 * Fv_T  # mole/s
@@ -98,9 +103,14 @@ def convert_data(df, run=0, type='mole', return_metadata=False):
         # Vapor Calculations
 
         # Find Vapor Mole Fractions
-        y_H2O = y_CO2 * alpha_H2O_CO2
-        y_N2 = (1 - y_CO2 - y_H2O) / (1 + alpha_O2_N2)
-        y_O2 = y_N2 * alpha_O2_N2
+        y_H2O, y_N2, y_O2 = _vapor_mole_fractions(
+            df,
+            run,
+            y_CO2,
+            alpha_H2O_CO2,
+            alpha_O2_N2,
+            vapor_composition_mode,
+        )
         sigma = y_N2 * MW_N2 + y_O2 * MW_O2 + y_CO2 * MW_CO2 + y_H2O * MW_H2O
 
         # Find Vapor Mass Flow Rates
@@ -164,6 +174,41 @@ def convert_data(df, run=0, type='mole', return_metadata=False):
             "single_bed_height_m": float(single_bed_height),
             "total_packed_height_m": float(H),
             "diameter_m": float(D),
+            "vapor_composition_mode": vapor_composition_mode,
         }
         return inputs, X, metadata
     return inputs, X
+
+
+def _vapor_mole_fractions(df, run, y_CO2, alpha_H2O_CO2, alpha_O2_N2, vapor_composition_mode):
+    y_H2O = _optional_fraction(df, run, "y_H2O")
+    if y_H2O is None:
+        y_H2O = y_CO2 * alpha_H2O_CO2
+
+    if vapor_composition_mode == "input_o2" and "y_O2" in df.columns:
+        y_O2 = float(df.iloc[run]["y_O2"])
+        y_N2 = 1.0 - y_CO2 - y_H2O - y_O2
+    elif vapor_composition_mode == "legacy_ratio":
+        y_N2 = (1.0 - y_CO2 - y_H2O) / (1.0 + alpha_O2_N2)
+        y_O2 = y_N2 * alpha_O2_N2
+    else:
+        raise ValueError(f"Unknown vapor_composition_mode: {vapor_composition_mode}")
+
+    if min(y_CO2, y_H2O, y_N2, y_O2) <= 0.0:
+        raise ValueError(
+            "Vapor composition reconstruction produced a nonpositive mole fraction: "
+            f"y_CO2={y_CO2}, y_H2O={y_H2O}, y_N2={y_N2}, y_O2={y_O2}"
+        )
+    total = y_CO2 + y_H2O + y_N2 + y_O2
+    if not np.isclose(total, 1.0, rtol=0.0, atol=1.0e-8):
+        raise ValueError(f"Vapor mole fractions do not sum to one: {total}")
+    return y_H2O, y_N2, y_O2
+
+
+def _optional_fraction(df, run, column):
+    if column not in df.columns:
+        return None
+    value = df.iloc[run][column]
+    if value is None or not np.isfinite(float(value)):
+        return None
+    return float(value)

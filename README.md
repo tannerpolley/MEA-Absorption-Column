@@ -49,16 +49,18 @@ To build a fresh local manuscript PDF after editing `docs\latex\main.tex` or inc
 
 The clickable local artifact is `docs\latex\main.pdf`. The build script also runs a freshness check and can open the PDF directly with `-Open`.
 
+Set up the project-local Python environment once from the repository root:
+
 ```powershell
-uv run --group test python -m pytest
-uv run python -m mea_absorption_column.benchmark --methods single scipy-bvp --thermo-models ideal_henry epcsaft_neutral
+uv sync --group test
+uv pip install 'C:\Users\Tanner\Documents\git\ePC-SAFT'
 ```
 
-When using the shared Codex Python environment directly from a worktree instead of `uv run`, set `PYTHONPATH=src` first so benchmark subprocesses import the active checkout:
+The local environment lives at `.venv/` and is ignored by Git. The ePC-SAFT install is optional for Henry-only validation, but it is required before running `epcsaft_neutral`, `epcsaft_ionic`, or experimental reactive diagnostics. Use the project-local interpreter directly for normal checks:
 
 ```powershell
-$env:PYTHONPATH = "src"
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe -m pytest -q -p no:cacheprovider
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
+.\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods single scipy-bvp --thermo-models ideal_henry
 ```
 
 Benchmark CSV and Markdown outputs are written to `analyses/nccc_validation/results/runs/benchmark` by default. Run-specific files under `results/runs/` are ignored by Git; curated paper-facing evidence lives under `analyses/nccc_validation/results/final/`.
@@ -82,10 +84,10 @@ analyses/nccc_validation/
 Use these commands to refresh and validate the curated tables, figures, and clean profile index without rerunning long simulations:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
 ```
 
 Clean temperature-profile PNGs are arranged by case and thermodynamic lane under `analyses/nccc_validation/results/final/profiles/`.

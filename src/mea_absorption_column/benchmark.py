@@ -47,6 +47,9 @@ BENCHMARK_COLUMNS = [
     "heat_transfer_factor",
     "intercooler_strength",
     "co2_flux_mode",
+    "vapor_composition_mode",
+    "gas_velocity_area_exponent",
+    "gas_velocity_area_reference_m_s",
     "co2_vapor_upper_factor",
     "success_boundary_residual_max",
     "integrator",
@@ -576,6 +579,9 @@ def _annotate_solver_settings(result, solver_settings):
         "heat_transfer_factor",
         "intercooler_strength",
         "co2_flux_mode",
+        "vapor_composition_mode",
+        "gas_velocity_area_exponent",
+        "gas_velocity_area_reference_m_s",
         "co2_vapor_upper_factor",
         "success_boundary_residual_max",
         "scaling_mode",
@@ -632,6 +638,9 @@ def _failure_metadata(df, run, method, staged_beds):
         "heat_transfer_factor": None,
         "intercooler_strength": None,
         "co2_flux_mode": None,
+        "vapor_composition_mode": None,
+        "gas_velocity_area_exponent": None,
+        "gas_velocity_area_reference_m_s": None,
         "co2_vapor_upper_factor": None,
         "success_boundary_residual_max": None,
         "integrator": None,
@@ -737,6 +746,9 @@ def parse_args(argv=None):
     parser.add_argument("--transform-mode", default=None)
     parser.add_argument("--thermal-state-mode", choices=["enthalpy", "temperature"], default=None)
     parser.add_argument("--co2-flux-mode", choices=["bidirectional", "absorption_only"], default=None)
+    parser.add_argument("--vapor-composition-mode", choices=["legacy_ratio", "input_o2"], default=None)
+    parser.add_argument("--gas-velocity-area-exponent", type=float, default=None)
+    parser.add_argument("--gas-velocity-area-reference-m-s", type=float, default=None)
     parser.add_argument("--co2-vapor-upper-factor", type=float, default=None)
     parser.add_argument("--shooting-integrator", choices=["euler", "solve_ivp", "bdf", "radau", "rk45"], default=None)
     parser.add_argument("--shooting-root-method", default=None)
@@ -814,6 +826,12 @@ def _solver_settings_from_args(args):
         settings["thermal_state_mode"] = args.thermal_state_mode
     if args.co2_flux_mode is not None:
         settings["co2_flux_mode"] = args.co2_flux_mode
+    if args.vapor_composition_mode is not None:
+        settings["vapor_composition_mode"] = args.vapor_composition_mode
+    if args.gas_velocity_area_exponent is not None:
+        settings["gas_velocity_area_exponent"] = args.gas_velocity_area_exponent
+    if args.gas_velocity_area_reference_m_s is not None:
+        settings["gas_velocity_area_reference_m_s"] = args.gas_velocity_area_reference_m_s
     if args.co2_vapor_upper_factor is not None:
         settings["co2_vapor_upper_factor"] = args.co2_vapor_upper_factor
     if args.shooting_integrator is not None:
@@ -933,8 +951,10 @@ def _profiles_with_coordinates(profiles, metadata):
         if "Position" in profile.columns:
             converted[sheetname] = profile
             continue
+        # Sort to enforce a stable bottom-to-top (ascending Position) CSV contract
+        # while preserving each row's value coupling from the original profile index.
+        profile = profile.sort_index()
         positions = profile.index.to_numpy(dtype=float)
-        positions = pd.Series(positions).sort_values(ignore_index=True).to_numpy()
         coordinate_frame = build_profile_coordinate_frame(
             positions,
             total_packed_height_m=metadata.get("total_packed_height_m"),
@@ -993,6 +1013,9 @@ def _write_profile_rerun_files(profile_dir: Path, metadata: dict, output_dir: Pa
         "heat_transfer_factor",
         "intercooler_strength",
         "co2_flux_mode",
+        "vapor_composition_mode",
+        "gas_velocity_area_exponent",
+        "gas_velocity_area_reference_m_s",
         "co2_vapor_upper_factor",
         "success_boundary_residual_max",
         "scaling_mode",

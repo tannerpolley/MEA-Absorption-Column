@@ -21,11 +21,15 @@ def test_nccc_validation_analysis_layout_exists():
         ANALYSIS / "scripts" / "collect_clean_profiles.py",
         ANALYSIS / "scripts" / "validate_results.py",
         FINAL / "tables" / "verified_c_case_thermo_benchmark.csv",
-        FINAL / "tables" / "verified_staged_kcase_benchmark.csv",
+        FINAL / "tables" / "validation_evidence_registry.csv",
+        FINAL / "tables" / "primary_validation_gate.csv",
+        FINAL / "tables" / "calibration_holdout_metrics.csv",
+        FINAL / "tables" / "method_case_contrast.csv",
         FINAL / "tables" / "clean_temperature_profile_index.csv",
         FINAL / "figures" / "c_case_thermo_benchmark.pdf",
-        FINAL / "figures" / "staged_kcase_capture_error.pdf",
-        FINAL / "figures" / "staged_epcsaft_smoke_capture_error.pdf",
+        FINAL / "figures" / "error_regime_capture_error.pdf",
+        FINAL / "figures" / "calibration_uncertainty_band.pdf",
+        FINAL / "figures" / "method_case_solver_contrast.pdf",
     ]
 
     missing = [path for path in expected if not path.exists()]
@@ -76,11 +80,12 @@ def test_final_clean_profile_index_points_to_existing_pngs():
 
 def test_primary_final_tables_use_analysis_paths_and_metadata():
     c_cases = pd.read_csv(FINAL / "tables" / "verified_c_case_thermo_benchmark.csv")
-    staged = pd.read_csv(FINAL / "tables" / "verified_staged_kcase_benchmark.csv")
+    gate = pd.read_csv(FINAL / "tables" / "primary_validation_gate.csv")
+    method_contrast = pd.read_csv(FINAL / "tables" / "method_case_contrast.csv")
 
     assert c_cases["case_id"].nunique() == 7
-    assert staged["case_id"].nunique() == 19
-    for column in ["beds", "intercoolers", "staged_beds", "intercooler_assumption"]:
-        assert column in staged.columns
-    for data in (c_cases, staged):
-        assert data["artifact"].str.startswith("analyses/nccc_validation/results/final/tables/").all()
+    assert set(c_cases["thermo_model"]) == {"ideal_henry", "epcsaft_neutral"}
+    assert gate["case_id"].nunique() == 7
+    assert not gate["case_id"].astype(str).str.startswith("K").any()
+    assert {"Shooting", "SciPy BVP", "Finite difference"} <= set(method_contrast["method"])
+    assert c_cases["artifact"].str.startswith("analyses/nccc_validation/results/final/tables/").all()

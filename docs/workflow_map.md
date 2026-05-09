@@ -47,7 +47,13 @@ The parameter datasets live in `src/mea_absorption_column/data/epcsaft_datasets/
 
 ## Common Commands
 
-When using the machine-level Codex venv from a worktree, set `PYTHONPATH=src` so Python imports the current worktree source instead of any editable install from another checkout:
+Use the project-root `.venv` for this repository. Create or refresh it with:
+
+```powershell
+uv sync --group test
+```
+
+If running scripts from a Git worktree or from an unusual shell context, set `PYTHONPATH=src` so Python imports the active checkout:
 
 ```powershell
 $env:PYTHONPATH = "src"
@@ -56,28 +62,28 @@ $env:PYTHONPATH = "src"
 Fast package test:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe -m pytest -q -p no:cacheprovider
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
 ```
 
 Validate curated NCCC artifacts without rerunning long simulations:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
 ```
 
 Run one clean Henry profile export:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses\nccc_validation\results\runs\manual_case_profiles
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses\nccc_validation\results\runs\manual_case_profiles
 ```
 
 Run one ePC-SAFT smoke profile after installing/updating the external package:
 
 ```powershell
-C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model epcsaft_neutral --output-dir analyses\nccc_validation\results\runs\manual_epcsaft_profile
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model epcsaft_neutral --output-dir analyses\nccc_validation\results\runs\manual_epcsaft_profile
 ```
 
-For a normal project-root `.venv`, either install the current checkout editable or keep `PYTHONPATH=src` for direct source-tree testing. The root `.venv/` folder is ignored by Git; the `C:\Users\Tanner\.codex\venvs\...` path is only the known-good local Codex environment.
+The root `.venv/` folder is ignored by Git. Do not hard-code `C:\Users\Tanner\.codex\venvs\...` in repo workflows; use `.\.venv\Scripts\python.exe` so commands work from a normal checkout.
 
 ## Runtime Policy
 

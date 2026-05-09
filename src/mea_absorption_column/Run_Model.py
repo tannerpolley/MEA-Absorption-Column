@@ -44,7 +44,14 @@ def run_model(df,
               intercooler_settings=None,
               ):
 
-    inputs, X, case_metadata = convert_data(df, run=run, type=data_type, return_metadata=True)
+    solver_settings_for_run = dict(solver_settings or {})
+    inputs, X, case_metadata = convert_data(
+        df,
+        run=run,
+        type=data_type,
+        return_metadata=True,
+        vapor_composition_mode=solver_settings_for_run.get("vapor_composition_mode", "legacy_ratio"),
+    )
 
     L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
 
@@ -66,7 +73,6 @@ def run_model(df,
         if staged_beds != "auto"
         else method == "scipy-bvp" and (beds_count > 1 or intercoolers_count > 0)
     )
-    solver_settings_for_run = dict(solver_settings or {})
     thermal_state_mode = solver_settings_for_run.get("thermal_state_mode", "enthalpy")
     if (
         method == "scipy-bvp"
@@ -201,6 +207,10 @@ def run_model(df,
         'thermal_state_mode': thermal_state_mode,
         'co2_flux_mode': solver_settings_for_run.get('co2_flux_mode', 'bidirectional'),
         'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
+        'vapor_composition_mode': case_metadata.get('vapor_composition_mode', 'legacy_ratio'),
+        'gas_velocity_area_exponent': float(solver_settings_for_run.get('gas_velocity_area_exponent', 0.0) or 0.0),
+        'gas_velocity_area_reference_m_s': solver_settings_for_run.get('gas_velocity_area_reference_m_s'),
+        'gas_velocity_area_bounds': solver_settings_for_run.get('gas_velocity_area_bounds', (0.1, 3.0)),
     }
     solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
     parameters = scales, eq_scales, const_flow, H, A, packing, model_options

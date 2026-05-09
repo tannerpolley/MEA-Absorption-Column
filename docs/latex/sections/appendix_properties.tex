@@ -1,0 +1,137 @@
+\appendix
+    \vspace{1cm}
+    \section{Properties}\label{sec:properties}
+        \vspace{1cm}
+        \subsection{Thermophysical Properties}
+            \vspace{1cm}
+            \subsubsection{Henry's Law} 
+                To formulate a Henry's Law for the mixture of the liquid solvent, the N2O analogy is used. Below are the equations that help reach the expressions for the solubility of $\COtwo$ in the $\MEA$ from Jiru et al. \cite{Jiru2012}
+                \begin{align}
+                    H_{\NtwoO,\MEA} &= \left(A_{\NtwoO,\MEA} \times 10^5\right) e^{\frac{-B_{\NtwoO,\MEA}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)\\
+                    H_{\NtwoO,\HtwoO} &= \left(A_{\NtwoO,\HtwoO} \times 10^6\right) e^{\frac{-B_{\NtwoO,\HtwoO}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)\\
+                    H_{\COtwo,\MEA} &= H_{\NtwoO,\MEA} \frac{H_{\COtwo, \HtwoO}}{H_{\NtwoO,\HtwoO}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)
+                \end{align}
+                And below is the formulation for the solubility of $\COtwo$ in the $\HtwoO$
+                \begin{align}
+                    H_{\COtwo, \HtwoO} &= \left(A_{\COtwo, \HtwoO} \times 10^6\right) e^{\frac{-B_{\COtwo, \HtwoO}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)
+                \end{align}
+                Next, a deviation is formulated since the solution is not ideal due to the intermolecular forces between the $\MEA$, $\COtwo$, and water. The $Ra$ term is used as the deviation from ideal solubility and uses terms $a_1$, $a_2$, $a_3$, and $b$ coefficients in the functional form.
+                \begin{align}
+                    R_{a} &= \left(a_1+a_2 \left(T_l-273.15\right)+a_3 \left(T_l-273.15\right)^2+b w_{\HtwoO}\right) w_{\MEA} w_{\HtwoO} \\
+                    \sigma &= w_{\MEA} \ln\left(H_{\COtwo,\MEA}\right)+w_{\HtwoO} \ln\left(H_{\COtwo,\HtwoO}\right) \\
+                    H_{\COtwo,\text{mix}} &= e^{R_{a} + \sigma} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)
+                \end{align}
+
+            \subsubsection{Density}
+                The density correlations are below and come from Morgan et al. \cite{Morgan2015}. 
+                \begin{align}
+                    \shortintertext{\quad\; Liquid Density}
+                    V^{\liq}_{\COtwo} &=  a_{\COtwo} + x_{\MEA} x_{\HtwoO} + (b_{\COtwo} + c_{\COtwo} x_{\MEA}) x_{\MEA} x_{\COtwo} \\
+                    V^{\liq}_{\MEA} &=  \frac{\text{MW}_{\MEA}}{a_{\MEA} T_l^2 + b_{\MEA} T^{\liq} + c_{\MEA}} + x_{\HtwoO}\left(d_{\MEA} + e_{\MEA}x_{\MEA} \right) \\
+                    V^{\liq}_{\HtwoO} &=  \frac{\text{MW}_{\HtwoO}}{a_{\HtwoO} T_l^2 + b_{\HtwoO} T_l + c_{\HtwoO}} \\
+                    V^{\liq} &= V^{\liq}_{\COtwo}x_{\COtwo} + V^{\liq}_{\MEA}x_{\MEA} + V^{\liq}_{\HtwoO}x_{\HtwoO} \\
+                    \rho ^{\liq}_{mol} &= \frac{1}{V^{\liq}} \\
+                    \rho ^{\liq}_{mass} &= \rho ^{\liq}_{mol}\text{MW}^{\liq}_{T} \\
+                    \shortintertext{\quad\; Vapor Density}
+                    \rho ^{\vap}_{mol} &= \frac{P}{RT_v} \\
+                    \rho ^{\vap}_{mass} &= \rho ^{\vap}_{mol}\text{MW}^{\vap}_{T}
+                \end{align}
+
+            \subsubsection{Surface Tension} 
+            The surface tension correlation is below and come from Morgan et al. \cite{Morgan2015}. 
+                \begin{align}
+                    \shortintertext{\quad\; First the pure species surface tension expressions are evaluated}
+                    \sigma _{\COtwo} &= S_1 r^2+S_2 r+S_3+T_l \left(S_4 r^2+S_5 r+S_6\right) \\
+                    \sigma _{\MEA} &= c_{1,\MEA} \left(1-\frac{T_l}{T_{c,\MEA}}\right)^{c_{2,\MEA}+c_{3,\MEA} \frac{T_l}{T_{c,\MEA}}+c_{4,\MEA} \left(\frac{T_l}{T_{c,\MEA}}\right)^2} \\
+                    \sigma _{\HtwoO} &= c_{1,\HtwoO} \left(1-\frac{T_l}{T_{c,\HtwoO}}\right)^{c_{2,\HtwoO}+c_{3,\HtwoO} \frac{T_l}{T_{c,\HtwoO}}+c_{4,\HtwoO} \left(\frac{T_l}{T_{c,\HtwoO}}\right)^2} \\
+                    \shortintertext{\quad\; The following are added equations to allow for continuous values while the older model only fit for discrete values of r}
+                    A &= a+b \alpha+c {\alpha}^2+d w_{\MEA}+e {w_{\MEA}}^2 \\
+                    B &= f+g \alpha+h {\alpha}^2+i w_{\MEA}+j {w_{\MEA}}^2 \\
+                    \shortintertext{\quad\; The final expression}
+                    \sigma _{\text{mix}} &= \sigma_{\HtwoO}+\left(\sigma_{\COtwo}-\sigma_{\HtwoO}\right) A x_{\COtwo}+\left(\sigma_{\MEA}-\sigma_{\HtwoO}\right) B x_{\MEA}
+                \end{align}
+
+            \subsubsection{Heat Capacity} 
+                A method to calculate heat capacity for solvents originally from Hilliard \cite{Hilliard2008}
+                \begin{align}
+                    C^{\liq}_{p,\MEA} &= 1000 \times \text{\text{MW}}_{\MEA} \sum_{i=0}^{5} {c_{i, \MEA}}^{i} \\
+                    C^{\liq}_{p,\HtwoO} &= 1000 \times \text{\text{MW}}_{\HtwoO} \sum_{i=0}^{5} {c_{i, \HtwoO}}^{i} \\
+                    C^{\liq}_{p,\COtwo} &= \frac{x_{\MEA} C^{\liq}_{p,\MEA} + x_{\HtwoO} C^{\liq}_{p,\HtwoO}}{x_{\COtwo}} \left( \frac{1}{1 - w_{\COtwo}} - 1\right)
+                \end{align}
+
+            \subsubsection{Heat of Vaporization}
+                The heat-of-vaporization contribution is represented with a standard reduced-temperature correlation, with an explicit derivative used for evaluating the temperature derivative of liquid enthalpy:
+                \begin{align}
+                    \Delta H_{vap} &= A (1 - T_r)^{B + C T_r + D T_r^2}, \quad \text{where } T_r = \frac{T_l}{T_c} \\
+                    \frac{d\Delta H_{vap}}{dT}
+                    &= \frac{A}{T_c^2(T - T_c)}
+                    \left( \frac{T_c - T}{T_c} \right)^{\frac{BT_c^2 + CTT_c + DT^2}{T_c^2}} \notag\\
+                    &\quad\times \left[ BT_c^2 + CTT_c + DT^2
+                    + (T - T_c)(CT_c + 2DT) \ln\left( \frac{T_c - T}{T_c} \right) \right]
+                \end{align}
+
+            \subsubsection{Enthalpy}
+                The correlations are adapted from Akula \cite{Akula2023} for the present model implementation
+                \begin{align}
+                    \shortintertext{\quad\; Pure Species Enthalpies}
+                    H^{\liq}_{\COtwo} &= H_{\text{CO}_2}^V - RT^2 \left( \frac{\partial \ln H_{\text{CO}_2, \text{H}_2\text{O}}}{\partial T} \right) + \Delta H_{abs} \\
+                    H^{\liq}_{\COtwo} &= H_{\text{CO}_2}^V - R \left( -b_{\text{CO}_2, \text{H}_2\text{O}} + c_{\text{CO}_2, \text{H}_2\text{O}} T + d_{\text{CO}_2, \text{H}_2\text{O}} T^2 \right) + \Delta H_{abs} \\
+                    H^{\liq}_{\MEA} &= \int_{T_{ref}}^{T} C_{p,\MEA} dT - \Delta H_{vap, \MEA} \\
+                    H^{\liq}_{\HtwoO} &= \int_{T_{ref}}^{T} C_{p,\HtwoO} dT - \Delta H_{vap, \HtwoO} \\
+                    \shortintertext{\quad\; Total enthalpy for liquid phase}
+                    H^{\liq}_{T} &= \sum_{i} x_iH^{\liq}_{i} \\
+                    \shortintertext{\quad\; Liquid enthalpy differential with respect to temperature for temperature based energy-balance derivation}
+                    \frac{H^{\liq}_{T}}{dT} &= -R\left(c_{\text{CO}_2, \text{H}_2\text{O}}  + 2d_{\text{CO}_2, \text{H}_2\text{O}} T \right) + C^{\liq}_{p, \MEA} + \frac{d\Delta H_{vap, \MEA}}{dT} +  C^{\liq}_{p, \HtwoO}+ \frac{d\Delta H_{vap, \HtwoO}}{dT}
+                \end{align}
+
+            \subsubsection{Thermal Conductivity}
+                \begin{align}
+                    k^{t}_{i} = \frac{A_i T^{B_i}}{1 + \frac{C_i}{T} + \frac{D_i}{T^2}}
+                \end{align}
+
+        \newpage
+        \subsection{Transport Properties}
+            \subsubsection{Viscosity} \cite{Morgan2015}
+                \textbf{Liquid Viscosity}
+                \begin{align}
+                    \mu ^{\liq}_{\HtwoO} &= A \times 10^\frac{B\left(293.15 - T_l - C\left(T_l - 293.15\right)^2\right)}{T_l - D} \\
+                    R &= \ln\left(mu^{\vap}_{\COtwo}\right) y_{\COtwo}+\ln\left(mu^{\vap}_{\HtwoO}\right) y_{\HtwoO}+\ln\left(mu^{\vap}_{N_2}\right) y_{N_2}+\ln\left(mu^{\vap}_{O_2}\right) y_{O_2} \\
+                    \mu ^{\liq}_{\text{mix}} &= \mu ^{\liq}_{\HtwoO} \times e^{R}
+                \end{align}
+                \vspace{.5cm}
+                \textbf{Vapor Viscosity}
+                \begin{align}
+                    \mu ^{\vap}_{\COtwo} &= \frac{2.148 \times 10^{-6} \ T_v^{0.46}}{1+\frac{290}{T_v}} \\
+                    \mu ^{\vap}_{\HtwoO} &= 1.7096\times 10^{-8} \ T_v^{1.1146} \\
+                    \mu ^{\vap}_{N_2} &= \frac{6.5592\times 10^{-7} \ T_v^{0.6081}}{1+\frac{54.714}{T_v}} \\
+                    \mu ^{\vap}_{O_2} &= \frac{5.5462\times 10^{-8} \ T_v^{0.8825}}{1+\frac{73.316}{T_v}} \\
+                    R &= \ln\left(\mu^{\vap}_{\COtwo}\right) y_{\COtwo}+\ln\left(\mu^{\vap}_{\HtwoO}\right) y_{\HtwoO}+\ln\left(\mu^{\vap}_{N_2}\right) y_{N_2}+\ln\left(\mu^{\vap}_{O_2}\right) y_{O_2} \\
+                    \theta_{ij} &= \frac{1 + 2\,\sqrt{\frac{\mu^{\vap}_{i}}{\mu^{\vap}_{j}}}\left(\frac{\text{MW}^{\vap}_{j}}{\text{MW}^{\vap}_{i}}\right)^{0.25} + \frac{\mu^{\vap}_{i}}{\mu^{\vap}_{j}}\left(\frac{\text{MW}^{\vap}_{j}}{\text{MW}^{\vap}_{i}}\right)^{0.5}}{\sqrt{8 + 8\,\frac{\text{MW}^{\vap}_{i}}{\text{MW}^{\vap}_{j}}}} \\
+                    \theta_{ji} &= \frac{\mu ^{\vap}_{j}}{mu ^{\vap}_{i}}\frac{\text{MW}^{\vap}_{i}}{\text{MW}^{\vap}_{j}}\theta_{ij}  \\
+                    \theta_{ij} &= 1 \quad\Longrightarrow\quad \text{if } i = j \\
+                    \mu^{\vap}_{\text{mix}} &= \sum_{i=1}^{N} \frac{y_i \,\mu^{\vap}_{i}}{\sum_{j=1}^{N} y_j \,\theta_{i,j}}
+                \end{align}
+
+            \subsubsection{Diffusivity}
+                \textbf{Liquid Diffusivity}
+                \begin{align}
+                    C^{\liq}_{\MEA,\text{true}} &= C^{\liq}_{\MEA} \times 10^{-3} \\
+                    D^{\liq}_{ \COtwo} &= \left(a + b C^{\liq}_{\MEA,\text{true}} + c {C^{\liq}_{\MEA,\text{true}}}^2\right) e^{\frac{d + e C^{\liq}_{\MEA,\text{true}}}{T_l}} \\
+                    D^{\liq}_{ \MEA} &= e^{a + \frac{b}{T_l} + c C^{\liq}_{\MEA}} \\
+                    D^{\liq}_{ \text{ion}} &= e^{a + \frac{b}{T_l} + c \log{\mu ^{\liq}_{ \text{mix}}}}
+                \end{align}
+                \vspace{.5cm}
+                \textbf{Vapor Diffusivity}
+                \begin{align}
+                    D_{i j} &= 1.013 \times 10^{-2} T_V^{1.75} \frac{\sqrt{\left(\text{MW}^{\vap}_{i}+\text{MW}^{\vap}_{j}\right) / \text{MW}^{\vap}_{i} \text{MW}^{\vap}_{j}}}{P\left(\sqrt[3]{V_{D i}}+\sqrt[3]{V_{D j}}\right)^2} \\
+                    D^{\vap}_{ i} &= \frac{1-y_i}{\sum_{\substack{j=1 \\ j \neq i}}^n \frac{y_j}{D_{i j}}}
+                \end{align}
+
+        \newpage
+        \subsection{Constants and Parameter Reporting}
+            Table~\ref{tab:appendix-parameter-scope} summarizes the parameter groups used by the absorber model. The detailed numerical values are maintained in the repository input data and model-parameter tables so that the manuscript does not duplicate a long, error-prone appendix table. This also keeps the paper aligned with the reproducibility claim: the benchmark dataset, solver settings, and reported tables are treated as the authoritative source for validation values.
+
+            \input{tables/appendix_parameter_scope}
+
+            The fixed constants retained from the original implementation include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, and measured capture values are read from the NCCC benchmark data. This separation prevents inconsistencies between a manuscript appendix and the executable model while still documenting the physical and numerical scope of the simulations.
+    \clearpage

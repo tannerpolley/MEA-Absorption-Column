@@ -165,7 +165,6 @@ def _check_latex_paths() -> None:
     for tex_name in (
         "main.tex",
         "revised_benchmark_results.tex",
-        "benchmark_results_section.tex",
     ):
         text = (DOCS_LATEX / tex_name).read_text(encoding="utf-8")
         if "docs/benchmark_figures" in text or "benchmark_figures/" in text:
@@ -175,7 +174,7 @@ def _check_latex_paths() -> None:
         for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", main):
             target = match.group(1)
             if target.startswith("Figures/") or target.startswith("figs/"):
-                continue
+                raise AssertionError(f"LaTeX figure path uses stale figure directory casing from {tex_name}: {target}")
             if not any(path.exists() for path in _latex_graphic_candidates(target)):
                 raise AssertionError(f"LaTeX figure path does not resolve from {tex_name}: {target}")
 
