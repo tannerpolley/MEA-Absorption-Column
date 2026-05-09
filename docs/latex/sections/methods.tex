@@ -6,8 +6,13 @@
             \frac{d \mathbf{y}}{dz} = \mathbf{f}\bigl(z, \mathbf{y}(z)\bigr) \\
             \mathbf{y}(0) = \boldsymbol{\alpha}, \quad \mathbf{y}(H) = \boldsymbol{\beta},
             \end{cases}
+            &&
+            \begin{matrix}
+            \left(\text{component units of }\mathbf{y}\,\unit{m^{-1}}\right)\\
+            \left(\text{component units of }\mathbf{y}\right)
+            \end{matrix}
         \end{align}
-        There are multiple methods that solve the boundary value problem required when simulating an packed-absorption column. Three possible methods are introduced and analyzed: the shooting method, finite difference method, and SciPy collocation-style boundary-value method. In this benchmark, shooting and finite difference are comparison methods because they expose different initialization and discretization behavior on the same equations, while the SciPy \texttt{solve\_bvp} path is the current reference solver because it is the implementation used to generate the benchmark rows and report mesh and residual metadata. The paper therefore treats speed and robustness as empirical outcomes of the recorded runs, not as a priori method rankings.
+        There are multiple methods that solve the boundary value problem required when simulating an packed-absorption column. Three possible methods are introduced and analyzed: the shooting method, finite difference method, and collocation boundary-value method. In this benchmark, shooting and finite difference are comparison methods because they expose different initialization and discretization behavior on the same equations, while the collocation method is the current reference solver because it is the implementation used to generate the benchmark rows and report mesh and residual metadata. The paper therefore treats speed and robustness as empirical outcomes of the recorded runs, not as a priori method rankings.
 
         \subsection{Shooting Method}
             The shooting method is a powerful numerical technique for solving boundary value problems (BVPs) by converting them into an equivalent set of initial value problems (IVPs). The core idea is to guess any unknown initial conditions (such as a missing initial slope) and then integrate the differential equations forward in one ``shot,'' checking at the end whether the boundary conditions are satisfied. If the final boundary conditions are not met, the initial guess is refined, and the process is repeated. This approach leverages well-established methods for solving IVPs (such as the Runge--Kutta family of methods) while systematically adjusting the guess until the boundary constraints are fulfilled, typically by employing a root-finding algorithm (e.g., Newton--Raphson, bisection, or secant method) on the difference between the solution and the desired boundary value at the final point. One of the advantages of the shooting method is its conceptual simplicity: one only needs to implement a standard IVP solver and a root-finding procedure to iteratively converge upon the correct boundary values. However, it can be sensitive to numerical stability issues, especially if the BVP spans a large domain or if the underlying differential equations are stiff. Despite these limitations, the shooting method remains a popular and straightforward choice for many two-point BVPs, offering an intuitive framework to find solutions by effectively ``aiming'' from one boundary toward the other and iterating until the solution ``hits'' the required condition. Below is an overview of how to apply the shooting method to the boundary value problem (BVP):
@@ -24,14 +29,16 @@
             \subsubsection*{Mismatch Function}
                 After integrating with the guess $\mathbf{p}$, define the \emph{mismatch function}:
                 \begin{align}
-                    \mathbf{F}(\mathbf{p}) = \mathbf{y}\bigl(H; \mathbf{p}\bigr) - \boldsymbol{\beta}.
+                    \mathbf{F}(\mathbf{p}) = \mathbf{y}\bigl(H; \mathbf{p}\bigr) - \boldsymbol{\beta}
+                    && \left(\text{component units of }\mathbf{y}\right).
                 \end{align}
                 This vector $\mathbf{F}(\mathbf{p})$ measures how far the computed solution at $z=H$ is from the required boundary condition $\boldsymbol{\beta}$.
 
             \subsubsection*{Root-Finding on the Mismatch}
                 To solve the BVP, we need $\mathbf{F}(\mathbf{p}) = \mathbf{0}$. Thus, the unknown initial values $\mathbf{p}$ must be adjusted until
                 \begin{align}
-                    \mathbf{y}\bigl(H,\mathbf{p}\bigr) &= \boldsymbol{\beta}.
+                    \mathbf{y}\bigl(H,\mathbf{p}\bigr) &= \boldsymbol{\beta}
+                    && \left(\text{component units of }\mathbf{y}\right).
                 \end{align}
                 Any standard root-finding algorithm capable of handling multiple variables can be used here. Each iteration calls the IVP solver anew (the ``shoot''), refines $\mathbf{p}$, and re-checks the mismatch at $z=H$ until $\|\mathbf{F}(\mathbf{p})\|$ is sufficiently small.
 
@@ -45,10 +52,12 @@
                 Divide the interval $[0,H]$ into $N$ sub-intervals of equal length $\Delta z = \frac{H}{N}$. Define the grid points:
                 \begin{align}
                     z_k = k\,\Delta z, \quad k = 0, 1, 2, \ldots, N,
+                    && \left(\unit{m}\right)
                 \end{align}
                 so that $z_0 = 0$ and $z_N = H$. Let $\mathbf{y}^k$ be the approximation to $\mathbf{y}$ at $z = z_k$:
                 \begin{align}
-                    \mathbf{y}^k \;\approx\; \mathbf{y}\bigl(z_k\bigr).
+                    \mathbf{y}^k \;\approx\; \mathbf{y}\bigl(z_k\bigr)
+                    && \left(\text{component units of }\mathbf{y}\right).
                 \end{align}
                 Each component of $\mathbf{y}^k$ corresponds to one of the six unknown functions ($F^{\liq}_{\mathrm{CO_2}}$, $F^{\liq}_{\mathrm{H_2O}}$, $F^{\vap}_{\mathrm{CO_2}}$, $F^{\vap}_{\mathrm{H_2O}}$, $\dot{H}_l$, $\dot{H}_v$).
 
@@ -59,7 +68,8 @@
                     \approx
                     \frac{\mathbf{y}^{k+1} - \mathbf{y}^{k-1}}{2\,\Delta z},
                     \quad 
-                    k = 1, 2, \ldots, N-1.
+                    k = 1, 2, \ldots, N-1
+                    && \left(\text{component units of }\mathbf{y}\,\unit{m^{-1}}\right).
                 \end{align}
                 If your system dictates or if you prefer simpler expressions, you might use forward or backward differences in some cases, but central differences typically provide higher accuracy for the same grid spacing. Thus, for each $k=1,\dots,N-1$, we replace \(\frac{d \mathbf{y}}{dz}\bigl(z_k\bigr)\) with the discrete difference. This transforms each continuous ODE \(\frac{d y_i}{dz} = f_i\bigl(z, y_1, y_2, \ldots, y_6\bigr)\) into an algebraic equation involving $\mathbf{y}^{k-1}$, $\mathbf{y}^k$, and $\mathbf{y}^{k+1}$.
 
@@ -69,6 +79,7 @@
                     \mathbf{y}^0 = \boldsymbol{\alpha}, 
                     \quad 
                     \mathbf{y}^N = \boldsymbol{\beta},
+                    && \left(\text{component units of }\mathbf{y}\right)
                 \end{align}
                 or, if only some components are known at each boundary, then only those components in $\mathbf{y}^0$ or $\mathbf{y}^N$ are fixed and the remaining must be determined by the system of equations.
 
@@ -77,17 +88,30 @@
                 \begin{align}
                     \mathcal{R}\Bigl(\mathbf{y}^0,\, \mathbf{y}^1,\, \dots,\, \mathbf{y}^N\Bigr) 
                     = \mathbf{0},
+                    && \left(\text{component residual units}\right)
                 \end{align}
                 where $\mathcal{R}$ denotes the collection of finite-difference equations plus boundary conditions.
 
             \subsubsection*{Summary}
                 By ensuring appropriate grid resolution and an effective nonlinear solver, finite difference approximations can provide accurate, stable solutions to this system of differential equations across the domain $0 \le z \le H$. While this technique can be both robust and straightforward conceptually, it comes with its own potential pitfalls. For instance, a too-coarse grid can lead to poor accuracy or even instability when applied to stiff or highly nonlinear systems. As the mesh becomes finer, the number of equations to be solved grows quickly, which can increase computational cost substantially, especially for higher-dimensional systems. Additionally, nonlinearity may require iterative solvers like Newton's method at each time step or iteration, and assembling and factoring large Jacobians can be computationally intensive. Boundary conditions that are non-standard or mixed in form may also complicate the discretization scheme. Overall, while the finite difference method is a powerful approach, the choice of mesh, solver, and stability considerations must be carefully addressed for each specific problem.
 
-        \subsection{SciPy Collocation-Style BVP Method}
-            The current implementation uses \texttt{scipy.integrate.solve\_bvp}, which solves boundary-value problems with a collocation-style residual control algorithm and adaptive mesh refinement. This method is distinct from a custom orthogonal collocation implementation based on explicitly selected Legendre or Chebyshev points. For reproducibility, the benchmark reports the starting mesh size, maximum node count, solver tolerance, boundary-condition tolerance, initialization profile, scaling, final residual norm, and convergence message used for each run.
+        \subsection{Collocation BVP Method}
+            The current collocation implementation uses the \texttt{scipy.integrate.solve\_bvp} package routine, which solves boundary-value problems with residual control and adaptive mesh refinement. This method is distinct from a custom orthogonal collocation implementation based on explicitly selected Legendre or Chebyshev points. For reproducibility, the benchmark reports the starting mesh size, maximum node count, solver tolerance, boundary-condition tolerance, initialization profile, scaling, final residual norm, and convergence message used for each run.
+
+            \subsubsection*{Mesh and Initial Profile}
+                The collocation method starts from a finite axial mesh across the packed height and an initial profile for every state variable on that mesh. For the absorber model, the state profile includes the liquid and vapor apparent molar flow rates, liquid and vapor enthalpy flows, and pressure. The initial profile can be constant, linearly interpolated between boundary values, or reused from a nearby operating point. This initialization matters because reaction equilibrium, fugacity, enhancement-factor, and transport calculations are all nonlinear functions of the local state. A poor initial profile can place some mesh intervals outside the physically meaningful domain, while a profile that respects inlet flows, temperatures, and pressure gives the nonlinear solver a better starting point.
+
+            \subsubsection*{Local Polynomial Representation}
+                Instead of integrating the model from one boundary to the other, the collocation method represents each state variable by piecewise polynomial functions over the mesh intervals. Within each interval, the algorithm chooses internal collocation points and requires the polynomial derivative to agree with the governing ODE residual at those points. The boundary conditions are enforced at the ends of the domain at the same time. This converts the two-point BVP into one coupled nonlinear algebraic problem for the unknown state values and polynomial coefficients across the whole column. The important distinction from shooting is that both column ends influence the solution simultaneously; the method does not rely on guessing one boundary and propagating the entire profile in one direction.
+
+            \subsubsection*{Nonlinear Iteration and Residual Control}
+                The coupled algebraic system is solved iteratively. At each iteration, the model evaluates the governing-equation residuals, boundary residuals, and any scaling used to make the variables comparable in magnitude. The iteration then updates the mesh-state values so that the polynomial profile better satisfies the differential equations and boundary conditions. For this absorber model, the residual evaluation is expensive because each axial point requires chemical-equilibrium, thermodynamic driving-force, transport-property, enhancement-factor, and flux calculations. The benchmark therefore records not only convergence success, but also the residual norm, boundary-condition residual, runtime, mesh size, and solver message.
+
+            \subsubsection*{Adaptive Mesh Refinement}
+                After a candidate solution is found on the current mesh, the method estimates where the collocation residual is largest. Intervals with larger residuals are refined by adding more mesh nodes, and the nonlinear solve is repeated on the refined mesh. This adaptivity is useful for packed-column absorption because temperature and concentration profiles can be smooth in most of the bed but sharper near a thermal bulge or thermodynamic pinch region. A fixed coarse mesh can miss these regions, while an unnecessarily fine uniform mesh increases the nonlinear system size everywhere. The adaptive approach concentrates nodes where the solution needs them, subject to the maximum-node limit reported in the benchmark.
 
             \subsubsection*{Benchmark Role}
-                In this work, the SciPy BVP method is treated as one solver configuration in the benchmark rather than as a separate methodological contribution. The benchmark output records its tolerance settings, adaptive mesh behavior, convergence message, boundary residual norm, runtime, and validation error so that claims about robustness or speed are traceable to reported results.
+                In this work, the collocation method is treated as one solver configuration in the benchmark rather than as a separate methodological contribution. It is the primary workflow for the NCCC one-bed validation because it handles mixed boundary conditions and localized profile changes more reliably than propagating an initial-value guess through the full column. This does not make it universally superior: its performance still depends on scaling, initialization, mesh limits, residual tolerances, and whether the property models remain inside their valid domains. The benchmark output records its tolerance settings, adaptive mesh behavior, convergence message, boundary residual norm, runtime, and validation error so that claims about robustness or speed are traceable to reported results.
 
         \subsection{Reproducibility and Numerical Settings}
             The benchmark calculations were performed in a Python 3.13 environment with fixed package versions. Each result entry records the case and method configuration, convergence message, residual metadata, capture error, temperature error where measured taps are available, runtime, mesh settings, solver tolerances, initialization notes, and thermodynamic model. Environment metadata, including Python version, platform, and package versions, is retained with the full benchmark dataset used to generate the reduced paper-facing tables. The same reporting schema is used for all solver paths so numerical behavior can be compared without relying on qualitative descriptions alone.

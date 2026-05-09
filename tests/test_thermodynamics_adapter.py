@@ -1,4 +1,6 @@
 import math
+import csv
+import json
 from pathlib import Path
 
 import numpy as np
@@ -7,8 +9,11 @@ import pytest
 from mea_absorption_column.Thermodynamics.Fugacity import fugacity
 from mea_absorption_column.Thermodynamics.thermo_models import (
     EPCSAFT_SOURCE_ROOT,
+    IONIC_LIQUID_SPECIES,
+    MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     build_epcsaft_params,
     ensure_epcsaft_importable,
+    epcsaft_dataset_mixture,
     epcsaft_source_fingerprint,
     neutral_liquid_composition,
 )
@@ -138,3 +143,45 @@ def test_epcsaft_adapter_reports_external_source_without_modifying_it():
     assert fingerprint["source_root"] == str(EPCSAFT_SOURCE_ROOT)
     assert fingerprint["exists"] is True
     assert "modified_at_utc" in fingerprint
+
+
+def test_ionic_epcsaft_dataset_enables_ssm_ds_and_dborn_parameters():
+    options_path = MEA_THERMODYNAMICS_EPCSAFT_DATASET / "user_options.json"
+    pure_path = MEA_THERMODYNAMICS_EPCSAFT_DATASET / "pure" / "any_solvent.csv"
+
+    with options_path.open("r", encoding="utf-8") as handle:
+        options = json.load(handle)
+    born_options = options["elec_model"]["born_model"]
+
+    assert born_options["d_Born_mode"] == 3
+    assert born_options["solvation_shell_model"] is True
+    assert born_options["dielectric_saturation"] is True
+    assert born_options["mu_born_model"]["comp_dep_delta_d"] is True
+
+    with pure_path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    charged_rows = [row for row in rows if abs(float(row["z"])) > 0.0]
+
+    assert charged_rows
+    assert {row["component"] for row in charged_rows}.issuperset({"MEAH+", "MEACOO-", "HCO3-"})
+    assert all(float(row["d_born"]) > 0.0 for row in charged_rows)
+
+
+def test_ionic_epcsaft_state_uses_ion_and_born_contribution_terms():
+    try:
+        ensure_epcsaft_importable()
+    except RuntimeError as exc:
+        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
+
+    mixture = epcsaft_dataset_mixture(tuple(IONIC_LIQUID_SPECIES), 323.2)
+    composition = np.array([0.02, 0.24, 0.62, 0.06, 0.05, 0.01], dtype=float)
+    composition /= composition.sum()
+    state = mixture.state(T=323.15, x=composition, P=109500.0, phase="liq")
+
+    ares = state.residual_helmholtz(return_contribution_terms=True)
+    lnfug = state.fugacity_coefficient(natural_log=True, return_contribution_terms=True)
+
+    assert abs(float(ares["terms"]["ion"])) > 1.0e-8
+    assert abs(float(ares["terms"]["born"])) > 1.0e-8
+    assert np.any(np.abs(np.asarray(lnfug["terms"]["ion"], dtype=float)) > 1.0e-8)
+    assert np.any(np.abs(np.asarray(lnfug["terms"]["born"], dtype=float)) > 1.0e-8)

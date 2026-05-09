@@ -29,7 +29,7 @@ def _strip_svg_trailing_whitespace(path: Path) -> None:
 def main() -> None:
     TABLES.mkdir(parents=True, exist_ok=True)
     FIGURES.mkdir(parents=True, exist_ok=True)
-    c_cases = pd.read_csv(TABLES / "raw_c_case_thermo_benchmark.csv")
+    c_cases = _load_c_case_results()
     c_cases["thermo_label"] = c_cases["thermo_model"].map(_label_thermo)
     c_cases["abs_capture_error_pct"] = c_cases["capture_error_pct"].abs()
     c_cases.to_csv(TABLES / "plot_c_case_thermo_benchmark.csv", index=False)
@@ -75,7 +75,7 @@ def main() -> None:
     axes[1].tick_params(axis="x", rotation=12)
 
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="outside upper center", ncol=2, frameon=False)
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 1.02), ncol=2, frameon=False)
     c_case_svg = FIGURES / "c_case_thermo_benchmark.svg"
     fig.savefig(c_case_svg, bbox_inches="tight")
     fig.savefig(FIGURES / "c_case_thermo_benchmark.pdf", bbox_inches="tight")
@@ -83,6 +83,26 @@ def main() -> None:
     plt.close(fig)
 
     generate_accuracy_credibility_artifacts()
+
+
+def _load_c_case_results() -> pd.DataFrame:
+    campaign_metrics = TABLES / "c_case_campaign_temperature_overlay_metrics.csv"
+    if campaign_metrics.exists():
+        c_cases = pd.read_csv(campaign_metrics)
+        c_cases["success"] = True
+        c_cases["source_dataset"] = "campaign"
+        if "plot_png" in c_cases.columns:
+            c_cases["plot_png"] = c_cases["case_id"].map(
+                lambda case_id: (
+                    "analyses/nccc_validation/results/final/figures/"
+                    f"c_case_campaign_temperature_overlays/{case_id}_temperature_overlay.png"
+                )
+            )
+        return c_cases
+
+    c_cases = pd.read_csv(TABLES / "raw_c_case_thermo_benchmark.csv")
+    c_cases["source_dataset"] = "legacy"
+    return c_cases
 
 
 if __name__ == "__main__":

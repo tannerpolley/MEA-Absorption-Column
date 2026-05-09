@@ -40,7 +40,8 @@ if (-not (Test-Path -LiteralPath $figureRootPath)) {
 
 $figureCopies = @(
     @{ Source = 'analyses\nccc_validation\results\final\figures\c_case_thermo_benchmark.pdf'; Destination = 'c-case-thermo-benchmark.pdf' },
-    @{ Source = 'analyses\nccc_validation\results\final\figures\c_case_temperature_profile_overlay_recommended.pdf'; Destination = 'case-c-temperature-overlay.pdf' },
+    @{ Source = 'analyses\nccc_validation\results\final\figures\c_case_campaign_temperature_overlays\3C_temperature_overlay.png'; Destination = 'case-3c-temperature-validation.png' },
+    @{ Source = 'analyses\nccc_validation\results\final\figures\c_case_campaign_temperature_overlays\c_case_temperature_overlay_contact_sheet.png'; Destination = 'case-c-temperature-overlay.png' },
     @{ Source = 'analyses\nccc_validation\results\final\figures\error_regime_capture_error.pdf'; Destination = 'error-regime-capture-error.pdf' },
     @{ Source = 'analyses\nccc_validation\results\final\figures\calibration_uncertainty_band.pdf'; Destination = 'calibration-uncertainty-band.pdf' },
     @{ Source = 'analyses\nccc_validation\results\final\figures\method_case_solver_contrast.pdf'; Destination = 'method-case-solver-contrast.pdf' },

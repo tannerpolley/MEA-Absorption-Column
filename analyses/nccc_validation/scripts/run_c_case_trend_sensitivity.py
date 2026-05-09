@@ -178,11 +178,11 @@ def _write_report(data: pd.DataFrame, summary: pd.DataFrame, rows_path: Path, su
         "",
         "## Summary",
         "",
-        summary.to_markdown(index=False),
+        _markdown_table(summary),
         "",
         "## Per-Case Rows",
         "",
-        data[
+        _markdown_table(data[
             [
                 "sensitivity_label",
                 "case_id",
@@ -196,7 +196,7 @@ def _write_report(data: pd.DataFrame, summary: pd.DataFrame, rows_path: Path, su
                 "G",
                 "jacobian_status",
             ]
-        ].to_markdown(index=False),
+        ]),
         "",
     ]
     return "\n".join(lines)
@@ -206,6 +206,23 @@ def _format_settings(settings: dict[str, object]) -> str:
     if not settings:
         return "baseline"
     return ";".join(f"{key}={value}" for key, value in sorted(settings.items()))
+
+
+def _markdown_table(frame: pd.DataFrame) -> str:
+    if frame.empty:
+        return "_No rows._"
+
+    text = frame.copy()
+    for column in text.columns:
+        text[column] = text[column].map(lambda value: "" if pd.isna(value) else str(value))
+
+    header = "| " + " | ".join(text.columns) + " |"
+    separator = "| " + " | ".join("---" for _ in text.columns) + " |"
+    rows = [
+        "| " + " | ".join(row[column] for column in text.columns) + " |"
+        for _, row in text.iterrows()
+    ]
+    return "\n".join([header, separator, *rows])
 
 
 def _corr(a: pd.Series, b: pd.Series) -> float:

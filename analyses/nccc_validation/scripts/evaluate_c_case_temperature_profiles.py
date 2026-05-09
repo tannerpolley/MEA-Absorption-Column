@@ -184,9 +184,10 @@ def _plot_recommended_profiles(metrics: pd.DataFrame, recommended_cases: list[st
     fig.savefig(out_svg, dpi=220, bbox_inches="tight")
     plt.close(fig)
 
-    DOC_FIGURES.mkdir(parents=True, exist_ok=True)
-    # manuscript-facing copy path
-    (DOC_FIGURES / "case-c-temperature-overlay.pdf").write_bytes(out_pdf.read_bytes())
+    # This legacy diagnostic figure is intentionally not copied into
+    # docs/latex/figures. The manuscript-facing C-case overlay is generated
+    # from corrected campaign inputs by render_c_case_campaign_temperature_gallery.py
+    # and synced through docs/latex/scripts/sync_latex_figures.ps1.
 
 
 def _write_recommendation_report(metrics: pd.DataFrame, recommendations: list[str]) -> None:

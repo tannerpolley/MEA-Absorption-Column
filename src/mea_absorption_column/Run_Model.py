@@ -466,7 +466,7 @@ Run #{run + 1:03d}:
 
     method_key = {
         'single': 'Shooting',
-        'scipy-bvp': 'SciPy BVP',
+        'scipy-bvp': 'Collocation BVP',
         'finite': 'Finite Difference',
     }
 

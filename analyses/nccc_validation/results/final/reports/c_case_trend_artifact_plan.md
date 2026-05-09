@@ -30,7 +30,7 @@ Evidence basis:
 ### B. Profile overlay (conservative, low-risk)
 Use one compact, strict paper candidate figure:
 - `analyses/nccc_validation/results/final/figures/c_case_temperature_profile_overlay_recommended_compact.pdf`
-- Copy in manuscript figure folder: `docs/latex/figures/case-c-temperature-overlay.pdf`
+- Copy in manuscript figure folder: `docs/latex/figures/case-c-temperature-overlay.png`
 
 Panel recommendation:
 - Include `3C` as the anchor case.
@@ -66,5 +66,5 @@ Why:
 - Added:
   - `analyses/nccc_validation/results/final/figures/c_case_temperature_profile_overlay_recommended_compact.pdf`
   - `analyses/nccc_validation/results/final/figures/c_case_temperature_profile_overlay_recommended_compact.svg`
-  - `docs/latex/figures/case-c-temperature-overlay.pdf`
+  - `docs/latex/figures/case-c-temperature-overlay.png`
   - `analyses/nccc_validation/results/final/reports/c_case_trend_artifact_plan.md`

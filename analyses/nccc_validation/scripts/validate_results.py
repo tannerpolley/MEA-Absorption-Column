@@ -125,8 +125,8 @@ def _check_method_contrast() -> None:
     _require_columns(data, ["scenario", "case_id", "method", "success", "runtime_s"])
     if data.empty:
         raise AssertionError("Method contrast table is empty.")
-    if not {"Shooting", "SciPy BVP", "Finite difference"}.issubset(set(data["method"])):
-        raise AssertionError("Method contrast table must include shooting, SciPy BVP, and finite difference rows.")
+    if not {"Shooting", "Collocation BVP", "Finite difference"}.issubset(set(data["method"])):
+        raise AssertionError("Method contrast table must include shooting, collocation BVP, and finite difference rows.")
     if data["scenario"].astype(str).str.contains("K case|intercool|staged", case=False, regex=True).any():
         raise AssertionError("Main-branch method contrast must not depend on staged/intercooled K-case evidence.")
 

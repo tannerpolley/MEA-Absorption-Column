@@ -28,6 +28,7 @@ $env:PYTHONPATH = "src"
 | `collect_clean_profiles.py` | Refreshes the clean temperature-profile PNG gallery and index. | Sometimes. | Required only when rerunning or collecting `epcsaft_*` lanes. |
 | `run_case_profile.py` | Runs one case and exports dense legacy-`Profiles.xlsx`-style CSVs. | Yes. | Required for `epcsaft_neutral`, `epcsaft_ionic`, and experimental reactive lanes. |
 | `generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and writes dense profile CSV folders. | Yes. | Required only for ePC-SAFT rows in the selected suite. |
+| `render_c_case_campaign_temperature_gallery.py` | Renders the corrected one-bed C-case temperature overlay gallery from a completed campaign-input benchmark run. | No. | No direct dependency; the source run may include ePC-SAFT rows. |
 | `probe_reactive_epcsaft_speciation.py` | Experimental reactive-speciation probe using the external ePC-SAFT package and the repo-vendored MEA dataset. | Thermodynamic probe only. | Required. Not a default validation script. |
 | `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
 
@@ -70,7 +71,16 @@ Full benchmark runs can also request these dense profile CSVs:
 .\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --c-case-ids 3C --nccc-case-limit 0 --profile-csvs --subprocess-timeout-s 60 --output-dir analyses\nccc_validation\results\runs\profile_csv_probe
 ```
 
-Run the favorable SRP-style method-comparison case across shooting, SciPy BVP, and finite difference:
+Run the corrected one-bed NCCC C-case campaign table and regenerate the 1C--7C temperature overlay gallery:
+
+```powershell
+.\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --c-case-dataset campaign --c-case-ids 1C 2C 3C 4C 5C 6C 7C --nccc-case-limit 0 --srp-case-limit 0 --staged-beds false --mesh-points 51 --tol 0.5 --bc-tol 0.001 --max-nodes 1000 --subprocess-timeout-s 60 --profile-csvs --profile-pngs --output-dir analyses\nccc_validation\results\runs\c_case_campaign_temperature_gallery
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_c_case_campaign_temperature_gallery.py
+```
+
+The campaign dataset is stored separately as `src/mea_absorption_column/data/C_cases_campaign_inputs.csv`; the legacy `C_cases_data.csv` remains available through the default `--c-case-dataset legacy` path for reproducibility.
+
+Run the favorable SRP-style method-comparison case across shooting, collocation BVP, and finite difference:
 
 ```powershell
 .\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods single scipy-bvp finite --thermo-models ideal_henry --c-case-limit 0 --nccc-case-limit 0 --srp-case-limit 1 --mesh-points 21 --tol 0.5 --bc-tol 0.001 --max-runtime-s 30 --seed-from-shooting --subprocess-timeout-s 60 --output-dir analyses\nccc_validation\results\runs\srp_method_slice

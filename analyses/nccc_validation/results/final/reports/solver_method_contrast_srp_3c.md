@@ -20,7 +20,7 @@ Source artifact: `analyses/nccc_validation/results/runs/srp_all_methods_coarse/b
 | Case | Method | Thermo | Success | Runtime s | Capture % | Notes |
 |---|---:|---:|---:|---:|---:|---|
 | SRP-LG7 | shooting | ideal Henry | true | 4.91 | 90.17 | Fast IVP/root comparison run. |
-| SRP-LG7 | SciPy BVP | ideal Henry | true | 7.61 | 89.95 | Shooting-seeded collocation, low boundary residual. |
+| SRP-LG7 | Collocation BVP | ideal Henry | true | 7.61 | 89.95 | Shooting-seeded collocation, low boundary residual. |
 | SRP-LG7 | finite difference | ideal Henry | true | 15.62 | 107.65 | Coarse 21-point algebraic solve; boundary residual is low, but capture overshoots because this row has no measured target gate. |
 
 The legacy figures reported approximately 0.6 s for shooting, 2.7 s for
@@ -40,7 +40,7 @@ Source artifacts:
 
 | Case | Method | Thermo | Success | Runtime s | Capture % | Capture error pct-pt | Temperature RMSE K | Notes |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| 3C | SciPy BVP | ideal Henry | true | 9.40 | 89.40 | -0.10 | 3.94 | Converged directly with measured temperature-profile validation. |
+| 3C | Collocation BVP | ideal Henry | true | 9.40 | 89.40 | -0.10 | 3.94 | Converged directly with measured temperature-profile validation. |
 | 3C | shooting | ideal Henry | false | 62.73 |  |  |  | Timed out at the bounded 60 s solver gate. |
 | 3C | finite difference | ideal Henry | false | 16.61 | 0.00 | -89.50 | 20.04 | Algebraic residual converged to a boundary-satisfying but physically wrong zero-capture branch. |
 
@@ -59,9 +59,9 @@ Source artifact: `analyses/nccc_validation/results/runs/nccc_3c_epcsaft_after_rh
 
 | Case | Method | Thermo | Success | Runtime s | Capture % | Capture error pct-pt | Temperature RMSE K | ePC-SAFT cache hits | ePC-SAFT cache misses | ePC-SAFT state time s | rho-guess hits | rho-guess misses |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 3C | SciPy BVP | ideal Henry | true | 5.95 | 89.40 | -0.10 | 3.94 | 0 | 0 | 0.00 | 0 | 0 |
-| 3C | SciPy BVP | neutral ePC-SAFT | true | 5.92 | 89.70 | 0.20 | 3.97 | 771 | 785 | 0.50 | 783 | 2 |
-| 3C | SciPy BVP | ionic ePC-SAFT | true | 6.15 | 89.83 | 0.33 | 3.97 | 768 | 788 | 0.34 | 786 | 2 |
+| 3C | Collocation BVP | ideal Henry | true | 5.95 | 89.40 | -0.10 | 3.94 | 0 | 0 | 0.00 | 0 | 0 |
+| 3C | Collocation BVP | neutral ePC-SAFT | true | 5.92 | 89.70 | 0.20 | 3.97 | 771 | 785 | 0.50 | 783 | 2 |
+| 3C | Collocation BVP | ionic ePC-SAFT | true | 6.15 | 89.83 | 0.33 | 3.97 | 768 | 788 | 0.34 | 786 | 2 |
 
 The current ePC-SAFT calls remain pressure-specified states. The MEA adapter now
 passes the previous converged molar density as an initial guess for the package's

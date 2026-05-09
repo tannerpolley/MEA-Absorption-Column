@@ -3,7 +3,7 @@
 
         \subsection{Benchmark Implementation}
     
-            To evaluate these methods, a modular steady-state absorber implementation was used to simulate amine-based absorption columns for CO\textsubscript{2} capture using pilot-plant cases from the National Carbon Capture Center (NCCC). The framework accommodates shooting, finite-difference, and SciPy collocation-style BVP solution paths within a single governing-equation set. The reported solver and thermodynamic comparison tables are regenerated from fixed input data and preserve the full run history so that solver messages, residual norms, mesh settings, thermodynamic model identifiers, and case metadata remain traceable to the computational configuration.
+            To evaluate these methods, a modular steady-state absorber implementation was used to simulate amine-based absorption columns for CO\textsubscript{2} capture using pilot-plant cases from the National Carbon Capture Center (NCCC). The framework accommodates shooting, finite-difference, and collocation BVP solution paths within a single governing-equation set. The reported solver and thermodynamic comparison tables are regenerated from fixed input data and preserve the full run history so that solver messages, residual norms, mesh settings, thermodynamic model identifiers, and case metadata remain traceable to the computational configuration.
             
             \begin{figure}
                 \centering
@@ -22,12 +22,12 @@
         \begin{figure}
             \centering
             \includegraphics[width=0.9\textwidth]{figures/case-3c-temperature-validation.png}
-            \caption{Comparison between modeled temperature profiles and experimental pilot plant column data. The profiles correspond to a liquid-to-gas ratio $\frac{L}{G}$ of 4.70, a CO$_2$ loading $\alpha = 0.25$, and an inlet gas CO$_2$ mole fraction $y_{\mathrm{CO_2}} = 0.08$.}
+            \caption{Comparison between modeled temperature profiles and experimental pilot plant column data for campaign Case 3C. The profiles correspond to a liquid-to-gas ratio $\frac{L}{G}$ of 4.72, a CO$_2$ loading $\alpha = 0.25$, and an inlet gas CO$_2$ mole fraction $y_{\mathrm{CO_2}} = 0.093$.}
             \label{fig:temp_profiles}
         \end{figure}
         Case 3C was used as an illustrative benchmark run because it has measured temperature taps and a capture value close to the baseline prediction. The temperature data for this row are shown in Table~\ref{tab:3C-temp-profile}. It is not the only validation evidence: the verified one-bed C dataset covers all seven C cases.
         \input{tables/case_3c_temperature_profile}
-        The temperature profiles of the solved column are useful validation evidence because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as a representative profile, where the predicted \% of $\COtwo$ captured by the model is $\left(89.33\% \:\:\text{vs}\:\:89.50\%\right)$ for the pilot-plant value. The broader benchmark reports aggregate capture and temperature metrics across all verified one-bed C cases, which makes the figure a useful example rather than the sole basis for the validation claim.
+        The temperature profiles of the solved column are useful validation evidence because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as a representative profile, where the Henry-law lane predicts $\SI{88.33}{\percent}$ capture and the neutral ePC-SAFT lane predicts $\SI{88.56}{\percent}$ capture against the $\SI{89.50}{\percent}$ pilot-plant value. The broader benchmark reports aggregate capture and temperature metrics across all verified one-bed C cases, which makes the figure a useful example rather than the sole basis for the validation claim.
 
         \begin{figure}
             \centering
@@ -36,16 +36,16 @@
             \label{fig:c-case-thermo-benchmark}
         \end{figure}
 
-        Figure~\ref{fig:c-case-thermo-benchmark} expands the validation from one representative case to all seven one-bed C cases in the benchmark dataset. The Henry-law and neutral ePC-SAFT lanes both converged for all seven cases. Their aggregate capture errors were similar in this benchmark, while the neutral ePC-SAFT lane required a longer median runtime because the vapor- and liquid-side fugacity coefficients are computed through the ePC-SAFT equation-of-state package. The important result is that the added EOS physics did not make the column benchmark impractically slow: the ePC-SAFT lane remained in the tens-of-seconds range for the one-bed cases. This supports its use as a middle-ground thermodynamic option when the Henry-law closure is considered too idealized but a fully activity-coefficient or electrolyte-reactive recalibration would be too costly or over-parameterized for the intended benchmark.
+        Figure~\ref{fig:c-case-thermo-benchmark} expands the validation from one representative case to all seven one-bed C cases in the corrected campaign-input benchmark dataset. The Henry-law and neutral ePC-SAFT lanes both converged for all seven cases and kept absolute capture error below ten percentage points. Their aggregate capture errors were similar, with mean absolute capture errors of 4.70 percentage points for Henry-law closure and 4.66 percentage points for neutral ePC-SAFT. The neutral ePC-SAFT lane required a longer median runtime because the vapor- and liquid-side fugacity coefficients are computed through the ePC-SAFT equation-of-state package, but the median runtime remained \SI{14.81}{s} compared with \SI{12.21}{s} for Henry-law closure. This supports its use as a middle-ground thermodynamic option when the Henry-law closure is considered too idealized but a fully activity-coefficient or electrolyte-reactive recalibration would be too costly or over-parameterized for the intended benchmark.
 
         \begin{figure}
             \centering
-            \includegraphics[width=0.90\textwidth]{figures/case-c-temperature-overlay.pdf}
-            \caption{Temperature-profile overlays for selected one-bed NCCC C cases with measured taps. Case 3C is retained as the anchor validation profile, and Case 6C provides an additional operating point included in the manuscript figure. Markers are measured liquid-temperature taps; model curves show the Henry-law and neutral ePC-SAFT thermodynamic lanes.}
+            \includegraphics[width=0.90\textwidth]{figures/case-c-temperature-overlay.png}
+            \caption{Temperature-profile overlays for all seven one-bed NCCC C cases with corrected campaign inputs. Markers are measured liquid-temperature taps; model curves show the Henry-law and neutral ePC-SAFT thermodynamic lanes.}
             \label{fig:generated-temperature-profiles}
         \end{figure}
 
-        The temperature profiles in Figure~\ref{fig:generated-temperature-profiles} are used as supporting validation evidence because they test the coupled mass-transfer and energy-balance response, not only the outlet capture value. The figure is intentionally limited to cases that support the central benchmark argument; broader sensitivity checks are retained in the analysis artifacts rather than added as manuscript figures.
+        The temperature profiles in Figure~\ref{fig:generated-temperature-profiles} are used as supporting validation evidence because they test the coupled mass-transfer and energy-balance response, not only the outlet capture value. Across the campaign cases, the neutral ePC-SAFT lane lowers the mean temperature RMSE from \SI{6.88}{K} to \SI{6.13}{K} and improves six of the seven case-level temperature RMSE values. Case 7C remains the most demanding thermal-shape case, but the corrected inputs remove the earlier severe capture-trend artifact and leave a clearer model-development target.
 
         \input{sections/results_benchmark_evidence}
 
@@ -78,14 +78,14 @@
     \subsection{Simulation Method Comparison}
         Figure~\ref{fig:method_comparison_figures} illustrates the temperature profiles obtained using three numerical methods: shooting, collocation, and finite difference. At higher $L/G$ ratios, the temperature bulge shifts toward the bottom of the column, which generally results in well-conditioned differential equations that the shooting method can solve efficiently. When the bulge appears near the top of the column (commonly associated with thermodynamic pinch points), the shooting path becomes less robust because of the stiffness and sensitivity of the coupled ODEs. The shooting path can also be run with stiff IVP integrators for comparison, but those runs require explicit runtime limits because poor boundary guesses can otherwise generate long root-search trajectories.
 
-        The SciPy BVP method provides an adaptive collocation-style alternative for the same governing equations. Its performance depends on the initialization profile, scaling, mesh limits, and tolerance settings, so the benchmark reports those values directly rather than treating robustness as a qualitative observation.
+        The collocation method provides an adaptive boundary-value alternative for the same governing equations. Its performance depends on the initialization profile, scaling, mesh limits, and tolerance settings, so the benchmark reports those values directly rather than treating robustness as a qualitative observation.
 
         The finite difference method offers another solution strategy by solving the spatially discretized equations as one nonlinear algebraic system. Its usefulness must be evaluated from the same metrics as the other methods: convergence success, boundary residuals, validation error, mesh size, and runtime.
 
-        Each method has trade-offs. The shooting method is simple but can be sensitive to stiffness; the SciPy BVP method depends strongly on initialization and mesh controls; and finite difference methods increase the nonlinear system size. Table~\ref{tab:method_comparison_table} should be interpreted alongside the quantitative benchmark outputs.
+        Each method has trade-offs. The shooting method is simple but can be sensitive to stiffness; the collocation method depends strongly on initialization and mesh controls; and finite difference methods increase the nonlinear system size. Table~\ref{tab:method_comparison_table} should be interpreted alongside the quantitative benchmark outputs.
         \input{tables/numerical_method_comparison}
 
-        The benchmark replaces qualitative method rankings with reported statistics. A defensible comparison reports convergence behavior, boundary residuals, validation errors, and runtime across representative cases. On the current evidence, the SciPy \texttt{solve\_bvp} path is the reference workflow for the NCCC one-bed validation because it handles the thermal-pinch case more reliably than the shooting and finite-difference paths. Shooting and finite difference remain useful comparison paths for favorable SRP-style one-bed cases because they expose speed, stiffness, initialization, and nonlinear-system conditioning tradeoffs.
+        The benchmark replaces qualitative method rankings with reported statistics. A defensible comparison reports convergence behavior, boundary residuals, validation errors, and runtime across representative cases. On the current evidence, the collocation path is the reference workflow for the NCCC one-bed validation because it handles the thermal-pinch case more reliably than the shooting and finite-difference paths. Shooting and finite difference remain useful comparison paths for favorable SRP-style one-bed cases because they expose speed, stiffness, initialization, and nonlinear-system conditioning tradeoffs.
 
 
     \subsection{Limitations and Future Work}

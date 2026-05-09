@@ -19,8 +19,8 @@ def main() -> None:
     FIGURES.mkdir(parents=True, exist_ok=True)
     DOC_FIGURES.mkdir(parents=True, exist_ok=True)
 
-    c_results = pd.read_csv(TABLES / "verified_c_case_thermo_benchmark.csv")
-    c_inputs = pd.read_csv(ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_data.csv")
+    c_results, c_input_path = _load_c_case_results()
+    c_inputs = pd.read_csv(c_input_path)
     c_inputs = c_inputs.rename(columns={"Case": "case_id", "CO2 %": "measured_capture_pct"})
     c_aug = _augment_c_cases(c_results, c_inputs)
 
@@ -34,6 +34,20 @@ def main() -> None:
     _write_error_regime_plot(c_aug)
     _write_uncertainty_plot(cal)
     _write_method_contrast_plot(method_contrast)
+
+
+def _load_c_case_results() -> tuple[pd.DataFrame, Path]:
+    campaign_metrics = TABLES / "c_case_campaign_temperature_overlay_metrics.csv"
+    campaign_inputs = ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_campaign_inputs.csv"
+    if campaign_metrics.exists() and campaign_inputs.exists():
+        results = pd.read_csv(campaign_metrics)
+        results["success"] = True
+        results["source_dataset"] = "campaign"
+        return results, campaign_inputs
+
+    results = pd.read_csv(TABLES / "verified_c_case_thermo_benchmark.csv")
+    results["source_dataset"] = "legacy"
+    return results, ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_data.csv"
 
 
 def _augment_c_cases(results: pd.DataFrame, inputs: pd.DataFrame) -> pd.DataFrame:
@@ -68,7 +82,7 @@ def _load_method_contrast() -> pd.DataFrame:
                 {
                     "scenario": "SRP favorable one-bed case",
                     "case_id": "SRP-LG7",
-                    "method": "SciPy BVP",
+                    "method": "Collocation BVP",
                     "thermo_model": "ideal_henry",
                     "success": True,
                     "runtime_s": 7.61,
@@ -104,7 +118,7 @@ def _load_method_contrast() -> pd.DataFrame:
                 {
                     "scenario": "NCCC thermal-pinch case",
                     "case_id": "3C",
-                    "method": "SciPy BVP",
+                    "method": "Collocation BVP",
                     "thermo_model": "ideal_henry",
                     "success": True,
                     "runtime_s": 9.40,
@@ -116,6 +130,8 @@ def _load_method_contrast() -> pd.DataFrame:
             ]
         )
         data.to_csv(path, index=False)
+    data["method"] = data["method"].replace({"SciPy BVP": "Collocation BVP"})
+    data.to_csv(path, index=False)
     data["success"] = data["success"].astype(str).str.lower().eq("true")
     return data
 
@@ -366,7 +382,7 @@ def _write_method_contrast_plot(data: pd.DataFrame) -> None:
     x = np.arange(len(scenarios))
     width = 0.22
     fig, ax = plt.subplots(figsize=(6.2, 2.8), constrained_layout=True)
-    colors = {"Shooting": "#7d3c98", "SciPy BVP": "#1b4f72", "Finite difference": "#b03a2e"}
+    colors = {"Shooting": "#7d3c98", "Collocation BVP": "#1b4f72", "Finite difference": "#b03a2e"}
     for i, method in enumerate(methods):
         vals = []
         labels = []
