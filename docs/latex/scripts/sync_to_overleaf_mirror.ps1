@@ -14,18 +14,7 @@ project. Use -WhatIf to preview the sync without writing to the mirror.
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [string]$MirrorRoot = 'C:\Users\Tanner\Documents\git\LaTeX-Projects\MEA-Absorption-Column-LaTeX',
-    [string[]]$AssetDirectories = @('figures', 'tables', 'sections', 'appendices'),
-    [string[]]$StaleMirrorDirectories = @('benchmark_figures', 'figs', 'Figures', 'thumbnails', 'out', 'builds', 'scripts', 'analyses'),
-    [string[]]$StaleMirrorFiles = @(
-        'main.pdf',
-        'build_main.ps1',
-        'check_main_pdf_fresh.py',
-        'prepare_elsevier_submission.ps1',
-        'sync_latex_figures.ps1',
-        'sync_to_overleaf_mirror.ps1',
-        'benchmark_results_section.tex',
-        'revised_benchmark_results.tex'
-    ),
+    [string[]]$ExcludedSourceEntries = @('scripts', 'builds'),
     [switch]$CleanBuildFiles
 )
 
@@ -84,20 +73,6 @@ function Get-ExactMirrorChildPath {
 
 $latexSourcePath = Resolve-RequiredPath -Path (Join-Path $PSScriptRoot '..') -Label 'LaTeX source folder'
 $mirrorRootPath = Resolve-RequiredPath -Path $MirrorRoot -Label 'Mirror checkout root'
-$buildFileNames = @(
-    'main.abs',
-    'main.aux',
-    'main.bbl',
-    'main.blg',
-    'main.fdb_latexmk',
-    'main.fls',
-    'main.log',
-    'main.out',
-    'main.pdf',
-    'main.synctex.gz',
-    'main.xdv',
-    'builds'
-)
 
 if (-not (Test-Path -LiteralPath (Join-Path $mirrorRootPath '.git'))) {
     throw "Mirror root is not a Git checkout: $mirrorRootPath"
@@ -106,6 +81,10 @@ if (-not (Test-Path -LiteralPath (Join-Path $mirrorRootPath '.git'))) {
 Write-Host "Source LaTeX folder: $latexSourcePath"
 Write-Host "Mirror root: $mirrorRootPath"
 
+$sourceEntries = Get-ChildItem -LiteralPath $latexSourcePath -Force |
+    Where-Object { $_.Name -notin $ExcludedSourceEntries }
+$allowedMirrorNames = @('.git') + @($sourceEntries | ForEach-Object { $_.Name })
+
 $figureSyncScript = Join-Path $latexSourcePath 'scripts\sync_latex_figures.ps1'
 if (Test-Path -LiteralPath $figureSyncScript) {
     if ($PSCmdlet.ShouldProcess($figureSyncScript, 'Refresh LaTeX figures from project outputs')) {
@@ -113,72 +92,64 @@ if (Test-Path -LiteralPath $figureSyncScript) {
     }
 }
 
-$latexFiles = Get-ChildItem -LiteralPath $latexSourcePath -File |
-    Where-Object {
-        $_.Name -notin $buildFileNames -and
-        $_.Extension -in @('.tex', '.bib', '.bst', '.cls', '.sty')
-    }
+foreach ($sourceEntry in $sourceEntries) {
+    $destinationPath = Join-Path $mirrorRootPath $sourceEntry.Name
+    if ($sourceEntry.PSIsContainer) {
+        if ($PSCmdlet.ShouldProcess($destinationPath, "Sync directory $($sourceEntry.FullName)")) {
+            $exactDestination = Get-ExactMirrorChildPath -MirrorRootPath $mirrorRootPath -RelativePath $sourceEntry.Name
+            if ($null -ne $exactDestination) {
+                Remove-Item -LiteralPath $exactDestination -Recurse -Force
+            }
+            elseif (Test-Path -LiteralPath $destinationPath) {
+                Remove-Item -LiteralPath $destinationPath -Recurse -Force
+            }
+            New-Item -ItemType Directory -Force -Path $destinationPath | Out-Null
 
-foreach ($file in $latexFiles) {
-    $destination = Join-Path $mirrorRootPath $file.Name
-    if ($PSCmdlet.ShouldProcess($destination, "Copy $($file.FullName)")) {
-        Copy-Item -LiteralPath $file.FullName -Destination $destination -Force
-    }
-}
+            $assetFiles = Get-ChildItem -LiteralPath $sourceEntry.FullName -Recurse -File -Force
+            foreach ($assetFile in $assetFiles) {
+                if ($assetFile.Name.EndsWith('.synctex.gz', [System.StringComparison]::OrdinalIgnoreCase)) {
+                    continue
+                }
+                if ($assetFile.Extension -in @('.abs', '.aux', '.bbl', '.blg', '.fdb_latexmk', '.fls', '.log', '.out', '.xdv')) {
+                    continue
+                }
 
-foreach ($assetDirectory in $AssetDirectories) {
-    $sourceAssetPath = Join-Path $latexSourcePath $assetDirectory
-    if (-not (Test-Path -LiteralPath $sourceAssetPath)) {
-        Write-Warning "Skipping missing asset directory: $sourceAssetPath"
-        continue
-    }
-
-    $destinationAssetPath = Join-Path $mirrorRootPath $assetDirectory
-    if ($PSCmdlet.ShouldProcess($destinationAssetPath, "Sync asset directory $sourceAssetPath")) {
-        if (Test-Path -LiteralPath $destinationAssetPath) {
-            Remove-Item -LiteralPath $destinationAssetPath -Recurse -Force
+                $relativePath = Get-PortableRelativePath -BasePath $sourceEntry.FullName -TargetPath $assetFile.FullName
+                $assetDestinationPath = Join-Path $destinationPath $relativePath
+                $destinationParent = Split-Path -Parent $assetDestinationPath
+                if (-not (Test-Path -LiteralPath $destinationParent)) {
+                    New-Item -ItemType Directory -Force -Path $destinationParent | Out-Null
+                }
+                Copy-Item -LiteralPath $assetFile.FullName -Destination $assetDestinationPath -Force
+            }
         }
-        New-Item -ItemType Directory -Force -Path $destinationAssetPath | Out-Null
-
-        $assetFiles = Get-ChildItem -LiteralPath $sourceAssetPath -Recurse -File -Force
-        foreach ($assetFile in $assetFiles) {
-            if ($assetFile.Name.EndsWith('.synctex.gz', [System.StringComparison]::OrdinalIgnoreCase)) {
-                continue
-            }
-            if ($assetFile.Extension -in @('.abs', '.aux', '.bbl', '.blg', '.fdb_latexmk', '.fls', '.log', '.out', '.xdv')) {
-                continue
-            }
-
-            $relativePath = Get-PortableRelativePath -BasePath $sourceAssetPath -TargetPath $assetFile.FullName
-            $destinationPath = Join-Path $destinationAssetPath $relativePath
-            $destinationParent = Split-Path -Parent $destinationPath
-            if (-not (Test-Path -LiteralPath $destinationParent)) {
-                New-Item -ItemType Directory -Force -Path $destinationParent | Out-Null
-            }
-            Copy-Item -LiteralPath $assetFile.FullName -Destination $destinationPath -Force
+    }
+    else {
+        if ($PSCmdlet.ShouldProcess($destinationPath, "Copy $($sourceEntry.FullName)")) {
+            Copy-Item -LiteralPath $sourceEntry.FullName -Destination $destinationPath -Force
         }
     }
 }
 
-foreach ($staleDirectory in $StaleMirrorDirectories) {
-    $stalePath = Get-ExactMirrorChildPath -MirrorRootPath $mirrorRootPath -RelativePath $staleDirectory
-    if ($null -eq $stalePath) {
+foreach ($mirrorEntry in Get-ChildItem -LiteralPath $mirrorRootPath -Force) {
+    if ($allowedMirrorNames -ccontains $mirrorEntry.Name) {
         continue
     }
 
-    if ($PSCmdlet.ShouldProcess($stalePath, 'Remove stale mirror directory')) {
-        Remove-Item -LiteralPath $stalePath -Recurse -Force
+    if ($PSCmdlet.ShouldProcess($mirrorEntry.FullName, 'Remove mirror item outside docs\latex projection')) {
+        Remove-Item -LiteralPath $mirrorEntry.FullName -Recurse -Force
     }
 }
 
-foreach ($staleFile in $StaleMirrorFiles) {
-    $stalePath = Join-Path $mirrorRootPath $staleFile
-    if (-not (Test-Path -LiteralPath $stalePath)) {
-        continue
-    }
-
-    if ($PSCmdlet.ShouldProcess($stalePath, 'Remove stale mirror file')) {
-        Remove-Item -LiteralPath $stalePath -Force
+if (-not $WhatIfPreference) {
+    foreach ($allowedName in $allowedMirrorNames) {
+        if ($allowedName -eq '.git') {
+            continue
+        }
+        $exactPath = Get-ExactMirrorChildPath -MirrorRootPath $mirrorRootPath -RelativePath $allowedName
+        if ($null -eq $exactPath) {
+            throw "Expected mirror item missing after sync: $allowedName"
+        }
     }
 }
 
