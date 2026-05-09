@@ -104,6 +104,40 @@
             \subsubsection*{Local Polynomial Representation}
                 Instead of integrating from one end of the column to the other, collocation represents each state variable with piecewise polynomial functions over the mesh intervals. Within each interval, the polynomial derivative is forced to match the governing-equation residual at selected internal points. The boundary conditions are enforced at the same time. This turns the two-point BVP into one coupled nonlinear algebraic problem over the whole column. The key difference from shooting is that both column ends influence the solution at once, so the method does not depend on guessing one boundary and propagating that guess through the full packed height.
 
+            \subsubsection*{Collocation Equations}
+                Let the mesh be $0=z_0<z_1<\cdots<z_N=H$. On interval $[z_j,z_{j+1}]$, the state is approximated by a local polynomial $\mathbf{p}_j(z)$:
+                \begin{align}
+                    \mathbf{y}(z) &\approx \mathbf{p}_j(z),
+                    \qquad z_j \le z \le z_{j+1}
+                    && \left(\text{component units of }\mathbf{y}\right).
+                \end{align}
+                At each collocation point $z_{j,q}$ inside the interval, the polynomial derivative is constrained to match the absorber model:
+                \begin{align}
+                    \mathbf{p}'_j(z_{j,q})
+                    -\mathbf{f}\left(z_{j,q},\mathbf{p}_j(z_{j,q})\right)
+                    &= \mathbf{0},
+                    \qquad q=1,\ldots,s
+                    && \left(\text{component units of }\mathbf{y}\,\unit{m^{-1}}\right).
+                \end{align}
+                Neighboring interval polynomials must also meet at the mesh nodes,
+                \begin{align}
+                    \mathbf{p}_{j-1}(z_j)-\mathbf{p}_{j}(z_j)
+                    &=\mathbf{0},
+                    \qquad j=1,\ldots,N-1
+                    && \left(\text{component units of }\mathbf{y}\right),
+                \end{align}
+                while the boundary conditions close the system:
+                \begin{align}
+                    \mathbf{B}\left(\mathbf{p}_0(0),\mathbf{p}_{N-1}(H)\right)
+                    &= \mathbf{0}
+                    && \left(\text{boundary residual units}\right).
+                \end{align}
+                Collecting the polynomial coefficients and mesh-state values into $\mathbf{U}$ gives the nonlinear algebraic problem solved by the collocation routine:
+                \begin{align}
+                    \mathbf{R}(\mathbf{U}) &= \mathbf{0}
+                    && \left(\text{scaled residual units}\right).
+                \end{align}
+
             \subsubsection*{Nonlinear Iteration and Residual Control}
                 The coupled algebraic system is solved iteratively. At each iteration, the model evaluates governing-equation residuals, boundary residuals, and the scaling used to put variables on comparable magnitudes. The solver then updates the mesh-state values until the polynomial profile better satisfies both the differential equations and the boundary conditions. For this absorber model, one residual evaluation is not cheap: each axial point requires chemical-equilibrium, thermodynamic driving-force, transport-property, enhancement-factor, and flux calculations. For that reason, the benchmark records more than a success flag. It reports residual norm, boundary residual, runtime, mesh size, and solver message.
 

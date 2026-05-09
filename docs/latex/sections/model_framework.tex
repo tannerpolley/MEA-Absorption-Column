@@ -124,15 +124,7 @@
                 The parameters used to determine the Henry's Law expression for $\COtwo$ in the liquid mixture are tuned to capture the main mixture interactions and are fitted with speciation data. This baseline remains less rigorous than an e-NRTL activity-coefficient model \cite{Zhang2011} or an ePC-SAFT equation-of-state model, but it is also simpler and more stable when the benchmark needs to run many cases. The ePC-SAFT calculation is introduced as a comparison model, not as a claim that it is faster than Henry's Law or that it replaces the chemical-equilibrium model.
 
                 \subsubsection*{ePC-SAFT fugacity-coefficient calculation}
-                The ePC-SAFT calculation is used here as a residual-Helmholtz equation of state for the fugacity coefficient of $\COtwo$, while the absorber chemistry remains the concentration-based calculation described above. For the liquid phase, the local MEA electrolyte state activates the ionic terms. For the vapor phase, the same ePC-SAFT machinery is used but the electrolyte terms vanish because the vapor composition contains only neutral species. For each phase state $(T,P,\mathbf{x})$, the equation of state solves for the phase density and evaluates the residual Helmholtz energy as the sum of neutral, association, and electrolyte contributions \cite{Gross2001,Cameretti2005,Bulow2019,Bulow2020,Bulow2021a,Figiel2025}:
-                \begin{equation}
-                    \tilde{a}^{res} =
-                    \tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}
-                    +\tilde{a}^{DH}+\tilde{a}^{Born}.
-                    \qquad \text{dimensionless}
-                    \label{eq:epcsaft-ares}
-                \end{equation}
-                The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, the association term accounts for site-specific association such as hydrogen bonding, the Debye--Huckel term accounts for long-range ionic screening, and the Born term accounts for ion-solvation work through the selected relative-permittivity and Born-diameter rules. The selected paper-facing configuration uses Debye--Huckel, fitted Born diameters, solvation-shell correction (SSM), dielectric saturation (DS), the empirical relative-permittivity rule, and numerical Born chemical-potential derivatives. The main contribution equations are summarized as
+                The ePC-SAFT calculation is used here as a residual-Helmholtz equation of state for the fugacity coefficient of $\COtwo$, while the absorber chemistry remains the concentration-based calculation described above. For the liquid phase, the local MEA electrolyte state activates the ionic terms. For the vapor phase, the same ePC-SAFT machinery is used but the electrolyte terms vanish because the vapor composition contains only neutral species. For each phase state $(T,P,\mathbf{x})$, the equation of state solves for the phase density and evaluates the residual Helmholtz energy as $\tilde{a}^{res}=\tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}+\tilde{a}^{DH}+\tilde{a}^{Born}$. The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, the association term accounts for site-specific association such as hydrogen bonding, the Debye--Huckel term accounts for long-range ionic screening, and the Born term accounts for ion-solvation work through the selected relative-permittivity and Born-diameter rules. The selected paper-facing configuration uses Debye--Huckel, fitted Born diameters, solvation-shell correction (SSM), dielectric saturation (DS), the empirical relative-permittivity rule, and numerical Born chemical-potential derivatives. The five residual-Helmholtz contribution terms evaluated by the ePC-SAFT calculation are summarized as
                 \begin{align}
                     \tilde{a}^{hc}
                     &= \bar{m}\tilde{a}^{hs}
@@ -146,51 +138,10 @@
                     &= \sum_i x_i\sum_{A_i}
                     \left(\ln X^{A_i}-\frac{X^{A_i}}{2}+\frac{1}{2}\right)
                     && \text{dimensionless}\label{eq:epcsaft-assoc}\\
-                    X^{A_i}
-                    &= \left[1+\sum_j\sum_{B_j}\rho x_j X^{B_j}\Delta^{A_iB_j}\right]^{-1}
-                    && \text{dimensionless}\label{eq:epcsaft-assoc-site}\\
-                    \Delta^{A_iB_j}
-                    &= d_{ij}^{3}g_{ij}^{hs}
-                    \left[\exp\left(\frac{\epsilon^{A_iB_j}}{k_BT}\right)-1\right]\kappa^{A_iB_j}
-                    && \left(\unit{m^3}\right)\label{eq:epcsaft-assoc-strength}.
-                \end{align}
-                In these equations, $\bar{m}=\sum_i x_i m_i$ is the mean segment number, $\rho$ is molar density, $\eta$ is the packing fraction, $g_{ij}^{hs}$ is the hard-sphere contact value, $X^{A_i}$ is the fraction of association sites not bonded at site $A_i$, and $\Delta^{A_iB_j}$ is the association strength. All quantities are evaluated at the local phase state $(T,P,\mathbf{x})$ after the density solve.
-
-                The Debye--Huckel screening contribution is written with the inverse Debye length $\kappa$ and the finite-ion-size correction $\chi_i$:
-                \begin{align}
-                    \kappa
-                    &= \sqrt{\frac{\rho e^{2}}{k_{B}T\varepsilon_{0}\varepsilon_{r}}
-                    \sum_{j}x_{j}z_{j}^{2}}
-                    && \left(\unit{m^{-1}}\right)\label{eq:epcsaft-kappa}\\
-                    \chi_i
-                    &=\frac{3}{(\kappa d_i)^3}
-                    \left[\frac{3}{2}+\ln(1+\kappa d_i)-2(1+\kappa d_i)
-                    +\frac{1}{2}(1+\kappa d_i)^2\right]
-                    && \text{dimensionless}\label{eq:epcsaft-chi}\\
                     \tilde{a}^{DH}
                     &=-\frac{\kappa e^{2}}{12\pi\varepsilon_{0}\varepsilon_{r}k_{B}T}
                     \sum_i x_i z_i^2 \chi_i
-                    && \text{dimensionless}\label{eq:epcsaft-dh}.
-                \end{align}
-                The Born contribution uses fitted Born diameters for the ionic species and activates both SSM and DS in the selected configuration:
-                \begin{align}
-                    d_i^{Born}
-                    &=
-                    \begin{cases}
-                        d_i, & \text{default Born-diameter rule},\\
-                        d_i^{Born,\mathrm{fit}}, & \text{fitted Born-diameter rule},
-                    \end{cases}
-                    && \left(\unit{m}\right)\label{eq:epcsaft-dborn}\\
-                    f_{mix} &= \sum_k x_k f_k
-                    && \text{dimensionless}\label{eq:epcsaft-fmix}\\
-                    \Delta d_i &= \frac{f_{mix}-1}{|z_i|}d_i^{Born}
-                    && \left(\unit{m}\right)\label{eq:epcsaft-delta-d}\\
-                    D_{i,Born}^{bulk} &= \frac{1}{d_i^{Born}}
-                    && \left(\unit{m^{-1}}\right)\label{eq:epcsaft-dterm-born}\\
-                    D_{i,SSM}^{bulk} &= \frac{1}{d_i^{Born}+\Delta d_i}-\frac{1}{d_i^{Born}}
-                    && \left(\unit{m^{-1}}\right)\label{eq:epcsaft-dterm-ssm}\\
-                    D_{i,DS}^{ion} &= \frac{1}{d_i^{Born}}-\frac{1}{d_i^{Born}+\Delta d_i}
-                    && \left(\unit{m^{-1}}\right)\label{eq:epcsaft-dterm-ds}\\
+                    && \text{dimensionless}\label{eq:epcsaft-dh}\\
                     \tilde{a}^{Born}
                     &=
                     -\frac{e^2}{4\pi\varepsilon_0 k_B T}
@@ -198,31 +149,11 @@
                     \sum_{\delta\in\mathcal{D}}
                     \left(1-\frac{1}{\varepsilon_{r,m_\delta}}\right)
                     D_{i,\delta}^{(m_\delta)}
-                    && \text{dimensionless}\label{eq:epcsaft-born}\\
-                    \mathcal{D}
-                    &= \{\mathrm{Born}\}\cup\mathcal{D}_{add},
-                    \qquad
-                    \mathcal{D}_{add}\subseteq\{\mathrm{SSM},\mathrm{DS}\}
-                    && \text{dimensionless}\label{eq:epcsaft-born-set}.
+                    && \text{dimensionless}\label{eq:epcsaft-born}.
                 \end{align}
-                Here $e$ is the elementary charge, $k_B$ is Boltzmann's constant, $\varepsilon_0$ is the vacuum permittivity, $\varepsilon_r$ is the relative permittivity, $z_i$ is the ion charge number, and $d_i$ is the effective ion diameter. The selected run sets $\mathcal{D}_{add}=\{\mathrm{SSM},\mathrm{DS}\}$ and uses the empirical relative-permittivity rule from the configured ePC-SAFT dataset.
+                Here $\bar{m}$ is the mean segment number, $\rho$ is molar density, $\eta$ is the packing fraction, $X^{A_i}$ is the fraction of nonbonded association sites, $\kappa$ and $\chi_i$ are the Debye--Huckel screening quantities, and $D_{i,\delta}^{(m_\delta)}$ collects the Born, SSM, and DS diameter terms. The auxiliary definitions, derivative expressions, and mixing rules follow the cited SAFT-family and ePC-SAFT formulations \cite{Gross2001,Cameretti2005,Bulow2019,Bulow2020,Bulow2021a,Figiel2025}. They are not repeated here because the present paper uses ePC-SAFT as a thermodynamic closure inside the absorber benchmark rather than deriving the equation of state itself. All quantities are evaluated at the local phase state $(T,P,\mathbf{x})$ after the density solve.
 
-                The residual Helmholtz energy gives the compressibility factor and residual chemical potential,
-                \begin{align}
-                    Z &= 1+\rho\left(\frac{\partial \tilde{a}^{res}}{\partial \rho}\right)_{T,\mathbf{x}}
-                    && \text{dimensionless}\\
-                    \tilde{\mu}_k^{res} &= \tilde{a}^{res}+(Z-1)
-                    +\left(\frac{\partial \tilde{a}^{res}}{\partial x_k}\right)_{T,\rho,\mathbf{x}_{j\ne k}}
-                    -\sum_j x_j
-                    \left(\frac{\partial \tilde{a}^{res}}{\partial x_j}\right)_{T,\rho,\mathbf{x}_{i\ne j}}
-                    && \text{dimensionless},
-                \end{align}
-                and the fugacity coefficient follows as
-                \begin{equation}
-                    \ln\phi_k=\tilde{\mu}_k^{res}-\ln Z.
-                    \qquad \text{dimensionless}
-                    \label{eq:epcsaft-phi}
-                \end{equation}
+                The residual Helmholtz energy is then differentiated by the ePC-SAFT implementation to obtain residual chemical potentials, compressibility factors, and fugacity coefficients.
                 The ePC-SAFT sensitivity calculation then uses separate vapor- and liquid-side fugacity coefficients,
                 \begin{align}
                     f_{\COtwo}^{\vap} &= y_{\COtwo}\phi_{\COtwo}^{\vap}P
