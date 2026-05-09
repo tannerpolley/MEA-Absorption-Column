@@ -43,18 +43,18 @@
         \input{tables/calibration_holdout_screen}
 
     \subsection{Solver-Method Contrast}
-        The solver comparison is reported as a method-behavior benchmark rather than as a claim that every method is equally useful for every absorber case. Figure~\ref{fig:method-case-solver-contrast} contrasts a favorable SRP-style one-bed case with the NCCC 3C thermal-pinch case. The shooting and finite-difference paths can produce useful comparison results under favorable conditions, while the collocation path is the more reliable reference workflow for the NCCC temperature-profile case.
+        The solver comparison is reported as a method-behavior benchmark rather than as a claim that every method is equally useful for every absorber case. Figure~\ref{fig:method-case-solver-contrast} contrasts a favorable SRP-style one-bed case with the NCCC 3C thermal-pinch case. The favorable case shows that shooting, collocation, and finite difference can all produce useful comparison runs, while the NCCC 3C case shows why collocation is retained as the reference workflow for measured temperature-profile validation.
 
-        Table~\ref{tab:method-case-contrast} gives the corresponding method results. The SRP-style case is included because it shows the shooting and finite-difference implementations on a smoother one-bed operating point. The NCCC 3C case is more discriminating because the measured profile contains a sharper temperature feature, and the initial-value character of shooting and the algebraic stiffness of the finite-difference residual are less forgiving than the collocation BVP formulation.
+        Table~\ref{tab:method-case-contrast} gives the corresponding method results. The SRP-style case is included because it shows the shooting and finite-difference implementations on a smoother one-bed operating point where they remain informative. The NCCC 3C case is more discriminating because the measured profile contains a sharper temperature feature, so the collocation BVP formulation provides the most stable reference evidence for the validation set.
 
         \input{tables/method_case_contrast}
 
         \begin{figure}
             \centering
             \includegraphics[width=0.78\textwidth]{figures/method-case-solver-contrast.pdf}
-            \caption{Runtime and method comparison for representative one-bed cases. The SRP-style case shows shooting and finite difference on a smoother operating point; the NCCC 3C case shows why collocation BVP solution is retained as the reference workflow for the validation set.}
+            \caption{Runtime and method comparison for representative one-bed cases. The SRP-style case demonstrates useful shooting, collocation, and finite-difference comparison runs on a smoother operating point; the NCCC 3C case identifies collocation BVP solution as the reference workflow for measured temperature-profile validation.}
             \label{fig:method-case-solver-contrast}
         \end{figure}
 
     \subsection{Model Adequacy}
-        The model is considered adequate for a validation case when convergence, boundary residuals, capture error, and temperature-profile error are all acceptable for the stated purpose. Under that standard, the present model is best interpreted as a transparent one-bed benchmark and thermodynamic-driving-force sensitivity platform. It provides a stronger basis for comparing solver behavior and thermodynamic assumptions than a single successful case study, while leaving broader predictive calibration as future work.
+        The model is considered adequate for a validation case when convergence, boundary residuals, capture error, and temperature-profile error are all acceptable for the stated purpose. Under that standard, the present model is best interpreted as a transparent one-bed benchmark and thermodynamic-driving-force sensitivity platform. It provides a stronger basis for comparing solver behavior and thermodynamic assumptions than a single successful case study. The remaining limitation is that broader predictive calibration, especially for fully electrolyte-reactive thermodynamics, should be validated as a future extension rather than inferred from the neutral fugacity-coefficient lane.

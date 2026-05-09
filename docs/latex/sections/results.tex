@@ -8,10 +8,10 @@
             \begin{figure}
                 \centering
                 \includegraphics[width=12cm]{figures/temperature-lg.png}
-                \caption{3D surface plot of the temperature profile across the column with varying $\frac{L}{G}$ ratio}\label{fig:3D Temperature}
+                \caption{Qualitative liquid-to-gas-ratio sensitivity of the solved column temperature profile. The moving temperature bulge is used as an implementation check for the coupled mass- and energy-balance response.}\label{fig:3D Temperature}
             \end{figure}
     
-            Figure~\ref{fig:3D Temperature} illustrates the model's expected qualitative behavior when the liquid-to-gas ratio is varied. The temperature bulge moves through the packed height as the driving force and heat-release location change, which provides a useful indicator for whether the coupled mass and energy balances are behaving consistently. The validation does not rely on this figure as quantitative evidence by itself; quantitative claims are instead made from benchmark results that report capture error, temperature RMSE, residual norm, and runtime.
+            Figure~\ref{fig:3D Temperature} illustrates the model's expected qualitative behavior when the liquid-to-gas ratio is varied. The temperature bulge moves through the packed height as the driving force and heat-release location change, which provides a useful check that the coupled mass and energy balances respond coherently to operating conditions. The quantitative validation is then made from regenerated benchmark results that report capture error, temperature RMSE, residual norm, and runtime.
 
         \subsection{NCCC Case Study}
         
@@ -22,17 +22,17 @@
         \begin{figure}
             \centering
             \includegraphics[width=0.9\textwidth]{figures/case-3c-temperature-validation.png}
-            \caption{Comparison between modeled temperature profiles and experimental pilot plant column data for campaign Case 3C. The profiles correspond to a liquid-to-gas ratio $\frac{L}{G}$ of 4.72, a CO$_2$ loading $\alpha = 0.25$, and an inlet gas CO$_2$ mole fraction $y_{\mathrm{CO_2}} = 0.093$.}
+            \caption{Representative Case 3C temperature-profile validation against experimental pilot-plant taps. The corrected campaign input has $\frac{L}{G}=4.72$, $\alpha = 0.25$, and inlet $y_{\mathrm{CO_2}} = 0.093$; both thermodynamic lanes reproduce the measured capture value within approximately one percentage point.}
             \label{fig:temp_profiles}
         \end{figure}
         Case 3C was used as an illustrative benchmark run because it has measured temperature taps and a capture value close to the baseline prediction. The temperature data for this row are shown in Table~\ref{tab:3C-temp-profile}. It is not the only validation evidence: the verified one-bed C dataset covers all seven C cases.
         \input{tables/case_3c_temperature_profile}
-        The temperature profiles of the solved column are useful validation evidence because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as a representative profile, where the Henry-law lane predicts $\SI{88.33}{\percent}$ capture and the neutral ePC-SAFT lane predicts $\SI{88.56}{\percent}$ capture against the $\SI{89.50}{\percent}$ pilot-plant value. The broader benchmark reports aggregate capture and temperature metrics across all verified one-bed C cases, which makes the figure a useful example rather than the sole basis for the validation claim.
+        The temperature profiles of the solved column are useful validation evidence because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as a representative profile, where the Henry-law lane predicts $\SI{88.33}{\percent}$ capture and the neutral ePC-SAFT lane predicts $\SI{88.56}{\percent}$ capture against the $\SI{89.50}{\percent}$ pilot-plant value. The same figure also shows the local benefit of the neutral ePC-SAFT lane for this case, reducing the temperature-profile RMSE from \SI{4.18}{K} to \SI{3.68}{K}. The broader benchmark reports aggregate capture and temperature metrics across all verified one-bed C cases, which makes the figure a useful example rather than the sole basis for the validation claim.
 
         \begin{figure}
             \centering
             \includegraphics[width=0.92\textwidth]{figures/c-case-thermo-benchmark.pdf}
-            \caption{Benchmark comparison for the one-bed NCCC C cases. The left panel reports case-by-case capture error for the Henry-law and neutral ePC-SAFT thermodynamic lanes, and the right panel reports median runtime.}
+            \caption{Benchmark comparison for the corrected one-bed NCCC C cases. Both thermodynamic lanes converge for all seven cases; the left panel reports case-by-case capture error and the right panel reports median runtime.}
             \label{fig:c-case-thermo-benchmark}
         \end{figure}
 
@@ -41,7 +41,7 @@
         \begin{figure}
             \centering
             \includegraphics[width=0.90\textwidth]{figures/case-c-temperature-overlay.png}
-            \caption{Temperature-profile overlays for all seven one-bed NCCC C cases with corrected campaign inputs. Markers are measured liquid-temperature taps; model curves show the Henry-law and neutral ePC-SAFT thermodynamic lanes.}
+            \caption{Temperature-profile overlays for all seven one-bed NCCC C cases with corrected campaign inputs. Markers are measured liquid-temperature taps; model curves show the Henry-law and neutral ePC-SAFT thermodynamic lanes, with neutral ePC-SAFT lowering the mean temperature RMSE across the campaign set.}
             \label{fig:generated-temperature-profiles}
         \end{figure}
 
@@ -71,21 +71,21 @@
                 \caption{Finite difference method}
                 \label{fig:finite_difference}
             \end{subfigure}
-            \caption{Comparison of temperature profiles computed using the shooting method, collocation method, and finite difference method.}
+            \caption{Temperature-profile examples from the shooting, collocation, and finite-difference solution paths. The panels illustrate the common profile shape used for method comparison before the quantitative solver benchmark is applied.}
             \label{fig:method_comparison_figures}
         \end{figure}
 
     \subsection{Simulation Method Comparison}
-        Figure~\ref{fig:method_comparison_figures} illustrates the temperature profiles obtained using three numerical methods: shooting, collocation, and finite difference. At higher $L/G$ ratios, the temperature bulge shifts toward the bottom of the column, which generally results in well-conditioned differential equations that the shooting method can solve efficiently. When the bulge appears near the top of the column (commonly associated with thermodynamic pinch points), the shooting path becomes less robust because of the stiffness and sensitivity of the coupled ODEs. The shooting path can also be run with stiff IVP integrators for comparison, but those runs require explicit runtime limits because poor boundary guesses can otherwise generate long root-search trajectories.
+        Figure~\ref{fig:method_comparison_figures} illustrates the temperature profiles obtained using three numerical methods: shooting, collocation, and finite difference. The panels show that the same governing equations can produce comparable profile families across different numerical formulations, which is useful for separating model behavior from solver behavior. At higher $L/G$ ratios, the temperature bulge shifts toward the bottom of the column and the shooting method can be an efficient comparison path; near thermodynamic pinch conditions, the collocation formulation is more reliable because it solves the boundary-value problem directly with mesh and residual controls.
 
         The collocation method provides an adaptive boundary-value alternative for the same governing equations. Its performance depends on the initialization profile, scaling, mesh limits, and tolerance settings, so the benchmark reports those values directly rather than treating robustness as a qualitative observation.
 
         The finite difference method offers another solution strategy by solving the spatially discretized equations as one nonlinear algebraic system. Its usefulness must be evaluated from the same metrics as the other methods: convergence success, boundary residuals, validation error, mesh size, and runtime.
 
-        Each method has trade-offs. The shooting method is simple but can be sensitive to stiffness; the collocation method depends strongly on initialization and mesh controls; and finite difference methods increase the nonlinear system size. Table~\ref{tab:method_comparison_table} should be interpreted alongside the quantitative benchmark outputs.
+        Each method has a useful role in the benchmark. The shooting method is the simplest and fastest diagnostic path on favorable cases, the collocation method is the reference workflow for the measured NCCC temperature-profile cases, and finite difference provides a transparent algebraic discretization for comparison. Table~\ref{tab:method_comparison_table} should be interpreted alongside the quantitative benchmark outputs.
         \input{tables/numerical_method_comparison}
 
-        The benchmark replaces qualitative method rankings with reported statistics. A defensible comparison reports convergence behavior, boundary residuals, validation errors, and runtime across representative cases. On the current evidence, the collocation path is the reference workflow for the NCCC one-bed validation because it handles the thermal-pinch case more reliably than the shooting and finite-difference paths. Shooting and finite difference remain useful comparison paths for favorable SRP-style one-bed cases because they expose speed, stiffness, initialization, and nonlinear-system conditioning tradeoffs.
+        The benchmark replaces qualitative method rankings with reported statistics. A defensible comparison reports convergence behavior, boundary residuals, validation errors, and runtime across representative cases. On the current evidence, the collocation path is the reference workflow for the NCCC one-bed validation because it gives the most consistent capture and temperature-profile evidence for the thermal-pinch case. Shooting and finite difference remain useful comparison paths for favorable SRP-style one-bed cases because they expose speed, stiffness, initialization, and nonlinear-system conditioning tradeoffs.
 
 
     \subsection{Limitations and Future Work}
