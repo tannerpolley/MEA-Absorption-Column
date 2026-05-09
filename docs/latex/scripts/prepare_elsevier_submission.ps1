@@ -5,11 +5,12 @@ Create a flat Elsevier Editorial Manager LaTeX source package.
 .DESCRIPTION
 Elsevier's LaTeX instructions state that Editorial Manager cannot process
 LaTeX submissions that rely on subfolders. This script keeps the repository
-source organized, but writes a flat copy under docs\latex\out for upload.
+source organized, but writes a flat copy under docs\latex\builds for upload.
 
-The copied TeX files rewrite figures/<name>, tables/<name>, and sections/<name>
-references to bare filenames. Referenced figure files, table .tex files, and
-section .tex files are copied to the same folder as main.tex.
+The copied TeX files rewrite figures/<name>, tables/<name>, sections/<name>,
+and appendices/<name> references to bare filenames. Referenced figure files,
+table .tex files, section .tex files, and appendix .tex files are copied to the
+same folder as main.tex.
 #>
 
 [CmdletBinding()]
@@ -25,7 +26,7 @@ if ([string]::IsNullOrWhiteSpace($scriptRoot)) {
     $scriptRoot = Split-Path -Parent $PSCommandPath
 }
 if ([string]::IsNullOrWhiteSpace($OutputRoot)) {
-    $OutputRoot = Join-Path $scriptRoot 'out\elsevier_submission_flat'
+    $OutputRoot = Join-Path (Split-Path -Parent $scriptRoot) 'builds\elsevier_submission_flat'
 }
 
 function Copy-TextWithFlatFigurePaths {
@@ -38,17 +39,18 @@ function Copy-TextWithFlatFigurePaths {
     $text = $text -replace 'figures/', ''
     $text = $text -replace 'tables/', ''
     $text = $text -replace 'sections/', ''
+    $text = $text -replace 'appendices/', ''
     $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
     [System.IO.File]::WriteAllText($Destination, $text, $utf8NoBom)
 }
 
-$latexRoot = (Resolve-Path -LiteralPath $scriptRoot).Path
-$outRootParent = Join-Path $latexRoot 'out'
+$latexRoot = (Resolve-Path -LiteralPath (Join-Path $scriptRoot '..')).Path
+$buildsRootParent = Join-Path $latexRoot 'builds'
 $fullOutputRoot = [System.IO.Path]::GetFullPath($OutputRoot)
-$fullOutParent = [System.IO.Path]::GetFullPath($outRootParent)
+$fullBuildsParent = [System.IO.Path]::GetFullPath($buildsRootParent)
 
-if (-not $fullOutputRoot.StartsWith($fullOutParent, [System.StringComparison]::OrdinalIgnoreCase)) {
-    throw "OutputRoot must be inside docs\latex\out: $fullOutputRoot"
+if (-not $fullOutputRoot.StartsWith($fullBuildsParent, [System.StringComparison]::OrdinalIgnoreCase)) {
+    throw "OutputRoot must be inside docs\latex\builds: $fullOutputRoot"
 }
 
 if (Test-Path -LiteralPath $fullOutputRoot) {
@@ -58,7 +60,8 @@ New-Item -ItemType Directory -Path $fullOutputRoot | Out-Null
 
 $texFiles = @(
     Get-Item -LiteralPath (Join-Path $latexRoot 'main.tex')
-) + @(Get-ChildItem -LiteralPath (Join-Path $latexRoot 'sections') -Filter '*.tex' -File)
+) + @(Get-ChildItem -LiteralPath (Join-Path $latexRoot 'sections') -Filter '*.tex' -File) +
+    @(Get-ChildItem -LiteralPath (Join-Path $latexRoot 'appendices') -Filter '*.tex' -File)
 
 foreach ($texFile in $texFiles) {
     Copy-TextWithFlatFigurePaths `
@@ -73,14 +76,14 @@ foreach ($tableFile in $tableFiles) {
 
 $plainFiles = @(
     'references.bib',
-    'main.pdf'
+    'builds\main.pdf'
 )
 
 foreach ($plainFile in $plainFiles) {
-    Copy-Item -LiteralPath (Join-Path $latexRoot $plainFile) -Destination (Join-Path $fullOutputRoot $plainFile) -Force
+    Copy-Item -LiteralPath (Join-Path $latexRoot $plainFile) -Destination (Join-Path $fullOutputRoot ([System.IO.Path]::GetFileName($plainFile))) -Force
 }
 
-$builtBbl = Join-Path $latexRoot 'out\main.bbl'
+$builtBbl = Join-Path $latexRoot 'builds\main.bbl'
 if (Test-Path -LiteralPath $builtBbl) {
     Copy-Item -LiteralPath $builtBbl -Destination (Join-Path $fullOutputRoot 'main.bbl') -Force
 }

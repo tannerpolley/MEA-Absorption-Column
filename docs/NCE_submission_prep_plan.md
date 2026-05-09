@@ -108,7 +108,7 @@ No Python package API, model behavior, benchmark logic, or research data should 
     - Identify the exact files needed for upload: manuscript source, bibliography, class/style files if required, all figures, final PDF, declaration document, and optional highlights/cover letter.
 
 12. **Build and validate**
-    - Run the repository build command: `docs\latex\build_main.ps1`.
+    - Run the repository build command: `docs\latex\scripts\build_main.ps1`.
     - Use multiple LaTeX/BibTeX passes through the build workflow as needed.
     - Check for:
       - fatal errors
@@ -145,7 +145,7 @@ No Python package API, model behavior, benchmark logic, or research data should 
 - Cleaned final LaTeX manuscript.
 - Cleaned included `.tex` files if needed.
 - Cleaned bibliography files if safe and necessary.
-- Fresh compiled PDF at `docs\latex\main.pdf`.
+- Fresh compiled PDF at `docs\latex\builds\main.pdf`.
 - `NCE_submission_report.md`.
 - Optional `latex_build_notes.md` if the build has non-obvious warnings or workflow notes.
 

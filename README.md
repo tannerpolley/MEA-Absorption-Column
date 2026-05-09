@@ -36,7 +36,7 @@ The sibling LaTeX manuscript checkout lives at `C:\Users\Tanner\Documents\git\La
 The manuscript source lives in `docs\latex`. To refresh the flat Overleaf mirror checkout after manuscript or figure updates, run:
 
 ```powershell
-.\docs\latex\sync_to_overleaf_mirror.ps1 -CleanBuildFiles
+.\docs\latex\scripts\sync_to_overleaf_mirror.ps1 -CleanBuildFiles
 ```
 
 Use `-WhatIf` first when you want to preview the files that would be copied. The sync script intentionally excludes itself so it does not appear in the Overleaf mirror project.
@@ -44,10 +44,10 @@ Use `-WhatIf` first when you want to preview the files that would be copied. The
 To build a fresh local manuscript PDF after editing `docs\latex\main.tex` or included LaTeX inputs, run:
 
 ```powershell
-.\docs\latex\build_main.ps1
+.\docs\latex\scripts\build_main.ps1
 ```
 
-The clickable local artifact is `docs\latex\main.pdf`. The build script also runs a freshness check and can open the PDF directly with `-Open`.
+The clickable local artifact is `docs\latex\builds\main.pdf`. The build script also runs a freshness check and can open the PDF directly with `-Open`.
 
 Set up the project-local Python environment once from the repository root:
 

@@ -3,8 +3,9 @@
 Refresh manuscript figures from project-generated outputs.
 
 .DESCRIPTION
-Copies the figure files referenced by docs\latex\main.tex and
-docs\latex\sections\*.tex into docs\latex\figures. This keeps the LaTeX source
+Copies generated figure files referenced by docs\latex\main.tex and
+docs\latex\sections\*.tex into docs\latex\figures. Static manuscript figures
+already live in docs\latex\figures. This keeps the LaTeX source
 folder self-contained before it is mirrored to Overleaf.
 #>
 
@@ -26,7 +27,7 @@ function Resolve-RequiredPath {
     return (Resolve-Path -LiteralPath $Path).Path
 }
 
-$latexSourcePath = Resolve-RequiredPath -Path $PSScriptRoot -Label 'LaTeX source folder'
+$latexSourcePath = Resolve-RequiredPath -Path (Join-Path $PSScriptRoot '..') -Label 'LaTeX source folder'
 $docsRootPath = Resolve-RequiredPath -Path (Split-Path -Parent $latexSourcePath) -Label 'Docs root'
 $repoRootPath = Resolve-RequiredPath -Path (Split-Path -Parent $docsRootPath) -Label 'Repository root'
 $figureRootPath = Join-Path $latexSourcePath 'figures'
@@ -38,12 +39,6 @@ if (-not (Test-Path -LiteralPath $figureRootPath)) {
 }
 
 $figureCopies = @(
-    @{ Source = 'docs\figs\Model_Framework_Flowchart.png'; Destination = 'model-framework-flowchart.png' },
-    @{ Source = 'docs\figs\Temperature_LG.png'; Destination = 'temperature-lg.png' },
-    @{ Source = 'docs\Figures\Temp_with_data.png'; Destination = 'case-3c-temperature-validation.png' },
-    @{ Source = 'docs\Figures\shooting.png'; Destination = 'method-shooting.png' },
-    @{ Source = 'docs\Figures\collocation.png'; Destination = 'method-collocation.png' },
-    @{ Source = 'docs\Figures\finite_difference.png'; Destination = 'method-finite-difference.png' },
     @{ Source = 'analyses\nccc_validation\results\final\figures\c_case_thermo_benchmark.pdf'; Destination = 'c-case-thermo-benchmark.pdf' },
     @{ Source = 'analyses\nccc_validation\results\final\figures\c_case_temperature_profile_overlay_recommended.pdf'; Destination = 'case-c-temperature-overlay.pdf' },
     @{ Source = 'analyses\nccc_validation\results\final\figures\error_regime_capture_error.pdf'; Destination = 'error-regime-capture-error.pdf' },
@@ -70,6 +65,7 @@ foreach ($copy in $figureCopies) {
 $texFiles = @(
     Join-Path $latexSourcePath 'main.tex'
 ) + @(Get-ChildItem -LiteralPath (Join-Path $latexSourcePath 'sections') -Filter '*.tex' -File |
+    ForEach-Object { $_.FullName }) + @(Get-ChildItem -LiteralPath (Join-Path $latexSourcePath 'appendices') -Filter '*.tex' -File |
     ForEach-Object { $_.FullName })
 
 $missingReferences = New-Object System.Collections.Generic.List[string]

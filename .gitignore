@@ -164,17 +164,7 @@ analyses/**/.cache/
 analyses/**/tmp/
 
 # LaTeX manuscript build outputs
-docs/latex/*.abs
-docs/latex/*.aux
-docs/latex/*.bbl
-docs/latex/*.blg
-docs/latex/*.fdb_latexmk
-docs/latex/*.fls
-docs/latex/*.log
-docs/latex/*.out
-docs/latex/*.pdf
-docs/latex/*.synctex.gz
-docs/latex/*.xdv
+docs/latex/builds/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

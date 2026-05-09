@@ -5,10 +5,11 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$LatexDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$LatexDir = Resolve-Path (Join-Path $ScriptDir '..')
 $RepoRoot = Resolve-Path (Join-Path $LatexDir '..\..')
 $Python = Join-Path $RepoRoot '.venv\Scripts\python.exe'
-$OutDir = Join-Path $LatexDir 'out'
+$OutDir = Join-Path $LatexDir 'builds'
 if (-not (Test-Path -LiteralPath $Python)) {
     $Python = 'python'
 }
@@ -18,33 +19,31 @@ if (-not (Test-Path -LiteralPath $OutDir)) {
 
 Push-Location $LatexDir
 try {
-    & latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=out main.tex
+    & latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=builds main.tex
     if ($LASTEXITCODE -ne 0) {
         throw "latexmk failed with exit code $LASTEXITCODE"
     }
 
     $BuiltPdf = Join-Path $OutDir 'main.pdf'
-    $PdfPath = Join-Path $LatexDir 'main.pdf'
     if (-not (Test-Path -LiteralPath $BuiltPdf)) {
         throw "Expected built PDF not found: $BuiltPdf"
     }
-    Copy-Item -LiteralPath $BuiltPdf -Destination $PdfPath -Force
 
-    & $Python .\check_main_pdf_fresh.py
+    & $Python .\scripts\check_main_pdf_fresh.py
     if ($LASTEXITCODE -ne 0) {
-        throw "main.pdf freshness check failed with exit code $LASTEXITCODE"
+        throw "builds\main.pdf freshness check failed with exit code $LASTEXITCODE"
     }
 
     if ($CleanBuildFiles) {
-        & latexmk -c -outdir=out main.tex
+        & latexmk -c -outdir=builds main.tex
         if ($LASTEXITCODE -ne 0) {
             throw "latexmk cleanup failed with exit code $LASTEXITCODE"
         }
     }
 
-    Write-Host "Fresh PDF: $PdfPath"
+    Write-Host "Fresh PDF: $BuiltPdf"
     if ($Open) {
-        Invoke-Item -LiteralPath $PdfPath
+        Invoke-Item -LiteralPath $BuiltPdf
     }
 }
 finally {

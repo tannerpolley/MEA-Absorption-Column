@@ -9,7 +9,7 @@ This document is the repo-facing handoff map for future agents or forks. It foll
 | `src/mea_absorption_column/` | Package | Reusable absorber model, thermodynamic adapters, solver wrappers, benchmark CLI, packaged reference CSV data, and MEA-local ePC-SAFT parameter files. | No study run outputs should be written here. |
 | `tests/` | Package tests | Fast regression and schema checks for model, benchmark, thermodynamics, and artifact behavior. | Test temp files should use pytest temp folders or ignored `.tmp_local/`. |
 | `analyses/nccc_validation/` | Analysis | Canonical reviewer-response validation workflow for one-bed C cases, SRP-style solver comparisons, dense profile CSVs, and manuscript figures. | Disposable runs under `results/runs/`; curated evidence under `results/final/`. |
-| `docs/latex/` | Manuscript | LaTeX source, bibliography, build scripts, Overleaf mirror sync, and manuscript-local figure copies. | Local LaTeX build products are ignored; `main.pdf` can be regenerated with `build_main.ps1`. |
+| `docs/latex/` | Manuscript | LaTeX source, bibliography, source-only helper scripts, Overleaf mirror sync, appendices, and manuscript-local figure copies. | Local LaTeX build products stay under ignored `builds/`; `builds/main.pdf` can be regenerated with `scripts/build_main.ps1`. |
 | `docs/` | Supporting notes | Reviewer-response notes, robust-convergence status, and this workflow map. | Do not put benchmark run artifacts here. |
 | `scripts/` | Repo tools | Repository-wide utilities or small smoke checks only. | No paper-facing sweep outputs. |
 

@@ -6,11 +6,11 @@ Date checked: 2026-05-08
 
 The manuscript source uses Elsevier's CAS single-column class, `cas-sc`, from the Elsevier CAS template bundle. The working LaTeX project relies on the MiKTeX-installed CAS files for local compilation so the manuscript folder does not carry redundant class/style files.
 
-The working manuscript source keeps figures in `docs/latex/figures` and table source files in `docs/latex/tables` for repository cleanliness. For Editorial Manager source upload, use `docs/latex/prepare_elsevier_submission.ps1` to create a flat copy because Elsevier's LaTeX instructions state that subfolders cannot be processed by EM.
+The working manuscript source keeps figures in `docs/latex/figures`, table source files in `docs/latex/tables`, and appendix source files in `docs/latex/appendices` for repository cleanliness. For Editorial Manager source upload, use `docs/latex/scripts/prepare_elsevier_submission.ps1` to create a flat copy because Elsevier's LaTeX instructions state that subfolders cannot be processed by EM.
 
 The manuscript compiles successfully to a fresh PDF at:
 
-`docs/latex/main.pdf`
+`docs/latex/builds/main.pdf`
 
 ## Standards Checked
 
@@ -41,7 +41,7 @@ The required CAS files `cas-sc.cls`, `cas-common.sty`, and `cas-model2-names.bst
 Build command:
 
 ```powershell
-.\docs\latex\build_main.ps1
+.\docs\latex\scripts\build_main.ps1
 ```
 
 Result: passed.
@@ -49,7 +49,7 @@ Result: passed.
 Freshness check:
 
 ```powershell
-.\.venv\Scripts\python.exe docs\latex\check_main_pdf_fresh.py
+.\.venv\Scripts\python.exe docs\latex\scripts\check_main_pdf_fresh.py
 ```
 
 Result: passed.
@@ -59,7 +59,7 @@ The LaTeX log scan found no fatal errors, undefined citations, undefined referen
 Flat source-package compile command:
 
 ```powershell
-Push-Location .\docs\latex\out\elsevier_submission_flat
+Push-Location .\docs\latex\builds\elsevier_submission_flat
 latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex
 Pop-Location
 ```
@@ -80,7 +80,7 @@ The validation script was updated to check only the live manuscript inputs and t
 
 ## Figure And Source Layout
 
-All manuscript figure references now use the manuscript-local `figures/` folder. The files currently in `docs/latex/figures` are all referenced by `main.tex` or `revised_benchmark_results.tex`.
+All manuscript figure references now use the manuscript-local `figures/` folder. The files currently in `docs/latex/figures` are referenced by `main.tex` or included section files.
 
 All manuscript tables are in standard LaTeX `table` environments with `\caption{...}` and `\label{...}`. Each table is stored as its own `.tex` file under `docs/latex/tables/` and is inserted with `\input{tables/...}`. The included benchmark-results file uses normal subsection organization plus standard table and figure floats.
 
@@ -102,19 +102,18 @@ For initial review, Next journals allow flexible formatting and a single manuscr
 Flat package command:
 
 ```powershell
-.\docs\latex\prepare_elsevier_submission.ps1 -Zip
+.\docs\latex\scripts\prepare_elsevier_submission.ps1 -Zip
 ```
 
-This writes `docs\latex\out\elsevier_submission_flat\` and `docs\latex\out\elsevier_submission_flat.zip`, with figure paths and table inputs rewritten to bare filenames in the copied `.tex` files.
+This writes `docs\latex\builds\elsevier_submission_flat\` and `docs\latex\builds\elsevier_submission_flat.zip`, with figure paths, table inputs, section inputs, and appendix inputs rewritten to bare filenames in the copied `.tex` files.
 The script was verified directly on this machine after fixing its script-root path resolution and text encoding write path for Windows PowerShell compatibility.
 
 Suggested source package contents:
 
 - `main.tex`
-- `revised_benchmark_results.tex`
 - all table `.tex` files from `docs/latex/tables/`
 - `references.bib`
 - all files in `docs/latex/figures/`
-- `main.pdf`
+- `main.pdf` copied from `docs/latex/builds/main.pdf`
 
 The local source package relies on the installed CAS bundle. If a submission portal or coauthor build environment requires every class/style file explicitly, add `cas-sc.cls`, `cas-common.sty`, and `cas-model2-names.bst` from the standard Elsevier CAS bundle to the upload package at submission time.

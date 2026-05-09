@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 
-LATEX_DIR = Path(__file__).resolve().parent
+LATEX_DIR = Path(__file__).resolve().parents[1]
 ROOT = LATEX_DIR.parents[1]
 
 
@@ -15,7 +15,7 @@ def main() -> int:
     tex = LATEX_DIR / args.tex
     pdf = LATEX_DIR / args.pdf
     if not pdf.exists():
-        print(f"Missing {pdf}. Run docs\\latex\\build_main.ps1.")
+        print(f"Missing {pdf}. Run docs\\latex\\scripts\\build_main.ps1.")
         return 1
 
     sources = _latex_sources(tex)
@@ -24,7 +24,7 @@ def main() -> int:
         print(f"{pdf} is stale. Newer inputs:")
         for path in stale_sources:
             print(f"  {path.relative_to(ROOT)}")
-        print(f"Run docs\\latex\\build_main.ps1 to refresh {pdf.name}.")
+        print(f"Run docs\\latex\\scripts\\build_main.ps1 to refresh {args.pdf}.")
         return 1
 
     print(f"{pdf} is current.")
@@ -34,7 +34,7 @@ def main() -> int:
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Check whether a manuscript PDF is newer than its LaTeX inputs.")
     parser.add_argument("--tex", default="main.tex")
-    parser.add_argument("--pdf", default="main.pdf")
+    parser.add_argument("--pdf", default="builds/main.pdf")
     return parser.parse_args()
 
 

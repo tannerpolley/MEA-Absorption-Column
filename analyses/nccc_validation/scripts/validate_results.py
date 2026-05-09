@@ -162,25 +162,22 @@ def _check_referenced_profile_csv_dirs() -> None:
 
 
 def _check_latex_paths() -> None:
-    for tex_name in (
-        "main.tex",
-        "revised_benchmark_results.tex",
-    ):
-        text = (DOCS_LATEX / tex_name).read_text(encoding="utf-8")
+    for tex_path in _tex_dependency_closure(DOCS_LATEX / "main.tex"):
+        text = tex_path.read_text(encoding="utf-8")
         if "docs/benchmark_figures" in text or "benchmark_figures/" in text:
-            raise AssertionError(f"{tex_name} still references docs benchmark figure paths.")
-    for tex_name in ("main.tex",):
-        main = (DOCS_LATEX / tex_name).read_text(encoding="utf-8")
-        for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", main):
+            raise AssertionError(f"{tex_path.relative_to(ROOT)} still references docs benchmark figure paths.")
+        for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", text):
             target = match.group(1)
             if target.startswith("Figures/") or target.startswith("figs/"):
-                raise AssertionError(f"LaTeX figure path uses stale figure directory casing from {tex_name}: {target}")
+                raise AssertionError(
+                    f"LaTeX figure path uses stale figure directory casing from {tex_path.relative_to(ROOT)}: {target}"
+                )
             if not any(path.exists() for path in _latex_graphic_candidates(target)):
-                raise AssertionError(f"LaTeX figure path does not resolve from {tex_name}: {target}")
+                raise AssertionError(f"LaTeX figure path does not resolve from {tex_path.relative_to(ROOT)}: {target}")
 
 
 def _check_latex_pdf_is_current() -> None:
-    _check_one_latex_pdf_is_current("main.tex", "main.pdf", "docs\\latex\\build_main.ps1")
+    _check_one_latex_pdf_is_current("main.tex", "builds/main.pdf", "docs\\latex\\scripts\\build_main.ps1")
 
 
 def _check_one_latex_pdf_is_current(tex_name: str, pdf_name: str, build_command: str) -> None:
