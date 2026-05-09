@@ -326,17 +326,17 @@
                 The enthalpy transferred is the product of molar enthalpy and molar flux of the transferring species ($\COtwo, \HtwoO$). The liquid-side enthalpy source is written as the negative vapor-side transferred enthalpy plus heat transfer so that interphase enthalpy transfer is conservative. There is also heat transfer governed by the overall heat-transfer coefficient $U$, interfacial area $\left(a_e\right)$, cross-sectional area $\left(A\right)$, and the temperature gradient.
                 
         \subsection{Governing Equations}\label{subsec:governing-equations}
-            The governing equations combine the absorption thermodynamics, transport correlations, reaction enhancement, and packed-column balances. The solver advances apparent CO$_2$ and H$_2$O molar flows in each phase, phase enthalpy flows, and column pressure. The differential system can be discretized by IVP shooting, finite differences, or collocation BVP methods; convergence is evaluated from boundary residuals and validation metrics rather than from the nonlinear solver message alone.
+            The governing equations combine the thermodynamic driving force, transport correlations, reaction enhancement, and packed-column balances. The numerical state contains the apparent CO$_2$ and H$_2$O molar flows in each phase, phase enthalpy flows, and pressure. This state vector is used by the shooting, finite-difference, and collocation BVP formulations so that method comparisons are made with the same model equations.
 
             \subsubsection{Material Balance}\label{subsubsec:material-balance}
-                The material balances are accounted for by molar flow $\left(F_{j, i}\right)$ which equate to the interfacial molar flux $\left(N_{j,i}\right)$. The flux moves across the interfacial phase boundary found on the packed elements within the column.
+                Axial material balances equate the change in apparent molar flow to the interfacial flux over the packed height. Only CO$_2$ and H$_2$O are transferred between phases in the differential state:
                 \begin{align}
                     \frac{d F^{\liq}_{ \COtwo}}{d z} &= -N^{\liq}_{ \COtwo} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)\\
                     \frac{d F^{\liq}_{ \HtwoO}}{d z} &= -N^{\liq}_{ \HtwoO} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)\\
                     \frac{d F^{\vap}_{ \COtwo}}{d z} &= N^{\vap}_{ \COtwo} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)\\
                     \frac{d F^{\vap}_{ \HtwoO}}{d z} &= N^{\vap}_{ \HtwoO} && \left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)
                 \end{align}
-                We can assume that the flow rates of $\MEA$, $\Ntwo$ and $\Otwo$ are steady-state through the column since the flux for these species across the phase boundary is negligible. Though flow rates are being accounted for in the differential equations, the more convenient form of mole fractions is used in the model and can be easily converted from flow rates.
+                MEA, N$_2$, and O$_2$ are treated as non-transferring apparent components over the one-bed benchmark. Phase compositions and loading are reconstructed from the solved flow variables:
                 \begin{align}
                     x_i &= \frac{F^{\liq}_{ i}}{F^{\liq}_{ T}}
                     && \text{dimensionless}\\
@@ -347,66 +347,33 @@
                 \end{align}
 
             \subsubsection{Energy Balance}\label{subsubsec:energy-balance}
-                The energy balances are similar to the material balances, but the solved thermal state is phase enthalpy flow. The enthalpy-flow derivatives are governed by the interfacial enthalpy source terms defined above.
+                The thermal state is written as phase enthalpy flow. Interfacial heat and material transfer enter through the enthalpy source terms:
                 \begin{align}
                     \frac{d \dot{H}^{\liq}}{d z} &= \dot{H}^{\liq}_{flux} && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right)\\
                     \frac{d \dot{H}^{\vap}}{d z} &= \dot{H}^{\vap}_{flux} && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right)
                 \end{align}
-                Temperature profiles are obtained algebraically from the phase enthalpies. Equivalent temperature derivatives can be derived from the same enthalpy balances:
-                Start with the overall energy balance based on enthalpy flow:
-                \begin{equation}
-                    \frac{d\dot{H}^j}{dz} = \dot{H}^{j}_{flux}
-                    \qquad \left(\unit{J\,s^{-1}\,m^{-1}}\right)
-                \end{equation}
-                
-                Separate enthalpy flow into molar enthalpy and molar flow rate and use the product-rule:
+                The reported temperature profiles are obtained from the same enthalpy state. For phase $j$, with $\dot{H}^{j}=F^{j}H^{j}$,
                 \begin{align}
-                    \frac{d}{dz}(F^j H^j) &= \dot{H}^{j}_{flux}
-                    && \left(\unit{J\,s^{-1}\,m^{-1}}\right)\\
-                    \frac{dF^j}{dz} H^j + F^j \frac{dH^j}{dz} &= \dot{H}^{j}_{flux}
-                    && \left(\unit{J\,s^{-1}\,m^{-1}}\right)
-                \end{align}
-                
-                Now use chain-rule to convert the enthalpy differential to the temperature differential:
-                \begin{equation}
-                    \frac{dH^j}{dz} = \frac{dH^j}{dT^j} \cdot \frac{dT^j}{dz}
-                    \qquad \left(\unit{J\,mol^{-1}\,m^{-1}}\right)
-                \end{equation}
-                
-                Substitute the expression in and simplify:
-                \begin{align}
-                    F^j \cdot \frac{dH^j}{dT^j} \cdot \frac{dT^j}{dz} &= \dot{H}^{j}_{flux} - \frac{dF^j}{dz} H^j
-                    && \left(\unit{J\,s^{-1}\,m^{-1}}\right)\\
                     \frac{dT^j}{dz} &= \frac{\dot{H}^{j}_{flux} - \frac{dF^j}{dz} H^j}{F^j \cdot \frac{dH^j}{dT^j}}
                     && \left(\unit{K\,m^{-1}}\right)
                 \end{align}
-                
-                The phase-flow derivatives are then substituted:
-                \begin{align}
-                    \frac{dF^j}{dz} &= N_{j, \mathrm{CO}_2} + N_{j, \mathrm{H}_2\mathrm{O}}
-                    && \left(\unit{mol\,s^{-1}\,m^{-1}}\right)\\
-                    \frac{dH_v}{dT_v} &= C^{\mathrm{vap}}_{p}
-                    && \left(\unit{J\,mol^{-1}\,K^{-1}}\right)
-                \end{align}
-                
-                Final equations:
+                Substituting the phase flow derivatives gives the equivalent temperature-gradient form:
                 \begin{align}
                     \frac{dT_l}{dz} &= \frac{\dot{H}^{\mathrm{liq}}_{flux} +  H_l(N^{\mathrm{liq}}_{\mathrm{CO}_2} + N^{\mathrm{liq}}_{\mathrm{H}_2\mathrm{O}})}{F_l \cdot \frac{dH_l}{dT_l}}
                     && \left(\unit{K\,m^{-1}}\right)\\[1em]
                     \frac{dT_v}{dz} &= \frac{\dot{H}^{\mathrm{vap}}_{flux} -  H_v(N^{\mathrm{vap}}_{\mathrm{CO}_2} + N^{\mathrm{vap}}_{\mathrm{H}_2\mathrm{O}})}{F_v \cdot C^{\mathrm{vap}}_{p}}
                     && \left(\unit{K\,m^{-1}}\right)
                 \end{align}
-
-                Since the vapor enthalpy is based on heat capacity, its temperature derivative reduces to the vapor-phase total heat capacity. The liquid enthalpy expression includes additional temperature-dependent terms, so $\frac{dH_l}{dT_l}$ is evaluated from the liquid enthalpy correlation rather than approximated as a simple heat-capacity sum. If the numerical coordinate is normalized by packed height, the right-hand side of each differential equation is multiplied by the total packed height.
+                Since the vapor enthalpy is based on heat capacity, its temperature derivative reduces to $C_p^{\vap}$. The liquid derivative $\frac{dH_l}{dT_l}$ is evaluated from the liquid enthalpy correlation because the liquid enthalpy expression includes additional temperature-dependent terms. If the numerical coordinate is normalized by packed height, each right-hand side is multiplied by the total packed height.
                 
             \subsubsection{Pressure State}
-                Pressure is retained as a state variable so that the same state vector can be used when pressure variation is included. For the one-bed benchmark calculations reported here, the pressure is held constant:
+                Pressure is retained as a state variable so that pressure-drop extensions can use the same state layout. For the one-bed benchmark calculations reported here,
                 \begin{align}
                     \frac{dP}{dz} = 0
                     && \left(\unit{Pa\,m^{-1}}\right).
                 \end{align}
 
-                In summary, the governing equations are
+                The resulting state vector and residual function are
                 \begin{align}
                     \mathbf{y}(z) &=
                     \begin{pmatrix}
@@ -441,10 +408,10 @@
                     \unit{Pa\,m^{-1}}
                     \right)^{\mathsf{T}}.
                 \end{align}
-                These governing equations are solved as a boundary-value problem because the lean liquid stream enters the top of the column and the flue gas enters from the bottom. For the one-bed benchmark, the pressure equation is retained in the numerical state and set to zero axial gradient.
+                Convergence is evaluated from the boundary residuals and validation metrics rather than from the nonlinear solver message alone.
 
             \subsubsection{Boundary Conditions}
-                There is a choice on how to set up the boundary conditions based on the direction of flow and the height coordinate. Since $\COtwo$ absorption is the main concern of the problem, the bottom of the column where the vapor enters is taken as $z = a$, and the liquid enters at $z = b$. In this model, $a = 0$ and $b = H$. With the assumption that only $\COtwo$ and $\HtwoO$ cross the phase boundary, the material boundary conditions contain those two species. The seven differential states require seven boundary conditions: vapor composition, vapor enthalpy, and pressure at the bottom; liquid composition and liquid enthalpy at the top.
+                The equations are solved as a boundary-value problem because the vapor enters at the bottom and the lean liquid enters at the top. Let $a=0$ denote the vapor inlet and $b=H$ denote the liquid inlet. The seven differential states require seven boundary conditions:
                 \begin{align}
                     \boldsymbol{\alpha} &= \left[F^{\vap}_{ \COtwo, a}, F^{\vap}_{ \HtwoO, a}, \dot{H}^{\vap}_{ a}, P_a\right]
                     && \left(
@@ -458,4 +425,20 @@
                     \unit{J\,s^{-1}}
                     \right)^{\mathsf{T}}
                 \end{align}
-
+                or equivalently,
+                \begin{align}
+                    \mathbf{r}(\mathbf{y}) &=
+                    \begin{pmatrix}
+                        \mathbf{y}_{\vap}(a)-\boldsymbol{\alpha}\\
+                        \mathbf{y}_{\liq}(b)-\boldsymbol{\beta}
+                    \end{pmatrix}
+                    =
+                    \mathbf{0}
+                    && \left(
+                    2\times\unit{mol\,s^{-1}},
+                    \unit{J\,s^{-1}},
+                    \unit{Pa},
+                    2\times\unit{mol\,s^{-1}},
+                    \unit{J\,s^{-1}}
+                    \right)^{\mathsf{T}}.
+                \end{align}
