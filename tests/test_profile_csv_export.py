@@ -1,9 +1,11 @@
 import json
 
+import numpy as np
 import pandas as pd
 
 from mea_absorption_column.misc.Save_Run_Outputs import (
     build_profile_coordinate_frame,
+    make_dfs_dict,
     write_profile_csvs,
 )
 
@@ -15,6 +17,21 @@ def test_profile_coordinate_frame_spans_global_staged_height():
     assert frame["Position"].tolist() == [0.0, 0.5, 1.0]
     assert frame["height_m"].tolist() == [0.0, 15.0, 30.0]
     assert frame["bed_id"].tolist() == [1, 2, 3]
+
+
+def test_make_dfs_dict_preserves_solver_row_order(tmp_path):
+    output_dict = {
+        "T": np.array([[320.0, 318.0], [315.0, 316.0]]),
+    }
+    keys_dict = {"T": ["Tl", "Tv"]}
+    coordinate_frame = build_profile_coordinate_frame([0.0, 1.0], total_packed_height_m=10.0, beds=1)
+
+    dfs = make_dfs_dict(output_dict, keys_dict, [0.0, 1.0], coordinate_frame=coordinate_frame)
+    frame = dfs["T"]
+
+    assert frame["Position"].tolist() == [0.0, 1.0]
+    assert frame["Tl"].tolist() == [320.0, 315.0]
+    assert frame["Tv"].tolist() == [318.0, 316.0]
 
 
 def test_write_profile_csvs_writes_one_file_per_legacy_sheet(tmp_path):

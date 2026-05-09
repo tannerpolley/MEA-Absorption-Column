@@ -20,12 +20,12 @@ def make_dfs_dict(output_dict, keys_dict, stages, coordinate_frame=None):
         keys = keys_dict[k1]
         array = output_dict[k1]
         for k2, v in zip(keys, array.T):
-            d[k2] = v[::-1]
-        df = pd.DataFrame(d, index=stages[::-1])
+            d[k2] = v
+        df = pd.DataFrame(d, index=stages)
         df.index.name = 'Position'
         if coordinate_frame is not None:
             df = pd.concat([coordinate_frame.copy(), df.reset_index(drop=True)], axis=1)
-            df.index = stages[::-1]
+            df.index = stages
             df.index.name = 'Position'
         dfs_dict[k1] = df
     return dfs_dict
