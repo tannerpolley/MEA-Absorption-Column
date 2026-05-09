@@ -1,4 +1,15 @@
 case_id,thermo_model,profile_png,clean_profile,caveat
-3C,epcsaft_neutral,analyses/nccc_validation/results/final/profiles/3C/epcsaft_neutral/temperature_profile.png,True,accepted clean validation profile
-3C,ideal_henry,analyses/nccc_validation/results/final/profiles/3C/ideal_henry/temperature_profile.png,True,accepted clean validation profile
-7C,epcsaft_neutral,analyses/nccc_validation/results/final/profiles/7C/epcsaft_neutral/temperature_profile.png,True,converged profile retained as a difficult one-bed ePC-SAFT diagnostic with substantial validation error
+1C,ideal_henry,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/1C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+1C,epcsaft_ionic,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/1C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+2C,ideal_henry,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/2C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+2C,epcsaft_ionic,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/2C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+3C,ideal_henry,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/3C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+3C,epcsaft_ionic,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/3C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+4C,ideal_henry,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/4C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+4C,epcsaft_ionic,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/4C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+5C,ideal_henry,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/5C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+5C,epcsaft_ionic,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/5C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+6C,ideal_henry,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/6C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+6C,epcsaft_ionic,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/6C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+7C,ideal_henry,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/7C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison
+7C,epcsaft_ionic,analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/7C_temperature_overlay.png,True,accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison

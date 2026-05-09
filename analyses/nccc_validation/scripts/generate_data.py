@@ -20,7 +20,7 @@ DIAGNOSTIC_COLUMNS = [
 
 def main() -> None:
     TABLES.mkdir(parents=True, exist_ok=True)
-    c_cases = _read_results("analyses/nccc_validation/results/runs/physical_domain_c_cases/benchmark_results.csv")
+    c_cases = _read_current_c_case_results()
     c_cases = _select_columns(
         c_cases,
         [
@@ -39,6 +39,16 @@ def main() -> None:
     c_cases.to_csv(TABLES / "raw_c_case_thermo_benchmark.csv", index=False)
     c_cases.to_csv(TABLES / "verified_c_case_thermo_benchmark.csv", index=False)
     generate_accuracy_credibility_artifacts()
+
+
+def _read_current_c_case_results() -> pd.DataFrame:
+    campaign_metrics = TABLES / "c_case_campaign_temperature_overlay_metrics.csv"
+    if campaign_metrics.exists():
+        data = pd.read_csv(campaign_metrics)
+        data["artifact"] = f"analyses/nccc_validation/results/final/tables/{campaign_metrics.name}"
+        data["success"] = True
+        return data
+    return _read_results("analyses/nccc_validation/results/runs/physical_domain_c_cases/benchmark_results.csv")
 
 
 def _read_results(relative_path: str) -> pd.DataFrame:

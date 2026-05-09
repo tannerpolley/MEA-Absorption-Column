@@ -9,7 +9,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
 ANALYSIS = Path(__file__).resolve().parents[1]
-RUNS = ANALYSIS / "results" / "runs" / "clean_profile_csvs_c_cases"
+RUNS = ANALYSIS / "results" / "runs" / "c_case_campaign_temperature_gallery"
 FINAL = ANALYSIS / "results" / "final"
 TABLES = FINAL / "tables"
 FIGURES = FINAL / "figures"
@@ -18,7 +18,7 @@ DOC_FIGURES = ROOT / "docs" / "latex" / "figures"
 
 THERMO_STYLE = {
     "ideal_henry": {"color": "#2f5d8c", "label": "ideal Henry"},
-    "epcsaft_neutral": {"color": "#8a4b2b", "label": "neutral ePC-SAFT"},
+    "epcsaft_ionic": {"color": "#8a4b2b", "label": "ePC-SAFT"},
 }
 
 
@@ -37,7 +37,7 @@ def _is_float_like(value) -> bool:
 
 
 def _load_cases() -> pd.DataFrame:
-    return pd.read_csv(ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_data.csv")
+    return pd.read_csv(ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_campaign_inputs.csv")
 
 
 def _load_results() -> pd.DataFrame:
@@ -50,7 +50,7 @@ def _tap_and_profile_metrics(
     case_row: pd.Series,
     run_row: pd.Series,
 ) -> dict:
-    profile_path = RUNS / "profiles" / "C_cases_data" / case_id / "scipy-bvp" / thermo_model / "T.csv"
+    profile_path = RUNS / "profiles" / "C_cases_campaign_inputs" / case_id / "scipy-bvp" / thermo_model / "T.csv"
     profile = pd.read_csv(profile_path)
     tap_columns = _tap_columns(case_row)
     tap_positions = np.array([float(col) for col in tap_columns], dtype=float)
@@ -85,7 +85,7 @@ def _evaluate_all_cases() -> pd.DataFrame:
             (benchmark["case_id"] == case_id)
             & (benchmark["method"] == "scipy-bvp")
             & (benchmark["success"])
-            & (benchmark["thermo_model"].isin(["ideal_henry", "epcsaft_neutral"]))
+            & (benchmark["thermo_model"].isin(["ideal_henry", "epcsaft_ionic"]))
         ]
         for _, run_row in subset.iterrows():
             metric = _tap_and_profile_metrics(case_id, run_row["thermo_model"], case_row, run_row)
@@ -128,8 +128,8 @@ def _plot_recommended_profiles(metrics: pd.DataFrame, recommended_cases: list[st
         tap_positions = np.array([float(col) for col in tap_columns], dtype=float)
         tap_temperatures = case_row[tap_columns].astype(float).to_numpy()
 
-        for thermo_model in ["ideal_henry", "epcsaft_neutral"]:
-            profile_path = RUNS / "profiles" / "C_cases_data" / case_id / "scipy-bvp" / thermo_model / "T.csv"
+        for thermo_model in ["ideal_henry", "epcsaft_ionic"]:
+            profile_path = RUNS / "profiles" / "C_cases_campaign_inputs" / case_id / "scipy-bvp" / thermo_model / "T.csv"
             if not profile_path.exists():
                 continue
             profile = pd.read_csv(profile_path)
@@ -164,7 +164,7 @@ def _plot_recommended_profiles(metrics: pd.DataFrame, recommended_cases: list[st
             benchmark.loc[
                 (benchmark["case_id"] == case_id)
                 & (benchmark["method"] == "scipy-bvp")
-                & (benchmark["thermo_model"] == "epcsaft_neutral")
+                & (benchmark["thermo_model"] == "epcsaft_ionic")
                 & (benchmark["success"]),
             ].iloc[0]["capture_error_pct"]
         )
@@ -229,9 +229,8 @@ def _write_recommendation_report(metrics: pd.DataFrame, recommendations: list[st
         report.append("- None that satisfy the strict criteria.")
     report.append("")
     report.append("## Caveats")
-    report.append("- 4C, 5C, and 7C show materially larger liquid-tap mismatch and/or capture bias than 3C/6C under conservative thresholds.")
-    report.append("- 3C remains the anchor case in existing paper-facing figure flow.")
-    report.append("- 7C has high runtime in the `ideal_henry` row and large capture-metric miss in both lanes.")
+    report.append("- The campaign overlay figure remains the paper-facing profile summary for the 1C--7C set.")
+    report.append("- Case 7C remains the hardest thermal-shape case, while the capture errors stay within the campaign validation gate.")
 
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text("\n".join(report), encoding="utf-8")

@@ -1,7 +1,7 @@
 id: nccc_validation
 title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
-summary: Reviewer-response validation artifacts for one-bed C cases, SRP-style method contrast, ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons, and diagnostic electrolyte ePC-SAFT option checks.
+summary: Reviewer-response validation artifacts for one-bed C cases, SRP-style method contrast, ideal Henry versus full ePC-SAFT fugacity driving-force comparisons, and diagnostic electrolyte ePC-SAFT option checks.
 owner: project
 architecture:
   standard: C:\Users\Tanner\.codex\PROJECT_ARCHITECTURE.md
@@ -79,7 +79,6 @@ runtime:
 external_dependencies:
   epcsaft:
     required_for:
-      - thermo_model: epcsaft_neutral
       - thermo_model: epcsaft_ionic
       - thermo_model: epcsaft_reactive_six
       - thermo_model: epcsaft_reactive_six_concentration
@@ -95,7 +94,7 @@ external_dependencies:
     package_contract: external package is read-only from this repo; adapter, caching, guards, and benchmark scripts live here
     optional_env:
       MEA_EPCSAFT_ROOT: C:\Users\Tanner\Documents\git\ePC-SAFT
-      MEA_EPCSAFT_DATASET_NAME: MEA_CO2_H2O_draft
+      MEA_EPCSAFT_DATASET_NAME: MEA_CO2_H2O_ionic_fit
     repo_owned_datasets:
       - ../../src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_draft
       - ../../src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_ionic_fit

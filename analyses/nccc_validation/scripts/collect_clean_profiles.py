@@ -44,6 +44,7 @@ def generate_temperature_profiles(
 ) -> pd.DataFrame:
     df = load_cases(source)
     stop = len(df) if limit is None else min(len(df), start + limit)
+    output_dir = output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     rows = []
     for run in range(start, stop):
@@ -121,7 +122,7 @@ def collect_existing_profiles(profile_root: Path = PROFILE_ROOT) -> pd.DataFrame
 
 
 def _profile_caveat(case_id: str, thermo_model: str) -> str:
-    if case_id == "7C" and thermo_model == "epcsaft_neutral":
+    if case_id == "7C" and thermo_model == "epcsaft_ionic":
         return "converged profile retained as a difficult one-bed ePC-SAFT diagnostic with substantial validation error"
     return "accepted clean validation profile"
 
@@ -169,7 +170,7 @@ def parse_args(argv=None):
     parser.add_argument("--collect-existing", action="store_true", help="Index existing final profile PNGs without rerunning simulations.")
     parser.add_argument("--source", choices=["c-cases", "nccc"], default="c-cases")
     parser.add_argument("--methods", nargs="+", default=["scipy-bvp"])
-    parser.add_argument("--thermo-models", nargs="+", default=["ideal_henry", "epcsaft_neutral"])
+    parser.add_argument("--thermo-models", nargs="+", default=["ideal_henry", "epcsaft_ionic"])
     parser.add_argument("--output-dir", default=str(PROFILE_ROOT))
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--start", type=int, default=0)

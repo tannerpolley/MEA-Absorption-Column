@@ -8,18 +8,17 @@ Case metrics (best model by tap RMSE):
 
 | case_id   | best_thermo_model   |   capture_error_pct |   tap_rmse_K |   tap_mae_K |   temperature_rmse_K |
 |:----------|:--------------------|--------------------:|-------------:|------------:|---------------------:|
-| 1C        | ideal_henry         |          -18.3171   |      9.4983  |     8.70478 |              5.14805 |
-| 2C        | epcsaft_neutral     |           -5.7647   |     10.1486  |     8.87505 |              3.40379 |
-| 3C        | epcsaft_neutral     |            0.198344 |      9.31583 |     8.39415 |              3.96885 |
-| 4C        | epcsaft_neutral     |            5.65103  |     11.0123  |     8.85475 |              6.84559 |
-| 5C        | epcsaft_neutral     |            3.88148  |     12.2931  |    10.1887  |              9.00242 |
-| 6C        | epcsaft_neutral     |            9.97035  |      8.60296 |     7.17415 |              5.10028 |
-| 7C        | ideal_henry         |           22.073    |      8.31598 |     8.21104 |              7.43757 |
+| 1C        | ideal_henry         |            -2.40997 |      3.47732 |     2.60065 |              3.47732 |
+| 2C        | ideal_henry         |            -7.31668 |      4.1897  |     3.27695 |              4.1897  |
+| 3C        | ideal_henry         |            -1.16784 |      4.17567 |     3.60783 |              4.17567 |
+| 4C        | ideal_henry         |             6.19464 |      6.67206 |     6.25422 |              6.67206 |
+| 5C        | ideal_henry         |            -2.69323 |      7.10759 |     6.85457 |              7.10759 |
+| 6C        | ideal_henry         |             9.31761 |      6.43978 |     6.23133 |              6.43978 |
+| 7C        | ideal_henry         |            -3.76908 |     16.1143  |    14.1038  |             16.1143  |
 
 ## Recommended additional cases beyond 3C
-- 6C
+- 1C, 2C, 4C, 5C, 6C
 
 ## Caveats
-- 4C, 5C, and 7C show materially larger liquid-tap mismatch and/or capture bias than 3C/6C under conservative thresholds.
-- 3C remains the anchor case in existing paper-facing figure flow.
-- 7C has high runtime in the `ideal_henry` row and large capture-metric miss in both lanes.
+- The campaign overlay figure remains the paper-facing profile summary for the 1C--7C set.
+- Case 7C remains the hardest thermal-shape case, while the capture errors stay within the campaign validation gate.

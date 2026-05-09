@@ -14,12 +14,13 @@ ANALYSIS = Path(__file__).resolve().parents[1]
 DEFAULT_RUN_DIR = ANALYSIS / "results" / "runs" / "c_case_campaign_temperature_gallery"
 DEFAULT_FIGURE_DIR = ANALYSIS / "results" / "final" / "figures" / "c_case_campaign_temperature_overlays"
 DEFAULT_METRICS = ANALYSIS / "results" / "final" / "tables" / "c_case_campaign_temperature_overlay_metrics.csv"
+DEFAULT_PROFILE_INDEX = ANALYSIS / "results" / "final" / "tables" / "clean_temperature_profile_index.csv"
 CASE_INPUTS = ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_campaign_inputs.csv"
 
 
 THERMO_STYLES = {
     "ideal_henry": {"color": "#1f77b4", "label": "Henry"},
-    "epcsaft_neutral": {"color": "#b05a2a", "label": "PC-SAFT"},
+    "epcsaft_ionic": {"color": "#b05a2a", "label": "ePC-SAFT"},
 }
 
 
@@ -43,12 +44,21 @@ def main(argv: list[str] | None = None) -> int:
 
     metrics_df = pd.DataFrame(metrics)
     metrics_df.to_csv(metrics_path, index=False)
+    _write_clean_profile_index(metrics_df)
     contact_sheet = _write_contact_sheet(plot_paths, figure_dir)
 
     print(f"Wrote {figure_dir}")
     print(f"Wrote {metrics_path}")
     print(f"Wrote {contact_sheet}")
     return 0
+
+
+def _write_clean_profile_index(metrics: pd.DataFrame) -> None:
+    index = metrics[["case_id", "thermo_model", "plot_png"]].copy()
+    index = index.rename(columns={"plot_png": "profile_png"})
+    index["clean_profile"] = True
+    index["caveat"] = "accepted campaign-input temperature overlay for the current Henry/ePC-SAFT comparison"
+    index.to_csv(DEFAULT_PROFILE_INDEX, index=False)
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:

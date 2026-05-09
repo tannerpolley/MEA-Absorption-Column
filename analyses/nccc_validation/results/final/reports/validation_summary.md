@@ -4,13 +4,13 @@ This report summarizes the curated benchmark artifacts used for the main-branch 
 
 ## Accepted Evidence
 
-- One-bed C-case benchmark: 7 NCCC C cases were retained for both `ideal_henry` and `epcsaft_neutral`, giving 14 accepted campaign-input rows in `results/final/tables/c_case_campaign_temperature_overlay_metrics.csv`.
-- One-bed capture-error MAE is 4.70 percentage points for `ideal_henry` and 4.66 percentage points for `epcsaft_neutral`. Mean temperature RMSE is 6.88 K for `ideal_henry` and 6.13 K for `epcsaft_neutral`.
+- One-bed C-case benchmark: 7 NCCC C cases were retained for both `ideal_henry` and `epcsaft_ionic`, giving 14 accepted campaign-input rows in `results/final/tables/c_case_campaign_temperature_overlay_metrics.csv`.
+- One-bed capture-error MAE is 4.70 percentage points for `ideal_henry` and 4.54 percentage points for `epcsaft_ionic`. Mean temperature RMSE is 6.88 K for `ideal_henry` and 6.91 K for `epcsaft_ionic`.
 - `validation_evidence_registry.csv` and `primary_validation_gate.csv` separate primary validation from diagnostic method-comparison evidence and require the accepted one-bed C rows to use common benchmark settings.
 
 ## Thermodynamic Sensitivity Evidence
 
-The ePC-SAFT comparison is described as a controlled CO2 fugacity-driving-force sensitivity lane. The model changes the CO2 fugacity coefficient while preserving chemistry, transport, enhancement factor, hydraulics, and balances from the baseline model.
+The ePC-SAFT comparison is described as a controlled CO2 fugacity-driving-force sensitivity lane. The selected paper-facing configuration is `2025_Figiel_empirical_fitted_Born_SSM_DS`, which uses the repo-vendored `MEA_CO2_H2O_ionic_fit` dataset with Debye-Huckel, fitted Born diameters, SSM, DS, empirical dielectric mixing, and numerical `mu_born` derivatives. The absorber still preserves the same chemistry, transport, enhancement factor, hydraulics, and balances as the baseline model.
 
 ## Accuracy-Credibility Screens
 
@@ -18,7 +18,7 @@ The ePC-SAFT comparison is described as a controlled CO2 fugacity-driving-force 
 
 ## Clean Profile Gallery
 
-The clean profile gallery is indexed by `results/final/tables/clean_temperature_profile_index.csv`. It currently includes accepted 3C profiles for both thermodynamic lanes and a retained 7C ePC-SAFT diagnostic profile with an explicit caveat.
+The clean profile gallery is indexed by `results/final/tables/clean_temperature_profile_index.csv`. It points to the regenerated 1C--7C campaign-input temperature overlays for both thermodynamic lanes.
 
 ## Solver-Method Contrast
 

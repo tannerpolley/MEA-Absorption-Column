@@ -108,7 +108,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run bounded one-bed C-case root-cause probes.")
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--case-ids", nargs="+", default=["1C", "3C", "7C"])
-    parser.add_argument("--thermo-models", nargs="+", default=["epcsaft_neutral"])
+    parser.add_argument("--thermo-models", nargs="+", default=["epcsaft_ionic"])
     parser.add_argument("--subprocess-timeout-s", type=float, default=60.0)
     return parser.parse_args(argv)
 

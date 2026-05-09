@@ -65,7 +65,7 @@ def _check_c_case_benchmark() -> None:
     if data["case_id"].nunique() != 7:
         raise AssertionError("Expected 7 one-bed C cases.")
     counts = data.groupby("thermo_model")["case_id"].nunique().to_dict()
-    if counts.get("ideal_henry") != 7 or counts.get("epcsaft_neutral") != 7:
+    if counts.get("ideal_henry") != 7 or counts.get("epcsaft_ionic") != 7:
         raise AssertionError(f"Expected both thermo lanes to cover 7 C cases, got {counts!r}.")
     if not data["success"].astype(str).str.lower().eq("true").all():
         raise AssertionError("All verified C-case rows must be successful.")
@@ -111,7 +111,7 @@ def _check_accuracy_credibility_tables() -> None:
     error_regime = pd.read_csv(TABLES / "error_regime_capture_data.csv")
     _require_columns(error_regime, ["case_id", "thermo_model", "capture_error_pct", "L_over_G", "alpha", "y_CO2"])
     counts = error_regime.groupby("thermo_model")["case_id"].nunique().to_dict()
-    if counts.get("ideal_henry") != 7 or counts.get("epcsaft_neutral") != 7:
+    if counts.get("ideal_henry") != 7 or counts.get("epcsaft_ionic") != 7:
         raise AssertionError(f"Expected error-regime data for both C-case thermo lanes, got {counts!r}.")
 
     uncertainty = pd.read_csv(TABLES / "uncertainty_band_capture.csv")

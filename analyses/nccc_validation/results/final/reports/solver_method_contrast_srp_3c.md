@@ -53,20 +53,18 @@ false branches. Collocation is the strongest reference method here because it
 solves the distributed boundary-value problem directly and can use residual
 control across the full temperature profile.
 
-## ePC-SAFT Pressure-State Smoke Results
+## ePC-SAFT Electrolyte Configuration Evidence
 
-Source artifact: `analyses/nccc_validation/results/runs/nccc_3c_epcsaft_after_rhoguess/benchmark_results.csv`
+The pressure-state smoke table has been superseded by
+`epcsaft_electrolyte_column_config_matrix.csv`. The selected paper-facing
+configuration is `2025_Figiel_empirical_fitted_Born_SSM_DS`, which keeps the
+six-species MEA absorber state and uses the repo-vendored
+`MEA_CO2_H2O_ionic_fit` dataset. In the Case 3C configuration matrix, that row
+converged with the collocation BVP calculation, predicted 89.83% capture, and
+reported a 7.90 s runtime under the matrix smoke settings.
 
-| Case | Method | Thermo | Success | Runtime s | Capture % | Capture error pct-pt | Temperature RMSE K | ePC-SAFT cache hits | ePC-SAFT cache misses | ePC-SAFT state time s | rho-guess hits | rho-guess misses |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 3C | Collocation BVP | ideal Henry | true | 5.95 | 89.40 | -0.10 | 3.94 | 0 | 0 | 0.00 | 0 | 0 |
-| 3C | Collocation BVP | neutral ePC-SAFT | true | 5.92 | 89.70 | 0.20 | 3.97 | 771 | 785 | 0.50 | 783 | 2 |
-| 3C | Collocation BVP | ionic ePC-SAFT | true | 6.15 | 89.83 | 0.33 | 3.97 | 768 | 788 | 0.34 | 786 | 2 |
-
-The current ePC-SAFT calls remain pressure-specified states. The MEA adapter now
+The current ePC-SAFT calls remain pressure-specified states. The MEA adapter
 passes the previous converged molar density as an initial guess for the package's
 internal pressure-density solve; it does not use direct density states for the
-validation fugacity calculation. With the updated package and rho-guess path, the
-ionic lane is no longer a 17 s outlier in the Case 3C smoke. The remaining
-overhead is mostly the larger six-species/electrolyte fugacity calculation and
-external-dataset path rather than a runaway pressure-state density solve.
+validation fugacity calculation. The remaining overhead is the expected cost of
+the six-species electrolyte fugacity calculation and external-dataset path.

@@ -83,7 +83,7 @@ def main() -> None:
     if args.run_epcsaft:
         epcsaft_rows = _run_suite(
             case_ids=case_ids,
-            label="epcsaft_neutral",
+            label="epcsaft_ionic",
             output_dir=output_dir,
             args=args,
             include_epcsaft=True,

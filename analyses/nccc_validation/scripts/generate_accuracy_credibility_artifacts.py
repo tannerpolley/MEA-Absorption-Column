@@ -272,7 +272,7 @@ def _write_calibration_artifacts(c_aug: pd.DataFrame) -> pd.DataFrame:
 
 def _write_error_regime_artifacts(c_aug: pd.DataFrame) -> None:
     rows = []
-    label = {"ideal_henry": "C one-bed Henry", "epcsaft_neutral": "C one-bed PC-SAFT"}
+    label = {"ideal_henry": "C one-bed Henry", "epcsaft_ionic": "C one-bed ePC-SAFT"}
     for _, row in c_aug.iterrows():
         rows.append(
             {
@@ -315,14 +315,14 @@ def _write_error_regime_plot(c_aug: pd.DataFrame) -> None:
     data = pd.read_csv(TABLES / "error_regime_capture_data.csv")
     fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.4), constrained_layout=True, sharey=True)
     xcols = [("L_over_G", "L/G"), ("alpha", "Lean loading"), ("y_CO2", "Inlet CO$_2$ mole fraction")]
-    markers = {"ideal_henry": "o", "epcsaft_neutral": "s"}
-    colors = {"ideal_henry": "#1b4f72", "epcsaft_neutral": "#b03a2e"}
+    markers = {"ideal_henry": "o", "epcsaft_ionic": "s"}
+    colors = {"ideal_henry": "#1b4f72", "epcsaft_ionic": "#b03a2e"}
     for ax, (xcol, xlabel) in zip(axes, xcols):
         for thermo, group in data.groupby("thermo_model", sort=False):
             ax.scatter(
                 group[xcol],
                 group["capture_error_pct"],
-                        label={"ideal_henry": "Henry", "epcsaft_neutral": "PC-SAFT"}.get(
+                        label={"ideal_henry": "Henry", "epcsaft_ionic": "ePC-SAFT"}.get(
                             thermo, thermo.replace("_", " ")
                         ),
                 marker=markers.get(thermo, "o"),

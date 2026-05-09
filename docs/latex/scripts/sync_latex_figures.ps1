@@ -44,10 +44,7 @@ $figureCopies = @(
     @{ Source = 'analyses\nccc_validation\results\final\figures\c_case_campaign_temperature_overlays\c_case_temperature_overlay_contact_sheet.png'; Destination = 'case-c-temperature-overlay.png' },
     @{ Source = 'analyses\nccc_validation\results\final\figures\error_regime_capture_error.pdf'; Destination = 'error-regime-capture-error.pdf' },
     @{ Source = 'analyses\nccc_validation\results\final\figures\calibration_uncertainty_band.pdf'; Destination = 'calibration-uncertainty-band.pdf' },
-    @{ Source = 'analyses\nccc_validation\results\final\figures\method_case_solver_contrast.pdf'; Destination = 'method-case-solver-contrast.pdf' },
-    @{ Source = 'analyses\nccc_validation\results\final\profiles\3C\ideal_henry\temperature_profile.png'; Destination = 'profile-3c-henry.png' },
-    @{ Source = 'analyses\nccc_validation\results\final\profiles\3C\epcsaft_neutral\temperature_profile.png'; Destination = 'profile-3c-epcsaft.png' },
-    @{ Source = 'analyses\nccc_validation\results\final\profiles\7C\epcsaft_neutral\temperature_profile.png'; Destination = 'profile-7c-epcsaft.png' }
+    @{ Source = 'analyses\nccc_validation\results\final\figures\method_case_solver_contrast.pdf'; Destination = 'method-case-solver-contrast.pdf' }
 )
 
 foreach ($copy in $figureCopies) {
