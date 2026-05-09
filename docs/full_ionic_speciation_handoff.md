@@ -74,6 +74,8 @@ Repro command template:
 
 The run worthy of building on is `epcsaft_reactive_six_activity_rebased`. It proves the column can converge while using activity-coupled ePC-SAFT speciation and ionic ePC-SAFT fugacity together, with no domain guards and chemistry residuals below `1e-8`.
 
+These results should be carried into the main manuscript as evidence for the modeling choice, not as a recommendation to make activity-coupled speciation the default column model. The clean full ionic speciation/activity loop does converge, but it drives the single-case runtime to about 129 s under the loose proof settings, compared with the much faster Henry-law and neutral ePC-SAFT benchmark lanes reported in the current paper results. The capture accuracy improvement is small for the clean rebased activity run: case 3C gives 89.837% CO2 capture, only 0.337 percentage points from the target. That is useful confirmation that the full loop is technically feasible, but it also supports the paper's simplification: removing activity coefficients from the routine chemical-speciation closure is a justified speed/complexity tradeoff for repeated absorber simulations.
+
 The stricter `activity_converted` mode is useful evidence that the non-rebased constant conversion can complete a full column solve, but it is not yet a clean convergence claim because failed intermediate collocation states inflate the maximum chemistry residual diagnostics. The next scientific improvement should target this mode by adding continuation/warm-start handoff from one chemistry solve to the next or by moving closer to the double-nested update strategy from Ascani et al.
 
 ## Literature guidance
