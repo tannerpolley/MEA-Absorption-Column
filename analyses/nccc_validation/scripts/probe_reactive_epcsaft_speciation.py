@@ -12,7 +12,10 @@ import pandas as pd
 
 from mea_absorption_column.misc.Convert_Data import convert_data
 from mea_absorption_column.Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
-from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET
+from mea_absorption_column.Thermodynamics.thermo_models import (
+    MEA_THERMODYNAMICS_EPCSAFT_DATASET,
+    ensure_epcsaft_importable,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -177,6 +180,7 @@ def solve_mode(
 
 
 def run_probe(case_id: str, dataset: Path, output_root: Path) -> Path:
+    ensure_epcsaft_importable()
     import epcsaft
 
     data_path = REPO_ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_data.csv"

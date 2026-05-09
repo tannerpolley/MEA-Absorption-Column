@@ -15,6 +15,7 @@ from mea_absorption_column.Properties.Thermophysical_Properties import density
 from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
+    epcsaft_runtime_user_options,
 )
 
 
@@ -27,6 +28,94 @@ REACTION_NAMES_6 = ("carbamate", "bicarbonate")
 EPCSAFT_CHEMISTRY_CACHE_T_DIGITS = int(os.environ.get("MEA_EPCSAFT_CHEMISTRY_CACHE_T_DIGITS", "2"))
 EPCSAFT_CHEMISTRY_CACHE_X_DIGITS = int(os.environ.get("MEA_EPCSAFT_CHEMISTRY_CACHE_X_DIGITS", "6"))
 EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA = float(os.environ.get("MEA_EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA", "10.0"))
+EPCSAFT_REACTIVE_OPTION_ENV_KEYS = (
+    "MEA_EPCSAFT_REACTIVE_MAX_ITERATIONS",
+    "MEA_EPCSAFT_REACTIVE_TOLERANCE",
+    "MEA_EPCSAFT_REACTIVE_MASS_TOLERANCE",
+    "MEA_EPCSAFT_REACTIVE_CHARGE_TOLERANCE",
+    "MEA_EPCSAFT_REACTIVE_REACTION_TOLERANCE",
+    "MEA_EPCSAFT_REACTIVE_DAMPING",
+    "MEA_EPCSAFT_REACTIVE_ACCEPT_BEST_EFFORT",
+    "MEA_EPCSAFT_REACTIVE_BEST_EFFORT_MASS_MAX",
+    "MEA_EPCSAFT_REACTIVE_BEST_EFFORT_CHARGE_MAX",
+    "MEA_EPCSAFT_REACTIVE_BEST_EFFORT_REACTION_MAX",
+)
+
+
+def _env_int(name, default):
+    value = os.environ.get(name)
+    if value is None or value == "":
+        return int(default)
+    return int(value)
+
+
+def _env_float(name, default):
+    value = os.environ.get(name)
+    if value is None or value == "":
+        return float(default)
+    return float(value)
+
+
+def _env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None or value == "":
+        return bool(default)
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _reactive_speciation_options(epcsaft):
+    return epcsaft.ReactiveSpeciationOptions(
+        max_iterations=_env_int("MEA_EPCSAFT_REACTIVE_MAX_ITERATIONS", 120),
+        tolerance=_env_float("MEA_EPCSAFT_REACTIVE_TOLERANCE", 1.0e-8),
+        mass_tolerance=_env_float("MEA_EPCSAFT_REACTIVE_MASS_TOLERANCE", 1.0e-7),
+        charge_tolerance=_env_float("MEA_EPCSAFT_REACTIVE_CHARGE_TOLERANCE", 1.0e-7),
+        reaction_tolerance=_env_float("MEA_EPCSAFT_REACTIVE_REACTION_TOLERANCE", 1.0e-7),
+        damping=_env_float("MEA_EPCSAFT_REACTIVE_DAMPING", 0.7),
+        return_best_effort=True,
+    )
+
+
+def _max_abs(values):
+    values = list(values)
+    if not values:
+        return 0.0
+    return float(max(abs(float(value)) for value in values))
+
+
+def _accept_reactive_best_effort(result):
+    if not _env_bool("MEA_EPCSAFT_REACTIVE_ACCEPT_BEST_EFFORT", False):
+        return False
+    max_mass = _max_abs(getattr(result, "mass_balance_residuals", {}).values())
+    max_reaction = _max_abs(getattr(result, "reaction_residuals", []))
+    max_charge = abs(float(getattr(result, "charge_residual", 0.0)))
+    return (
+        max_mass <= _env_float("MEA_EPCSAFT_REACTIVE_BEST_EFFORT_MASS_MAX", 1.0e-6)
+        and max_charge <= _env_float("MEA_EPCSAFT_REACTIVE_BEST_EFFORT_CHARGE_MAX", 1.0e-6)
+        and max_reaction <= _env_float("MEA_EPCSAFT_REACTIVE_BEST_EFFORT_REACTION_MAX", 1.0e-6)
+    )
+
+
+def _record_epcsaft_reactive_result(diagnostics, result):
+    if diagnostics is None:
+        return
+    max_mass = _max_abs(getattr(result, "mass_balance_residuals", {}).values())
+    max_reaction = _max_abs(getattr(result, "reaction_residuals", []))
+    max_charge = abs(float(getattr(result, "charge_residual", 0.0)))
+    _set_diagnostic_max(diagnostics, "epcsaft_chemistry_max_mass_residual", max_mass)
+    _set_diagnostic_max(diagnostics, "epcsaft_chemistry_max_reaction_residual", max_reaction)
+    _set_diagnostic_max(diagnostics, "epcsaft_chemistry_max_charge_residual", max_charge)
+    result_diagnostics = getattr(result, "diagnostics", {}) or {}
+    diagnostics["epcsaft_chemistry_last_message"] = str(getattr(result, "message", ""))
+    diagnostics["epcsaft_chemistry_last_iterations"] = int(result_diagnostics.get("iterations", 0) or 0)
+    diagnostics["epcsaft_chemistry_last_native_success"] = bool(
+        result_diagnostics.get("native_success", getattr(result, "success", False))
+    )
+
+
+def _set_diagnostic_max(diagnostics, key, value):
+    if not np.isfinite(value):
+        return
+    diagnostics[key] = max(float(diagnostics.get(key, 0.0)), float(value))
 
 
 def chemical_equilibrium(Fl, Tl):
@@ -275,15 +364,7 @@ def epcsaft_reactive_chemical_equilibrium(
         )
         for reaction, value, name in zip(REACTIONS_6, log_k, REACTION_NAMES_6)
     ]
-    options = epcsaft.ReactiveSpeciationOptions(
-        max_iterations=60,
-        tolerance=1.0e-8,
-        mass_tolerance=1.0e-7,
-        charge_tolerance=1.0e-7,
-        reaction_tolerance=1.0e-7,
-        damping=0.7,
-        return_best_effort=True,
-    )
+    options = _reactive_speciation_options(epcsaft)
     started = time.perf_counter()
     result = epcsaft.solve_reactive_speciation(
         species=list(SPECIES_6),
@@ -309,13 +390,18 @@ def epcsaft_reactive_chemical_equilibrium(
         "epcsaft_chemistry_solve_s",
         time.perf_counter() - started,
     )
+    _record_epcsaft_reactive_result(diagnostics, result)
     if not result.success:
-        record_domain_guard(
-            diagnostics,
-            "chemical_equilibrium",
-            f"ePC-SAFT reactive speciation did not converge: {result.message}",
-        )
-        raise RuntimeError(f"ePC-SAFT reactive speciation failed: {result.message}")
+        if _accept_reactive_best_effort(result):
+            _increment_diagnostic(diagnostics, "epcsaft_chemistry_accepted_best_effort_count")
+        else:
+            _increment_diagnostic(diagnostics, "epcsaft_chemistry_failed_count")
+            record_domain_guard(
+                diagnostics,
+                "chemical_equilibrium",
+                f"ePC-SAFT reactive speciation did not converge: {result.message}",
+            )
+            raise RuntimeError(f"ePC-SAFT reactive speciation failed: {result.message}")
     x_true = np.asarray([float(result.x[name]) for name in SPECIES_6], dtype=float)
     x_true = np.maximum(x_true, 1.0e-30)
     x_true = x_true / float(np.sum(x_true))
@@ -391,10 +477,7 @@ def _epcsaft_module():
 
 def _epcsaft_six_mixture(epcsaft, temperature, x):
     dataset = Path(MEA_THERMODYNAMICS_EPCSAFT_DATASET)
-    user_options = None
-    user_options_path = dataset / "user_options.json"
-    if user_options_path.exists():
-        user_options = json.loads(user_options_path.read_text(encoding="utf-8"))
+    user_options = epcsaft_runtime_user_options() or None
     return epcsaft.ePCSAFTMixture.from_dataset(
         str(dataset),
         list(SPECIES_6),
@@ -431,10 +514,23 @@ def _epcsaft_chemistry_cache_key(
         str(standard_state),
         str(log_k_basis),
         bool(calibrate_activity_to_legacy),
+        _reactive_options_cache_token(),
+        _epcsaft_user_options_cache_token(),
         float(np.round(float(temperature), EPCSAFT_CHEMISTRY_CACHE_T_DIGITS)),
         float(np.round(float(pressure) / pressure_increment) * pressure_increment),
         tuple(float(np.round(value, EPCSAFT_CHEMISTRY_CACHE_X_DIGITS)) for value in apparent_x),
     )
+
+
+def _reactive_options_cache_token():
+    return tuple((key, os.environ.get(key, "")) for key in EPCSAFT_REACTIVE_OPTION_ENV_KEYS)
+
+
+def _epcsaft_user_options_cache_token():
+    options = epcsaft_runtime_user_options()
+    if not options:
+        return "{}"
+    return json.dumps(options, sort_keys=True, separators=(",", ":"))
 
 
 def _increment_diagnostic(diagnostics, key, amount=1):
