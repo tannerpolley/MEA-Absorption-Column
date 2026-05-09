@@ -20,6 +20,7 @@ def main() -> int:
     checks = [
         _check_required_files,
         _check_c_case_benchmark,
+        _check_full_species_ionic_sweep,
         _check_accuracy_credibility_tables,
         _check_method_contrast,
         _check_profile_index,
@@ -45,6 +46,7 @@ def _check_required_files() -> None:
         TABLES / "primary_validation_gate.csv",
         TABLES / "primary_validation_gate_summary.csv",
         TABLES / "method_case_contrast.csv",
+        TABLES / "full_species_ionic_2017_c_case_sweep.csv",
         FIGURES / "nccc_one_bed_thermo_benchmark.pdf",
         FIGURES / "nccc_2017_epcsaft_temperature_overlays" / "nccc_2017_epcsaft_temperature_overlay_contact_sheet.png",
         FIGURES / "method_case_solver_contrast.pdf",
@@ -68,6 +70,59 @@ def _check_c_case_benchmark() -> None:
         raise AssertionError(f"Expected both thermo lanes to cover 8 accepted one-bed cases, got {counts!r}.")
     if not data["success"].astype(str).str.lower().eq("true").all():
         raise AssertionError("All accepted one-bed rows must be successful.")
+
+
+def _check_full_species_ionic_sweep() -> None:
+    data = pd.read_csv(TABLES / "full_species_ionic_2017_c_case_sweep.csv")
+    _require_columns(
+        data,
+        [
+            "case_id",
+            "nccc_dataset",
+            "data_type",
+            "thermo_model",
+            "epcsaft_dataset_name",
+            "epcsaft_config",
+            "success",
+            "runtime_s",
+            "co2_capture_pct",
+            "target_co2_capture_pct",
+            "capture_error_pct_pt",
+            "invalid_state_count",
+            "guard_penalty_count",
+            "epcsaft_chemistry_solve_s",
+            "epcsaft_chemistry_max_mass_residual",
+            "epcsaft_chemistry_max_reaction_residual",
+            "epcsaft_chemistry_max_charge_residual",
+            "epcsaft_chemistry_failed_count",
+            "raw_result_csv",
+            "benchmark_command",
+        ],
+    )
+    expected_cases = {"1C", "2C", "3C", "4C", "5C", "6C", "7C"}
+    got_cases = set(data["case_id"].astype(str))
+    if got_cases != expected_cases:
+        raise AssertionError(f"Expected full-species 2017 C sweep cases {sorted(expected_cases)!r}, got {sorted(got_cases)!r}.")
+    if set(data["nccc_dataset"].astype(str)) != {"2017"} or set(data["data_type"].astype(str)) != {"mass"}:
+        raise AssertionError("Full-species ionic sweep must use the corrected 2017 mass-input C-case data.")
+    if set(data["thermo_model"].astype(str)) != {"epcsaft_reactive_nine_activity_rebased"}:
+        raise AssertionError("Full-species ionic sweep must use the nine-species activity-rebased ePC-SAFT model.")
+    if set(data["epcsaft_dataset_name"].astype(str)) != {"MEA_CO2_H2O_ionic_fit"}:
+        raise AssertionError("Full-species ionic sweep must use the MEA_CO2_H2O_ionic_fit parameter dataset.")
+    if set(data["epcsaft_config"].astype(str)) != {"2025_Figiel_empirical_fitted_Born_SSM_DS"}:
+        raise AssertionError("Full-species ionic sweep must use the selected 2025 Figiel ePC-SAFT configuration.")
+    if not data["success"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Every full-species ionic C-case row is expected to converge.")
+    if data[["invalid_state_count", "guard_penalty_count", "epcsaft_chemistry_failed_count"]].sum().sum() != 0:
+        raise AssertionError("Full-species ionic sweep should have zero invalid states, guard penalties, and chemistry failures.")
+    if data["epcsaft_chemistry_max_mass_residual"].max() > 1e-7:
+        raise AssertionError("Full-species ionic sweep mass residual exceeds 1e-7.")
+    if data["epcsaft_chemistry_max_reaction_residual"].max() > 1e-7:
+        raise AssertionError("Full-species ionic sweep reaction residual exceeds 1e-7.")
+    if data["epcsaft_chemistry_max_charge_residual"].max() > 1e-10:
+        raise AssertionError("Full-species ionic sweep charge residual exceeds 1e-10.")
+    if data["runtime_s"].mean() < 120.0:
+        raise AssertionError("Full-species ionic sweep no longer supports the documented slow-path timing boundary.")
 
 
 def _check_accuracy_credibility_tables() -> None:

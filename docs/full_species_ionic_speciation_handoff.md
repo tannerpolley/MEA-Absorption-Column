@@ -4,6 +4,8 @@ Branch: `codex/full-species-ionic`
 
 Date: 2026-05-09
 
+Current evidence note: the historical probe values below are superseded for paper-facing timing and capture claims by the committed corrected 2017 C-case sweep at `analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv`. That artifact records all seven 2017 C rows converging with a mean runtime of `171.102 s`, zero invalid states, zero guard penalties, zero chemistry failures, and chemistry residuals below `1e-8`.
+
 ## What changed
 
 - Added nine-species reactive ePC-SAFT chemical-equilibrium modes:

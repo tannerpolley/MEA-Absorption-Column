@@ -1,6 +1,6 @@
 # Answers To Factual Manuscript Clarification Questions
 
-Repo checked: `MEA-Absorption-Column` on `main` at `12572b85cb4e722a4c0dde8e18c6d0c969263a3a`.
+Repo checked: `MEA-Absorption-Column` on `main` at `12572b85cb4e722a4c0dde8e18c6d0c969263a3a`; full-species C-sweep evidence updated from the committed `full_species_ionic_2017_c_case_sweep.csv` artifact.
 
 ## 1. Which exact ePC-SAFT lane produced Figure 4?
 Answer: `epcsaft_ionic`.
@@ -51,28 +51,28 @@ Relevant: 7C rows.
 Confidence: High.
 
 ## 9. Is the seven-row C-case sweep actually 1C-7C?
-Answer: Yes, the full-species handoff describes 1C-7C.
-Evidence path: `docs/full_species_ionic_speciation_handoff.md`.
-Relevant: `full_species_ionic_all_c_cases`.
+Answer: Yes. The committed full-species 2017 C-case sweep contains 1C-7C.
+Evidence path: `analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv`.
+Relevant: `case_id`; `epcsaft_reactive_nine_activity_rebased`.
 Confidence: High.
 
 ## 10. What were the full-path capture predictions/errors?
-Answer: Handoff values: 1C 79.258% (-17.842 p.p.); 2C 86.651% (-5.649); 3C 89.855% (+0.355); 4C 94.678% (+5.778); 5C 90.525% (+4.125); 6C 70.549% (+10.349); 7C 98.515% (+22.115). MAE `9.459 p.p.`; mean runtime `351.770 s`.
-Evidence path: `docs/full_species_ionic_speciation_handoff.md`.
+Answer: Committed corrected 2017 C-sweep values: 1C 94.980% (-2.120 p.p.); 2C 88.409% (-3.891); 3C 88.736% (-0.764); 4C 93.747% (+4.847); 5C 93.175% (+6.775); 6C 71.453% (+11.253); 7C 92.914% (+16.514). Mean runtime `171.102 s`.
+Evidence path: `analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv`.
 Relevant: `epcsaft_reactive_nine_activity_rebased`.
-Confidence: High for handoff values; AUTHOR VERIFY: underlying run CSV is not committed.
+Confidence: High.
 
 ## 11. Should the full activity-coupled path be described as validated or feasible?
-Answer: From committed files alone, feasible. Author decision: validation-grade wording is acceptable only after rerunning or committing CSV evidence for the slow path.
-Evidence path: `docs/full_species_ionic_speciation_handoff.md`; `docs/latex/tables/full_ionic_speciation_timing.tex`.
-Relevant: "relaxed feasibility settings."
+Answer: Feasible and timing-supported from committed evidence. The committed CSV shows all seven 2017 C rows converged with zero invalid states, zero guard penalties, zero chemistry failures, and residuals below the manuscript tolerance, but the mean runtime is too slow for routine validation sweeps.
+Evidence path: `analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv`; `docs/latex/tables/full_ionic_speciation_timing.tex`.
+Relevant: `success`; `runtime_s`; residual and guard columns.
 Confidence: High.
 
 ## 12. Were slow runtimes measured on same environment?
-Answer: Routine rows record Python/platform/package versions. The handoff says the slow path ran on this machine but does not include the same full environment metadata.
-Evidence path: `nccc_one_bed_accepted_results.csv`; `docs/full_species_ionic_speciation_handoff.md`.
+Answer: Yes for the committed slow-path CSV: it records Python `3.13.2`, Windows platform information, package versions, BLAS thread env vars, cache env vars, and the benchmark command for each row.
+Evidence path: `analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv`; `nccc_one_bed_accepted_results.csv`.
 Relevant: `python_version`, `platform`, `package_versions`.
-Confidence: Medium; AUTHOR VERIFY: exact environment equivalence.
+Confidence: High.
 
 ## 13. Do slow-path runtimes include import/setup overhead?
 Answer: Subprocess benchmark runtime includes worker startup/import/setup overhead; in-process `run_model` timing measures solver execution only.
@@ -267,7 +267,7 @@ Relevant: style choice.
 Confidence: Medium.
 
 ## 45. Should abstract say full activity path is not routine?
-Answer: Yes. This prevents confusion between `9.86 s` routine ePC-SAFT and `212.809 s` full activity-coupled path.
+Answer: Yes. This prevents confusion between `9.86 s` routine ePC-SAFT and the full activity-coupled path, which now has a committed seven-row 2017 C sweep with `171.102 s` mean runtime.
 Evidence path: `main.tex`; `results.tex`; author response.
 Relevant: abstract/runtime claims.
 Confidence: High.
