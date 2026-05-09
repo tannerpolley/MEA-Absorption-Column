@@ -4,8 +4,7 @@
     \captionof{table}{Timing boundary for the full ionic activity-speciation ePC-SAFT path.}
     \label{tab:full-ionic-speciation-timing}
     \renewcommand{\arraystretch}{1.2}
-    \begin{adjustbox}{max width=\textwidth}
-    \begin{tabular}{p{0.28\textwidth}p{0.16\textwidth}p{0.16\textwidth}p{0.36\textwidth}}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}X@{}}
         \toprule
         \textbf{Path} & \textbf{Scope} & \textbf{Runtime} & \textbf{What it shows} \\
         \midrule
@@ -14,6 +13,5 @@
         Full nine-species activity-speciation proof & Case 3C & \SI{212.809}{s} & Feasible activity-coupled ePC-SAFT chemistry and ionic fugacity loop with no domain guards and chemistry residuals near $10^{-8}$. \\
         Full nine-species activity-speciation sweep & Seven C rows & Mean \SI{351.770}{s} & All rows converged under relaxed feasibility settings; useful feasibility evidence but too slow for routine validation sweeps. \\
         \bottomrule
-    \end{tabular}
-    \end{adjustbox}
+    \end{tabularx}
 \end{center}
