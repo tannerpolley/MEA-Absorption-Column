@@ -19,16 +19,17 @@ def main(argv=None):
         raise SystemExit("Usage: python -m mea_absorption_column.benchmark_worker INPUT_JSON")
     input_path = Path(argv[0])
     payload = json.loads(input_path.read_text(encoding="utf-8"))
-    c_cases, nccc_cases, srp_cases = load_case_data()
+    settings = settings_from_payload(payload["settings"])
+    c_cases, nccc_cases, srp_cases = load_case_data(settings.c_case_dataset)
     case_source = payload["case_source"]
     data_by_source = {
         "C_cases_data": c_cases,
+        "C_cases_campaign_inputs": c_cases,
         "NCCC_Data": nccc_cases,
         "SRP_method_cases": srp_cases,
     }
     df = data_by_source[case_source]
-    settings = settings_from_payload(payload["settings"])
-    if case_source == "C_cases_data":
+    if case_source in {"C_cases_data", "C_cases_campaign_inputs"}:
         df = _filter_case_ids(df, settings.c_case_ids, case_source)
     elif case_source == "NCCC_Data":
         df = _filter_case_ids(df, settings.nccc_case_ids, case_source)

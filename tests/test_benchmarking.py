@@ -206,6 +206,8 @@ def test_benchmark_cli_accepts_solver_settings():
         "--profile-csvs",
         "--subprocess-timeout-s",
         "30",
+        "--c-case-dataset",
+        "campaign",
         "--nccc-case-ids",
         "K4",
         "K5",
@@ -267,6 +269,7 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.profile_pngs is True
     assert args.profile_csvs is True
     assert args.subprocess_timeout_s == 30
+    assert args.c_case_dataset == "campaign"
     assert args.nccc_case_ids == ["K4", "K5"]
     assert args.srp_case_limit == 1
     assert args.srp_case_ids == ["SRP-LG7"]
@@ -315,6 +318,16 @@ def test_convert_data_defaults_to_legacy_vapor_reconstruction():
 
     assert metadata["vapor_composition_mode"] == "legacy_ratio"
     assert round(y[3], 6) == round(0.06655280890171553, 6)
+
+
+def test_load_case_data_can_use_campaign_c_case_inputs():
+    legacy_cases, _, _ = load_case_data()
+    campaign_cases, _, _ = load_case_data(c_case_dataset="campaign")
+
+    assert legacy_cases.loc["1C", "alpha"] == pytest.approx(0.25)
+    assert campaign_cases.loc["1C", "alpha"] == pytest.approx(0.15)
+    assert campaign_cases.loc["7C", "alpha"] == pytest.approx(0.34)
+    assert campaign_cases.loc["7C", "L/G"] == pytest.approx(4.628230060332862)
 
 
 def test_convert_data_can_use_input_o2_column():

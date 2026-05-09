@@ -106,26 +106,34 @@ class BenchmarkSettings:
     profile_pngs: bool = False
     profile_csvs: bool = False
     subprocess_timeout_s: float | None = None
+    c_case_dataset: str = "legacy"
 
 
 def _data_path(filename: str):
     return resources.files("mea_absorption_column").joinpath(f"data/{filename}")
 
 
-def load_case_data():
-    c_cases = pd.read_csv(_data_path("C_cases_data.csv"), index_col=0)
+def load_case_data(c_case_dataset: str = "legacy"):
+    c_case_files = {
+        "legacy": "C_cases_data.csv",
+        "campaign": "C_cases_campaign_inputs.csv",
+    }
+    if c_case_dataset not in c_case_files:
+        raise ValueError(f"Unknown c_case_dataset: {c_case_dataset!r}")
+    c_cases = pd.read_csv(_data_path(c_case_files[c_case_dataset]), index_col=0)
     nccc_cases = pd.read_csv(_data_path("NCCC_Data_mole_based.csv"), index_col=0)
     srp_cases = pd.read_csv(_data_path("SRP_method_cases.csv"), index_col=0)
     return c_cases, nccc_cases, srp_cases
 
 
 def run_benchmark(settings: BenchmarkSettings = BenchmarkSettings()) -> pd.DataFrame:
-    c_cases, nccc_cases, srp_cases = load_case_data()
+    c_cases, nccc_cases, srp_cases = load_case_data(settings.c_case_dataset)
     case_groups = []
     if settings.c_case_limit != 0:
         c_subset = c_cases.iloc[: settings.c_case_limit] if settings.c_case_limit is not None else c_cases
         c_subset = _filter_case_ids(c_subset, settings.c_case_ids, "C_cases_data")
-        case_groups.append(("C_cases_data", c_subset))
+        case_source = "C_cases_campaign_inputs" if settings.c_case_dataset == "campaign" else "C_cases_data"
+        case_groups.append((case_source, c_subset))
     if settings.nccc_case_limit != 0:
         nccc_subset = nccc_cases.iloc[: settings.nccc_case_limit] if settings.nccc_case_limit is not None else nccc_cases
         nccc_subset = _filter_case_ids(nccc_subset, settings.nccc_case_ids, "NCCC_Data")
@@ -374,6 +382,7 @@ def _settings_to_payload(settings: BenchmarkSettings, solver_settings_override=N
         "profile_pngs": settings.profile_pngs,
         "profile_csvs": settings.profile_csvs,
         "subprocess_timeout_s": None,
+        "c_case_dataset": settings.c_case_dataset,
     }
 
 
@@ -396,6 +405,7 @@ def settings_from_payload(payload: dict) -> BenchmarkSettings:
         profile_pngs=bool(payload.get("profile_pngs", False)),
         profile_csvs=bool(payload.get("profile_csvs", False)),
         subprocess_timeout_s=payload.get("subprocess_timeout_s"),
+        c_case_dataset=payload.get("c_case_dataset", "legacy"),
     )
 
 
@@ -776,6 +786,7 @@ def parse_args(argv=None):
     parser.add_argument("--profile-pngs", action="store_true")
     parser.add_argument("--profile-csvs", action="store_true")
     parser.add_argument("--subprocess-timeout-s", type=float, default=None)
+    parser.add_argument("--c-case-dataset", choices=["legacy", "campaign"], default="legacy")
     parser.add_argument("--no-write", action="store_true")
     return parser.parse_args(argv)
 
@@ -803,6 +814,7 @@ def main(argv=None):
         profile_pngs=bool(args.profile_pngs),
         profile_csvs=bool(args.profile_csvs),
         subprocess_timeout_s=args.subprocess_timeout_s,
+        c_case_dataset=args.c_case_dataset,
     )
     results = run_benchmark(settings)
     print(results.to_string(index=False))
