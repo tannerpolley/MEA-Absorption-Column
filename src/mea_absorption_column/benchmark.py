@@ -115,27 +115,43 @@ class BenchmarkSettings:
     profile_csvs: bool = False
     subprocess_timeout_s: float | None = None
     c_case_dataset: str = "legacy"
+    nccc_dataset: str = "legacy"
 
 
 def _data_path(filename: str):
     return resources.files("mea_absorption_column").joinpath(f"data/{filename}")
 
 
-def load_case_data(c_case_dataset: str = "legacy"):
+def load_case_data(c_case_dataset: str = "legacy", nccc_dataset: str = "legacy"):
     c_case_files = {
         "legacy": "C_cases_data.csv",
         "campaign": "C_cases_campaign_inputs.csv",
     }
+    nccc_case_files = {
+        "legacy": "NCCC_Data_mole_based.csv",
+        "2014": "NCCC_2014_model_inputs_mass.csv",
+        "2017": "NCCC_2017_model_inputs_mass.csv",
+    }
     if c_case_dataset not in c_case_files:
         raise ValueError(f"Unknown c_case_dataset: {c_case_dataset!r}")
+    if nccc_dataset not in nccc_case_files:
+        raise ValueError(f"Unknown nccc_dataset: {nccc_dataset!r}")
     c_cases = pd.read_csv(_data_path(c_case_files[c_case_dataset]), index_col=0)
-    nccc_cases = pd.read_csv(_data_path("NCCC_Data_mole_based.csv"), index_col=0)
+    nccc_cases = pd.read_csv(_data_path(nccc_case_files[nccc_dataset]), index_col=0)
     srp_cases = pd.read_csv(_data_path("SRP_method_cases.csv"), index_col=0)
     return c_cases, nccc_cases, srp_cases
 
 
+def _nccc_case_source(nccc_dataset: str) -> str:
+    return {
+        "legacy": "NCCC_Data",
+        "2014": "NCCC_2014_cases",
+        "2017": "NCCC_2017_cases",
+    }[nccc_dataset]
+
+
 def run_benchmark(settings: BenchmarkSettings = BenchmarkSettings()) -> pd.DataFrame:
-    c_cases, nccc_cases, srp_cases = load_case_data(settings.c_case_dataset)
+    c_cases, nccc_cases, srp_cases = load_case_data(settings.c_case_dataset, settings.nccc_dataset)
     case_groups = []
     if settings.c_case_limit != 0:
         c_subset = c_cases.iloc[: settings.c_case_limit] if settings.c_case_limit is not None else c_cases
@@ -144,8 +160,9 @@ def run_benchmark(settings: BenchmarkSettings = BenchmarkSettings()) -> pd.DataF
         case_groups.append((case_source, c_subset))
     if settings.nccc_case_limit != 0:
         nccc_subset = nccc_cases.iloc[: settings.nccc_case_limit] if settings.nccc_case_limit is not None else nccc_cases
-        nccc_subset = _filter_case_ids(nccc_subset, settings.nccc_case_ids, "NCCC_Data")
-        case_groups.append(("NCCC_Data", nccc_subset))
+        nccc_case_source = _nccc_case_source(settings.nccc_dataset)
+        nccc_subset = _filter_case_ids(nccc_subset, settings.nccc_case_ids, nccc_case_source)
+        case_groups.append((nccc_case_source, nccc_subset))
     if settings.srp_case_limit != 0:
         srp_subset = srp_cases.iloc[: settings.srp_case_limit] if settings.srp_case_limit is not None else srp_cases
         srp_subset = _filter_case_ids(srp_subset, settings.srp_case_ids, "SRP_method_cases")
@@ -391,6 +408,7 @@ def _settings_to_payload(settings: BenchmarkSettings, solver_settings_override=N
         "profile_csvs": settings.profile_csvs,
         "subprocess_timeout_s": None,
         "c_case_dataset": settings.c_case_dataset,
+        "nccc_dataset": settings.nccc_dataset,
     }
 
 
@@ -414,6 +432,7 @@ def settings_from_payload(payload: dict) -> BenchmarkSettings:
         profile_csvs=bool(payload.get("profile_csvs", False)),
         subprocess_timeout_s=payload.get("subprocess_timeout_s"),
         c_case_dataset=payload.get("c_case_dataset", "legacy"),
+        nccc_dataset=payload.get("nccc_dataset", "legacy"),
     )
 
 
@@ -795,6 +814,8 @@ def parse_args(argv=None):
     parser.add_argument("--profile-csvs", action="store_true")
     parser.add_argument("--subprocess-timeout-s", type=float, default=None)
     parser.add_argument("--c-case-dataset", choices=["legacy", "campaign"], default="legacy")
+    parser.add_argument("--nccc-dataset", choices=["legacy", "2014", "2017"], default="legacy")
+    parser.add_argument("--data-type", choices=["mole", "mass"], default=BenchmarkSettings.data_type)
     parser.add_argument("--no-write", action="store_true")
     return parser.parse_args(argv)
 
@@ -818,11 +839,13 @@ def main(argv=None):
         srp_case_ids=tuple(args.srp_case_ids) if args.srp_case_ids is not None else None,
         staged_beds=staged_beds,
         write_artifacts=not args.no_write,
+        data_type=args.data_type,
         solver_settings=_solver_settings_from_args(args),
         profile_pngs=bool(args.profile_pngs),
         profile_csvs=bool(args.profile_csvs),
         subprocess_timeout_s=args.subprocess_timeout_s,
         c_case_dataset=args.c_case_dataset,
+        nccc_dataset=args.nccc_dataset,
     )
     results = run_benchmark(settings)
     print(results.to_string(index=False))

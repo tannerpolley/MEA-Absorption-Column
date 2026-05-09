@@ -1,0 +1,53 @@
+case_no,campaign_year,source_file,source_subset,configuration,absorber_beds,intercoolers,lean_solvent_flow_kg_h,flue_gas_flow_kg_h,lean_solvent_temp_C,inlet_gas_temp_C,absorber_pressure_kPa,lean_loading_mol_co2_per_mol_mea,w_MEA,y_CO2,y_O2,co2_capture_pct,co2_capture_std_pct,reported_model_capture_pct
+K1,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,6804.0,2248.0,40.97,42.48,108.82,0.145,0.298,0.1155,,99.91,,99.96
+K2,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,11794.0,2243.0,40.52,44.94,107.06,0.247,0.312,0.114,,99.49,,99.84
+K3,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,3175.0,2242.0,45.68,43.67,107.78,0.091,0.295,0.1058,,83.57,,77.33
+K4,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,3175.0,2243.0,46.72,44.73,107.65,0.083,0.31,0.11449999999999999,,78.1,,76.5
+K5,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,6804.0,2235.0,41.57,43.78,106.94,0.108,0.306,0.0919,,99.53,,99.98
+K6,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,6804.0,2237.0,40.87,42.18,107.1,0.347,0.307,0.09119999999999999,,59.03,,68.16
+K7,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,11791.0,2233.0,40.62,44.72,107.3,0.399,0.288,0.09179999999999999,,54.76,,69.82
+K8,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,11643.0,2237.0,40.57,42.47,107.26,0.154,0.285,0.092,,98.07,,99.95
+K9,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,3175.0,2232.0,42.66,44.87,107.49,0.239,0.311,0.0922,,55.48,,57.55
+K10,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,3175.0,2237.0,48.59,42.15,107.71,0.062,0.297,0.09179999999999999,,98.43,,95.35
+K11,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,6804.0,2237.0,40.83,44.4,107.2,0.161,0.293,0.1001,,99.75,,99.93
+K12,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,6804.0,2231.0,40.92,43.24,106.37,0.16,0.293,0.0824,,99.61,,99.93
+K13,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, no intercooling",3,0,6804.0,2238.0,41.93,42.09,107.56,0.164,0.303,0.0935,,97.98,,98.36
+K14,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,8845.0,2895.0,40.41,47.67,107.86,0.224,0.303,0.0901,,98.27,,99.32
+K15,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,8845.0,2908.0,40.6,42.83,108.08,0.224,0.313,0.0907,,99.42,,99.44
+K16,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"3 beds, 2 intercoolers",3,2,4128.0,2903.0,44.45,45.42,108.7,0.124,0.329,0.09210000000000002,,93.54,,87.54
+K17,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"2 beds, no intercooling",2,0,6804.0,2240.0,42.03,41.03,108.12,0.168,0.307,0.0919,,97.61,,98.18
+K18,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"1 bed, no intercooling",1,0,6804.0,2271.0,42.24,46.07,109.18,0.141,0.302,0.10189999999999999,,92.85,,94.36
+K19,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"1 bed, no intercooling",1,0,11793.0,1440.0,40.9,46.18,108.02,0.184,0.278,0.11,,98.21,,98.91
+K20,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"1 bed, no intercooling",1,0,3175.0,1324.0,45.3,46.09,108.12,0.075,0.276,0.10980000000000001,,95.55,,98.02
+K21,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"2 beds, no intercooling",2,0,3175.0,1366.0,45.18,46.11,107.76,0.074,0.271,0.1018,,96.32,,99.72
+K22,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"2 beds, 1 intercooler",2,1,6804.0,1379.0,41.24,46.06,107.51,0.13,0.281,0.1092,,99.49,,99.97
+K23,2014,Morgan et al. - 2018 - Development of a Rigorous Modeling Framework for Solvent-Based CO2 Capture.md,2014 K campaign,"2 beds, 1 intercooler",2,1,6804.0,1418.0,41.23,46.11,107.37,0.138,0.281,0.1013,,99.58,,99.96
+1A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,8180.0,3000.0,44.1,43.4,109.4,0.24,0.3,0.082,0.111,97.5,0.3,97.2
+2A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,7130.0,2690.0,44.9,45.2,109.5,0.25,0.31,0.1,0.087,93.4,0.3,90.2
+3A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,3354.0,1500.0,45.6,43.3,107.9,0.24,0.31,0.108,0.073,81.1,0.6,77.0
+4A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,3600.0,3000.0,45.6,43.4,110.2,0.19,0.31,0.076,0.111,70.6,1.1,66.6
+5A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,3380.0,2750.0,45.5,45.7,109.8,0.2,0.31,0.107,0.074,53.9,2.6,50.2
+6A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,3130.0,1750.0,45.1,43.4,108.2,0.31,0.3,0.076,0.11,51.7,0.9,60.6
+7A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,4730.0,2255.0,45.1,43.5,109.2,0.23,0.3,0.109,0.071,72.5,1.0,73.0
+8A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,3230.0,2240.0,44.8,42.8,109.2,0.24,0.31,0.107,0.073,56.3,1.8,51.8
+9A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,3224.0,2245.0,45.9,43.4,108.8,0.14,0.31,0.108,0.073,74.2,0.6,72.9
+10A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,7980.0,2492.0,44.8,43.1,109.0,0.32,0.3,0.109,0.072,79.9,0.6,74.2
+11A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,3016.0,2761.0,45.8,42.9,109.6,0.16,0.31,0.096,0.086,60.5,1.7,55.7
+12A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,4170.0,2920.0,46.4,45.1,109.7,0.14,0.32,0.107,0.073,75.4,0.8,72.5
+13A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,6910.0,2680.0,44.9,44.6,109.3,0.26,0.3,0.108,0.073,80.6,0.6,80.9
+14A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,6505.0,2500.0,44.8,43.5,109.2,0.31,0.31,0.108,0.072,57.8,0.7,63.1
+15A,2017,Morgan et al.md,2017 SDoE iteration 1,"3 beds, 2 intercoolers",3,2,8000.0,2494.0,44.9,42.9,109.1,0.32,0.3,0.108,0.072,76.8,1.4,74.6
+1B,2017,Morgan et al.md,2017 SDoE iteration 2,"3 beds, 2 intercoolers",3,2,7959.0,2497.0,44.4,43.7,109.7,0.3,0.3,0.077,0.11,96.1,0.1,93.5
+2B,2017,Morgan et al.md,2017 SDoE iteration 2,"3 beds, 2 intercoolers",3,2,9871.0,2746.0,44.7,45.7,109.5,0.3,0.3,0.088,0.098,97.7,0.5,93.1
+3B,2017,Morgan et al.md,2017 SDoE iteration 2,"3 beds, 2 intercoolers",3,2,11412.0,2748.0,44.4,47.3,109.2,0.3,0.3,0.108,0.071,94.8,0.1,92.5
+1C,2017,Morgan et al.md,2017 one-bed validation,"1 bed, no intercooling",1,0,6185.0,1997.0,,43.3,109.1,0.15,0.3,0.077,0.108,97.1,0.7,95.4
+2C,2017,Morgan et al.md,2017 one-bed validation,"1 bed, no intercooling",1,0,7765.0,2499.0,,43.1,109.6,0.2,0.3,0.077,0.109,92.3,0.5,87.6
+3C,2017,Morgan et al.md,2017 one-bed validation,"1 bed, no intercooling",1,0,7517.0,2013.0,,43.6,109.5,0.25,0.3,0.093,0.09,89.5,1.2,84.0
+4C,2017,Morgan et al.md,2017 one-bed validation,"1 bed, no intercooling",1,0,6160.0,1500.0,44.9,43.3,107.7,0.25,0.3,0.108,0.075,88.9,0.8,87.6
+5C,2017,Morgan et al.md,2017 one-bed validation,"1 bed, no intercooling",1,0,5237.0,1498.0,45.0,43.3,108.4,0.26,0.3,0.077,0.11,86.4,0.6,87.3
+6C,2017,Morgan et al.md,2017 one-bed validation,"1 bed, no intercooling",1,0,7665.0,2700.0,44.8,43.4,109.7,0.31,0.31,0.077,0.109,60.2,0.5,58.8
+7C,2017,Morgan et al.md,2017 one-bed validation,"1 bed, no intercooling",1,0,5414.0,1000.0,44.7,43.3,107.3,0.34,0.29,0.1,0.091,76.4,2.2,78.8
+1D,2017,Morgan et al.md,2017 two-bed validation,"2 beds, no intercooling",2,0,4912.0,1500.0,44.8,43.4,107.8,0.3,0.3,0.1,0.091,78.4,2.2,80.1
+2D,2017,Morgan et al.md,2017 two-bed validation,"2 beds, no intercooling",2,0,4600.0,2000.0,45.4,43.9,108.7,0.2,0.3,0.117,0.071,80.5,0.2,81.2
+3D,2017,Morgan et al.md,2017 two-bed validation,"2 beds, no intercooling",2,0,9534.0,2502.0,,44.9,110.0,0.3,0.3,0.093,0.09,87.0,0.9,81.5
+4D,2017,Morgan et al.md,2017 two-bed validation,"2 beds, no intercooling",2,0,4733.0,1966.0,46.3,43.1,108.6,0.2,0.3,0.079,0.107,96.4,0.5,96.9

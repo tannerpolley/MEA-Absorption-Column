@@ -330,6 +330,23 @@ def test_load_case_data_can_use_campaign_c_case_inputs():
     assert campaign_cases.loc["7C", "L/G"] == pytest.approx(4.628230060332862)
 
 
+def test_load_case_data_can_use_year_split_nccc_inputs():
+    _, nccc_2014, _ = load_case_data(nccc_dataset="2014")
+    _, nccc_2017, _ = load_case_data(nccc_dataset="2017")
+
+    assert {"K13", "K17", "K18", "K19", "K20", "K21"}.issubset(nccc_2014.index)
+    assert {"1C", "2C", "3C", "7C", "1D", "4D"}.issubset(nccc_2017.index)
+    assert nccc_2014.loc["K18", "Intercoolers"] == 0
+    assert nccc_2017.loc["1C", "Intercoolers"] == 0
+    assert nccc_2017.loc["1C", "Tl"] == pytest.approx(318.15)
+    assert nccc_2017.loc["2C", "Tl"] == pytest.approx(318.15)
+    assert nccc_2017.loc["3C", "Tl"] == pytest.approx(318.15)
+    assert nccc_2017.loc["3D", "Tl"] == pytest.approx(318.15)
+    assert bool(nccc_2017.loc["1C", "lean_solvent_temp_imputed"]) is True
+    assert bool(nccc_2017.loc["3D", "lean_solvent_temp_imputed"]) is True
+    assert nccc_2017.loc["2C", "y_CO2"] == pytest.approx(0.077)
+
+
 def test_convert_data_can_use_input_o2_column():
     c_cases, _, _ = load_case_data()
 

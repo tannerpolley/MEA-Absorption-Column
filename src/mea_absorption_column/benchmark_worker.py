@@ -7,6 +7,7 @@ from pathlib import Path
 
 from mea_absorption_column.benchmark import (
     _filter_case_ids,
+    _nccc_case_source,
     _run_one_case_in_process,
     load_case_data,
     settings_from_payload,
@@ -20,18 +21,20 @@ def main(argv=None):
     input_path = Path(argv[0])
     payload = json.loads(input_path.read_text(encoding="utf-8"))
     settings = settings_from_payload(payload["settings"])
-    c_cases, nccc_cases, srp_cases = load_case_data(settings.c_case_dataset)
+    c_cases, nccc_cases, srp_cases = load_case_data(settings.c_case_dataset, settings.nccc_dataset)
     case_source = payload["case_source"]
+    nccc_case_source = _nccc_case_source(settings.nccc_dataset)
     data_by_source = {
         "C_cases_data": c_cases,
         "C_cases_campaign_inputs": c_cases,
         "NCCC_Data": nccc_cases,
+        nccc_case_source: nccc_cases,
         "SRP_method_cases": srp_cases,
     }
     df = data_by_source[case_source]
     if case_source in {"C_cases_data", "C_cases_campaign_inputs"}:
         df = _filter_case_ids(df, settings.c_case_ids, case_source)
-    elif case_source == "NCCC_Data":
+    elif case_source in {"NCCC_Data", nccc_case_source}:
         df = _filter_case_ids(df, settings.nccc_case_ids, case_source)
     else:
         df = _filter_case_ids(df, settings.srp_case_ids, case_source)
