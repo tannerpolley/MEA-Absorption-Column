@@ -22,7 +22,9 @@ EPCSAFT_BUILD_DIRS = (
     EPCSAFT_SOURCE_ROOT / "build" / f"cp{sys.version_info.major}{sys.version_info.minor}-cp{sys.version_info.major}{sys.version_info.minor}-win_amd64",
 )
 SPECIES = ["CO2", "MEA", "H2O"]
-IONIC_LIQUID_SPECIES = ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-"]
+IONIC_LIQUID_SPECIES_6 = ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-"]
+IONIC_LIQUID_SPECIES_9 = ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"]
+IONIC_LIQUID_SPECIES = IONIC_LIQUID_SPECIES_6
 CO2_INDEX = 0
 MEA_INDEX = 1
 H2O_INDEX = 2
@@ -122,16 +124,23 @@ def neutral_vapor_composition(y) -> np.ndarray:
 
 def ionic_liquid_composition(x_true) -> np.ndarray:
     x_arr = np.asarray(x_true, dtype=float)
-    if x_arr.size < len(IONIC_LIQUID_SPECIES):
+    species = _ionic_species_for_size(x_arr.size)
+    if x_arr.size < len(species):
         raise ValueError(
-            f"ePC-SAFT ionic liquid composition requires {len(IONIC_LIQUID_SPECIES)} species, got {x_arr.size}."
+            f"ePC-SAFT ionic liquid composition requires {len(species)} species, got {x_arr.size}."
         )
-    ionic = np.asarray(x_arr[: len(IONIC_LIQUID_SPECIES)], dtype=float)
+    ionic = np.asarray(x_arr[: len(species)], dtype=float)
     ionic = np.maximum(ionic, COMPOSITION_FLOOR)
     total = float(ionic.sum())
     if not math.isfinite(total) or total <= 0.0:
         raise ValueError("Ionic liquid composition must have a positive finite sum.")
     return ionic / total
+
+
+def _ionic_species_for_size(size: int) -> list[str]:
+    if int(size) >= len(IONIC_LIQUID_SPECIES_9):
+        return IONIC_LIQUID_SPECIES_9
+    return IONIC_LIQUID_SPECIES_6
 
 
 def ensure_epcsaft_importable():
@@ -373,11 +382,15 @@ def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, m
 
 
 def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral") -> float:
-    species_key = tuple(IONIC_LIQUID_SPECIES if mixture_kind == "ionic" else SPECIES)
+    composition_arr = np.asarray(composition, dtype=float)
+    if mixture_kind == "ionic":
+        species_key = tuple(_ionic_species_for_size(composition_arr.size))
+    else:
+        species_key = tuple(SPECIES)
     user_options_json = "{}"
     if mixture_kind in {"ionic", "external_neutral"}:
         user_options_json = _canonical_user_options_json(epcsaft_runtime_user_options())
-    key = (str(mixture_kind), user_options_json, *_epcsaft_cache_key(T, P, composition, phase))
+    key = (str(mixture_kind), user_options_json, *_epcsaft_cache_key(T, P, composition_arr, phase))
     if cache and key in _EPCSAFT_PHI_CACHE:
         _EPCSAFT_CACHE_STATS["epcsaft_cache_hits"] += 1
         return _EPCSAFT_PHI_CACHE[key]
@@ -509,6 +522,13 @@ def compute_fugacity(
         "epcsaft_reactive_six_activity",
         "epcsaft_reactive_six_activity_converted",
         "epcsaft_reactive_six_activity_rebased",
+        "epcsaft_reactive_nine",
+        "epcsaft_reactive_nine_activity",
+        "epcsaft_reactive_nine_activity_converted",
+        "epcsaft_reactive_nine_activity_rebased",
+        "epcsaft_full_species_activity",
+        "epcsaft_full_species_activity_converted",
+        "epcsaft_full_species_activity_rebased",
     }:
         blend = float(np.clip(epcsaft_fugacity_blend, 0.0, 1.0))
         epcsaft_values = epcsaft_ionic_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O)

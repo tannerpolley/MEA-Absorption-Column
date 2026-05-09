@@ -311,14 +311,17 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     elif run_type == 'saving':
         Fl_true = [Cl_true[i] * ul * A for i in range(len(Cl_true))]
+        Fl_true_report = list(Fl_true[:6])
+        Cl_true_report = list(Cl_true[:6])
+        x_true_report = list(x_true[:6])
 
         Fl_CO2, Fl_MEA, Fl_H2O = Fl
-        Fl_CO2_true, Fl_MEA_true, Fl_H2O_true, Fl_MEAH_true, Fl_MEACOO_true, Fl_HCO3_true = Fl_true
+        Fl_CO2_true, Fl_MEA_true, Fl_H2O_true, Fl_MEAH_true, Fl_MEACOO_true, Fl_HCO3_true = Fl_true_report
         Fv_CO2, Fv_H2O, Fv_N2, Fv_O2 = Fv
         Cl_CO2, Cl_MEA, Cl_H2O = Cl
-        Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true = Cl_true
+        Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true = Cl_true_report
         x_CO2, x_MEA, x_H2O = x
-        x_CO2_true, x_MEA_true, x_H2O_true, x_MEAH_true, x_MEACOO_true, x_HCO3_true = x_true
+        x_CO2_true, x_MEA_true, x_H2O_true, x_MEAH_true, x_MEACOO_true, x_HCO3_true = x_true_report
         y_CO2, y_H2O, y_N2, y_O2 = y
         Cv_CO2, Cv_H2O, Cv_N2, Cv_O2 = Cv
         DF_CO2, H_CO2_mix = CO2

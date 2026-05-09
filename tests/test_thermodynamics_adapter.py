@@ -10,6 +10,7 @@ from mea_absorption_column.Thermodynamics.Fugacity import fugacity
 from mea_absorption_column.Thermodynamics.thermo_models import (
     EPCSAFT_SOURCE_ROOT,
     IONIC_LIQUID_SPECIES,
+    IONIC_LIQUID_SPECIES_9,
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     build_epcsaft_params,
     ensure_epcsaft_importable,
@@ -185,3 +186,21 @@ def test_ionic_epcsaft_state_uses_ion_and_born_contribution_terms():
     assert abs(float(ares["terms"]["born"])) > 1.0e-8
     assert np.any(np.abs(np.asarray(lnfug["terms"]["ion"], dtype=float)) > 1.0e-8)
     assert np.any(np.abs(np.asarray(lnfug["terms"]["born"], dtype=float)) > 1.0e-8)
+
+
+def test_full_species_ionic_epcsaft_state_uses_all_nine_species():
+    try:
+        ensure_epcsaft_importable()
+    except RuntimeError as exc:
+        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
+
+    mixture = epcsaft_dataset_mixture(tuple(IONIC_LIQUID_SPECIES_9), 323.2)
+    composition = np.array([0.02, 0.23, 0.62, 0.06, 0.05, 0.01, 1.0e-6, 2.0e-6, 1.0e-6], dtype=float)
+    composition /= composition.sum()
+    state = mixture.state(T=323.15, x=composition, P=109500.0, phase="liq")
+    phi = state.fugacity_coefficient(natural_log=True)
+    lnfug = state.fugacity_coefficient(natural_log=True, return_contribution_terms=True)
+
+    assert len(phi) == len(IONIC_LIQUID_SPECIES_9)
+    assert len(lnfug["terms"]["ion"]) == len(IONIC_LIQUID_SPECIES_9)
+    assert len(lnfug["terms"]["born"]) == len(IONIC_LIQUID_SPECIES_9)

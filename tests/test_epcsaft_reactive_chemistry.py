@@ -9,6 +9,8 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     ensure_epcsaft_importable,
 )
 
+SPECIES_9 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-")
+
 
 def _requires_reactive_epcsaft_dataset():
     try:
@@ -83,3 +85,27 @@ def test_epcsaft_reactive_six_activity_converted_uses_concentration_basis_units(
     assert converted_x[0] < activity_x[0]
     assert converted_x[0] > legacy_x[0]
     assert abs(converted_x[4] - legacy_x[4]) < abs(activity_x[4] - legacy_x[4])
+
+
+def test_epcsaft_reactive_nine_activity_rebased_solves_case_3c_state():
+    _requires_reactive_epcsaft_dataset()
+    Fl, Tl, P = _case_3c_liquid_state()
+    diagnostics = {}
+
+    Cl_true, x_true = chemical_equilibrium_with_model(
+        Fl,
+        Tl,
+        model="epcsaft_reactive_nine_activity_rebased",
+        P=P,
+        diagnostics=diagnostics,
+    )
+
+    np.testing.assert_allclose(np.sum(x_true), 1.0, atol=1.0e-12)
+    assert len(x_true) == len(SPECIES_9)
+    assert len(Cl_true) == len(SPECIES_9)
+    assert diagnostics["epcsaft_chemistry_max_mass_residual"] < 1.0e-6
+    assert diagnostics["epcsaft_chemistry_max_reaction_residual"] < 1.0e-6
+    assert diagnostics["epcsaft_chemistry_max_charge_residual"] < 1.0e-6
+    assert x_true[SPECIES_9.index("H3O+")] > 0.0
+    assert x_true[SPECIES_9.index("OH-")] > 0.0
+    assert x_true[SPECIES_9.index("CO3^2-")] > 0.0

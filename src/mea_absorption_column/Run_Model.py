@@ -719,6 +719,13 @@ def _default_chemical_equilibrium_model(thermo_model):
         "epcsaft_reactive_six_activity",
         "epcsaft_reactive_six_activity_converted",
         "epcsaft_reactive_six_activity_rebased",
+        "epcsaft_reactive_nine",
+        "epcsaft_reactive_nine_activity",
+        "epcsaft_reactive_nine_activity_converted",
+        "epcsaft_reactive_nine_activity_rebased",
+        "epcsaft_full_species_activity",
+        "epcsaft_full_species_activity_converted",
+        "epcsaft_full_species_activity_rebased",
     }:
         return normalized
     return "legacy"

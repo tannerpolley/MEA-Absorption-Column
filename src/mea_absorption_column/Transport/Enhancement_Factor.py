@@ -11,7 +11,7 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
                        Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None):
     enable_enhancement_factor = True
 
-    Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true = Cl_true
+    Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true = Cl_true[:6]
     Cl_CO2_true = Cl_CO2_true / 1.04542981654115
     Dl_MEAH = Dl_ion
     Dl_MEACOO = Dl_ion
