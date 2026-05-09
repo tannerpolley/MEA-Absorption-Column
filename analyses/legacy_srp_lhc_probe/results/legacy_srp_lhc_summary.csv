@@ -1,0 +1,4 @@
+geometry,water_mode,method,status,runs,median_runtime_s,median_wall_runtime_s,median_capture_pct
+srp,explicit,single,error,5,1.662770899999941,1.662770899999941,
+srp,explicit,single,success,20,0.781452850000278,2.2948840000001383,99.99816822710163
+srp,legacy-ratio,single,success,25,0.8481825000003482,2.3158023000000867,99.99964585771828

@@ -1,0 +1,34 @@
+run,method,geometry,water_mode,status,success,capture_pct,runtime_s,message,L,V,L_G,alpha,w_MEA,y_CO2,y_H2O_input,y_H2O_legacy_converter,y_H2O_used,Tl_K,Tv_K,wall_runtime_s,timeout_s
+1,single-bounded,srp,explicit,solver_failure,False,,1.228559900000164,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarning: divide by zero encountered in scalar divide
+  ΔP_H = Ψ_L * a_p / (ϵ - h_L) ** 3 ** Fv ** 2 / 2 * 1 / K",28.64360773540634,3.777578223070945,7.58253199377055,0.2856469999645027,0.2918733806302769,0.1673103512648684,0.0158094828065687,0.1610531142152654,0.0158094828065687,311.3692878203966,319.4556992586939,2.68967930000008,45.0
+9,single-bounded,srp,explicit,solver_failure,False,,1.263893399999688,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:25: RuntimeWarning: invalid value encountered in scalar power
+  Ha = (k2 * Cl_MEA_true * Dl_CO2) ** .5 / kl_CO2
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarning: divide by zero encountered in scalar divide
+  ΔP_H = Ψ_L * a_p / (ϵ - h_L) ** 3 ** Fv ** 2 / 2 * 1 / K
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 ",27.83654811754617,3.672922774553986,7.578854723109838,0.2938359055490854,0.2909238582807239,0.1821079360336417,0.0118964905861627,0.17529728435691128,0.0118964905861627,315.74153656601663,320.8708222432993,2.7887202000001707,45.0
+10,single-bounded,srp,explicit,solver_failure,False,,1.2826203999998143,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarning: divide by zero encountered in scalar divide
+  ΔP_H = Ψ_L * a_p / (ϵ - h_L) ** 3 ** Fv ** 2 / 2 * 1 / K
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: i",26.54225993893724,3.683581415948169,7.205558108210064,0.2840744221649599,0.3093693864794469,0.1783333963179011,0.0133697228263885,0.1716639085893423,0.0133697228263885,314.5064803131476,321.2851857303846,2.8543946999998298,45.0
+17,single-bounded,srp,explicit,solver_failure,False,,1.3123727000001963,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:25: RuntimeWarning: invalid value encountered in scalar power
+  Ha = (k2 * Cl_MEA_true * Dl_CO2) ** .5 / kl_CO2
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarning: divide by zero encountered in scalar divide
+  ΔP_H = Ψ_L * a_p / (ϵ - h_L) ** 3 ** Fv ** 2 / 2 * 1 / K
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered ",30.56293074746814,3.998529518589053,7.643542608697002,0.2709035761091949,0.2878818444877855,0.1724617903463623,0.014750288343327,0.1660118947120644,0.014750288343327,314.1918830188118,322.88170029126763,2.8601613000000725,45.0
+23,single-bounded,srp,explicit,solver_failure,False,,1.2940909000003558,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered in scalar power
+  sigma_H2O = c1_H2O * (1 - Tl / Tc_H2O) ** (c2_H2O + c3_H2O * (Tl / Tc_H2O) + c4_H2O * (Tl / Tc_H2O) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\T",28.186610808100355,3.892572404345545,7.241126915618502,0.2813512937989418,0.3014263101443651,0.1750572198314629,0.015212879174635,0.16851025777293588,0.015212879174635,311.1993823860036,320.6080443100327,2.8286826999997174,45.0

@@ -1,0 +1,250 @@
+run,method,geometry,water_mode,status,success,capture_pct,runtime_s,wall_runtime_s,timeout_s,message,L,V,L_G,alpha,w_MEA,y_CO2,y_H2O_input,y_H2O_legacy_converter,Tl_K,Tv_K,y_H2O_used
+1,single,srp,explicit,error,False,,1.7546692000000803,1.7546692000000803,60.0,"Traceback (most recent call last):
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 452, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 422, in main
+    result = _run_worker(args.row_index, args.method, args.geometry, args.water_mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 248, in _run_worker
+    capture_pct, success = run_model_module.run_model(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Run_Model.py""",28.64360773540634,3.777578223070945,7.58253199377055,0.2856469999645027,0.2918733806302769,0.1673103512648684,0.0158094828065687,0.1610531142152654,311.3692878203966,319.4556992586939,0.0158094828065687
+2,single,srp,explicit,success,True,99.99122971194558,0.8809951999996883,2.4635362000003624,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",29.070479136739003,3.62803646563233,8.012730691137724,0.2933976966191603,0.2950261386728167,0.1736239794367795,0.0114741599485045,0.1671306191119814,312.69085426120785,318.2188145208372,0.0114741599485045
+3,single,srp,explicit,success,True,99.99834683404384,0.7220311999999467,2.182947100000092,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",30.178120088425874,3.4130247037084662,8.842045607122458,0.2895122775062148,0.3112882218375913,0.1707334270232804,0.0149018071552836,0.1643481704202116,313.32454901962194,317.0452734646136,0.0149018071552836
+4,single,srp,explicit,success,True,99.9926607096554,0.9876241000001756,2.460339700000077,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered",31.601498360355595,3.858418705807453,8.190271914448005,0.2771478557524129,0.2856822429794839,0.1738564128844092,0.0137994334129065,0.1673543597849616,314.71908159388266,321.790792540703,0.0137994334129065
+5,single,srp,explicit,success,True,99.99832062251292,0.7057058000000325,2.166026400000192,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",26.09447858767712,3.121052582266759,8.360794283294391,0.2904938834212728,0.2965053573331498,0.1830791105595,0.0107601414202209,0.1762321379427985,313.5238488184918,319.9583122402921,0.0107601414202209
+6,single,srp,explicit,success,True,99.9990597545618,0.70047889999978,2.16015490000018,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",30.5510693046463,3.1104189943339486,9.822171662499242,0.2959774486056234,0.3042864953078547,0.1664355107759593,0.0129011133259358,0.1602109918712786,312.2030956787332,318.09731313569495,0.0129011133259358
+7,single,srp,explicit,success,True,99.99948879604852,0.8853008999999474,2.345166600000084,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered",29.64786440068401,3.247631492675869,9.129072823547418,0.2748689672294521,0.3031331402408543,0.1838146911713965,0.0111359378403512,0.1769402085876013,316.99033226456834,322.0058531802492,0.0111359378403512
+8,single,srp,explicit,success,True,99.99959638774271,0.729318499999863,2.188234299999749,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",27.659830329307045,3.2981712657077336,8.386414197739272,0.2665708488973907,0.3165620070370446,0.1656310709687484,0.011947296216853,0.1594366372950639,314.9950236381161,319.29116486059564,0.011947296216853
+9,single,srp,explicit,error,False,,1.662770899999941,1.662770899999941,60.0,"Traceback (most recent call last):
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 452, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 422, in main
+    result = _run_worker(args.row_index, args.method, args.geometry, args.water_mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 248, in _run_worker
+    capture_pct, success = run_model_module.run_model(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Run_Model.py""",27.83654811754617,3.672922774553986,7.578854723109838,0.2938359055490854,0.2909238582807239,0.1821079360336417,0.0118964905861627,0.1752972843569112,315.74153656601663,320.8708222432993,0.0118964905861627
+10,single,srp,explicit,error,False,,1.646520799999962,1.646520799999962,60.0,"Traceback (most recent call last):
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 452, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 422, in main
+    result = _run_worker(args.row_index, args.method, args.geometry, args.water_mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 248, in _run_worker
+    capture_pct, success = run_model_module.run_model(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Run_Model.py""",26.54225993893724,3.683581415948169,7.205558108210064,0.2840744221649599,0.3093693864794469,0.1783333963179011,0.0133697228263885,0.1716639085893423,314.5064803131476,321.2851857303846,0.0133697228263885
+11,single,srp,explicit,success,True,99.99803541501436,0.7092038999999204,2.200195800000074,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)",29.528134097326365,3.333938726595659,8.85683166933246,0.2837663775026199,0.2933401112820886,0.1847766395957819,0.0141300680763378,0.1778661811188314,313.06310866280506,317.67064634067884,0.0141300680763378
+12,single,srp,explicit,success,True,99.99804939416916,0.712646500000119,2.1714257999997244,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",30.998091543463687,3.463358817330929,8.950297436219058,0.2630568759109422,0.280210827256967,0.1772687772420542,0.0101691616757115,0.1706391051846403,313.79004290589535,322.4718296321292,0.0101691616757115
+13,single,srp,explicit,success,True,99.9942040257942,0.7740793000002668,2.254124900000079,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)",27.278642125247902,3.502059553131751,7.789314176811673,0.2793193549180117,0.2842692018202922,0.1686048517211839,0.0138458273774301,0.1622992016705038,311.9804770205678,317.33359756110576,0.0138458273774301
+14,single,srp,explicit,success,True,99.99707313362194,0.9205454000002646,2.440975399999843,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarning: divide by zero encountered in scalar divide
+  ΔP_H = Ψ_L * a_p / (ϵ - h_L) ** 3 ** Fv ** 2 / 2 * 1 / K
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** ",26.8023989719814,3.538904370251016,7.573643186656748,0.2607828800573877,0.2826931200789466,0.1809395642302833,0.0153900827953073,0.1741726084712317,314.0065896514725,319.7515177792662,0.0153900827953073
+15,single,srp,explicit,success,True,99.99763031575128,0.9881274999997912,2.470874699999968,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered in scalar power
+  sigma_H2O = c1_H2O * (1 - Tl / Tc_H2O) ** (c2_H2O + c3_H2O * (Tl / Tc_H2O) + c4_H2O * (Tl / Tc_H2O) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarnin",31.446851602835466,3.926713215559541,8.008441125322776,0.2647864940946254,0.3056531854647496,0.167682382092376,0.0127163299570411,0.1614112314680307,316.3567210633908,320.5586446703595,0.0127163299570411
+16,single,srp,explicit,success,True,99.9982870600341,0.7011846999998852,2.16459470000018,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",26.475666321944924,3.004975294194757,8.81061031453159,0.2977160045953144,0.2882861858578072,0.169288358337634,0.0145329015667652,0.1629571458343515,315.35175228223227,318.78943473899017,0.0145329015667652
+17,single,srp,explicit,error,False,,1.6345424999999525,1.6345424999999525,60.0,"Traceback (most recent call last):
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 452, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 422, in main
+    result = _run_worker(args.row_index, args.method, args.geometry, args.water_mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 248, in _run_worker
+    capture_pct, success = run_model_module.run_model(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Run_Model.py""",30.56293074746814,3.998529518589053,7.643542608697002,0.2709035761091949,0.2878818444877855,0.1724617903463623,0.014750288343327,0.1660118947120644,314.1918830188118,322.88170029126763,0.014750288343327
+18,single,srp,explicit,success,True,99.99973069910916,0.7888264000002891,2.327380000000176,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",27.99778071164025,3.0465055757088524,9.190129483063822,0.2722611077870564,0.3146195392287275,0.1795182815325361,0.0125352605205452,0.1728044803015042,311.6683826048816,317.9493672698452,0.0125352605205452
+19,single,srp,explicit,success,True,99.99979715706178,1.1613055999996504,3.027725399999781,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",31.199176265318656,3.17824694785656,9.816473287690776,0.2653281070707639,0.3178994548687018,0.1700988854814213,0.0112048621185831,0.1637373600869431,312.55855996201905,321.5252965673215,0.0112048621185831
+20,single,srp,explicit,success,True,99.99780959799963,1.2920939000000544,3.162295099999937,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered",28.579916221224074,3.8227288739387166,7.476312645677379,0.268941246487449,0.3184791683026847,0.1758738680058824,0.0132474857078458,0.1692963641358366,316.5267299138881,322.7255339880632,0.0132474857078458
+21,single,srp,explicit,success,True,99.99795523548111,1.0212824999998702,2.536984400000165,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered",31.815442822173083,3.75891264944788,8.46400163803919,0.2731306662495792,0.3079479339044968,0.1817206659450787,0.0106054751293006,0.1749244977759617,315.8805789434772,318.56020994900683,0.0106054751293006
+22,single,srp,explicit,success,True,99.99883248301956,0.7185832000000119,2.262388000000101,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",29.930681531734308,3.3703152966694434,8.880676998176375,0.2878285342655778,0.3121672197082354,0.1718425808340712,0.010430539745467,0.1654158430060446,315.1772033484781,322.15635237565726,0.010430539745467
+23,single,srp,explicit,error,False,,2.181197599999905,2.181197599999905,60.0,"Traceback (most recent call last):
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 452, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 422, in main
+    result = _run_worker(args.row_index, args.method, args.geometry, args.water_mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py"", line 248, in _run_worker
+    capture_pct, success = run_model_module.run_model(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Run_Model.py""",28.186610808100355,3.892572404345545,7.241126915618502,0.2813512937989418,0.3014263101443651,0.1750572198314629,0.015212879174635,0.1685102577729358,311.1993823860036,320.6080443100327,0.015212879174635
+24,single,srp,explicit,success,True,99.9939043992109,1.2184457000003022,3.1318327999997564,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarning: divide by zero encountered in scalar di",29.17772618930136,3.580758943487762,8.148475406970963,0.2993868204560651,0.2984005529970421,0.1762457694063917,0.0123952245534129,0.1696543568020418,316.1448982518156,320.20179118656824,0.0123952245534129
+25,single,srp,explicit,success,True,99.99868136333424,0.710019099999954,2.1779805999999557,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",27.127294421505137,3.219530283422651,8.425854715883082,0.2777336893410964,0.299921851740539,0.1792148769077188,0.0156751663922974,0.1725124227012139,311.83906200937275,319.0024084661446,0.0156751663922974
+1,single,srp,legacy-ratio,success,True,99.99728182234276,0.8073466000000735,2.279928099999779,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",28.64360773540634,3.777578223070945,7.58253199377055,0.2856469999645027,0.2918733806302769,0.1673103512648684,0.0158094828065687,0.1610531142152654,311.3692878203966,319.4556992586939,0.1610531142152654
+2,single,srp,legacy-ratio,success,True,99.9983575536574,0.7553564999998343,2.2058907999999064,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",29.070479136739003,3.62803646563233,8.012730691137724,0.2933976966191603,0.2950261386728167,0.1736239794367795,0.0114741599485045,0.1671306191119814,312.69085426120785,318.2188145208372,0.1671306191119814
+3,single,srp,legacy-ratio,success,True,99.99974795680836,0.7393859999997403,2.2188687000002574,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",30.178120088425874,3.4130247037084662,8.842045607122458,0.2895122775062148,0.3112882218375913,0.1707334270232804,0.0149018071552836,0.1643481704202116,313.32454901962194,317.0452734646136,0.1643481704202116
+4,single,srp,legacy-ratio,success,True,99.99879404767869,0.7385670000003302,2.20010289999982,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",31.601498360355595,3.858418705807453,8.190271914448005,0.2771478557524129,0.2856822429794839,0.1738564128844092,0.0137994334129065,0.1673543597849616,314.71908159388266,321.790792540703,0.1673543597849616
+5,single,srp,legacy-ratio,success,True,99.9997629646164,0.8988145999996959,2.3589559000001827,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",26.09447858767712,3.121052582266759,8.360794283294391,0.2904938834212728,0.2965053573331498,0.1830791105595,0.0107601414202209,0.1762321379427985,313.5238488184918,319.9583122402921,0.1762321379427985
+6,single,srp,legacy-ratio,success,True,99.99982238235064,0.8414599999996426,2.3127245999999104,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",30.5510693046463,3.1104189943339486,9.822171662499242,0.2959774486056234,0.3042864953078547,0.1664355107759593,0.0129011133259358,0.1602109918712786,312.2030956787332,318.09731313569495,0.1602109918712786
+7,single,srp,legacy-ratio,success,True,99.99987261497228,0.8558428999999705,2.3158023000000867,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",29.64786440068401,3.247631492675869,9.129072823547418,0.2748689672294521,0.3031331402408543,0.1838146911713965,0.0111359378403512,0.1769402085876013,316.99033226456834,322.0058531802492,0.1769402085876013
+8,single,srp,legacy-ratio,success,True,99.9998972628172,0.7346293999999034,2.1989582999999584,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",27.659830329307045,3.2981712657077336,8.386414197739272,0.2665708488973907,0.3165620070370446,0.1656310709687484,0.011947296216853,0.1594366372950639,314.9950236381161,319.29116486059564,0.1594366372950639
+9,single,srp,legacy-ratio,success,True,99.99700920613716,0.9825298999999176,2.455268799999885,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered",27.83654811754617,3.672922774553986,7.578854723109838,0.2938359055490854,0.2909238582807239,0.1821079360336417,0.0118964905861627,0.1752972843569112,315.74153656601663,320.8708222432993,0.1752972843569112
+10,single,srp,legacy-ratio,success,True,99.99827521395856,0.9884005000003526,2.468661500000053,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered",26.54225993893724,3.683581415948169,7.205558108210064,0.2840744221649599,0.3093693864794469,0.1783333963179011,0.0133697228263885,0.1716639085893423,314.5064803131476,321.2851857303846,0.1716639085893423
+11,single,srp,legacy-ratio,success,True,99.99964585771828,0.8666916000001947,2.3224508999996942,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",29.528134097326365,3.333938726595659,8.85683166933246,0.2837663775026199,0.2933401112820886,0.1847766395957819,0.0141300680763378,0.1778661811188314,313.06310866280506,317.67064634067884,0.1778661811188314
+12,single,srp,legacy-ratio,success,True,99.99977038106027,0.7315683000001627,2.199002500000006,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",30.998091543463687,3.463358817330929,8.950297436219058,0.2630568759109422,0.280210827256967,0.1772687772420542,0.0101691616757115,0.1706391051846403,313.79004290589535,322.4718296321292,0.1706391051846403
+13,single,srp,legacy-ratio,success,True,99.99888097295832,0.73203280000007,2.1913417999999183,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",27.278642125247902,3.502059553131751,7.789314176811673,0.2793193549180117,0.2842692018202922,0.1686048517211839,0.0138458273774301,0.1622992016705038,311.9804770205678,317.33359756110576,0.1622992016705038
+14,single,srp,legacy-ratio,success,True,99.99897593583876,1.0010879999999815,2.46964700000035,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:25: RuntimeWarning: invalid value encountered in scalar power
+  Ha = (k2 * Cl_MEA_true * Dl_CO2) ** .5 / kl_CO2
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_ME",26.8023989719814,3.538904370251016,7.573643186656748,0.2607828800573877,0.2826931200789466,0.1809395642302833,0.0153900827953073,0.1741726084712317,314.0065896514725,319.7515177792662,0.1741726084712317
+15,single,srp,legacy-ratio,success,True,99.9989867821288,0.9073803999999654,2.3870068999999603,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:25: RuntimeWarning: invalid value encountered in scalar power
+  Ha = (k2 * Cl_MEA_true * Dl_CO2) ** .5 / kl_CO2
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarning: divide by zero encountered in scalar divide
+  ΔP_H = Ψ_L * a_p / (ϵ - h_L) ** 3 ** Fv ** 2 / 2 * 1 / K
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / ",31.446851602835466,3.926713215559541,8.008441125322776,0.2647864940946254,0.3056531854647496,0.167682382092376,0.0127163299570411,0.1614112314680307,316.3567210633908,320.5586446703595,0.1614112314680307
+16,single,srp,legacy-ratio,success,True,99.99969955935752,0.7314629000002242,2.193149600000197,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",26.475666321944924,3.004975294194757,8.81061031453159,0.2977160045953144,0.2882861858578072,0.169288358337634,0.0145329015667652,0.1629571458343515,315.35175228223227,318.78943473899017,0.1629571458343515
+17,single,srp,legacy-ratio,success,True,99.99585751759318,0.9542765000001054,2.4179933000000347,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Pressure_Drop.py:30: RuntimeWarning: divide by zero encountered in scalar divide
+  ΔP_H = Ψ_L * a_p / (ϵ - h_L) ** 3 ** Fv ** 2 / 2 * 1 / K
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** ",30.56293074746814,3.998529518589053,7.643542608697002,0.2709035761091949,0.2878818444877855,0.1724617903463623,0.014750288343327,0.1660118947120644,314.1918830188118,322.88170029126763,0.1660118947120644
+18,single,srp,legacy-ratio,success,True,99.99994749891454,0.8977201000002424,2.385695299999952,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",27.99778071164025,3.0465055757088524,9.190129483063822,0.2722611077870564,0.3146195392287275,0.1795182815325361,0.0125352605205452,0.1728044803015042,311.6683826048816,317.9493672698452,0.1728044803015042
+19,single,srp,legacy-ratio,success,True,99.99994954965588,0.8862002999999277,2.5276491999998143,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",31.199176265318656,3.17824694785656,9.816473287690776,0.2653281070707639,0.3178994548687018,0.1700988854814213,0.0112048621185831,0.1637373600869431,312.55855996201905,321.5252965673215,0.1637373600869431
+20,single,srp,legacy-ratio,success,True,99.9991211702958,0.958082099999956,2.4753718000001754,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered",28.579916221224074,3.8227288739387166,7.476312645677379,0.268941246487449,0.3184791683026847,0.1758738680058824,0.0132474857078458,0.1692963641358366,316.5267299138881,322.7255339880632,0.1692963641358366
+21,single,srp,legacy-ratio,success,True,99.9997497993594,0.742113899999822,2.2672105999999985,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",31.815442822173083,3.75891264944788,8.46400163803919,0.2731306662495792,0.3079479339044968,0.1817206659450787,0.0106054751293006,0.1749244977759617,315.8805789434772,318.56020994900683,0.1749244977759617
+22,single,srp,legacy-ratio,success,True,99.99980155192917,0.7379928000000291,2.2410329999997884,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",29.930681531734308,3.3703152966694434,8.880676998176375,0.2878285342655778,0.3121672197082354,0.1718425808340712,0.010430539745467,0.1654158430060446,315.1772033484781,322.15635237565726,0.1654158430060446
+23,single,srp,legacy-ratio,success,True,99.99827865576856,0.8277401999998801,2.3859316999996736,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",28.186610808100355,3.892572404345545,7.241126915618502,0.2813512937989418,0.3014263101443651,0.1750572198314629,0.015212879174635,0.1685102577729358,311.1993823860036,320.6080443100327,0.1685102577729358
+24,single,srp,legacy-ratio,success,True,99.9979285109812,0.9350430999998024,2.516914600000291,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:100: RuntimeWarning: invalid value encountered in scalar power
+  sigma_MEA = c1_MEA * (1 - Tl / Tc_MEA) ** (c2_MEA + c3_MEA * (Tl / Tc_MEA) + c4_MEA * (Tl / Tc_MEA) ** 2)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Properties\Thermophysical_Properties.py:101: RuntimeWarning: invalid value encountered",29.17772618930136,3.580758943487762,8.148475406970963,0.2993868204560651,0.2984005529970421,0.1762457694063917,0.0123952245534129,0.1696543568020418,316.1448982518156,320.20179118656824,0.1696543568020418
+25,single,srp,legacy-ratio,success,True,99.99982735169992,0.8481825000003482,2.291170100000272,60.0,"C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\src\mea_absorption_column\Transport\Enhancement_Factor.py:44: RuntimeWarning: invalid value encountered in scalar power
+  eq1 = E - Ha * Υ_MEA_int ** (1 / 2) * (1 - Υ_CO2_int) / (1 - Υ_CO2_bulk)
+C:\Users\Tanner\.codex\worktrees\legacy-srp-lhc-probe\MEA-Absorption-Column\.venv\Lib\site-packages\scipy\optimize\_nonlin.py:374: RuntimeWarning: invalid value encountered in scalar divide
+  and dx_norm/self.x_rtol <= x_norm))",27.127294421505137,3.219530283422651,8.425854715883082,0.2777336893410964,0.299921851740539,0.1792148769077188,0.0156751663922974,0.1725124227012139,311.83906200937275,319.0024084661446,0.1725124227012139
