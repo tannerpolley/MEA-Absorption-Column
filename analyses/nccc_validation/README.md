@@ -30,6 +30,8 @@ $env:PYTHONPATH = "src"
 | `generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and writes dense profile CSV folders. | Yes. | Required only for ePC-SAFT rows in the selected suite. |
 | `render_c_case_campaign_temperature_gallery.py` | Renders the corrected one-bed C-case temperature overlay gallery from a completed campaign-input benchmark run. | No. | No direct dependency; the source run may include ePC-SAFT rows. |
 | `probe_reactive_epcsaft_speciation.py` | Experimental reactive-speciation probe using the external ePC-SAFT package and the repo-vendored MEA dataset. | Thermodynamic probe only. | Required. Not a default validation script. |
+| `probe_epcsaft_electrolyte_options.py` | Exercises neutral, ion-only, Born, SSM, DS, and unsupported fitted-Born user-option paths and writes contribution diagnostics. | Thermodynamic probe only. | Required. Not a default validation script. |
+| `run_epcsaft_electrolyte_config_matrix.py` | Runs the NCCC 3C absorber case across dated and mode-coverage ePC-SAFT electrolyte user-option configurations, then exports parameter provenance tables. | Yes. | Required. Not a default validation script. |
 | `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
 
 Henry-only validation does not require the external ePC-SAFT checkout. ePC-SAFT diagnostics should be run only after installing or updating the external package. The MEA parameter datasets are vendored in this repo under `src/mea_absorption_column/data/epcsaft_datasets/`.
@@ -39,6 +41,18 @@ Typical ePC-SAFT diagnostic environment:
 ```powershell
 $env:MEA_EPCSAFT_ROOT = "C:\Users\Tanner\Documents\git\ePC-SAFT"
 $env:MEA_EPCSAFT_DATASET_NAME = "MEA_CO2_H2O_draft"
+```
+
+Run the electrolyte option matrix diagnostic:
+
+```powershell
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\probe_epcsaft_electrolyte_options.py
+```
+
+Run the column-level electrolyte configuration matrix and regenerate the pure-component and binary-interaction parameter provenance tables:
+
+```powershell
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_epcsaft_electrolyte_config_matrix.py
 ```
 
 Regenerate plot-ready tables from curated inputs or available run folders:

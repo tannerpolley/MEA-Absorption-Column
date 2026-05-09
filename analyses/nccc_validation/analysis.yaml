@@ -1,7 +1,7 @@
 id: nccc_validation
 title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
-summary: Reviewer-response validation artifacts for one-bed C cases, SRP-style method contrast, and ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons.
+summary: Reviewer-response validation artifacts for one-bed C cases, SRP-style method contrast, ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons, and diagnostic electrolyte ePC-SAFT option checks.
 owner: project
 architecture:
   standard: C:\Users\Tanner\.codex\PROJECT_ARCHITECTURE.md
@@ -28,6 +28,22 @@ outputs:
     kind: uncertainty_screen_table
   - path: results/final/tables/method_case_contrast.csv
     kind: solver_method_diagnostic_table
+  - path: results/final/tables/epcsaft_electrolyte_option_matrix.csv
+    kind: electrolyte_option_diagnostic_table
+  - path: results/final/reports/epcsaft_electrolyte_option_matrix.md
+    kind: electrolyte_option_diagnostic_report
+  - path: results/final/tables/epcsaft_electrolyte_column_config_matrix.csv
+    kind: electrolyte_column_configuration_table
+  - path: results/final/tables/epcsaft_electrolyte_config_user_options.csv
+    kind: electrolyte_configuration_source_table
+  - path: results/final/tables/epcsaft_electrolyte_pure_parameters.csv
+    kind: electrolyte_pure_parameter_provenance_table
+  - path: results/final/tables/epcsaft_electrolyte_binary_parameters.csv
+    kind: electrolyte_binary_parameter_provenance_table
+  - path: results/final/tables/epcsaft_electrolyte_relative_permittivity_parameters.csv
+    kind: electrolyte_relative_permittivity_parameter_table
+  - path: results/final/reports/epcsaft_electrolyte_column_config_matrix.md
+    kind: electrolyte_column_configuration_report
   - path: results/final/figures/c_case_thermo_benchmark.pdf
     kind: manuscript_figure
   - path: results/final/figures/error_regime_capture_error.pdf
@@ -53,6 +69,10 @@ commands:
     - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_clean_profile_csvs.py --suite all --output-dir analyses\nccc_validation\results\runs\clean_profile_csvs
   validate:
     - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
+  epcsaft_electrolyte_options:
+    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\probe_epcsaft_electrolyte_options.py
+  epcsaft_electrolyte_column_matrix:
+    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_epcsaft_electrolyte_config_matrix.py
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -65,6 +85,8 @@ external_dependencies:
       - thermo_model: epcsaft_reactive_six_concentration
       - thermo_model: epcsaft_reactive_six_activity
       - script: scripts/probe_reactive_epcsaft_speciation.py
+      - script: scripts/probe_epcsaft_electrolyte_options.py
+      - script: scripts/run_epcsaft_electrolyte_config_matrix.py
     not_required_for:
       - thermo_model: ideal_henry
       - script: scripts/generate_data.py
