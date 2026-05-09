@@ -19,7 +19,7 @@ CASE_INPUTS = ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_campaig
 
 THERMO_STYLES = {
     "ideal_henry": {"color": "#1f77b4", "label": "Henry"},
-    "epcsaft_neutral": {"color": "#b05a2a", "label": "ePC-SAFT"},
+    "epcsaft_neutral": {"color": "#b05a2a", "label": "PC-SAFT"},
 }
 
 

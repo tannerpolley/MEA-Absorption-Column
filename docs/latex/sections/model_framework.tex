@@ -8,7 +8,7 @@
         \end{figure}
         The diagram in Figure~\ref{fig:Model_Framework_Flowchart}, adapted from Luo \cite{Luo2017}, outlines the computational framework used for the MEA absorber benchmark. The calculation begins with flow, composition, pressure, and temperature variables for the vapor and liquid phases. These variables are used to evaluate thermodynamic, transport, and hydraulic properties, which then define interfacial fluxes and close the governing balances. This modular structure is important for the present study because it allows the numerical method and CO$_2$ fugacity model to be changed while the rest of the absorber equations remain fixed.
         
-        Thermodynamic modeling follows, incorporating both the chemical equilibrium and vapor-liquid equilibrium (VLE) of the model. The chemical equilibrium determines true species concentrations from the reaction set and apparent mole fractions. The VLE calculation then provides the fugacities that define the thermodynamic driving force. The model can switch the CO$_2$ driving-force calculation between the baseline Henry-law expression and an equation-of-state calculation using the \texttt{epcsaft} package \cite{Cameretti2005,Polley2026epcsaft}. In this work, the Henry-law model is the fast baseline, while neutral ePC-SAFT is used as a controlled sensitivity test for the CO$_2$ fugacity coefficient on both the vapor and liquid sides. The chemical-equilibrium equations, enhancement factor, transport correlations, and balances remain unchanged so that the thermodynamic comparison isolates the fugacity calculation rather than introducing a second absorber model. The benchmark results show higher runtime for ePC-SAFT than for Henry because the ePC-SAFT lane evaluates fugacity coefficients through an equation-of-state state calculation, but the cost remains in the same repeated-simulation regime rather than becoming an offline calibration-only calculation. Once the thermodynamics is evaluated, it is used alongside hydraulic variables, transfer coefficients, heat transfer, and the enhancement factor to calculate species and enthalpy fluxes. These fluxes close the governing mass and energy balances.
+        Thermodynamic modeling follows, incorporating both the chemical equilibrium and vapor-liquid equilibrium (VLE) of the model. The chemical equilibrium determines true species concentrations from the reaction set and apparent mole fractions. The VLE calculation then provides the fugacities that define the thermodynamic driving force. The model can switch the CO$_2$ driving-force calculation between the baseline Henry-law expression and a PC-SAFT equation-of-state calculation. In this work, the Henry-law model is the fast baseline, while PC-SAFT is used as a controlled sensitivity test for the CO$_2$ fugacity coefficient on both the vapor and liquid sides. The chemical-equilibrium equations, enhancement factor, transport correlations, and balances remain unchanged so that the thermodynamic comparison isolates the fugacity calculation rather than introducing a second absorber model. The benchmark results show higher runtime for PC-SAFT than for Henry's Law because the PC-SAFT calculation evaluates fugacity coefficients through an equation-of-state density solve, but the cost remains in the same repeated-simulation regime rather than becoming an offline calibration-only calculation. Once the thermodynamics is evaluated, it is used alongside hydraulic variables, transfer coefficients, heat transfer, and the enhancement factor to calculate species and enthalpy fluxes. These fluxes close the governing mass and energy balances.
 
         \subsection{Thermodynamics}\label{subsec:thermodynamics}
             The thermodynamics section of the model establishes the chemical and phase behavior that drives $\COtwo$ absorption in the MEA solvent system. It begins with solving chemical equilibrium by determining the true species concentrations. Once the true concentrations are known, vapor--liquid equilibrium is modeled to determine the fugacities of the species. Together, the chemical equilibrium and VLE models provide the thermodynamic foundation for predicting mass transfer and absorption behavior throughout the column.
@@ -72,11 +72,11 @@
                     && \left(\unit{mol\,m^{-3}}\right)
                 \end{align}
                 where $\textbf{C}$ is the array of unknown true-species concentrations.
-                Each equation is set to zero and the true species concentrations are obtained as the roots of the nonlinear algebraic system. Concentration is used as the unknown variable because the present model assumes unit activity coefficients for the species in this simplified equilibrium calculation and because concentration provides better numerical scaling than mole fraction for dilute $\COtwo$ species. Since the true mole fraction of $\COtwo$ can become small near the top of the column, scaling both the unknowns and equations is important for root-finder convergence. The implementation stores the previous converged chemical-equilibrium solution and reuses it as the next initial guess while marching through the profile. This sequential initialization reduces the need for a separate surrogate model for chemical-equilibrium guesses. A more rigorous alternative would solve for reaction extents $(\xi)$ by minimizing $\Delta _{rxn} G^{\circ}$, but that approach is outside the scope of the present benchmark. Once true species concentrations are known, VLE behavior can be evaluated.
+                Each equation is set to zero and the true species concentrations are obtained as the roots of the nonlinear algebraic system. Concentration is used as the unknown variable because the present model assumes unit activity coefficients for the species in this simplified equilibrium calculation and because concentration provides better numerical scaling than mole fraction for dilute $\COtwo$ species. Since the true mole fraction of $\COtwo$ can become small near the top of the column, scaling both the unknowns and equations is important for root-finder convergence. The calculation stores the previous converged chemical-equilibrium solution and reuses it as the next initial guess while marching through the profile. This sequential initialization reduces the need for a separate surrogate model for chemical-equilibrium guesses. A more rigorous alternative would solve for reaction extents $(\xi)$ by minimizing $\Delta _{rxn} G^{\circ}$, but that approach is outside the scope of the present benchmark. Once true species concentrations are known, VLE behavior can be evaluated.
 
 
             \subsubsection{Vapor-Liquid Equilibrium}
-                The vapor-liquid equilibrium of the model determines the driving force for $\COtwo$ absorption in the column. This driving force is the difference between the vapor and liquid fugacities of $\COtwo$. Significant progress has been made in developing accurate models for phase behavior. One sophisticated route is the e-NRTL activity coefficient model originally developed by Zhang et al. \cite{Zhang2011}. In this model, binary electrolyte interaction parameters between molecules and electrolytes are fit with speciation data, and many thermodynamic expressions are derived, such as heat capacity and excess enthalpy. This model has shown strong performance for the $\MEA-\HtwoO-\COtwo$ system, but the parameter count and model complexity can be a hindrance when running numerous simulations for statistical testing. PC-SAFT and ePC-SAFT provide an equation-of-state alternative for associating and electrolyte-containing systems \cite{Gross2001,Cameretti2005}, and PC-SAFT parameters for $\COtwo$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh \cite{Baygi2015}. The benchmark therefore keeps the Henry-law model as the fast baseline and adds a neutral ePC-SAFT sensitivity lane to evaluate how an EOS-based CO$_2$ fugacity-coefficient calculation changes the solved column predictions. The following outlines the derivation and assumptions for relating liquid fugacity to Henry's Law. The equilibrium definition for a species between liquid and vapor phases is
+                The vapor-liquid equilibrium of the model determines the driving force for $\COtwo$ absorption in the column. This driving force is the difference between the vapor and liquid fugacities of $\COtwo$. Significant progress has been made in developing accurate models for phase behavior. One sophisticated route is the e-NRTL activity coefficient model originally developed by Zhang et al. \cite{Zhang2011}. In this model, binary electrolyte interaction parameters between molecules and electrolytes are fit with speciation data, and many thermodynamic expressions are derived, such as heat capacity and excess enthalpy. This model has shown strong performance for the $\MEA-\HtwoO-\COtwo$ system, but the parameter count and model complexity can be a hindrance when running numerous simulations for statistical testing. PC-SAFT provides an equation-of-state alternative for associating systems \cite{Gross2001,Cameretti2005}, and PC-SAFT parameters for $\COtwo$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh \cite{Baygi2015}. The benchmark therefore keeps the Henry-law model as the fast baseline and adds a PC-SAFT sensitivity calculation to evaluate how an EOS-based CO$_2$ fugacity-coefficient calculation changes the solved column predictions. The following outlines the derivation and assumptions for relating liquid fugacity to Henry's Law. The equilibrium definition for a species between liquid and vapor phases is
                 \begin{equation}
                     f_i^v = f_i^l
                     \qquad \left(\unit{Pa}\right)
@@ -121,76 +121,39 @@
                     \textit{f}^{\:\vap}_{ \COtwo} &= P y_{\COtwo} && \left(\unit{Pa} \right)\\
                     \textit{f}^{\:\liq}_{ \COtwo} &= C^{\liq}_{ \COtwo, \text{true}} H_{\COtwo,\text{mix}} &&\left(\unit{Pa} \right) \label{eq:ideal}
                 \end{align}
-                The parameters used to determine the Henry's Law expression for $\COtwo$ in the liquid mixture are specifically tuned to account for as many interactions as possible and are fitted with speciation data. This baseline remains less rigorous than an e-NRTL activity-coefficient model \cite{Zhang2011} or an ePC-SAFT equation-of-state model, but it is also simpler and more stable when the benchmark needs to run many cases. The neutral ePC-SAFT lane is therefore introduced as a comparison path, not as a claim that it is faster than Henry's Law or that it replaces the chemical-equilibrium model.
+                The parameters used to determine the Henry's Law expression for $\COtwo$ in the liquid mixture are specifically tuned to account for as many interactions as possible and are fitted with speciation data. This baseline remains less rigorous than an e-NRTL activity-coefficient model \cite{Zhang2011} or a PC-SAFT equation-of-state model, but it is also simpler and more stable when the benchmark needs to run many cases. The PC-SAFT calculation is therefore introduced as a comparison model, not as a claim that it is faster than Henry's Law or that it replaces the chemical-equilibrium model.
 
-                \subsubsection*{ePC-SAFT fugacity-coefficient lane}
-                The ePC-SAFT calculation is used here as a residual-Helmholtz equation of state for the fugacity coefficient of $\COtwo$, while the absorber chemistry remains the legacy concentration-based calculation described above. The implementation calls the \texttt{epcsaft} package \cite{Polley2026epcsaft} to evaluate pressure-specified vapor and liquid phase states. For each phase state $(T,P,\mathbf{x})$, the package solves for the phase density and evaluates the residual Helmholtz energy as the sum of physically motivated contributions \cite{Gross2001,Cameretti2005,Bulow2020,Bulow2021a,Figiel2025}:
+                \subsubsection*{PC-SAFT fugacity-coefficient calculation}
+                The PC-SAFT calculation is used here as a residual-Helmholtz equation of state for the fugacity coefficient of $\COtwo$, while the absorber chemistry remains the concentration-based calculation described above. For each phase state $(T,P,\mathbf{x})$, the equation of state solves for the phase density and evaluates the residual Helmholtz energy as the sum of physically motivated neutral-species contributions \cite{Gross2001,Cameretti2005,Bulow2020,Bulow2021a,Figiel2025}:
                 \begin{equation}
                     \tilde{a}^{res} =
-                    \tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}
-                    +\tilde{a}^{DH}+\tilde{a}^{Born}.
+                    \tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}.
                     \qquad \text{dimensionless}
-                    \label{eq:epcsaft-ares}
+                    \label{eq:pcsaft-ares}
                 \end{equation}
-                The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, the association term accounts for site-specific association such as hydrogen bonding, the Debye--H{\"u}ckel term accounts for long-range electrostatic screening when charged species are included, and the Born term accounts for ion solvation. The main contribution equations used by the package are summarized as
+                The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, and the association term accounts for site-specific association such as hydrogen bonding. The main contribution equations are summarized as
                 \begin{align}
                     \tilde{a}^{hc}
                     &= \bar{m}\tilde{a}^{hs}
                     -\sum_i x_i(m_i-1)\ln g_{ii}^{hs}(\sigma_{ii})
-                    && \text{dimensionless}\label{eq:epcsaft-hc}\\
+                    && \text{dimensionless}\label{eq:pcsaft-hc}\\
                     \tilde{a}^{disp}
                     &= -2\pi\rho I_1(\eta,\bar{m})\overline{m^2\epsilon\sigma^3}
                     -\pi\rho\bar{m}C_1I_2(\eta,\bar{m})\overline{m^2\epsilon^2\sigma^3}
-                    && \text{dimensionless}\label{eq:epcsaft-disp}\\
+                    && \text{dimensionless}\label{eq:pcsaft-disp}\\
                     \tilde{a}^{assoc}
                     &= \sum_i x_i\sum_{A_i}
                     \left(\ln X^{A_i}-\frac{X^{A_i}}{2}+\frac{1}{2}\right)
-                    && \text{dimensionless}\label{eq:epcsaft-assoc}\\
+                    && \text{dimensionless}\label{eq:pcsaft-assoc}\\
                     X^{A_i}
                     &= \left[1+\sum_j\sum_{B_j}\rho x_j X^{B_j}\Delta^{A_iB_j}\right]^{-1}
-                    && \text{dimensionless}\label{eq:epcsaft-assoc-site}\\
+                    && \text{dimensionless}\label{eq:pcsaft-assoc-site}\\
                     \Delta^{A_iB_j}
                     &= d_{ij}^{3}g_{ij}^{hs}
                     \left[\exp\left(\frac{\epsilon^{A_iB_j}}{k_BT}\right)-1\right]\kappa^{A_iB_j}
-                    && \left(\unit{m^3}\right)\label{eq:epcsaft-assoc-strength}\\
-                    \tilde{a}^{DH}
-                    &= -\frac{\kappa e^{2}}{12\pi\epsilon_0\epsilon_r k_BT}
-                    \sum_i x_i z_i^2\chi_i
-                    && \text{dimensionless}\label{eq:epcsaft-dh}.
+                    && \left(\unit{m^3}\right)\label{eq:pcsaft-assoc-strength}.
                 \end{align}
-                In these equations, $\bar{m}=\sum_i x_i m_i$ is the mean segment number, $\rho$ is molar density, $\eta$ is the packing fraction, $g_{ij}^{hs}$ is the hard-sphere contact value, $X^{A_i}$ is the fraction of association sites not bonded at site $A_i$, $\Delta^{A_iB_j}$ is the association strength, and $\kappa$ and $\chi_i$ are the Debye screening and finite-ion-size factors. All quantities are evaluated at the local phase state $(T,P,\mathbf{x})$ after the package density solve.
-
-                The current ePC-SAFT implementation used by this project also supports the modified Born/solvation-shell treatment in which the Born contribution can be evaluated over a set of dielectric-response contributions:
-                \begin{equation}
-                    \tilde{a}^{Born} =
-                    -\frac{e^2}{4\pi\epsilon_0 k_B T}
-                    \sum_i x_i z_i^2
-                    \sum_{\delta\in\mathcal{D}}
-                    \left(1-\frac{1}{\epsilon_{r,m_\delta}}\right)
-                    D_{i,\delta}^{(m_\delta)},
-                    \quad
-                    \mathcal{D}=\{\mathrm{Born}\}\cup\mathcal{D}_{add}.
-                    \qquad \text{dimensionless}
-                    \label{eq:epcsaft-born}
-                \end{equation}
-                with the selectable inverse-diameter terms
-                \begin{align}
-                    D_{i,\mathrm{Born}}^{(\mathrm{bulk})}
-                    &= \frac{1}{d_i^{Born}}
-                    && \left(\unit{m^{-1}}\right)\\
-                    D_{i,\mathrm{SSM}}^{(\mathrm{bulk})}
-                    &= \frac{1}{d_i^{Born}+\Delta d_i}-\frac{1}{d_i^{Born}}
-                    && \left(\unit{m^{-1}}\right)\\
-                    D_{i,\mathrm{DS}}^{(\mathrm{ion})}
-                    &= \frac{1}{d_i^{Born}}-\frac{1}{d_i^{Born}+\Delta d_i}
-                    && \left(\unit{m^{-1}}\right)\\
-                    \mathcal{D}
-                    &= \{\mathrm{Born}\}\cup\mathcal{D}_{add},
-                    \qquad
-                    \mathcal{D}_{add}\subseteq\{\mathrm{SSM},\mathrm{DS}\}
-                    && \text{dimensionless}.
-                \end{align}
-                The one-bed validation results reported in this paper use the neutral $\COtwo$--$\MEA$--$\HtwoO$ ePC-SAFT lane, so $z_i=0$ for the active species and the Debye--H{\"u}ckel and Born terms vanish in the primary validation rows. The hard-chain, dispersion, and association terms remain active for the neutral fugacity-coefficient calculation. The repository also includes an experimental ionic/reactive ePC-SAFT dataset path in which charged species have positive fitted $d_i^{Born}$ parameters and the SSM and DS Born options are enabled; that path is treated as a diagnostic readiness check rather than as the primary validation claim. In the present absorber benchmark, ePC-SAFT is used only through the package fugacity-coefficient interface and does not replace the reaction-equilibrium equations with ePC-SAFT activity coefficients.
+                In these equations, $\bar{m}=\sum_i x_i m_i$ is the mean segment number, $\rho$ is molar density, $\eta$ is the packing fraction, $g_{ij}^{hs}$ is the hard-sphere contact value, $X^{A_i}$ is the fraction of association sites not bonded at site $A_i$, and $\Delta^{A_iB_j}$ is the association strength. All quantities are evaluated at the local phase state $(T,P,\mathbf{x})$ after the density solve.
 
                 The residual Helmholtz energy gives the compressibility factor and residual chemical potential,
                 \begin{align}
@@ -206,17 +169,17 @@
                 \begin{equation}
                     \ln\phi_k=\tilde{\mu}_k^{res}-\ln Z.
                     \qquad \text{dimensionless}
-                    \label{eq:epcsaft-phi}
+                    \label{eq:pcsaft-phi}
                 \end{equation}
-                The ePC-SAFT sensitivity lane then uses separate vapor- and liquid-side fugacity coefficients,
+                The PC-SAFT sensitivity calculation then uses separate vapor- and liquid-side fugacity coefficients,
                 \begin{align}
                     f_{\COtwo}^{\vap} &= y_{\COtwo}\phi_{\COtwo}^{\vap}P
                     && \left(\unit{Pa}\right),\\
                     f_{\COtwo}^{\liq} &= x_{\COtwo}^{\liq}\phi_{\COtwo}^{\liq}P
                     && \left(\unit{Pa}\right).
                 \end{align}
-                This keeps the comparison narrow: only the CO$_2$ fugacity driving force changes, while the same column balances, reaction speciation, enhancement factor, and transport correlations are retained. The result is not a full electrolyte-reactive absorber model, but it is a direct column-level test of whether a package-based ePC-SAFT fugacity calculation can be used quickly enough to support absorber-simulation studies.
-                The following equations for the fugacity of $\HtwoO$ are below
+                This keeps the comparison narrow: only the CO$_2$ fugacity driving force changes, while the same column balances, reaction speciation, enhancement factor, and transport correlations are retained. The result is not a full electrolyte-reactive absorber model, but it is a direct column-level test of whether a PC-SAFT fugacity calculation can be used quickly enough to support absorber-simulation studies.
+                The corresponding $\HtwoO$ fugacity expressions are
                 \begin{align}
                     \textit{f}^{\:\vap}_{ \HtwoO} &= P y_{\HtwoO} && \left(\unit{Pa} \right)\\
                     \textit{f}^{\:\liq}_{ \HtwoO} &= P_{\text{sat}, \HtwoO} x_{\HtwoO, \text{true}} && \left(\unit{Pa} \right)

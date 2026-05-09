@@ -1,7 +1,7 @@
 \begin{table}
     \centering
     \small
-    \caption{Parameter and constant groups used by the absorber benchmark implementation.}
+    \caption{Parameter and constant groups used by the absorber benchmark model.}
     \label{tab:appendix-parameter-scope}
     \renewcommand{\arraystretch}{1.2}
     \begin{adjustbox}{max width=\textwidth}
@@ -10,10 +10,10 @@
         \textbf{Group} & \textbf{Examples} & \textbf{Source/provenance} \\
         \midrule
         Column geometry and packing & Column diameter, packed height, packing area, packing void fraction & Model constants and NCCC case-conversion metadata \\
-        Thermodynamics & Henry-law constants, vapor-pressure correlations, neutral ePC-SAFT parameters for \COtwo--\MEA--\HtwoO fugacity coefficients, and diagnostic ionic ePC-SAFT parameters including fitted $d_i^{Born}$ values & Thermodynamic adapter and MEA-local parameter datasets \\
-        Transport properties & Density, viscosity, diffusivity, heat capacity, surface tension, thermal conductivity & Property-correlation modules used by the shared residual engine \\
-        Mass and heat transfer & Interfacial area, liquid and vapor transfer coefficients, enhancement factor, heat-transfer coefficient & Transport and reaction-enhancement modules with domain guards \\
-        Numerical settings & Mesh size, tolerance, maximum nodes, scaling, initialization, residual gates & Benchmark dataset and solver settings metadata \\
+        Thermodynamics & Henry-law constants, vapor-pressure correlations, and PC-SAFT parameters for \COtwo--\MEA--\HtwoO fugacity coefficients & Thermodynamic model and MEA-local parameter datasets \\
+        Transport properties & Density, viscosity, diffusivity, heat capacity, surface tension, thermal conductivity & Property correlations used by the governing-equation residuals \\
+        Mass and heat transfer & Interfacial area, liquid and vapor transfer coefficients, enhancement factor, heat-transfer coefficient & Transport and reaction-enhancement correlations with physical-domain checks \\
+        Numerical settings & Mesh size, tolerance, maximum nodes, scaling, initialization, residual gates & Benchmark dataset and solver settings \\
         \bottomrule
     \end{tabular}
     \end{adjustbox}

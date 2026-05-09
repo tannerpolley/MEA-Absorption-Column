@@ -91,7 +91,7 @@
                 \end{align}
 
             \subsubsection{Enthalpy}
-                The correlations are adapted from Akula \cite{Akula2023} for the present model implementation
+                The correlations are adapted from Akula \cite{Akula2023} for the present absorber model
                 \begin{align}
                     \shortintertext{\quad\; Pure Species Enthalpies}
                     H^{\liq}_{\COtwo} &= H_{\text{CO}_2}^V - RT^2 \left( \frac{\partial \ln H_{\text{CO}_2, \text{H}_2\text{O}}}{\partial T} \right) + \Delta H_{abs}
@@ -178,5 +178,5 @@
 
             \input{tables/appendix_parameter_scope}
 
-            The fixed constants retained from the original implementation include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, and measured capture values are read from the NCCC benchmark data. This separation prevents inconsistencies between a manuscript appendix and the executable model while still documenting the physical and numerical scope of the simulations.
+            The fixed constants used in the simulations include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, and measured capture values are read from the NCCC benchmark data. This separation prevents inconsistencies between a manuscript appendix and the executable model while still documenting the physical and numerical scope of the simulations.
     \clearpage

@@ -272,7 +272,7 @@ def _write_calibration_artifacts(c_aug: pd.DataFrame) -> pd.DataFrame:
 
 def _write_error_regime_artifacts(c_aug: pd.DataFrame) -> None:
     rows = []
-    label = {"ideal_henry": "C one-bed Henry", "epcsaft_neutral": "C one-bed ePC-SAFT"}
+    label = {"ideal_henry": "C one-bed Henry", "epcsaft_neutral": "C one-bed PC-SAFT"}
     for _, row in c_aug.iterrows():
         rows.append(
             {
@@ -322,7 +322,9 @@ def _write_error_regime_plot(c_aug: pd.DataFrame) -> None:
             ax.scatter(
                 group[xcol],
                 group["capture_error_pct"],
-                label=thermo.replace("_", " "),
+                        label={"ideal_henry": "Henry", "epcsaft_neutral": "PC-SAFT"}.get(
+                            thermo, thermo.replace("_", " ")
+                        ),
                 marker=markers.get(thermo, "o"),
                 color=colors.get(thermo, "#333333"),
                 s=28,

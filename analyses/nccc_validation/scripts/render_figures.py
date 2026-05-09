@@ -17,7 +17,7 @@ def _label_thermo(value: str) -> str:
     if value == "ideal_henry":
         return "Henry"
     if value == "epcsaft_neutral":
-        return "neutral ePC-SAFT"
+        return "PC-SAFT"
     return value
 
 
@@ -47,7 +47,7 @@ def main() -> None:
     summary.to_csv(TABLES / "plot_c_case_thermo_summary.csv", index=False)
 
     fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.6), constrained_layout=True)
-    colors = {"Henry": "#2f5d8c", "neutral ePC-SAFT": "#8a4b2b"}
+    colors = {"Henry": "#2f5d8c", "PC-SAFT": "#8a4b2b"}
 
     for label, group in c_cases.groupby("thermo_label", sort=False):
         axes[0].plot(
