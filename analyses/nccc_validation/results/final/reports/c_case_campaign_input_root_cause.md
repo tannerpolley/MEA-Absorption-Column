@@ -38,6 +38,8 @@ The campaign-input correction also resolves the endpoint behavior in the neutral
 | 3C | True | 11.93 | 88.56 | -0.9362 | 3.682 | 1935 | 1399 | 1.041 |
 | 7C | True | 19.78 | 72.44 | -3.962 | 14.35 | 1936 | 2004 | 2.12 |
 
+The complete 1C--7C campaign gallery gives a stronger thermodynamic comparison than the three-case probe. Neutral ePC-SAFT lowers the liquid-temperature RMSE in six of seven cases relative to the ideal-Henry lane, reducing the campaign mean from 6.88 K to 6.13 K. The improvement is modest rather than transformative, but it is consistent evidence that replacing the idealized CO2 driving force with an ePC-SAFT fugacity basis improves the temperature-profile validation while preserving the same absorber model, solver settings, chemistry closure, and transport correlations. This is a useful manuscript result because it supports the ePC-SAFT lane as a rigorous and experimentally visible thermodynamic sensitivity, not just a software embellishment.
+
 ## Interpretation
 
 - 1C changes from alpha 0.25 in the legacy CSV to alpha 0.15 in the campaign table; this raises predicted capture from 78.8% to 94.7%.
@@ -57,10 +59,25 @@ The dominant capture trend is fixed by the campaign-input correction, but the te
 
 For other NCCC runs, this correction may help only if those runs share the same source-data conversion problem. The broader NCCC staged/intercooled tables should be audited against their original mass-flow, loading, and inlet-composition sources before solver or intercooler changes are tuned. If those broader inputs are already correctly converted, the C-case campaign correction will not automatically fix their remaining convergence or thermal-profile issues.
 
+## Thermal-shape diagnosis
+
+The remaining 7C mismatch is a thermal-shape problem, not a recurrence of the original capture-trend bug. Interpolating the solved liquid profile at the NCCC tap locations shows that the ideal-Henry lane is approximately 14 K hot on average for 7C, with the upper measured tap about 25 K hotter than the data. The neutral ePC-SAFT lane lowers that mean hot bias to about 12 K and lowers the RMSE from 16.11 K to 14.35 K, but the same profile family remains. This is useful because ePC-SAFT improves the thermodynamic driving-force evidence while also showing that a fugacity-only correction cannot close the highest-loading thermal shape.
+
+A targeted 7C sensitivity screen supports the same conclusion. Changing the internal gas-liquid heat-transfer factor from 0.5 to 2.0 changes the 7C RMSE only from 16.22 K to 16.07 K and leaves capture essentially unchanged. Reducing the mass-transfer factor does lower the RMSE to 14.23 K at a 0.5 factor, but it also pushes the capture error to -24.7 percentage points, so it is not a defensible validation fix. The heat-transfer coefficient alone is therefore not the controlling missing correction, and mass-transfer retuning would trade away the already-improved capture validation.
+
+The implementation points to three higher-value model checks:
+
+1. Heat-source closure. The current `enthalpy_flux(...)` implementation transports CO2 and H2O enthalpy and adds interphase sensible heat transfer, but it does not expose a separately auditable heat-of-absorption or heat-of-speciation term. The next model check should write the local absorption heat, water condensation/evaporation heat, and interphase sensible heat terms separately in the dense profile exports.
+2. Liquid heat-capacity closure. The temperature derivative diagnostic uses `f_dHl_dT(...)`, which is a custom derivative rather than a direct derivative of the same mixture enthalpy expression used to compute `Hl_T`. This should be replaced or audited against a finite-difference derivative of mixture enthalpy at the local composition before using temperature-state runs as validation evidence.
+3. External heat loss/contacting closure. Literature on MEA absorber temperature bulges emphasizes that the bulge magnitude and location depend on L/G, heat of absorption, packing height, inlet CO2, and water vaporization/condensation. This model currently treats heat transfer as internal vapor-liquid exchange and does not include a calibrated wall/ambient heat-loss path. The 7C hot upper-column bias is consistent with a missing heat-removal or heat-source-distribution term, especially at high loading and inlet CO2.
+
+The practical next step is to add a thermal-accounting profile table before changing solver strategy: `q_interphase`, `q_absorption`, `q_water_phase_change`, `q_wall_loss`, `dHmix_dT_fd`, and `dHmix_dT_model`. That table will make it possible to distinguish a wrong heat source from a wrong heat capacity, a missing heat sink, or a mass-transfer/contacting distribution error.
+
 ## Artifacts
 
 - Legacy run: `analyses/nccc_validation/results/runs/c_case_trend_baseline_all7_now/benchmark_results.csv`
 - Campaign run: `analyses/nccc_validation/results/runs/c_case_campaign_dataset_benchmark_all7/benchmark_results.csv`
 - Campaign input dataset: `src/mea_absorption_column/data/C_cases_campaign_inputs.csv`
+- Thermal-closure probe: `analyses/nccc_validation/results/runs/c_case_campaign_7c_thermal_closure_probe/`
 - Temperature overlay metrics: `analyses/nccc_validation/results/final/tables/c_case_campaign_temperature_overlay_metrics.csv`
 - Temperature overlay figures: `analyses/nccc_validation/results/final/figures/c_case_campaign_temperature_overlays/`
