@@ -107,7 +107,7 @@
 
     % Here goes the abstract
     \begin{abstract}
-        Post-combustion carbon capture (PCC) using amine-based absorption is a critical technology for mitigating CO$_2$ emissions from industrial processes and power generation. This study presents a transparent Python implementation of a steady-state MEA absorber model and uses it as a reproducible benchmark for numerical solution strategies and thermodynamic driving-force assumptions. The framework couples mass and energy balances with simplified thermodynamic, transport, reaction-enhancement, and hydraulic submodels. The numerical comparison evaluates shooting, finite-difference, and SciPy collocation-style boundary-value solvers using explicit settings for mesh size, tolerances, initialization, scaling, residual definitions, and runtime environment. The thermodynamic comparison contrasts the original Henry-law CO$_2$ fugacity driving force with neutral and six-species ionic ePC-SAFT fugacity-coefficient sensitivity calculations that use an external ePC-SAFT package without modifying it. Validation is reported across generated one-bed NCCC benchmark artifacts and a verified staged/intercooled subset rather than a single illustrative run, with capture-rate error, temperature-profile error where measurements are available, convergence rate, and runtime used as the primary metrics. The contribution is therefore a reproducible benchmark and implementation framework, not a claim of a new high-fidelity MEA thermodynamic model or an industrial scale-up tool.
+        Post-combustion carbon capture (PCC) using amine-based absorption is a critical technology for mitigating CO$_2$ emissions from industrial processes and power generation. This study presents a transparent Python implementation of a steady-state MEA absorber model and uses it as a reproducible benchmark for numerical solution strategies and thermodynamic driving-force assumptions. The framework couples mass and energy balances with simplified thermodynamic, transport, reaction-enhancement, and hydraulic submodels. The numerical comparison evaluates shooting, finite-difference, and SciPy collocation-style boundary-value solvers using explicit settings for mesh size, tolerances, initialization, scaling, residual definitions, and runtime environment. The thermodynamic comparison contrasts the original Henry-law CO$_2$ fugacity driving force with ePC-SAFT fugacity-coefficient sensitivity calculations that use an external ePC-SAFT package without modifying it. Validation is reported across generated one-bed NCCC benchmark artifacts rather than a single illustrative run, with capture-rate error, temperature-profile error where measurements are available, convergence rate, and runtime used as the primary metrics. The contribution is therefore a reproducible benchmark and implementation framework, not a claim of a new high-fidelity MEA thermodynamic model or an industrial scale-up tool.
     \end{abstract}
 
     \begin{keywords}
@@ -545,14 +545,12 @@
                 In this work, the SciPy BVP method is treated as one solver configuration in the benchmark rather than as a separate methodological contribution. The benchmark output records its tolerance settings, adaptive mesh behavior, convergence message, boundary residual norm, runtime, and validation error so that claims about robustness or speed are traceable to generated data.
 
         \subsection{Reproducibility and Numerical Settings}
-            The benchmark implementation is executed with \texttt{uv} and Python 3.13 so that the external ePC-SAFT native extension can be imported without modifying the ePC-SAFT source tree. Benchmark results are generated with \texttt{python -m mea\_absorption\_column.benchmark}. Each result row records the case/method configuration, success flag, convergence message, residual diagnostics, capture error, temperature error where measured taps are available, runtime, mesh settings, solver tolerances, bed count, intercooler count, staged-bed flag, and intercooler assumption. Environment metadata, including Python version, platform, and package versions, is recorded in the full benchmark output or run metadata used to generate the reduced paper-facing tables. Failed runs are retained in the output table so convergence failures are part of the numerical comparison.
-
-            Multi-bed and intercooled NCCC cases are evaluated with a staged SciPy BVP configuration when \texttt{--staged-beds auto} is used. The staged configuration solves one packed-bed BVP per bed, enforces inter-bed vapor continuity, and represents intercoolers as liquid enthalpy resets between adjacent beds. If no explicit inter-stage target temperatures are supplied, the measured lean-solvent feed temperature is used as the liquid reset target and the benchmark row reports this assumption.
+            The benchmark implementation is executed with \texttt{uv} and Python 3.13 so that the external ePC-SAFT native extension can be imported without modifying the ePC-SAFT source tree. Benchmark results are generated with \texttt{python -m mea\_absorption\_column.benchmark}. Each result row records the case/method configuration, success flag, convergence message, residual diagnostics, capture error, temperature error where measured taps are available, runtime, mesh settings, solver tolerances, initialization notes, and thermodynamic model. Environment metadata, including Python version, platform, and package versions, is recorded in the full benchmark output or run metadata used to generate the reduced paper-facing tables. Failed runs are retained in the output table so convergence failures are part of the numerical comparison.
 
             The thermodynamic benchmark includes the baseline Henry-law model, a neutral ePC-SAFT sensitivity model, and a six-species ionic ePC-SAFT diagnostic lane. In the ePC-SAFT lanes, the external ePC-SAFT package is used as a read-only dependency. Only the CO$_2$ fugacity driving force is changed; chemical equilibrium, enhancement factor, transport-property correlations, and governing balances are held fixed. Pressure, not density, is specified for each ePC-SAFT phase state. Cached molar-density guesses are used only to initialize the package's internal pressure-density solve, and the benchmark records fugacity-cache hits, cache misses, density-state timing, and density-guess reuse. These ePC-SAFT rows are therefore controlled thermodynamic sensitivity studies and not full electrolyte-reactive thermodynamic models.
 
     \section{Results}
-        This section presents the implementation and evaluation of the MEA absorption column model developed in Python. The results are organized around reproducible benchmark outputs instead of a single illustrative simulation. The first validation tier uses the one-bed NCCC C cases because temperature-profile data are available for those runs. The second validation tier uses the broader NCCC capture-rate data and the staged-bed/intercooler implementation. The thermodynamic comparison is reported separately so that the effect of replacing only the CO$_2$ fugacity driving force can be interpreted without changing the reaction or transport submodels at the same time.
+        This section presents the implementation and evaluation of the MEA absorption column model developed in Python. The results are organized around reproducible benchmark outputs instead of a single illustrative simulation. The primary validation tier uses the one-bed NCCC C cases because temperature-profile data are available for those runs. The thermodynamic comparison is reported separately so that the effect of replacing only the CO$_2$ fugacity driving force can be interpreted without changing the reaction or transport submodels at the same time.
 
         \subsection{Custom Simulation Model Built with Python and Scipy}
     
@@ -568,12 +566,12 @@
 
         \subsection{NCCC Case Study}
         
-            The model is benchmarked against the 2017 MEA test campaign data at the NCCC for one-bed cases and staged/intercooled capture-rate cases \cite{Morgan2020DevelopmentProcess}. The runs conducted for this campaign are shown in Table \ref{tab:mea-data}. The validation reports capture-rate error across the generated benchmark artifacts and temperature-profile error for the one-bed cases with measured temperature taps. A single case is retained only as an illustrative profile comparison and not as the sole evidence of predictive reliability.
+            The model is benchmarked against the 2017 MEA test campaign data at the NCCC for the one-bed C cases \cite{Morgan2020DevelopmentProcess}. The runs conducted for this campaign are shown in Table \ref{tab:mea-data}. The validation reports capture-rate error across the generated benchmark artifacts and temperature-profile error for the one-bed cases with measured temperature taps. A single case is retained only as an illustrative profile comparison and not as the sole evidence of predictive reliability.
             
             \begin{table}[htbp]
                 \centering
                 \scriptsize
-                \caption{2017 MEA campaign at NCCC}
+                \caption{2017 one-bed MEA C-case campaign at NCCC}
                 \label{tab:mea-data}
                 \renewcommand{\arraystretch}{1.2}
                 \begin{tabularx}{\textwidth}{|c| *{9}{>{\centering\arraybackslash}X|}}
@@ -589,24 +587,6 @@
                 \makecell{\textbf{Inlet Flue}\\\textbf{Gas CO\textsubscript{2}}\\\textbf{Mole Frac.}} &
                 \makecell{\textbf{$\COtwo$}\\\textbf{Capture}\\\textbf{(\%)}} \\
                 \hline
-                1A & 8180 & 3000 & 44.1 & 43.4 & 109.4 & 0.24 & 0.30 & 0.082 & 97.5\\
-                2A & 7130 & 2690 & 44.9 & 45.2 & 109.5 & 0.25 & 0.31 & 0.087 & 93.4\\
-                3A & 3354 & 1500 & 45.6 & 45.2 & 107.9 & 0.24 & 0.31 & 0.073 & 81.1\\
-                4A & 3600 & 3000 & 45.6 & 43.4 & 110.2 & 0.19 & 0.31 & 0.076 & 70.6\\
-                5A & 3380 & 2750 & 45.5 & 45.7 & 109.8 & 0.20 & 0.31 & 0.107 & 53.9\\
-                6A & 3130 & 1750 & 45.1 & 43.4 & 108.2 & 0.31 & 0.30 & 0.106 & 51.7\\
-                7A & 4730 & 2255 & 45.1 & 43.5 & 109.2 & 0.23 & 0.30 & 0.109 & 72.5\\
-                8A & 3230 & 2240 & 44.8 & 42.8 & 109.2 & 0.24 & 0.31 & 0.107 & 56.3\\
-                9A & 3224 & 2245 & 45.9 & 43.4 & 108.8 & 0.14 & 0.31 & 0.108 & 74.2\\
-                10A & 7980 & 2492 & 44.8 & 43.1 & 109.0 & 0.32 & 0.30 & 0.109 & 79.9\\
-                11A & 3016 & 2761 & 45.8 & 42.9 & 109.6 & 0.16 & 0.30 & 0.096 & 60.5\\
-                12A & 4170 & 2920 & 46.4 & 45.1 & 109.7 & 0.14 & 0.30 & 0.092 & 75.4 \\
-                13A & 6910 & 2680 & 44.9 & 44.6 & 109.3 & 0.26 & 0.30 & 0.108 & 80.6\\
-                14A & 6505 & 2500 & 44.8 & 43.5 & 109.2 & 0.31 & 0.31 & 0.107 & 57.8\\
-                15A & 8000 & 2494 & 44.9 & 42.9 & 109.1 & 0.32 & 0.30 & 0.108 & 76.8\\
-                1B & 7959 & 2497 & 44.4 & 43.7 & 109.5 & 0.30 & 0.30 & 0.077 & 96.1\\
-                2B & 9871 & 2746 & 44.7 & 45.7 & 109.5 & 0.30 & 0.30 & 0.088 & 97.7\\
-                3B & 11412 & 2748 & 44.4 & 47.3 & 109.2 & 0.30 & 0.30 & 0.093 & 94.8\\
                 1C & 6185 & 1997 & NA & 43.3 & 109.1 & 0.15 & 0.30 & 0.077 & 97.1\\
                 2C & 7765 & 2499 & NA & 43.1 & 109.6 & 0.20 & 0.30 & 0.109 & 92.3\\
                 3C & 7517 & 2013 & NA & 43.6 & 109.5 & 0.25 & 0.30 & 0.093 & 89.5\\
@@ -614,10 +594,6 @@
                 5C & 5237 & 1800 & 45.0 & 45.0 & 108.4 & 0.26 & 0.30 & 0.100 & 86.4\\
                 6C & 7665 & 2700 & 44.8 & 44.3 & 109.3 & 0.31 & 0.30 & 0.077 & 60.2\\
                 7C & 5414 & 1498 & 45.5 & 43.1 & 107.0 & 0.34 & 0.29 & 0.117 & 76.4\\
-                1D & 4912 & 2000 & 44.8 & 44.2 & 108.0 & 0.30 & 0.30 & 0.100 & 78.4\\
-                2D & 4790 & 1900 & 44.4 & 48.5 & 108.7 & 0.20 & 0.30 & 0.117 & 80.5\\
-                3D & 9534 & 2502 & NA & 44.9 & 110.0 & 0.30 & 0.30 & 0.093 & 87.0\\
-                4D & 4733 & 1966 & 46.3 & 43.1 & 108.6 & 0.20 & 0.30 & 0.079 & 96.4\\
                 \hline
                 \end{tabularx}
             \end{table}
@@ -628,7 +604,7 @@
             \caption{Comparison between modeled temperature profiles and experimental pilot plant column data. The profiles correspond to a liquid-to-gas ratio $\frac{L}{G}$ of 4.70, a CO$_2$ loading $\alpha = 0.25$, and an inlet gas CO$_2$ mole fraction $y_{\mathrm{CO_2}} = 0.08$.}
             \label{fig:temp_profiles}
         \end{figure}
-        Case 3C was used as an illustrative benchmark run because it is a single-bed case with no intercoolers. The temperature data for this row are shown in Table~\ref{tab:3C-temp-profile}. It is not the only validation evidence: the verified one-bed C artifact covers all seven C cases, and the staged/intercooled benchmark evidence is currently partial.
+        Case 3C was used as an illustrative benchmark run because it has measured temperature taps and a capture value close to the generated baseline prediction. The temperature data for this row are shown in Table~\ref{tab:3C-temp-profile}. It is not the only validation evidence: the verified one-bed C artifact covers all seven C cases.
         \begin{table}[htbp]
             \centering
             \caption{Absorber temperature profile for Case 3C}
@@ -642,7 +618,7 @@
                 \hline
             \end{tabular}
         \end{table}
-        The temperature profiles of the solved column are useful validation diagnostics because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as an illustrative profile, where the predicted \% of $\COtwo$ captured by the model is $\left(89.33\% \:\:\text{vs}\:\:89.50\%\right)$ for the pilot-plant value. This single agreement is not sufficient by itself to establish predictive reliability; therefore, the benchmark reports aggregate capture and temperature metrics across the verified one-bed C cases and the staged/intercooled K-case evidence before drawing conclusions.
+        The temperature profiles of the solved column are useful validation diagnostics because they reflect the coupled energy balance, heat transfer, and absorption behavior. The Case 3C comparison in Figure~\ref{fig:temp_profiles} is retained as an illustrative profile, where the predicted \% of $\COtwo$ captured by the model is $\left(89.33\% \:\:\text{vs}\:\:89.50\%\right)$ for the pilot-plant value. This single agreement is not sufficient by itself to establish predictive reliability; therefore, the benchmark reports aggregate capture and temperature metrics across all verified one-bed C cases before drawing conclusions.
 
         \begin{figure}
             \centering
@@ -681,24 +657,6 @@
         The generated temperature profiles in Figure~\ref{fig:generated-temperature-profiles} are used as diagnostic evidence rather than as standalone proof of predictive accuracy. Case 3C remains the best-aligned illustrative case, while Case 7C shows that convergence alone is not equivalent to predictive agreement. This distinction prevents solver success from being confused with model validation.
 
         \input{revised_benchmark_results}
-
-        \begin{figure}
-            \centering
-            \includegraphics[width=0.68\textwidth]{figures/staged-kcase-capture-error.pdf}
-            \caption{Generated capture-error summary for the verified NCCC K-case Henry-law runs. It includes accepted rows across one-bed, two-bed, and three-bed configurations.}
-            \label{fig:staged-kcase-capture-error}
-        \end{figure}
-
-        Figure~\ref{fig:staged-kcase-capture-error} summarizes the broader K-case capture-rate evidence now generated for the Henry-law lane. The primary validation artifact contains 19 of the 23 available K cases, with a mean absolute capture error of 2.81 percentage points and a largest accepted absolute error of 6.40 percentage points. A separate sensitivity-recovery artifact shows that K6, K7, K8, and K20 can also be brought within the capture gate under recovery settings, but those rows require high mass-transfer factors, suppressed intercooler reset strength, large guard counts, or mesh-limit final iterates and are therefore not counted as primary validation. The staged ePC-SAFT lane is also still treated as active benchmark work rather than as finished predictive evidence.
-
-        \begin{figure}
-            \centering
-            \includegraphics[width=0.68\textwidth]{figures/staged-epcsaft-smoke-capture-error.pdf}
-            \caption{Generated capture-error summary for the staged neutral ePC-SAFT diagnostic rows. Dashed lines indicate the eight-percentage-point capture-error gate used for benchmark acceptance.}
-            \label{fig:staged-epcsaft-smoke-capture-error}
-        \end{figure}
-
-        Figure~\ref{fig:staged-epcsaft-smoke-capture-error} shows the current staged ePC-SAFT smoke artifact. Fourteen of the 19 selected rows satisfy the strict success definition, including the capture-error gate and boundary-residual gate. K2 falls to the zero-capture branch under the nominal high-capture staged initialization. K4 and K9 are rejected by the capture-error gate, while K19 and K23 are rejected by the boundary-residual gate despite small capture errors. A separate targeted recovery probe using documented capture-initialization and intercooler-strength multistarts recovers K4, K9, and K23 under the same neutral ePC-SAFT fugacity lane, while K2 and K19 remain unresolved for the full neutral ePC-SAFT endpoint. A K2 fugacity-blend diagnostic shows that partial Henry/ePC-SAFT blends can preserve the high-capture branch, but the full ePC-SAFT endpoint returns to the zero-capture branch. This result is useful diagnostic evidence that the Henry-seeded ePC-SAFT pathway can be run through explicit staged beds and intercooler resets, but it is not yet primary predictive validation.
 
        \begin{figure}
             \centering
@@ -774,17 +732,17 @@
         \end{tabular}
         \end{table}
 
-        The benchmark replaces qualitative method rankings with generated statistics. A defensible comparison reports where each method succeeds or fails, the residuals it leaves at the boundaries, the validation errors it produces, and the runtime distribution across the case set. On the current evidence, the SciPy \texttt{solve\_bvp} path is the reference workflow for reported staged/intercooled results because it is the only method currently connected to the explicit bed-stack implementation and post-processing gates. Shooting and finite difference remain useful comparison paths because they expose stiffness, initialization, and nonlinear-system conditioning issues, but they are not used as the primary predictive workflow for the staged NCCC evidence.
+        The benchmark replaces qualitative method rankings with generated statistics. A defensible comparison reports where each method succeeds or fails, the residuals it leaves at the boundaries, the validation errors it produces, and the runtime distribution across the case set. On the current evidence, the SciPy \texttt{solve\_bvp} path is the reference workflow for the NCCC one-bed validation because it handles the thermal-pinch case more reliably than the shooting and finite-difference paths. Shooting and finite difference remain useful comparison paths for favorable SRP-style one-bed cases because they expose speed, stiffness, initialization, and nonlinear-system conditioning tradeoffs.
 
 
     \subsection{Limitations and Future Work}
-        The results should be read as a reproducible benchmark of a simplified absorber model, not as a complete predictive process simulator. The staged/intercooled NCCC implementation explicitly represents multiple packed sections and inter-stage liquid thermal resets, which is a substantial improvement over treating bed count as only a height multiplier. However, the intercooler model does not include detailed heat-exchanger approach temperatures, pressure losses through intercooler hardware, collection-tray holdup, redistribution maldistribution, or measured heat duty. The ePC-SAFT lanes are likewise limited to the CO$_2$ fugacity-coefficient driving force; they do not replace the chemical-equilibrium model, ionic speciation calculation, reaction-enhancement calculation, or transport-property correlations with a fully coupled electrolyte-reactive thermodynamic model. Future work should therefore focus on a documented global calibration, expanded pilot-plant validation, fully audited electrolyte ePC-SAFT or eNRTL comparisons \cite{Zhang2011ThermodynamicModel}, and stronger bounded finite-difference and shooting implementations. Optimization and scale-up studies should remain future applications unless supported by generated validation data.
+        The results should be read as a reproducible benchmark of a simplified absorber model, not as a complete predictive process simulator. The ePC-SAFT lanes are limited to the CO$_2$ fugacity-coefficient driving force; they do not replace the chemical-equilibrium model, ionic speciation calculation, reaction-enhancement calculation, or transport-property correlations with a fully coupled electrolyte-reactive thermodynamic model. The one-bed NCCC C cases provide a useful validation set with measured temperature taps, but the error-regime and holdout results show that broader predictive accuracy should not be oversold. Future work should therefore focus on a documented global calibration, expanded pilot-plant validation, fully audited electrolyte ePC-SAFT or eNRTL comparisons \cite{Zhang2011ThermodynamicModel}, and stronger bounded finite-difference and shooting implementations. Optimization and scale-up studies should remain future applications unless supported by generated validation data.
 
 
     \section{Conclusion}
-        This work presents a transparent Python framework for benchmarking a simplified MEA absorber model, numerical solution methods, staged/intercooled NCCC configurations, and thermodynamic driving-force assumptions. The evidence extends beyond a single illustrative validation case by adding generated one-bed C-case metrics, a staged/intercooled Henry-law K-case subset, solver metadata, boundary-residual diagnostics, temperature-profile diagnostics, and neutral and diagnostic ionic ePC-SAFT fugacity-coefficient sensitivity lanes. These additions make the contribution defensible as a reproducible benchmark rather than as a new high-fidelity absorber model.
+        This work presents a transparent Python framework for benchmarking a simplified MEA absorber model, numerical solution methods, and thermodynamic driving-force assumptions. The evidence extends beyond a single illustrative validation case by adding generated one-bed C-case metrics, solver metadata, boundary-residual diagnostics, temperature-profile diagnostics, SRP-style method-contrast evidence, and ePC-SAFT fugacity-coefficient sensitivity lanes. These additions make the contribution defensible as a reproducible benchmark rather than as a new high-fidelity absorber model.
 
-        The results also define the limits of the current model. The Henry-law lane remains the primary validation path for staged/intercooled NCCC cases, while the ePC-SAFT lanes demonstrate how the same model can be run with EOS-based CO$_2$ fugacity driving forces at higher computational cost. The ePC-SAFT comparison is therefore useful for thermodynamic sensitivity and model-development evidence, but it is not yet a full electrolyte-thermodynamic replacement. The paper's central conclusion is that transparent benchmark artifacts, explicit solver settings, and conservative validation gates provide a stronger and more reproducible basis for evaluating this class of absorber model than a single successful case study.
+        The results also define the limits of the current model. The Henry-law lane remains the primary validation path, while the ePC-SAFT lanes demonstrate how the same model can be run with EOS-based CO$_2$ fugacity driving forces at higher computational cost. The ePC-SAFT comparison is therefore useful for thermodynamic sensitivity and model-development evidence, but it is not yet a full electrolyte-thermodynamic replacement. The paper's central conclusion is that transparent benchmark artifacts, explicit solver settings, and conservative validation gates provide a stronger and more reproducible basis for evaluating this class of absorber model than a single successful case study.
 
     \section*{Code Availability}
         The full Python implementation of the MEA-based absorption column model, including all simulation methods and test data, is available at this
@@ -950,7 +908,7 @@
                 \end{tabular}
             \end{table}
 
-            The fixed constants retained from the original implementation include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, bed counts, and intercooler counts are read from the NCCC benchmark data. This separation prevents inconsistencies between a manuscript appendix and the executable model while still documenting the physical and numerical scope of the simulations.
+            The fixed constants retained from the original implementation include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, and measured capture values are read from the NCCC benchmark data. This separation prevents inconsistencies between a manuscript appendix and the executable model while still documenting the physical and numerical scope of the simulations.
 \newpage
 \subsection{Code Snippet of Model}
 

@@ -1,0 +1,7 @@
+scenario,case_id,method,thermo_model,success,runtime_s,capture_pct,capture_error_pct,temperature_rmse_K,boundary_residual_norm,interpretation
+SRP favorable one-bed case,SRP-LG7,Shooting,ideal_henry,True,4.91,90.17,,,0.0437,Favorable one-bed IVP/root comparison case; no NCCC temperature-profile gate is applied.
+SRP favorable one-bed case,SRP-LG7,SciPy BVP,ideal_henry,True,7.61,89.95,,,4.11e-11,Shooting-seeded collocation solve with low boundary residual.
+SRP favorable one-bed case,SRP-LG7,Finite difference,ideal_henry,True,15.62,107.65,,,9.93e-13,Coarse algebraic solve reaches low boundary residual but overshoots capture.
+NCCC thermal-pinch case,3C,Shooting,ideal_henry,False,62.73,,,,,Timed out at the bounded solver gate for the measured-temperature NCCC case.
+NCCC thermal-pinch case,3C,SciPy BVP,ideal_henry,True,9.40,89.40,-0.10,3.94,,Direct collocation-style BVP solve matched capture and temperature-profile evidence.
+NCCC thermal-pinch case,3C,Finite difference,ideal_henry,False,16.61,0.00,-89.50,20.04,,Converged to a boundary-satisfying but physically wrong zero-capture branch.

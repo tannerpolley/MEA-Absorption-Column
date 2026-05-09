@@ -6,7 +6,7 @@ This folder contains study-specific workflows. Each analysis should be self-cont
 
 | Analysis | Purpose | ePC-SAFT dependency | Primary commands |
 | --- | --- | --- | --- |
-| `nccc_validation` | Reviewer-response validation for C cases, staged/intercooled NCCC K cases, solver comparisons, temperature profiles, and thermodynamic driving-force comparisons. | Optional for `epcsaft_neutral` and required for experimental reactive ePC-SAFT probes. Henry-only validation does not require ePC-SAFT. | See `analyses/nccc_validation/README.md` and `analyses/nccc_validation/analysis.yaml`. |
+| `nccc_validation` | Reviewer-response validation for one-bed C cases, SRP-style solver comparisons, temperature profiles, and thermodynamic driving-force comparisons. | Optional for `epcsaft_neutral` and required for experimental reactive ePC-SAFT probes. Henry-only validation does not require ePC-SAFT. | See `analyses/nccc_validation/README.md` and `analyses/nccc_validation/analysis.yaml`. |
 
 ## Conventions
 

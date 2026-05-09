@@ -1,0 +1,15 @@
+case_id,thermo_model,evidence_group,primary_validation,no_case_specific_tuning,mass_transfer_factor,heat_transfer_factor,case_specific_recovery,gate_note
+1C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+1C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+2C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+2C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+3C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+3C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+4C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+4C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+5C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+5C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+6C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+6C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+7C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings
+7C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,accepted primary row uses the same global benchmark settings

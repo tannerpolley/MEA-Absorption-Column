@@ -1,0 +1,4 @@
+evidence_group,evidence_class,primary_validation,no_case_specific_tuning,rows,accepted_rows,failed_or_diagnostic_rows,success_rate_pct,capture_mae_pct,max_abs_capture_error_pct,median_runtime_s,notes
+"One-bed C cases, ideal_henry",primary,True,True,7,7,0,100.0,9.364,22.059,9.92,One-bed C-case validation rows generated with common settings.
+"One-bed C cases, epcsaft_neutral",primary,True,True,7,7,0,100.0,9.368,22.091,27.63,One-bed C-case validation rows generated with common settings.
+SRP-style method contrast,diagnostic,False,True,6,4,2,66.67,,,12.51,"Method-behavior comparison, not an NCCC predictive-validation table."

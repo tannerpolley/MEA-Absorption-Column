@@ -20,8 +20,8 @@ def main() -> int:
     checks = [
         _check_required_files,
         _check_c_case_benchmark,
-        _check_staged_kcase_benchmark,
-        _check_diagnostic_tables,
+        _check_accuracy_credibility_tables,
+        _check_method_contrast,
         _check_profile_index,
         _check_referenced_profile_csv_dirs,
         _check_final_tables_do_not_point_to_removed_docs_paths,
@@ -38,18 +38,23 @@ def main() -> int:
 def _check_required_files() -> None:
     required = [
         TABLES / "verified_c_case_thermo_benchmark.csv",
-        TABLES / "verified_staged_kcase_benchmark.csv",
-        TABLES / "staged_epcsaft_smoke.csv",
-        TABLES / "staged_epcsaft_recovery_probe.csv",
-        TABLES / "staged_epcsaft_k2_blend_probe.csv",
-        TABLES / "kcase_sensitivity_recoveries.csv",
-        TABLES / "kcase_unresolved_diagnostics.csv",
+        TABLES / "validation_evidence_registry.csv",
+        TABLES / "primary_validation_gate.csv",
+        TABLES / "primary_validation_gate_summary.csv",
+        TABLES / "calibration_coefficients.csv",
+        TABLES / "calibration_holdout_metrics.csv",
+        TABLES / "calibration_holdout_predictions.csv",
+        TABLES / "error_regime_capture_data.csv",
+        TABLES / "uncertainty_band_capture.csv",
+        TABLES / "method_case_contrast.csv",
         FIGURES / "c_case_thermo_benchmark.pdf",
-        FIGURES / "staged_kcase_capture_error.pdf",
-        FIGURES / "staged_epcsaft_smoke_capture_error.pdf",
+        FIGURES / "error_regime_capture_error.pdf",
+        FIGURES / "calibration_uncertainty_band.pdf",
+        FIGURES / "method_case_solver_contrast.pdf",
         FINAL / "reports" / "validation_summary.md",
         ANALYSIS / "scripts" / "run_case_profile.py",
         ANALYSIS / "scripts" / "generate_clean_profile_csvs.py",
+        ANALYSIS / "scripts" / "generate_accuracy_credibility_artifacts.py",
     ]
     _require_existing(required)
 
@@ -66,43 +71,64 @@ def _check_c_case_benchmark() -> None:
         raise AssertionError("All verified C-case rows must be successful.")
 
 
-def _check_staged_kcase_benchmark() -> None:
-    data = pd.read_csv(TABLES / "verified_staged_kcase_benchmark.csv")
+def _check_accuracy_credibility_tables() -> None:
+    registry = pd.read_csv(TABLES / "validation_evidence_registry.csv")
     _require_columns(
-        data,
+        registry,
         [
-            "case_id",
-            "thermo_model",
-            "success",
-            "capture_error_pct",
-            "boundary_residual_norm",
-            "beds",
-            "intercoolers",
-            "staged_beds",
-            "intercooler_assumption",
-            "message",
+            "evidence_group",
+            "evidence_class",
+            "primary_validation",
+            "no_case_specific_tuning",
+            "rows",
+            "accepted_rows",
         ],
     )
-    if len(data) != 19 or data["case_id"].nunique() != 19:
-        raise AssertionError("Expected 19 primary staged Henry K-case rows.")
-    if set(data["thermo_model"]) != {"ideal_henry"}:
-        raise AssertionError("Primary staged K-case benchmark should contain the Henry lane only.")
-    if not data["success"].astype(str).str.lower().eq("true").all():
-        raise AssertionError("Primary staged K-case rows must be accepted rows.")
-    if data["capture_error_pct"].abs().max() > 8:
-        raise AssertionError("Primary staged K-case rows must remain inside the 8 percentage-point capture gate.")
+    if not set(registry["evidence_class"]).issubset({"primary", "diagnostic", "recovery"}):
+        raise AssertionError("Validation registry has an unexpected evidence class.")
+
+    gate = pd.read_csv(TABLES / "primary_validation_gate.csv")
+    _require_columns(gate, ["case_id", "thermo_model", "primary_validation", "no_case_specific_tuning"])
+    if gate["case_id"].astype(str).str.startswith("K").any():
+        raise AssertionError("Main-branch primary validation gate must not include K-case rows.")
+    if not gate["primary_validation"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("All gate rows are expected to be primary one-bed C validation rows.")
+    if not gate["no_case_specific_tuning"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Primary validation rows must pass the no-case-specific-tuning gate.")
+
+    summary = pd.read_csv(TABLES / "primary_validation_gate_summary.csv")
+    _require_columns(summary, ["evidence_group", "thermo_model", "gate_pass"])
+    if not summary["gate_pass"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Primary validation gate summary contains a failed gate.")
+
+    cal = pd.read_csv(TABLES / "calibration_holdout_predictions.csv")
+    _require_columns(cal, ["case_id", "split", "calibrated_capture_error_pct"])
+    if set(cal["split"]) != {"train", "holdout"}:
+        raise AssertionError("Calibration screen must contain both train and holdout splits.")
+    if cal["case_id"].astype(str).str.startswith("K").any():
+        raise AssertionError("Main-branch calibration screen must not include K-case rows.")
+
+    error_regime = pd.read_csv(TABLES / "error_regime_capture_data.csv")
+    _require_columns(error_regime, ["case_id", "thermo_model", "capture_error_pct", "L_over_G", "alpha", "y_CO2"])
+    counts = error_regime.groupby("thermo_model")["case_id"].nunique().to_dict()
+    if counts.get("ideal_henry") != 7 or counts.get("epcsaft_neutral") != 7:
+        raise AssertionError(f"Expected error-regime data for both C-case thermo lanes, got {counts!r}.")
+
+    uncertainty = pd.read_csv(TABLES / "uncertainty_band_capture.csv")
+    _require_columns(uncertainty, ["case_id", "lower_capture_pct", "upper_capture_pct"])
+    if not (uncertainty["upper_capture_pct"] > uncertainty["lower_capture_pct"]).all():
+        raise AssertionError("Uncertainty bands must have upper values above lower values.")
 
 
-def _check_diagnostic_tables() -> None:
-    recovery = pd.read_csv(TABLES / "kcase_sensitivity_recoveries.csv")
-    unresolved = pd.read_csv(TABLES / "kcase_unresolved_diagnostics.csv")
-    epcsaft = pd.read_csv(TABLES / "staged_epcsaft_smoke.csv")
-    if recovery.empty or unresolved.empty or epcsaft.empty:
-        raise AssertionError("Diagnostic/recovery tables must be present and non-empty.")
-    primary_cases = set(pd.read_csv(TABLES / "verified_staged_kcase_benchmark.csv")["case_id"])
-    unresolved_cases = set(unresolved["case_id"])
-    if unresolved_cases & primary_cases:
-        raise AssertionError("Unresolved diagnostic rows must not be mixed into the primary accepted K-case table.")
+def _check_method_contrast() -> None:
+    data = pd.read_csv(TABLES / "method_case_contrast.csv")
+    _require_columns(data, ["scenario", "case_id", "method", "success", "runtime_s"])
+    if data.empty:
+        raise AssertionError("Method contrast table is empty.")
+    if not {"Shooting", "SciPy BVP", "Finite difference"}.issubset(set(data["method"])):
+        raise AssertionError("Method contrast table must include shooting, SciPy BVP, and finite difference rows.")
+    if data["scenario"].astype(str).str.contains("K case|intercool|staged", case=False, regex=True).any():
+        raise AssertionError("Main-branch method contrast must not depend on staged/intercooled K-case evidence.")
 
 
 def _check_profile_index() -> None:

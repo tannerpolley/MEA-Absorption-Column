@@ -98,23 +98,9 @@ Robust-convergence diagnostics and the current verification snapshot are summari
 uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --mesh-points 51 --tol 0.5 --bc-tol 0.001 --max-nodes 1000 --success-boundary-residual-max 1
 ```
 
-The hand-built central-difference Jacobian is available with `--finite-jacobian`, but it is opt-in because stacked/intercooled cases are much slower with it.
+The hand-built central-difference Jacobian is available with `--finite-jacobian`, but it is opt-in because it is slower than the default solver path on stiff nonlinear cases.
 
 Shooting-method experiments can use `--shooting-integrator euler|bdf|radau|rk45`. Stiff IVP integrators are diagnostic only at this stage; pair them with `--max-runtime-s` or `--subprocess-timeout-s` when sweeping cases so a bad shooting branch returns a structured timeout row instead of tying up the workflow.
-
-### Intercooled bed stack benchmark
-
-Multi-bed NCCC cases should be run with staged beds enabled:
-
-```powershell
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --staged-beds auto --transform-mode case_bounded_flow_pressure --output-dir analyses\nccc_validation\results\runs\intercooled_benchmark
-```
-
-`--staged-beds auto` uses the stacked solver when a case has `Beds > 1` or `Intercoolers > 0`. Intercoolers are modeled as liquid enthalpy resets between beds. Unless explicit target temperatures are supplied, the first comparison uses the measured liquid feed temperature as the inter-stage target and reports this as `intercooler_assumption=Tl_feed_target`.
-
-`--intercooler-strength` can be used for continuation studies: `0` keeps the staged topology without applying liquid cooling, `0.25` applies a weak reset, and `1` applies the full target-temperature reset.
-
-The staged/intercooled NCCC workflow is still diagnostic rather than fully predictive. Failed rows are expected to stay in the benchmark CSV with `success=False`, `boundary_residual_norm`, `boundary_residual_components`, `jacobian_status`, guard counts, and the first failed domain. `--thermal-state-mode temperature` is available for staged solver experiments, but the current reference path remains the enthalpy-state solver with case-bounded flow/pressure variables. The continuation ladder in `python -m mea_absorption_column.continuation` records optional seed/ramp stages and only treats the full-intercooler stage as the required staged Henry result.
 
 ## Thermodynamics
 
@@ -131,4 +117,4 @@ The supported ePC-SAFT comparison in the paper-facing workflow remains a control
 
 The MEA ePC-SAFT parameter datasets are vendored in this repository under `src/mea_absorption_column/data/epcsaft_datasets/`. `MEA_EPCSAFT_DATASET_NAME` can select a different vendored dataset, and `MEA_THERMODYNAMICS_EPCSAFT_DATASET` remains an override for temporary external comparisons only. Normal repo tests and absorber runs must not depend on a sibling MEA-Thermodynamics checkout for parameter files.
 
-`--epcsaft-fugacity-blend <0..1>` is available for continuation diagnostics in the `epcsaft_neutral` lane. A value of `0` returns the Henry-law fugacity values through the ePC-SAFT adapter path, intermediate values linearly blend Henry and neutral ePC-SAFT fugacity values, and `1` is the full neutral ePC-SAFT fugacity endpoint. This is intended for branch diagnosis and staged warm-start studies, not as a publishable calibrated thermodynamic model by itself.
+`--epcsaft-fugacity-blend <0..1>` is available for continuation diagnostics in the `epcsaft_neutral` lane. A value of `0` returns the Henry-law fugacity values through the ePC-SAFT adapter path, intermediate values linearly blend Henry and neutral ePC-SAFT fugacity values, and `1` is the full neutral ePC-SAFT fugacity endpoint. This is intended for branch diagnosis and warm-start studies, not as a publishable calibrated thermodynamic model by itself.

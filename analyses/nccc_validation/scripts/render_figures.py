@@ -4,7 +4,8 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.lines import Line2D
+
+from generate_accuracy_credibility_artifacts import main as generate_accuracy_credibility_artifacts
 
 
 ANALYSIS = Path(__file__).resolve().parents[1]
@@ -81,77 +82,7 @@ def main() -> None:
     _strip_svg_trailing_whitespace(c_case_svg)
     plt.close(fig)
 
-    staged = pd.read_csv(TABLES / "raw_staged_kcase_benchmark.csv")
-    staged["abs_capture_error_pct"] = staged["capture_error_pct"].abs()
-    staged.to_csv(TABLES / "plot_staged_kcase_benchmark.csv", index=False)
-
-    staged_epcsaft = pd.read_csv(TABLES / "raw_staged_epcsaft_smoke.csv")
-    staged_epcsaft["abs_capture_error_pct"] = staged_epcsaft["capture_error_pct"].abs()
-    staged_epcsaft.to_csv(TABLES / "plot_staged_epcsaft_smoke.csv", index=False)
-
-    unresolved = pd.read_csv(TABLES / "raw_kcase_unresolved_diagnostics.csv")
-    unresolved.to_csv(TABLES / "plot_kcase_unresolved_diagnostics.csv", index=False)
-
-    recoveries = pd.read_csv(TABLES / "raw_kcase_sensitivity_recoveries.csv")
-    recoveries["abs_capture_error_pct"] = recoveries["capture_error_pct"].abs()
-    recoveries.to_csv(TABLES / "plot_kcase_sensitivity_recoveries.csv", index=False)
-
-    epcsaft_recovery = pd.read_csv(TABLES / "raw_staged_epcsaft_recovery_probe.csv")
-    epcsaft_recovery["abs_capture_error_pct"] = epcsaft_recovery["capture_error_pct"].abs()
-    epcsaft_recovery.to_csv(TABLES / "plot_staged_epcsaft_recovery_probe.csv", index=False)
-
-    k2_blend = pd.read_csv(TABLES / "raw_staged_epcsaft_k2_blend_probe.csv")
-    k2_blend["abs_capture_error_pct"] = k2_blend["capture_error_pct"].abs()
-    k2_blend.to_csv(TABLES / "plot_staged_epcsaft_k2_blend_probe.csv", index=False)
-
-    fig, ax = plt.subplots(figsize=(7.4, 3.6), constrained_layout=True)
-    ax.bar(staged["case_id"], staged["capture_error_pct"], color="#4f6f52", width=0.55)
-    ax.axhline(0, color="0.35", linewidth=0.8)
-    ax.set_ylabel("Capture error (%)")
-    ax.set_xlabel("Intercooled NCCC case")
-    ax.set_title("Verified staged-bed Henry runs", pad=8)
-    ax.tick_params(axis="x", rotation=45)
-    staged_svg = FIGURES / "staged_kcase_capture_error.svg"
-    fig.savefig(staged_svg, bbox_inches="tight")
-    fig.savefig(FIGURES / "staged_kcase_capture_error.pdf", bbox_inches="tight")
-    _strip_svg_trailing_whitespace(staged_svg)
-    plt.close(fig)
-
-    fig, ax = plt.subplots(figsize=(7.4, 3.8), constrained_layout=True)
-    success = staged_epcsaft["success"].astype(str).str.lower().eq("true")
-    error = pd.to_numeric(staged_epcsaft["capture_error_pct"], errors="coerce")
-    abs_error = error.abs()
-    high_error_failure = (~success) & abs_error.gt(8.0)
-    residual_failure = (~success) & ~high_error_failure
-    plotted_error = error.mask(high_error_failure)
-
-    colors = success.map({True: "#5f7f5a", False: "#b36b5e"}).tolist()
-    ax.bar(staged_epcsaft["case_id"], plotted_error, color=colors, width=0.55, zorder=2)
-    ax.axhline(0, color="0.35", linewidth=0.8)
-    ax.axhline(8, color="0.45", linewidth=0.8, linestyle="--")
-    ax.axhline(-8, color="0.45", linewidth=0.8, linestyle="--")
-    for idx, row in staged_epcsaft.loc[high_error_failure].iterrows():
-        y = 8.7 if error.loc[idx] >= 0 else -8.7
-        ax.scatter(row["case_id"], y, marker="x", s=52, color="#8f2f2f", linewidths=1.8, zorder=3)
-    for idx, row in staged_epcsaft.loc[residual_failure].iterrows():
-        y = float(error.loc[idx]) if pd.notna(error.loc[idx]) else 0.0
-        ax.scatter(row["case_id"], y, marker="o", s=38, facecolors="none", edgecolors="#8f2f2f", linewidths=1.5, zorder=3)
-    ax.set_ylim(-10.0, 10.0)
-    ax.set_ylabel("Capture error (%)")
-    ax.set_xlabel("Intercooled NCCC case")
-    ax.set_title("Staged neutral ePC-SAFT diagnostic rows", pad=8)
-    ax.tick_params(axis="x", rotation=45)
-    legend_handles = [
-        Line2D([0], [0], color="#5f7f5a", lw=6, label="accepted"),
-        Line2D([0], [0], marker="x", color="#8f2f2f", linestyle="None", label="failed, off-scale"),
-        Line2D([0], [0], marker="o", color="#8f2f2f", markerfacecolor="none", linestyle="None", label="failed residual gate"),
-    ]
-    ax.legend(handles=legend_handles, loc="upper left", frameon=False, fontsize=8)
-    epcsaft_svg = FIGURES / "staged_epcsaft_smoke_capture_error.svg"
-    fig.savefig(epcsaft_svg, bbox_inches="tight")
-    fig.savefig(FIGURES / "staged_epcsaft_smoke_capture_error.pdf", bbox_inches="tight")
-    _strip_svg_trailing_whitespace(epcsaft_svg)
-    plt.close(fig)
+    generate_accuracy_credibility_artifacts()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,3 @@
+split,rows,uncalibrated_mae_pct,calibrated_mae_pct,uncalibrated_bias_pct,calibrated_bias_pct,scope_note
+train,5,6.767,0.716,-3.111,-0.0,small global residual-correction screen only
+holdout,2,15.856,13.321,15.856,8.888,small global residual-correction screen only

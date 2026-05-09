@@ -1,7 +1,7 @@
 id: nccc_validation
 title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
-summary: Reviewer-response validation artifacts for one-bed C cases, staged/intercooled K cases, and ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons.
+summary: Reviewer-response validation artifacts for one-bed C cases, SRP-style method contrast, and ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons.
 owner: project
 architecture:
   standard: C:\Users\Tanner\.codex\PROJECT_ARCHITECTURE.md
@@ -16,9 +16,25 @@ inputs:
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
-  - path: results/final/tables/verified_staged_kcase_benchmark.csv
-    kind: accepted_result_table
+  - path: results/final/tables/validation_evidence_registry.csv
+    kind: evidence_registry
+  - path: results/final/tables/primary_validation_gate.csv
+    kind: validation_gate_table
+  - path: results/final/tables/calibration_holdout_metrics.csv
+    kind: calibration_screen_table
+  - path: results/final/tables/error_regime_capture_data.csv
+    kind: plot_data_table
+  - path: results/final/tables/uncertainty_band_capture.csv
+    kind: uncertainty_screen_table
+  - path: results/final/tables/method_case_contrast.csv
+    kind: solver_method_diagnostic_table
   - path: results/final/figures/c_case_thermo_benchmark.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/error_regime_capture_error.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/calibration_uncertainty_band.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/method_case_solver_contrast.pdf
     kind: manuscript_figure
   - path: results/final/profiles
     kind: clean_profile_gallery

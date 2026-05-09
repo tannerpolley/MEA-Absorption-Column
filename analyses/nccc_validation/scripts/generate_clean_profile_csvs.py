@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -79,7 +78,7 @@ def main(argv=None) -> int:
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="Generate dense profile CSVs for accepted validation rows.")
-    parser.add_argument("--suite", choices=["c", "k", "all"], default="all")
+    parser.add_argument("--suite", choices=["c", "all"], default="all")
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT))
     parser.add_argument(
         "--per-case-timeout-s",
@@ -112,22 +111,6 @@ def _jobs(suite: str, case_ids: list[str] | None = None) -> list[ProfileJob]:
                     solver_settings={},
                 )
             )
-    if suite in {"k", "all"}:
-        k_cases = pd.read_csv(FINAL_TABLES / "verified_staged_kcase_benchmark.csv")
-        for row in k_cases.itertuples(index=False):
-            if not _truthy(row.success):
-                continue
-            if selected is not None and str(row.case_id) not in selected:
-                continue
-            jobs.append(
-                ProfileJob(
-                    case_source="NCCC_Data",
-                    case_id=str(row.case_id),
-                    method="scipy-bvp",
-                    thermo_model=str(row.thermo_model),
-                    solver_settings=_parse_continuation_path(getattr(row, "continuation_path", "")),
-                )
-            )
     return jobs
 
 
@@ -140,7 +123,7 @@ def _run_job(job: ProfileJob, output_dir: Path, timeout_s: float) -> pd.DataFram
         nccc_case_limit=0 if job.case_source != "NCCC_Data" else None,
         c_case_ids=(job.case_id,) if job.case_source == "C_cases_data" else None,
         nccc_case_ids=(job.case_id,) if job.case_source == "NCCC_Data" else None,
-        staged_beds="auto",
+        staged_beds=False,
         solver_settings=job.solver_settings or None,
         profile_csvs=True,
         profile_pngs=True,
@@ -148,31 +131,6 @@ def _run_job(job: ProfileJob, output_dir: Path, timeout_s: float) -> pd.DataFram
         write_artifacts=False,
     )
     return run_benchmark(settings)
-
-
-def _parse_continuation_path(value) -> dict:
-    settings = {
-        "mesh_points": 5,
-        "tol": 0.5,
-        "bc_tol": 0.001,
-        "max_nodes": 80,
-        "max_runtime_s": 45.0,
-        "success_capture_error_max_pct": 8.0,
-    }
-    text = "" if value is None or (isinstance(value, float) and math.isnan(value)) else str(value)
-    if not text or text == "none":
-        return settings
-    for part in text.split(";"):
-        if "=" not in part:
-            continue
-        key, raw = [item.strip() for item in part.split("=", 1)]
-        if key == "capture_guess":
-            settings["co2_capture_guess_pct"] = float(raw)
-        elif key in {"mass_transfer_factor", "intercooler_strength", "co2_vapor_upper_factor"}:
-            settings[key] = float(raw)
-        elif key == "co2_flux_mode":
-            settings[key] = raw
-    return settings
 
 
 def _existing_keys(path: Path) -> set[tuple[str, str, str, str]]:
