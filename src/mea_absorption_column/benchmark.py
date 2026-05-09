@@ -45,6 +45,8 @@ BENCHMARK_COLUMNS = [
     "epcsaft_fugacity_blend",
     "mass_transfer_factor",
     "heat_transfer_factor",
+    "wall_heat_loss_coeff_W_m_K",
+    "ambient_temperature_K",
     "intercooler_strength",
     "co2_flux_mode",
     "vapor_composition_mode",
@@ -587,6 +589,8 @@ def _annotate_solver_settings(result, solver_settings):
         "epcsaft_fugacity_blend",
         "mass_transfer_factor",
         "heat_transfer_factor",
+        "wall_heat_loss_coeff_W_m_K",
+        "ambient_temperature_K",
         "intercooler_strength",
         "co2_flux_mode",
         "vapor_composition_mode",
@@ -646,6 +650,8 @@ def _failure_metadata(df, run, method, staged_beds):
         "epcsaft_fugacity_blend": None,
         "mass_transfer_factor": None,
         "heat_transfer_factor": None,
+        "wall_heat_loss_coeff_W_m_K": None,
+        "ambient_temperature_K": None,
         "intercooler_strength": None,
         "co2_flux_mode": None,
         "vapor_composition_mode": None,
@@ -768,6 +774,8 @@ def parse_args(argv=None):
     parser.add_argument("--chemical-equilibrium-model", default=None)
     parser.add_argument("--mass-transfer-factor", type=float, default=None)
     parser.add_argument("--heat-transfer-factor", type=float, default=None)
+    parser.add_argument("--wall-heat-loss-coeff-w-m-k", type=float, default=None)
+    parser.add_argument("--ambient-temperature-K", type=float, default=None)
     parser.add_argument("--intercooler-strength", type=float, default=None)
     parser.add_argument("--success-boundary-residual-max", type=float, default=None)
     parser.add_argument("--success-capture-error-max-pct", type=float, default=None)
@@ -864,6 +872,10 @@ def _solver_settings_from_args(args):
         settings["mass_transfer_factor"] = args.mass_transfer_factor
     if args.heat_transfer_factor is not None:
         settings["heat_transfer_factor"] = args.heat_transfer_factor
+    if args.wall_heat_loss_coeff_w_m_k is not None:
+        settings["wall_heat_loss_coeff_W_m_K"] = args.wall_heat_loss_coeff_w_m_k
+    if args.ambient_temperature_K is not None:
+        settings["ambient_temperature_K"] = args.ambient_temperature_K
     if args.intercooler_strength is not None:
         settings["intercooler_strength"] = args.intercooler_strength
     if args.success_boundary_residual_max is not None:
@@ -1023,6 +1035,8 @@ def _write_profile_rerun_files(profile_dir: Path, metadata: dict, output_dir: Pa
         "epcsaft_fugacity_blend",
         "mass_transfer_factor",
         "heat_transfer_factor",
+        "wall_heat_loss_coeff_W_m_K",
+        "ambient_temperature_K",
         "intercooler_strength",
         "co2_flux_mode",
         "vapor_composition_mode",

@@ -176,6 +176,8 @@ def test_benchmark_schema_includes_staged_bed_metadata():
         "intercooler_assumption",
         "mass_transfer_factor",
         "heat_transfer_factor",
+        "wall_heat_loss_coeff_W_m_K",
+        "ambient_temperature_K",
         "intercooler_strength",
         "co2_flux_mode",
     ]:
@@ -239,6 +241,10 @@ def test_benchmark_cli_accepts_solver_settings():
         "0.5",
         "--heat-transfer-factor",
         "0.8",
+        "--wall-heat-loss-coeff-w-m-k",
+        "45",
+        "--ambient-temperature-K",
+        "299.15",
         "--success-boundary-residual-max",
         "0.5",
         "--success-capture-error-max-pct",
@@ -285,6 +291,8 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.epcsaft_fugacity_blend == 0.5
     assert args.mass_transfer_factor == 0.5
     assert args.heat_transfer_factor == 0.8
+    assert args.wall_heat_loss_coeff_w_m_k == 45
+    assert args.ambient_temperature_K == 299.15
     assert args.success_boundary_residual_max == 0.5
     assert args.success_capture_error_max_pct == 8
     assert args.capture_correction_model == "nccc_linear"
@@ -303,6 +311,8 @@ def test_benchmark_cli_accepts_solver_settings():
     assert solver_settings["h2o_capture_guess_pct"] == -90
     assert solver_settings["epcsaft_fugacity_blend"] == 0.5
     assert solver_settings["vapor_composition_mode"] == "input_o2"
+    assert solver_settings["wall_heat_loss_coeff_W_m_K"] == 45
+    assert solver_settings["ambient_temperature_K"] == 299.15
     assert solver_settings["gas_velocity_area_exponent"] == 1.5
     assert solver_settings["gas_velocity_area_reference_m_s"] == 1.88
     assert solver_settings["guard_rhs"] is False
@@ -396,6 +406,14 @@ def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
             "_profiles": {
                 "T": pd.DataFrame({"Tl": [320.0, 315.0], "Tv": [318.0, 316.0]}, index=[1.0, 0.0]),
                 "CO2": pd.DataFrame({"DF_CO2": [1.2, 0.8]}, index=[1.0, 0.0]),
+                "thermal_accounting": pd.DataFrame(
+                    {
+                        "q_interphase_liquid": [10.0, 9.0],
+                        "dHmix_dT_model": [260.0, 259.0],
+                        "dHmix_dT_fd": [82.0, 81.0],
+                    },
+                    index=[1.0, 0.0],
+                ),
             },
         }
 
@@ -416,6 +434,7 @@ def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
     assert row["profile_csv_status"] == "written"
     assert (profile_dir / "T.csv").exists()
     assert (profile_dir / "CO2.csv").exists()
+    assert (profile_dir / "thermal_accounting.csv").exists()
     assert (profile_dir / "profile_manifest.json").exists()
     assert (profile_dir / "run_spec.json").exists()
     manifest = json.loads((profile_dir / "profile_manifest.json").read_text(encoding="utf-8"))

@@ -28,6 +28,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     guard_invalid_states = model_options.get('guard_invalid_states', True)
     mass_transfer_factor = float(model_options.get('mass_transfer_factor', 1.0))
     heat_transfer_factor = float(model_options.get('heat_transfer_factor', 1.0))
+    wall_heat_loss_coeff_W_m_K = float(model_options.get('wall_heat_loss_coeff_W_m_K', 0.0) or 0.0)
+    ambient_temperature_K = float(model_options.get('ambient_temperature_K', 298.15))
     thermal_state_mode = model_options.get('thermal_state_mode', 'enthalpy')
     co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
     epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
@@ -253,6 +255,11 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region --- Enthalpy Flux
 
     Hv_flux, Hl_flux, qv, ql, Hv_trn, Hl_trn, Hv_CO2_trn, Hv_H2O_trn, Hl_CO2_trn, Hl_H2O_trn = enthalpy_flux(Nl_CO2, Hl_CO2, Nl_H2O, Hl_H2O, Nv_CO2, Hv_CO2, Nv_H2O, Hv_H2O, UT * heat_transfer_factor, a_eA, Tv, Tl)
+    # The axial coordinate is bottom-to-top while the liquid stream flows
+    # downward. Heat removed from the liquid therefore enters the dH_l/dz
+    # balance with a positive coordinate sign.
+    q_wall_loss = wall_heat_loss_coeff_W_m_K * max(Tl - ambient_temperature_K, 0.0)
+    Hl_flux_effective = Hl_flux + q_wall_loss
 
     # endregion
 
@@ -271,14 +278,15 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region -- Energy Balance
-    dHlf_dz = Hl_flux + 1e-10
+    dHlf_dz = Hl_flux_effective + 1e-10
     dHvf_dz = Hv_flux + 1e-10
 
 
     dHl_dT = f_dHl_dT(Tl, x)
+    dHl_dT_fd = _finite_difference_mixture_enthalpy_derivative(Tl, x, phase="liquid")
     dHv_dT = Cpv_T
 
-    dTl_dz = H*(Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
+    dTl_dz = H*(Hl_flux_effective + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
     dTv_dz = H*(Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dT)
 
     # endregion
@@ -354,6 +362,26 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                        Cpl_MEA, Cpl_H2O],
             'Prop_v': [rho_mol_v, rho_mass_v, muv_CO2, muv_H2O, muv_N2, muv_O2, muv_mix, Dv_CO2, Dv_H2O,
                        Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2, kt_vap],
+            'thermal_accounting': [
+                ql,
+                qv,
+                Hl_trn,
+                Hv_trn,
+                Nl_CO2 * Hl_CO2 + Nl_H2O * Hl_H2O,
+                Nl_CO2 * (Hl_CO2 - Hv_CO2),
+                Nl_H2O * (Hl_H2O - Hv_H2O),
+                (Nl_CO2 * Hl_CO2 + Nl_H2O * Hl_H2O) - Hl_trn,
+                Hl_flux,
+                q_wall_loss,
+                Hl_flux_effective,
+                Hl_flux_effective + Hl_T * (Nl_CO2 + Nl_H2O),
+                dHl_dT,
+                dHl_dT_fd,
+                dHl_dT - dHl_dT_fd,
+                (dHl_dT - dHl_dT_fd) / max(abs(dHl_dT_fd), 1.0e-12),
+                wall_heat_loss_coeff_W_m_K,
+                ambient_temperature_K,
+            ],
         }
 
         if zi == 0 and column_names:
@@ -368,6 +396,26 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                                 key_list.append(k2)
                                 continue
                 keys_dict[k] = key_list
+            keys_dict['thermal_accounting'] = [
+                'q_interphase_liquid',
+                'q_interphase_vapor',
+                'current_liquid_enthalpy_transport',
+                'current_vapor_enthalpy_transport',
+                'liquid_species_enthalpy_transport',
+                'q_absorption_proxy',
+                'q_water_phase_change_proxy',
+                'q_missing_if_liquid_species_transport',
+                'current_liquid_enthalpy_flux',
+                'q_wall_loss',
+                'liquid_enthalpy_flux_with_wall_loss',
+                'temperature_equation_numerator',
+                'dHmix_dT_model',
+                'dHmix_dT_fd',
+                'dHmix_dT_error',
+                'dHmix_dT_relative_error',
+                'wall_heat_loss_coeff_W_m_K',
+                'ambient_temperature_K',
+            ]
         else:
             keys_dict = None
         return output_dict, keys_dict
@@ -384,6 +432,14 @@ def _temperatures_in_bounds(Tl, Tv, bounds):
         and low <= float(Tl) <= high
         and low <= float(Tv) <= high
     )
+
+
+def _finite_difference_mixture_enthalpy_derivative(T, composition, phase):
+    step = 1.0e-3
+    T = float(T)
+    _, high = enthalpy(T + step, composition, phase=phase)
+    _, low = enthalpy(T - step, composition, phase=phase)
+    return float((high - low) / (2.0 * step))
 
 
 def _smooth_absorption_only_vapor_flux(nv_co2):

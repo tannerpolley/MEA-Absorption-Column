@@ -29,6 +29,7 @@ $env:PYTHONPATH = "src"
 | `run_case_profile.py` | Runs one case and exports dense legacy-`Profiles.xlsx`-style CSVs. | Yes. | Required for `epcsaft_neutral`, `epcsaft_ionic`, and experimental reactive lanes. |
 | `generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and writes dense profile CSV folders. | Yes. | Required only for ePC-SAFT rows in the selected suite. |
 | `render_c_case_campaign_temperature_gallery.py` | Renders the corrected one-bed C-case temperature overlay gallery from a completed campaign-input benchmark run. | No. | No direct dependency; the source run may include ePC-SAFT rows. |
+| `analyze_thermal_accounting.py` | Summarizes thermal-accounting profile exports and renders the wall-loss thermal-closure screen. | No; reads completed profile runs. | No direct dependency; compares existing Henry and ePC-SAFT rows. |
 | `probe_reactive_epcsaft_speciation.py` | Experimental reactive-speciation probe using the external ePC-SAFT package and the repo-vendored MEA dataset. | Thermodynamic probe only. | Required. Not a default validation script. |
 | `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
 
@@ -79,6 +80,15 @@ Run the corrected one-bed NCCC C-case campaign table and regenerate the 1C--7C t
 ```
 
 The campaign dataset is stored separately as `src/mea_absorption_column/data/C_cases_campaign_inputs.csv`; the legacy `C_cases_data.csv` remains available through the default `--c-case-dataset legacy` path for reproducibility.
+
+Run the thermal-accounting and wall-loss closure screen after the campaign profile run exists:
+
+```powershell
+.\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_neutral --c-case-dataset campaign --c-case-ids 1C 2C 3C 4C 5C 6C 7C --nccc-case-limit 0 --srp-case-limit 0 --staged-beds false --mesh-points 51 --tol 0.5 --bc-tol 0.001 --max-nodes 1000 --wall-heat-loss-coeff-w-m-k 75 --ambient-temperature-K 298.15 --subprocess-timeout-s 60 --profile-csvs --output-dir analyses\nccc_validation\results\runs\c_case_wall_heat_loss_75_both_thermo
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\analyze_thermal_accounting.py
+```
+
+The wall-loss screen is a model-adequacy diagnostic, not a final plant heat-loss calibration. It uses one global coefficient for all seven C cases and should be reported as evidence that the remaining temperature-profile error is a thermal-closure limitation rather than a solver or fugacity-only issue.
 
 Run the favorable SRP-style method-comparison case across shooting, SciPy BVP, and finite difference:
 
