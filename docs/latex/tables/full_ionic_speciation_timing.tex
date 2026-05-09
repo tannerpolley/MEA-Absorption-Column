@@ -1,7 +1,7 @@
-\begin{table}[htbp]
+\begin{center}
     \centering
     \small
-    \caption{Timing boundary for the full ionic activity-speciation ePC-SAFT path.}
+    \captionof{table}{Timing boundary for the full ionic activity-speciation ePC-SAFT path.}
     \label{tab:full-ionic-speciation-timing}
     \renewcommand{\arraystretch}{1.2}
     \begin{adjustbox}{max width=\textwidth}
@@ -9,10 +9,10 @@
         \toprule
         \textbf{Path} & \textbf{Scope} & \textbf{Runtime} & \textbf{What it shows} \\
         \midrule
-        Henry-law routine campaign & Seven C cases & Median \SI{13.93}{s} & Fast baseline driving-force calculation with concentration-based chemistry. \\
-        ePC-SAFT fugacity campaign & Seven C cases & Median \SI{18.93}{s} & Routine thermodynamic comparison using ePC-SAFT CO$_2$ fugacity coefficients with the same concentration-based chemistry. \\
+        Henry-law routine campaign & Accepted rows & Median \SI{8.62}{s} & Fast baseline driving-force calculation with concentration-based chemistry. \\
+        ePC-SAFT fugacity campaign & Accepted rows & Median \SI{9.86}{s} & Routine thermodynamic comparison using ePC-SAFT CO$_2$ fugacity coefficients with the same concentration-based chemistry. \\
         Full ionic activity-speciation proof & Case 3C & \SI{129.282}{s} & Feasible activity-coupled ePC-SAFT chemistry and ionic fugacity loop; timing target for future acceleration. \\
         \bottomrule
     \end{tabular}
     \end{adjustbox}
-\end{table}
+\end{center}

@@ -1,0 +1,7 @@
+case_id,thermo_model,capture_pct,capture_error_pct,temperature_rmse_K,tap_rmse_K,tap_bias_K,tap_max_abs_K,runtime_s,plot_png
+1C,epcsaft_ionic,95.0864397912147,-2.013560208785293,,3.513984110396445,0.372855553359625,6.039982918262979,10.29814600944519,analyses/nccc_validation/results/final/figures/nccc_2017_epcsaft_temperature_overlays/1C_temperature_overlay.png
+2C,epcsaft_ionic,88.60618828348566,-3.693811716514333,,3.64089157265981,0.33465935830901117,6.324744212482585,8.180507898330688,analyses/nccc_validation/results/final/figures/nccc_2017_epcsaft_temperature_overlays/2C_temperature_overlay.png
+3C,epcsaft_ionic,88.85897412956055,-0.6410258704394494,,4.24634657315301,2.4068940473284215,7.509033258273746,7.281428337097168,analyses/nccc_validation/results/final/figures/nccc_2017_epcsaft_temperature_overlays/3C_temperature_overlay.png
+4C,epcsaft_ionic,93.42644394372904,4.526443943729035,,8.127332197516765,6.401682857023365,12.165400106594234,11.348326683044434,analyses/nccc_validation/results/final/figures/nccc_2017_epcsaft_temperature_overlays/4C_temperature_overlay.png
+5C,epcsaft_ionic,93.35082713819529,6.950827138195265,,8.569552774587837,5.728202322235541,11.386615228431424,8.538632154464722,analyses/nccc_validation/results/final/figures/nccc_2017_epcsaft_temperature_overlays/5C_temperature_overlay.png
+6C,epcsaft_ionic,71.76633788974134,11.566337889741334,,6.829359823332447,5.105829314848881,8.499764003174334,9.412795066833496,analyses/nccc_validation/results/final/figures/nccc_2017_epcsaft_temperature_overlays/6C_temperature_overlay.png

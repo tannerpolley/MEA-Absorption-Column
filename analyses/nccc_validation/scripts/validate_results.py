@@ -37,19 +37,16 @@ def main() -> int:
 
 def _check_required_files() -> None:
     required = [
-        TABLES / "verified_c_case_thermo_benchmark.csv",
+        TABLES / "nccc_one_bed_accepted_results.csv",
+        TABLES / "nccc_one_bed_case_scope.csv",
+        TABLES / "nccc_2017_epcsaft_temperature_overlay_metrics.csv",
+        TABLES / "nccc_2017_epcsaft_temperature_profile_index.csv",
         TABLES / "validation_evidence_registry.csv",
         TABLES / "primary_validation_gate.csv",
         TABLES / "primary_validation_gate_summary.csv",
-        TABLES / "calibration_coefficients.csv",
-        TABLES / "calibration_holdout_metrics.csv",
-        TABLES / "calibration_holdout_predictions.csv",
-        TABLES / "error_regime_capture_data.csv",
-        TABLES / "uncertainty_band_capture.csv",
         TABLES / "method_case_contrast.csv",
-        FIGURES / "c_case_thermo_benchmark.pdf",
-        FIGURES / "error_regime_capture_error.pdf",
-        FIGURES / "calibration_uncertainty_band.pdf",
+        FIGURES / "nccc_one_bed_thermo_benchmark.pdf",
+        FIGURES / "nccc_2017_epcsaft_temperature_overlays" / "nccc_2017_epcsaft_temperature_overlay_contact_sheet.png",
         FIGURES / "method_case_solver_contrast.pdf",
         FINAL / "reports" / "validation_summary.md",
         ANALYSIS / "scripts" / "run_case_profile.py",
@@ -60,15 +57,17 @@ def _check_required_files() -> None:
 
 
 def _check_c_case_benchmark() -> None:
-    data = pd.read_csv(TABLES / "verified_c_case_thermo_benchmark.csv")
-    _require_columns(data, ["case_id", "thermo_model", "success", "capture_error_pct", "temperature_rmse_K"])
-    if data["case_id"].nunique() != 7:
-        raise AssertionError("Expected 7 one-bed C cases.")
+    data = pd.read_csv(TABLES / "nccc_one_bed_accepted_results.csv")
+    _require_columns(data, ["case_id", "thermo_model", "success", "capture_error_pct", "runtime_s", "campaign_year"])
+    expected_cases = {"K18", "K19", "1C", "2C", "3C", "4C", "5C", "6C"}
+    got_cases = set(data["case_id"].astype(str))
+    if got_cases != expected_cases:
+        raise AssertionError(f"Expected accepted one-bed cases {sorted(expected_cases)!r}, got {sorted(got_cases)!r}.")
     counts = data.groupby("thermo_model")["case_id"].nunique().to_dict()
-    if counts.get("ideal_henry") != 7 or counts.get("epcsaft_ionic") != 7:
-        raise AssertionError(f"Expected both thermo lanes to cover 7 C cases, got {counts!r}.")
+    if counts.get("ideal_henry") != 8 or counts.get("epcsaft_ionic") != 8:
+        raise AssertionError(f"Expected both thermo lanes to cover 8 accepted one-bed cases, got {counts!r}.")
     if not data["success"].astype(str).str.lower().eq("true").all():
-        raise AssertionError("All verified C-case rows must be successful.")
+        raise AssertionError("All accepted one-bed rows must be successful.")
 
 
 def _check_accuracy_credibility_tables() -> None:
@@ -101,23 +100,12 @@ def _check_accuracy_credibility_tables() -> None:
     if not summary["gate_pass"].astype(str).str.lower().eq("true").all():
         raise AssertionError("Primary validation gate summary contains a failed gate.")
 
-    cal = pd.read_csv(TABLES / "calibration_holdout_predictions.csv")
-    _require_columns(cal, ["case_id", "split", "calibrated_capture_error_pct"])
-    if set(cal["split"]) != {"train", "holdout"}:
-        raise AssertionError("Calibration screen must contain both train and holdout splits.")
-    if cal["case_id"].astype(str).str.startswith("K").any():
-        raise AssertionError("Main-branch calibration screen must not include K-case rows.")
-
-    error_regime = pd.read_csv(TABLES / "error_regime_capture_data.csv")
-    _require_columns(error_regime, ["case_id", "thermo_model", "capture_error_pct", "L_over_G", "alpha", "y_CO2"])
-    counts = error_regime.groupby("thermo_model")["case_id"].nunique().to_dict()
-    if counts.get("ideal_henry") != 7 or counts.get("epcsaft_ionic") != 7:
-        raise AssertionError(f"Expected error-regime data for both C-case thermo lanes, got {counts!r}.")
-
-    uncertainty = pd.read_csv(TABLES / "uncertainty_band_capture.csv")
-    _require_columns(uncertainty, ["case_id", "lower_capture_pct", "upper_capture_pct"])
-    if not (uncertainty["upper_capture_pct"] > uncertainty["lower_capture_pct"]).all():
-        raise AssertionError("Uncertainty bands must have upper values above lower values.")
+    temp = pd.read_csv(TABLES / "nccc_2017_epcsaft_temperature_overlay_metrics.csv")
+    _require_columns(temp, ["case_id", "thermo_model", "capture_error_pct", "plot_png"])
+    if set(temp["case_id"].astype(str)) != {"1C", "2C", "3C", "4C", "5C", "6C"}:
+        raise AssertionError("Temperature-profile gallery should include accepted 2017 one-bed C cases 1C through 6C.")
+    if set(temp["thermo_model"].astype(str)) != {"epcsaft_ionic"}:
+        raise AssertionError("Temperature-profile gallery should be ePC-SAFT only.")
 
 
 def _check_method_contrast() -> None:
@@ -132,9 +120,9 @@ def _check_method_contrast() -> None:
 
 
 def _check_profile_index() -> None:
-    index_path = TABLES / "clean_temperature_profile_index.csv"
+    index_path = TABLES / "nccc_2017_epcsaft_temperature_profile_index.csv"
     if not index_path.exists():
-        raise AssertionError("Missing clean profile index. Run collect_clean_profiles.py --collect-existing.")
+        raise AssertionError("Missing 2017 ePC-SAFT temperature profile index. Run render_c_case_campaign_temperature_gallery.py.")
     data = pd.read_csv(index_path)
     _require_columns(data, ["case_id", "thermo_model", "profile_png", "clean_profile", "caveat"])
     if data.empty:

@@ -28,17 +28,19 @@ def main() -> None:
 
     _write_validation_registry(c_aug, method_contrast)
     _write_primary_validation_gate(c_aug)
-    cal = _write_calibration_artifacts(c_aug)
-    _write_error_regime_artifacts(c_aug)
-    _write_uncertainty_band(cal)
-    _write_error_regime_plot(c_aug)
-    _write_uncertainty_plot(cal)
     _write_method_contrast_plot(method_contrast)
 
 
 def _load_c_case_results() -> tuple[pd.DataFrame, Path]:
-    campaign_metrics = TABLES / "c_case_campaign_temperature_overlay_metrics.csv"
+    nccc_2017_metrics = TABLES / "nccc_2017_epcsaft_temperature_overlay_metrics.csv"
     campaign_inputs = ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_campaign_inputs.csv"
+    if nccc_2017_metrics.exists() and campaign_inputs.exists():
+        results = pd.read_csv(nccc_2017_metrics)
+        results["success"] = True
+        results["source_dataset"] = "nccc_2017_epcsaft"
+        return results, campaign_inputs
+
+    campaign_metrics = TABLES / "c_case_campaign_temperature_overlay_metrics.csv"
     if campaign_metrics.exists() and campaign_inputs.exists():
         results = pd.read_csv(campaign_metrics)
         results["success"] = True
@@ -68,8 +70,8 @@ def _load_method_contrast() -> pd.DataFrame:
         data = pd.DataFrame(
             [
                 {
-                    "scenario": "SRP favorable one-bed case",
-                    "case_id": "SRP-LG7",
+                    "scenario": "Smooth one-bed case",
+                    "case_id": "smooth-one-bed",
                     "method": "Shooting",
                     "thermo_model": "ideal_henry",
                     "success": True,
@@ -80,8 +82,8 @@ def _load_method_contrast() -> pd.DataFrame:
                     "boundary_residual_norm": 0.0437,
                 },
                 {
-                    "scenario": "SRP favorable one-bed case",
-                    "case_id": "SRP-LG7",
+                    "scenario": "Smooth one-bed case",
+                    "case_id": "smooth-one-bed",
                     "method": "Collocation BVP",
                     "thermo_model": "ideal_henry",
                     "success": True,
@@ -92,8 +94,8 @@ def _load_method_contrast() -> pd.DataFrame:
                     "boundary_residual_norm": 4.11e-11,
                 },
                 {
-                    "scenario": "SRP favorable one-bed case",
-                    "case_id": "SRP-LG7",
+                    "scenario": "Smooth one-bed case",
+                    "case_id": "smooth-one-bed",
                     "method": "Finite difference",
                     "thermo_model": "ideal_henry",
                     "success": True,
@@ -160,7 +162,7 @@ def _write_validation_registry(c_aug: pd.DataFrame, method_contrast: pd.DataFram
         )
     rows.append(
         {
-            "evidence_group": "SRP-style method contrast",
+            "evidence_group": "Smooth one-bed method contrast",
             "evidence_class": "diagnostic",
             "primary_validation": False,
             "no_case_specific_tuning": True,
@@ -409,10 +411,8 @@ def _write_method_contrast_plot(data: pd.DataFrame) -> None:
                     fontsize=7,
                 )
     ax.set_xticks(x)
-    ax.set_xticklabels(["SRP-style\none-bed", "NCCC 3C\nthermal pinch"])
+    ax.set_xticklabels(["Smooth\none-bed", "NCCC 3C\nthermal pinch"])
     ax.set_ylabel("Runtime (s)")
-    ax.set_yscale("log")
-    ax.grid(True, axis="y", color="#d0d0d0", linewidth=0.5, alpha=0.8)
     ax.legend(frameon=False, fontsize=7, loc="upper left")
     _save_figure(fig, "method_case_solver_contrast", "method-case-solver-contrast.pdf")
 

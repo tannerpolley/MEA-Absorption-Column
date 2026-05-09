@@ -173,10 +173,11 @@
                 \end{align}
 
         \newpage
-        \subsection{Constants and Parameter Reporting}
-            Table~\ref{tab:appendix-parameter-scope} summarizes the parameter groups used by the absorber model. The detailed numerical values are maintained in the repository input data and model-parameter tables so that the manuscript does not duplicate a long, error-prone appendix table. This also keeps the paper aligned with the reproducibility claim: the benchmark dataset, solver settings, and reported tables are treated as the authoritative source for validation values.
+        \subsection{Constants and Parameter Reporting}\label{sec:appendix-properties}
+            Table~\ref{tab:appendix-parameter-scope} summarizes the parameter groups used by the absorber model. The absorber constants and case-specific operating rows are maintained in the repository input data so that the manuscript and executable benchmark stay aligned. The ePC-SAFT parameter record used in the thermodynamic runs is reported separately in Tables~\ref{tab:epcsaft-pure-parameters} and~\ref{tab:epcsaft-binary-parameters}.
 
             \input{tables/appendix_parameter_scope}
+            \input{tables/epcsaft_parameter_summary}
 
             The fixed constants used in the simulations include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, and measured capture values are read from the NCCC benchmark data. This separation prevents inconsistencies between a manuscript appendix and the executable model while still documenting the physical and numerical scope of the simulations.
     \clearpage

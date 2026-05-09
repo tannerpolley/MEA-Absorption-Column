@@ -1,7 +1,7 @@
 \begin{center}
     \centering
     \small
-    \captionof{table}{Representative one-bed solver-method comparison for runtime and conditioning across the SRP-style and NCCC validation cases.}
+    \captionof{table}{Representative one-bed solver-method comparison for runtime and conditioning across a smooth one-bed case and the NCCC validation case.}
     \label{tab:method-case-contrast}
     \renewcommand{\arraystretch}{1.2}
     \begin{adjustbox}{max width=\textwidth}
@@ -9,9 +9,9 @@
         \toprule
         \textbf{Scenario} & \textbf{Method} & \textbf{Success} & \textbf{Runtime (s)} & \textbf{Capture (\%)} \\
         \midrule
-        SRP-style favorable & Shooting & Yes & 4.91 & 90.17 \\
-        SRP-style favorable & Collocation BVP & Yes & 7.61 & 89.95 \\
-        SRP-style favorable & Finite difference & Yes & 15.62 & 107.65 \\
+        Smooth one-bed & Shooting & Yes & 4.91 & 90.17 \\
+        Smooth one-bed & Collocation BVP & Yes & 7.61 & 89.95 \\
+        Smooth one-bed & Finite difference & Yes & 15.62 & 107.65 \\
         NCCC 3C thermal pinch & Shooting & No & 62.73 & -- \\
         NCCC 3C thermal pinch & Collocation BVP & Yes & 9.40 & 89.40 \\
         NCCC 3C thermal pinch & Finite difference & No & 16.61 & 0.00 \\
