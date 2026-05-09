@@ -24,7 +24,8 @@ def make_dfs_dict(output_dict, keys_dict, stages, coordinate_frame=None):
         df = pd.DataFrame(d, index=stages[::-1])
         df.index.name = 'Position'
         if coordinate_frame is not None:
-            df = pd.concat([coordinate_frame.copy(), df.reset_index(drop=True)], axis=1)
+            reversed_coordinate_frame = coordinate_frame.iloc[::-1].reset_index(drop=True)
+            df = pd.concat([reversed_coordinate_frame, df.reset_index(drop=True)], axis=1)
             df.index = stages[::-1]
             df.index.name = 'Position'
         dfs_dict[k1] = df

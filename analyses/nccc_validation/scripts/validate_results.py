@@ -22,6 +22,8 @@ def main() -> int:
         _check_c_case_benchmark,
         _check_staged_kcase_benchmark,
         _check_diagnostic_tables,
+        _check_accuracy_credibility_artifacts,
+        _check_appendix_c_temperature_profiles,
         _check_profile_index,
         _check_referenced_profile_csv_dirs,
         _check_final_tables_do_not_point_to_removed_docs_paths,
@@ -44,12 +46,32 @@ def _check_required_files() -> None:
         TABLES / "staged_epcsaft_k2_blend_probe.csv",
         TABLES / "kcase_sensitivity_recoveries.csv",
         TABLES / "kcase_unresolved_diagnostics.csv",
+        TABLES / "validation_evidence_registry.csv",
+        TABLES / "primary_validation_gate_summary.csv",
+        TABLES / "calibration_holdout_metrics.csv",
+        TABLES / "error_regime_capture_data.csv",
+        TABLES / "staged_epcsaft_reliability_summary.csv",
+        TABLES / "intercooled_temperature_profile_k3.csv",
+        TABLES / "morgan2020_case1a_measured_intercooled_profile.csv",
+        TABLES / "appendix_c_temperature_profile_index.csv",
+        TABLES / "nccc_legacy_k_case_name_crosswalk.csv",
         FIGURES / "c_case_thermo_benchmark.pdf",
         FIGURES / "staged_kcase_capture_error.pdf",
         FIGURES / "staged_epcsaft_smoke_capture_error.pdf",
+        FIGURES / "calibration_uncertainty_band.pdf",
+        FIGURES / "error_regime_capture_error.pdf",
+        FIGURES / "staged_epcsaft_reliability.pdf",
+        FIGURES / "intercooled_temperature_profile_k3.pdf",
+        FIGURES / "morgan2020_case1a_measured_intercooled_profile.pdf",
+        FIGURES / "intercooled_temperature_profile_comparison.pdf",
+        FIGURES / "appendix_c_temperature_profiles.pdf",
+        ANALYSIS / "data" / "input" / "morgan2020_appendix_c_case1a_absorber_temperature_profile.csv",
+        ANALYSIS / "data" / "input" / "morgan2020_appendix_c_absorber_temperature_profiles.csv",
         FINAL / "reports" / "validation_summary.md",
         ANALYSIS / "scripts" / "run_case_profile.py",
         ANALYSIS / "scripts" / "generate_clean_profile_csvs.py",
+        ANALYSIS / "scripts" / "generate_accuracy_credibility_artifacts.py",
+        ANALYSIS / "scripts" / "render_appendix_c_temperature_profiles.py",
     ]
     _require_existing(required)
 
@@ -103,6 +125,85 @@ def _check_diagnostic_tables() -> None:
     unresolved_cases = set(unresolved["case_id"])
     if unresolved_cases & primary_cases:
         raise AssertionError("Unresolved diagnostic rows must not be mixed into the primary accepted K-case table.")
+
+
+def _check_accuracy_credibility_artifacts() -> None:
+    registry = pd.read_csv(TABLES / "validation_evidence_registry.csv")
+    _require_columns(
+        registry,
+        [
+            "evidence_group",
+            "evidence_class",
+            "primary_validation",
+            "no_case_specific_tuning",
+            "rows",
+            "accepted_rows",
+        ],
+    )
+    if not {"primary", "recovery", "diagnostic"}.issubset(set(registry["evidence_class"])):
+        raise AssertionError("Validation registry must distinguish primary, recovery, and diagnostic evidence.")
+
+    gate = pd.read_csv(TABLES / "primary_validation_gate_summary.csv")
+    _require_columns(gate, ["evidence_group", "thermo_model", "gate_pass"])
+    if not gate["gate_pass"].astype(str).str.lower().eq("true").any():
+        raise AssertionError("No-case-specific-tuning gate must identify at least one passing evidence group.")
+    if "staged/intercooled K cases" not in set(gate["evidence_group"]):
+        raise AssertionError("No-case-specific-tuning gate must report the staged K-case evidence group.")
+
+    metrics = pd.read_csv(TABLES / "calibration_holdout_metrics.csv")
+    _require_columns(metrics, ["split", "raw_capture_mae_pct", "calibrated_capture_mae_pct"])
+    if set(metrics["split"]) != {"train", "holdout"}:
+        raise AssertionError("Calibration screen must report train and holdout rows.")
+    if not (metrics["calibrated_capture_mae_pct"] <= metrics["raw_capture_mae_pct"]).all():
+        raise AssertionError("Calibration screen should not degrade the reported low-hanging MAE metric.")
+
+    reliability = pd.read_csv(TABLES / "staged_epcsaft_reliability_summary.csv")
+    _require_columns(reliability, ["source", "outcome", "rows", "fraction"])
+    if "accepted" not in set(reliability["outcome"]):
+        raise AssertionError("Staged ePC-SAFT reliability summary must include accepted rows.")
+
+
+def _check_appendix_c_temperature_profiles() -> None:
+    measured = pd.read_csv(ANALYSIS / "data" / "input" / "morgan2020_appendix_c_absorber_temperature_profiles.csv")
+    _require_columns(
+        measured,
+        [
+            "case_id",
+            "relative_position_top_to_bottom",
+            "temperature_C",
+            "beds",
+            "intercoolers",
+            "source",
+        ],
+    )
+    expected_cases = {f"{i}A" for i in range(1, 16)} | {"1B", "2B", "3B"} | {f"{i}C" for i in range(1, 8)} | {
+        f"{i}D" for i in range(1, 5)
+    }
+    if set(measured["case_id"]) != expected_cases:
+        raise AssertionError("Appendix C absorber profile table must contain the expected NCCC case labels.")
+
+    index = pd.read_csv(TABLES / "appendix_c_temperature_profile_index.csv")
+    _require_columns(
+        index,
+        ["case_id", "beds", "intercoolers", "model_status", "model_quality", "model_source", "source_row", "case_plot_png", "message"],
+    )
+    if set(index["case_id"]) != expected_cases:
+        raise AssertionError("Appendix C profile index must cover every absorber temperature-profile case.")
+    if len(index) != 29:
+        raise AssertionError("Appendix C profile index must contain exactly 29 absorber profile plots.")
+    c_cases = {f"{i}C" for i in range(1, 8)}
+    c_overlays = index[index["case_id"].isin(c_cases)]
+    if not c_overlays["model_status"].astype(str).eq("profile_exported").all():
+        raise AssertionError("All one-bed C cases should use exported true model profiles in the Appendix C review PDF.")
+    if index.astype(str).apply(lambda col: col.str.contains("measured_data_surrogate|interpolated_model_placeholder", case=False, regex=True)).any().any():
+        raise AssertionError("Appendix C profile index must not use generated placeholder curves as model evidence.")
+    for raw_path in index["case_plot_png"]:
+        if not (ROOT / raw_path).exists():
+            raise AssertionError(f"Appendix C case plot does not exist: {raw_path}")
+    page_dir = FIGURES / "appendix_c_temperature_profile_pages"
+    for page_number in range(1, 9):
+        if not (page_dir / f"page_{page_number:02d}.png").exists():
+            raise AssertionError(f"Missing Appendix C profile page preview {page_number}.")
 
 
 def _check_profile_index() -> None:
@@ -164,11 +265,16 @@ def _check_one_latex_pdf_is_current(tex_name: str, pdf_name: str, build_command:
     if not pdf.exists():
         raise AssertionError(f"Missing docs/latex/{pdf_name}. Run {build_command}.")
     sources = set()
-    for pattern in ("*.bib", "*.bst", "*.cls", "*.sty"):
+    for pattern in ("*.bst", "*.cls", "*.sty"):
         sources.update(DOCS_LATEX.glob(pattern))
     for tex_path in _tex_dependency_closure(root_tex):
         sources.add(tex_path)
         text = tex_path.read_text(encoding="utf-8")
+        for match in re.finditer(r"\\bibliography\{([^}]+)\}", text):
+            for bib_name in match.group(1).split(","):
+                bib_path = (DOCS_LATEX / bib_name.strip()).with_suffix(".bib")
+                if bib_path.exists():
+                    sources.add(bib_path)
         for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", text):
             for candidate in _latex_graphic_candidates(match.group(1)):
                 if candidate.exists():

@@ -1,0 +1,10 @@
+source,outcome,rows,total_rows,fraction
+nominal,accepted,13,19,0.6842105263157895
+nominal,capture_gate_failure,4,19,0.21052631578947367
+nominal,residual_gate_failure,2,19,0.10526315789473684
+targeted_recovery,capture_gate_failure,1,5,0.2
+targeted_recovery,accepted,3,5,0.6
+targeted_recovery,residual_gate_failure,1,5,0.2
+k2_blend,accepted,2,4,0.5
+k2_blend,other_failure,1,4,0.25
+k2_blend,capture_gate_failure,1,4,0.25

@@ -360,6 +360,9 @@ def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
         "bed_id",
         "bed_position_m",
     ]
+    t_profile = pd.read_csv(profile_dir / "T.csv")
+    assert t_profile["Position"].tolist() == [1.0, 0.0]
+    assert t_profile["Tl"].tolist() == [320.0, 315.0]
 
 
 def test_benchmark_multistart_selects_lowest_capture_error(tmp_path, monkeypatch):

@@ -40,13 +40,14 @@ def _parse_args() -> argparse.Namespace:
 
 def _latex_sources(root_tex: Path) -> set[Path]:
     sources: set[Path] = set()
-    for pattern in ("*.bib", "*.bst", "*.cls", "*.sty"):
+    for pattern in ("*.bst", "*.cls", "*.sty"):
         sources.update(path.resolve() for path in LATEX_DIR.glob(pattern))
 
     for tex_path in _tex_dependency_closure(root_tex):
         sources.add(tex_path.resolve())
         text = tex_path.read_text(encoding="utf-8")
         sources.update(_graphics_sources(text))
+        sources.update(_bibliography_sources(text))
 
     return sources
 
@@ -84,6 +85,16 @@ def _graphics_sources(text: str) -> set[Path]:
             if resolved.exists():
                 paths.add(resolved)
                 break
+    return paths
+
+
+def _bibliography_sources(text: str) -> set[Path]:
+    paths: set[Path] = set()
+    for match in re.finditer(r"\\bibliography\{([^}]+)\}", text):
+        for name in match.group(1).split(","):
+            candidate = (LATEX_DIR / name.strip()).with_suffix(".bib").resolve()
+            if candidate.exists():
+                paths.add(candidate)
     return paths
 
 

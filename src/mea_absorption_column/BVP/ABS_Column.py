@@ -12,7 +12,6 @@ from ..Transport.Pressure_Drop import pressure_drop
 from ..Transport.Enhancement_Factor import enhancement_factor
 from ..Transport.Flux import molar_flux, enthalpy_flux
 from ..misc.Get_Temperature_Enthalpy import get_liquid_temperature, get_vapor_temperature
-from ..misc.special_functions import f_dHl_dT
 from .robust_core import record_domain_guard
 
 
@@ -216,8 +215,20 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # region -- Enhancement Factor
 
-    E, Psi, Psi_H, enhance_factor = enhancement_factor(Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
-                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='implicit', diagnostics=solver_diagnostics)
+    E, Psi, Psi_H, enhance_factor = enhancement_factor(
+        Tl,
+        Cl_true,
+        y[0],
+        P,
+        H_CO2_mix,
+        kl_CO2,
+        kv_CO2,
+        Dl_CO2,
+        Dl_MEA,
+        Dl_ion,
+        E_type=model_options.get("enhancement_factor_model", "implicit"),
+        diagnostics=solver_diagnostics,
+    )
 
     # endregion
 
@@ -238,6 +249,15 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region --- Enthalpy Flux
 
     Hv_flux, Hl_flux, qv, ql, Hv_trn, Hl_trn, Hv_CO2_trn, Hv_H2O_trn, Hl_CO2_trn, Hl_H2O_trn = enthalpy_flux(Nl_CO2, Hl_CO2, Nl_H2O, Hl_H2O, Nv_CO2, Hv_CO2, Nv_H2O, Hv_H2O, UT * heat_transfer_factor, a_eA, Tv, Tl)
+    liquid_intercooler_flux = _distributed_liquid_cooling_flux(
+        zi=zi,
+        hlf=Hlf,
+        fl_total=Fl_T,
+        x=x,
+        model_options=model_options,
+        bed_height_m=H,
+    )
+    Hl_flux += liquid_intercooler_flux
 
     # endregion
 
@@ -260,11 +280,13 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     dHvf_dz = Hv_flux + 1e-10
 
 
-    dHl_dT = f_dHl_dT(Tl, x)
+    dHl_dT = _liquid_mixture_enthalpy_temperature_derivative(Tl, x)
     dHv_dT = Cpv_T
 
-    dTl_dz = H*(Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
-    dTv_dz = H*(Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dT)
+    liquid_component_enthalpy_flow = Hl_CO2 * dFl_CO2_dz + Hl_H2O * dFl_H2O_dz
+    vapor_component_enthalpy_flow = Hv_CO2 * dFv_CO2_dz + Hv_H2O * dFv_H2O_dz
+    dTl_dz = H * (dHlf_dz - liquid_component_enthalpy_flow) / (Fl_T * dHl_dT)  # K across normalized height
+    dTv_dz = H * (dHvf_dz - vapor_component_enthalpy_flow) / (Fv_T * dHv_dT)
 
     # endregion
 
@@ -369,6 +391,41 @@ def _temperatures_in_bounds(Tl, Tv, bounds):
         and low <= float(Tl) <= high
         and low <= float(Tv) <= high
     )
+
+
+def _liquid_mixture_enthalpy_temperature_derivative(Tl, x):
+    step = 1.0e-3 * (1.0 + abs(float(Tl)))
+    upper = enthalpy(float(Tl) + step, x, phase="liquid")[1]
+    lower = enthalpy(float(Tl) - step, x, phase="liquid")[1]
+    derivative = (upper - lower) / (2.0 * step)
+    if not np.isfinite(derivative) or abs(derivative) < 1.0e-12:
+        return heat_capacity(Tl, x, phase="liquid")[1]
+    return derivative
+
+
+def _distributed_liquid_cooling_flux(zi, hlf, fl_total, x, model_options, bed_height_m):
+    spec = model_options.get("distributed_liquid_cooling")
+    if not spec:
+        return 0.0
+    target_temperature = spec.get("target_temperature_K")
+    if target_temperature is None:
+        return 0.0
+    strength = float(spec.get("strength", 1.0))
+    if strength <= 0.0:
+        return 0.0
+    zone_fraction = max(float(spec.get("zone_fraction", 0.25)), 1.0e-6)
+    zone_fraction = min(zone_fraction, 1.0)
+    local_z = float(np.asarray(zi).reshape(-1)[0])
+    zone_start = 1.0 - zone_fraction
+    if local_z < zone_start:
+        return 0.0
+
+    progress = min(max((local_z - zone_start) / zone_fraction, 0.0), 1.0)
+    window = 0.5 - 0.5 * np.cos(np.pi * progress)
+    _, target_hl = enthalpy(float(target_temperature), x, phase='liquid')
+    target_hlf = float(target_hl) * float(fl_total)
+    relaxation_length_m = max(float(bed_height_m) * zone_fraction, 1.0e-9)
+    return strength * window * (target_hlf - float(hlf)) / relaxation_length_m
 
 
 def _smooth_absorption_only_vapor_flux(nv_co2):

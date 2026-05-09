@@ -746,7 +746,13 @@ def parse_args(argv=None):
     parser.add_argument("--chemical-equilibrium-model", default=None)
     parser.add_argument("--mass-transfer-factor", type=float, default=None)
     parser.add_argument("--heat-transfer-factor", type=float, default=None)
+    parser.add_argument(
+        "--intercooler-model",
+        choices=["liquid_temperature_reset", "distributed_liquid_cooling", "pumparound_temperature_approach"],
+        default=None,
+    )
     parser.add_argument("--intercooler-strength", type=float, default=None)
+    parser.add_argument("--intercooler-distributed-zone-fraction", type=float, default=None)
     parser.add_argument("--success-boundary-residual-max", type=float, default=None)
     parser.add_argument("--success-capture-error-max-pct", type=float, default=None)
     parser.add_argument("--capture-correction-model", default=None)
@@ -834,8 +840,12 @@ def _solver_settings_from_args(args):
         settings["mass_transfer_factor"] = args.mass_transfer_factor
     if args.heat_transfer_factor is not None:
         settings["heat_transfer_factor"] = args.heat_transfer_factor
+    if args.intercooler_model is not None:
+        settings["intercooler_model"] = args.intercooler_model
     if args.intercooler_strength is not None:
         settings["intercooler_strength"] = args.intercooler_strength
+    if args.intercooler_distributed_zone_fraction is not None:
+        settings["intercooler_distributed_zone_fraction"] = args.intercooler_distributed_zone_fraction
     if args.success_boundary_residual_max is not None:
         settings["success_boundary_residual_max"] = args.success_boundary_residual_max
     if args.success_capture_error_max_pct is not None:
@@ -934,7 +944,6 @@ def _profiles_with_coordinates(profiles, metadata):
             converted[sheetname] = profile
             continue
         positions = profile.index.to_numpy(dtype=float)
-        positions = pd.Series(positions).sort_values(ignore_index=True).to_numpy()
         coordinate_frame = build_profile_coordinate_frame(
             positions,
             total_packed_height_m=metadata.get("total_packed_height_m"),

@@ -67,6 +67,19 @@ def run_model(df,
         else method == "scipy-bvp" and (beds_count > 1 or intercoolers_count > 0)
     )
     solver_settings_for_run = dict(solver_settings or {})
+    intercooler_settings = dict(intercooler_settings or {})
+    requested_intercooler_model = intercooler_settings.get(
+        "model",
+        solver_settings_for_run.get("intercooler_model", "liquid_temperature_reset"),
+    )
+    if (
+        method == "scipy-bvp"
+        and use_staged_beds
+        and intercoolers_count > 0
+        and requested_intercooler_model == "pumparound_temperature_approach"
+        and "thermal_state_mode" not in solver_settings_for_run
+    ):
+        solver_settings_for_run["thermal_state_mode"] = "temperature"
     thermal_state_mode = solver_settings_for_run.get("thermal_state_mode", "enthalpy")
     if (
         method == "scipy-bvp"
@@ -135,21 +148,8 @@ def run_model(df,
     Fl_H2O_a_guess = Fl_H2O_b + (Fv_H2O_a - Fv_H2O_b_guess) # 55.2093581436551
     Tl_a_guess = 325.
 
-    # Convert from Temperature to Enthalpy
-
     Fl_a_guess = [Fl_CO2_a_guess, Fl_MEA_a, Fl_H2O_a_guess]
-    Hlt_a_guess = get_liquid_enthalpy(Fl_a_guess, Tl_a_guess)
-    Hlf_a_guess = Hlt_a_guess * sum(Fl_a_guess)
-
-    Hlt_b = get_liquid_enthalpy(Fl_b, Tl_b)
-    Hlf_b = Hlt_b * sum(Fl_b)
-
-    Hvt_a = get_vapor_enthalpy(Fv_a, Tv_a)
-    Hvf_a = Hvt_a * sum(Fv_a)
-
     Fv_b_guess = [Fv_CO2_b_guess, Fv_H2O_b_guess, Fv_N2_b, Fv_O2_b]
-    Hvt_b_guess = get_vapor_enthalpy(Fv_b_guess, Tv_b_guess)
-    Hvf_b_guess = Hvt_b_guess * sum(Fv_b_guess)
 
     P_a = P
     P_b = P
@@ -162,6 +162,19 @@ def run_model(df,
         thermal_b = Tl_b
         thermal_vapor_b = Tv_b_guess
     else:
+        # Convert from temperature to enthalpy only for legacy enthalpy-state solves.
+        Hlt_a_guess = get_liquid_enthalpy(Fl_a_guess, Tl_a_guess)
+        Hlf_a_guess = Hlt_a_guess * sum(Fl_a_guess)
+
+        Hlt_b = get_liquid_enthalpy(Fl_b, Tl_b)
+        Hlf_b = Hlt_b * sum(Fl_b)
+
+        Hvt_a = get_vapor_enthalpy(Fv_a, Tv_a)
+        Hvf_a = Hvt_a * sum(Fv_a)
+
+        Hvt_b_guess = get_vapor_enthalpy(Fv_b_guess, Tv_b_guess)
+        Hvf_b_guess = Hvt_b_guess * sum(Fv_b_guess)
+
         thermal_a = Hlf_a_guess
         thermal_vapor_a = Hvf_a
         thermal_b = Hlf_b
@@ -171,6 +184,10 @@ def run_model(df,
                            thermal_a, thermal_vapor_a, P_a])
 
     scales = scaling(z, Y_a_unscaled)
+    scales = np.asarray(scales, dtype=float)
+    zero_or_bad_scales = ~np.isfinite(scales) | (scales <= 0.0)
+    if np.any(zero_or_bad_scales):
+        scales[zero_or_bad_scales] = np.maximum(np.abs(Y_a_unscaled[zero_or_bad_scales]), 1.0)
     if thermal_state_mode == "temperature":
         scales[4] = 400.0
         scales[5] = 400.0
@@ -199,12 +216,12 @@ def run_model(df,
         'mass_transfer_factor': float(solver_settings_for_run.get('mass_transfer_factor', 1.0)),
         'heat_transfer_factor': float(solver_settings_for_run.get('heat_transfer_factor', 1.0)),
         'thermal_state_mode': thermal_state_mode,
+        'enhancement_factor_model': solver_settings_for_run.get('enhancement_factor_model', 'implicit'),
         'co2_flux_mode': solver_settings_for_run.get('co2_flux_mode', 'bidirectional'),
         'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
     }
     solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
     parameters = scales, eq_scales, const_flow, H, A, packing, model_options
-    intercooler_settings = intercooler_settings or {}
     stack_spec = build_bed_stack_spec(
         beds=beds_count if use_staged_beds else 1,
         intercoolers=intercoolers_count if use_staged_beds else 0,
@@ -212,7 +229,55 @@ def run_model(df,
         liquid_feed_temperature_K=Tl_z,
         target_temperatures_K=intercooler_settings.get("target_temperatures_K"),
         intercooler_strength=float(intercooler_settings.get("strength", solver_settings_for_run.get("intercooler_strength", 1.0))),
+        intercooler_model=requested_intercooler_model,
+        distributed_zone_fraction=float(
+            intercooler_settings.get(
+                "distributed_zone_fraction",
+                solver_settings_for_run.get("intercooler_distributed_zone_fraction", 0.25),
+            )
+        ),
     )
+    if (
+        method == "scipy-bvp"
+        and thermal_state_mode == "temperature"
+        and solver_settings_for_run.get("seed_from_enthalpy", False)
+        and "initial_guess_scaled" not in solver_settings_for_run
+    ):
+        enthalpy_seed_settings = {
+            **solver_settings_for_run,
+            "thermal_state_mode": "enthalpy",
+            "seed_from_enthalpy": False,
+            "return_internal_profile": True,
+            "continuation_stage": "enthalpy_seed",
+            "continuation_path": "enthalpy->temperature",
+        }
+        enthalpy_seed = run_model(
+            df,
+            method=method,
+            data_type=data_type,
+            run=run,
+            show_info=False,
+            save_run_results=False,
+            plot_temperature=False,
+            thermo_model=thermo_model,
+            solver_settings=enthalpy_seed_settings,
+            return_details=True,
+            staged_beds=use_staged_beds,
+            intercooler_settings=intercooler_settings,
+        )
+        if enthalpy_seed.get("success") and enthalpy_seed.get("_raw_solution_scaled") is not None:
+            temperature_seed = _enthalpy_profile_to_temperature_seed(
+                enthalpy_seed["_raw_solution_scaled"],
+                enthalpy_seed["_scales"],
+                scales,
+                Fl_MEA_a,
+                Fv_N2_a,
+                Fv_O2_a,
+            )
+            if temperature_seed is not None:
+                solver_settings_for_run["initial_guess_scaled"] = temperature_seed
+                solver_settings_for_run["continuation_stage"] = "enthalpy_seeded_temperature"
+                solver_settings_for_run["continuation_path"] = "enthalpy->temperature"
     if (
         method == "scipy-bvp"
         and use_staged_beds
@@ -521,9 +586,9 @@ Run #{run + 1:03d}:
             'beds': beds_count,
             'intercoolers': intercoolers_count,
             'staged_beds': bool(use_staged_beds),
-            'intercooler_model': 'liquid_temperature_reset' if stack_spec.intercoolers else 'none',
+            'intercooler_model': stack_spec.model if stack_spec.intercoolers else 'none',
             'intercooler_assumption': (
-                f"{stack_spec.assumption};strength={stack_spec.intercoolers[0].strength:g}"
+                f"{stack_spec.assumption};strength={stack_spec.intercoolers[0].strength:g};zone={stack_spec.distributed_zone_fraction:g}"
                 if stack_spec.intercoolers
                 else 'none'
             ),
@@ -536,6 +601,8 @@ Run #{run + 1:03d}:
             'jacobian_status': solver_diagnostics.get('jacobian_status', ''),
             'scaling_mode': solver_settings_for_run.get('scaling_mode', 'legacy_flow_enthalpy'),
             'transform_mode': solver_settings_for_run.get('transform_mode', 'bounded_guarded_raw_state'),
+            'thermal_state_mode': thermal_state_mode,
+            'enhancement_factor_model': solver_settings_for_run.get('enhancement_factor_model', 'implicit'),
             'continuation_path': solver_settings_for_run.get('continuation_path', 'none'),
             'epcsaft_cache_hits': int(cache_stats.get('epcsaft_cache_hits', 0)),
             'epcsaft_cache_misses': int(cache_stats.get('epcsaft_cache_misses', 0)),
@@ -582,6 +649,7 @@ Run #{run + 1:03d}:
                 )
         if return_internal_profile:
             result["_raw_solution_scaled"] = raw_Y_scaled
+            result["_scales"] = scales
         if return_profiles:
             result["_profiles"] = dfs_dict
         return result
@@ -640,6 +708,34 @@ def _fallback_temperature_profile(Y, z, thermal_state_mode, Fl_MEA, Fv_N2, Fv_O2
     if not np.isfinite(profile[["Tl", "Tv"]].to_numpy(dtype=float)).any():
         return {}
     return {"T": profile}
+
+
+def _enthalpy_profile_to_temperature_seed(raw_solution_scaled, enthalpy_scales, temperature_scales, fl_mea, fv_n2, fv_o2):
+    raw_solution_scaled = np.asarray(raw_solution_scaled, dtype=float)
+    enthalpy_scales = np.asarray(enthalpy_scales, dtype=float)
+    temperature_scales = np.asarray(temperature_scales, dtype=float)
+    if raw_solution_scaled.ndim != 2 or raw_solution_scaled.shape[0] % 7 != 0:
+        return None
+    converted = np.zeros_like(raw_solution_scaled, dtype=float)
+    for start in range(0, raw_solution_scaled.shape[0], 7):
+        block = raw_solution_scaled[start:start + 7, :] * enthalpy_scales[:, None]
+        for j in range(block.shape[1]):
+            fl = [block[0, j], fl_mea, block[1, j]]
+            fv = [block[2, j], block[3, j], fv_n2, fv_o2]
+            fl_total = sum(fl)
+            fv_total = sum(fv)
+            if fl_total <= 0.0 or fv_total <= 0.0:
+                return None
+            x = [value / fl_total for value in fl]
+            y = [value / fv_total for value in fv]
+            liquid_h = block[4, j] / fl_total
+            vapor_h = block[5, j] / fv_total
+            block[4, j] = get_liquid_temperature(x, liquid_h)
+            block[5, j] = get_vapor_temperature(y, vapor_h)
+        converted[start:start + 7, :] = block / temperature_scales[:, None]
+    if not np.all(np.isfinite(converted)):
+        return None
+    return converted
 
 
 def _finite_or_nan(value):

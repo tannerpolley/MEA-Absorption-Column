@@ -4,7 +4,10 @@ import numpy as np
 import pytest
 
 from mea_absorption_column.BVP.robust_core import make_solver_diagnostics
-from mea_absorption_column.Transport.Enhancement_Factor import enhancement_factor
+from mea_absorption_column.Transport.Enhancement_Factor import (
+    _explicit_enhancement_factor,
+    enhancement_factor,
+)
 from mea_absorption_column.Transport.Hydraulic_Variables_Correlations import (
     holdup,
     interfacial_area,
@@ -260,6 +263,39 @@ def test_enhancement_factor_falls_back_to_explicit_when_implicit_subsolve_fails(
     assert Psi_H > 0.0
     assert all(np.isfinite(payload))
     assert diagnostics["domain_guard_counts"]["enhancement_factor"] == 1
+
+
+def test_explicit_enhancement_factor_matches_corrected_idaes_algebra():
+    Ha = 12.0
+    Dl_MEA = 8.0e-10
+    Cl_MEA_true = 9000.0
+    Dl_MEAH = 8.0e-10
+    Cl_MEAH_true = 1800.0
+    Dl_MEACOO = 8.0e-10
+    Cl_MEACOO_true = 1500.0
+    Dl_CO2 = 1.0e-9
+    Cl_CO2_true = 900.0
+
+    E = _explicit_enhancement_factor(
+        Ha=Ha,
+        Dl_MEA=Dl_MEA,
+        Cl_MEA_true=Cl_MEA_true,
+        Dl_MEAH=Dl_MEAH,
+        Cl_MEAH_true=Cl_MEAH_true,
+        Dl_MEACOO=Dl_MEACOO,
+        Cl_MEACOO_true=Cl_MEACOO_true,
+        Dl_CO2=Dl_CO2,
+        Cl_CO2_true=Cl_CO2_true,
+    )
+
+    R_plus = Dl_MEA * Cl_MEA_true / (2 * Dl_MEAH * Cl_MEAH_true)
+    R_minus = Dl_MEA * Cl_MEA_true / (2 * Dl_MEACOO * Cl_MEACOO_true)
+    E_infinity_minus_one = Dl_MEA * Cl_MEA_true / (2 * Dl_CO2 * Cl_CO2_true)
+    resistance_ratio = (R_plus + R_minus + 2) / E_infinity_minus_one
+    expected = Ha * (1 + resistance_ratio) / (1 + Ha * resistance_ratio)
+
+    assert np.isclose(E, expected)
+    assert 1.0 <= E <= Ha
 
 
 def test_enhancement_factor_rejects_invalid_domain():

@@ -64,6 +64,40 @@ def test_build_bed_stack_spec_accepts_intercooler_strength():
     assert all(cooler.strength == 0.25 for cooler in spec.intercoolers)
 
 
+def test_build_bed_stack_spec_accepts_distributed_cooling_model():
+    from mea_absorption_column.intercooling import build_bed_stack_spec
+
+    spec = build_bed_stack_spec(
+        beds=3,
+        intercoolers=2,
+        single_bed_height_m=6.1,
+        liquid_feed_temperature_K=314.0,
+        intercooler_model="distributed_liquid_cooling",
+        distributed_zone_fraction=0.35,
+    )
+
+    assert spec.model == "distributed_liquid_cooling"
+    assert spec.distributed_zone_fraction == 0.35
+    assert all(cooler.mode == "distributed_temperature_target" for cooler in spec.intercoolers)
+
+
+def test_build_bed_stack_spec_accepts_pumparound_temperature_approach_model():
+    from mea_absorption_column.intercooling import build_bed_stack_spec
+
+    spec = build_bed_stack_spec(
+        beds=3,
+        intercoolers=2,
+        single_bed_height_m=6.1,
+        liquid_feed_temperature_K=314.0,
+        intercooler_model="pumparound_temperature_approach",
+        intercooler_strength=0.4,
+    )
+
+    assert spec.model == "pumparound_temperature_approach"
+    assert all(cooler.mode == "pumparound_temperature_approach" for cooler in spec.intercoolers)
+    assert all(cooler.strength == 0.4 for cooler in spec.intercoolers)
+
+
 def test_liquid_enthalpy_after_intercooler_preserves_liquid_molar_flows():
     from mea_absorption_column.intercooling import liquid_enthalpy_after_intercooler
 

@@ -93,7 +93,7 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
             else:
                 E, Cl_MEA_int = solution.x
 
-        elif E_type == 'explicit':
+        elif E_type in {'explicit', 'explicit_idaes'}:
 
             E = _explicit_enhancement_factor(
                 Ha=Ha,
@@ -108,7 +108,7 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
             )
 
         else:
-            raise ValueError('E_type must be explicit or explicit')
+            raise ValueError("E_type must be 'implicit', 'explicit', or 'explicit_idaes'")
 
     else:
         E = Ha
@@ -136,9 +136,10 @@ def _explicit_enhancement_factor(
     floor = 1.0e-30
     R_plus = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_MEAH * Cl_MEAH_true, floor))
     R_minus = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_MEACOO * Cl_MEACOO_true, floor))
-    E_hat = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_CO2 * Cl_CO2_true, floor))
-    denominator = Ha * (R_plus + R_minus + 2) / max(E_hat, floor) + 1
-    E = 1 + (Ha - 1) / denominator
+    E_infinity_minus_one = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_CO2 * Cl_CO2_true, floor))
+    resistance_ratio = (R_plus + R_minus + 2) / max(E_infinity_minus_one, floor)
+    denominator = 1 + Ha * resistance_ratio
+    E = Ha * (1 + resistance_ratio) / denominator
     if not np.isfinite(E):
         E = 1.0
     return float(np.clip(E, 1.0, 1.0e4))

@@ -22,6 +22,8 @@ class BedStackSpec:
     single_bed_height_m: float
     intercoolers: tuple[IntercoolerSpec, ...]
     assumption: str
+    model: str = "liquid_temperature_reset"
+    distributed_zone_fraction: float = 0.25
 
 
 def build_bed_stack_spec(
@@ -31,6 +33,8 @@ def build_bed_stack_spec(
     liquid_feed_temperature_K: float,
     target_temperatures_K: list[float] | tuple[float, ...] | None = None,
     intercooler_strength: float = 1.0,
+    intercooler_model: str = "liquid_temperature_reset",
+    distributed_zone_fraction: float = 0.25,
 ) -> BedStackSpec:
     beds = int(beds)
     intercoolers = int(intercoolers)
@@ -43,6 +47,16 @@ def build_bed_stack_spec(
     intercooler_strength = float(intercooler_strength)
     if not 0.0 <= intercooler_strength <= 1.0:
         raise ValueError("intercooler_strength must be between 0 and 1.")
+    allowed_models = {
+        "liquid_temperature_reset",
+        "distributed_liquid_cooling",
+        "pumparound_temperature_approach",
+    }
+    if intercooler_model not in allowed_models:
+        raise ValueError(f"intercooler_model must be one of {sorted(allowed_models)}.")
+    distributed_zone_fraction = float(distributed_zone_fraction)
+    if not 0.0 < distributed_zone_fraction <= 1.0:
+        raise ValueError("distributed_zone_fraction must be greater than 0 and no greater than 1.")
 
     if target_temperatures_K is None:
         targets = [float(liquid_feed_temperature_K)] * intercoolers
@@ -58,7 +72,13 @@ def build_bed_stack_spec(
         specs.append(
             IntercoolerSpec(
                 below_upper_bed_index=beds - 1 - offset,
-                mode="temperature_target",
+                mode=(
+                    "distributed_temperature_target"
+                    if intercooler_model == "distributed_liquid_cooling"
+                    else "pumparound_temperature_approach"
+                    if intercooler_model == "pumparound_temperature_approach"
+                    else "temperature_target"
+                ),
                 target_temperature_K=targets[offset],
                 strength=intercooler_strength,
             )
@@ -69,6 +89,8 @@ def build_bed_stack_spec(
         single_bed_height_m=float(single_bed_height_m),
         intercoolers=tuple(specs),
         assumption=assumption,
+        model=intercooler_model,
+        distributed_zone_fraction=distributed_zone_fraction,
     )
 
 

@@ -1,0 +1,17 @@
+boundary_residual_norm,capture_error_pct,capture_pct,case_id,case_source,continuation_path,message,runtime_s,success,temperature_rmse_K,thermal_state_mode,timeout
+9.197537227966199e-14,-18.375573756181296,78.7244262438187,1C,C_cases_data,none,The algorithm converged to the desired accuracy.,4.3682026863098145,True,5.186768435621393,enthalpy,False
+2.784691583163958e-14,-18.36787026657406,78.73212973342594,1C,C_cases_data,enthalpy->temperature,The algorithm converged to the desired accuracy.,0.8758993148803711,True,5.212463809413922,temperature,False
+2.5371331007517257e-13,-6.001710840572613,86.29828915942738,2C,C_cases_data,none,The algorithm converged to the desired accuracy.,1.4942173957824707,True,4.455768950622635,enthalpy,False
+3.097689950313592e-14,-5.96709312323047,86.33290687676953,2C,C_cases_data,enthalpy->temperature,The algorithm converged to the desired accuracy.,1.3167974948883057,True,4.444786439881954,temperature,False
+5.6616491335583666e-14,-0.10175423439790166,89.3982457656021,3C,C_cases_data,none,The algorithm converged to the desired accuracy.,3.2582874298095703,True,3.9909412938389495,enthalpy,False
+2.49411342160733e-14,-0.1131241295597647,89.38687587044024,3C,C_cases_data,enthalpy->temperature,The algorithm converged to the desired accuracy.,1.980133295059204,True,4.030487582877851,temperature,False
+1.480816741459878e-13,5.497395954562194,94.3973959545622,4C,C_cases_data,none,The algorithm converged to the desired accuracy.,2.861485242843628,True,7.783629496324955,enthalpy,False
+1.7962843691201774e-14,5.485653056793595,94.3856530567936,4C,C_cases_data,enthalpy->temperature,The algorithm converged to the desired accuracy.,2.1753733158111572,True,7.820401221090568,temperature,False
+1.9874510888381023e-13,3.7703064221886393,90.17030642218865,5C,C_cases_data,none,The algorithm converged to the desired accuracy.,2.9019992351531982,True,10.351239514836998,enthalpy,False
+1.7866861185229615e-14,3.77109087136607,90.17109087136608,5C,C_cases_data,enthalpy->temperature,The algorithm converged to the desired accuracy.,0.9441742897033691,True,10.338021264790065,temperature,False
+7.797813921525446e-14,9.80894894347702,70.00894894347702,6C,C_cases_data,none,The algorithm converged to the desired accuracy.,1.7879736423492432,True,6.165624836929248,enthalpy,False
+3.1495502370476187e-14,9.78784952956373,69.98784952956373,6C,C_cases_data,enthalpy->temperature,The algorithm converged to the desired accuracy.,0.8763797283172607,True,6.115350101124506,temperature,False
+1.7071112337197702e-13,22.034023319393285,98.43402331939329,7C,C_cases_data,none,The algorithm converged to the desired accuracy.,7.083127975463867,True,23.489595565994424,enthalpy,False
+1.710314313394711e-14,22.038387332250835,98.43838733225084,7C,C_cases_data,enthalpy->temperature,The algorithm converged to the desired accuracy.,6.91858696937561,True,23.38634029424741,temperature,False
+,,,SRP-LG7,SRP_method_cases,,subprocess timeout after 75 s,,False,,enthalpy,True
+,,,SRP-LG7,SRP_method_cases,,subprocess timeout after 75 s,,False,,temperature,True

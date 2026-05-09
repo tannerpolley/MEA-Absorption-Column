@@ -1,7 +1,7 @@
 id: nccc_validation
 title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
-summary: Reviewer-response validation artifacts for one-bed C cases, staged/intercooled K cases, and ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons.
+summary: Reviewer-response validation artifacts for one-bed C cases, staged/intercooled legacy K rows, Appendix C absorber temperature-profile review plots, and ideal Henry versus neutral ePC-SAFT fugacity driving-force comparisons.
 owner: project
 architecture:
   standard: C:\Users\Tanner\.codex\PROJECT_ARCHITECTURE.md
@@ -13,6 +13,12 @@ inputs:
     kind: packaged_reference_data
   - path: ../../src/mea_absorption_column/data/NCCC_Data.csv
     kind: packaged_reference_data
+  - path: data/input/morgan2020_appendix_c_case1a_absorber_temperature_profile.csv
+    kind: literature_temperature_profile
+    source: Morgan2020 Appendix C Table C1
+  - path: data/input/morgan2020_appendix_c_absorber_temperature_profiles.csv
+    kind: literature_temperature_profile
+    source: Morgan2020 Appendix C Tables C1-C3
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -20,6 +26,24 @@ outputs:
     kind: accepted_result_table
   - path: results/final/figures/c_case_thermo_benchmark.pdf
     kind: manuscript_figure
+  - path: results/final/figures/calibration_uncertainty_band.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/error_regime_capture_error.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/staged_epcsaft_reliability.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/intercooled_temperature_profile_k3.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/morgan2020_case1a_measured_intercooled_profile.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/intercooled_temperature_profile_comparison.pdf
+    kind: manuscript_figure
+  - path: results/final/figures/appendix_c_temperature_profiles.pdf
+    kind: review_figure_package
+  - path: results/final/tables/appendix_c_temperature_profile_index.csv
+    kind: profile_overlay_index
+  - path: results/final/tables/nccc_legacy_k_case_name_crosswalk.csv
+    kind: case_name_metadata
   - path: results/final/profiles
     kind: clean_profile_gallery
   - path: results/runs/*/profiles
@@ -35,6 +59,10 @@ commands:
     - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses\nccc_validation\results\runs\manual_case_profiles
   clean_profile_csvs:
     - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\generate_clean_profile_csvs.py --suite all --output-dir analyses\nccc_validation\results\runs\clean_profile_csvs
+  accuracy_credibility:
+    - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\generate_accuracy_credibility_artifacts.py
+  appendix_c_profiles:
+    - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\render_appendix_c_temperature_profiles.py
   validate:
     - C:\Users\Tanner\.codex\venvs\MEA-Absorption-Column-py313\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
 runtime:

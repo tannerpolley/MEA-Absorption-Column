@@ -73,7 +73,10 @@ def stacked_boundary_conditions(
 
         liquid_from_upper = upper_bottom.copy() * scales
         cooler = _intercooler_for_upper_bed(stack_spec, upper_bed)
-        if cooler is not None:
+        if cooler is not None and stack_spec.model in {
+            "liquid_temperature_reset",
+            "pumparound_temperature_approach",
+        }:
             if thermal_state_mode == "temperature":
                 liquid_from_upper[4] = (
                     (1.0 - cooler.strength) * liquid_from_upper[4]
@@ -186,15 +189,21 @@ def segmented_scipy_BVP_solve(
     scales, eq_scales, const_flow, H, A, packing, model_options = parameters
     fl_mea = const_flow[0]
     thermal_state_mode = model_options.get("thermal_state_mode", "enthalpy") if isinstance(model_options, dict) else "enthalpy"
-    bed_parameters = (
-        scales,
-        eq_scales,
-        const_flow,
-        stack_spec.single_bed_height_m,
-        A,
-        packing,
-        model_options,
-    )
+
+    def bed_parameters_for(bed_index: int):
+        bed_model_options = dict(model_options) if isinstance(model_options, dict) else {}
+        cooling = _distributed_cooling_for_bed(stack_spec, bed_index)
+        if cooling is not None:
+            bed_model_options["distributed_liquid_cooling"] = cooling
+        return (
+            scales,
+            eq_scales,
+            const_flow,
+            stack_spec.single_bed_height_m,
+            A,
+            packing,
+            bed_model_options,
+        )
 
     mesh_points = int(settings["mesh_points"])
     max_runtime_s = settings.get("max_runtime_s")
@@ -211,6 +220,7 @@ def segmented_scipy_BVP_solve(
         if transform_mode == "case_bounded_flow_pressure"
         else None
     )
+    bed_parameter_blocks = [bed_parameters_for(bed_index) for bed_index in range(stack_spec.beds)]
     z_mesh = np.linspace(z[0], z[-1], mesh_points)
     y_guess = _stack_initial_guess(
         Y_a_scaled,
@@ -239,7 +249,7 @@ def segmented_scipy_BVP_solve(
                     guard_column_rhs(
                         z_values[i],
                         _vector_to_scaled_physical(bed_y_solver[:, i], transform_mode=transform_mode, bounds=case_bounds),
-                        bed_parameters,
+                        bed_parameter_blocks[bed_index],
                         evaluator=abs_column,
                     ),
                     transform_mode,
@@ -307,6 +317,22 @@ def segmented_scipy_BVP_solve(
 def _physical_rhs_to_solver_rhs(y_solver, rhs_physical, transform_mode, bounds=None):
     derivative = _vector_derivative(y_solver, transform_mode=transform_mode, bounds=bounds)
     return np.asarray(rhs_physical, dtype=float) / derivative
+
+
+def _distributed_cooling_for_bed(stack_spec: BedStackSpec, bed_index: int):
+    if stack_spec.model != "distributed_liquid_cooling":
+        return None
+    upper_bed = int(bed_index) + 1
+    if upper_bed >= stack_spec.beds:
+        return None
+    cooler = _intercooler_for_upper_bed(stack_spec, upper_bed)
+    if cooler is None:
+        return None
+    return {
+        "target_temperature_K": cooler.target_temperature_K,
+        "strength": cooler.strength,
+        "zone_fraction": stack_spec.distributed_zone_fraction,
+    }
 
 
 def _stacked_vector_to_physical(vector, beds, transform_mode, bounds=None):

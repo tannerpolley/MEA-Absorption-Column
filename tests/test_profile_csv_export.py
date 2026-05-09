@@ -4,6 +4,7 @@ import pandas as pd
 
 from mea_absorption_column.misc.Save_Run_Outputs import (
     build_profile_coordinate_frame,
+    make_dfs_dict,
     write_profile_csvs,
 )
 
@@ -52,3 +53,15 @@ def test_write_profile_csvs_writes_one_file_per_legacy_sheet(tmp_path):
     manifest = json.loads((tmp_path / "profile_manifest.json").read_text(encoding="utf-8"))
     assert manifest["case_id"] == "3C"
     assert manifest["profile_csv_files"] == ["T.csv", "CO2.csv"]
+
+
+def test_make_dfs_dict_reverses_coordinate_frame_with_profile_values():
+    output_dict = {"T": pd.DataFrame({"Tl": [310.0, 320.0, 330.0], "Tv": [311.0, 321.0, 331.0]}).to_numpy()}
+    keys_dict = {"T": ["Tl", "Tv"]}
+    coordinates = build_profile_coordinate_frame([0.0, 0.5, 1.0], total_packed_height_m=12.0, beds=3)
+
+    profiles = make_dfs_dict(output_dict, keys_dict, [0.0, 0.5, 1.0], coordinate_frame=coordinates)
+    profile = profiles["T"]
+
+    assert profile["Position"].tolist() == [1.0, 0.5, 0.0]
+    assert profile["Tl"].tolist() == [330.0, 320.0, 310.0]

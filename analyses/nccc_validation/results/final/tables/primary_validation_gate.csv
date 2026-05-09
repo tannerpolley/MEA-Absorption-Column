@@ -1,0 +1,34 @@
+case_id,thermo_model,evidence_group,primary_validation,no_case_specific_tuning,mass_transfer_factor,intercooler_strength,case_specific_recovery,gate_note
+1C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+1C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+2C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+2C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+3C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+3C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+4C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+4C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+5C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+5C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+6C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+6C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+7C,ideal_henry,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+7C,epcsaft_neutral,one-bed C cases,True,True,1.0,1.0,False,primary C-case row uses default benchmark settings
+K1,ideal_henry,staged/intercooled K cases,True,True,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K2,ideal_henry,staged/intercooled K cases,True,True,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K3,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K4,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K5,ideal_henry,staged/intercooled K cases,True,True,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K9,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K10,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K11,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K12,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K13,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K14,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K15,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K16,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K17,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K18,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K19,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K21,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K22,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings
+K23,ideal_henry,staged/intercooled K cases,True,False,1.0,1.0,False,primary K row must retain the documented global continuation settings

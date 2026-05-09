@@ -53,6 +53,58 @@ def test_stacked_boundary_conditions_returns_7_per_bed_residuals_for_three_beds(
     assert residual.shape == (21,)
 
 
+def test_distributed_intercooler_boundary_does_not_force_liquid_enthalpy_reset():
+    scales = np.ones(7)
+    reset_spec = build_bed_stack_spec(2, 1, 6.1, 314.0, intercooler_model="liquid_temperature_reset")
+    distributed_spec = build_bed_stack_spec(2, 1, 6.1, 314.0, intercooler_model="distributed_liquid_cooling")
+    bottom = np.tile(np.array([9.0, 40.0, 2.0, 1.0, 5.0e5, 9.0e5, 108000.0]), 2)
+    top = bottom.copy()
+
+    reset_residual = stacked_boundary_conditions(
+        bottom_scaled=bottom,
+        top_scaled=top,
+        y_bottom_target_scaled=bottom[:7],
+        y_top_target_scaled=top[-7:],
+        scales=scales,
+        fl_mea=20.0,
+        stack_spec=reset_spec,
+    )
+    distributed_residual = stacked_boundary_conditions(
+        bottom_scaled=bottom,
+        top_scaled=top,
+        y_bottom_target_scaled=bottom[:7],
+        y_top_target_scaled=top[-7:],
+        scales=scales,
+        fl_mea=20.0,
+        stack_spec=distributed_spec,
+    )
+
+    assert reset_residual.shape == distributed_residual.shape == (14,)
+    assert abs(reset_residual[-1]) > 1.0
+    assert distributed_residual[-1] == 0.0
+
+
+def test_pumparound_temperature_approach_keeps_temperature_reset_boundary_contract():
+    scales = np.ones(7)
+    spec = build_bed_stack_spec(2, 1, 6.1, 314.0, intercooler_model="pumparound_temperature_approach")
+    bottom = np.tile(np.array([9.0, 40.0, 2.0, 1.0, 325.0, 330.0, 108000.0]), 2)
+    top = bottom.copy()
+
+    residual = stacked_boundary_conditions(
+        bottom_scaled=bottom,
+        top_scaled=top,
+        y_bottom_target_scaled=bottom[:7],
+        y_top_target_scaled=top[-7:],
+        scales=scales,
+        fl_mea=20.0,
+        stack_spec=spec,
+        thermal_state_mode="temperature",
+    )
+
+    assert residual.shape == (14,)
+    assert residual[-1] == 11.0
+
+
 def test_stack_initial_guess_accepts_explicit_profile():
     explicit = np.ones((14, 11))
     guess = _stack_initial_guess(

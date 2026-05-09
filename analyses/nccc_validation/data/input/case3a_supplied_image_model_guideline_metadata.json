@@ -1,0 +1,22 @@
+{
+  "case_id": "3A",
+  "source": "User-supplied low-resolution Case 3A plot image in Codex thread",
+  "series": "model prediction curve",
+  "x_axis": {
+    "label": "Relative Column Position",
+    "scale": "linear",
+    "range": [0.0, 1.0]
+  },
+  "y_axis": {
+    "label": "Temperature",
+    "unit": "degC",
+    "scale": "linear",
+    "range": [35.0, 80.0]
+  },
+  "digitization_note": "The image was available in-thread but not as a filesystem source image, so the stored guideline is a manually calibrated low-resolution digitization for qualitative shape benchmarking only. It is not used as primary validation data.",
+  "qa_limitations": [
+    "No pixel overlay could be generated from the in-thread image attachment.",
+    "The curve is used only to diagnose profile smoothness and intercooler-shape plausibility.",
+    "Morgan Appendix C point data remain the validation data used for plotted symbols."
+  ]
+}
