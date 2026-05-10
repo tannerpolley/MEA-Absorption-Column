@@ -216,7 +216,7 @@ def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> Non
             group["case_label"],
             group["capture_error_pct"],
             marker=markers.get(int(year), "o"),
-            linewidth=1.7,
+            linestyle="None",
             markersize=5.5,
             color=colors.get(label),
             label=f"{label}, {year}",
