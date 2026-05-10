@@ -1,6 +1,6 @@
     \section{Model Framework}
     \label{sec:model-framework}
-        Solvent-based PCC models describe how $\COtwo$ moves from the vapor phase into the liquid solvent inside a packed column. That transfer is driven by thermodynamics and limited by transport, reaction kinetics, hydraulics, and heat release. Local temperature, pressure, composition, and flow rates determine the properties used in those submodels. The governing mass and energy balances then track how the liquid and vapor streams change with packed height.
+        Solvent-based post-combustion carbon capture (PCC) models describe how $\COtwo$ moves from the vapor phase into the liquid solvent inside a packed column. That transfer is driven by thermodynamics and limited by transport, reaction kinetics, hydraulics, and heat release. Local temperature, pressure, composition, and flow rates determine the properties used in those submodels. The governing mass and energy balances then track how the liquid and vapor streams change with packed height.
 
         \begin{figure}
             \centering
@@ -9,7 +9,7 @@
         \end{figure}
         Figure~\ref{fig:Model_Framework_Flowchart}, adapted from Luo \cite{Luo2017}, outlines the model structure used for the MEA absorber benchmark. The calculation begins with flow, composition, pressure, and temperature variables for the vapor and liquid phases. These variables are used to evaluate thermodynamic, transport, and hydraulic properties, which define interfacial fluxes and close the governing balances. This structure is important for the present study because it allows the numerical method and CO$_2$ fugacity model to be changed while the rest of the absorber equations remain fixed.
         
-        Thermodynamic modeling follows, incorporating both the chemical equilibrium and vapor--liquid equilibrium (VLE) of the model. The chemical equilibrium determines true species concentrations from the reaction set and apparent mole fractions. The VLE calculation then provides the fugacities that define the thermodynamic driving force. The model can switch the CO$_2$ driving-force calculation between the baseline Henry-law expression and an ePC-SAFT equation-of-state calculation. In this work, the Henry-law model is the fast baseline, while ePC-SAFT is the structured fugacity-coefficient calculation. The liquid-side calculation uses ePC-SAFT for the MEA electrolyte state. The vapor-side calculation uses the same fugacity framework, but only neutral species are present in the gas phase. The chemical-equilibrium equations, enhancement factor, transport correlations, and balances remain unchanged so that the thermodynamic comparison isolates the fugacity calculation rather than introducing a second absorber model. The benchmark results show higher runtime for ePC-SAFT than for Henry's Law because the ePC-SAFT calculation evaluates fugacity coefficients through an equation-of-state density solve, but the cost remains in the same repeated-simulation regime rather than becoming an offline calibration-only calculation. Once the thermodynamics is evaluated, it is used alongside hydraulic variables, transfer coefficients, heat transfer, and the enhancement factor to calculate species and enthalpy fluxes. These fluxes close the governing mass and energy balances.
+        Thermodynamic modeling includes both chemical equilibrium and vapor--liquid equilibrium (VLE). The chemical-equilibrium calculation determines true species concentrations from apparent component amounts and the retained reaction set. The VLE calculation then supplies the fugacities used in the interfacial driving force. The model switches the CO$_2$ driving-force calculation between the baseline Henry-law expression and an ePC-SAFT fugacity-coefficient calculation. In this work, Henry-law closure is the fast baseline, while ePC-SAFT provides an electrolyte equation-of-state CO$_2$ fugacity closure. The liquid-side calculation uses ePC-SAFT for the MEA--CO$_2$--water electrolyte state, whereas the vapor-side calculation uses the same fugacity framework with only neutral species present. Chemical equilibrium, enhancement factor, transport correlations, hydraulics, and balances remain unchanged so that the thermodynamic comparison isolates the fugacity calculation rather than introducing a second absorber model. The ePC-SAFT rows require additional density and fugacity-coefficient evaluations, but the reported runtimes remain in the repeated-simulation regime. Once the thermodynamic terms are evaluated, they are combined with hydraulic variables, transfer coefficients, heat transfer, and the enhancement factor to calculate species and enthalpy fluxes. These fluxes close the governing mass and energy balances.
 
         \subsection{Thermodynamics}\label{subsec:thermodynamics}
             The thermodynamics section establishes the chemical and phase behavior that sets the local $\COtwo$ driving force in the MEA solvent system. It begins by solving chemical equilibrium for true species concentrations. Those concentrations then feed transport-property calculations and the vapor--liquid fugacity calculation. Together, the speciation and VLE models determine the local mass-transfer driving force used by the packed-column balances.
@@ -185,7 +185,7 @@
                     && \left(\unit{m\,s^{-1}}\right).
                 \end{align}
 
-                \paragraph{Inter-facial Area}\mbox{}\\[0.5em]
+                \paragraph{Interfacial Area}\mbox{}\\[0.5em]
                 The effective interfacial area converts packed-bed geometry and liquid wetting into available transfer area per bed volume. It depends on liquid density, surface tension, superficial velocity, and packing geometry, and it enters both the molar-flux expression and the mass-transfer correlations reported by Tsai~\cite{Tsai2010}.
                 \begin{align}
                     a_e 
@@ -201,7 +201,7 @@
                 Here $A$ and $B$ are correlation parameters, and $\alpha$ combines packing-specific constants.
 
                 \paragraph{Mass Transfer Coefficients}\mbox{}\\[0.5em]
-                The mass transfer coefficients for vapor and liquid depend on several components such as densities, viscosities, surface tension, flow velocities, specific surface area, void fraction, and other packing-specific constants. These constants are found through regression with a large database for multiple types of packing and sizes by Billet and Chinen\cite{Billet1999, Chinen2018}.
+                The liquid and vapor mass-transfer coefficients are evaluated from correlations that depend on phase density, viscosity, diffusivity, superficial velocity, packing area, void fraction, and packing-specific constants. The coefficients and constants follow regression-based packed-column correlations reported by Billet and Schultes and by Chinen and co-workers~\cite{Billet1999,Chinen2018}.
                 \begin{align}
                     k_l &= C_L \cdot 12^{1 / 6}\left(\frac{u_L}{h_L}\right)^{1 / 2}\left(\frac{D_L}{d_h}\right)^{1 / 2} && \left(\frac{\unit{m} }{\unit{s}} \right)\\
                     k_v &= \frac{C^{\vap}\,D^{\vap}\,RT_v}{}
@@ -250,7 +250,7 @@
                     \Psi_H &= \eta_{\Psi}\frac{\Psi}{\Psi + H_{\COtwo, \text{mix}}}
                     && \text{dimensionless},
                 \end{align}
-                Here, $\eta_{\Psi} = 0.3$ is a fixed dimensionless lumped driving-force scale used in both the Henry-law and ePC-SAFT campaigns. It is not adjusted by case or by thermodynamic model.
+                Here, $\eta_{\Psi} = 0.3$ is a fixed dimensionless lumped driving-force scale used in both the Henry-law and ePC-SAFT campaigns. It is not adjusted by case or by thermodynamic model. The value is retained from the present absorber implementation as a fixed model parameter; this benchmark compares thermodynamic closures at fixed $\eta_{\Psi}$ rather than recalibrating the transport model.
 
             \subsubsection{Flux}
                 \paragraph{Molar Flux}\mbox{}\\[0.5em]
@@ -264,7 +264,7 @@
                 Here flux is defined as a material flux $\left(\frac{\unit{mol}}{\unit{s\cdot m}} \right)$ per packed-column length. The specific packing area maps interfacial transfer onto the one-dimensional bed coordinate. The flux equations combine transport terms, the fugacity driving force, and, for $\COtwo$, a reaction-enhancement correction. Because absorbed $\COtwo$ reacts in the liquid phase, the CO$_2$ flux includes the enhancement correction $\Psi_H$.
 
                 \paragraph{Enthalpy Flux}\mbox{}\\[0.5em]
-                The enthalpy flux is the sum of the enthalpy (chemical) and heat (conduction and convection) that is transferred across the interface. There is also a general heat transfer between the two phases where the driving force is the temperature gradient and is contained by the overall heat transfer coefficient $U$.
+                The interphase enthalpy source contains the enthalpy carried by transferred CO$_2$ and H$_2$O plus sensible heat exchange between phases. Heat transfer is modeled with the same effective interfacial area and the overall heat-transfer coefficient $U$:
                 \begin{align}
                     q^{\vap} &= -U a_e A \left(T_v-T_l\right) && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right) \\
                     q^{\liq} &= -U a_e A \left(T_l-T_v\right) && \left(\frac{\unit{J}}{\unit{s\cdot m}} \right) \\

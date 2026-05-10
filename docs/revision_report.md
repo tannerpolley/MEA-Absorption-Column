@@ -65,3 +65,88 @@ Implemented the submission-readiness plan around the current committed evidence 
 - `docs\latex\scripts\sync_to_overleaf_mirror.ps1 -CleanBuildFiles -WhatIf` completed.
 - `docs\latex\scripts\sync_to_overleaf_mirror.ps1 -CleanBuildFiles` completed.
 - `docs\latex\scripts\test_overleaf_sync.ps1` passed.
+
+## Final Exact-Edit Pass
+
+### Files Changed
+
+- `docs/latex/main.tex`
+- `docs/latex/sections/model_framework.tex`
+- `docs/latex/sections/methods.tex`
+- `docs/latex/sections/results.tex`
+- `docs/latex/sections/conclusion.tex`
+- `docs/latex/sections/data_availability.tex`
+- `docs/latex/sections/code_availability.tex`
+- `docs/latex/tables/appendix_parameter_scope.tex`
+- `docs/latex/tables/epcsaft_parameter_summary.tex`
+- `README.md`
+- `analyses/nccc_validation/scripts/generate_accuracy_credibility_artifacts.py`
+- `analyses/nccc_validation/scripts/run_full_species_ionic_2017_c_case_sweep.py`
+- `analyses/nccc_validation/results/final/figures/*`
+- `analyses/nccc_validation/results/final/tables/*`
+- `docs/latex/figures/*`
+
+### Exact Edits Applied
+
+- Replaced the abstract with the final concise submission abstract and confirmed it remains under 250 words.
+- Defined post-combustion carbon capture as PCC at first use.
+- Tightened the thermodynamic overview so ePC-SAFT is described as the liquid-side electrolyte fugacity closure, with the vapor-side calculation using the same fugacity-coefficient framework for neutral species.
+- Clarified that `eta_Psi = 0.3` is a fixed dimensionless model parameter used in both thermodynamic campaigns and that changing it requires a separate sensitivity or recalibration study.
+- Revised transport prose for interfacial area, holdup, mass transfer, heat transfer, molar flux, and enthalpy flux without changing the equations.
+- Replaced "full ePC-SAFT fugacity correction" with "ePC-SAFT CO2 fugacity correction" in the validation-method description.
+- Updated Figure 2 and Figure 3 captions so each figure has one clear evidence role.
+- Updated Figure 5 to use a linear y-axis with enough headroom for failed-run labels.
+- Replaced source-path metadata in submission-facing CSV artifacts with portable repository-relative or package-relative notes.
+- Rendered carbonate, hydronium, and hydroxide notation consistently in Section 4.4 and the appendix parameter table.
+- Replaced the conclusion, Data Availability, and Code Availability text with the final submission reference language.
+- Switched the visible ePC-SAFT package URL to `\url{...}` so the Code Availability paragraph builds without an overfull box.
+
+### Numerical Values Preserved
+
+- Routine accepted-row ePC-SAFT mean absolute capture error: 3.73 percentage points.
+- Routine accepted-row Henry-law mean absolute capture error: 3.78 percentage points.
+- Routine accepted-row ePC-SAFT median runtime: 9.86 s.
+- Routine accepted-row Henry-law median runtime: 8.62 s.
+- Full activity-coupled mean absolute capture error: 6.595 percentage points.
+- Full activity-coupled mean runtime: 171.102 s.
+- Full activity-coupled mean chemistry-solve time: 127.764 s.
+- Fixed driving-force scale parameter: `eta_Psi = 0.3`.
+
+### Commands Run
+
+- `.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_nccc_one_bed_artifacts.py`
+- `.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py`
+- `powershell -NoProfile -ExecutionPolicy Bypass -File docs\latex\scripts\sync_latex_figures.ps1`
+- `powershell -NoProfile -ExecutionPolicy Bypass -File docs\latex\scripts\build_main.ps1`
+- `.\.venv\Scripts\python.exe docs\latex\scripts\check_main_pdf_fresh.py`
+- `.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py`
+- `git diff --check`
+
+### Build / Validation Results
+
+- LaTeX build passed and produced a fresh `docs/latex/builds/main.pdf`.
+- PDF freshness check passed.
+- NCCC validation artifact consistency check passed.
+- `git diff --check` passed with only line-ending normalization warnings.
+- The only remaining LaTeX warning is the existing minor bibliography underfull box in `main.bbl`.
+
+### Grep Results
+
+- No submission-facing hits remain for the requested stale-language phrases, the author-verification marker, the old capture-error unit label, or local Windows user paths.
+
+### PDF Visual Checks
+
+- Page 1: title, abstract, keywords, and introduction opening render cleanly.
+- Page 16: Figure 2 renders with the liquid-inlet boundary explanation attached to the caption.
+- Page 17: Figure 3 renders as the validation-only temperature-profile overlay.
+- Page 18: Figure 4 renders with the revised capture-error axis label.
+- Page 19: Figure 5 renders with a linear y-axis and unclipped failed-run labels.
+- Page 27: Appendix parameter tables render with readable ePC-SAFT parameter notation and ion formulas.
+
+### Tag / Submission Reference
+
+- The manuscript, Data Availability, Code Availability, and report use `nce-submission-preprint-v1` as the submission reference tag.
+
+### Remaining Issues
+
+- The bibliography still reports one minor underfull box in `main.bbl`. It is isolated to a reference-list line break and does not block the build.

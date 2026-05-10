@@ -123,6 +123,14 @@ def _config_row() -> pd.Series:
     return match.iloc[0]
 
 
+def _portable_source_note(value: object) -> str:
+    text = "" if value is None else str(value)
+    return text.replace(
+        r"C:\Users\Tanner\Documents\git\ePC-SAFT\data\reference\epcsaft_parameters\2025_Figiel\user_options.json",
+        "epcsaft reference data: epcsaft_parameters/2025_Figiel/user_options.json",
+    )
+
+
 def _benchmark_env(user_options_json: str) -> dict[str, str]:
     env = os.environ.copy()
     env.update(
@@ -213,7 +221,7 @@ def _aggregate(case_ids: list[str], raw_root: Path, output_csv: Path, config_row
                 "epcsaft_dataset_name": DATASET_NAME,
                 "epcsaft_config": CONFIG_NAME,
                 "epcsaft_user_options_json": config_row.get("user_options_json"),
-                "epcsaft_config_source_note": config_row.get("source_note"),
+                "epcsaft_config_source_note": _portable_source_note(config_row.get("source_note")),
                 "method": row.get("method"),
                 "success": row.get("success"),
                 "message": row.get("message"),

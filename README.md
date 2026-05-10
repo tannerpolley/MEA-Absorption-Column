@@ -21,7 +21,7 @@ This repository follows the local project architecture standard for scientific P
 
 - Package code and reusable model data live under `src/mea_absorption_column/`.
 - Fast regression tests live under `tests/`.
-- Paper-facing validation workflows live under `analyses/nccc_validation/`.
+- Manuscript validation workflows live under `analyses/nccc_validation/`.
 - Manuscript source and LaTeX build scripts live under `docs/latex/`.
 - Root `scripts/` is reserved for repo-wide tools or small smoke checks, not benchmark sweeps.
 

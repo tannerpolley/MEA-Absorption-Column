@@ -6,14 +6,14 @@
 
         \input{tables/nccc_one_bed_case_scope}
 
-        The accepted one-bed ePC-SAFT validation set contains K18, K19, and 1C--6C. K20 and 7C were run with the same bounded settings, but they did not satisfy the common solver gate and are not included in the accuracy aggregate. Table~\ref{tab:nccc-attempted-status} records that boundary so the reported validation set is not confused with the full attempted set.
+        The accepted one-bed validation set contains K18, K19, and 1C--6C. K20 and 7C were run with the same bounded settings, but they did not satisfy the common solver gate and are not included in the accuracy aggregate. Table~\ref{tab:nccc-attempted-status} records that boundary so the reported validation set is not confused with the full attempted set.
 
         \input{tables/nccc_one_bed_attempted_status}
 
         \begin{center}
             \centering
             \includegraphics[width=0.9\textwidth]{figures/case-3c-temperature-validation.png}
-            \captionof{figure}{Representative 2017 Case 3C ePC-SAFT temperature-profile validation against experimental pilot-plant taps. The model input has $\alpha = 0.25$, inlet $y_{\mathrm{CO_2}} = 0.093$, and the \SI{45.0}{\degreeCelsius} lean-inlet assumption used for the blank source temperature row. The sharp feature near normalized position 1.0 is the liquid-inlet/top boundary response.}
+            \captionof{figure}{Representative 2017 Case 3C ePC-SAFT temperature-profile validation against experimental pilot-plant taps. The model input has $\alpha = 0.25$, inlet $y_{\mathrm{CO_2}} = 0.093$, and the \SI{45.0}{\degreeCelsius} lean-inlet assumption used for the blank source temperature row. The normalized coordinate runs from the vapor inlet at 0 to the liquid inlet at 1; the sharp feature near normalized position 1.0 is the imposed lean-liquid inlet boundary response rather than an internal temperature tap.}
             \label{fig:temp_profiles}
         \end{center}
 
@@ -22,7 +22,7 @@
         \begin{center}
             \centering
             \includegraphics[width=0.82\textwidth]{figures/case-c-temperature-overlay.png}
-            \captionof{figure}{Temperature-profile overlays for accepted 2017 one-bed NCCC C cases. Markers are measured liquid-temperature taps; curves show the ePC-SAFT liquid-temperature profiles. The curves are used here as validation evidence for the energy-balance response, not as a thermodynamic-model comparison.}
+            \captionof{figure}{Temperature-profile overlays for accepted 2017 one-bed NCCC C cases. Markers are measured liquid-temperature taps; curves show the ePC-SAFT liquid-temperature profiles. The curves are used here as validation evidence for the energy-balance response, not as a thermodynamic-model comparison. The normalized coordinate runs from the vapor inlet to the liquid inlet, and the terminal point represents the imposed lean-liquid inlet condition.}
             \label{fig:generated-temperature-profiles}
         \end{center}
 
@@ -61,11 +61,11 @@
         \FloatBarrier
 
     \subsection{Full Ionic Speciation Timing Test}
-        The routine one-bed campaign keeps the concentration-based chemical-equilibrium calculation fixed and uses ePC-SAFT for the CO$_2$ fugacity coefficients. A separate full ionic activity-speciation sweep was run to check the stronger path: ePC-SAFT activity-related quantities enter the chemical-equilibrium calculation, and the resulting true-species state then feeds the ionic liquid fugacity calculation. The sweep uses a nine-species ionic state for CO$_2$, MEA, H$_2$O, MEAH$^+$, MEACOO$^-$, HCO$_3^-$, \ce{CO3^{2-}}, \ce{H3O+}, and \ce{OH-}. It converged for all seven 2017 C-case rows with no invalid states, no domain guards, and chemistry residuals below $10^{-8}$.
+        The routine one-bed campaign keeps the concentration-based chemical-equilibrium calculation fixed and uses ePC-SAFT for the CO$_2$ fugacity coefficients. A separate full ionic activity-speciation sweep was run to check the stronger path: ePC-SAFT activity-related quantities enter the chemical-equilibrium calculation, and the resulting true-species state then feeds the ionic liquid fugacity calculation. The sweep uses a nine-species ionic state for CO$_2$, MEA, H$_2$O, MEAH$^+$, MEACOO$^-$, HCO$_3^-$, $\mathrm{CO_3^{2-}}$, $\mathrm{H_3O^+}$, and $\mathrm{OH^-}$. It converged for all seven 2017 C-case rows with no invalid states, no domain guards, and chemistry residuals below $10^{-8}$.
 
         \input{tables/full_ionic_speciation_timing}
 
-        Table~\ref{tab:full-ionic-speciation-timing} gives the practical reason this full loop is not used for every routine validation row. The full activity-coupled sweep uses relaxed feasibility settings: 7 starting mesh points, a solver tolerance of 10, a boundary-condition tolerance of 0.5, and a maximum of 80 mesh nodes. The nine-species Case 3C row predicts $\SI{88.736}{\percent}$ capture, $-0.764$ percentage points from the measured value, but it takes \SI{139.420}{s}; \SI{102.267}{s} of that runtime is spent in the ePC-SAFT chemistry solves. Across all seven C rows, the mean runtime is \SI{171.102}{s}, the mean chemistry-solve time is \SI{127.764}{s}, and the capture mean absolute error is 6.595 percentage points. These values come from the committed sweep table \path{analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv}, generated by \path{analyses/nccc_validation/scripts/run_full_species_ionic_2017_c_case_sweep.py}. This makes the full ionic activity-speciation loop a real feasibility result and a concrete acceleration target, but not the routine validation model used for the main thermodynamic comparison.
+        Table~\ref{tab:full-ionic-speciation-timing} gives the practical reason this full loop is not used for every routine validation row. The full activity-coupled sweep uses relaxed feasibility settings: 7 starting mesh points, a solver tolerance of 10, a boundary-condition tolerance of 0.5, and a maximum of 80 mesh nodes. The nine-species Case 3C row predicts $\SI{88.736}{\percent}$ capture, $-0.764$ percentage points from the measured value, but it takes \SI{139.420}{s}; \SI{102.267}{s} of that runtime is spent in the ePC-SAFT chemistry solves. Across all seven C rows, the mean runtime is \SI{171.102}{s}, the mean chemistry-solve time is \SI{127.764}{s}, and the capture mean absolute error is 6.595 percentage points. These values come from the committed sweep table \path{analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv}, generated by \path{analyses/nccc_validation/scripts/run_full_species_ionic_2017_c_case_sweep.py}. These results establish the full ionic activity-speciation loop as a feasible but slow path and a concrete acceleration target, not as the routine validation model used for the main thermodynamic comparison.
 
         \FloatBarrier
 

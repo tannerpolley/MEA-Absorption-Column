@@ -413,6 +413,9 @@ def _write_method_contrast_plot(data: pd.DataFrame) -> None:
     ax.set_xticks(x)
     ax.set_xticklabels(["Smooth\none-bed", "NCCC 3C\nthermal pinch"])
     ax.set_ylabel("Runtime (s)")
+    finite_runtimes = data["runtime_s"][np.isfinite(data["runtime_s"])]
+    if not finite_runtimes.empty:
+        ax.set_ylim(0, float(finite_runtimes.max()) + 8.0)
     ax.legend(frameon=False, fontsize=7, loc="upper left")
     _save_figure(fig, "method_case_solver_contrast", "method-case-solver-contrast.pdf")
 
