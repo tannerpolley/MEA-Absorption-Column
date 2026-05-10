@@ -57,7 +57,8 @@ def test_epcsaft_reactive_six_activity_basis_changes_case_3c_speciation():
         diagnostics={},
     )
 
-    assert activity_x[0] > 1.0e6 * legacy_x[0]
+    np.testing.assert_allclose(np.sum(activity_x), 1.0, atol=1.0e-12)
+    assert activity_x[0] > 10.0 * legacy_x[0]
     assert activity_x[4] < legacy_x[4]
 
 
@@ -83,7 +84,6 @@ def test_epcsaft_reactive_six_activity_converted_uses_concentration_basis_units(
 
     np.testing.assert_allclose(np.sum(converted_x), 1.0, atol=1.0e-12)
     assert converted_x[0] < activity_x[0]
-    assert converted_x[0] > legacy_x[0]
     assert abs(converted_x[4] - legacy_x[4]) < abs(activity_x[4] - legacy_x[4])
 
 

@@ -3,7 +3,7 @@
 This diagnostic exercises the MEA six-species ePC-SAFT dataset at a Case-3C-like liquid state.
 It separates the neutral fugacity-coefficient path from electrolyte option paths that activate Debye-Huckel ion and Born terms.
 
-- Dataset: `C:\Users\Tanner\Documents\git\MEA-Absorption-Column\src\mea_absorption_column\data\epcsaft_datasets\MEA_CO2_H2O_draft`
+- Dataset: `src\mea_absorption_column\data\epcsaft_datasets\MEA_CO2_H2O_draft`
 - Successful configurations: 8/9
 - Expected unsupported configurations: 1
 - Unexpected outcomes: 0

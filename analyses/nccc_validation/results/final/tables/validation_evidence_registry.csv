@@ -1,3 +1,3 @@
 evidence_group,evidence_class,primary_validation,no_case_specific_tuning,rows,accepted_rows,failed_or_diagnostic_rows,success_rate_pct,capture_mae_pct,max_abs_capture_error_pct,median_runtime_s,notes
-"One-bed C cases, epcsaft_ionic",primary,True,True,6,6,0,100.0,4.899,11.566,8.976,One-bed C-case validation rows generated with common settings.
+"One-bed C cases, epcsaft_ionic",primary,True,True,6,6,0,100.0,2.606,4.824,7.381,One-bed C-case validation rows generated with common settings.
 Smooth one-bed method contrast,diagnostic,False,True,6,4,2,66.67,,,12.51,"Method-behavior comparison, not an NCCC predictive-validation table."

@@ -147,6 +147,8 @@ def test_epcsaft_adapter_reports_external_source_without_modifying_it():
 
 
 def test_ionic_epcsaft_dataset_enables_ssm_ds_and_dborn_parameters():
+    assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.name == "MEA_CO2_H2O_ionic_fit"
+
     options_path = MEA_THERMODYNAMICS_EPCSAFT_DATASET / "user_options.json"
     pure_path = MEA_THERMODYNAMICS_EPCSAFT_DATASET / "pure" / "any_solvent.csv"
 

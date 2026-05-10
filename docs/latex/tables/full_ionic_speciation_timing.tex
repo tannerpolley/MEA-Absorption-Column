@@ -8,8 +8,8 @@
         \toprule
         \textbf{Path} & \textbf{Scope} & \textbf{Accuracy} & \textbf{Runtime} & \textbf{What it shows} \\
         \midrule
-        Henry-law routine campaign & 8 accepted rows & Mean absolute capture error 3.78 percentage points & Median \SI{8.62}{s} & Fast baseline driving-force calculation with concentration-based chemistry. \\
-        ePC-SAFT fugacity campaign & 8 accepted rows & Mean absolute capture error 3.73 percentage points & Median \SI{9.86}{s} & Routine thermodynamic comparison using ePC-SAFT CO$_2$ fugacity coefficients with the same concentration-based chemistry. \\
+        Henry-law routine campaign & 8 accepted rows & Mean absolute capture error 2.74 percentage points & Median \SI{5.24}{s} & Fast baseline driving-force calculation with concentration-based chemistry. \\
+        ePC-SAFT fugacity campaign & 8 accepted rows & Mean absolute capture error 2.89 percentage points & Median \SI{7.57}{s} & Routine thermodynamic comparison using ePC-SAFT CO$_2$ fugacity coefficients with the same concentration-based chemistry. \\
         Full nine-species activity-speciation check & Case 3C & Capture error $-0.764$ percentage points & \SI{139.420}{s}; \SI{102.267}{s} chemistry solve & Feasible activity-coupled ePC-SAFT chemistry and ionic fugacity loop under relaxed feasibility settings. \\
         Full nine-species activity-speciation sweep & 7 C rows & Mean absolute capture error 6.595 percentage points; maximum absolute error 16.514 percentage points & Mean \SI{171.102}{s}; mean chemistry solve \SI{127.764}{s} & All seven rows converged with zero invalid states, zero guard penalties, and chemistry residuals below $10^{-8}$; the path is feasible but too slow for routine validation sweeps. \\
         \bottomrule

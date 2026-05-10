@@ -21,7 +21,7 @@ def interfacial_area(rho_mass_l, sigma, ul, A, packing, diagnostics=None):
     Lp = A * a_p / ϵ
 
     # Compute interfacial area
-    A1 = 1.43914
+    A1 = 1.42
     A2 = .12
     # a_e = a_p * A1 * (rho_mass_l / sigma * g ** 1/3 * (ul * A / Lp) ** (4 / 3)) ** A2
     a_e = np.log(a_p) + np.log(A1) + A2 * (

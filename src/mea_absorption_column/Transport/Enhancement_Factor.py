@@ -8,7 +8,7 @@ from .domain_guards import DomainGuardError, require_positive
 
 def enhancement_factor(Tl, Cl_true, y_CO2, P,
                        H_CO2_mix, kl_CO2, kv_CO2,
-                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None):
+                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None, eta_psi=1.0):
     enable_enhancement_factor = True
 
     Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true = Cl_true[:6]
@@ -113,11 +113,12 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
     else:
         E = Ha
 
+    eta_psi = float(eta_psi)
     Psi = E * kl_CO2 / kv_CO2
-    Psi_H = Psi / (Psi + H_CO2_mix)*.3
-    require_positive("enhancement_factor", diagnostics, Ha=Ha, E=E, Psi=Psi, Psi_H=Psi_H)
+    Psi_H = Psi / (Psi + H_CO2_mix) * eta_psi
+    require_positive("enhancement_factor", diagnostics, Ha=Ha, E=E, Psi=Psi, Psi_H=Psi_H, eta_psi=eta_psi)
 
-    enhance_factor = [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi_H, Psi]
+    enhance_factor = [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi_H, Psi, eta_psi]
 
     return E, Psi, Psi_H, enhance_factor
 

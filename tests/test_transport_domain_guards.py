@@ -168,7 +168,9 @@ def test_transfer_guards_reject_nonpositive_vapor_holdup():
         mass_transfer_coeff(
             h_L=0.05,
             h_V=-0.1,
+            rho_mass_l=1000.0,
             rho_mass_v=1.2,
+            mul_mix=1.0e-3,
             muv_mix=1.8e-5,
             Dl_CO2=1e-9,
             Dv_CO2=1e-5,
@@ -225,6 +227,55 @@ def test_enhancement_factor_is_finite_for_valid_inputs():
     assert Psi > 0.0
     assert Psi_H > 0.0
     assert all(np.isfinite(payload))
+    assert payload[-1] == pytest.approx(1.0)
+
+
+def test_enhancement_factor_eta_psi_scales_driving_factor():
+    diagnostics = make_solver_diagnostics()
+    common = dict(
+        Tl=323.15,
+        Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
+        y_CO2=0.08,
+        P=109500.0,
+        H_CO2_mix=2.5e6,
+        kl_CO2=2e-4,
+        kv_CO2=0.01,
+        Dl_CO2=1e-9,
+        Dl_MEA=8e-10,
+        Dl_ion=8e-10,
+        E_type="explicit",
+        diagnostics=diagnostics,
+    )
+
+    _, _, baseline, baseline_payload = enhancement_factor(**common, eta_psi=0.3)
+    _, _, unscaled, unscaled_payload = enhancement_factor(**common, eta_psi=1.0)
+
+    assert unscaled / baseline == pytest.approx(1.0 / 0.3)
+    assert baseline_payload[-1] == pytest.approx(0.3)
+    assert unscaled_payload[-1] == pytest.approx(1.0)
+
+
+def test_enhancement_factor_rejects_nonpositive_eta_psi():
+    diagnostics = make_solver_diagnostics()
+
+    with pytest.raises(DomainGuardError):
+        enhancement_factor(
+            Tl=323.15,
+            Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
+            y_CO2=0.08,
+            P=109500.0,
+            H_CO2_mix=2.5e6,
+            kl_CO2=2e-4,
+            kv_CO2=0.01,
+            Dl_CO2=1e-9,
+            Dl_MEA=8e-10,
+            Dl_ion=8e-10,
+            E_type="explicit",
+            diagnostics=diagnostics,
+            eta_psi=0.0,
+        )
+
+    assert diagnostics["domain_guard_counts"]["enhancement_factor"] == 1
 
 
 def test_enhancement_factor_falls_back_to_explicit_when_implicit_subsolve_fails(monkeypatch):

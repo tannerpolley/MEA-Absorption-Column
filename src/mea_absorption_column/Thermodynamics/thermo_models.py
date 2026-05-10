@@ -33,7 +33,7 @@ TEMPERATURE_MIN_K = 250.0
 TEMPERATURE_MAX_K = 500.0
 FUGACITY_FLOOR_PA = 1.0e-9
 PACKAGED_EPCSAFT_DATASETS = resources.files("mea_absorption_column").joinpath("data/epcsaft_datasets")
-DEFAULT_EPCSAFT_DATASET_NAME = os.environ.get("MEA_EPCSAFT_DATASET_NAME", "MEA_CO2_H2O_draft")
+DEFAULT_EPCSAFT_DATASET_NAME = os.environ.get("MEA_EPCSAFT_DATASET_NAME", "MEA_CO2_H2O_ionic_fit")
 
 
 def _resolve_epcsaft_dataset_path() -> Path:

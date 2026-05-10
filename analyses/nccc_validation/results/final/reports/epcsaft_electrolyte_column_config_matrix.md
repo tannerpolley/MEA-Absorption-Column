@@ -3,12 +3,12 @@
 These runs use the six-species MEA absorber state with the repo-vendored `MEA_CO2_H2O_ionic_fit` ePC-SAFT dataset.
 The 3C C-case is intentionally small enough to keep the comparison reproducible while still running the full column solver.
 
-- Dataset path: `C:\Users\Tanner\Documents\git\MEA-Absorption-Column\src\mea_absorption_column\data\epcsaft_datasets\MEA_CO2_H2O_ionic_fit`
-- Run root: `C:\Users\Tanner\Documents\git\MEA-Absorption-Column\analyses\nccc_validation\results\runs\epcsaft_electrolyte_config_matrix`
+- Dataset path: `src\mea_absorption_column\data\epcsaft_datasets\MEA_CO2_H2O_ionic_fit`
+- Run root: `analyses\nccc_validation\results\runs\epcsaft_electrolyte_config_matrix`
 - Successful column rows: 14/14
-- Primary result table: `C:\Users\Tanner\Documents\git\MEA-Absorption-Column\analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_column_config_matrix.csv`
-- Pure parameter table: `C:\Users\Tanner\Documents\git\MEA-Absorption-Column\analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_pure_parameters.csv`
-- Binary interaction table: `C:\Users\Tanner\Documents\git\MEA-Absorption-Column\analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_binary_parameters.csv`
+- Primary result table: `analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_column_config_matrix.csv`
+- Pure parameter table: `analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_pure_parameters.csv`
+- Binary interaction table: `analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_binary_parameters.csv`
 
 ## Column Results
 

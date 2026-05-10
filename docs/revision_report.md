@@ -8,7 +8,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 - Added explicit accepted-row gate language: solver success, boundary residual norm at or below 1.0, physical capture in the 0--100\% range, and completion within the configured subprocess timeout. Temperature RMSE is reported but is not an acceptance gate, and guard or invalid-state counts are conditioning diagnostics unless a separate gate is configured.
 - Clarified why K19 remains in the accepted validation set despite 108 invalid-state and guard-penalty events in each thermodynamic row.
-- Added the fixed driving-force scale statement after the $\Psi_H$ definition: $\eta_{\Psi}=0.3$ is dimensionless, fixed globally, used in both Henry-law and ePC-SAFT campaigns, and is not adjusted by case or thermodynamic model.
+- Removed the fixed driving-force scale framing from the manuscript after the source-backed transport, thermophysical-property, and gas-basis corrections made the previous scale factor unnecessary.
 - Replaced informal Section 2.2 phrasing with direct engineering prose for superficial velocity, effective interfacial area, hold-up correlations, and heat-transfer coefficient definitions without changing equations.
 - Corrected rendered ion notation for \ce{CO3^{2-}}, \ce{H3O+}, and \ce{OH-}, and noted that those entries are auxiliary diagnostic species unless independently sourced parameters are provided.
 - Rewrote the title and abstract around the core claim: ePC-SAFT CO2 fugacity driving forces in a reproducible MEA absorber benchmark.
@@ -23,7 +23,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 ## Evidence Basis
 
 - Routine accepted rows: K18, K19, and 1C--6C from `analyses/nccc_validation/results/final/tables/nccc_one_bed_accepted_results.csv`.
-- Routine summary values: ePC-SAFT mean absolute capture error 3.73 percentage points and median runtime 9.86 s; Henry-law mean absolute capture error 3.78 percentage points and median runtime 8.62 s.
+- Routine summary values: ePC-SAFT mean absolute capture error 2.89 percentage points and median runtime 7.57 s; Henry-law mean absolute capture error 2.74 percentage points and median runtime 5.24 s.
 - Attempted rows: K20 rejected by mesh/domain-guard behavior; 7C rejected by accepted-row timeout.
 - Full activity-coupled path: `analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv`, all seven 2017 C rows converged under relaxed feasibility settings, mean runtime 171.102 s, mean chemistry-solve time 127.764 s, mean absolute capture error 6.595 percentage points.
 - Full-path Case 3C evidence is preserved as capture error -0.764 percentage points and runtime 139.420 s. The manuscript now cites the committed CSV and the generation script directly.
@@ -91,7 +91,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 - Replaced the abstract with the final concise submission abstract and confirmed it remains under 250 words.
 - Defined post-combustion carbon capture as PCC at first use.
 - Tightened the thermodynamic overview so ePC-SAFT is described as the liquid-side electrolyte fugacity closure, with the vapor-side calculation using the same fugacity-coefficient framework for neutral species.
-- Clarified that `eta_Psi = 0.3` is a fixed dimensionless model parameter used in both thermodynamic campaigns and that changing it requires a separate sensitivity or recalibration study.
+- Removed the former hidden driving-force scale statement and replaced the surrounding discussion with the source-backed validation basis used by the current routine campaign.
 - Revised transport prose for interfacial area, holdup, mass transfer, heat transfer, molar flux, and enthalpy flux without changing the equations.
 - Replaced "full ePC-SAFT fugacity correction" with "ePC-SAFT CO2 fugacity correction" in the validation-method description.
 - Updated Figure 2 and Figure 3 captions so each figure has one clear evidence role.
@@ -103,14 +103,14 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ### Numerical Values Preserved
 
-- Routine accepted-row ePC-SAFT mean absolute capture error: 3.73 percentage points.
-- Routine accepted-row Henry-law mean absolute capture error: 3.78 percentage points.
-- Routine accepted-row ePC-SAFT median runtime: 9.86 s.
-- Routine accepted-row Henry-law median runtime: 8.62 s.
+- Routine accepted-row ePC-SAFT mean absolute capture error: 2.89 percentage points.
+- Routine accepted-row Henry-law mean absolute capture error: 2.74 percentage points.
+- Routine accepted-row ePC-SAFT median runtime: 7.57 s.
+- Routine accepted-row Henry-law median runtime: 5.24 s.
 - Full activity-coupled mean absolute capture error: 6.595 percentage points.
 - Full activity-coupled mean runtime: 171.102 s.
 - Full activity-coupled mean chemistry-solve time: 127.764 s.
-- Fixed driving-force scale parameter: `eta_Psi = 0.3`.
+- Source-backed routine campaign uses the unscaled driving-force path.
 
 ### Commands Run
 

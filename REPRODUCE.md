@@ -21,6 +21,7 @@ These commands rebuild plot-ready tables and figures from existing committed res
 
 ```powershell
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_nccc_one_bed_artifacts.py
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_source_backed_temperature_capture_gallery.py
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing

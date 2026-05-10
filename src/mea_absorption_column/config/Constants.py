@@ -31,8 +31,8 @@ packing_params = {
     'MellapakPlus252Y': {
         'a_p': 250.0,  # Akula 2022 Table 14
         'eps': .970,  # Akula 2022 Table 14
-        'Cl': .5,  # Regressed from Chinen 2018 Supporting Information Table S3
-        'Cv': .357,  # Regressed from Chinen 2018 Supporting Information Table S3
+        'Cl': .203,  # Regressed from Chinen 2018 Supporting Information Table S3
+        'Cv': .35,  # Akula 2021 Supporting Information Eq. S46
         'Cs': .017,  # Akula 2022 Table 14
         'Cb': .241,  # Akula 2022 Table 14
         'Ch': .119,  # Akula 2022 Table 14

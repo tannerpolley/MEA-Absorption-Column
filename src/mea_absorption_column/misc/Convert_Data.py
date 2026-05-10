@@ -2,9 +2,17 @@ import numpy as np
 from scipy.optimize import root
 
 from ..config.Constants import MWs_l, MWs_v, column_params, packing_params, n
+from ..Properties.Thermophysical_Properties import vapor_pressure
 
 
-def convert_data(df, run=0, type='mole', return_metadata=False, vapor_composition_mode='legacy_ratio'):
+def convert_data(
+        df,
+        run=0,
+        type='mole',
+        return_metadata=False,
+        vapor_composition_mode='legacy_ratio',
+        gas_flow_basis='reported_total_wet',
+):
 
     X = df.iloc[run, :].to_numpy()
     case_id = str(df.index[run])
@@ -38,10 +46,12 @@ def convert_data(df, run=0, type='mole', return_metadata=False, vapor_compositio
         # Vapor Calculations
 
         # Find Vapor Mole Fractions
-        y_H2O, y_N2, y_O2 = _vapor_mole_fractions(
+        y_CO2, y_H2O, y_N2, y_O2 = _vapor_mole_fractions(
             df,
             run,
             y_CO2,
+            Tv_0,
+            P,
             alpha_H2O_CO2,
             alpha_O2_N2,
             vapor_composition_mode,
@@ -57,6 +67,10 @@ def convert_data(df, run=0, type='mole', return_metadata=False, vapor_compositio
     elif type == 'mass':
 
         m_T_l, m_T_v, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
+        if gas_flow_basis not in {"reported_total_wet", "reported_dry_mass"}:
+            raise ValueError(f"Unknown gas_flow_basis: {gas_flow_basis}")
+        if gas_flow_basis == "reported_dry_mass" and vapor_composition_mode != "dry_saturated":
+            raise ValueError("gas_flow_basis='reported_dry_mass' requires vapor_composition_mode='dry_saturated'")
 
         D = column_params['NCCC']['D']
         H = column_params['NCCC']['H'] * beds
@@ -90,8 +104,9 @@ def convert_data(df, run=0, type='mole', return_metadata=False, vapor_compositio
 
         w_H2O_unloaded = 1 - w_MEA_unloaded
 
-        m_MEA_l = w_MEA_unloaded * m_T_l  # kg/s
-        m_H2O_l = w_H2O_unloaded * m_T_l  # kg/s
+        unloaded_mass = m_T_l / (1.0 + alpha * w_MEA_unloaded * MW_CO2 / MW_MEA)
+        m_MEA_l = w_MEA_unloaded * unloaded_mass  # kg/s
+        m_H2O_l = w_H2O_unloaded * unloaded_mass  # kg/s
 
         Fl_MEA_b = m_MEA_l/MW_MEA
         Fl_H2O_b = m_H2O_l/MW_H2O
@@ -103,33 +118,47 @@ def convert_data(df, run=0, type='mole', return_metadata=False, vapor_compositio
         # Vapor Calculations
 
         # Find Vapor Mole Fractions
-        y_H2O, y_N2, y_O2 = _vapor_mole_fractions(
+        y_CO2, y_H2O, y_N2, y_O2 = _vapor_mole_fractions(
             df,
             run,
             y_CO2,
+            Tv_0,
+            P,
             alpha_H2O_CO2,
             alpha_O2_N2,
             vapor_composition_mode,
         )
-        sigma = y_N2 * MW_N2 + y_O2 * MW_O2 + y_CO2 * MW_CO2 + y_H2O * MW_H2O
+        if gas_flow_basis == "reported_dry_mass":
+            wet_factor = 1.0 - y_H2O
+            dry_y_CO2 = y_CO2 / wet_factor
+            dry_y_N2 = y_N2 / wet_factor
+            dry_y_O2 = y_O2 / wet_factor
+            dry_sigma = dry_y_N2 * MW_N2 + dry_y_O2 * MW_O2 + dry_y_CO2 * MW_CO2
+            Fv_dry = m_T_v / dry_sigma
+            Fv_CO2 = dry_y_CO2 * Fv_dry
+            Fv_N2 = dry_y_N2 * Fv_dry
+            Fv_O2 = dry_y_O2 * Fv_dry
+            Fv_H2O = (y_H2O / wet_factor) * Fv_dry
+        else:
+            sigma = y_N2 * MW_N2 + y_O2 * MW_O2 + y_CO2 * MW_CO2 + y_H2O * MW_H2O
 
-        # Find Vapor Mass Flow Rates
+            # Find Vapor Mass Flow Rates
 
-        w_CO2_v = y_CO2 * MW_CO2 / sigma
-        w_H2O_v = y_H2O * MW_H2O / sigma
-        w_N2_v = y_N2 * MW_N2 / sigma
-        w_O2_v = y_O2 * MW_O2 / sigma
+            w_CO2_v = y_CO2 * MW_CO2 / sigma
+            w_H2O_v = y_H2O * MW_H2O / sigma
+            w_N2_v = y_N2 * MW_N2 / sigma
+            w_O2_v = y_O2 * MW_O2 / sigma
 
-        m_CO2_v = w_CO2_v * m_T_v
-        m_H2O_v = w_H2O_v * m_T_v
-        m_N2_v = w_N2_v * m_T_v
-        m_O2_v = w_O2_v * m_T_v
+            m_CO2_v = w_CO2_v * m_T_v
+            m_H2O_v = w_H2O_v * m_T_v
+            m_N2_v = w_N2_v * m_T_v
+            m_O2_v = w_O2_v * m_T_v
 
-        # Find Vapor Molar Flow Rates
-        Fv_CO2 = m_CO2_v / MW_CO2  # mole/s
-        Fv_H2O = m_H2O_v / MW_H2O  # mole/s
-        Fv_N2 = m_N2_v / MW_N2  # mole/s
-        Fv_O2 = m_O2_v / MW_O2  # mole/s
+            # Find Vapor Molar Flow Rates
+            Fv_CO2 = m_CO2_v / MW_CO2  # mole/s
+            Fv_H2O = m_H2O_v / MW_H2O  # mole/s
+            Fv_N2 = m_N2_v / MW_N2  # mole/s
+            Fv_O2 = m_O2_v / MW_O2  # mole/s
 
         Fv = [Fv_CO2, Fv_H2O, Fv_N2, Fv_O2]
         Fv_T = sum(Fv)
@@ -175,17 +204,30 @@ def convert_data(df, run=0, type='mole', return_metadata=False, vapor_compositio
             "total_packed_height_m": float(H),
             "diameter_m": float(D),
             "vapor_composition_mode": vapor_composition_mode,
+            "gas_flow_basis": gas_flow_basis,
         }
         return inputs, X, metadata
     return inputs, X
 
 
-def _vapor_mole_fractions(df, run, y_CO2, alpha_H2O_CO2, alpha_O2_N2, vapor_composition_mode):
+def _vapor_mole_fractions(df, run, y_CO2, Tv, P, alpha_H2O_CO2, alpha_O2_N2, vapor_composition_mode):
     y_H2O = _optional_fraction(df, run, "y_H2O")
     if y_H2O is None:
         y_H2O = y_CO2 * alpha_H2O_CO2
 
-    if vapor_composition_mode == "input_o2" and "y_O2" in df.columns:
+    if vapor_composition_mode == "dry_saturated":
+        y_H2O = float(np.clip(vapor_pressure(Tv) / P, 0.0, 0.95))
+        dry_y_co2 = float(y_CO2)
+        dry_y_o2 = float(df.iloc[run]["y_O2"]) if "y_O2" in df.columns else None
+        if dry_y_o2 is None:
+            dry_y_N2 = (1.0 - dry_y_co2) / (1.0 + alpha_O2_N2)
+            dry_y_o2 = dry_y_N2 * alpha_O2_N2
+        dry_y_N2 = 1.0 - dry_y_co2 - dry_y_o2
+        wet_factor = 1.0 - y_H2O
+        y_CO2 = dry_y_co2 * wet_factor
+        y_O2 = dry_y_o2 * wet_factor
+        y_N2 = dry_y_N2 * wet_factor
+    elif vapor_composition_mode == "input_o2" and "y_O2" in df.columns:
         y_O2 = float(df.iloc[run]["y_O2"])
         y_N2 = 1.0 - y_CO2 - y_H2O - y_O2
     elif vapor_composition_mode == "legacy_ratio":
@@ -202,7 +244,7 @@ def _vapor_mole_fractions(df, run, y_CO2, alpha_H2O_CO2, alpha_O2_N2, vapor_comp
     total = y_CO2 + y_H2O + y_N2 + y_O2
     if not np.isclose(total, 1.0, rtol=0.0, atol=1.0e-8):
         raise ValueError(f"Vapor mole fractions do not sum to one: {total}")
-    return y_H2O, y_N2, y_O2
+    return y_CO2, y_H2O, y_N2, y_O2
 
 
 def _optional_fraction(df, run, column):

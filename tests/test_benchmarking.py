@@ -5,7 +5,9 @@ from pathlib import Path
 import pytest
 
 from mea_absorption_column.BVP.ABS_Column import _gas_velocity_area_factor
+from mea_absorption_column.config.Constants import MWs_v
 from mea_absorption_column.misc.Convert_Data import convert_data
+from mea_absorption_column.Properties.Thermophysical_Properties import vapor_pressure
 from mea_absorption_column.benchmark import (
     BENCHMARK_COLUMNS,
     BenchmarkSettings,
@@ -149,6 +151,7 @@ def test_benchmark_result_columns_round_trip_to_csv(tmp_path, monkeypatch):
         solver_settings={
             "co2_vapor_upper_factor": 1.05,
             "success_boundary_residual_max": 0.5,
+            "eta_psi": 0.5,
             "max_nodes": 300,
             "co2_capture_guess_pct": 91.0,
             "h2o_capture_guess_pct": -80.0,
@@ -162,6 +165,7 @@ def test_benchmark_result_columns_round_trip_to_csv(tmp_path, monkeypatch):
     assert list(loaded.columns) == BENCHMARK_COLUMNS
     assert loaded.loc[0, "co2_vapor_upper_factor"] == 1.05
     assert loaded.loc[0, "success_boundary_residual_max"] == 0.5
+    assert loaded.loc[0, "eta_psi"] == 0.5
     assert loaded.loc[0, "max_nodes"] == 300
     assert loaded.loc[0, "co2_capture_guess_pct"] == 91.0
     assert loaded.loc[0, "h2o_capture_guess_pct"] == -80.0
@@ -221,6 +225,8 @@ def test_benchmark_cli_accepts_solver_settings():
         "1.05",
         "--vapor-composition-mode",
         "input_o2",
+        "--gas-flow-basis",
+        "reported_dry_mass",
         "--gas-velocity-area-exponent",
         "1.5",
         "--gas-velocity-area-reference-m-s",
@@ -235,6 +241,8 @@ def test_benchmark_cli_accepts_solver_settings():
         "-90",
         "--epcsaft-fugacity-blend",
         "0.5",
+        "--eta-psi",
+        "1.0",
         "--mass-transfer-factor",
         "0.5",
         "--heat-transfer-factor",
@@ -276,6 +284,7 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.transform_mode == "positive_flow_pressure"
     assert args.co2_vapor_upper_factor == 1.05
     assert args.vapor_composition_mode == "input_o2"
+    assert args.gas_flow_basis == "reported_dry_mass"
     assert args.gas_velocity_area_exponent == 1.5
     assert args.gas_velocity_area_reference_m_s == 1.88
     assert args.shooting_integrator == "bdf"
@@ -283,6 +292,7 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.co2_capture_guess_pct == 85
     assert args.h2o_capture_guess_pct == -90
     assert args.epcsaft_fugacity_blend == 0.5
+    assert args.eta_psi == 1.0
     assert args.mass_transfer_factor == 0.5
     assert args.heat_transfer_factor == 0.8
     assert args.success_boundary_residual_max == 0.5
@@ -302,7 +312,9 @@ def test_benchmark_cli_accepts_solver_settings():
     assert solver_settings["co2_capture_guess_pct"] == 85
     assert solver_settings["h2o_capture_guess_pct"] == -90
     assert solver_settings["epcsaft_fugacity_blend"] == 0.5
+    assert solver_settings["eta_psi"] == 1.0
     assert solver_settings["vapor_composition_mode"] == "input_o2"
+    assert solver_settings["gas_flow_basis"] == "reported_dry_mass"
     assert solver_settings["gas_velocity_area_exponent"] == 1.5
     assert solver_settings["gas_velocity_area_reference_m_s"] == 1.88
     assert solver_settings["guard_rhs"] is False
@@ -361,6 +373,72 @@ def test_convert_data_can_use_input_o2_column():
 
     assert metadata["vapor_composition_mode"] == "input_o2"
     assert round(y[3], 6) == round(float(c_cases.iloc[0]["y_O2"]), 6)
+
+
+def test_convert_data_can_convert_dry_gas_to_saturated_wet_basis():
+    _, nccc_2017, _ = load_case_data(nccc_dataset="2017")
+
+    inputs, _, metadata = convert_data(
+        nccc_2017,
+        run=nccc_2017.index.get_loc("1C"),
+        type="mass",
+        return_metadata=True,
+        vapor_composition_mode="dry_saturated",
+    )
+    _, vapor_flows, *_ = inputs
+    y = [flow / sum(vapor_flows) for flow in vapor_flows]
+    row = nccc_2017.loc["1C"]
+    y_h2o = vapor_pressure(row["Tv"]) / row["P"]
+
+    assert metadata["vapor_composition_mode"] == "dry_saturated"
+    assert y[0] == pytest.approx(row["y_CO2"] * (1.0 - y_h2o))
+    assert y[1] == pytest.approx(y_h2o)
+    assert y[3] == pytest.approx(row["y_O2"] * (1.0 - y_h2o))
+
+
+def test_convert_data_can_treat_reported_gas_flow_as_dry_mass():
+    _, nccc_2017, _ = load_case_data(nccc_dataset="2017")
+
+    inputs, _, metadata = convert_data(
+        nccc_2017,
+        run=nccc_2017.index.get_loc("1C"),
+        type="mass",
+        return_metadata=True,
+        vapor_composition_mode="dry_saturated",
+        gas_flow_basis="reported_dry_mass",
+    )
+    _, vapor_flows, *_ = inputs
+    row = nccc_2017.loc["1C"]
+    dry_mass = (
+        vapor_flows[0] * MWs_v[0]
+        + vapor_flows[2] * MWs_v[2]
+        + vapor_flows[3] * MWs_v[3]
+    )
+    wet_mass = dry_mass + vapor_flows[1] * MWs_v[1]
+
+    assert metadata["gas_flow_basis"] == "reported_dry_mass"
+    assert dry_mass == pytest.approx(row["G"])
+    assert wet_mass > row["G"]
+
+
+def test_convert_data_mass_inputs_preserve_loaded_lean_solvent_mass():
+    _, nccc_2017, _ = load_case_data(nccc_dataset="2017")
+
+    inputs, _, _ = convert_data(
+        nccc_2017,
+        run=nccc_2017.index.get_loc("6C"),
+        type="mass",
+        return_metadata=True,
+        vapor_composition_mode="dry_saturated",
+    )
+    liquid_flows, *_ = inputs
+    loaded_mass = (
+        liquid_flows[0] * 0.04401
+        + liquid_flows[1] * 0.06108
+        + liquid_flows[2] * 0.01802
+    )
+
+    assert loaded_mass == pytest.approx(nccc_2017.loc["6C", "L"])
 
 
 def test_gas_velocity_area_factor_is_bounded_and_reference_normalized():

@@ -28,6 +28,8 @@ outputs:
     kind: uncertainty_screen_table
   - path: results/final/tables/method_case_contrast.csv
     kind: solver_method_diagnostic_table
+  - path: results/final/tables/source_backed_1c_6c_temperature_capture_profile_metrics.csv
+    kind: source_backed_temperature_capture_profile_table
   - path: results/final/tables/epcsaft_electrolyte_option_matrix.csv
     kind: electrolyte_option_diagnostic_table
   - path: results/final/reports/epcsaft_electrolyte_option_matrix.md
@@ -54,6 +56,8 @@ outputs:
     kind: manuscript_figure
   - path: results/final/figures/method_case_solver_contrast.pdf
     kind: manuscript_figure
+  - path: results/final/figures/source_backed_1c_6c_temperature_capture_profiles
+    kind: source_backed_temperature_capture_gallery
   - path: results/final/profiles
     kind: clean_profile_gallery
   - path: results/runs/*/profiles
@@ -63,6 +67,7 @@ commands:
     - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
   render:
     - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
+    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_source_backed_temperature_capture_gallery.py
   profiles:
     - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
   case_profile:

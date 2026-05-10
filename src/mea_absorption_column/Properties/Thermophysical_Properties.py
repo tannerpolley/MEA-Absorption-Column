@@ -3,6 +3,12 @@ from numpy import log, exp
 from mea_absorption_column.config.Constants import MWs_l, MWs_v, R
 
 
+CO2_HEAT_OF_ABSORPTION_J_PER_MOL = -84000.0
+HENRY_LWM_COEFFS = (1.70981, 0.03972, -4.3e-4, -2.20377)
+CO2_MOLAR_VOLUME_COEFFS_ML_PER_MOL = (10.2074, 207.0, -563.3701)
+MEA_MOLAR_VOLUME_INTERACTION_COEFFS_ML_PER_MOL = (-2.2642, 3.0059)
+
+
 def henrys_law(T, z):
 
     Tl = T
@@ -20,7 +26,9 @@ def henrys_law(T, z):
     H_N2O_H2O = 8.449e6 * exp(-2283 / Tl)
     H_CO2_MEA = H_N2O_MEA * (H_CO2_H2O / H_N2O_H2O)
 
-    a1, a2, a3, b = -2.076073001, 0.037322205, -0.00032721, -0.111102655
+    # IDAES MEA solvent package N2O-analogy coefficients. Older Tanner
+    # parmest overrides lower H_CO2_mix and over-accelerate absorption.
+    a1, a2, a3, b = HENRY_LWM_COEFFS
     lwm = (a1 + a2 * (Tl-273.15) + a3 * (Tl-273.15) ** 2 + b * wt_H2O)
 
     Ra = lwm * wt_MEA * wt_H2O
@@ -43,8 +51,9 @@ def density(T, z, P, phase='liquid'):
 
         MWT_l = sum([x[i] * MWs_l[i] for i in range(len(x))])
 
-        a1, b1, c1 = -10.5792012186177, 192.012600751473, -695.384861676286
-        a2, b2, c2, d2, e2 = [-5.35162e-7, -4.51417e-4, 1.19451, -2.02049415703576, 3.1506793296904,]
+        a1, b1, c1 = CO2_MOLAR_VOLUME_COEFFS_ML_PER_MOL
+        a2, b2, c2 = [-5.35162e-7, -4.51417e-4, 1.19451]
+        d2, e2 = MEA_MOLAR_VOLUME_INTERACTION_COEFFS_ML_PER_MOL
         a3, b3, c3 = [-3.2484e-6, 0.00165, 0.793]
 
         V_CO2 = a1 + (b1 + c1 * x_MEA) * x_MEA
@@ -182,7 +191,7 @@ def enthalpy(T, z, phase='liquid'):
         dh_vap_MEA = 58000
         dh_vap_H2O = 49.99e3
         t = float(Tl) - 273.15
-        Hl_CO2 = -63999.8249763614
+        Hl_CO2 = CO2_HEAT_OF_ABSORPTION_J_PER_MOL
 
         coefficients = {'CO2': np.array([276370, -2090.1, 8.125, -.014116, 9.3701e-6]),
                         'MEA': np.array([2.6161, 3.706e-3, 3.787e-6, 0, 0]),

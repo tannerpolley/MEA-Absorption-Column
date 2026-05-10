@@ -57,7 +57,7 @@
                      Q_r &= K_r
                      && \left((\unit{mol\,m^{-3}})^{\sum_i\nu_{i,r}}\right)
                  \end{align}
-                is used for both reactions alongside the material and charge-balance equations derived from Akula \cite{Akula2023}.
+                is used for both reactions alongside the material and charge-balance equations derived from Akula \cite{Akula2023}. The tabulated constants are converted onto the absorber's \(\unit{mol\,m^{-3}}\) concentration basis before solving the residual equations.
 
                 \begin{align}
                     C^{\liq}_{\ce{CO2},0} &= C^{\liq}_{\ce{CO2}} + C^{\liq}_{\ce{MEAH}^{+}}
@@ -203,11 +203,17 @@
                 \paragraph{Mass Transfer Coefficients}\mbox{}\\[0.5em]
                 The liquid and vapor mass-transfer coefficients are evaluated from correlations that depend on phase density, viscosity, diffusivity, superficial velocity, packing area, void fraction, and packing-specific constants. The coefficients and constants follow regression-based packed-column correlations reported by Billet and Schultes and by Chinen and co-workers~\cite{Billet1999,Chinen2018}.
                 \begin{align}
-                    k_l &= C_L \cdot 12^{1 / 6}\left(\frac{u_L}{h_L}\right)^{1 / 2}\left(\frac{D_L}{d_h}\right)^{1 / 2} && \left(\frac{\unit{m} }{\unit{s}} \right)\\
-                    k_v &= \frac{C^{\vap}\,D^{\vap}\,RT_v}{}
+                    k_l &= C_L
+                           \left(\frac{g\rho^{\liq}}{\mu^{\liq}}\right)^{1/6}
+                           \left(\frac{1}{d_h}\right)^{1/2}
+                           \left(\frac{u^{\liq}}{a_p}\right)^{1/3}
+                           {D^{\liq}}^{1/2}
+                           && \left(\frac{\unit{m} }{\unit{s}} \right)\\
+                    k_v &= \frac{C^{\vap}}{R\,T_v}
                            \left(\frac{a_p}{d_h\,h_V}\right)^{1/2}  
                            \left(\frac{u^{\vap}}{\rho^{\vap}\,a_p\,\mu^{\vap}}\right)^{3 / 4}
-                           \left(\frac{\mu^{\vap}}{\rho^{\vap}}\,D^{\vap}\right)^{1 / 3}
+                           {D^{\vap}}^{2 / 3}
+                           \left(\frac{\mu^{\vap}}{\rho^{\vap}}\right)^{1 / 3}
                            && \left(\frac{\unit{mol} }{\unit{Pa} \cdot{m}^2 \cdot \unit{s}} \right)
                 \end{align}
 
@@ -247,10 +253,10 @@
                 \begin{align}
                     \Psi &= E \frac{k^{\liq}_{ \COtwo}}{k^{\vap}_{ \COtwo}}
                     && \left(\unit{Pa\,m^{3}\,mol^{-1}}\right)\\
-                    \Psi_H &= \eta_{\Psi}\frac{\Psi}{\Psi + H_{\COtwo, \text{mix}}}
+                    \Psi_H &= \frac{\Psi}{\Psi + H_{\COtwo, \text{mix}}}
                     && \text{dimensionless},
                 \end{align}
-                Here, $\eta_{\Psi} = 0.3$ is a fixed dimensionless lumped driving-force scale used in both the Henry-law and ePC-SAFT campaigns. It is not adjusted by case or by thermodynamic model. The value is retained from the present absorber implementation as a fixed model parameter; this benchmark compares thermodynamic closures at fixed $\eta_{\Psi}$ rather than recalibrating the transport model.
+                The routine campaign uses this expression directly in both the Henry-law and ePC-SAFT campaigns. It is not adjusted by case or by thermodynamic model, so the benchmark compares thermodynamic closures without introducing a replacement mass-transfer tuning factor.
 
             \subsubsection{Flux}
                 \paragraph{Molar Flux}\mbox{}\\[0.5em]

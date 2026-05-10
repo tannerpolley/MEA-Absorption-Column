@@ -25,7 +25,7 @@ from mea_absorption_column.misc.Get_Temperature_Enthalpy import (
     get_liquid_enthalpy, get_vapor_enthalpy, get_liquid_temperature, get_vapor_temperature
 )
 from mea_absorption_column.misc.Scaling import scaling
-from mea_absorption_column.Thermodynamics.thermo_models import epcsaft_cache_stats
+from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET, epcsaft_cache_stats
 
 np.set_printoptions(suppress=True)
 
@@ -51,6 +51,7 @@ def run_model(df,
         type=data_type,
         return_metadata=True,
         vapor_composition_mode=solver_settings_for_run.get("vapor_composition_mode", "legacy_ratio"),
+        gas_flow_basis=solver_settings_for_run.get("gas_flow_basis", "reported_total_wet"),
     )
 
     L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
@@ -204,10 +205,12 @@ def run_model(df,
         'strict_domain_guards': bool(solver_settings_for_run.get('strict_domain_guards', guard_rhs)),
         'mass_transfer_factor': float(solver_settings_for_run.get('mass_transfer_factor', 1.0)),
         'heat_transfer_factor': float(solver_settings_for_run.get('heat_transfer_factor', 1.0)),
+        'eta_psi': float(solver_settings_for_run.get('eta_psi', 1.0)),
         'thermal_state_mode': thermal_state_mode,
         'co2_flux_mode': solver_settings_for_run.get('co2_flux_mode', 'bidirectional'),
         'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
         'vapor_composition_mode': case_metadata.get('vapor_composition_mode', 'legacy_ratio'),
+        'gas_flow_basis': case_metadata.get('gas_flow_basis', 'reported_total_wet'),
         'gas_velocity_area_exponent': float(solver_settings_for_run.get('gas_velocity_area_exponent', 0.0) or 0.0),
         'gas_velocity_area_reference_m_s': solver_settings_for_run.get('gas_velocity_area_reference_m_s'),
         'gas_velocity_area_bounds': solver_settings_for_run.get('gas_velocity_area_bounds', (0.1, 3.0)),
@@ -528,6 +531,9 @@ Run #{run + 1:03d}:
             'co2_capture_guess_pct': CO2_cap_guess,
             'h2o_capture_guess_pct': H2O_cap_guess,
             'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
+            'epcsaft_dataset': str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
+            'eta_psi': float(solver_settings_for_run.get('eta_psi', 1.0)),
+            'gas_flow_basis': case_metadata.get('gas_flow_basis', 'reported_total_wet'),
             'beds': beds_count,
             'intercoolers': intercoolers_count,
             'staged_beds': bool(use_staged_beds),
@@ -584,6 +590,7 @@ Run #{run + 1:03d}:
                     "message": result["message"],
                     "runtime_s": result["runtime_s"],
                     "runtime_label": _format_runtime_label(result["runtime_s"]),
+                    "eta_psi": result["eta_psi"],
                     "intercooler_model": result["intercooler_model"],
                     "intercooler_assumption": result["intercooler_assumption"],
                     "profile_status": profile_status,

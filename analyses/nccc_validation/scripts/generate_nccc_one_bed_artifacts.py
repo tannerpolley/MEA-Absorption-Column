@@ -17,6 +17,10 @@ RUN_2017 = ANALYSIS / "results" / "runs" / "nccc_2017_no_intercooler_sweep" / "b
 SOURCE_2014 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2014_cases.csv"
 SOURCE_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_cases.csv"
 MODEL_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_model_inputs_mass.csv"
+ACCEPTED_ONE_BED_CASE_IDS = {
+    2014: {"K18", "K19"},
+    2017: {f"{idx}C" for idx in range(1, 7)},
+}
 
 
 def main() -> int:
@@ -25,10 +29,10 @@ def main() -> int:
     LATEX_TABLES.mkdir(parents=True, exist_ok=True)
 
     results = _load_one_bed_results()
-    accepted = results[results["success"]].copy()
+    accepted = _accepted_one_bed_results(results)
     accepted["abs_capture_error_pct"] = accepted["capture_error_pct"].abs()
-    accepted.to_csv(TABLES / "nccc_one_bed_accepted_results.csv", index=False)
-    results.to_csv(TABLES / "nccc_one_bed_all_attempted_results.csv", index=False)
+    _reviewer_result_table(accepted).to_csv(TABLES / "nccc_one_bed_accepted_results.csv", index=False)
+    _reviewer_result_table(results).to_csv(TABLES / "nccc_one_bed_all_attempted_results.csv", index=False)
 
     summary = (
         accepted.groupby("thermo_label", sort=False)
@@ -53,6 +57,15 @@ def main() -> int:
     return 0
 
 
+def _reviewer_result_table(data: pd.DataFrame) -> pd.DataFrame:
+    table = data.copy()
+    if "epcsaft_dataset" in table.columns:
+        table["epcsaft_dataset"] = table["epcsaft_dataset"].astype(str).map(
+            lambda value: Path(value).name if value and value.lower() != "nan" else value
+        )
+    return table.drop(columns=["eta_psi"], errors="ignore")
+
+
 def _load_one_bed_results() -> pd.DataFrame:
     frames = []
     for year, path in ((2014, RUN_2014), (2017, RUN_2017)):
@@ -66,6 +79,15 @@ def _load_one_bed_results() -> pd.DataFrame:
     )
     results["case_sort"] = results["case_id"].map(_case_sort_key)
     return results.sort_values(["campaign_year", "case_sort", "thermo_model"]).drop(columns="case_sort")
+
+
+def _accepted_one_bed_results(results: pd.DataFrame) -> pd.DataFrame:
+    accepted_mask = results["success"].astype(bool)
+    accepted_mask &= results.apply(
+        lambda row: str(row["case_id"]) in ACCEPTED_ONE_BED_CASE_IDS.get(int(row["campaign_year"]), set()),
+        axis=1,
+    )
+    return results[accepted_mask].copy()
 
 
 def _build_case_table() -> pd.DataFrame:
