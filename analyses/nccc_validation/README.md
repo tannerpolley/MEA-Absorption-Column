@@ -30,7 +30,7 @@ $env:PYTHONPATH = "src"
 | `generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and writes dense profile CSV folders. | Yes. | Required only for ePC-SAFT rows in the selected suite. |
 | `render_c_case_campaign_temperature_gallery.py` | Renders the corrected one-bed C-case temperature overlay gallery from a completed campaign-input benchmark run. | No. | No direct dependency; the source run may include ePC-SAFT rows. |
 | `probe_reactive_epcsaft_speciation.py` | Experimental reactive-speciation probe using the external ePC-SAFT package and the repo-vendored MEA dataset. | Thermodynamic probe only. | Required. Not a default validation script. |
-| `probe_epcsaft_electrolyte_options.py` | Exercises neutral, ion-only, Born, SSM, DS, and unsupported fitted-Born user-option paths and writes contribution diagnostics. | Thermodynamic probe only. | Required. Not a default validation script. |
+| `probe_epcsaft_electrolyte_options.py` | Exercises neutral, ion-only, selected classic-Born, and unsupported fitted-Born user-option paths and writes contribution diagnostics. | Thermodynamic probe only. | Required. Not a default validation script. |
 | `run_epcsaft_electrolyte_config_matrix.py` | Runs the NCCC 3C absorber case across dated and mode-coverage ePC-SAFT electrolyte user-option configurations, then exports parameter provenance tables. | Yes. | Required. Not a default validation script. |
 | `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
 
@@ -88,7 +88,7 @@ Full benchmark runs can also request these dense profile CSVs:
 Run the corrected one-bed NCCC C-case campaign table and regenerate the 1C--7C temperature overlay gallery:
 
 ```powershell
-$config = Import-Csv analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_config_user_options.csv | Where-Object { $_.config -eq "2025_Figiel_empirical_fitted_Born_SSM_DS" } | Select-Object -First 1
+$config = Import-Csv analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_config_user_options.csv | Where-Object { $_.config -eq "source_backed_linear_classic_Born" } | Select-Object -First 1
 $env:MEA_EPCSAFT_DATASET_NAME = "MEA_CO2_H2O_ionic_fit"
 $env:MEA_EPCSAFT_USER_OPTIONS_JSON = $config.user_options_json
 .\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry epcsaft_ionic --c-case-dataset campaign --c-case-ids 1C 2C 3C 4C 5C 6C 7C --nccc-case-limit 0 --srp-case-limit 0 --staged-beds false --mesh-points 51 --tol 0.5 --bc-tol 0.001 --max-nodes 1000 --subprocess-timeout-s 120 --profile-csvs --profile-pngs --output-dir analyses\nccc_validation\results\runs\c_case_campaign_temperature_gallery

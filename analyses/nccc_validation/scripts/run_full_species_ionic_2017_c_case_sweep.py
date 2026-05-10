@@ -11,7 +11,7 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CASE_IDS = ("1C", "2C", "3C", "4C", "5C", "6C", "7C")
-CONFIG_NAME = "2025_Figiel_empirical_fitted_Born_SSM_DS"
+CONFIG_NAME = "source_backed_linear_classic_Born"
 THERMO_MODEL = "epcsaft_reactive_nine_activity_rebased"
 DATASET_NAME = "MEA_CO2_H2O_ionic_fit"
 INPUT_SOURCE = REPO_ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_model_inputs_mass.csv"
@@ -124,11 +124,7 @@ def _config_row() -> pd.Series:
 
 
 def _portable_source_note(value: object) -> str:
-    text = "" if value is None else str(value)
-    return text.replace(
-        r"C:\Users\Tanner\Documents\git\ePC-SAFT\data\reference\epcsaft_parameters\2025_Figiel\user_options.json",
-        "epcsaft reference data: epcsaft_parameters/2025_Figiel/user_options.json",
-    )
+    return "" if value is None else str(value)
 
 
 def _benchmark_env(user_options_json: str) -> dict[str, str]:

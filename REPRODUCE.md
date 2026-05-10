@@ -9,7 +9,7 @@ uv sync --group test
 uv pip install /path/to/ePC-SAFT
 $env:PYTHONPATH = "src"
 $env:MEA_EPCSAFT_DATASET_NAME = "MEA_CO2_H2O_ionic_fit"
-$config = Import-Csv analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_config_user_options.csv | Where-Object { $_.config -eq "2025_Figiel_empirical_fitted_Born_SSM_DS" } | Select-Object -First 1
+$config = Import-Csv analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_config_user_options.csv | Where-Object { $_.config -eq "source_backed_linear_classic_Born" } | Select-Object -First 1
 $env:MEA_EPCSAFT_USER_OPTIONS_JSON = $config.user_options_json
 ```
 

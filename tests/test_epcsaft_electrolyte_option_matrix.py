@@ -27,10 +27,19 @@ def _requires_epcsaft():
     assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.exists()
 
 
-def _options(*, include_born=True, d_born_mode=3, ssm=True, ds=True, mu_mode="numerical"):
+def _options(
+    *,
+    include_born=True,
+    d_born_mode=0,
+    ssm=False,
+    ds=False,
+    mu_mode="analytical",
+    rel_perm_rule="linear",
+    rel_perm_mode="analytical",
+):
     return {
         "elec_model": {
-            "rel_perm": {"rule": "empirical", "differential_mode": "numerical"},
+            "rel_perm": {"rule": rel_perm_rule, "differential_mode": rel_perm_mode},
             "include_born_model": include_born,
             "born_model": {
                 "d_Born_mode": d_born_mode,
@@ -67,10 +76,43 @@ def test_neutral_path_has_no_electrolyte_contributions():
     [
         ("dataset_default", None, True),
         ("ion_only_born_disabled", _options(include_born=False), False),
-        ("classic_born_sigma_radius", _options(d_born_mode=0, ssm=False, ds=False), True),
-        ("fitted_born_ssm_only", _options(ssm=True, ds=False), True),
-        ("fitted_born_ds_only", _options(ssm=False, ds=True), True),
-        ("fitted_born_ssm_ds", _options(ssm=True, ds=True), True),
+        ("classic_born_sigma_radius", _options(), True),
+        (
+            "fitted_born_ssm_only",
+            _options(
+                d_born_mode=3,
+                ssm=True,
+                ds=False,
+                mu_mode="numerical",
+                rel_perm_rule="empirical",
+                rel_perm_mode="numerical",
+            ),
+            True,
+        ),
+        (
+            "fitted_born_ds_only",
+            _options(
+                d_born_mode=3,
+                ssm=False,
+                ds=True,
+                mu_mode="numerical",
+                rel_perm_rule="empirical",
+                rel_perm_mode="numerical",
+            ),
+            True,
+        ),
+        (
+            "fitted_born_ssm_ds",
+            _options(
+                d_born_mode=3,
+                ssm=True,
+                ds=True,
+                mu_mode="numerical",
+                rel_perm_rule="empirical",
+                rel_perm_mode="numerical",
+            ),
+            True,
+        ),
     ],
 )
 def test_electrolyte_user_option_matrix_runs_and_reports_terms(name, options, expect_born_nonzero):
@@ -121,7 +163,19 @@ def test_runtime_user_options_env_changes_ionic_fugacity_path(monkeypatch):
     clear_epcsaft_phi_cache()
     no_born = epcsaft_phi_co2(323.15, 109500.0, IONIC_X, phase="liq", mixture_kind="ionic")
 
-    monkeypatch.setenv("MEA_EPCSAFT_USER_OPTIONS_JSON", json.dumps(_options(ssm=True, ds=True)))
+    monkeypatch.setenv(
+        "MEA_EPCSAFT_USER_OPTIONS_JSON",
+        json.dumps(
+            _options(
+                d_born_mode=3,
+                ssm=True,
+                ds=True,
+                mu_mode="numerical",
+                rel_perm_rule="empirical",
+                rel_perm_mode="numerical",
+            )
+        ),
+    )
     clear_epcsaft_phi_cache()
     with_born = epcsaft_phi_co2(323.15, 109500.0, IONIC_X, phase="liq", mixture_kind="ionic")
 

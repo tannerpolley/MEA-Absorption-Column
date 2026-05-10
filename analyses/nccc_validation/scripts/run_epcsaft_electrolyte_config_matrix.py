@@ -16,6 +16,7 @@ from mea_absorption_column.Thermodynamics.thermo_models import epcsaft_state_con
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DATASET_NAME = "MEA_CO2_H2O_ionic_fit"
+SELECTED_CONFIG_NAME = "source_backed_linear_classic_Born"
 DATASET_PATH = (
     REPO_ROOT / "src" / "mea_absorption_column" / "data" / "epcsaft_datasets" / DATASET_NAME
 )
@@ -47,6 +48,24 @@ def _advanced_born_options(*, ssm=True, ds=True, mu_mode="numerical") -> dict:
                 "mu_born_model": {
                     "differential_mode": mu_mode,
                     "comp_dep_delta_d": bool(ssm or ds),
+                },
+            },
+        }
+    }
+
+
+def _linear_classic_born_options() -> dict:
+    return {
+        "elec_model": {
+            "rel_perm": {"rule": "linear", "differential_mode": "analytical"},
+            "include_born_model": True,
+            "born_model": {
+                "d_Born_mode": 0,
+                "solvation_shell_model": False,
+                "dielectric_saturation": False,
+                "mu_born_model": {
+                    "differential_mode": "analytical",
+                    "comp_dep_delta_d": False,
                 },
             },
         }
@@ -141,20 +160,17 @@ def _configurations() -> list[dict]:
             ),
         },
         {
-            "config": "2025_Figiel_empirical_fitted_Born_SSM_DS",
-            "family": "dated_preset",
-            "rel_perm_rule": "empirical",
-            "born_mode": "fitted_param",
-            "ssm": True,
-            "ds": True,
-            "mu_born_mode": "numerical",
+            "config": SELECTED_CONFIG_NAME,
+            "family": "selected",
+            "rel_perm_rule": "linear",
+            "born_mode": "classic_sigma_radius",
+            "ssm": False,
+            "ds": False,
+            "mu_born_mode": "analytical",
             "dh_variant": "default",
-            "user_options": _advanced_born_options(ssm=True, ds=True, mu_mode="numerical"),
+            "user_options": _linear_classic_born_options(),
             "expected_success": True,
-            "source_note": _preset_source(
-                "2025_Figiel",
-                "Figiel-2025-like advanced Born pattern: empirical dielectric, fitted d_Born, SSM, DS, numerical mu_born",
-            ),
+            "source_note": "Selected source-backed MEA absorber configuration: linear relative-permittivity mixing, classic Born segment-diameter radius mode, and no fitted Born-diameter dependence.",
         },
         {
             "config": "mode_relperm_combined_no_Born",
@@ -277,6 +293,10 @@ def _clean_json(value: dict) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
 
+def _repo_path(path: Path) -> str:
+    return str(path.relative_to(REPO_ROOT)).replace("\\", "/")
+
+
 def _run_benchmark(config: dict) -> dict:
     run_dir = RUN_ROOT / config["config"]
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -327,7 +347,7 @@ def _run_benchmark(config: dict) -> dict:
         "family": config["family"],
         "expected_success": config["expected_success"],
         "run_wall_s": wall_s,
-        "run_dir": str(run_dir),
+        "run_dir": _repo_path(run_dir),
         "command_returncode": completed.returncode,
     }
     result_path = run_dir / "benchmark_results.csv"
@@ -392,15 +412,19 @@ def _source_note_for_component(component: str) -> str:
     if component in {"CO2", "MEA", "H2O"}:
         return "Neutral component parameters from the repo-vendored MEA ePC-SAFT ionic-fit dataset."
     if component in {"MEAH+", "MEACOO-"}:
-        return "MEA ionic species values from the repo-vendored ionic-fit dataset; d_born is treated as the fitted Born diameter for SSM/DS runs."
-    return "Auxiliary carbonate/water ion placeholder from the repo-vendored ionic-fit dataset; d_born=3 A is used as a reasonable hydrated-ion-scale assumption."
+        return "MEA ionic species analog/estimated values from the repo-vendored ionic-fit dataset; charged-species segment number is fixed at m=1."
+    if component in {"CO3^2-", "H3O+", "OH-"}:
+        return "Source-backed carbonate/water-ion parameter value in the repo-vendored ionic-fit dataset; charged-species segment number is fixed at m=1."
+    return "Repo-vendored bicarbonate parameter value; charged-species segment number is fixed at m=1."
 
 
 def _write_pure_parameter_table() -> pd.DataFrame:
     path = DATASET_PATH / "pure" / "any_solvent.csv"
     frame = pd.read_csv(path)
+    if "d_born" in frame.columns:
+        frame = frame.drop(columns=["d_born"])
     frame.insert(0, "dataset", DATASET_NAME)
-    frame["source_path"] = str(path)
+    frame["source_path"] = _repo_path(path)
     frame["source_note"] = frame["component"].map(_source_note_for_component)
     frame.to_csv(PURE_TABLE, index=False)
     return frame
@@ -422,7 +446,7 @@ def _write_binary_parameter_table() -> pd.DataFrame:
                         "component_i": component_i,
                         "component_j": component_j,
                         "value": matrix.loc[component_i, component_j],
-                        "source_path": str(path),
+                        "source_path": _repo_path(path),
                         "source_note": "Repo-vendored MEA ePC-SAFT ionic-fit binary interaction matrix; upper triangle reported once.",
                     }
                 )
@@ -435,8 +459,8 @@ def _write_rel_perm_parameter_table() -> pd.DataFrame:
     path = DATASET_PATH / "mixed" / "rel_perm" / "parameters.csv"
     frame = pd.read_csv(path)
     frame.insert(0, "dataset", DATASET_NAME)
-    frame["source_path"] = str(path)
-    frame["source_note"] = "Relative-permittivity coefficient table used when rel_perm.rule=empirical or aqueous-organic."
+    frame["source_path"] = _repo_path(path)
+    frame["source_note"] = "Relative-permittivity coefficient table retained for non-selected diagnostic modes; the selected configuration uses linear mixing from pure-component relative-permittivity values."
     frame.to_csv(REL_PERM_TABLE, index=False)
     return frame
 
@@ -478,19 +502,19 @@ def _write_report(results: pd.DataFrame, pure: pd.DataFrame, binary: pd.DataFram
         "diagnostic_note",
     ]
     nonzero_binary = binary[pd.to_numeric(binary["value"], errors="coerce").fillna(0.0) != 0.0]
-    pure_columns = ["component", "m", "s", "e", "e_assoc", "vol_a", "z", "dielc", "d_born", "source_note"]
+    pure_columns = ["component", "m", "s", "e", "e_assoc", "vol_a", "z", "dielc", "source_note"]
     lines = [
         "# ePC-SAFT Electrolyte Column Configuration Matrix",
         "",
         "These runs use the six-species MEA absorber state with the repo-vendored `MEA_CO2_H2O_ionic_fit` ePC-SAFT dataset.",
         "The 3C C-case is intentionally small enough to keep the comparison reproducible while still running the full column solver.",
         "",
-        f"- Dataset path: `{DATASET_PATH}`",
-        f"- Run root: `{RUN_ROOT}`",
+        f"- Dataset path: `{_repo_path(DATASET_PATH)}`",
+        f"- Run root: `{_repo_path(RUN_ROOT)}`",
         f"- Successful column rows: {int(results['success'].astype(str).str.lower().eq('true').sum())}/{len(results)}",
-        f"- Primary result table: `{RESULT_TABLE}`",
-        f"- Pure parameter table: `{PURE_TABLE}`",
-        f"- Binary interaction table: `{BINARY_TABLE}`",
+        f"- Primary result table: `{_repo_path(RESULT_TABLE)}`",
+        f"- Pure parameter table: `{_repo_path(PURE_TABLE)}`",
+        f"- Binary interaction table: `{_repo_path(BINARY_TABLE)}`",
         "",
         "## Column Results",
         "",
@@ -508,8 +532,8 @@ def _write_report(results: pd.DataFrame, pure: pd.DataFrame, binary: pd.DataFram
         "",
         "## Notes",
         "",
-        "- The dated rows reproduce the ePC-SAFT package user-option patterns while holding the MEA component dataset fixed.",
-        "- The SSM+DS rows use the `MEA_CO2_H2O_ionic_fit` ion Born diameters. For auxiliary carbonate/water ions, the vendored dataset uses 3 A hydrated-ion-scale assumptions.",
+        "- The selected row uses linear relative-permittivity mixing and the classic Born radius mode while holding the MEA component dataset fixed.",
+        "- Fitted Born-diameter rows are retained only as diagnostic option-coverage rows. They are not the selected paper configuration.",
         "- The absorber itself is currently the six-species chemistry state (`CO2`, `MEA`, `H2O`, `MEAH+`, `MEACOO-`, `HCO3-`); the parameter tables still report the full nine-species dataset so the unused ionic species are auditable.",
     ]
     REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")

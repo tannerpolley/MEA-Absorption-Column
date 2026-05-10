@@ -146,7 +146,7 @@ def test_epcsaft_adapter_reports_external_source_without_modifying_it():
     assert "modified_at_utc" in fingerprint
 
 
-def test_ionic_epcsaft_dataset_enables_ssm_ds_and_dborn_parameters():
+def test_ionic_epcsaft_dataset_uses_linear_classic_born_options_and_source_backed_ions():
     assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.name == "MEA_CO2_H2O_ionic_fit"
 
     options_path = MEA_THERMODYNAMICS_EPCSAFT_DATASET / "user_options.json"
@@ -154,20 +154,29 @@ def test_ionic_epcsaft_dataset_enables_ssm_ds_and_dborn_parameters():
 
     with options_path.open("r", encoding="utf-8") as handle:
         options = json.load(handle)
+    rel_perm_options = options["elec_model"]["rel_perm"]
     born_options = options["elec_model"]["born_model"]
 
-    assert born_options["d_Born_mode"] == 3
-    assert born_options["solvation_shell_model"] is True
-    assert born_options["dielectric_saturation"] is True
-    assert born_options["mu_born_model"]["comp_dep_delta_d"] is True
+    assert rel_perm_options["rule"] == "linear"
+    assert options["elec_model"]["include_born_model"] is True
+    assert born_options["d_Born_mode"] == 0
+    assert born_options["solvation_shell_model"] is False
+    assert born_options["dielectric_saturation"] is False
+    assert born_options["mu_born_model"]["comp_dep_delta_d"] is False
 
     with pure_path.open("r", encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))
     charged_rows = [row for row in rows if abs(float(row["z"])) > 0.0]
+    by_component = {row["component"]: row for row in rows}
 
     assert charged_rows
     assert {row["component"] for row in charged_rows}.issuperset({"MEAH+", "MEACOO-", "HCO3-"})
-    assert all(float(row["d_born"]) > 0.0 for row in charged_rows)
+    assert math.isclose(float(by_component["CO3^2-"]["s"]), 2.4422)
+    assert math.isclose(float(by_component["CO3^2-"]["e"]), 249.26)
+    assert math.isclose(float(by_component["H3O+"]["s"]), 3.4654)
+    assert math.isclose(float(by_component["H3O+"]["e"]), 500.0)
+    assert math.isclose(float(by_component["OH-"]["s"]), 2.0177)
+    assert math.isclose(float(by_component["OH-"]["e"]), 650.0)
 
 
 def test_ionic_epcsaft_state_uses_ion_and_born_contribution_terms():

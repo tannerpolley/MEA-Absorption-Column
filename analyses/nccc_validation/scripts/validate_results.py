@@ -109,8 +109,8 @@ def _check_full_species_ionic_sweep() -> None:
         raise AssertionError("Full-species ionic sweep must use the nine-species activity-rebased ePC-SAFT model.")
     if set(data["epcsaft_dataset_name"].astype(str)) != {"MEA_CO2_H2O_ionic_fit"}:
         raise AssertionError("Full-species ionic sweep must use the MEA_CO2_H2O_ionic_fit parameter dataset.")
-    if set(data["epcsaft_config"].astype(str)) != {"2025_Figiel_empirical_fitted_Born_SSM_DS"}:
-        raise AssertionError("Full-species ionic sweep must use the selected 2025 Figiel ePC-SAFT configuration.")
+    if set(data["epcsaft_config"].astype(str)) != {"source_backed_linear_classic_Born"}:
+        raise AssertionError("Full-species ionic sweep must use the selected source-backed linear classic-Born ePC-SAFT configuration.")
     if not data["success"].astype(str).str.lower().eq("true").all():
         raise AssertionError("Every full-species ionic C-case row is expected to converge.")
     if data[["invalid_state_count", "guard_penalty_count", "epcsaft_chemistry_failed_count"]].sum().sum() != 0:

@@ -15,6 +15,8 @@ LATEX_TABLES = ROOT / "docs" / "latex" / "tables"
 SOURCE_2014 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2014_cases.csv"
 SOURCE_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_cases.csv"
 MODEL_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_model_inputs_mass.csv"
+RUN_2014 = ANALYSIS / "results" / "runs" / "nccc_2014_no_intercooler_sweep" / "benchmark_results.csv"
+RUN_2017 = ANALYSIS / "results" / "runs" / "nccc_2017_no_intercooler_sweep" / "benchmark_results.csv"
 
 
 def main() -> int:
@@ -38,9 +40,14 @@ def main() -> int:
 def _load_pr_backed_accepted_artifacts() -> tuple[pd.DataFrame, pd.DataFrame]:
     accepted_path = TABLES / "nccc_one_bed_accepted_results.csv"
     summary_path = TABLES / "nccc_one_bed_accepted_summary.csv"
+    if RUN_2014.exists() and RUN_2017.exists():
+        accepted, summary = _build_accepted_artifacts_from_runs()
+        accepted.to_csv(accepted_path, index=False)
+        summary.to_csv(summary_path, index=False)
+        return accepted, summary
     if not accepted_path.exists() or not summary_path.exists():
         raise FileNotFoundError(
-            "Figure 4 requires the PR-backed final accepted-row tables. "
+            "Figure 4 requires final accepted-row tables or the raw 2014/2017 sweep outputs. "
             f"Missing {accepted_path if not accepted_path.exists() else summary_path}."
         )
     accepted = pd.read_csv(accepted_path)
@@ -69,6 +76,42 @@ def _load_pr_backed_accepted_artifacts() -> tuple[pd.DataFrame, pd.DataFrame]:
     accepted = accepted.copy()
     if "abs_capture_error_pct" not in accepted.columns:
         accepted["abs_capture_error_pct"] = accepted["capture_error_pct"].abs()
+    _validate_pr_backed_accepted_artifacts(accepted, summary)
+    return accepted, summary
+
+
+def _build_accepted_artifacts_from_runs() -> tuple[pd.DataFrame, pd.DataFrame]:
+    data_2014 = pd.read_csv(RUN_2014)
+    data_2017 = pd.read_csv(RUN_2017)
+    data_2014["campaign_year"] = 2014
+    data_2017["campaign_year"] = 2017
+    data = pd.concat([data_2014, data_2017], ignore_index=True, sort=False)
+    accepted_cases = ["K18", "K19", "1C", "2C", "3C", "4C", "5C", "6C"]
+    accepted = data[
+        data["case_id"].astype(str).isin(accepted_cases)
+        & data["thermo_model"].astype(str).isin(["ideal_henry", "epcsaft_ionic"])
+    ].copy()
+    accepted["thermo_label"] = accepted["thermo_model"].map(
+        {"ideal_henry": "Henry", "epcsaft_ionic": "ePC-SAFT"}
+    )
+    if "epcsaft_dataset" in accepted.columns:
+        accepted["epcsaft_dataset"] = "MEA_CO2_H2O_ionic_fit"
+    accepted["abs_capture_error_pct"] = accepted["capture_error_pct"].abs()
+    case_order = {case_id: idx for idx, case_id in enumerate(accepted_cases)}
+    thermo_order = {"ePC-SAFT": 0, "Henry": 1}
+    accepted["_case_order"] = accepted["case_id"].map(case_order)
+    accepted["_thermo_order"] = accepted["thermo_label"].map(thermo_order)
+    accepted = accepted.sort_values(["_case_order", "_thermo_order"]).drop(columns=["_case_order", "_thermo_order"])
+    summary = (
+        accepted.groupby("thermo_label", sort=False)
+        .agg(
+            accepted_rows=("case_id", "count"),
+            capture_mae_pct=("abs_capture_error_pct", "mean"),
+            max_abs_capture_error_pct=("abs_capture_error_pct", "max"),
+            median_runtime_s=("runtime_s", "median"),
+        )
+        .reset_index()
+    )
     _validate_pr_backed_accepted_artifacts(accepted, summary)
     return accepted, summary
 
@@ -216,7 +259,8 @@ def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> Non
             group["case_label"],
             group["capture_error_pct"],
             marker=markers.get(int(year), "o"),
-            linewidth=1.7,
+            linestyle="None",
+            linewidth=0,
             markersize=5.5,
             color=colors.get(label),
             label=f"{label}, {year}",

@@ -37,10 +37,19 @@ IONIC_X = IONIC_X / IONIC_X.sum()
 NEUTRAL_X = np.array([0.02, 0.24, 0.74], dtype=float)
 
 
-def _options(*, include_born=True, d_born_mode=3, ssm=True, ds=True, mu_mode="numerical"):
+def _options(
+    *,
+    include_born=True,
+    d_born_mode=0,
+    ssm=False,
+    ds=False,
+    mu_mode="analytical",
+    rel_perm_rule="linear",
+    rel_perm_mode="analytical",
+):
     return {
         "elec_model": {
-            "rel_perm": {"rule": "empirical", "differential_mode": "numerical"},
+            "rel_perm": {"rule": rel_perm_rule, "differential_mode": rel_perm_mode},
             "include_born_model": include_born,
             "born_model": {
                 "d_Born_mode": d_born_mode,
@@ -82,35 +91,63 @@ def _matrix():
             "config": "ionic_classic_born_sigma_radius",
             "mixture_kind": "ionic",
             "composition": IONIC_X,
-            "user_options": _options(d_born_mode=0, ssm=False, ds=False),
+            "user_options": _options(),
             "expected_success": True,
         },
         {
             "config": "ionic_fitted_born_ssm_only",
             "mixture_kind": "ionic",
             "composition": IONIC_X,
-            "user_options": _options(ssm=True, ds=False),
+            "user_options": _options(
+                d_born_mode=3,
+                ssm=True,
+                ds=False,
+                mu_mode="numerical",
+                rel_perm_rule="empirical",
+                rel_perm_mode="numerical",
+            ),
             "expected_success": True,
         },
         {
             "config": "ionic_fitted_born_ds_only",
             "mixture_kind": "ionic",
             "composition": IONIC_X,
-            "user_options": _options(ssm=False, ds=True),
+            "user_options": _options(
+                d_born_mode=3,
+                ssm=False,
+                ds=True,
+                mu_mode="numerical",
+                rel_perm_rule="empirical",
+                rel_perm_mode="numerical",
+            ),
             "expected_success": True,
         },
         {
             "config": "ionic_fitted_born_ssm_ds_numerical",
             "mixture_kind": "ionic",
             "composition": IONIC_X,
-            "user_options": _options(ssm=True, ds=True, mu_mode="numerical"),
+            "user_options": _options(
+                d_born_mode=3,
+                ssm=True,
+                ds=True,
+                mu_mode="numerical",
+                rel_perm_rule="empirical",
+                rel_perm_mode="numerical",
+            ),
             "expected_success": True,
         },
         {
             "config": "ionic_fitted_born_ssm_ds_auto",
             "mixture_kind": "ionic",
             "composition": IONIC_X,
-            "user_options": _options(ssm=True, ds=True, mu_mode="auto"),
+            "user_options": _options(
+                d_born_mode=3,
+                ssm=True,
+                ds=True,
+                mu_mode="auto",
+                rel_perm_rule="empirical",
+                rel_perm_mode="numerical",
+            ),
             "expected_success": True,
         },
         {
@@ -197,7 +234,7 @@ def _write_report(frame: pd.DataFrame) -> None:
         "",
         "The neutral reference keeps both ion and Born residual Helmholtz contributions at zero.",
         "The ionic dataset path activates the ion term and, when Born is enabled with a supported radius model, activates the Born contribution as well.",
-        "The fitted Born-diameter option is intentionally guarded: it requires the SSM or DS Born path, so the fitted-without-SSM/DS row is an expected clear failure rather than a silent neutral fallback.",
+        "The dataset-default path uses linear relative-permittivity mixing and the classic Born radius mode. The fitted Born-diameter diagnostic rows are retained only as option-coverage checks; the unsupported fitted-without-SSM/DS row is an expected clear failure rather than a silent neutral fallback.",
     ]
     FINAL_REPORT.parent.mkdir(parents=True, exist_ok=True)
     FINAL_REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
