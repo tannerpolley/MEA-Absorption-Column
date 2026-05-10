@@ -59,7 +59,7 @@ def main() -> None:
             color=colors.get(label),
         )
     axes[0].axhline(0, color="0.35", linewidth=0.8)
-    axes[0].set_ylabel("Capture error (%)")
+    axes[0].set_ylabel("Capture error, predicted - measured (p.p.)")
     axes[0].set_xlabel("NCCC one-bed C case")
     axes[0].set_title("Capture validation", pad=8)
     axes[0].tick_params(axis="x", rotation=45)

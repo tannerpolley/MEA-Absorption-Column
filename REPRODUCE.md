@@ -20,10 +20,12 @@ Henry-law checks do not require the external ePC-SAFT package. ePC-SAFT validati
 These commands rebuild plot-ready tables and figures from existing committed results or already completed run folders:
 
 ```powershell
+.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_nccc_one_bed_artifacts.py
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
+docs\latex\scripts\sync_latex_figures.ps1
 ```
 
 ## Routine ePC-SAFT C-Case Campaign

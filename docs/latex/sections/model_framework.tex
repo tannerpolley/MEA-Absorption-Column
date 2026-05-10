@@ -22,7 +22,7 @@
                     & \MEA+\COtwo+\HtwoO \leftrightarrow \MEAH +\HCOthree
                     && \text{stoichiometric reaction}
                 \end{align}
-                This reaction set represents a simplification of the solution chemistry that was developed by Hilliard \cite{Hilliard2008} for typical $\COtwo$ capture process conditions where concentrations of other ions (${\text{H}_3 \text{O}}^+$,${\text{OH}}^-$,${\text{CO}_3}^{2-}$ ) are negligibly low.
+                This reaction set represents a simplification of the solution chemistry that was developed by Hilliard \cite{Hilliard2008} for typical $\COtwo$ capture process conditions where concentrations of other ions (\ce{H3O+}, \ce{OH-}, \ce{CO3^{2-}}) are negligibly low.
 
                 This reaction set gives the following stoichiometric matrix $\mathbf{\nu}_{i,r}$:
                 \begin{align}
@@ -177,7 +177,7 @@
 
             \subsubsection{Hydraulic Variables and Correlations}
                 \paragraph{Velocity}\mbox{}\\[0.5em]
-                The velocities of each phase are a simple derivation from molar flow rate and density
+                The superficial velocities of each phase are calculated from molar flow rate, column area, and molar density:
                 \begin{align}
                     u_l &= \frac{F^{\liq}_{T}}{A \,\rho^{\liq}_{ \text{mol}}}
                     && \left(\unit{m\,s^{-1}}\right)\\
@@ -186,7 +186,7 @@
                 \end{align}
 
                 \paragraph{Inter-facial Area}\mbox{}\\[0.5em]
-                The interfacial area is the area in which the transfer happens and is dependent on the density, surface tension, and a packing constant. It is found both in the final molar flux equation as well as a part of the mass transfer coefficients given by Tsai~\cite{Tsai2010}.
+                The effective interfacial area converts packed-bed geometry and liquid wetting into available transfer area per bed volume. It depends on liquid density, surface tension, superficial velocity, and packing geometry, and it enters both the molar-flux expression and the mass-transfer correlations reported by Tsai~\cite{Tsai2010}.
                 \begin{align}
                     a_e 
                     &= 1.42\,a_p\left[\frac{\rho_L}{\sigma_L}\,g^{1/3}\left(\frac{u_L}{a_p}\right)^{4/3}\right]^{0.116} && \left(\unit{m^{-1}}\right)
@@ -198,7 +198,7 @@
                     h_L &= A\left[u_L \alpha\left(\frac{\mu_L}{\rho_L}\right)^{1 / 3}\right]^{B} && \text{dimensionless}\\
                     h_V &= \epsilon - h_L && \text{dimensionless}
                 \end{align}
-                Where $A$ and $B$ are correlation parameters $\alpha$ is a parameter that combines multiple packing-specific constants
+                Here $A$ and $B$ are correlation parameters, and $\alpha$ combines packing-specific constants.
 
                 \paragraph{Mass Transfer Coefficients}\mbox{}\\[0.5em]
                 The mass transfer coefficients for vapor and liquid depend on several components such as densities, viscosities, surface tension, flow velocities, specific surface area, void fraction, and other packing-specific constants. These constants are found through regression with a large database for multiple types of packing and sizes by Billet and Chinen\cite{Billet1999, Chinen2018}.
@@ -212,7 +212,7 @@
                 \end{align}
 
                 \paragraph{Heat Transfer Coefficient}\mbox{}\\[0.5em]
-                Here is the overall heat transfer coefficient formulated by the Chilton-Colburn analogy
+                The overall heat-transfer coefficient is estimated with the Chilton--Colburn analogy:
                 \begin{align}
                     U_T = \left(\frac{(k^{\vap}_{\COtwo}\,P)^3\,{k_{t}^{\vap}}^{2}\,C^{\vap}_{p,T}}{\rho^{\vap}_{\text{mol}}\,{D^{\vap}_{\COtwo}}^2}\right)^{\frac{1}{3}}
                     && \left(\unit{J\,s^{-1}\,m^{-2}\,K^{-1}}\right)
@@ -250,7 +250,7 @@
                     \Psi_H &= \eta_{\Psi}\frac{\Psi}{\Psi + H_{\COtwo, \text{mix}}}
                     && \text{dimensionless},
                 \end{align}
-                where $\eta_{\Psi}$ is a fixed global driving-force scale used consistently across the reported benchmark cases. This scale is not adjusted case by case.
+                Here, $\eta_{\Psi} = 0.3$ is a fixed dimensionless lumped driving-force scale used in both the Henry-law and ePC-SAFT campaigns. It is not adjusted by case or by thermodynamic model.
 
             \subsubsection{Flux}
                 \paragraph{Molar Flux}\mbox{}\\[0.5em]

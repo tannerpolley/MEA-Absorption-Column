@@ -190,7 +190,7 @@ def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> Non
         )
     axes[0].axhline(0.0, color="0.35", linewidth=0.8)
     axes[0].set_xticks(range(len(order)), order, rotation=45, ha="right")
-    axes[0].set_ylabel("Capture error (%)")
+    axes[0].set_ylabel("Capture error, predicted - measured (p.p.)")
     axes[0].set_xlabel("Accepted one-bed NCCC case")
     axes[0].set_title("Accepted capture validation", pad=8)
     axes[0].grid(axis="y", alpha=0.25, linewidth=0.7)
