@@ -26,7 +26,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 - Routine summary values: ePC-SAFT mean absolute capture error 2.89 percentage points and median runtime 7.57 s; Henry-law mean absolute capture error 2.74 percentage points and median runtime 5.24 s.
 - Attempted rows: K20 rejected by mesh/domain-guard behavior; 7C rejected by accepted-row timeout.
 - Full activity-coupled path: `analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv`, all seven 2017 C rows converged under relaxed feasibility settings, mean runtime 171.102 s, mean chemistry-solve time 127.764 s, mean absolute capture error 6.595 percentage points.
-- Full-path Case 3C evidence is preserved as capture error -0.764 percentage points and runtime 139.420 s. The manuscript now cites the committed CSV and the generation script directly.
+- Full-path Case 3C evidence is preserved as capture error -0.764 percentage points and runtime 139.420 s. The manuscript reports the evidence in prose and tables without exposing internal CSV or script filenames in the body text.
 - Solver-method contrast: `analyses/nccc_validation/results/final/tables/method_case_contrast.csv`.
 
 ## Reproducibility Updates
@@ -145,7 +145,94 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ### Tag / Submission Reference
 
-- The manuscript, Data Availability, Code Availability, and report use `nce-submission-preprint-v1` as the submission reference tag.
+- The manuscript, Data Availability, Code Availability, and report use `nce-submission-preprint-v2` as the submission reference tag.
+
+## Final Submission Metadata And Figure 4 Update
+
+### Files Changed
+
+- `docs/latex/main.tex`
+- `docs/latex/sections/declaration_competing_interest.tex`
+- `docs/latex/sections/data_availability.tex`
+- `docs/latex/sections/code_availability.tex`
+- `docs/latex/sections/results.tex`
+- `docs/latex/software_references.bib`
+- `docs/latex/thumbnails/cas-email.jpeg`
+- `analyses/nccc_validation/scripts/generate_nccc_one_bed_artifacts.py`
+- `analyses/nccc_validation/results/final/figures/nccc_one_bed_thermo_benchmark.pdf`
+- `analyses/nccc_validation/results/final/figures/nccc_one_bed_thermo_benchmark.png`
+- `docs/latex/figures/nccc-one-bed-thermo-benchmark.pdf`
+- `docs/code_to_paper_traceability.md`
+
+### Author Metadata Added
+
+- Added Tanner W. Polley's ORCID identifier: `0009-0008-5957-4152`.
+- Added BYU author emails for Tanner W. Polley and John D. Hedengren.
+- Marked John D. Hedengren as corresponding author.
+- Added the CAS template email thumbnail required by the `cas-sc` front matter under `docs/latex/thumbnails/cas-email.jpeg`.
+
+### Declarations Added Or Updated
+
+- Added a CRediT Author Statement.
+- Added a Funding statement declaring no specific funding.
+- Updated the Declaration of Competing Interest.
+- Updated Data Availability to point to the project repository and `nce-submission-preprint-v2`.
+- Updated Code Availability to point to the project repository, `nce-submission-preprint-v2`, and the `epcsaft` package release.
+
+### Software Citation Update
+
+- Updated `docs/latex/software_references.bib` for the `epcsaft` software citation.
+- The citation now points to the public `ePC-SAFT` GitHub release `v1.5.0`, includes package version 1.5.0, and records commit `e4ee304721ac6670120e69ef260a596ea3c3fe9c`.
+- `docs/latex/references.bib` remained untouched because it is Zotero-owned.
+
+### Figure 4 Correction
+
+- Fixed `analyses/nccc_validation/scripts/generate_nccc_one_bed_artifacts.py` so Figure 4 reads the PR-backed final accepted-row artifacts:
+  - `analyses/nccc_validation/results/final/tables/nccc_one_bed_accepted_results.csv`
+  - `analyses/nccc_validation/results/final/tables/nccc_one_bed_accepted_summary.csv`
+- Removed the stale fallback path that could regenerate Figure 4 from old run-folder CSVs and produce the wrong K18/K19 capture-error values.
+- Added validation inside the script so Figure 4 fails if the accepted-row table is not the expected K18, K19, and 1C--6C scope with Henry and ePC-SAFT rows.
+- Regenerated Figure 4 with the PR-backed data, removed the horizontal gridlines, and moved the legend to the top middle of the left capture-validation panel.
+- Updated `docs/code_to_paper_traceability.md` so the Figure 4 script path points to `generate_nccc_one_bed_artifacts.py`.
+
+### Manuscript Prose Cleanup
+
+- Removed the abstract sentence: "K20 and 7C are retained as attempted rows and excluded from conditional accuracy statistics."
+- Removed the Section 4.4 sentence that exposed internal CSV and script filenames in manuscript prose.
+
+### Commands Run
+
+- `.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_nccc_one_bed_artifacts.py`
+- `powershell -NoProfile -ExecutionPolicy Bypass -File docs\latex\scripts\sync_latex_figures.ps1`
+- `powershell -NoProfile -ExecutionPolicy Bypass -File docs\latex\scripts\build_main.ps1`
+- `.\.venv\Scripts\python.exe docs\latex\scripts\check_main_pdf_fresh.py`
+- `.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py`
+- `git diff --check`
+- `powershell -NoProfile -ExecutionPolicy Bypass -File docs\latex\scripts\sync_to_overleaf_mirror.ps1 -WhatIf -CleanBuildFiles`
+- `powershell -NoProfile -ExecutionPolicy Bypass -File docs\latex\scripts\sync_to_overleaf_mirror.ps1 -CleanBuildFiles`
+- `powershell -NoProfile -ExecutionPolicy Bypass -File docs\latex\scripts\test_overleaf_sync.ps1`
+- `powershell -NoProfile -ExecutionPolicy Bypass -File docs\latex\scripts\test_overleaf_sync.ps1 -RequireCleanMirrorGit -VerifyRemote`
+
+### Build / Validation Results
+
+- LaTeX build passed and produced a fresh 30-page `docs/latex/builds/main.pdf`.
+- PDF freshness check passed.
+- NCCC validation artifact consistency check passed.
+- `git diff --check` passed with only line-ending normalization warnings.
+- Local and remote Overleaf sync audits passed.
+- Source repository `main` was pushed with tag `nce-submission-preprint-v2`.
+- Overleaf mirror `master` was pushed after the source repository.
+
+### PDF Visual Checks
+
+- Page 1: title, author metadata, corresponding-author marker, ORCID line, abstract, and keywords rendered correctly.
+- Page 18: Figure 4 rendered with the PR-backed data, no horizontal gridlines, and the legend at the top middle of the left capture-validation panel.
+- Page 29: CRediT, Funding, Declaration of Competing Interest, Data Availability, Code Availability, and Generative AI disclosure rendered correctly.
+
+### Metadata Pass Remaining Issues
+
+- The build still reports nonblocking LaTeX warnings: three empty-anchor warnings from CAS front matter and underfull bibliography lines in `main.bbl`.
+- These warnings do not block PDF generation, freshness validation, or Overleaf sync.
 
 ### Remaining Issues
 
