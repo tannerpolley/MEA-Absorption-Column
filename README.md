@@ -94,7 +94,7 @@ Clean temperature-profile PNGs are arranged by case and thermodynamic lane under
 
 See `analyses/README.md`, `analyses/nccc_validation/README.md`, and `analyses/nccc_validation/analysis.yaml` before adding new validation scripts or result folders.
 
-Robust-convergence diagnostics and the current verification snapshot are summarized in `docs/robust_convergence_status.md`. The benchmark CLI exposes solver settings for reproducibility:
+The benchmark CLI exposes solver settings for reproducibility:
 
 ```powershell
 uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --mesh-points 51 --tol 0.5 --bc-tol 0.001 --max-nodes 1000 --success-boundary-residual-max 1

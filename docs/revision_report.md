@@ -150,3 +150,5 @@ Implemented the submission-readiness plan around the current committed evidence 
 ### Remaining Issues
 
 - The bibliography still reports one minor underfull box in `main.bbl`. It is isolated to a reference-list line break and does not block the build.
+- A reviewer-facing repository cleanup removed local IDE/Codex metadata, captured install logs, old internal planning documents, and unreferenced packaged data artifacts. Script-wired legacy analysis outputs such as the validation-evidence registry, calibration/holdout tables, and uncertainty/error-regime figures remain tracked because pruning them cleanly requires a separate analysis-script cleanup pass.
+- The cleanup-safe tests passed after this pass (`tests/test_benchmarking.py` and `tests/test_profile_csv_export.py`), and `analyses/nccc_validation/scripts/validate_results.py` passed. `tests/test_results_architecture.py` still needs a separate test-maintenance update because it references the removed historical `results_benchmark_evidence.tex` section and expects seven primary gate rows while the current accepted gate evidence contains 1C--6C.

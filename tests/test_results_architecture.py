@@ -58,11 +58,8 @@ def test_clean_profile_generator_defaults_to_sixty_second_case_timeout():
 def test_old_docs_benchmark_gallery_is_removed():
     assert not (ROOT / "docs" / "benchmark_figures").exists()
 
-    checked_files = [
-        ROOT / "README.md",
-        ROOT / "docs" / "latex" / "main.tex",
-        ROOT / "docs" / "latex" / "sections" / "results_benchmark_evidence.tex",
-    ]
+    checked_files = [ROOT / "README.md", ROOT / "docs" / "latex" / "main.tex"]
+    checked_files.extend((ROOT / "docs" / "latex" / "sections").glob("*.tex"))
     for path in checked_files:
         text = path.read_text(encoding="utf-8")
         assert "docs/benchmark_figures" not in text
@@ -85,7 +82,8 @@ def test_primary_final_tables_use_analysis_paths_and_metadata():
 
     assert c_cases["case_id"].nunique() == 7
     assert set(c_cases["thermo_model"]) == {"ideal_henry", "epcsaft_ionic"}
-    assert gate["case_id"].nunique() == 7
+    assert set(gate["case_id"].astype(str)) == {"1C", "2C", "3C", "4C", "5C", "6C"}
+    assert set(gate["thermo_model"]) == {"epcsaft_ionic"}
     assert not gate["case_id"].astype(str).str.startswith("K").any()
     assert {"Shooting", "Collocation BVP", "Finite difference"} <= set(method_contrast["method"])
     assert c_cases["artifact"].str.startswith("analyses/nccc_validation/results/final/tables/").all()
