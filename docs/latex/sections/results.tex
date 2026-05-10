@@ -40,7 +40,7 @@
             \label{fig:nccc-one-bed-thermo-benchmark}
         \end{center}
 
-        Figure~\ref{fig:nccc-one-bed-thermo-benchmark} is the main thermodynamic comparison. Across the accepted one-bed rows, ePC-SAFT gives a capture mean absolute error of 2.89 percentage points, compared with 2.74 percentage points for Henry-law closure. Its median runtime is \SI{7.57}{s}, compared with \SI{5.24}{s} for Henry-law closure. That runtime increase is small relative to the extra fugacity-coefficient work: ePC-SAFT evaluates vapor- and liquid-side fugacity coefficients instead of using the idealized driving-force closure, while remaining fast enough for repeated benchmark runs.
+        Figure~\ref{fig:nccc-one-bed-thermo-benchmark} is the main thermodynamic comparison. Across the accepted one-bed rows, ePC-SAFT gives a capture mean absolute error of 2.89 percentage points, compared with 2.74 percentage points for Henry-law closure. Its median runtime is \SI{7.57}{s}, compared with \SI{5.24}{s} for Henry-law closure. This aggregate does not show a lower capture-error result for ePC-SAFT; it shows a comparable prediction while replacing the idealized driving-force closure with vapor- and liquid-side fugacity coefficients. The runtime increase remains small enough for repeated benchmark runs.
 
         \FloatBarrier
 
