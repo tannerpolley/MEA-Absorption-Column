@@ -6,12 +6,14 @@
 
         \input{tables/nccc_one_bed_case_scope}
 
-        The accepted one-bed ePC-SAFT validation set contains K18, K19, and 1C--6C. K20 and 7C were run with the same bounded settings, but they did not satisfy the common solver gate and are not included in the accuracy aggregate. This keeps the validation figure tied to cases that solved cleanly under the same model setting.
+        The accepted one-bed ePC-SAFT validation set contains K18, K19, and 1C--6C. K20 and 7C were run with the same bounded settings, but they did not satisfy the common solver gate and are not included in the accuracy aggregate. Table~\ref{tab:nccc-attempted-status} records that boundary so the reported validation set is not confused with the full attempted set.
+
+        \input{tables/nccc_one_bed_attempted_status}
 
         \begin{center}
             \centering
             \includegraphics[width=0.9\textwidth]{figures/case-3c-temperature-validation.png}
-            \captionof{figure}{Representative 2017 Case 3C ePC-SAFT temperature-profile validation against experimental pilot-plant taps. The model input has $\alpha = 0.25$, inlet $y_{\mathrm{CO_2}} = 0.093$, and the \SI{45.0}{\degreeCelsius} lean-inlet assumption used for the blank source temperature row.}
+            \captionof{figure}{Representative 2017 Case 3C ePC-SAFT temperature-profile validation against experimental pilot-plant taps. The model input has $\alpha = 0.25$, inlet $y_{\mathrm{CO_2}} = 0.093$, and the \SI{45.0}{\degreeCelsius} lean-inlet assumption used for the blank source temperature row. The sharp feature near normalized position 1.0 is the liquid-inlet/top boundary response.}
             \label{fig:temp_profiles}
         \end{center}
 
@@ -20,7 +22,7 @@
         \begin{center}
             \centering
             \includegraphics[width=0.82\textwidth]{figures/case-c-temperature-overlay.png}
-            \captionof{figure}{Temperature-profile overlays for accepted 2017 one-bed NCCC C cases. Markers are measured liquid-temperature taps; curves show the ePC-SAFT liquid-temperature profiles.}
+            \captionof{figure}{Temperature-profile overlays for accepted 2017 one-bed NCCC C cases. Markers are measured liquid-temperature taps; curves show the ePC-SAFT liquid-temperature profiles. The curves are used here as validation evidence for the energy-balance response, not as a thermodynamic-model comparison.}
             \label{fig:generated-temperature-profiles}
         \end{center}
 
@@ -34,7 +36,7 @@
         \begin{center}
             \centering
             \includegraphics[width=0.92\textwidth]{figures/nccc-one-bed-thermo-benchmark.pdf}
-            \captionof{figure}{Thermodynamic driving-force comparison for accepted one-bed, no-intercooler NCCC cases from the 2014 K and 2017 C campaigns. The left panel reports case-by-case capture error, and the right panel reports median runtime for accepted rows.}
+            \captionof{figure}{Thermodynamic driving-force comparison for accepted one-bed, no-intercooler NCCC cases from the 2014 K and 2017 C campaigns. The left panel reports case-by-case capture error, and the right panel reports median runtime for accepted rows. K20 and 7C are excluded because they did not satisfy the common accepted-row gate.}
             \label{fig:nccc-one-bed-thermo-benchmark}
         \end{center}
 
@@ -50,11 +52,11 @@
         \begin{center}
             \centering
             \includegraphics[width=0.78\textwidth]{figures/method-case-solver-contrast.pdf}
-            \captionof{figure}{Runtime and method comparison for representative one-bed cases. The smooth operating point demonstrates useful shooting, collocation, and finite-difference comparison runs; the NCCC 3C case identifies collocation BVP solution as the reference method for measured temperature-profile validation.}
+            \captionof{figure}{Runtime and method comparison for representative one-bed cases. The smooth operating point demonstrates that shooting can be fast on favorable profiles; the NCCC 3C case identifies collocation BVP solution as the reference method for measured temperature-profile validation. The y-axis is linear.}
             \label{fig:method-case-solver-contrast}
         \end{center}
 
-        Table~\ref{tab:method-case-contrast} and Figure~\ref{fig:method-case-solver-contrast} show why collocation is used as the reference method for the NCCC validation rows. Shooting is efficient on the smoother point, but it does not meet the NCCC 3C acceptance gate. A separate SRP-like high-L/G probe supports the favorable-case side of this result: shooting solved 20 of 25 explicit-vapor-water rows with a median model runtime of \SI{0.78}{s}, and it solved 25 of 25 rows under the older vapor-water-ratio assumption with a median model runtime of \SI{0.85}{s}. That evidence is used only as a speed and conditioning check, not as primary validation. Finite difference is informative as an algebraic discretization check, but its favorable-case capture value shows that convergence alone is not the same as physical validation. Collocation gives the most reliable accepted result for the NCCC 3C thermal-pinch case while still reporting the mesh, residual, and runtime information needed for reproduction.
+        Table~\ref{tab:method-case-contrast} and Figure~\ref{fig:method-case-solver-contrast} show why collocation is used as the reference method for the NCCC validation rows. Shooting is efficient on the smoother point, but it does not meet the NCCC 3C acceptance gate. A separate high-liquid-to-gas-ratio probe supports the favorable-case side of this result: shooting solved 20 of 25 explicit-vapor-water rows with a median model runtime of \SI{0.78}{s}, and it solved 25 of 25 rows under the older vapor-water-ratio assumption with a median model runtime of \SI{0.85}{s}. That evidence is used only as a speed and conditioning check, not as primary validation. Finite difference is informative as an algebraic discretization check, but its favorable-case capture value shows that convergence alone is not the same as physical validation. Collocation gives the most reliable accepted result for the NCCC 3C thermal-pinch case while still reporting the mesh, residual, and runtime information needed for reproduction.
 
         \FloatBarrier
 
@@ -63,11 +65,11 @@
 
         \input{tables/full_ionic_speciation_timing}
 
-        Table~\ref{tab:full-ionic-speciation-timing} gives the practical reason this full loop is not used for every routine validation row. The nine-species Case 3C row predicts $\SI{88.736}{\percent}$ capture, $-0.764$ percentage points from the measured value, but it takes \SI{139.420}{s}; \SI{102.267}{s} of that runtime is spent in the ePC-SAFT chemistry solves. Across all seven C rows, the mean runtime is \SI{171.102}{s}, and the mean chemistry-solve time is \SI{127.764}{s}. This makes the full ionic activity-speciation loop a clear feasibility result and a concrete acceleration target. For repeated one-bed simulations, the faster ePC-SAFT fugacity calculation is the right middle ground: it brings the electrolyte EOS into the absorber driving force while preserving the speed needed for solver and thermodynamic benchmarking.
+        Table~\ref{tab:full-ionic-speciation-timing} gives the practical reason this full loop is not used for every routine validation row. The full activity-coupled sweep uses relaxed feasibility settings: 7 starting mesh points, a solver tolerance of 10, a boundary-condition tolerance of 0.5, and a maximum of 80 mesh nodes. The nine-species Case 3C row predicts $\SI{88.736}{\percent}$ capture, $-0.764$ percentage points from the measured value, but it takes \SI{139.420}{s}; \SI{102.267}{s} of that runtime is spent in the ePC-SAFT chemistry solves. Across all seven C rows, the mean runtime is \SI{171.102}{s}, the mean chemistry-solve time is \SI{127.764}{s}, and the capture mean absolute error is 6.595 percentage points. This makes the full ionic activity-speciation loop a real feasibility result and a concrete acceleration target, but not the routine validation model used for the main thermodynamic comparison.
 
         \FloatBarrier
 
     \subsection{Limitations and Future Work}
-        The scope limits are collected here rather than repeated throughout the results. The absorber model is a simplified one-bed benchmark built from literature submodels for reaction enhancement, transport properties, hydraulics, and heat transfer. The primary validation set is the accepted one-bed NCCC case set from the 2014 K and 2017 C campaigns, so broader claims about multi-bed operation, plantwide optimization, or other solvents require additional data. The attempted two-bed 2017 D cases and higher-height cases did not meet the common bounded solver gate in the current branch, so they are not used as paper-facing evidence. The routine ePC-SAFT campaign changes the CO$_2$ fugacity driving force while holding the concentration-based chemistry, enhancement factor, transport correlations, and governing balances fixed. The full activity-coupled ePC-SAFT speciation loop has now been shown to converge across the seven 2017 C rows, but it is still too slow for the repeated-run role of this paper. Future work should focus on making that loop practical through caching, tabulation, continuation, or refitting activity-basis constants, and then validating it across the same campaign set. Direct eNRTL comparisons should likewise be added only when the calibration choices and timing data are reported on the same basis as the present benchmark.
+        The scope limits are collected here rather than repeated throughout the results. The absorber model is a simplified one-bed benchmark built from literature submodels for reaction enhancement, transport properties, hydraulics, and heat transfer. The primary validation set is the accepted one-bed NCCC case set from the 2014 K and 2017 C campaigns, so broader claims about multi-bed operation, plantwide optimization, or other solvents require additional data. Attempted two-bed 2017 D cases and higher-height cases did not meet the common bounded solver gate in the present evidence set, so they are not used as validation evidence. The routine ePC-SAFT campaign changes the CO$_2$ fugacity driving force while holding the concentration-based chemistry, enhancement factor, transport correlations, and governing balances fixed. The full activity-coupled ePC-SAFT speciation loop has now been shown to converge across the seven 2017 C rows, but it is still too slow for the repeated-run role of this paper and its capture accuracy is uneven across the full C set. Future work should focus on making that loop practical through caching, tabulation, continuation, or refitting activity-basis constants, and then validating it across the same campaign set. Direct eNRTL comparisons should likewise be added only when the calibration choices and timing data are reported on the same basis as the present benchmark.
 
 

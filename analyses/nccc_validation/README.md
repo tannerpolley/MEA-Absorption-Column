@@ -9,7 +9,7 @@ This analysis owns the reviewer-response validation artifacts for the MEA absorb
 - `results/final/figures/`: paper-ready SVG/PDF benchmark figures.
 - `results/final/profiles/<case_id>/<thermo_model>/`: clean temperature-profile PNGs for quick visual review.
 - `results/final/reports/`: Markdown or CSV summaries for accepted rows, fallback rows, and unresolved diagnostics.
-- `results/runs/<run_id>/profiles/<case_source>/<case_id>/<method>/<thermo_model>/`: requested dense profile CSV exports. These are the CSV replacement for the legacy `Profiles.xlsx` workbook: each old workbook sheet is written as its own CSV, with `Position`, `height_m`, `bed_id`, and `bed_position_m` coordinate columns.
+- `results/runs/<run_id>/profiles/<case_source>/<case_id>/<method>/<thermo_model>/`: requested dense profile CSV exports. These are the CSV replacement for the older `Profiles.xlsx` workbook: each old workbook sheet is written as its own CSV, with `Position`, `height_m`, `bed_id`, and `bed_position_m` coordinate columns.
 
 ## Commands
 
@@ -26,7 +26,7 @@ $env:PYTHONPATH = "src"
 | `generate_data.py` | Converts curated run/final CSVs into raw, verified, and plot-ready tables. | No. | No direct dependency; may process existing ePC-SAFT rows. |
 | `render_figures.py` | Renders final manuscript figures from final tables. | No. | No direct dependency; may plot existing ePC-SAFT rows. |
 | `collect_clean_profiles.py` | Refreshes the clean temperature-profile PNG gallery and index. | Sometimes. | Required only when rerunning or collecting `epcsaft_*` lanes. |
-| `run_case_profile.py` | Runs one case and exports dense legacy-`Profiles.xlsx`-style CSVs. | Yes. | Required for `epcsaft_ionic` and experimental reactive lanes. |
+| `run_case_profile.py` | Runs one case and exports dense `Profiles.xlsx`-style CSVs. | Yes. | Required for `epcsaft_ionic` and experimental reactive lanes. |
 | `generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and writes dense profile CSV folders. | Yes. | Required only for ePC-SAFT rows in the selected suite. |
 | `render_c_case_campaign_temperature_gallery.py` | Renders the corrected one-bed C-case temperature overlay gallery from a completed campaign-input benchmark run. | No. | No direct dependency; the source run may include ePC-SAFT rows. |
 | `probe_reactive_epcsaft_speciation.py` | Experimental reactive-speciation probe using the external ePC-SAFT package and the repo-vendored MEA dataset. | Thermodynamic probe only. | Required. Not a default validation script. |
@@ -39,7 +39,7 @@ Henry-only validation does not require the external ePC-SAFT checkout. ePC-SAFT 
 Typical ePC-SAFT diagnostic environment:
 
 ```powershell
-$env:MEA_EPCSAFT_ROOT = "C:\Users\Tanner\Documents\git\ePC-SAFT"
+$env:MEA_EPCSAFT_ROOT = "/path/to/ePC-SAFT"
 $env:MEA_EPCSAFT_DATASET_NAME = "MEA_CO2_H2O_ionic_fit"
 ```
 
@@ -95,7 +95,7 @@ $env:MEA_EPCSAFT_USER_OPTIONS_JSON = $config.user_options_json
 .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_c_case_campaign_temperature_gallery.py
 ```
 
-The campaign dataset is stored separately as `src/mea_absorption_column/data/C_cases_campaign_inputs.csv`; the legacy `C_cases_data.csv` remains available through the default `--c-case-dataset legacy` path for reproducibility.
+The campaign dataset is stored separately as `src/mea_absorption_column/data/C_cases_campaign_inputs.csv`; the older `C_cases_data.csv` remains available through the default `--c-case-dataset legacy` path for reproducibility.
 
 Run the favorable SRP-style method-comparison case across shooting, collocation BVP, and finite difference:
 

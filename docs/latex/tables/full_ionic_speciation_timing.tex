@@ -1,17 +1,17 @@
 \begin{center}
     \centering
     \small
-    \captionof{table}{Timing boundary for the full ionic activity-speciation ePC-SAFT path.}
+    \captionof{table}{Timing and accuracy boundary for the routine fugacity campaign and the full ionic activity-speciation ePC-SAFT path.}
     \label{tab:full-ionic-speciation-timing}
     \renewcommand{\arraystretch}{1.2}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}X@{}}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}X@{}}
         \toprule
-        \textbf{Path} & \textbf{Scope} & \textbf{Runtime} & \textbf{What it shows} \\
+        \textbf{Path} & \textbf{Scope} & \textbf{Accuracy} & \textbf{Runtime} & \textbf{What it shows} \\
         \midrule
-        Henry-law routine campaign & Accepted rows & Median \SI{8.62}{s} & Fast baseline driving-force calculation with concentration-based chemistry. \\
-        ePC-SAFT fugacity campaign & Accepted rows & Median \SI{9.86}{s} & Routine thermodynamic comparison using ePC-SAFT CO$_2$ fugacity coefficients with the same concentration-based chemistry. \\
-        Full nine-species activity-speciation check & Case 3C & \SI{139.420}{s} & Feasible activity-coupled ePC-SAFT chemistry and ionic fugacity loop; capture error is $-0.764$ percentage points with no domain guards. \\
-        Full nine-species activity-speciation sweep & Seven 2017 C rows & Mean \SI{171.102}{s} & All seven rows converged with zero invalid states, zero guard penalties, and chemistry residuals below $10^{-8}$; the path is feasible but too slow for routine validation sweeps. \\
+        Henry-law routine campaign & 8 accepted rows & Mean absolute capture error 3.78 percentage points & Median \SI{8.62}{s} & Fast baseline driving-force calculation with concentration-based chemistry. \\
+        ePC-SAFT fugacity campaign & 8 accepted rows & Mean absolute capture error 3.73 percentage points & Median \SI{9.86}{s} & Routine thermodynamic comparison using ePC-SAFT CO$_2$ fugacity coefficients with the same concentration-based chemistry. \\
+        Full nine-species activity-speciation check & Case 3C & Capture error $-0.764$ percentage points & \SI{139.420}{s}; \SI{102.267}{s} chemistry solve & Feasible activity-coupled ePC-SAFT chemistry and ionic fugacity loop under relaxed feasibility settings. \\
+        Full nine-species activity-speciation sweep & 7 C rows & Mean absolute capture error 6.595 percentage points; maximum absolute error 16.514 percentage points & Mean \SI{171.102}{s}; mean chemistry solve \SI{127.764}{s} & All seven rows converged with zero invalid states, zero guard penalties, and chemistry residuals below $10^{-8}$; the path is feasible but too slow for routine validation sweeps. \\
         \bottomrule
     \end{tabularx}
 \end{center}
