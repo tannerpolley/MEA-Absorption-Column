@@ -12,15 +12,9 @@ TABLES = ANALYSIS / "results" / "final" / "tables"
 FIGURES = ANALYSIS / "results" / "final" / "figures"
 LATEX_TABLES = ROOT / "docs" / "latex" / "tables"
 
-RUN_2014 = ANALYSIS / "results" / "runs" / "nccc_2014_no_intercooler_sweep" / "benchmark_results.csv"
-RUN_2017 = ANALYSIS / "results" / "runs" / "nccc_2017_no_intercooler_sweep" / "benchmark_results.csv"
 SOURCE_2014 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2014_cases.csv"
 SOURCE_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_cases.csv"
 MODEL_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_model_inputs_mass.csv"
-ACCEPTED_ONE_BED_CASE_IDS = {
-    2014: {"K18", "K19"},
-    2017: {f"{idx}C" for idx in range(1, 7)},
-}
 
 
 def main() -> int:
@@ -28,13 +22,69 @@ def main() -> int:
     FIGURES.mkdir(parents=True, exist_ok=True)
     LATEX_TABLES.mkdir(parents=True, exist_ok=True)
 
-    results = _load_one_bed_results()
-    accepted = _accepted_one_bed_results(results)
-    accepted["abs_capture_error_pct"] = accepted["capture_error_pct"].abs()
-    _reviewer_result_table(accepted).to_csv(TABLES / "nccc_one_bed_accepted_results.csv", index=False)
-    _reviewer_result_table(results).to_csv(TABLES / "nccc_one_bed_all_attempted_results.csv", index=False)
+    accepted, summary = _load_pr_backed_accepted_artifacts()
 
-    summary = (
+    case_table = _build_case_table()
+    case_table.to_csv(TABLES / "nccc_one_bed_case_scope.csv", index=False)
+    _write_latex_case_table(case_table)
+    _plot_accepted_results(accepted, summary)
+
+    print(f"Read {TABLES / 'nccc_one_bed_accepted_results.csv'}")
+    print(f"Wrote {TABLES / 'nccc_one_bed_case_scope.csv'}")
+    print(f"Wrote {FIGURES / 'nccc_one_bed_thermo_benchmark.pdf'}")
+    return 0
+
+
+def _load_pr_backed_accepted_artifacts() -> tuple[pd.DataFrame, pd.DataFrame]:
+    accepted_path = TABLES / "nccc_one_bed_accepted_results.csv"
+    summary_path = TABLES / "nccc_one_bed_accepted_summary.csv"
+    if not accepted_path.exists() or not summary_path.exists():
+        raise FileNotFoundError(
+            "Figure 4 requires the PR-backed final accepted-row tables. "
+            f"Missing {accepted_path if not accepted_path.exists() else summary_path}."
+        )
+    accepted = pd.read_csv(accepted_path)
+    summary = pd.read_csv(summary_path)
+    required_accepted = {
+        "case_id",
+        "campaign_year",
+        "thermo_label",
+        "capture_error_pct",
+        "runtime_s",
+    }
+    required_summary = {
+        "thermo_label",
+        "accepted_rows",
+        "capture_mae_pct",
+        "max_abs_capture_error_pct",
+        "median_runtime_s",
+    }
+    if not required_accepted.issubset(accepted.columns) or not required_summary.issubset(summary.columns):
+        missing_accepted = sorted(required_accepted - set(accepted.columns))
+        missing_summary = sorted(required_summary - set(summary.columns))
+        raise ValueError(
+            "Final accepted-row artifacts are missing required columns: "
+            f"accepted={missing_accepted}, summary={missing_summary}"
+        )
+    accepted = accepted.copy()
+    if "abs_capture_error_pct" not in accepted.columns:
+        accepted["abs_capture_error_pct"] = accepted["capture_error_pct"].abs()
+    _validate_pr_backed_accepted_artifacts(accepted, summary)
+    return accepted, summary
+
+
+def _validate_pr_backed_accepted_artifacts(accepted: pd.DataFrame, summary: pd.DataFrame) -> None:
+    expected_cases = {"K18", "K19", "1C", "2C", "3C", "4C", "5C", "6C"}
+    expected_labels = {"Henry", "ePC-SAFT"}
+    actual_cases = set(accepted["case_id"].astype(str))
+    actual_labels = set(accepted["thermo_label"].astype(str))
+    if actual_cases != expected_cases or actual_labels != expected_labels or len(accepted) != 16:
+        raise ValueError(
+            "Final accepted-row table does not match the PR-backed Figure 4 scope: "
+            f"cases={sorted(actual_cases)}, labels={sorted(actual_labels)}, rows={len(accepted)}"
+        )
+
+    computed = (
         accepted.groupby("thermo_label", sort=False)
         .agg(
             accepted_rows=("case_id", "count"),
@@ -44,50 +94,11 @@ def main() -> int:
         )
         .reset_index()
     )
-    summary.to_csv(TABLES / "nccc_one_bed_accepted_summary.csv", index=False)
-
-    case_table = _build_case_table()
-    case_table.to_csv(TABLES / "nccc_one_bed_case_scope.csv", index=False)
-    _write_latex_case_table(case_table)
-    _plot_accepted_results(accepted, summary)
-
-    print(f"Wrote {TABLES / 'nccc_one_bed_accepted_results.csv'}")
-    print(f"Wrote {TABLES / 'nccc_one_bed_case_scope.csv'}")
-    print(f"Wrote {FIGURES / 'nccc_one_bed_thermo_benchmark.pdf'}")
-    return 0
-
-
-def _reviewer_result_table(data: pd.DataFrame) -> pd.DataFrame:
-    table = data.copy()
-    if "epcsaft_dataset" in table.columns:
-        table["epcsaft_dataset"] = table["epcsaft_dataset"].astype(str).map(
-            lambda value: Path(value).name if value and value.lower() != "nan" else value
-        )
-    return table.drop(columns=["eta_psi"], errors="ignore")
-
-
-def _load_one_bed_results() -> pd.DataFrame:
-    frames = []
-    for year, path in ((2014, RUN_2014), (2017, RUN_2017)):
-        data = pd.read_csv(path)
-        data["campaign_year"] = year
-        frames.append(data)
-    results = pd.concat(frames, ignore_index=True)
-    results = results[(results["beds"].eq(1)) & (results["intercoolers"].eq(0))].copy()
-    results["thermo_label"] = results["thermo_model"].map(
-        {"ideal_henry": "Henry", "epcsaft_ionic": "ePC-SAFT"}
-    )
-    results["case_sort"] = results["case_id"].map(_case_sort_key)
-    return results.sort_values(["campaign_year", "case_sort", "thermo_model"]).drop(columns="case_sort")
-
-
-def _accepted_one_bed_results(results: pd.DataFrame) -> pd.DataFrame:
-    accepted_mask = results["success"].astype(bool)
-    accepted_mask &= results.apply(
-        lambda row: str(row["case_id"]) in ACCEPTED_ONE_BED_CASE_IDS.get(int(row["campaign_year"]), set()),
-        axis=1,
-    )
-    return results[accepted_mask].copy()
+    merged = summary.merge(computed, on="thermo_label", suffixes=("_file", "_computed"), validate="one_to_one")
+    for column in ("accepted_rows", "capture_mae_pct", "max_abs_capture_error_pct", "median_runtime_s"):
+        delta = (merged[f"{column}_file"] - merged[f"{column}_computed"]).abs().max()
+        if delta > 1e-9:
+            raise ValueError(f"Final accepted-row summary disagrees with accepted results for {column}.")
 
 
 def _build_case_table() -> pd.DataFrame:
@@ -215,7 +226,7 @@ def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> Non
     axes[0].set_ylabel("Capture error, predicted - measured (p.p.)")
     axes[0].set_xlabel("Accepted one-bed NCCC case")
     axes[0].set_title("Accepted capture validation", pad=8)
-    axes[0].grid(axis="y", alpha=0.25, linewidth=0.7)
+    axes[0].grid(False)
 
     axes[1].bar(
         summary["thermo_label"],
@@ -225,9 +236,14 @@ def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> Non
     )
     axes[1].set_ylabel("Median runtime (s)")
     axes[1].set_title("Accepted-row runtime", pad=8)
-    axes[1].grid(axis="y", alpha=0.22, linewidth=0.7)
+    axes[1].grid(False)
 
-    axes[0].legend(loc="upper left", fontsize=7.0, frameon=False)
+    axes[0].legend(
+        loc="upper center",
+        ncol=2,
+        fontsize=7.0,
+        frameon=False,
+    )
     fig.savefig(FIGURES / "nccc_one_bed_thermo_benchmark.pdf", bbox_inches="tight")
     fig.savefig(FIGURES / "nccc_one_bed_thermo_benchmark.png", bbox_inches="tight", dpi=220)
     plt.close(fig)

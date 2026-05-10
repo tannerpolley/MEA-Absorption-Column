@@ -39,8 +39,6 @@
 
 \usepackage{color}
 \usepackage{siunitx}
-% Suppress the empty CAS ORCID footer until final author metadata is added.
-\RenewDocumentCommand \printorcid { } { }
 
 \begin{document}
 
@@ -54,16 +52,26 @@
     \title[mode = title]{A Reproducible MEA Absorber Benchmark for ePC-SAFT \texorpdfstring{CO$_2$}{CO2} Fugacity Driving Forces}
 
     % Article type for Editorial Manager: Original Research Article.
-    \author{Tanner W. Polley}
-    \author{John D. Hedengren}
+    \author[1]{Tanner W. Polley}[orcid=0009-0008-5957-4152]
+    \ead{tpolley3@byu.edu}
 
-    % Email id of the first author
-    % \ead{tannerwpolley@gmail.com}
-    % TODO_AUTHOR: Confirm affiliations, corresponding-author designation, e-mail, and ORCID identifiers before submission.
+    \author[1]{John D. Hedengren}
+    \cormark[1]
+    \ead{john_hedengren@byu.edu}
+
+    \affiliation[1]{
+        organization={Department of Chemical Engineering, Brigham Young University},
+        city={Provo},
+        state={UT},
+        postcode={84602},
+        country={United States}
+    }
+
+    \cortext[cor1]{Corresponding author.}
 
     % Here goes the abstract
     \begin{abstract}
-        Post-combustion carbon dioxide (CO$_2$) capture with aqueous monoethanolamine (MEA) is a mature rate-based separation, but absorber benchmarks often change thermodynamics, solver formulation, and validation scope at the same time. This work uses one steady-state packed-column model to compare boundary-value problem (BVP) solvers and CO$_2$ fugacity closures while holding chemical equilibrium, reaction enhancement, transport correlations, hydraulics, and material and energy balances fixed. The routine thermodynamic campaign replaces the Henry-law CO$_2$ closure with a liquid-side ionic electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) fugacity calculation while retaining concentration-based chemical equilibrium with unit activity coefficients. Eight of ten evaluated one-bed National Carbon Capture Center (NCCC) rows satisfied the common solver-acceptance gate; K20 and 7C are retained as attempted rows and excluded from conditional accuracy statistics. For accepted rows, ePC-SAFT gave a capture mean absolute error of 2.89 percentage points, compared with 2.74 percentage points for Henry-law closure, while median runtime increased from 5.24 s to 7.57 s. Collocation produced the most reliable accepted NCCC solutions; shooting remained faster on smoother high-liquid-to-gas-ratio probes. A separate nine-species activity-coupled ePC-SAFT chemistry-and-fugacity path converged for all seven 2017 C rows under relaxed settings, with capture mean absolute error of 6.595 percentage points and mean runtime of 171.102 s. The benchmark separates solver conditioning from fugacity-closure effects and reports attempted cases, residuals, runtime, and validation error for reproducible absorber-model comparison.
+        Post-combustion carbon dioxide (CO$_2$) capture with aqueous monoethanolamine (MEA) is a mature rate-based separation, but absorber benchmarks often change thermodynamics, solver formulation, and validation scope at the same time. This work uses one steady-state packed-column model to compare boundary-value problem (BVP) solvers and CO$_2$ fugacity closures while holding chemical equilibrium, reaction enhancement, transport correlations, hydraulics, and material and energy balances fixed. The routine thermodynamic campaign replaces the Henry-law CO$_2$ closure with a liquid-side ionic electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) fugacity calculation while retaining concentration-based chemical equilibrium with unit activity coefficients. For accepted rows, ePC-SAFT gave a capture mean absolute error of 2.89 percentage points, compared with 2.74 percentage points for Henry-law closure, while median runtime increased from 5.24 s to 7.57 s. Collocation produced the most reliable accepted NCCC solutions; shooting remained faster on smoother high-liquid-to-gas-ratio probes. A separate nine-species activity-coupled ePC-SAFT chemistry-and-fugacity path converged for all seven 2017 C rows under relaxed settings, with capture mean absolute error of 6.595 percentage points and mean runtime of 171.102 s. The benchmark separates solver conditioning from fugacity-closure effects and reports attempted cases, residuals, runtime, and validation error for reproducible absorber-model comparison.
     \end{abstract}
 
     \begin{keywords}
