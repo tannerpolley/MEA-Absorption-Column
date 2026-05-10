@@ -190,10 +190,11 @@ def chemical_equilibrium(Fl, Tl):
     # a1, b1, c1, d1 = 234.3, -1204.1, -36.9, -.008
     # a2, b2, c2, d2 = 176.72, -1582.5, -29.2, 0.013
 
-    # Compute log(K) values
+    # The legacy constants are tabulated on a kmol/m3-compatible concentration basis.
+    # The absorber state uses mol/m3, so reactions with sum(nu) = -1 need K/1000.
     log_K1 = a1 + b1 / Tl + c1 * np.log(Tl) + d1 * Tl
     log_K2 = a2 + b2 / Tl + c2 * np.log(Tl) + d2 * Tl
-    log_K = np.array([log_K1, log_K2]) # K_i values
+    log_K = np.array([log_K1, log_K2]) - np.log(1000.0) # K_i values
 
     v_ij = np.array([[-1, -2, 0, 1, 1, 0], [-1, -1, -1, 1, 0, 1]])
 

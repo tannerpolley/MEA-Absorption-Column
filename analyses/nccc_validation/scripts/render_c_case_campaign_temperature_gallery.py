@@ -19,6 +19,7 @@ CASE_INPUTS = ROOT / "src" / "mea_absorption_column" / "data" / "C_cases_campaig
 
 
 THERMO_MODEL = "epcsaft_ionic"
+ACCEPTED_2017_CASE_IDS = tuple(f"{idx}C" for idx in range(1, 7))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -34,7 +35,7 @@ def main(argv: list[str] | None = None) -> int:
     metrics = []
     plot_paths = []
 
-    for case_id in [f"{idx}C" for idx in range(1, 8)]:
+    for case_id in ACCEPTED_2017_CASE_IDS:
         plot_path, case_metrics = _plot_case(case_id, case_data, results, run_dir, figure_dir)
         if plot_path is not None:
             plot_paths.append(plot_path)

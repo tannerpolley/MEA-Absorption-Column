@@ -1,10 +1,27 @@
 import numpy as np
 from numpy import log, exp
-from ..config.Constants import R
+from ..config.Constants import R, g
 from .domain_guards import require_positive
 
 
-def mass_transfer_coeff(h_L, h_V, rho_mass_v, muv_mix, Dl_CO2, Dv_CO2, Dv_H2O, Dv_T, A, Tv, ul, uv, packing, diagnostics=None):
+def mass_transfer_coeff(
+    h_L,
+    h_V,
+    rho_mass_l,
+    rho_mass_v,
+    mul_mix,
+    muv_mix,
+    Dl_CO2,
+    Dv_CO2,
+    Dv_H2O,
+    Dv_T,
+    A,
+    Tv,
+    ul,
+    uv,
+    packing,
+    diagnostics=None,
+):
 
     a_p, ϵ, Clp, Cvp, Cs, Cp_0, Ch = packing
     require_positive(
@@ -12,7 +29,9 @@ def mass_transfer_coeff(h_L, h_V, rho_mass_v, muv_mix, Dl_CO2, Dv_CO2, Dv_H2O, D
         diagnostics,
         h_L=h_L,
         h_V=h_V,
+        rho_mass_l=rho_mass_l,
         rho_mass_v=rho_mass_v,
+        mul_mix=mul_mix,
         muv_mix=muv_mix,
         Dl_CO2=Dl_CO2,
         Dv_CO2=Dv_CO2,
@@ -32,12 +51,18 @@ def mass_transfer_coeff(h_L, h_V, rho_mass_v, muv_mix, Dl_CO2, Dv_CO2, Dv_H2O, D
     Lp = A * a_p / ϵ
 
     def f_kl(Dl):
-        kl = Clp * (12 ** (1 / 6)) * ((ul / h_L) ** .5) * ((Dl / d_h) ** .5)  # m/s
+        kl = (
+            Clp
+            * (g * rho_mass_l / mul_mix) ** (1 / 6)
+            * (1 / d_h) ** 0.5
+            * (ul / a_p) ** (1 / 3)
+            * Dl ** 0.5
+        )  # m/s
         return kl
 
     def f_kv(Dv):
         kv = Cvp / R / Tv * np.sqrt(a_p / d_h / h_V) * Dv ** (2 / 3) * (muv_mix / rho_mass_v) ** (1 / 3) * (
-                uv * rho_mass_v / a_p / muv_mix) ** (3 / 4)  # m/s
+                uv * rho_mass_v / a_p / muv_mix) ** (3 / 4)  # mol/(m2 s Pa)
         return kv
 
     kl_CO2 = f_kl(Dl_CO2)

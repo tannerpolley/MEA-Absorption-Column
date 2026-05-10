@@ -30,6 +30,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     heat_transfer_factor = float(model_options.get('heat_transfer_factor', 1.0))
     thermal_state_mode = model_options.get('thermal_state_mode', 'enthalpy')
     co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
+    eta_psi = float(model_options.get('eta_psi', 1.0))
     epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
     chemical_equilibrium_model = model_options.get('chemical_equilibrium_model', 'legacy')
     gas_velocity_area_exponent = float(model_options.get('gas_velocity_area_exponent', 0.0) or 0.0)
@@ -214,8 +215,24 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region -- Transfer Coefficients
     # region --- Mass Transfer Coefficients
 
-    kl_CO2, kv_CO2, kv_H2O, kv_T, const = mass_transfer_coeff(h_L, h_V, rho_mass_v, muv_mix, Dl_CO2, Dv_CO2, Dv_H2O,
-                                                              Dv_T, A, Tv, ul, uv, packing, diagnostics=solver_diagnostics)
+    kl_CO2, kv_CO2, kv_H2O, kv_T, const = mass_transfer_coeff(
+        h_L,
+        h_V,
+        rho_mass_l,
+        rho_mass_v,
+        mul_mix,
+        muv_mix,
+        Dl_CO2,
+        Dv_CO2,
+        Dv_H2O,
+        Dv_T,
+        A,
+        Tv,
+        ul,
+        uv,
+        packing,
+        diagnostics=solver_diagnostics,
+    )
     # endregion
 
     # region --- Heat Transfer Coefficient
@@ -232,7 +249,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region -- Enhancement Factor
 
     E, Psi, Psi_H, enhance_factor = enhancement_factor(Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
-                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='implicit', diagnostics=solver_diagnostics)
+                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit',
+                                                       diagnostics=solver_diagnostics, eta_psi=eta_psi)
 
     # endregion
 
@@ -326,7 +344,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         Cv_CO2, Cv_H2O, Cv_N2, Cv_O2 = Cv
         DF_CO2, H_CO2_mix = CO2
         DF_H2O, Psat_H2O = H2O
-        k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi_H, Psi = enhance_factor
+        k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi_H, Psi, eta_psi = enhance_factor
         Cpl_CO2, Cpl_MEA, Cpl_H2O = Cpl
         Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2 = Cpv
         V_l, V_CO2, V_MEA, V_H2O = volume
@@ -349,7 +367,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
             'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv_T, Fv_T, Hvf, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, dHvf_dz, dTv_dz, dHv_dT],
             'CO2': [Nl_CO2, Nv_CO2, kv_CO2, a_eA, DF_CO2, fv_CO2, fl_CO2, Psi, H_CO2_mix],
             'H2O': [Nl_H2O, Nv_H2O, kv_H2O, a_eA, DF_H2O, fv_H2O, fl_H2O, Psat_H2O],
-            'enhance_factor': [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi, Psi_H],
+            'enhance_factor': [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi, Psi_H, eta_psi],
             'transport': [kl_CO2, kv_CO2, kv_H2O, ul, uv, h_L, h_V, a_e, UT, P,
                           Clp, Cvp, eps, a_p, A, Lp, d_h],
             'Prop_l': [rho_mol_l, rho_mass_l, V_l, V_CO2, V_MEA, V_H2O, mul_mix, sigma, Dl_CO2, Dl_MEA,
@@ -371,6 +389,26 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                                 key_list.append(k2)
                                 continue
                 keys_dict[k] = key_list
+            keys_dict['enhance_factor'] = ['k2', 'Cl_MEA_true', 'Dl_CO2', 'kl_CO2', 'Ha', 'E', 'Psi', 'Psi_H', 'eta_psi']
+            keys_dict['transport'] = [
+                'kl_CO2',
+                'kv_CO2',
+                'kv_H2O',
+                'ul',
+                'uv',
+                'h_L',
+                'h_V',
+                'a_e',
+                'UT',
+                'P',
+                'Clp',
+                'Cvp',
+                'eps',
+                'a_p',
+                'A',
+                'Lp',
+                'd_h',
+            ]
         else:
             keys_dict = None
         return output_dict, keys_dict

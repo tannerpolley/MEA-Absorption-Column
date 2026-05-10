@@ -43,11 +43,14 @@ BENCHMARK_COLUMNS = [
     "co2_capture_guess_pct",
     "h2o_capture_guess_pct",
     "epcsaft_fugacity_blend",
+    "epcsaft_dataset",
+    "eta_psi",
     "mass_transfer_factor",
     "heat_transfer_factor",
     "intercooler_strength",
     "co2_flux_mode",
     "vapor_composition_mode",
+    "gas_flow_basis",
     "gas_velocity_area_exponent",
     "gas_velocity_area_reference_m_s",
     "co2_vapor_upper_factor",
@@ -211,6 +214,8 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
     start = time.time()
     try:
         solver_settings = dict(settings.solver_settings or {})
+        if "vapor_composition_mode" not in solver_settings and case_source == "NCCC_2017_cases":
+            solver_settings["vapor_composition_mode"] = "dry_saturated"
         capture_guesses = tuple(solver_settings.pop("multistart_capture_guesses", ()) or ())
         mass_factors = tuple(solver_settings.pop("multistart_mass_transfer_factors", ()) or ())
         intercooler_strengths = tuple(solver_settings.pop("multistart_intercooler_strengths", ()) or ())
@@ -612,11 +617,13 @@ def _annotate_solver_settings(result, solver_settings):
         "co2_capture_guess_pct",
         "h2o_capture_guess_pct",
         "epcsaft_fugacity_blend",
+        "eta_psi",
         "mass_transfer_factor",
         "heat_transfer_factor",
         "intercooler_strength",
         "co2_flux_mode",
         "vapor_composition_mode",
+        "gas_flow_basis",
         "gas_velocity_area_exponent",
         "gas_velocity_area_reference_m_s",
         "co2_vapor_upper_factor",
@@ -678,11 +685,13 @@ def _failure_metadata(df, run, method, staged_beds):
         "co2_capture_guess_pct": None,
         "h2o_capture_guess_pct": None,
         "epcsaft_fugacity_blend": None,
+        "eta_psi": None,
         "mass_transfer_factor": None,
         "heat_transfer_factor": None,
         "intercooler_strength": None,
         "co2_flux_mode": None,
         "vapor_composition_mode": None,
+        "gas_flow_basis": None,
         "gas_velocity_area_exponent": None,
         "gas_velocity_area_reference_m_s": None,
         "co2_vapor_upper_factor": None,
@@ -790,7 +799,8 @@ def parse_args(argv=None):
     parser.add_argument("--transform-mode", default=None)
     parser.add_argument("--thermal-state-mode", choices=["enthalpy", "temperature"], default=None)
     parser.add_argument("--co2-flux-mode", choices=["bidirectional", "absorption_only"], default=None)
-    parser.add_argument("--vapor-composition-mode", choices=["legacy_ratio", "input_o2"], default=None)
+    parser.add_argument("--vapor-composition-mode", choices=["legacy_ratio", "input_o2", "dry_saturated"], default=None)
+    parser.add_argument("--gas-flow-basis", choices=["reported_total_wet", "reported_dry_mass"], default=None)
     parser.add_argument("--gas-velocity-area-exponent", type=float, default=None)
     parser.add_argument("--gas-velocity-area-reference-m-s", type=float, default=None)
     parser.add_argument("--co2-vapor-upper-factor", type=float, default=None)
@@ -799,6 +809,7 @@ def parse_args(argv=None):
     parser.add_argument("--co2-capture-guess-pct", type=float, default=None)
     parser.add_argument("--h2o-capture-guess-pct", type=float, default=None)
     parser.add_argument("--epcsaft-fugacity-blend", type=float, default=None)
+    parser.add_argument("--eta-psi", type=float, default=None)
     parser.add_argument("--chemical-equilibrium-model", default=None)
     parser.add_argument("--mass-transfer-factor", type=float, default=None)
     parser.add_argument("--heat-transfer-factor", type=float, default=None)
@@ -878,6 +889,8 @@ def _solver_settings_from_args(args):
         settings["co2_flux_mode"] = args.co2_flux_mode
     if args.vapor_composition_mode is not None:
         settings["vapor_composition_mode"] = args.vapor_composition_mode
+    if args.gas_flow_basis is not None:
+        settings["gas_flow_basis"] = args.gas_flow_basis
     if args.gas_velocity_area_exponent is not None:
         settings["gas_velocity_area_exponent"] = args.gas_velocity_area_exponent
     if args.gas_velocity_area_reference_m_s is not None:
@@ -896,6 +909,8 @@ def _solver_settings_from_args(args):
         settings["h2o_capture_guess_pct"] = args.h2o_capture_guess_pct
     if args.epcsaft_fugacity_blend is not None:
         settings["epcsaft_fugacity_blend"] = args.epcsaft_fugacity_blend
+    if args.eta_psi is not None:
+        settings["eta_psi"] = args.eta_psi
     if args.chemical_equilibrium_model is not None:
         settings["chemical_equilibrium_model"] = args.chemical_equilibrium_model
     if args.mass_transfer_factor is not None:
@@ -1059,11 +1074,13 @@ def _write_profile_rerun_files(profile_dir: Path, metadata: dict, output_dir: Pa
         "co2_capture_guess_pct",
         "h2o_capture_guess_pct",
         "epcsaft_fugacity_blend",
+        "eta_psi",
         "mass_transfer_factor",
         "heat_transfer_factor",
         "intercooler_strength",
         "co2_flux_mode",
         "vapor_composition_mode",
+        "gas_flow_basis",
         "gas_velocity_area_exponent",
         "gas_velocity_area_reference_m_s",
         "co2_vapor_upper_factor",
