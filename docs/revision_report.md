@@ -39,7 +39,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ## Context / Voice / Metadata Sweep
 
-- Confirmed submission-facing LaTeX sources have no remaining `AUTHOR VERIFY`, `right middle ground`, `middle ground`, `strongest proof`, `paper-facing`, `current branch`, `paramount`, or `Capture error (%)` hits.
+- Confirmed submission-facing LaTeX sources have no remaining hits for the targeted stale-language and metadata terms from the plan.
 - Replaced informal or internal phrases across the manuscript and active workflow docs, including branch-local wording and vague claims about model positioning.
 - Removed SRP-style language from the manuscript narrative and described the evidence as a high-liquid-to-gas-ratio probe.
 - Kept process-level framing around mass transfer, solver conditioning, local driving force, validation scope, runtime, and reproducibility.
