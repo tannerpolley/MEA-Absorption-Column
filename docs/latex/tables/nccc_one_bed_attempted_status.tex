@@ -1,0 +1,18 @@
+\begin{center}
+    \centering
+    \small
+    \captionof{table}{Attempted one-bed NCCC validation status under the common accepted-row gate.}
+    \label{tab:nccc-attempted-status}
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabularx}{\textwidth}{@{}ll>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}X@{}}
+        \toprule
+        \textbf{Year} & \textbf{Case} & \textbf{Gate status} & \textbf{Thermo rows} & \textbf{Reason or note} \\
+        \midrule
+        2014 & K18 & Accepted & Henry and ePC-SAFT & Both rows converged under the common collocation gate. \\
+        2014 & K19 & Accepted & Henry and ePC-SAFT & Both rows converged; both recorded 108 invalid-state and guard-penalty events. \\
+        2014 & K20 & Rejected & Henry and ePC-SAFT & Maximum mesh-node limit exceeded with hydraulics and pressure-drop guard activity; excluded from aggregate accuracy metrics. \\
+        2017 & 1C--6C & Accepted & Henry and ePC-SAFT & All six rows converged under the common collocation gate. \\
+        2017 & 7C & Rejected & Henry and ePC-SAFT & Accepted-row attempt exceeded the \SI{90}{s} subprocess timeout; retained as attempted-run evidence only. \\
+        \bottomrule
+    \end{tabularx}
+\end{center}

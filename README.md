@@ -31,7 +31,7 @@ For a handoff map that tells another Codex agent which scripts run the absorber,
 
 This repo is now `uv`-first for reproducible reviewer-response benchmarks.
 
-The sibling LaTeX manuscript checkout lives at `C:\Users\Tanner\Documents\git\LaTeX-Projects\MEA-Absorption-Column-LaTeX` and is connected to the Overleaf Git remote.
+The Overleaf mirror is a separate Git checkout configured locally. The source of truth remains `docs\latex`; mirror paths are intentionally machine-local and should not be committed.
 
 The manuscript source lives in `docs\latex`. To refresh the flat Overleaf mirror checkout after manuscript or figure updates, run:
 
@@ -53,17 +53,17 @@ Set up the project-local Python environment once from the repository root:
 
 ```powershell
 uv sync --group test
-uv pip install 'C:\Users\Tanner\Documents\git\ePC-SAFT'
+uv pip install /path/to/ePC-SAFT
 ```
 
-The local environment lives at `.venv/` and is ignored by Git. The ePC-SAFT install is optional for Henry-only validation, but it is required before running `epcsaft_neutral`, `epcsaft_ionic`, or experimental reactive diagnostics. Use the project-local interpreter directly for normal checks:
+The local environment lives at `.venv/` and is ignored by Git. The ePC-SAFT install is optional for Henry-only validation, but it is required before running `epcsaft_ionic` or experimental reactive diagnostics. Use the project-local interpreter directly for normal checks:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
 .\.venv\Scripts\python.exe -m mea_absorption_column.benchmark --methods single scipy-bvp --thermo-models ideal_henry
 ```
 
-Benchmark CSV and Markdown outputs are written to `analyses/nccc_validation/results/runs/benchmark` by default. Run-specific files under `results/runs/` are ignored by Git; curated paper-facing evidence lives under `analyses/nccc_validation/results/final/`.
+Benchmark CSV and Markdown outputs are written to `analyses/nccc_validation/results/runs/benchmark` by default. Run-specific files under `results/runs/` are ignored by Git; curated manuscript evidence lives under `analyses/nccc_validation/results/final/`.
 
 ### NCCC validation results
 
@@ -106,17 +106,17 @@ Shooting-method experiments can use `--shooting-integrator euler|bdf|radau|rk45`
 
 ## Thermodynamics
 
-The default model is `ideal_henry`, matching the previous Henry-law driving-force implementation. The `epcsaft_neutral` option imports the external `epcsaft` package read-only and uses only the CO2 fugacity coefficient from a neutral CO2/MEA/H2O parameter set stored in this repo under `src/mea_absorption_column/data/epcsaft_neutral/`.
+The default model is `ideal_henry`, matching the Henry-law CO2 driving-force implementation. The selected manuscript ePC-SAFT comparison is `epcsaft_ionic`: it retains the concentration-based chemical-equilibrium calculation and replaces the CO2 driving force with vapor- and liquid-side ePC-SAFT fugacity coefficients. The full activity-coupled path is separate and slower; it routes ePC-SAFT activity-related quantities through a nine-species chemical-equilibrium solve before evaluating the fugacity driving force.
 
 Thermodynamic modes are intentionally explicit:
 
-- `ideal_henry`: default validation baseline; legacy concentration-based chemical equilibrium and Henry-law CO2 driving force.
-- `epcsaft_neutral`: supported opt-in fugacity sensitivity lane; legacy chemistry is retained while neutral CO2/MEA/H2O ePC-SAFT replaces only the CO2 fugacity coefficient calculation.
-- `epcsaft_ionic`: opt-in diagnostic fugacity lane; legacy chemistry is retained while the ionic six-species liquid state is passed to ePC-SAFT for CO2 fugacity.
-- `epcsaft_reactive_*`: experimental opt-in chemistry lanes; ePC-SAFT reactive speciation replaces the legacy chemistry solve for diagnostic Case 3C-style smoke tests, but it is not yet broadly validated across all NCCC cases.
+- `ideal_henry`: default validation baseline; concentration-based chemical equilibrium and Henry-law CO2 driving force.
+- `epcsaft_ionic`: selected ePC-SAFT fugacity lane; concentration-based chemistry is retained while the ionic liquid state is passed to ePC-SAFT for CO2 fugacity.
+- `epcsaft_neutral`: historical or diagnostic sensitivity lane only; not the selected manuscript comparison.
+- `epcsaft_reactive_*`: experimental activity-coupled chemistry lanes; use only with runtime, residual, guard-count, and convergence diagnostics.
 
-The supported ePC-SAFT comparison in the paper-facing workflow remains a controlled thermodynamic sensitivity study, not a broad claim that every absorber result is a fully validated electrolyte-reactive ePC-SAFT model. Experimental reactive rows must be reported with runtime and convergence diagnostics.
+The supported ePC-SAFT comparison in the manuscript is a controlled thermodynamic driving-force benchmark, not a claim that every absorber result uses the full activity-coupled chemistry loop. Full reactive rows must be reported with runtime and convergence diagnostics.
 
 The MEA ePC-SAFT parameter datasets are vendored in this repository under `src/mea_absorption_column/data/epcsaft_datasets/`. `MEA_EPCSAFT_DATASET_NAME` can select a different vendored dataset, and `MEA_THERMODYNAMICS_EPCSAFT_DATASET` remains an override for temporary external comparisons only. Normal repo tests and absorber runs must not depend on a sibling MEA-Thermodynamics checkout for parameter files.
 
-`--epcsaft-fugacity-blend <0..1>` is available for continuation diagnostics in the `epcsaft_neutral` lane. A value of `0` returns the Henry-law fugacity values through the ePC-SAFT adapter path, intermediate values linearly blend Henry and neutral ePC-SAFT fugacity values, and `1` is the full neutral ePC-SAFT fugacity endpoint. This is intended for branch diagnosis and warm-start studies, not as a publishable calibrated thermodynamic model by itself.
+`--epcsaft-fugacity-blend <0..1>` is available for continuation diagnostics. A value of `0` returns the Henry-law fugacity values through the ePC-SAFT adapter path, intermediate values linearly blend Henry and ePC-SAFT fugacity values, and `1` is the full ePC-SAFT fugacity endpoint. This is intended for branch diagnosis and warm-start studies, not as a publishable calibrated thermodynamic model by itself.

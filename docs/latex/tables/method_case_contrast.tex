@@ -1,21 +1,21 @@
 \begin{center}
     \centering
     \small
-    \captionof{table}{Representative one-bed solver-method comparison for runtime and conditioning across a smooth one-bed case and the NCCC validation case.}
+    \captionof{table}{Representative one-bed solver-method comparison for runtime, numerical status, and physical acceptance.}
     \label{tab:method-case-contrast}
     \renewcommand{\arraystretch}{1.2}
     \begin{adjustbox}{max width=\textwidth}
-    \begin{tabular}{llccc}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.11\textwidth}>{\raggedleft\arraybackslash}p{0.08\textwidth}>{\raggedleft\arraybackslash}p{0.08\textwidth}>{\raggedright\arraybackslash}X@{}}
         \toprule
-        \textbf{Scenario} & \textbf{Method} & \textbf{Success} & \textbf{Runtime (s)} & \textbf{Capture (\%)} \\
+        \textbf{Scenario} & \textbf{Method} & \textbf{Numerical status} & \textbf{Physical gate} & \textbf{Runtime (s)} & \textbf{Capture (\%)} & \textbf{Interpretation} \\
         \midrule
-        Smooth one-bed & Shooting & Yes & 4.91 & 90.17 \\
-        Smooth one-bed & Collocation BVP & Yes & 7.61 & 89.95 \\
-        Smooth one-bed & Finite difference & Yes & 15.62 & 107.65 \\
-        NCCC 3C thermal pinch & Shooting & No & 62.73 & -- \\
-        NCCC 3C thermal pinch & Collocation BVP & Yes & 9.40 & 89.40 \\
-        NCCC 3C thermal pinch & Finite difference & No & 16.61 & 0.00 \\
+        Smooth one-bed & Shooting & Converged & Accepted & 4.91 & 90.17 & Fast favorable-case solution. \\
+        Smooth one-bed & Collocation BVP & Converged & Accepted & 7.61 & 89.95 & Reference BVP solution. \\
+        Smooth one-bed & Finite difference & Converged & Rejected & 15.62 & 107.65 & Capture exceeds a physical \SI{100}{\percent} bound. \\
+        NCCC 3C thermal pinch & Shooting & Failed gate & Rejected & 62.73 & -- & Did not satisfy the validation acceptance gate. \\
+        NCCC 3C thermal pinch & Collocation BVP & Converged & Accepted & 9.40 & 89.40 & Reference validation solution. \\
+        NCCC 3C thermal pinch & Finite difference & Rejected branch & Rejected & 16.61 & 0.00 & Physically wrong zero-capture branch. \\
         \bottomrule
-    \end{tabular}
+    \end{tabularx}
     \end{adjustbox}
 \end{center}

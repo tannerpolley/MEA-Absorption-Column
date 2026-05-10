@@ -15,54 +15,30 @@
         Several numerical methods can solve this kind of packed-absorption-column BVP. This benchmark compares shooting, finite difference, and collocation on the same governing equations. Shooting and finite difference are useful comparison methods because they expose different initialization and discretization behavior. Collocation is used as the reference method for the reported benchmark rows because it gives direct control over mesh refinement and residual reporting. Speed and robustness are measured outcomes of the runs, not assumed method rankings.
 
         \subsection{Shooting Method}
-            The shooting method solves a boundary value problem (BVP) by converting it into a set of initial value problems (IVPs). The core idea is to guess the unknown initial conditions, integrate the differential equations forward in one ``shot,'' and check whether the final boundary conditions are satisfied. If the final boundary conditions are not met, the initial guess is refined and the process is repeated. This approach uses standard IVP solvers, such as Runge--Kutta methods, together with a root-finding method such as Newton--Raphson, bisection, or a secant method. Its main advantage is simplicity: an IVP solver and a mismatch correction are enough to define the procedure. Its main weakness is sensitivity. Small errors in the guessed boundary values can grow across a long or stiff column, and each correction requires another integration. The steps are:
-
-            \subsubsection*{Integrate as an IVP (``Shoot'')}
-                For a given guess $\mathbf{p}$:
-                \begin{enumerate}
-                    \item Construct the initial condition $\mathbf{y}(0) = \boldsymbol{\alpha}$.
-                    \item Integrate the ODE system $\frac{d\mathbf{y}}{dz} = \mathbf{f}(z,\mathbf{y})$ from $z=0$ to $z=H$ using an IVP solver (e.g., a Runge--Kutta method).
-                    \item Record the final solution $\mathbf{y}(H;\mathbf{p})$ at $z=H$.
-                \end{enumerate}
-                This completes one \emph{shoot} from $z=0$ to $z=H$.
-
-            \subsubsection*{Mismatch Function}
-                After integrating with the guess $\mathbf{p}$, define the \emph{mismatch function}:
+            The shooting calculation guesses the unknown inlet-side state values, integrates the absorber balances across the packed height, and adjusts the guess until the outlet-side boundary conditions are met. For a guessed parameter vector $\mathbf{p}$, one integration gives $\mathbf{y}(H;\mathbf{p})$. The boundary mismatch is
                 \begin{align}
                     \mathbf{F}(\mathbf{p}) = \mathbf{y}\bigl(H; \mathbf{p}\bigr) - \boldsymbol{\beta}
                     && \left(\text{component units of }\mathbf{y}\right).
                 \end{align}
-                This vector $\mathbf{F}(\mathbf{p})$ measures how far the computed solution at $z=H$ is from the required boundary condition $\boldsymbol{\beta}$.
-
-            \subsubsection*{Root-Finding on the Mismatch}
-                To solve the BVP, we need $\mathbf{F}(\mathbf{p}) = \mathbf{0}$. Thus, the unknown initial values $\mathbf{p}$ must be adjusted until
+                The root-finding problem is therefore
                 \begin{align}
-                    \mathbf{y}\bigl(H,\mathbf{p}\bigr) &= \boldsymbol{\beta}
-                    && \left(\text{component units of }\mathbf{y}\right).
+                    \mathbf{F}(\mathbf{p}) &= \mathbf{0}
+                    && \left(\text{component units of }\mathbf{y}\right),
                 \end{align}
-                Any standard root-finding algorithm capable of handling multiple variables can be used here. Each iteration calls the IVP solver anew (the ``shoot''), refines $\mathbf{p}$, and re-checks the mismatch at $z=H$ until $\|\mathbf{F}(\mathbf{p})\|$ is sufficiently small.
-
-            \subsubsection*{Summary}
-                The shooting method, while conceptually straightforward, can encounter several complications when applied to a system of this nature. First, if the underlying equations are stiff or exhibit rapid changes, small numerical inaccuracies in the guessed initial conditions can amplify significantly over the integration domain, making the procedure unstable or very sensitive to perturbations. Second, if the domain is large or the solution features steep gradients, one might need a very accurate or adaptive IVP solver for each ``shoot,'' which can be computationally expensive. Additionally, good initial guesses for the unknown boundary conditions may be hard to find, especially in higher-dimensional problems, which can increase iteration counts. Finally, repeated integration for each iteration of a root-finding method (e.g., Newton's method or secant-like approaches) can become costly, and if Jacobian information is not readily available, approximation errors in the gradient of the mismatch function can slow the solve. These characteristics matter when solving the boundary value problem due to the stiffness and non-linearity of the model and will be further discussed below.
+                with each nonlinear iteration requiring another packed-column integration. This method is attractive when the profile is smooth and a good inlet-side guess is available. It is less reliable when the column contains sharp thermal or mass-transfer features, because a small inlet-state error can grow across the bed before the outlet mismatch is evaluated. The results section uses shooting for that reason: it is a useful speed comparison on smoother cases, but it is not the routine validation method for the NCCC thermal-profile rows.
 
         \subsection{Finite Difference}
-        The finite difference method (FDM) approximates derivatives with discrete difference quotients across a spatial mesh. By discretizing each differential equation between the boundary conditions, the original BVP is transformed into a system of algebraic equations. Each unknown state is represented at the mesh nodes, and finite-difference formulas link neighboring nodal values. The boundary conditions then anchor the solution at the domain edges. For the absorber model, the finite-difference system includes the species flow rates, phase enthalpy flows, and pressure state, coupled through the original differential equations. The method's main advantages are clarity of formulation and straightforward extension to mixed boundary conditions. Its main challenges are grid sensitivity, nonlinearity, stiffness, and the computational cost of solving the coupled algebraic system. The solution steps are summarized below.
-
-            \subsubsection*{Discretize the Domain}
-                Divide the interval $[0,H]$ into $N$ sub-intervals of equal length $\Delta z = \frac{H}{N}$. Define the grid points:
+            The finite-difference calculation replaces the continuous axial derivatives with mesh-based algebraic residuals. The packed height is divided into $N$ intervals with
                 \begin{align}
                     z_k = k\,\Delta z, \quad k = 0, 1, 2, \ldots, N,
                     && \left(\unit{m}\right)
                 \end{align}
-                so that $z_0 = 0$ and $z_N = H$. Let $\mathbf{y}^k$ be the approximation to $\mathbf{y}$ at $z = z_k$:
+                where $\Delta z=H/N$. The nodal state $\mathbf{y}^k$ approximates the absorber state at $z_k$,
                 \begin{align}
                     \mathbf{y}^k \;\approx\; \mathbf{y}\bigl(z_k\bigr)
                     && \left(\text{component units of }\mathbf{y}\right).
                 \end{align}
-                Each component of $\mathbf{y}^k$ corresponds to one of the six unknown functions ($F^{\liq}_{\mathrm{CO_2}}$, $F^{\liq}_{\mathrm{H_2O}}$, $F^{\vap}_{\mathrm{CO_2}}$, $F^{\vap}_{\mathrm{H_2O}}$, $\dot{H}_l$, $\dot{H}_v$).
-
-            \subsubsection*{Approximate Derivatives by Finite Differences}
-                A common choice is to use central differences for interior points:
+                Interior derivatives are represented with central differences,
                 \begin{align}
                     \frac{d \mathbf{y}}{dz}\biggr\rvert_{z=z_k}
                     \approx
@@ -71,29 +47,20 @@
                     k = 1, 2, \ldots, N-1
                     && \left(\text{component units of }\mathbf{y}\,\unit{m^{-1}}\right).
                 \end{align}
-                If your system dictates or if you prefer simpler expressions, you might use forward or backward differences in some cases, but central differences typically provide higher accuracy for the same grid spacing. Thus, for each $k=1,\dots,N-1$, we replace \(\frac{d \mathbf{y}}{dz}\bigl(z_k\bigr)\) with the discrete difference. This transforms each continuous ODE \(\frac{d y_i}{dz} = f_i\bigl(z, y_1, y_2, \ldots, y_6\bigr)\) into an algebraic equation involving $\mathbf{y}^{k-1}$, $\mathbf{y}^k$, and $\mathbf{y}^{k+1}$.
-
-            \subsubsection*{Impose Boundary Conditions}
-                At $k=0$ and $k=N$, apply the boundary conditions:
+                The boundary nodes enforce the inlet and outlet conditions,
                 \begin{align}
                     \mathbf{y}^0 = \boldsymbol{\alpha}, 
                     \quad 
                     \mathbf{y}^N = \boldsymbol{\beta},
                     && \left(\text{component units of }\mathbf{y}\right)
                 \end{align}
-                or, if only some components are known at each boundary, then only those components in $\mathbf{y}^0$ or $\mathbf{y}^N$ are fixed and the remaining must be determined by the system of equations.
-
-            \subsubsection*{Solve the Resulting System of Nonlinear Algebraic Equations}
-                Assemble all interior finite-difference approximations (one for each equation at each interior grid point), together with the boundary conditions at $k=0$ and $k=N$, into a large system of algebraic equations. Denoting the unknowns by \(\bigl(\mathbf{y}^1, \mathbf{y}^2, \dots, \mathbf{y}^{N-1}\bigr)\), the total number of unknowns is $7 \times (N-1)$ if all seven state variables are unknown at each interior node (assuming boundary values at $k=0$ and $k=N$ are given). If some boundary values are unknown, then the count of unknowns will adjust accordingly. In any case, the final step is to solve
+                for the components fixed by the mixed column boundary specification. Collecting the finite-difference equations and boundary equations gives
                 \begin{align}
                     \mathcal{R}\Bigl(\mathbf{y}^0,\, \mathbf{y}^1,\, \dots,\, \mathbf{y}^N\Bigr) 
                     = \mathbf{0},
                     && \left(\text{component residual units}\right)
                 \end{align}
-                where $\mathcal{R}$ denotes the collection of finite-difference equations plus boundary conditions.
-
-            \subsubsection*{Summary}
-                By ensuring appropriate grid resolution and an effective nonlinear solver, finite difference approximations can provide accurate, stable solutions to this system of differential equations across the domain $0 \le z \le H$. While this technique can be both robust and straightforward conceptually, it comes with its own potential pitfalls. For instance, a too-coarse grid can lead to poor accuracy or even instability when applied to stiff or highly nonlinear systems. As the mesh becomes finer, the number of equations to be solved grows quickly, which can increase computational cost substantially, especially for higher-dimensional systems. Additionally, nonlinearity may require iterative solvers like Newton's method at each time step or iteration, and assembling and factoring large Jacobians can be computationally intensive. Boundary conditions that are non-standard or mixed in form may also complicate the discretization scheme. Overall, while the finite difference method is a powerful approach, the choice of mesh, solver, and stability considerations must be carefully addressed for each specific problem.
+                over all nodal unknowns. Finite difference is included because it gives a direct algebraic discretization check against shooting and collocation. In this absorber problem, however, an algebraic solve can converge to a mathematically consistent but physically poor branch unless acceptance checks are applied after convergence. The finite-difference rows are therefore interpreted through capture, temperature, and residual evidence rather than by solver success alone.
 
         \subsection{Collocation BVP Method}
             The collocation calculation uses an adaptive residual-controlled BVP routine. It is not a custom orthogonal-collocation code built from user-selected Legendre or Chebyshev points. For reproducibility, each run reports the starting mesh size, maximum node count, solver tolerance, boundary-condition tolerance, initialization profile, scaling, final residual norm, and convergence message.
@@ -148,5 +115,12 @@
         \subsection{Reproducibility and Numerical Settings}
             The benchmark calculations were run in Python 3.13 with fixed package versions. Each result row records the case, method setting, convergence message, residual information, capture error, temperature error where measured taps are available, runtime, mesh settings, solver tolerances, initialization notes, and thermodynamic model. The full benchmark data record also retains Python version, platform, and package-version information. The same reporting fields are used for all solver paths, so numerical behavior can be compared directly across methods.
 
-            The thermodynamic benchmark includes the Henry-law baseline and the ePC-SAFT driving-force calculation. In the ePC-SAFT calculation, the equation of state supplies the CO$_2$ fugacity coefficients while the same concentration-based chemical-equilibrium calculation remains active for the routine one-bed NCCC campaign. Only the CO$_2$ fugacity driving force changes in the accepted validation rows. Chemical equilibrium, enhancement factor, transport-property correlations, and governing balances are held fixed. Pressure is specified for each ePC-SAFT phase state, and density initialization is used only to speed the numerical solve. The selected ePC-SAFT parameter record is summarized in Appendix~\ref{sec:appendix-properties}. The liquid phase uses the ionic terms directly; the vapor phase uses the same fugacity-coefficient framework with only neutral species present. A separate full ionic speciation sweep routes ePC-SAFT activity-related quantities into the chemical-equilibrium calculation before evaluating the fugacity driving force. That sweep is reported as a timing and feasibility boundary, while the repeated one-bed campaign uses the faster fugacity-only ePC-SAFT path.
+            Accepted one-bed NCCC rows use the collocation BVP path with 21 starting mesh points, a solver tolerance of 0.5, a boundary-condition tolerance of 0.001, and a maximum of 1000 mesh nodes. The solve scales flow and enthalpy states, uses bounded state transforms to keep property calls inside their physical domains, and applies the full ePC-SAFT fugacity correction in the ePC-SAFT rows. These settings define the common acceptance basis for K18, K19, and 1C--6C. K20 and 7C were attempted with the same bounded settings but did not satisfy the common accepted-row gate.
+
+            The thermodynamic benchmark includes the Henry-law baseline and the ePC-SAFT driving-force calculation. In the ePC-SAFT calculation, the equation of state supplies the CO$_2$ fugacity coefficients while the same concentration-based chemical-equilibrium calculation remains active for the routine one-bed NCCC campaign. Only the CO$_2$ fugacity driving force changes in the accepted validation rows. Chemical equilibrium, enhancement factor, transport-property correlations, and governing balances are held fixed. Pressure is specified for each ePC-SAFT phase state, and density initialization is used only to speed the numerical solve. The selected dataset record is \texttt{MEA\_CO2\_H2O\_ionic\_fit}; its ePC-SAFT parameter summary is given in Appendix~\ref{sec:appendix-properties}. The liquid phase uses the ionic terms directly; the vapor phase uses the same fugacity-coefficient framework with only neutral species present. A separate full ionic speciation sweep routes ePC-SAFT activity-related quantities into the chemical-equilibrium calculation before evaluating the fugacity driving force. That sweep is reported as a timing and feasibility boundary, while the repeated one-bed campaign uses the faster fugacity-only ePC-SAFT path.
+
+        \subsection{Validation Gate and Reported Metrics}
+            A row is included in the routine validation aggregate only when the solver reports success, the capture value remains physically interpretable, the recorded residuals meet the campaign gate, and the run finishes within the bounded subprocess time. Runs that fail those checks are still retained as attempted-row evidence, but they are not averaged with accepted rows. This distinction is important because some failures still carry useful information about conditioning, guard activation, or runtime.
+
+            Capture error is reported in percentage points relative to the measured pilot-plant capture. Temperature-profile error is reported only for cases with measured axial temperature taps. Runtime is the wall-clock model runtime recorded by the run artifact, not an external manual timing. Guard counts and invalid-state counts are treated as numerical-conditioning evidence: they identify when the nonlinear solver had to leave or clip the physically valid domain during an attempted solve.
 
