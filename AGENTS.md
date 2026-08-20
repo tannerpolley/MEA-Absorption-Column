@@ -28,7 +28,7 @@ Repository Profile: scientific-computing
 
 ## ePC-SAFT Cross-Repo Integration
 
-- This is an official downstream application under ePC-SAFT Governance D-037.
+- This is an official downstream application under ePC-SAFT Governance D-038.
 - Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project`; do not use the retired `/ePC-SAFT` path or a sibling source import.
 - Normal and final work uses one non-editable `epcsaft` wheel identified by Engine commit and wheel SHA-256. Intentional co-development uses an explicitly supplied candidate wheel with the same recorded identity.
 - Keep absorber integration, column validation, process analyses, and this repository's manuscript here. Thermodynamic parameter adoption remains owned by MEA-Thermodynamics; generic equations and solvers remain owned by ePC-SAFT-project.
