@@ -73,6 +73,19 @@ function Get-ExactMirrorChildPath {
 
 $latexSourcePath = Resolve-RequiredPath -Path (Join-Path $PSScriptRoot '..') -Label 'LaTeX source folder'
 $mirrorRootPath = Resolve-RequiredPath -Path $MirrorRoot -Label 'Mirror checkout root'
+$repoRootPath = Resolve-RequiredPath -Path (Join-Path $latexSourcePath '..\..') -Label 'repository root'
+$python = Join-Path $repoRootPath '.venv\Scripts\python.exe'
+if (-not (Test-Path -LiteralPath $python)) {
+    $python = 'python'
+}
+$bibliographyArgs = @((Join-Path $latexSourcePath 'scripts\latex_workflows.py'), 'sync-bibliography')
+if ($WhatIfPreference) {
+    $bibliographyArgs += '--check'
+}
+& $python @bibliographyArgs
+if ($LASTEXITCODE -ne 0) {
+    throw "Zotero bibliography sync failed with exit code $LASTEXITCODE"
+}
 
 if (-not (Test-Path -LiteralPath (Join-Path $mirrorRootPath '.git'))) {
     throw "Mirror root is not a Git checkout: $mirrorRootPath"

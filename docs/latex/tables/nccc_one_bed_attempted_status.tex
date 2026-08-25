@@ -8,11 +8,11 @@
         \toprule
         \textbf{Year} & \textbf{Case} & \textbf{Gate status} & \textbf{Thermo rows} & \textbf{Reason or note} \\
         \midrule
-        2014 & K18 & Accepted & Henry and ePC-SAFT & Both rows converged under the common collocation gate. \\
-        2014 & K19 & Accepted & Henry and ePC-SAFT & Both rows converged; both recorded 108 invalid-state and guard-penalty events. \\
-        2014 & K20 & Rejected & Henry and ePC-SAFT & Maximum mesh-node limit exceeded with hydraulics and pressure-drop domain violations; excluded from aggregate accuracy metrics. \\
-        2017 & 1C--6C & Accepted & Henry and ePC-SAFT & All six rows converged under the common collocation gate. \\
-        2017 & 7C & Rejected & Henry and ePC-SAFT & Run exceeded the \SI{90}{s} wall-time limit for accepted-row validation; retained as an attempted case only. \\
+        2014 & K18 & Accepted & Henry and ePC-SAFT & Both rows converged under the common collocation gate with no domain-guard events. \\
+        2014 & K19 & Accepted & Henry and ePC-SAFT & Both rows met the gate; conditioning diagnostics recorded 166 ePC-SAFT and 183 Henry guard events. \\
+        2014 & K20 & Rejected & Henry and ePC-SAFT & Both solvers exceeded the maximum mesh-node limit and encountered hydraulics or pressure-drop domain violations; excluded from aggregate accuracy metrics. \\
+        2017 & 1C--6C & Accepted & Henry and ePC-SAFT & All twelve rows converged under the common collocation gate with no domain-guard events. \\
+        2017 & 7C & Accepted & Henry and ePC-SAFT & Both rows met the 90-s gate: ePC-SAFT ran in 13.79 s with 3 guard events; Henry ran in 19.71 s with 116 guard events. \\
         \bottomrule
     \end{tabularx}
 \end{center}

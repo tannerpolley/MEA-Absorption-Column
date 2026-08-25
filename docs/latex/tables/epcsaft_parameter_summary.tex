@@ -1,22 +1,28 @@
-\begin{longtable}{llrrrrrrrr}
+{\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{llrrrrrrrrr}
     \caption{Pure-component ePC-SAFT parameter record used for the thermodynamic runs. Segment diameter $\sigma$ and Born diameter $d_{\mathrm{Born}}$ are in \AA; $\epsilon/k$ and $\epsilon^{\mathrm{assoc}}/k$ are in \si{K}; molecular weight is in \si{kg\,mol^{-1}}; relative permittivity $\epsilon_r$ is dimensionless.}
     \label{tab:epcsaft-pure-parameters}\\
     \toprule
-    \textbf{Species} & \textbf{Association} & \textbf{$m$} & \textbf{$\sigma$} & \textbf{$\epsilon/k$} & \textbf{$\epsilon^{\mathrm{assoc}}/k$} & \textbf{$\kappa^{\mathrm{assoc}}$} & \textbf{$z$} & \textbf{$d_{\mathrm{Born}}$} & \textbf{$\epsilon_r$} \\
+    \textbf{Species} & \textbf{Association} & \textbf{$m$} & \textbf{$\sigma$} & \textbf{$\epsilon/k$} & \textbf{$\epsilon^{\mathrm{assoc}}/k$} & \textbf{$\kappa^{\mathrm{assoc}}$} & \textbf{MW} & \textbf{$z$} & \textbf{$d_{\mathrm{Born}}$} & \textbf{$\epsilon_r$} \\
     \midrule
     \endfirsthead
     \toprule
-    \textbf{Species} & \textbf{Association} & \textbf{$m$} & \textbf{$\sigma$} & \textbf{$\epsilon/k$} & \textbf{$\epsilon^{\mathrm{assoc}}/k$} & \textbf{$\kappa^{\mathrm{assoc}}$} & \textbf{$z$} & \textbf{$d_{\mathrm{Born}}$} & \textbf{$\epsilon_r$} \\
+    \textbf{Species} & \textbf{Association} & \textbf{$m$} & \textbf{$\sigma$} & \textbf{$\epsilon/k$} & \textbf{$\epsilon^{\mathrm{assoc}}/k$} & \textbf{$\kappa^{\mathrm{assoc}}$} & \textbf{MW} & \textbf{$z$} & \textbf{$d_{\mathrm{Born}}$} & \textbf{$\epsilon_r$} \\
     \midrule
     \endhead
-    \ce{CO2} & -- & 2.0790 & 2.7852 & 169.21 & 0.0 & 0.00000 & 0 & 0.000 & 1.4122 \\
-    \ce{MEA} & 2B & 3.0353 & 3.0435 & 277.174 & 2586.3 & 0.03747 & 0 & 0.000 & 32.00 \\
-    \ce{H2O} & 2B & 1.2047 & $\sigma(T)$ & 353.95 & 2425.7 & 0.04509 & 0 & 0.000 & 78.09 \\
-    \ce{MEAH+} & -- & 1.0000 & 3.5630 & 228.71 & 0.0 & 0.00000 & 1 & 3.563 & 8.00 \\
-    \ce{MEACOO-} & -- & 1.0000 & 3.5605 & 533.11 & 0.0 & 0.00000 & -1 & 3.561 & 8.00 \\
-    \ce{HCO3-} & -- & 1.0000 & 2.9296 & 70.00 & 0.0 & 0.00000 & -1 & 3.000 & 8.00 \\
+    \ce{CO2} & -- & 2.0790 & 2.7852 & 169.21 & 0.0 & 0.00000 & 0.044010 & 0 & 0.000 & 1.4122 \\
+    \ce{MEA} & 2B & 3.0353 & 3.0435 & 277.174 & 2586.3 & 0.03747 & 0.061080 & 0 & 0.000 & 32.00 \\
+    \ce{H2O} & 2B & 1.2047 & $\sigma(T)$ & 353.95 & 2425.7 & 0.04509 & 0.018015 & 0 & 0.000 & 78.09 \\
+    \ce{MEAH+} & -- & 1.0000 & 3.5630 & 228.71 & 0.0 & 0.00000 & 0.062090 & 1 & 3.563 & 8.00 \\
+    \ce{MEACOO-} & -- & 1.0000 & 3.5605 & 533.11 & 0.0 & 0.00000 & 0.075070 & -1 & 3.561 & 8.00 \\
+    \ce{HCO3-} & -- & 1.0000 & 2.9296 & 70.00 & 0.0 & 0.00000 & 0.061017 & -1 & 3.000 & 8.00 \\
+    \ce{CO3^2-} & -- & 1.0000 & 3.0000 & 300.00 & 0.0 & 0.00000 & 0.060010 & -2 & 3.000 & 8.00 \\
+    \ce{H3O+} & -- & 1.0000 & 3.0000 & 300.00 & 0.0 & 0.00000 & 0.019020 & 1 & 3.000 & 8.00 \\
+    \ce{OH-} & -- & 1.0000 & 3.0000 & 300.00 & 0.0 & 0.00000 & 0.017010 & -1 & 3.000 & 8.00 \\
     \bottomrule
 \end{longtable}
+}
 
 \noindent The water segment diameter is evaluated as
 \begin{align}
@@ -24,6 +30,8 @@
     2.7927 + 10.11\exp(-0.01775T) - 1.417\exp(-0.01146T),
     && \left(\text{\AA}\right).
 \end{align}
+
+\noindent The routine fugacity campaign uses the first six species. The final three species occur only in the archived nine-species feasibility calculation. In the repository provenance record, the neutral-species parameters retain literature lineage; \ce{MEAH+} and \ce{MEACOO-} are provisional historical-evaluation values; \ce{HCO3-} is a transferred diagnostic value; and \ce{CO3^2-}, \ce{H3O+}, and \ce{OH-} are explicitly marked as diagnostic placeholders. The resulting set is therefore suitable for the present conditional benchmark but is not presented as a provenance-complete predictive nine-species fit.
 
 \begin{longtable}{llr}
     \caption{Binary interaction parameter record used for the ePC-SAFT mixture calculation. Unlisted $k_{ij}$ values in the stored matrix are zero.}
@@ -39,3 +47,5 @@
     \ce{MEA} & \ce{H2O} & -0.052 \\
     \bottomrule
 \end{longtable}
+
+\noindent The selected artifact contains one nonzero pair coefficient, $k_{\ce{MEA},\ce{H2O}}=-0.052$. That value was retained from the repository's historical MEA--water record; its traceable literature fit used a different neutral association-scheme combination from the selected 2B/2B record. Resolving that inconsistency and rerunning the campaign is required before claiming a source-complete parameterization. No $k_{ij}$ value was refitted to the NCCC absorber rows in this study.

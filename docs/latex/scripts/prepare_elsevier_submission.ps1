@@ -45,6 +45,16 @@ function Copy-TextWithFlatFigurePaths {
 }
 
 $latexRoot = (Resolve-Path -LiteralPath (Join-Path $scriptRoot '..')).Path
+$repoRoot = (Resolve-Path -LiteralPath (Join-Path $latexRoot '..\..')).Path
+$python = Join-Path $repoRoot '.venv\Scripts\python.exe'
+if (-not (Test-Path -LiteralPath $python)) {
+    $python = 'python'
+}
+& $python (Join-Path $scriptRoot 'latex_workflows.py') sync-bibliography
+if ($LASTEXITCODE -ne 0) {
+    throw "Zotero bibliography sync failed with exit code $LASTEXITCODE"
+}
+
 $buildsRootParent = Join-Path $latexRoot 'builds'
 $fullOutputRoot = [System.IO.Path]::GetFullPath($OutputRoot)
 $fullBuildsParent = [System.IO.Path]::GetFullPath($buildsRootParent)

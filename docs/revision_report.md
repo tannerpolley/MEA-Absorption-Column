@@ -1,5 +1,12 @@
 # Revision Report
 
+## 2026-08-25 MEA-only pre-MDEA freeze
+
+- Bound the downstream ePC-SAFT 0.2 adapter to Engine commit `b64f6df906489cb132792641c5be2ee8f404b114` and wheel SHA-256 `a505d20ac9019e9b4edbad16df80166b6e082170ef2a2f002d897269e756d0d9`.
+- Refreshed the tracked bibliography from the Zotero Companion path-sanitized Better BibTeX export; the separate `Documents/Papers` auto-export was not used because it contains local attachment paths.
+- Reserved tag `nce-mea-only-pre-mdea-2026-08-25` for the validated MEA-only manuscript, evidence, and code state before MDEA companion work.
+- Kept the archived nine-species activity-rebased calculations as historical numerical-feasibility evidence only; the ePC-SAFT 0.2 reactive route remains fail-closed until independently sourced standard-state reaction constants are admitted.
+
 ## Summary
 
 Implemented the submission-readiness plan around the current committed evidence artifacts. The manuscript now separates the routine `epcsaft_ionic` fugacity campaign from the slower full nine-species activity-coupled feasibility path, reports accepted and attempted NCCC rows separately, and adds reviewer-facing reproduction and traceability documents.
@@ -7,7 +14,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 ## Manuscript Changes
 
 - Added explicit accepted-row gate language: solver success, boundary residual norm at or below 1.0, physical capture in the 0--100\% range, and completion within the configured subprocess timeout. Temperature RMSE is reported but is not an acceptance gate, and guard or invalid-state counts are conditioning diagnostics unless a separate gate is configured.
-- Clarified why K19 remains in the accepted validation set despite 108 invalid-state and guard-penalty events in each thermodynamic row.
+- Clarified why K19 remains in the accepted validation set despite 166 ePC-SAFT and 183 Henry-law invalid-state and guard-penalty events.
 - Removed the fixed driving-force scale framing from the manuscript after the source-backed transport, thermophysical-property, and gas-basis corrections made the previous scale factor unnecessary.
 - Replaced informal Section 2.2 phrasing with direct engineering prose for superficial velocity, effective interfacial area, hold-up correlations, and heat-transfer coefficient definitions without changing equations.
 - Corrected rendered ion notation for \ce{CO3^{2-}}, \ce{H3O+}, and \ce{OH-}, and noted that those entries are auxiliary diagnostic species unless independently sourced parameters are provided.
@@ -16,15 +23,15 @@ Implemented the submission-readiness plan around the current committed evidence 
 - Revised Sections 3.1--3.3 so shooting, finite difference, and collocation are concise, equation-backed, and tied to the absorber benchmark instead of tutorial prose.
 - Kept the ePC-SAFT model description to the five evaluated residual-Helmholtz contribution terms and referenced the detailed ePC-SAFT literature for the full expressions.
 - Rebuilt Section 4 around distinct evidence roles: one-bed validation, thermodynamic driving-force comparison, solver behavior, full activity-coupled timing, and limitations.
-- Added an attempted-row table for K20 and 7C so the accepted-row accuracy aggregate is conditional and clear.
+- Added a generated attempted-row table for K18--K20 and 1C--7C so the accepted-row accuracy aggregate is conditional and auditable.
 - Updated Table 3 to include accuracy and timing for the routine campaign and the full activity-coupled path.
 - Moved limitation language into the limitations section and removed defensive language from the abstract and main results narrative.
 
 ## Evidence Basis
 
-- Routine accepted rows: K18, K19, and 1C--6C from `analyses/nccc_validation/results/final/tables/nccc_one_bed_accepted_results.csv`.
-- Routine summary values: ePC-SAFT mean absolute capture error 2.89 percentage points and median runtime 7.57 s; Henry-law mean absolute capture error 2.74 percentage points and median runtime 5.24 s.
-- Attempted rows: K20 rejected by mesh/domain-guard behavior; 7C rejected by accepted-row timeout.
+- Routine accepted cases: K18, K19, and 1C--7C from `analyses/nccc_validation/results/final/tables/nccc_one_bed_accepted_results.csv` (18 thermodynamic rows).
+- Routine summary values: ePC-SAFT mean absolute capture error 3.32 percentage points and median runtime 7.70 s; Henry-law mean absolute capture error 3.14 percentage points and median runtime 5.25 s.
+- Attempted rows: K20 is rejected by solver failure and mesh/domain-guard behavior; both 7C thermodynamic rows satisfy the stated gate.
 - Full activity-coupled path: `analyses/nccc_validation/results/final/tables/full_species_ionic_2017_c_case_sweep.csv`, all seven 2017 C rows converged under relaxed feasibility settings, mean runtime 171.102 s, mean chemistry-solve time 127.764 s, mean absolute capture error 6.595 percentage points.
 - Full-path Case 3C evidence is preserved as capture error -0.764 percentage points and runtime 139.420 s. The manuscript reports the evidence in prose and tables without exposing internal CSV or script filenames in the body text.
 - Solver-method contrast: `analyses/nccc_validation/results/final/tables/method_case_contrast.csv`.
@@ -103,10 +110,10 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ### Numerical Values Preserved
 
-- Routine accepted-row ePC-SAFT mean absolute capture error: 2.89 percentage points.
-- Routine accepted-row Henry-law mean absolute capture error: 2.74 percentage points.
-- Routine accepted-row ePC-SAFT median runtime: 7.57 s.
-- Routine accepted-row Henry-law median runtime: 5.24 s.
+- Routine accepted-row ePC-SAFT mean absolute capture error: 3.32 percentage points.
+- Routine accepted-row Henry-law mean absolute capture error: 3.14 percentage points.
+- Routine accepted-row ePC-SAFT median runtime: 7.70 s.
+- Routine accepted-row Henry-law median runtime: 5.25 s.
 - Full activity-coupled mean absolute capture error: 6.595 percentage points.
 - Full activity-coupled mean runtime: 171.102 s.
 - Full activity-coupled mean chemistry-solve time: 127.764 s.
@@ -187,17 +194,17 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ### Figure 4 Correction
 
-- Fixed `analyses/nccc_validation/scripts/generate_nccc_one_bed_artifacts.py` so Figure 4 reads the PR-backed final accepted-row artifacts:
+- Fixed `analyses/nccc_validation/scripts/generate_nccc_one_bed_artifacts.py` so Figure 4 and its summary are derived from the all-attempted artifact by the manuscript's stated gate:
   - `analyses/nccc_validation/results/final/tables/nccc_one_bed_accepted_results.csv`
   - `analyses/nccc_validation/results/final/tables/nccc_one_bed_accepted_summary.csv`
-- Removed the stale fallback path that could regenerate Figure 4 from old run-folder CSVs and produce the wrong K18/K19 capture-error values.
-- Added validation inside the script so Figure 4 fails if the accepted-row table is not the expected K18, K19, and 1C--6C scope with Henry and ePC-SAFT rows.
-- Regenerated Figure 4 with the PR-backed data, removed the horizontal gridlines, and moved the legend to the top middle of the left capture-validation panel.
+- Removed the hard-coded accepted-case list that excluded a passing 7C result.
+- Added validation inside the script so Figure 4 fails unless all 20 expected attempted rows are present exactly once and the accepted artifact equals the row-level gate.
+- Regenerated Figure 4 from the gate-derived all-attempted data, removed the horizontal gridlines, and moved the legend to the top middle of the left capture-validation panel.
 - Updated `docs/code_to_paper_traceability.md` so the Figure 4 script path points to `generate_nccc_one_bed_artifacts.py`.
 
 ### Manuscript Prose Cleanup
 
-- Removed the abstract sentence: "K20 and 7C are retained as attempted rows and excluded from conditional accuracy statistics."
+- Reconciled the abstract, methods, results, conclusion, timing table, and figure caption with the gate-derived acceptance of 7C and rejection of K20.
 - Removed the Section 4.4 sentence that exposed internal CSV and script filenames in manuscript prose.
 
 ### Commands Run
@@ -215,7 +222,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ### Build / Validation Results
 
-- LaTeX build passed and produced a fresh 30-page `docs/latex/builds/main.pdf`.
+- LaTeX build passed and produced a fresh 31-page `docs/latex/builds/main.pdf`.
 - PDF freshness check passed.
 - NCCC validation artifact consistency check passed.
 - `git diff --check` passed with only line-ending normalization warnings.
@@ -226,8 +233,11 @@ Implemented the submission-readiness plan around the current committed evidence 
 ### PDF Visual Checks
 
 - Page 1: title, author metadata, corresponding-author marker, ORCID line, abstract, and keywords rendered correctly.
-- Page 18: Figure 4 rendered with the PR-backed data, no horizontal gridlines, and the legend at the top middle of the left capture-validation panel.
-- Page 29: CRediT, Funding, Declaration of Competing Interest, Data Availability, Code Availability, and Generative AI disclosure rendered correctly.
+- Page 2: the first citation renders as `[1, 2, 3]` and the reference list begins with the same numbered sources.
+- Page 17: the attempted-status table renders legibly and reports 7C as accepted.
+- Page 19: Figure 4 renders from the gate-derived data and includes 7C.
+- Page 21: the full-species timing table renders legibly.
+- Page 31: CRediT, Funding, Declaration of Competing Interest, Data Availability, Code Availability, and Generative AI disclosure render correctly.
 
 ### Metadata Pass Remaining Issues
 
@@ -238,4 +248,4 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 - The bibliography still reports one minor underfull box in `main.bbl`. It is isolated to a reference-list line break and does not block the build.
 - A reviewer-facing repository cleanup removed local IDE/Codex metadata, captured install logs, old internal planning documents, and unreferenced packaged data artifacts. Script-wired legacy analysis outputs such as the validation-evidence registry, calibration/holdout tables, and uncertainty/error-regime figures remain tracked because pruning them cleanly requires a separate analysis-script cleanup pass.
-- The cleanup-safe tests passed after this pass (`tests/test_benchmarking.py` and `tests/test_profile_csv_export.py`), and `analyses/nccc_validation/scripts/validate_results.py` passed. `tests/test_results_architecture.py` still needs a separate test-maintenance update because it references the removed historical `results_benchmark_evidence.tex` section and expects seven primary gate rows while the current accepted gate evidence contains 1C--6C.
+- The NCCC artifact validator passes. `tests/test_results_architecture.py` now passes all seven tests and asserts that the accepted artifact is exactly the stated gate applied to the attempted artifact; the accepted cases are K18, K19, and 1C--7C for both closures.
