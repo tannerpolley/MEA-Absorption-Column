@@ -3,12 +3,18 @@ from numpy import exp, array
 from scipy.optimize import least_squares
 
 from mea_absorption_column.BVP.robust_core import record_domain_guard
-from .domain_guards import DomainGuardError, require_positive
+from .domain_guards import require_positive
 
 
 def enhancement_factor(Tl, Cl_true, y_CO2, P,
                        H_CO2_mix, kl_CO2, kv_CO2,
-                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None, eta_psi=1.0):
+                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None, eta_psi=1.0,
+                       amine_id='MEA'):
+    if str(amine_id).upper() == 'MDEA':
+        return _mdea_enhancement_factor(
+            Tl, Cl_true, y_CO2, P, H_CO2_mix, kl_CO2, kv_CO2,
+            Dl_CO2, Dl_MEA, diagnostics, eta_psi,
+        )
     enable_enhancement_factor = True
 
     Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true = Cl_true[:6]
@@ -32,11 +38,6 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
         Cl_MEAH_true=Cl_MEAH_true,
         Cl_MEACOO_true=Cl_MEACOO_true,
     )
-
-    # Based On Putta from IDAES
-    k_MEA = 3.1732e3 * exp(-4936.6 / Tl) # m^6/(mol^2*s)
-    k_H2O = 1.0882e2 * exp(-3900 / Tl) # m^6/(mol^2*s)
-    k2a = (k_MEA * Cl_MEA_true + k_H2O * Cl_H2O_true)  # m^3/(mol*s)
 
     # Based On Luo from IDAES
     k_MEA = 2.003e4 * exp(-4742.0 / Tl) # m^6/(mol^2*s)
@@ -121,6 +122,42 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
     enhance_factor = [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi_H, Psi, eta_psi]
 
     return E, Psi, Psi_H, enhance_factor
+
+
+def _mdea_enhancement_factor(
+    Tl, Cl_true, y_CO2, P, H_CO2_mix, kl_CO2, kv_CO2,
+    Dl_CO2, Dl_MDEA, diagnostics, eta_psi,
+):
+    cl_co2, cl_mdea = np.asarray(Cl_true, dtype=float)[:2]
+    require_positive(
+        "enhancement_factor",
+        diagnostics,
+        Tl=Tl,
+        P=P,
+        H_CO2_mix=H_CO2_mix,
+        kl_CO2=kl_CO2,
+        kv_CO2=kv_CO2,
+        Dl_CO2=Dl_CO2,
+        Dl_MDEA=Dl_MDEA,
+        Cl_CO2_true=cl_co2,
+        Cl_MDEA_true=cl_mdea,
+    )
+    # Camacho et al. (2009), Eq. 23; published units are m3/(kmol s).
+    k2 = np.exp(22.4 - 6243.5 / float(Tl)) / 1000.0
+    ha = np.sqrt(k2 * cl_mdea * Dl_CO2) / kl_CO2
+    interfacial_co2 = max(float(y_CO2) * float(P) / float(H_CO2_mix), 1.0e-30)
+    instantaneous = 1.0 + Dl_MDEA * cl_mdea / max(Dl_CO2 * interfacial_co2, 1.0e-30)
+    # Camacho Table IV shows E bounded closely by 1 + Ha and Ei.
+    enhancement = float(np.clip(min(1.0 + ha, instantaneous), 1.0, 1.0e4))
+    eta_psi = float(eta_psi)
+    psi = enhancement * kl_CO2 / kv_CO2
+    psi_h = psi / (psi + H_CO2_mix) * eta_psi
+    require_positive(
+        "enhancement_factor", diagnostics,
+        Ha=ha, E=enhancement, Psi=psi, Psi_H=psi_h, eta_psi=eta_psi,
+    )
+    payload = [k2, cl_mdea, Dl_CO2, kl_CO2, ha, enhancement, psi_h, psi, eta_psi]
+    return enhancement, psi, psi_h, payload
 
 
 def _explicit_enhancement_factor(

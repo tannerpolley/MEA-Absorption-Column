@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.optimize import root
 
 from ..config.Constants import MWs_l, MWs_v, column_params, packing_params, n
 from ..Properties.Thermophysical_Properties import vapor_pressure
@@ -12,6 +11,7 @@ def convert_data(
         return_metadata=False,
         vapor_composition_mode='legacy_ratio',
         gas_flow_basis='reported_total_wet',
+        amine_molar_mass_kg_per_mol=MWs_l[1],
 ):
 
     X = df.iloc[run, :].to_numpy()
@@ -23,7 +23,7 @@ def convert_data(
 
         # Molecular Weights
         MW_CO2 = MWs_l[0]
-        MW_MEA = MWs_l[1]
+        MW_MEA = amine_molar_mass_kg_per_mol
         MW_H2O = MWs_l[2]
         MW_N2 = MWs_v[2]
         MW_O2 = MWs_v[3]
@@ -90,7 +90,7 @@ def convert_data(
 
         # Molecular Weights
         MW_CO2 = MWs_l[0]
-        MW_MEA = MWs_l[1]
+        MW_MEA = amine_molar_mass_kg_per_mol
         MW_H2O = MWs_l[2]
         MW_N2 = MWs_v[2]
         MW_O2 = MWs_v[3]

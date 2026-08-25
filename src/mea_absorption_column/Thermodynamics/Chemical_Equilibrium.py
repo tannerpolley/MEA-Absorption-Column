@@ -21,6 +21,29 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
 
 SPECIES_6 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-")
 SPECIES_9 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-")
+MDEA_SPECIES = ("CO2", "MDEA", "H2O", "H+", "OH-", "HCO3-", "CO3^2-", "MDEAH+")
+MDEA_REACTIONS = np.array(
+    (
+        (0.0, 0.0, -1.0, 1.0, 1.0, 0.0, 0.0, 0.0),
+        (-1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0),
+        (0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 1.0, 0.0),
+        (0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0),
+    )
+)
+MDEA_BALANCES = np.array(
+    (
+        (1.0, 5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 5.0),
+        (0.0, 13.0, 2.0, 1.0, 1.0, 1.0, 0.0, 14.0),
+        (0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0),
+        (2.0, 2.0, 1.0, 0.0, 1.0, 3.0, 3.0, 2.0),
+    )
+)
+MDEA_LN_K_COEFFICIENTS = (
+    (132.899, -13445.9, -22.477, 0.0),
+    (212.739, -11333.8, -33.844, -0.0018149),
+    (287.444, -13648.7, -48.880, 0.030232),
+    (-83.491, -819.7, 10.976, 0.0),
+)
 REACTIONS_6 = (
     {"CO2": -1.0, "MEA": -2.0, "MEAH+": 1.0, "MEACOO-": 1.0},
     {"CO2": -1.0, "MEA": -1.0, "H2O": -1.0, "MEAH+": 1.0, "HCO3-": 1.0},
@@ -252,7 +275,7 @@ def chemical_equilibrium(Fl, Tl):
             max_nfev=60,
         )
 
-    Cl_true_scaled, solution, success = result.x, result.message, result.success
+    Cl_true_scaled = result.x
 
     Cl_true = np.maximum(Cl_true_scaled*scales, 1.0e-30)
 
@@ -270,8 +293,19 @@ def chemical_equilibrium_with_model(
     model="legacy",
     P=101325.0,
     diagnostics=None,
+    amine_id="MEA",
+    liquid_molar_density=None,
 ):
     normalized_model = (model or "legacy").lower()
+    if str(amine_id).upper() == "MDEA":
+        if normalized_model not in {"legacy", "legacy_concentration", "local", "mdea_ideal"}:
+            raise RuntimeError(
+                "MDEA column integration currently supports mdea_ideal chemistry; "
+                "the typed reactive ePC-SAFT campaign remains a validation-only lane"
+            )
+        return mdea_ideal_chemical_equilibrium(
+            Fl, Tl, liquid_molar_density=liquid_molar_density
+        )
     if normalized_model in {"legacy", "legacy_concentration", "local"}:
         return chemical_equilibrium(Fl, Tl)
     if normalized_model in {
@@ -373,6 +407,51 @@ def chemical_equilibrium_with_model(
         "epcsaft_reactive_six_activity, epcsaft_reactive_six_activity_converted, "
         "epcsaft_reactive_six_activity_rebased, or epcsaft_reactive_nine_activity_rebased."
     )
+
+
+def mdea_ideal_chemical_equilibrium(Fl, Tl, *, liquid_molar_density=None):
+    """Ideal-activity Uyan et al. (2015) eight-species MDEA speciation."""
+    raw = np.zeros(len(MDEA_SPECIES), dtype=float)
+    raw[:3] = np.maximum(np.asarray(Fl[:3], dtype=float), 1.0e-30)
+    hydrated = min(0.80 * raw[0], 0.80 * raw[1])
+    carbonate = min(0.01 * hydrated, 0.01 * raw[0])
+    extents = np.array((1.0e-8, hydrated, carbonate, -(hydrated + carbonate)))
+    initial = np.maximum(raw + MDEA_REACTIONS.T @ extents, 1.0e-30)
+    totals = MDEA_BALANCES @ raw
+    scales = np.maximum(np.abs(totals), 1.0)
+    T = float(Tl)
+    ln_k = np.array(
+        [a + b / T + c * np.log(T) + d * T for a, b, c, d in MDEA_LN_K_COEFFICIENTS]
+    )
+
+    def residual(log_amounts):
+        amounts = np.exp(log_amounts)
+        mole_fractions = amounts / amounts.sum()
+        return np.concatenate(
+            ((MDEA_BALANCES @ amounts - totals) / scales, MDEA_REACTIONS @ np.log(mole_fractions) - ln_k)
+        )
+
+    result = root(residual, np.log(initial))
+    max_residual = float(np.max(np.abs(residual(result.x))))
+    if not result.success or max_residual > 1.0e-7:
+        result = least_squares(
+            residual,
+            np.log(initial),
+            bounds=(-70.0, np.log(max(float(raw.sum()) * 2.0, 1.0))),
+            xtol=1.0e-11,
+            ftol=1.0e-11,
+            gtol=1.0e-11,
+            max_nfev=250,
+        )
+        max_residual = float(np.max(np.abs(residual(result.x))))
+    if not result.success or max_residual > 1.0e-7:
+        raise RuntimeError(
+            f"MDEA ideal-activity speciation failed: {result.message}; max residual={max_residual:.3e}"
+        )
+    amounts = np.exp(result.x)
+    x_true = amounts / amounts.sum()
+    molar_density = 1.0 if liquid_molar_density is None else float(liquid_molar_density)
+    return x_true * molar_density, x_true
 
 
 def epcsaft_reactive_chemical_equilibrium(
