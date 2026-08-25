@@ -1,0 +1,336 @@
+{
+  "schema_version": 1,
+  "identity": "mea-reactive-vle-application-contract-v1",
+  "overall_status": "source_frozen_upstream_admission_pending",
+  "frozen_on": "2026-08-12",
+  "contract_role": "v1_tracer_and_source_baseline",
+  "predictive_v2_pending": {
+    "required_before_promotion": true,
+    "upstream_issue_order": [30, 31],
+    "draft_observation_counts": {"pressure": 121, "speciation": 198, "total": 319},
+    "draft_campaign_blocks": 26,
+    "draft_cross_validation_folds": 5,
+    "initial_joint_temperature_domain_k": [313.15, 353.15],
+    "low_temperature_speciation_role": "qualification_support_not_joint_fit",
+    "high_temperature_pressure_role": "domain_extension_challenge_above_353.15_K",
+    "jou_training_policy": "requires_new_campaign_blocked_partition_identity_and_hashes_before_optimization",
+    "selection_policy": "campaign_blocked_cross_validation_then_one_all_admissible_data_refit"
+  },
+  "scientific_endpoint": {
+    "kind": "predictive_reactive_vle",
+    "inputs": [
+      "temperature",
+      "overall_MEA_H2O_CO2_composition_or_loading"
+    ],
+    "outputs": [
+      "equilibrium_pressure",
+      "vapor_composition",
+      "liquid_speciation"
+    ],
+    "forbidden_prediction_inputs": [
+      "observed_total_pressure",
+      "observed_CO2_partial_pressure"
+    ],
+    "staged_tracer": "certified_fixed_TP_homogeneous_reacting_liquid"
+  },
+  "source_binding": {
+    "repository": "tannerpolley/MEA-Thermodynamics",
+    "commit": "ac5ff017870ecf2c7987cba39f243b0399b8f106",
+    "required_clean_checkout": true,
+    "artifacts": [
+      {
+        "id": "reaction_source_contract",
+        "path": "data/reference/MEA/manifests/chemical_reaction_source_contract.json",
+        "sha256": "39db0d7ef972dc7eb41328bdf2ec3f67f62c33fc2bf0fdc7bab471ade9aefb55"
+      },
+      {
+        "id": "grouped_pressure_speciation_split",
+        "path": "data/reference/MEA/manifests/grouped_split_manifest.csv",
+        "sha256": "af205ad5968667cf25dc9205d780738035769664a94cc9a421cd3c67148ff804"
+      },
+      {
+        "id": "speciation_target_membership",
+        "path": "data/reference/MEA/manifests/speciation_target_membership.csv",
+        "sha256": "a89a3f0373a86813482158f180939cf57f74be038cd59f244dfadcb689923190"
+      },
+      {
+        "id": "pressure_metrology",
+        "path": "data/reference/MEA/manifests/pco2_metrology_manifest.csv",
+        "sha256": "0d14803873a60534ec5d7df382cfbd0ae03e4aaeba68bb5d54be7e4def8397cc"
+      },
+      {
+        "id": "vle_observations",
+        "path": "data/reference/MEA/observations/vapor_liquid_equilibrium/Canonical_VLE_Observations.csv",
+        "sha256": "9e7d9ba5fead8bfa83a311dad341e3e2e8df1806d5249642a23562e99a72cb73"
+      },
+      {
+        "id": "speciation_observations",
+        "path": "data/reference/MEA/observations/liquid_speciation/Canonical_Combined_ChEq.csv",
+        "sha256": "8c07df9efd1c1ecbd775ccdd42791e0cef1880b3837e5749a60d2142aa85809e"
+      },
+      {
+        "id": "volumetric_split",
+        "path": "data/reference/MEA/manifests/volumetric_grouped_split_manifest.csv",
+        "sha256": "156681e9cefc554314124b99daa9ffe9a45aa1ab02c167fa080d12405501dacd"
+      },
+      {
+        "id": "volumetric_observation_contract",
+        "path": "data/reference/MEA/manifests/ionic_volumetric_observation_contract.csv",
+        "sha256": "e5e751fb5100c2cb65a5ce0d544b3d52e3b8e17af2390ebaf081922cd63a2ef1"
+      },
+      {
+        "id": "parameter_source_audit",
+        "path": "data/reference/MEA/parameters/full_component_parameter_source_audit.csv",
+        "sha256": "7e002716d81c81b5f37f6d33e92c7665c6e498e939892c35556a51d985ebdd1c"
+      },
+      {
+        "id": "phase2_pure_parameter_seed",
+        "path": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv",
+        "sha256": "e6264444c4a5a9311dbaec1bcbf37cc6df37a20d79f2c03fe9e3f6177f593e5c"
+      },
+      {
+        "id": "phase2_binary_parameter_seed",
+        "path": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv",
+        "sha256": "3966b65ce2494728f6529724feca286b1852a82eec1cd2dd27b77d08c81adfea"
+      },
+      {
+        "id": "phase2_cross_association_seed",
+        "path": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_hb_ij.csv",
+        "sha256": "6ab75776e82755acd68efe7cd58ba468d5985cf81813a953cb5950308b90b886"
+      },
+      {
+        "id": "phase2_cross_diameter_seed",
+        "path": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/l_ij.csv",
+        "sha256": "6ab75776e82755acd68efe7cd58ba468d5985cf81813a953cb5950308b90b886"
+      },
+      {
+        "id": "phase2_model_options",
+        "path": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/user_options.json",
+        "sha256": "0213b8bdae8dd38fdfde5ccbcc9fbd7b38598b3af4461cf269a9793ff3d7dfe0"
+      }
+    ]
+  },
+  "chemistry": {
+    "source_contract_identity": "mea-nine-species-reaction-source-contract-v2",
+    "source_contract_status": "source_adjudicated_provider_transform_frozen",
+    "common_source_standard_state": "aqueous-molality-infinite-dilution-water-v1",
+    "provider_transform": "mea-five-reaction-provider-neutral-basis-transform-v1",
+    "provider_transform_ready": true,
+    "balance_row_order": [
+      "C",
+      "H",
+      "N",
+      "O"
+    ],
+    "declared_balance_rank": 4,
+    "declared_reaction_rank": 5,
+    "species": [
+      {
+        "source_id": "CO2",
+        "provider_id": "carbon-dioxide",
+        "parameter_component": "CO2",
+        "formula": {"C": 1, "H": 0, "N": 0, "O": 2},
+        "charge": 0,
+        "molar_mass_kg_per_mol": 0.04401
+      },
+      {
+        "source_id": "MEA",
+        "provider_id": "monoethanolamine",
+        "parameter_component": "MEA",
+        "formula": {"C": 2, "H": 7, "N": 1, "O": 1},
+        "charge": 0,
+        "molar_mass_kg_per_mol": 0.06108
+      },
+      {
+        "source_id": "H2O",
+        "provider_id": "water",
+        "parameter_component": "H2O",
+        "formula": {"C": 0, "H": 2, "N": 0, "O": 1},
+        "charge": 0,
+        "molar_mass_kg_per_mol": 0.01801528
+      },
+      {
+        "source_id": "MEAH+",
+        "provider_id": "protonated-monoethanolamine",
+        "parameter_component": "MEAH+",
+        "formula": {"C": 2, "H": 8, "N": 1, "O": 1},
+        "charge": 1,
+        "molar_mass_kg_per_mol": 0.06209
+      },
+      {
+        "source_id": "MEACOO-",
+        "provider_id": "carbamate-anion",
+        "parameter_component": "MEACOO-",
+        "formula": {"C": 3, "H": 6, "N": 1, "O": 3},
+        "charge": -1,
+        "molar_mass_kg_per_mol": 0.10408
+      },
+      {
+        "source_id": "HCO3-",
+        "provider_id": "bicarbonate-anion",
+        "parameter_component": "HCO3-",
+        "formula": {"C": 1, "H": 1, "N": 0, "O": 3},
+        "charge": -1,
+        "molar_mass_kg_per_mol": 0.0610168
+      },
+      {
+        "source_id": "CO3--",
+        "provider_id": "carbonate-anion",
+        "parameter_component": "CO3^2-",
+        "formula": {"C": 1, "H": 0, "N": 0, "O": 3},
+        "charge": -2,
+        "molar_mass_kg_per_mol": 0.06001
+      },
+      {
+        "source_id": "H3O+",
+        "provider_id": "hydronium-cation",
+        "parameter_component": "H3O+",
+        "formula": {"C": 0, "H": 3, "N": 0, "O": 1},
+        "charge": 1,
+        "molar_mass_kg_per_mol": 0.01902
+      },
+      {
+        "source_id": "OH-",
+        "provider_id": "hydroxide-anion",
+        "parameter_component": "OH-",
+        "formula": {"C": 0, "H": 1, "N": 0, "O": 1},
+        "charge": -1,
+        "molar_mass_kg_per_mol": 0.01701
+      }
+    ],
+    "reactions": [
+      {"id": "R1", "stoichiometry": [0, 0, -2, 0, 0, 0, 0, 1, 1]},
+      {"id": "R2", "stoichiometry": [-1, 0, -2, 0, 0, 1, 0, 1, 0]},
+      {"id": "R3", "stoichiometry": [0, 0, -1, 0, 0, -1, 1, 1, 0]},
+      {"id": "R4", "stoichiometry": [0, 1, -1, 0, -1, 1, 0, 0, 0]},
+      {"id": "R5", "stoichiometry": [0, 1, -1, -1, 0, 0, 0, 1, 0]}
+    ],
+    "temperature_domain_k": [293.15, 323.15],
+    "oxazolidone_policy": "exclude_and_reject_states_outside_the_predeclared_nine_species_domain_until_an_independent_source_contract_is_admitted"
+  },
+  "observations": {
+    "pressure_speciation_split": {
+      "total_states": 367,
+      "training_states": 147,
+      "reserved_states": 220,
+      "training_by_family": {"vle_pressure": 89, "speciation": 58},
+      "reserved_by_family": {"vle_pressure": 167, "speciation": 53}
+    },
+    "eligible_targets": {
+      "pressure": 121,
+      "speciation": 198,
+      "volumetric": 425
+    },
+    "volumetric_split": {
+      "training_states": 153,
+      "reserved_states": 78
+    },
+    "reduced_tracer": {
+      "maximum_fitted_coordinates": 2,
+      "pressure_row": {
+        "id": "vle_obs_0137",
+        "source": "Hilliard2008",
+        "temperature_k": 313.15,
+        "mea_mass_fraction": 0.3,
+        "co2_loading_mol_per_mol_mea": 0.466,
+        "observed_co2_partial_pressure_pa": 574.0,
+        "observed_total_pressure_pa": 7326.7,
+        "role": "training_positive_equality"
+      },
+      "speciation_row": {
+        "id": "cheq_canon_00194",
+        "source": "Bottinger2008",
+        "temperature_k": 313.15,
+        "mea_mass_fraction": 0.3,
+        "co2_loading_mol_per_mol_mea": 0.466,
+        "species": "MEACOO-",
+        "observed_mole_fraction": 0.0502,
+        "state_pressure_pa": 7326.7,
+        "pressure_role": "application_anchor_not_source_measurement",
+        "role": "training_positive_equality"
+      }
+    },
+    "model_selection_policy": "nested_model_selection_uses_training_internal_folds_only",
+    "reserved_policy": "reserved_observations_may_reject_but_may_not_redesign_or_refit_the_model"
+  },
+  "parameter_seed": {
+    "family": "MEA_CO2_H2O_phase2",
+    "authority": "provisional_nonpredictive_start_only",
+    "forbidden_claim": "final_predictive_parameter_set",
+    "release_stages": [
+      {
+        "stage": 1,
+        "scope": "source_qualified_neutral_pure_parameters",
+        "policy": "fit_or_recover_from_independent_pure_data_before_mixture_work"
+      },
+      {
+        "stage": 2,
+        "scope": "neutral_binary_and_fixed_topology_cross_association",
+        "policy": "release_only_rank_supported_coordinates_and_never_alias_k_hb_ij_to_resolved_association_energy"
+      },
+      {
+        "stage": 3,
+        "scope": "ionic_segment_coordinates",
+        "initial_coordinates": [
+          "MEAH+::segment_diameter",
+          "MEAH+::dispersion_energy_over_k",
+          "MEACOO-::segment_diameter"
+        ],
+        "policy": "reduced_tracer_uses_no_more_than_two_preregistered_rank_sufficient_coordinates"
+      },
+      {
+        "stage": 4,
+        "scope": "reaction_correlations",
+        "policy": "remain_source_fixed_until_every_eos_and_mixture_coordinate_stage_is_frozen_and_an_independent_reaction_refit_is_predeclared"
+      }
+    ]
+  },
+  "nested_model_hierarchy": {
+    "discrete_selection_outside_optimizer": true,
+    "source_fixed_multipole_moments": true,
+    "models": [
+      {
+        "id": "M0",
+        "role": "transferred_phase2_reference",
+        "association": "explicit_ordinary_fixed_topology",
+        "polar": "none",
+        "born_coefficients": [1, 1],
+        "relative_permittivity": "phase2_empirical_reference",
+        "induced_or_cross_association": "none"
+      },
+      {
+        "id": "M1",
+        "role": "source_fixed_polar_candidate",
+        "base": "M0",
+        "polar": "source_fixed_DD_QQ_DQ",
+        "promotion_requirement": "complete_source_packet_and_held_out_improvement_without_identifiability_loss"
+      },
+      {
+        "id": "M2",
+        "role": "source_defined_induced_or_cross_association_candidate",
+        "base": "M1",
+        "induced_or_cross_association": "explicit_source_defined_fixed_topology",
+        "promotion_requirement": "source_defined_combining_rule_or_resolved_energy_volume_pair_with_exact_identity_and_derivative"
+      }
+    ],
+    "simultaneous_k_ij_and_cross_association_fit": "forbidden_without_preregistered_rank_and_profile_identifiability_evidence"
+  },
+  "upstream_acceptance": {
+    "engine_repository": "tannerpolley/ePC-SAFT",
+    "required_families_in_order": [
+      "certified_homogeneous_reactive_observations",
+      "certified_reactive_bubble_vle_observations"
+    ],
+    "capabilities": {
+      "reactive_observation_governance_admission": "pending",
+      "certified_stable_homogeneous_mea_state": "pending",
+      "installed_reacting_liquid_observable_block": "pending",
+      "rank_sufficient_reduced_tracer": "pending",
+      "certified_reactive_bubble_vle": "pending",
+      "exact_reactive_vle_parameter_sensitivities": "pending",
+      "selected_parameter_derivative_support": "pending",
+      "immutable_installed_release_receipt": "pending"
+    },
+    "installed_artifact_receipt": null
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "package": {
+    "name": "epcsaft",
+    "minimum_version": "0.2.0",
+    "default_mode": "stable",
+    "allowed_sources": {
+      "stable": [
+        "local_file",
+        "release"
+      ],
+      "dev": [
+        "local_file",
+        "release"
+      ],
+      "final": [
+        "local_file",
+        "release"
+      ]
+    }
+  },
+  "final_identity": {
+    "engine_commit": "b64f6df906489cb132792641c5be2ee8f404b114",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "a505d20ac9019e9b4edbad16df80166b6e082170ef2a2f002d897269e756d0d9"
+  },
+  "required_public_symbols": [
+    "Parameters",
+    "Mixture",
+    "State",
+    "unit_registry"
+  ],
+  "forbidden_import_prefixes": [
+    "epcsaft._"
+  ],
+  "allowed_direct_import_paths": [
+    "src/mea_absorption_column/Thermodynamics/thermo_models.py",
+    "src/mea_absorption_column/Thermodynamics/epcsaft_v02.py",
+    "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py",
+    "analyses/nccc_validation/scripts/probe_reactive_epcsaft_speciation.py"
+  ],
+  "private_import_exception_paths": [
+    "src/mea_absorption_column/Thermodynamics/thermo_models.py"
+  ],
+  "scan_roots": [
+    "src",
+    "scripts",
+    "tests",
+    "analyses"
+  ],
+  "smoke": {
+    "kind": "ionic_fugacity_state",
+    "module": "mea_absorption_column.Thermodynamics.thermo_models"
+  }
+}

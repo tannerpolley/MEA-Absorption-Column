@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import pytest
 
@@ -8,9 +7,6 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
 )
-
-SPECIES_9 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-")
-
 
 def _requires_reactive_epcsaft_dataset():
     try:
@@ -27,85 +23,18 @@ def _case_3c_liquid_state():
     return list(Fl), float(Tl), float(P)
 
 
-def test_epcsaft_reactive_six_concentration_matches_legacy_case_3c_state():
+@pytest.mark.parametrize(
+    "model",
+    (
+        "epcsaft_reactive_six_concentration",
+        "epcsaft_reactive_six_activity",
+        "epcsaft_reactive_six_activity_converted",
+        "epcsaft_reactive_nine_activity_rebased",
+    ),
+)
+def test_legacy_reactive_modes_fail_closed_until_constants_meet_v02_contract(model):
     _requires_reactive_epcsaft_dataset()
     Fl, Tl, P = _case_3c_liquid_state()
 
-    _, legacy_x = chemical_equilibrium_with_model(Fl, Tl, model="legacy", P=P)
-    _, epcsaft_x = chemical_equilibrium_with_model(
-        Fl,
-        Tl,
-        model="epcsaft_reactive_six_concentration",
-        P=P,
-        diagnostics={},
-    )
-
-    np.testing.assert_allclose(np.sum(epcsaft_x), 1.0, atol=1.0e-12)
-    np.testing.assert_allclose(epcsaft_x, legacy_x, rtol=1.0e-3, atol=5.0e-5)
-
-
-def test_epcsaft_reactive_six_activity_basis_changes_case_3c_speciation():
-    _requires_reactive_epcsaft_dataset()
-    Fl, Tl, P = _case_3c_liquid_state()
-
-    _, legacy_x = chemical_equilibrium_with_model(Fl, Tl, model="legacy", P=P)
-    _, activity_x = chemical_equilibrium_with_model(
-        Fl,
-        Tl,
-        model="epcsaft_reactive_six_activity",
-        P=P,
-        diagnostics={},
-    )
-
-    np.testing.assert_allclose(np.sum(activity_x), 1.0, atol=1.0e-12)
-    assert activity_x[0] > 10.0 * legacy_x[0]
-    assert activity_x[4] < legacy_x[4]
-
-
-def test_epcsaft_reactive_six_activity_converted_uses_concentration_basis_units():
-    _requires_reactive_epcsaft_dataset()
-    Fl, Tl, P = _case_3c_liquid_state()
-
-    _, legacy_x = chemical_equilibrium_with_model(Fl, Tl, model="legacy", P=P)
-    _, activity_x = chemical_equilibrium_with_model(
-        Fl,
-        Tl,
-        model="epcsaft_reactive_six_activity",
-        P=P,
-        diagnostics={},
-    )
-    _, converted_x = chemical_equilibrium_with_model(
-        Fl,
-        Tl,
-        model="epcsaft_reactive_six_activity_converted",
-        P=P,
-        diagnostics={},
-    )
-
-    np.testing.assert_allclose(np.sum(converted_x), 1.0, atol=1.0e-12)
-    assert converted_x[0] < activity_x[0]
-    assert abs(converted_x[4] - legacy_x[4]) < abs(activity_x[4] - legacy_x[4])
-
-
-def test_epcsaft_reactive_nine_activity_rebased_solves_case_3c_state():
-    _requires_reactive_epcsaft_dataset()
-    Fl, Tl, P = _case_3c_liquid_state()
-    diagnostics = {}
-
-    Cl_true, x_true = chemical_equilibrium_with_model(
-        Fl,
-        Tl,
-        model="epcsaft_reactive_nine_activity_rebased",
-        P=P,
-        diagnostics=diagnostics,
-    )
-
-    np.testing.assert_allclose(np.sum(x_true), 1.0, atol=1.0e-12)
-    assert len(x_true) == len(SPECIES_9)
-    assert len(Cl_true) == len(SPECIES_9)
-    assert diagnostics["epcsaft_chemistry_max_mass_residual"] < 1.0e-6
-    assert diagnostics["epcsaft_chemistry_max_reaction_residual"] < 1.0e-6
-    assert diagnostics["epcsaft_chemistry_max_charge_residual"] < 1.0e-6
-    assert x_true[SPECIES_9.index("H3O+")] > 0.0
-    assert x_true[SPECIES_9.index("OH-")] > 0.0
-    assert x_true[SPECIES_9.index("CO3^2-")] > 0.0
+    with pytest.raises(RuntimeError, match="independently sourced.*standard-state conversion"):
+        chemical_equilibrium_with_model(Fl, Tl, model=model, P=P, diagnostics={})

@@ -386,6 +386,15 @@ def epcsaft_reactive_chemical_equilibrium(
     calibrate_activity_to_legacy=False,
     diagnostics=None,
 ):
+    ensure_epcsaft_importable()
+    raise RuntimeError(
+        "The legacy epcsaft_reactive_* modes are intentionally unavailable after the "
+        "ePC-SAFT 0.2 API cutover. The new typed chemical-equilibrium API requires "
+        "independently sourced, dimensionless reaction constants with an explicit "
+        "standard-state conversion; the archived locally rebased constants do not meet "
+        "that admission contract. Use epcsaft_ionic for the supported fugacity-only lane."
+    )
+
     species_set = str(species_set).lower()
     species, reaction_names, reaction_rows = _reactive_species_contract(species_set)
     apparent_x = _apparent_liquid_mole_fraction(Fl)
