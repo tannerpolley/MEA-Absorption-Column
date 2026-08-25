@@ -1,15 +1,15 @@
-    \section{Model Framework}
+    \section{Absorber and Thermodynamic Model}
     \label{sec:model-framework}
         Solvent-based post-combustion carbon capture (PCC) models describe how $\COtwo$ moves from the vapor phase into the liquid solvent inside a packed column. That transfer is driven by thermodynamics and limited by transport, reaction kinetics, hydraulics, and heat release. Local temperature, pressure, composition, and flow rates determine the properties used in those submodels. The governing mass and energy balances then track how the liquid and vapor streams change with packed height.
 
         \begin{figure}
             \centering
             \includegraphics[width=12cm]{figures/model-framework-flowchart.png}
-            \caption{Absorber model structure and thermodynamic responsibility map. Chemical equilibrium converts apparent component amounts to true species concentrations. The selected phase-equilibrium closure then converts each local $(T,P,\mathbf{x})$ state to CO$_2$ fugacities. Transport, hydraulics, interfacial fluxes, and column balances remain common to both thermodynamic closures.}\label{fig:Model_Framework_Flowchart}
+            \caption{Absorber calculation sequence. Chemical equilibrium converts apparent component amounts to true species concentrations. The selected phase-equilibrium closure then converts each local $(T,P,\mathbf{x})$ state to CO$_2$ fugacities. Transport, hydraulics, interfacial fluxes, and column balances remain common to both thermodynamic closures.}\label{fig:absorber-calculation-sequence}
         \end{figure}
-        Figure~\ref{fig:Model_Framework_Flowchart}, adapted from Luo \cite{Luo2017}, outlines the model structure used for the MEA absorber benchmark. The calculation begins with flow, composition, pressure, and temperature variables for the vapor and liquid phases. Chemical equilibrium determines the true liquid species state before the phase-equilibrium closure evaluates the CO$_2$ fugacity driving force. Transport and hydraulic properties then define interfacial fluxes and close the governing balances. This ordering allows the numerical method and CO$_2$ fugacity closure to change while the reaction, transport, hydraulic, and balance equations remain fixed.
+        Figure~\ref{fig:absorber-calculation-sequence}, adapted from Luo \cite{Luo2017}, outlines the calculation sequence used for the MEA absorber benchmark. The calculation begins with flow, composition, pressure, and temperature variables for the vapor and liquid phases. Chemical equilibrium determines the true liquid species state before the phase-equilibrium closure evaluates the CO$_2$ fugacity driving force. Transport and hydraulic properties then define interfacial fluxes and close the governing balances. This ordering allows the numerical method and CO$_2$ fugacity closure to change while the reaction, transport, hydraulic, and balance equations remain fixed.
         
-        Thermodynamic modeling includes both chemical equilibrium and vapor--liquid equilibrium (VLE). The chemical-equilibrium calculation determines true species concentrations from apparent component amounts and the retained reaction set. The VLE calculation then supplies the fugacities used in the interfacial driving force. The model switches the CO$_2$ driving-force calculation between the baseline Henry-law expression and an ePC-SAFT fugacity-coefficient calculation. In the routine ePC-SAFT campaign, the equation of state supplies local mixture density, residual-Helmholtz contributions, and vapor- and liquid-side CO$_2$ fugacity coefficients. It does not supply the reaction network or reaction-equilibrium constants. Chemical equilibrium, enhancement factor, transport correlations, hydraulics, and balances remain unchanged. Table~\ref{tab:thermodynamic-responsibility} lists the quantities owned by each block.
+        Thermodynamic modeling includes both chemical equilibrium and vapor--liquid equilibrium (VLE). The chemical-equilibrium calculation determines true species concentrations from apparent component amounts and the retained reaction set. The VLE calculation then supplies the fugacities used in the interfacial driving force. The model switches the CO$_2$ driving-force calculation between the baseline Henry-law expression and an ePC-SAFT fugacity-coefficient calculation. In the routine ePC-SAFT campaign, the equation of state supplies local mixture density, residual-Helmholtz contributions, and vapor- and liquid-side CO$_2$ fugacity coefficients. It does not supply the reaction network or reaction-equilibrium constants. Chemical equilibrium, enhancement factor, transport correlations, hydraulics, and balances remain unchanged. Table~\ref{tab:thermodynamic-responsibility} lists the quantities supplied by each calculation.
 
         \begin{table}[htbp]
             \centering
@@ -17,9 +17,9 @@
             \label{tab:thermodynamic-responsibility}
             \begin{tabularx}{\textwidth}{p{0.22\textwidth} X X}
                 \toprule
-                Block & Quantities supplied & Role in the comparison \\
+                Calculation & Quantities supplied & Role in the comparison \\
                 \midrule
-                Routine chemical equilibrium & True-species concentrations, charge balance, component balances, and fitted concentration-basis $K_r(T)$ values & Fixed in the Henry-law and routine ePC-SAFT rows; unit activity coefficients are used \\
+                Routine chemical equilibrium & True-species concentrations, charge balance, component balances, and the retained concentration-basis $K_r(T)$ record & Fixed in the Henry-law and routine ePC-SAFT rows; unit activity coefficients are used \\
                 Henry-law closure & Liquid CO$_2$ fugacity from the mixture Henry coefficient and ideal vapor partial pressure & Baseline phase-equilibrium driving force \\
                 Routine ePC-SAFT closure & Phase density, residual-Helmholtz contributions, and vapor- and liquid-side CO$_2$ fugacity coefficients at local $(T,P,\mathbf{x})$ & Replaces only the Henry-law CO$_2$ fugacity closure \\
                 Transport and column model & Transfer coefficients, enhancement factor, interfacial fluxes, hydraulics, and material and energy balances & Fixed across the thermodynamic comparison \\
@@ -41,7 +41,7 @@
                     & \MEA+\COtwo+\HtwoO \leftrightarrow \MEAH +\HCOthree
                     && \text{stoichiometric reaction}
                 \end{align}
-                This reaction set represents a simplification of the solution chemistry that was developed by Hilliard \cite{Hilliard2008} for typical $\COtwo$ capture process conditions where concentrations of other ions (\ce{H3O+}, \ce{OH-}, \ce{CO3^{2-}}) are negligibly low.
+                This reaction set follows the simplified solution chemistry used by Hilliard \cite{Hilliard2008} and omits \ce{H3O+}, \ce{OH-}, and \ce{CO3^{2-}}. The omission is an assumption of the six-species calculation and limits its applicability when those species contribute materially to charge or component balances.
 
                 This reaction set gives the following stoichiometric matrix $\mathbf{\nu}_{i,r}$:
                 \begin{align}
@@ -56,20 +56,20 @@
                     \end{bmatrix}
                     && \text{dimensionless}
                 \end{align}
-                The equilibrium constants are found through fitting speciation data to the following equation.
+                The retained temperature-dependent equilibrium-constant record has the form
                 
                 \begin{align}
                     \log K_r = a_r + \frac{b_r}{T_l} + c_r \ln(T_l) + d_r T_l
                     && \text{dimensionless}
                 \end{align}
 
-                 where $r$ represents a reaction number. The fitted $K_r$ values use a concentration standard state. With $C^\circ=\SI{1}{mol\,L^{-1}}=\SI{1000}{mol\,m^{-3}}$ and unit activity coefficients in the routine campaign, the dimensionless species activities and reaction quotient are
+                 where $r$ represents a reaction number. The $K_r$ values use a concentration standard state. Their estimation dataset, objective, weights, parameter bounds, and uncertainty were not recovered for this manuscript, so they are treated as fixed inputs rather than parameters estimated in this study. With $C^\circ=\SI{1}{mol\,L^{-1}}=\SI{1000}{mol\,m^{-3}}$ and unit activity coefficients in the routine campaign, the dimensionless species activities and reaction quotient are
                  \begin{align}
                      a_i^{(c)} &= \frac{C_i}{C^\circ},
                      & Q_r &= \prod_i \left(a_i^{(c)}\right)^{\nu_{i,r}},
                      & \ln Q_r-\ln K_r(T_l) &= 0 .
                  \end{align}
-                The algebraic implementation evaluates the equivalent quotient directly with concentrations in \(\unit{mol\,m^{-3}}\). It therefore converts the fitted constant according to
+                The algebraic implementation evaluates the equivalent quotient directly with concentrations in \(\unit{mol\,m^{-3}}\). It therefore converts the retained constant according to
                 \begin{align}
                     \ln K_{r,C} &= \ln K_r + \left(\sum_i\nu_{i,r}\right)\ln C^\circ ,
                 \end{align}
@@ -89,13 +89,13 @@
                     && \left(\unit{mol\,m^{-3}}\right)
                 \end{align}
                 where $\textbf{C}$ is the array of unknown true-species concentrations.
-                Each equation is set to zero and the true species concentrations are obtained as the roots of the nonlinear algebraic system. Concentration is used as the unknown variable because the routine validation campaign assumes unit activity coefficients in the equilibrium equations and because concentration gives better numerical scaling than mole fraction for dilute $\COtwo$ species. Since the true mole fraction of $\COtwo$ can become small near the top of the column, scaling both the unknowns and equations is important for root-finder convergence. The calculation stores the previous converged chemical-equilibrium solution and reuses it as the next initial guess while marching through the profile. This sequential initialization reduces the number of failed local chemistry solves during BVP residual evaluation.
+                Each equation is set to zero and the true species concentrations are obtained as the roots of the nonlinear algebraic system. Concentrations are the unknowns because the routine calculation uses a concentration standard state and unit activity coefficients. The unknowns and equations are scaled before the nonlinear solve. The calculation reuses the preceding axial-point solution as the initial guess for the next local chemical-equilibrium calculation.
 
                 The routine validation campaign uses this concentration-based equilibrium calculation. It assumes unit activity coefficients in the equilibrium equations but still produces true ionic species concentrations for $\COtwo$, MEA, H$_2$O, MEAH$^+$, MEACOO$^-$, and HCO$_3^-$. Those true species states are passed to the transport-property and ePC-SAFT fugacity calculations. The routine ePC-SAFT campaign therefore changes the CO$_2$ fugacity closure, not the chemical-equilibrium model. A separate activity-rebased path was used as a numerical feasibility test. For each local chemistry call, that path set the reaction constants equal to the ePC-SAFT activity quotient evaluated at the legacy-derived initial composition. The rebasing produces a locally consistent starting state but does not introduce independently sourced or regressed activity-basis $K_r(T)$ values. The resulting sweep demonstrates numerical activity coupling only; it does not validate predictive reactive ePC-SAFT chemistry. Once true species concentrations are known, VLE behavior can be evaluated.
 
 
             \subsubsection{Vapor-Liquid Equilibrium}
-                The vapor--liquid equilibrium calculation determines the $\COtwo$ driving force for absorption in the column. This driving force is the difference between vapor and liquid fugacities. One detailed activity-coefficient route is the eNRTL model originally developed by Zhang et al. \cite{Zhang2011}. In that model, binary electrolyte interaction parameters between molecules and electrolytes are fitted with speciation data, and thermodynamic properties such as heat capacity and excess enthalpy can be derived. This model is widely used for the $\MEA-\HtwoO-\COtwo$ system, but the parameter count and calibration burden can make repeated benchmark runs harder. SAFT-family equations of state provide another route for associating systems \cite{Gross2001,Cameretti2005}, and ePC-SAFT adds electrolyte terms needed for ionic liquid states. SAFT-family parameters for $\COtwo$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh \cite{Baygi2015}. The benchmark keeps the Henry-law model as the fast baseline and adds an ePC-SAFT driving-force calculation to evaluate how an EOS-based CO$_2$ fugacity-coefficient calculation changes the solved column predictions when it is placed directly inside the absorber driving-force term. The following outlines the derivation and assumptions for relating liquid fugacity to Henry's Law. The equilibrium definition for a species between liquid and vapor phases is
+                The vapor--liquid equilibrium calculation determines the $\COtwo$ driving force for absorption in the column. This driving force is the difference between vapor and liquid fugacities. One activity-coefficient route is the eNRTL model developed by Zhang et al. \cite{Zhang2011}. In that model, binary electrolyte interaction parameters between molecules and electrolytes are estimated from speciation data, and thermodynamic properties such as heat capacity and excess enthalpy can be derived. SAFT-family equations of state provide another route for associating systems \cite{Gross2001,Cameretti2005}, and ePC-SAFT adds electrolyte terms for ionic liquid states. SAFT-family parameters for $\COtwo$ solubility in aqueous MEA have been reported by Fakouri Baygi and Pahlavanzadeh \cite{Baygi2015}. The benchmark retains the Henry-law model as the reference closure and adds an ePC-SAFT driving-force calculation to evaluate how an EOS-based CO$_2$ fugacity-coefficient calculation changes the solved column predictions. The following outlines the derivation and assumptions for relating liquid fugacity to Henry's Law. The equilibrium definition for a species between liquid and vapor phases is
                 \begin{equation}
                     f_i^v = f_i^l
                     \qquad \left(\unit{Pa}\right)
@@ -140,7 +140,7 @@
                     \textit{f}^{\:\vap}_{ \COtwo} &= P y_{\COtwo} && \left(\unit{Pa} \right)\\
                     \textit{f}^{\:\liq}_{ \COtwo} &= C^{\liq}_{ \COtwo, \text{true}} H_{\COtwo,\text{mix}} &&\left(\unit{Pa} \right) \label{eq:ideal}
                 \end{align}
-                The parameters used to determine the Henry's Law expression for $\COtwo$ in the liquid mixture are tuned to capture the main mixture interactions and are fitted with speciation data. This baseline is simpler than an eNRTL activity-coefficient model \cite{Zhang2011} or an ePC-SAFT equation-of-state model, and it is stable when the benchmark needs to run many cases. The ePC-SAFT calculation is introduced as a comparison model, not as a claim that it is faster than Henry's Law or that it replaces the chemical-equilibrium model.
+                The coefficients used in the Henry-law expression are retained from the existing model record. Their estimation dataset, objective, weights, bounds, and uncertainty were not recovered for this manuscript; the Henry-law calculation is therefore treated as a fixed reference closure rather than a parameter-estimation result of this study. The ePC-SAFT calculation is introduced as a comparison model and does not replace the chemical-equilibrium calculation.
 
                 \subsubsection*{ePC-SAFT fugacity-coefficient calculation}
                 The ePC-SAFT calculation is used here as a residual-Helmholtz equation of state for the fugacity coefficient of $\COtwo$, while the absorber chemistry remains the concentration-based calculation described above. For the liquid phase, the local MEA electrolyte state activates the ionic terms. For the vapor phase, the same ePC-SAFT machinery is used but the electrolyte terms vanish because the vapor composition contains only neutral species. For each phase state $(T,P,\mathbf{x})$, the equation of state solves for the phase density and evaluates the residual Helmholtz energy as $\tilde{a}^{res}=\tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}+\tilde{a}^{DH}+\tilde{a}^{Born}$. The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, the association term accounts for site-specific association such as hydrogen bonding, the Debye--Huckel term accounts for long-range ionic screening, and the Born term accounts for ion-solvation work. The five residual-Helmholtz contribution terms evaluated by the ePC-SAFT calculation are summarized as
@@ -180,7 +180,7 @@
                     f_{\COtwo}^{\liq} &= x_{\COtwo}^{\liq}\phi_{\COtwo}^{\liq}P
                     && \left(\unit{Pa}\right).
                 \end{align}
-                This keeps the comparison narrow: only the CO$_2$ fugacity driving force changes, while the same column balances, reaction speciation, enhancement factor, and transport correlations are retained. The result is a direct column-level test of whether a liquid-side ionic ePC-SAFT fugacity calculation can be used quickly enough to support absorber-simulation studies.
+                This keeps the comparison narrow: only the CO$_2$ fugacity driving force changes, while the same column balances, reaction speciation, enhancement factor, and transport correlations are retained. The recorded runtimes quantify the computational cost of evaluating the liquid-side ionic ePC-SAFT fugacity calculation inside the absorber model.
                 The corresponding $\HtwoO$ fugacity expressions are
                 \begin{align}
                     \textit{f}^{\:\vap}_{ \HtwoO} &= P y_{\HtwoO} && \left(\unit{Pa} \right)\\
@@ -381,7 +381,7 @@
                     \unit{Pa\,m^{-1}}
                     \right)^{\mathsf{T}}.
                 \end{align}
-                Convergence is evaluated from the boundary residuals and validation metrics rather than from the nonlinear solver message alone.
+                Numerical status is determined from the solver success report and boundary-residual norm. Capture and temperature comparisons with NCCC observations are reported separately and do not establish numerical convergence.
 
             \subsubsection{Boundary Conditions}
                 The equations are solved as a boundary-value problem because the vapor enters at the bottom and the lean liquid enters at the top. Let $a=0$ denote the vapor inlet and $b=H$ denote the liquid inlet. The seven differential states require seven boundary conditions:
