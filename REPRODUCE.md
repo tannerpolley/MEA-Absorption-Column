@@ -64,13 +64,10 @@ docs/latex/scripts/build_main.sh
 uv run python docs/latex/scripts/check_main_pdf_fresh.py
 ```
 
-The build first projects the Zotero Companion path-sanitized Better BibTeX
-export at `/home/tnnrpolley21/Zotero/exports/references.bib` into the
-Git-tracked `docs/latex/references.bib` snapshot. Refresh the central export
-with `zotero-companion bibliography-export --apply --json`; edit article
-metadata in Zotero, never in either `.bib` file. The separate Zotero auto-export
-under `Documents/Papers` currently includes attachment paths and is not safe for
-Git or Overleaf. The repository snapshot keeps Overleaf self-contained.
+The build first projects the Zotero-owned Better BibTeX auto-export at
+`/home/tnnrpolley21/Documents/Papers/references.bib` into the Git-tracked
+`docs/latex/references.bib` snapshot. Edit article metadata in Zotero, never in
+either `.bib` file. The repository snapshot keeps Overleaf self-contained.
 
 The source of truth is `docs/latex`, except for the Zotero-owned central
 bibliography. Use the strict Overleaf mirror sync only after the local build and
