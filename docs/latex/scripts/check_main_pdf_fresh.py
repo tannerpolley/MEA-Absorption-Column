@@ -15,7 +15,7 @@ def main() -> int:
     tex = LATEX_DIR / args.tex
     pdf = LATEX_DIR / args.pdf
     if not pdf.exists():
-        print(f"Missing {pdf}. Run docs\\latex\\scripts\\build_main.ps1.")
+        print(f"Missing {pdf}. Run: uv run python docs/latex/scripts/latex_workflows.py build")
         return 1
 
     sources = _latex_sources(tex)
@@ -24,7 +24,7 @@ def main() -> int:
         print(f"{pdf} is stale. Newer inputs:")
         for path in stale_sources:
             print(f"  {path.relative_to(ROOT)}")
-        print(f"Run docs\\latex\\scripts\\build_main.ps1 to refresh {args.pdf}.")
+        print(f"Run `uv run python docs/latex/scripts/latex_workflows.py build` to refresh {args.pdf}.")
         return 1
 
     print(f"{pdf} is current.")

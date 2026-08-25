@@ -1113,17 +1113,20 @@ def _write_profile_rerun_files(profile_dir: Path, metadata: dict, output_dir: Pa
     }
     spec_path = profile_dir / "run_spec.json"
     spec_path.write_text(json.dumps(spec, indent=2, sort_keys=True, default=str), encoding="utf-8")
-    repo_root = Path.cwd()
-    runner = repo_root / "analyses" / "nccc_validation" / "scripts" / "run_case_profile.py"
     script = "\n".join(
         [
-            "$ErrorActionPreference = 'Stop'",
-            f"Set-Location -LiteralPath '{repo_root}'",
-            f"& '{sys.executable}' '{runner}' --spec '{spec_path}'",
+            "#!/usr/bin/env bash",
+            "set -euo pipefail",
+            'script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"',
+            'repo_root="$(git -C "$script_dir" rev-parse --show-toplevel)"',
+            'cd -- "$repo_root"',
+            'uv run python analyses/nccc_validation/scripts/run_case_profile.py --spec "$script_dir/run_spec.json"',
             "",
         ]
     )
-    (profile_dir / "rerun_profile.ps1").write_text(script, encoding="utf-8")
+    rerun_path = profile_dir / "rerun_profile.sh"
+    rerun_path.write_text(script, encoding="utf-8")
+    rerun_path.chmod(rerun_path.stat().st_mode | 0o111)
 
 
 if __name__ == "__main__":

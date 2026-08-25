@@ -19,6 +19,11 @@ if (-not (Test-Path -LiteralPath $OutDir)) {
 
 Push-Location $LatexDir
 try {
+    & $Python .\scripts\latex_workflows.py sync-bibliography
+    if ($LASTEXITCODE -ne 0) {
+        throw "Zotero bibliography sync failed with exit code $LASTEXITCODE"
+    }
+
     & latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=builds main.tex
     if ($LASTEXITCODE -ne 0) {
         throw "latexmk failed with exit code $LASTEXITCODE"

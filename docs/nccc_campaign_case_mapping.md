@@ -20,8 +20,8 @@ The two naming systems are separate campaign identifiers. The `C` and `D` cases 
 
 The extraction script is:
 
-```powershell
-.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\extract_nccc_case_catalog_from_markdown.py
+```bash
+uv run python analyses/nccc_validation/scripts/extract_nccc_case_catalog_from_markdown.py
 ```
 
 It writes:

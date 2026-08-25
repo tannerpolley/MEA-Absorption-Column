@@ -9,7 +9,7 @@ This document is the repo-facing handoff map for future agents or forks. It foll
 | `src/mea_absorption_column/` | Package | Reusable absorber model, thermodynamic adapters, solver wrappers, benchmark CLI, packaged reference CSV data, and MEA-local ePC-SAFT parameter files. | No study run outputs should be written here. |
 | `tests/` | Package tests | Fast regression and schema checks for model, benchmark, thermodynamics, and artifact behavior. | Test temp files should use pytest temp folders or ignored `.tmp_local/`. |
 | `analyses/nccc_validation/` | Analysis | Canonical reviewer-response validation workflow for one-bed C cases, SRP-style solver comparisons, dense profile CSVs, and manuscript figures. | Disposable runs under `results/runs/`; curated evidence under `results/final/`. |
-| `docs/latex/` | Manuscript | LaTeX source, bibliography, source-only helper scripts, Overleaf mirror sync, appendices, and manuscript-local figure copies. | Local LaTeX build products stay under ignored `builds/`; `builds/main.pdf` can be regenerated with `scripts/build_main.ps1`. |
+| `docs/latex/` | Manuscript | LaTeX source, bibliography, source-only helper scripts, Overleaf mirror sync, appendices, and manuscript-local figure copies. | Local LaTeX build products stay under ignored `builds/`; regenerate `builds/main.pdf` with `uv run python docs/latex/scripts/latex_workflows.py build`. |
 | `docs/` | Supporting notes | Reviewer-response notes, robust-convergence status, and this workflow map. | Do not put benchmark run artifacts here. |
 | `scripts/` | Repo tools | Repository-wide utilities or small smoke checks only. | No manuscript sweep outputs. |
 
@@ -22,9 +22,9 @@ The canonical analysis folder is `analyses/nccc_validation/`.
 | `scripts/generate_data.py` | Normalizes curated benchmark rows into raw, verified, and plot-ready final tables. | No, except it reads existing run/final CSVs. | No direct ePC-SAFT import; may process ePC-SAFT result rows already generated elsewhere. |
 | `scripts/render_figures.py` | Renders manuscript figures from final tables. | No. | No direct ePC-SAFT import; plots ePC-SAFT rows when present. |
 | `scripts/collect_clean_profiles.py` | Builds or refreshes the clean temperature-profile PNG gallery and index. | Yes when not using existing profile images. | Optional; required only when collecting/rerunning `epcsaft_*` thermodynamic lanes. |
-| `scripts/run_case_profile.py` | Runs one case and writes dense per-variable profile CSVs plus a rerun spec. | Yes. | Optional; required for `epcsaft_ionic` or experimental reactive lanes. |
+| `scripts/run_case_profile.py` | Runs one case and writes dense per-variable profile CSVs plus a rerun spec. | Yes. | Optional; required for `epcsaft_ionic`. |
 | `scripts/generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and exports dense profile CSVs. | Yes. | Optional by suite; ePC-SAFT required for ePC-SAFT C-case profile rows. |
-| `scripts/probe_reactive_epcsaft_speciation.py` | Experimental downstream probe of ePC-SAFT reactive speciation against concentration-based MEA chemistry states. | Yes, but it is a thermodynamic/speciation probe rather than a full column validation sweep. | Required; uses the vendored MEA ePC-SAFT dataset by default. |
+| `scripts/probe_reactive_epcsaft_speciation.py` | Archived probe for the superseded reactive interface. | No supported current run. | Retained for provenance; it must be migrated to the typed 0.2 equilibrium API before reuse. |
 | `scripts/validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct ePC-SAFT import. |
 
 ## ePC-SAFT Dependency Contract
@@ -33,56 +33,55 @@ Henry-only tests and benchmarks should run without the external ePC-SAFT checkou
 
 - `ideal_henry`: default validation lane; no external ePC-SAFT dependency.
 - `epcsaft_ionic`: selected manuscript ePC-SAFT fugacity lane. It requires the external `epcsaft` package and uses the vendored six-species ePC-SAFT dataset plus the liquid state produced by the concentration-based chemistry model.
-- `epcsaft_reactive_*`: experimental diagnostic chemistry lanes. They require the external `epcsaft` package and the vendored six-species ePC-SAFT dataset. Treat these as Case-3C smoke-tested until broader final tables and manuscript claims are updated.
+- `epcsaft_reactive_*`: intentionally unavailable after the 0.2 cutover because the archived locally rebased constants do not satisfy the new typed standard-state contract.
 
-Typical local environment variables for ePC-SAFT diagnostics:
+The selected vendored dataset may be chosen explicitly:
 
-```powershell
-$env:MEA_EPCSAFT_ROOT = "/path/to/ePC-SAFT"
-$env:MEA_EPCSAFT_DATASET_NAME = "MEA_CO2_H2O_ionic_fit"
+```bash
+export MEA_EPCSAFT_DATASET_NAME="MEA_CO2_H2O_ionic_fit"
 ```
 
-The parameter datasets live in `src/mea_absorption_column/data/epcsaft_datasets/` so a fork can test ionic and reactive lanes without a sibling MEA-Thermodynamics checkout. `MEA_THERMODYNAMICS_EPCSAFT_DATASET` is still available as an explicit override for one-off comparisons, but it must not be required for default tests. Do not edit the external ePC-SAFT package from this repo. If package behavior blocks absorber validation, record a downstream issue or upstream request in the ePC-SAFT repo and keep the MEA repo changes limited to adapters, caching, guards, benchmark settings, and analysis scripts.
+The parameter datasets live in `src/mea_absorption_column/data/epcsaft_datasets/`. `MEA_THERMODYNAMICS_EPCSAFT_DATASET` remains an explicit one-off override. The package dependency is an immutable wheel built by the sibling ePC-SAFT project; the adapter uses `Parameters`, `Mixture`, and `State`, and does not expose a derivative-backend selector because CppAD is the package's sole production authority.
 
 ## Common Commands
 
 Use the project-root `.venv` for this repository. Create or refresh it with:
 
-```powershell
+```bash
 uv sync --group test
 ```
 
 If running scripts from a Git worktree or from an unusual shell context, set `PYTHONPATH=src` so Python imports the active checkout:
 
-```powershell
-$env:PYTHONPATH = "src"
+```bash
+export PYTHONPATH="src"
 ```
 
 Fast package test:
 
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
+```bash
+uv run python -m pytest -q -p no:cacheprovider
 ```
 
 Validate curated NCCC artifacts without rerunning long simulations:
 
-```powershell
-.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
+```bash
+uv run python analyses/nccc_validation/scripts/validate_results.py
 ```
 
 Run one clean Henry profile export:
 
-```powershell
-.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses\nccc_validation\results\runs\manual_case_profiles
+```bash
+uv run python analyses/nccc_validation/scripts/run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses/nccc_validation/results/runs/manual_case_profiles
 ```
 
 Run one ePC-SAFT smoke profile after installing/updating the external package:
 
-```powershell
-.\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model epcsaft_ionic --output-dir analyses\nccc_validation\results\runs\manual_epcsaft_profile
+```bash
+uv run python analyses/nccc_validation/scripts/run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model epcsaft_ionic --output-dir analyses/nccc_validation/results/runs/manual_epcsaft_profile
 ```
 
-The root `.venv/` folder is ignored by Git. Do not hard-code user-local virtual-environment paths in repo workflows; use `.\.venv\Scripts\python.exe` so commands work from a normal checkout.
+The root `.venv/` folder is ignored by Git. Use `uv run python` for portable repository workflows; reserve `.venv/bin/python` for interpreter-specific debugging.
 
 ## Runtime Policy
 

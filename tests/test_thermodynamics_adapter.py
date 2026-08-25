@@ -1,21 +1,23 @@
 import math
-import csv
-import json
 from pathlib import Path
 
 import numpy as np
 import pytest
 
 from mea_absorption_column.Thermodynamics.Fugacity import fugacity
+from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
+    fugacity_coefficients,
+    parameter_document,
+    state as epcsaft_state,
+)
 from mea_absorption_column.Thermodynamics.thermo_models import (
-    EPCSAFT_SOURCE_ROOT,
     IONIC_LIQUID_SPECIES,
     IONIC_LIQUID_SPECIES_9,
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
-    build_epcsaft_params,
     ensure_epcsaft_importable,
     epcsaft_dataset_mixture,
     epcsaft_source_fingerprint,
+    ionic_liquid_composition,
     neutral_liquid_composition,
 )
 
@@ -49,16 +51,21 @@ def test_neutral_liquid_composition_renormalizes_co2_mea_h2o_only():
     assert x_neutral[0] > 0.0
 
 
-def test_epcsaft_parameter_dataset_has_expected_shape_and_documented_species():
-    params = build_epcsaft_params()
+def test_epcsaft_parameter_document_has_all_species_molar_masses_and_pair_records():
+    document = parameter_document(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET))
+    components = {record["name"]: record for record in document["components"]}
 
-    assert params["m"].shape == (3,)
-    assert params["k_ij"].shape == (3, 3)
-    assert params["species"] == ["CO2", "MEA", "H2O"]
-    assert params["assoc_scheme"] == [None, "3b", "4c"]
-    assert np.allclose(params["k_ij"], params["k_ij"].T)
-    assert np.isclose(params["k_ij"][1, 2], -0.052)
-    assert Path(params["metadata_path"]).exists()
+    assert set(components) == set(IONIC_LIQUID_SPECIES_9)
+    assert all(record["fixed"]["molar_mass"]["value"]["magnitude"] > 0.0 for record in components.values())
+    assert all(record["fixed"]["molar_mass"]["value"]["unit"] == "kilogram / mole" for record in components.values())
+    mea_water = next(
+        record
+        for record in document["pairs"]
+        if {record["component_id_a"], record["component_id_b"]}
+        == {"monoethanolamine", "water"}
+    )
+    assert mea_water["coefficients"][0]["value"]["magnitude"] == pytest.approx(-0.052)
+    assert "status=explicit-selected-dataset" in mea_water["coefficients"][0]["provenance"]["locator"]
 
 
 def test_epcsaft_neutral_fugacity_returns_positive_finite_values():
@@ -139,35 +146,35 @@ def test_epcsaft_fugacity_blend_is_clipped_to_valid_range():
 
 
 def test_epcsaft_adapter_reports_external_source_without_modifying_it():
+    try:
+        ensure_epcsaft_importable()
+    except RuntimeError as exc:
+        pytest.skip(f"external ePC-SAFT package unavailable: {exc}")
     fingerprint = epcsaft_source_fingerprint()
 
-    assert fingerprint["source_root"] == str(EPCSAFT_SOURCE_ROOT)
+    assert fingerprint["package"] == "epcsaft"
+    assert fingerprint["installed"] is True
     assert fingerprint["exists"] is True
-    assert "modified_at_utc" in fingerprint
+    assert Path(fingerprint["module_path"]).exists()
+    assert fingerprint["source_kind"] in {"release", "pinned_git", "direct_url", "local_file"}
+    assert "source_root" not in fingerprint
 
 
-def test_ionic_epcsaft_dataset_enables_ssm_ds_and_dborn_parameters():
+def test_ionic_epcsaft_document_declares_fixed_born_and_permittivity_models():
     assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.name == "MEA_CO2_H2O_ionic_fit"
+    document = parameter_document(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET))
+    families = {record["kind"]: record for record in document["model_families"]}
+    charged = [
+        record for record in document["components"]
+        if record["fixed"]["charge_number"]["value"]["magnitude"] != 0
+    ]
 
-    options_path = MEA_THERMODYNAMICS_EPCSAFT_DATASET / "user_options.json"
-    pure_path = MEA_THERMODYNAMICS_EPCSAFT_DATASET / "pure" / "any_solvent.csv"
-
-    with options_path.open("r", encoding="utf-8") as handle:
-        options = json.load(handle)
-    born_options = options["elec_model"]["born_model"]
-
-    assert born_options["d_Born_mode"] == 3
-    assert born_options["solvation_shell_model"] is True
-    assert born_options["dielectric_saturation"] is True
-    assert born_options["mu_born_model"]["comp_dep_delta_d"] is True
-
-    with pure_path.open("r", encoding="utf-8", newline="") as handle:
-        rows = list(csv.DictReader(handle))
-    charged_rows = [row for row in rows if abs(float(row["z"])) > 0.0]
-
-    assert charged_rows
-    assert {row["component"] for row in charged_rows}.issuperset({"MEAH+", "MEACOO-", "HCO3-"})
-    assert all(float(row["d_born"]) > 0.0 for row in charged_rows)
+    assert families["electrolyte"]["choice"] == "born"
+    assert families["electrolyte"]["c_shell"] == pytest.approx(1.0)
+    assert families["electrolyte"]["c_dielectric"] == pytest.approx(1.0)
+    assert families["permittivity"]["choice"] == "ion-fraction-suppression"
+    assert charged
+    assert all(any(value["family"] == "born_diameter" for value in record["coefficients"]) for record in charged)
 
 
 def test_ionic_epcsaft_state_uses_ion_and_born_contribution_terms():
@@ -177,17 +184,18 @@ def test_ionic_epcsaft_state_uses_ion_and_born_contribution_terms():
         pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
 
     mixture = epcsaft_dataset_mixture(tuple(IONIC_LIQUID_SPECIES), 323.2)
-    composition = np.array([0.02, 0.24, 0.62, 0.06, 0.05, 0.01], dtype=float)
-    composition /= composition.sum()
-    state = mixture.state(T=323.15, x=composition, P=109500.0, phase="liq")
+    composition = ionic_liquid_composition([0.02, 0.24, 0.62, 0.06, 0.05, 0.01])
+    state = epcsaft_state(
+        mixture,
+        temperature_k=323.15,
+        pressure_pa=109500.0,
+        composition=composition,
+        phase="liquid",
+    )
 
-    ares = state.residual_helmholtz(return_contribution_terms=True)
-    lnfug = state.fugacity_coefficient(natural_log=True, return_contribution_terms=True)
-
-    assert abs(float(ares["terms"]["ion"])) > 1.0e-8
-    assert abs(float(ares["terms"]["born"])) > 1.0e-8
-    assert np.any(np.abs(np.asarray(lnfug["terms"]["ion"], dtype=float)) > 1.0e-8)
-    assert np.any(np.abs(np.asarray(lnfug["terms"]["born"], dtype=float)) > 1.0e-8)
+    assert abs(float(state.debye_huckel)) > 1.0e-8
+    assert abs(float(state.born)) > 1.0e-8
+    assert all(value > 0.0 for value in fugacity_coefficients(state))
 
 
 def test_full_species_ionic_epcsaft_state_uses_all_nine_species():
@@ -197,12 +205,18 @@ def test_full_species_ionic_epcsaft_state_uses_all_nine_species():
         pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
 
     mixture = epcsaft_dataset_mixture(tuple(IONIC_LIQUID_SPECIES_9), 323.2)
-    composition = np.array([0.02, 0.23, 0.62, 0.06, 0.05, 0.01, 1.0e-6, 2.0e-6, 1.0e-6], dtype=float)
-    composition /= composition.sum()
-    state = mixture.state(T=323.15, x=composition, P=109500.0, phase="liq")
-    phi = state.fugacity_coefficient(natural_log=True)
-    lnfug = state.fugacity_coefficient(natural_log=True, return_contribution_terms=True)
+    composition = ionic_liquid_composition(
+        [0.02, 0.23, 0.62, 0.06, 0.05, 0.01, 1.0e-6, 2.0e-6, 1.0e-6]
+    )
+    state = epcsaft_state(
+        mixture,
+        temperature_k=323.15,
+        pressure_pa=109500.0,
+        composition=composition,
+        phase="liquid",
+    )
+    phi = fugacity_coefficients(state)
 
     assert len(phi) == len(IONIC_LIQUID_SPECIES_9)
-    assert len(lnfug["terms"]["ion"]) == len(IONIC_LIQUID_SPECIES_9)
-    assert len(lnfug["terms"]["born"]) == len(IONIC_LIQUID_SPECIES_9)
+    assert abs(float(state.debye_huckel)) > 1.0e-8
+    assert abs(float(state.born)) > 1.0e-8

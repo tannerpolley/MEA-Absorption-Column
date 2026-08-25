@@ -3,24 +3,26 @@ from __future__ import annotations
 import json
 import math
 import os
-import sys
 import time
 from functools import lru_cache
-import importlib.util
+import importlib
+import importlib.metadata
 from importlib import resources
 from pathlib import Path
 
 import numpy as np
 
 from mea_absorption_column.BVP.robust_core import record_guard_penalty, record_invalid_state
-
-
-EPCSAFT_SOURCE_ROOT = Path(os.environ.get("MEA_EPCSAFT_ROOT", r"C:\Users\Tanner\Documents\git\ePC-SAFT"))
-EPCSAFT_SOURCE_SRC = EPCSAFT_SOURCE_ROOT / "src"
-EPCSAFT_BUILD_DIRS = (
-    EPCSAFT_SOURCE_ROOT / "build" / "dev",
-    EPCSAFT_SOURCE_ROOT / "build" / f"cp{sys.version_info.major}{sys.version_info.minor}-cp{sys.version_info.major}{sys.version_info.minor}-win_amd64",
+from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
+    fugacity_coefficients as _v02_fugacity_coefficients,
+    mixture as _v02_mixture,
+    molar_density_value as _v02_molar_density_value,
+    pressure_value as _v02_pressure_value,
+    state as _v02_state,
+    state_at_density as _v02_state_at_density,
 )
+
+
 SPECIES = ["CO2", "MEA", "H2O"]
 IONIC_LIQUID_SPECIES_6 = ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-"]
 IONIC_LIQUID_SPECIES_9 = ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"]
@@ -93,15 +95,45 @@ def build_epcsaft_params() -> dict:
     return params
 
 
+def _epcsaft_direct_url() -> dict | None:
+    try:
+        dist = importlib.metadata.distribution("epcsaft")
+    except importlib.metadata.PackageNotFoundError:
+        return None
+    text = dist.read_text("direct_url.json")
+    if not text:
+        return None
+    return json.loads(text)
+
+
+def _epcsaft_source_kind(direct_url: dict | None) -> str:
+    if not direct_url:
+        return "release"
+    if "vcs_info" in direct_url:
+        return "pinned_git"
+    url = str(direct_url.get("url", ""))
+    return "local_file" if url.startswith("file:") else "direct_url"
+
+
 def epcsaft_source_fingerprint() -> dict:
-    init_file = EPCSAFT_SOURCE_SRC / "epcsaft" / "__init__.py"
-    stat = init_file.stat() if init_file.exists() else None
+    try:
+        module = importlib.import_module("epcsaft")
+    except Exception as exc:
+        return {
+            "package": "epcsaft",
+            "installed": False,
+            "import_error": f"{type(exc).__name__}: {exc}",
+        }
+    module_file = Path(module.__file__).resolve()
+    direct_url = _epcsaft_direct_url()
     return {
-        "source_root": str(EPCSAFT_SOURCE_ROOT),
-        "source_src": str(EPCSAFT_SOURCE_SRC),
-        "exists": EPCSAFT_SOURCE_ROOT.exists(),
-        "import_init": str(init_file),
-        "modified_at_utc": None if stat is None else stat.st_mtime,
+        "package": "epcsaft",
+        "installed": True,
+        "version": importlib.metadata.version("epcsaft"),
+        "module_path": str(module_file),
+        "exists": module_file.exists(),
+        "source_kind": _epcsaft_source_kind(direct_url),
+        "source_detail": json.dumps(direct_url, sort_keys=True) if direct_url else str(module_file),
     }
 
 
@@ -134,7 +166,36 @@ def ionic_liquid_composition(x_true) -> np.ndarray:
     total = float(ionic.sum())
     if not math.isfinite(total) or total <= 0.0:
         raise ValueError("Ionic liquid composition must have a positive finite sum.")
-    return ionic / total
+    ionic = ionic / total
+    return _enforce_electroneutrality(ionic, species)
+
+
+def _enforce_electroneutrality(composition: np.ndarray, species: list[str] | tuple[str, ...]) -> np.ndarray:
+    charges_by_species = {
+        "CO2": 0.0,
+        "MEA": 0.0,
+        "H2O": 0.0,
+        "MEAH+": 1.0,
+        "MEACOO-": -1.0,
+        "HCO3-": -1.0,
+        "CO3^2-": -2.0,
+        "H3O+": 1.0,
+        "OH-": -1.0,
+    }
+    values = np.asarray(composition, dtype=float).copy()
+    charges = np.asarray([charges_by_species[item] for item in species], dtype=float)
+    residual = float(np.dot(values, charges))
+    if abs(residual) > 1.0e-15:
+        candidate_sign = -1.0 if residual > 0.0 else 1.0
+        candidates = np.flatnonzero(charges * candidate_sign > 0.0)
+        if candidates.size == 0:
+            raise ValueError("Ionic ePC-SAFT composition cannot be projected to electroneutrality.")
+        index = int(candidates[np.argmax(values[candidates])])
+        values[index] += abs(residual / charges[index])
+        values /= float(np.sum(values))
+    if abs(float(np.dot(values, charges))) > 1.0e-12:
+        raise ValueError("Ionic ePC-SAFT composition does not satisfy electroneutrality.")
+    return values
 
 
 def _ionic_species_for_size(size: int) -> list[str]:
@@ -145,55 +206,23 @@ def _ionic_species_for_size(size: int) -> list[str]:
 
 def ensure_epcsaft_importable():
     try:
-        from epcsaft import ePCSAFTMixture
+        import epcsaft
 
-        return ePCSAFTMixture
-    except Exception as first_error:
-        if EPCSAFT_SOURCE_SRC.exists() and str(EPCSAFT_SOURCE_SRC) not in sys.path:
-            sys.path.insert(0, str(EPCSAFT_SOURCE_SRC))
-        _preload_epcsaft_core()
-        for module_name in list(sys.modules):
-            if module_name == "epcsaft" or (module_name.startswith("epcsaft.") and module_name != "epcsaft._core"):
-                del sys.modules[module_name]
-        try:
-            from epcsaft import ePCSAFTMixture
-
-            return ePCSAFTMixture
-        except Exception as second_error:
-            raise RuntimeError(
-                "Could not import the external ePC-SAFT package from the active environment "
-                f"or from {EPCSAFT_SOURCE_SRC}. First error: {first_error}; second error: {second_error}"
-            ) from second_error
-
-
-def _preload_epcsaft_core():
-    if "epcsaft._core" in sys.modules:
-        return
-    suffix = f"_core.cp{sys.version_info.major}{sys.version_info.minor}"
-    candidates = []
-    for build_dir in EPCSAFT_BUILD_DIRS:
-        if build_dir.exists():
-            candidates.extend(build_dir.glob(f"{suffix}*.pyd"))
-    for candidate in candidates:
-        spec = importlib.util.spec_from_file_location("epcsaft._core", candidate)
-        if spec is None or spec.loader is None:
-            continue
-        module = importlib.util.module_from_spec(spec)
-        sys.modules["epcsaft._core"] = module
-        try:
-            spec.loader.exec_module(module)
-            return
-        except Exception:
-            sys.modules.pop("epcsaft._core", None)
-            continue
+        for symbol in ("Parameters", "Mixture", "State", "unit_registry"):
+            if not hasattr(epcsaft, symbol):
+                raise AttributeError(f"missing public ePC-SAFT 0.2 symbol: {symbol}")
+        return epcsaft
+    except Exception as exc:
+        raise RuntimeError(
+            "Could not import the installed ePC-SAFT package from the active environment. "
+            "Install the immutable ePC-SAFT 0.2 wheel; local checkout import fallbacks are disabled."
+        ) from exc
 
 
 @lru_cache(maxsize=1)
 def epcsaft_mixture():
-    ePCSAFTMixture = ensure_epcsaft_importable()
-    params = build_epcsaft_params()
-    native_params = {key: value for key, value in params.items() if key not in {"species", "metadata_path"}}
-    return ePCSAFTMixture.from_params(native_params, species=params["species"])
+    ensure_epcsaft_importable()
+    return _v02_mixture(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), tuple(SPECIES))
 
 
 def _canonical_user_options_json(user_options: dict | None) -> str:
@@ -210,14 +239,23 @@ def _user_options_from_json(user_options_json: str) -> dict:
 
 def epcsaft_runtime_user_options() -> dict:
     options_json = os.environ.get("MEA_EPCSAFT_USER_OPTIONS_JSON")
-    if options_json:
-        return _user_options_from_json(options_json)
-    return epcsaft_dataset_user_options()
+    if options_json and _user_options_from_json(options_json):
+        raise RuntimeError(
+            "MEA_EPCSAFT_USER_OPTIONS_JSON is not supported by the ePC-SAFT 0.2 API. "
+            "Model-family and derivative choices are immutable parameter-document inputs; "
+            "CppAD is the package's sole production derivative authority."
+        )
+    return {}
 
 
 @lru_cache(maxsize=512)
 def epcsaft_dataset_mixture(species_key: tuple[str, ...], T_key: float, user_options_json: str = "{}"):
-    ePCSAFTMixture = ensure_epcsaft_importable()
+    ensure_epcsaft_importable()
+    if user_options_json and _user_options_from_json(user_options_json):
+        raise ValueError(
+            "Runtime ePC-SAFT user-option overrides were removed in API 0.2. "
+            "Create a separately identified parameter document for a different model family."
+        )
     if not MEA_THERMODYNAMICS_EPCSAFT_DATASET.exists():
         raise FileNotFoundError(
             "MEA ePC-SAFT dataset not found at "
@@ -225,15 +263,7 @@ def epcsaft_dataset_mixture(species_key: tuple[str, ...], T_key: float, user_opt
             "src/mea_absorption_column/data/epcsaft_datasets, or set MEA_THERMODYNAMICS_EPCSAFT_DATASET "
             "for an explicit external comparison."
         )
-    species = list(species_key)
-    seed = np.full(len(species), 1.0 / len(species), dtype=float)
-    return ePCSAFTMixture.from_dataset(
-        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
-        species,
-        seed,
-        float(T_key),
-        user_options=_user_options_from_json(user_options_json),
-    )
+    return _v02_mixture(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), tuple(species_key))
 
 
 def epcsaft_dataset_user_options(dataset: Path | None = None) -> dict:
@@ -253,21 +283,21 @@ def epcsaft_state_contribution_diagnostics(
     mixture_kind="neutral",
     user_options=None,
 ) -> dict:
+    if user_options:
+        raise ValueError(
+            "Runtime ePC-SAFT user-option overrides were removed in API 0.2. "
+            "Diagnostic variants must use separately identified parameter documents."
+        )
     species_key = tuple(IONIC_LIQUID_SPECIES if mixture_kind == "ionic" else SPECIES)
     composition_arr = np.asarray(composition, dtype=float)
     composition_arr = np.maximum(composition_arr, COMPOSITION_FLOOR)
     composition_arr = composition_arr / float(np.sum(composition_arr))
+    if mixture_kind == "ionic":
+        composition_arr = _enforce_electroneutrality(composition_arr, species_key)
     if mixture_kind == "neutral":
         mixture = epcsaft_mixture()
     elif mixture_kind in {"ionic", "external_neutral"}:
-        ePCSAFTMixture = ensure_epcsaft_importable()
-        mixture = ePCSAFTMixture.from_dataset(
-            str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
-            list(species_key),
-            composition_arr,
-            float(T),
-            user_options=user_options,
-        )
+        mixture = epcsaft_dataset_mixture(species_key, _epcsaft_dataset_T_key(T))
     else:
         raise ValueError(f"Unknown ePC-SAFT mixture kind: {mixture_kind}")
 
@@ -279,16 +309,13 @@ def epcsaft_state_contribution_diagnostics(
         phase,
         f"{mixture_kind}_diagnostic",
     )
-    phi = np.asarray(state.fugacity_coefficient(natural_log=False), dtype=float)
-    ares_result = state.residual_helmholtz(return_contribution_terms=True)
-    fugacity_result = state.fugacity_coefficient(
-        natural_log=True,
-        return_contribution_terms=True,
-    )
-    ares_terms = {key: float(value) for key, value in ares_result.get("terms", {}).items()}
-    lnfugcoef_terms = {
-        key: float(np.asarray(values, dtype=float)[CO2_INDEX])
-        for key, values in fugacity_result.get("terms", {}).items()
+    phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
+    ares_terms = {
+        "hc": float(state.hard_chain),
+        "disp": float(state.dispersion),
+        "assoc": float(state.association),
+        "ion": float(state.debye_huckel),
+        "born": float(state.born),
     }
     return {
         "mixture_kind": mixture_kind,
@@ -297,9 +324,10 @@ def epcsaft_state_contribution_diagnostics(
         "temperature_K": float(T),
         "pressure_Pa": float(P),
         "composition": composition_arr.tolist(),
-        "density_mol_m3": float(state.molar_density()),
+        "density_mol_m3": _v02_molar_density_value(state),
+        "parameter_fingerprint": str(mixture.parameter_fingerprint),
         "phi_co2": float(phi[CO2_INDEX]),
-        "lnfugcoef_co2_terms": lnfugcoef_terms,
+        "lnfugcoef_co2_terms": {},
         "ares_terms": ares_terms,
     }
 
@@ -355,7 +383,7 @@ def _rho_guess_from_cache(mixture_kind, phase):
 
 def _store_rho_guess(mixture_kind, phase, state):
     try:
-        rho = float(state.molar_density())
+        rho = _v02_molar_density_value(state)
     except Exception:
         return
     if math.isfinite(rho) and rho > 0.0:
@@ -364,33 +392,74 @@ def _store_rho_guess(mixture_kind, phase, state):
 
 def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, mixture_kind):
     rho_guess = _rho_guess_from_cache(mixture_kind, phase)
-    kwargs = {
-        "T": float(T),
-        "x": np.asarray(composition, dtype=float),
-        "P": float(P),
-        "phase": phase,
-    }
     if rho_guess is not None:
-        kwargs["rho_guess"] = rho_guess
-    try:
-        state = mixture.state(**kwargs)
-    except TypeError:
-        kwargs.pop("rho_guess", None)
-        state = mixture.state(**kwargs)
+        try:
+            state = _state_from_density_newton(
+                mixture,
+                T=float(T),
+                P=float(P),
+                composition=np.asarray(composition, dtype=float),
+                rho_guess=rho_guess,
+            )
+            _store_rho_guess(mixture_kind, phase, state)
+            return state
+        except Exception:
+            pass
+    state = _v02_state(
+        mixture,
+        temperature_k=float(T),
+        pressure_pa=float(P),
+        composition=np.asarray(composition, dtype=float),
+        phase=phase,
+    )
     _store_rho_guess(mixture_kind, phase, state)
     return state
+
+
+def _state_from_density_newton(mixture, *, T, P, composition, rho_guess):
+    rho = max(float(rho_guess), 1.0e-9)
+    target = float(P)
+    for _ in range(12):
+        current = _v02_state_at_density(
+            mixture,
+            temperature_k=T,
+            density_mol_m3=rho,
+            composition=composition,
+        )
+        residual = _v02_pressure_value(current) - target
+        if abs(residual) <= max(1.0e-5 * target, 1.0e-2):
+            if current.fugacity is None:
+                raise RuntimeError("Density-closed ePC-SAFT state has no stable fugacity value.")
+            return current
+
+        step = max(1.0e-5 * rho, 1.0e-4)
+        plus = _v02_state_at_density(
+            mixture,
+            temperature_k=T,
+            density_mol_m3=rho + step,
+            composition=composition,
+        )
+        derivative = (_v02_pressure_value(plus) - _v02_pressure_value(current)) / step
+        if not math.isfinite(derivative) or abs(derivative) < 1.0e-12:
+            raise RuntimeError("Invalid ePC-SAFT pressure-density slope.")
+        delta = residual / derivative
+        max_delta = 0.2 * rho
+        rho = max(rho - float(np.clip(delta, -max_delta, max_delta)), 1.0e-9)
+    raise RuntimeError("Warm-started ePC-SAFT density closure did not converge.")
 
 
 def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral") -> float:
     composition_arr = np.asarray(composition, dtype=float)
     if mixture_kind == "ionic":
+        epcsaft_runtime_user_options()
         species_key = tuple(_ionic_species_for_size(composition_arr.size))
+        composition_arr = _enforce_electroneutrality(composition_arr, species_key)
+    elif mixture_kind == "external_neutral":
+        epcsaft_runtime_user_options()
+        species_key = tuple(SPECIES)
     else:
         species_key = tuple(SPECIES)
-    user_options_json = "{}"
-    if mixture_kind in {"ionic", "external_neutral"}:
-        user_options_json = _canonical_user_options_json(epcsaft_runtime_user_options())
-    key = (str(mixture_kind), user_options_json, *_epcsaft_cache_key(T, P, composition_arr, phase))
+    key = (str(mixture_kind), *_epcsaft_cache_key(T, P, composition_arr, phase))
     if cache and key in _EPCSAFT_PHI_CACHE:
         _EPCSAFT_CACHE_STATS["epcsaft_cache_hits"] += 1
         return _EPCSAFT_PHI_CACHE[key]
@@ -398,15 +467,15 @@ def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral"
     if mixture_kind == "neutral":
         mixture = epcsaft_mixture()
     elif mixture_kind == "ionic":
-        mixture = epcsaft_dataset_mixture(species_key, _epcsaft_dataset_T_key(T), user_options_json)
+        mixture = epcsaft_dataset_mixture(species_key, _epcsaft_dataset_T_key(T))
     elif mixture_kind == "external_neutral":
-        mixture = epcsaft_dataset_mixture(species_key, _epcsaft_dataset_T_key(T), user_options_json)
+        mixture = epcsaft_dataset_mixture(species_key, _epcsaft_dataset_T_key(T))
     else:
         raise ValueError(f"Unknown ePC-SAFT mixture kind: {mixture_kind}")
     start = time.perf_counter()
-    state = _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, mixture_kind)
+    state = _pressure_state_with_optional_rho_guess(mixture, T, P, composition_arr, phase, mixture_kind)
     _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] += time.perf_counter() - start
-    phi = np.asarray(state.fugacity_coefficient(natural_log=False), dtype=float)
+    phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
     phi_co2 = float(phi[CO2_INDEX])
     if not math.isfinite(phi_co2) or phi_co2 <= 0.0:
         raise RuntimeError(f"Invalid ePC-SAFT CO2 fugacity coefficient: {phi_co2!r}")
@@ -429,9 +498,6 @@ def epcsaft_phi_co2_batch(records, cache=True) -> list[float]:
         mixture_kind = record.get("mixture_kind", "neutral")
         key = (
             str(mixture_kind),
-            _canonical_user_options_json(epcsaft_runtime_user_options())
-            if mixture_kind in {"ionic", "external_neutral"}
-            else "{}",
             *_epcsaft_cache_key(record["T"], record["P"], record["composition"], record["phase"]),
         )
         if key not in resolved:

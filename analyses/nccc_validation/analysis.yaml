@@ -1,7 +1,7 @@
 id: nccc_validation
 title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
-summary: Reviewer-response validation artifacts for one-bed C cases, SRP-style method contrast, ideal Henry versus routine ePC-SAFT fugacity driving-force comparisons, and diagnostic activity-coupled ePC-SAFT option checks.
+summary: Reviewer-response validation artifacts for one-bed NCCC cases, solver-method contrast, ideal Henry versus routine ePC-SAFT fugacity driving-force comparisons, and diagnostic activity-coupled ePC-SAFT option checks.
 owner: project
 architecture:
   standard: local_codex_project_architecture
@@ -64,22 +64,22 @@ outputs:
     kind: requested_dense_profile_csvs
 commands:
   generate:
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_data.py
+    - uv run python analyses/nccc_validation/scripts/generate_data.py
   render:
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_figures.py
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\render_source_backed_temperature_capture_gallery.py
+    - uv run python analyses/nccc_validation/scripts/render_figures.py
+    - uv run python analyses/nccc_validation/scripts/render_source_backed_temperature_capture_gallery.py
   profiles:
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\collect_clean_profiles.py --collect-existing
+    - uv run python analyses/nccc_validation/scripts/collect_clean_profiles.py --collect-existing
   case_profile:
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses\nccc_validation\results\runs\manual_case_profiles
+    - uv run python analyses/nccc_validation/scripts/run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses/nccc_validation/results/runs/manual_case_profiles
   clean_profile_csvs:
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\generate_clean_profile_csvs.py --suite all --output-dir analyses\nccc_validation\results\runs\clean_profile_csvs
+    - uv run python analyses/nccc_validation/scripts/generate_clean_profile_csvs.py --suite all --output-dir analyses/nccc_validation/results/runs/clean_profile_csvs
   validate:
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\validate_results.py
+    - uv run python analyses/nccc_validation/scripts/validate_results.py
   epcsaft_electrolyte_options:
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\probe_epcsaft_electrolyte_options.py
+    - uv run python analyses/nccc_validation/scripts/probe_epcsaft_electrolyte_options.py
   epcsaft_electrolyte_column_matrix:
-    - .\.venv\Scripts\python.exe analyses\nccc_validation\scripts\run_epcsaft_electrolyte_config_matrix.py
+    - uv run python analyses/nccc_validation/scripts/run_epcsaft_electrolyte_config_matrix.py
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -100,7 +100,6 @@ external_dependencies:
       - script: scripts/validate_results.py
     package_contract: external package is read-only from this repo; adapter, caching, guards, and benchmark scripts live here
     optional_env:
-      MEA_EPCSAFT_ROOT: /path/to/ePC-SAFT
       MEA_EPCSAFT_DATASET_NAME: MEA_CO2_H2O_ionic_fit
     repo_owned_datasets:
       - ../../src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_draft

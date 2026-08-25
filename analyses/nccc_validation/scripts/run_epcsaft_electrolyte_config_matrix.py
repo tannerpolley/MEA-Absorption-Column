@@ -29,9 +29,6 @@ PURE_TABLE = TABLE_DIR / "epcsaft_electrolyte_pure_parameters.csv"
 BINARY_TABLE = TABLE_DIR / "epcsaft_electrolyte_binary_parameters.csv"
 REL_PERM_TABLE = TABLE_DIR / "epcsaft_electrolyte_relative_permittivity_parameters.csv"
 REPORT = REPORT_DIR / "epcsaft_electrolyte_column_config_matrix.md"
-PACKAGE_PRESET_ROOT = Path(os.environ.get("MEA_EPCSAFT_ROOT", r"C:\Users\Tanner\Documents\git\ePC-SAFT")) / (
-    "data/reference/epcsaft_parameters"
-)
 IONIC_X = np.array([1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001], dtype=float)
 IONIC_X = IONIC_X / IONIC_X.sum()
 
@@ -54,8 +51,7 @@ def _advanced_born_options(*, ssm=True, ds=True, mu_mode="numerical") -> dict:
 
 
 def _preset_source(name: str, note: str) -> str:
-    path = PACKAGE_PRESET_ROOT / name / "user_options.json"
-    return f"{note}; package preset source={path}"
+    return f"{note}; package preset source=epcsaft reference data: epcsaft_parameters/{name}/user_options.json"
 
 
 def _configurations() -> list[dict]:
