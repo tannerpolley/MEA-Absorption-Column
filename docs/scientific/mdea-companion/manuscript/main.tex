@@ -1,0 +1,109 @@
+\documentclass[a4paper,fleqn]{cas-sc}
+\usepackage[pagewise]{lineno}
+\linenumbers
+
+\usepackage[numbers]{natbib}
+\usepackage{subfiles}
+\usepackage[version=4]{mhchem}
+\usepackage{cleveref}
+\usepackage{subcaption}
+\captionsetup{hypcap=false}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{mathtools} 
+\usepackage{tabularx}
+\usepackage{makecell}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\renewcommand\cellalign{tl}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\newcommand{\Ha}{\text{Ha}}
+\newcommand{\COtwo}{{\ce{CO2}}}
+\newcommand{\HtwoO}{{\ce{H2O}}}
+\newcommand{\MEA}{{\ce{MEA}}}
+\newcommand{\MEAH}{\ce{MEAH+}}
+\newcommand{\MEACOO}{{\ce{MEACOO-}}}
+\newcommand{\HCOthree}{{\ce{HCO3-}}}
+\newcommand{\Ntwo}{{\ce{N2}}}
+\newcommand{\Otwo}{{\ce{O2}}}
+\newcommand{\NtwoO}{{\ce{N2O}}}
+
+\newcommand{\A}{\text{A}}
+\newcommand{\B}{\text{B}}
+\newcommand{\C}{\text{C}}
+\newcommand{\D}{\text{D}}
+
+\newcommand{\liq}{\ell}
+\newcommand{\vap}{v}
+\newcommand{\FloatBarrier}{\par}
+
+\usepackage{color}
+\usepackage{siunitx}
+\Urlmuskip=0mu plus 2mu\relax
+\AtBeginEnvironment{thebibliography}{\raggedright\sloppy\emergencystretch=3em}
+
+\begin{document}
+
+    \def\floatpagepagefraction{1}
+    \def\textpagefraction{.001}
+
+    \shorttitle{ePC-SAFT Fugacity Benchmark for MEA Absorption}
+    \shortauthors{T. W. Polley and J. D. Hedengren}
+
+    % Main title of the paper
+    \title[mode = title]{A Reproducible MEA Absorber Benchmark for ePC-SAFT \texorpdfstring{CO$_2$}{CO2} Fugacity Driving Forces}
+
+    % Article type for Editorial Manager: Original Research Article.
+    \author[1]{Tanner W. Polley}[orcid=0009-0008-5957-4152]
+    \ead{tpolley3@byu.edu}
+
+    \author[1]{John D. Hedengren}
+    \cormark[1]
+    \ead{john_hedengren@byu.edu}
+
+    \affiliation[1]{
+        organization={Department of Chemical Engineering, Brigham Young University},
+        city={Provo},
+        state={UT},
+        postcode={84602},
+        country={United States}
+    }
+
+    \cortext[cor1]{Corresponding author.}
+
+    % Here goes the abstract
+    \begin{abstract}
+        Post-combustion carbon dioxide (CO$_2$) capture with aqueous monoethanolamine (MEA) is a mature rate-based separation, but absorber benchmarks often change thermodynamics, solver formulation, and validation scope at the same time. This work uses one steady-state packed-column model to compare boundary-value problem (BVP) solvers and CO$_2$ fugacity closures while holding chemical equilibrium, reaction enhancement, transport correlations, hydraulics, and material and energy balances fixed. The routine thermodynamic campaign replaces the Henry-law CO$_2$ closure with a liquid-side ionic electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) fugacity calculation while retaining concentration-based chemical equilibrium with unit activity coefficients. For the nine solver-accepted National Carbon Capture Center (NCCC) cases, ePC-SAFT gave a capture mean absolute error of 3.32 percentage points, compared with 3.14 percentage points for Henry-law closure, while median runtime increased from 5.25 s to 7.70 s. Collocation produced the most reliable accepted NCCC solutions; shooting remained faster on smoother high-liquid-to-gas-ratio probes. An archived nine-species activity loop, rebased to a legacy-derived initial composition for each local chemistry call, converged for all seven 2017 C rows under relaxed settings, with capture mean absolute error of 6.595 percentage points and mean runtime of 171.102 s. This legacy-interface calculation tests numerical coupling and does not validate independently sourced activity-basis reaction constants. The benchmark separates solver conditioning from fugacity-closure effects and reports attempted cases, residuals, runtime, and validation error for reproducible absorber-model comparison.
+    \end{abstract}
+
+    \begin{keywords}
+        Post-combustion CO$_2$ capture \sep MEA absorption \sep Boundary-value problems \sep Solver benchmarking \sep ePC-SAFT \sep Fugacity driving force
+    \end{keywords}
+
+    \maketitle
+
+    \input{sections/introduction}
+
+    \input{sections/model_framework}
+
+    \input{sections/methods}
+
+    \input{sections/results}
+
+    \input{sections/conclusion}
+
+    \appendix
+
+    \input{appendices/appendix_properties}
+
+    \input{sections/declaration_competing_interest}
+
+    \input{sections/data_availability}
+
+    \input{sections/code_availability}
+
+    \input{sections/generative_ai_disclosure}
+
+    \bibliographystyle{model1-num-names}
+    \bibliography{references,software_references}
+\end{document}
