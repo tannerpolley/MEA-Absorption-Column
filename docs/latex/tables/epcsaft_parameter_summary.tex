@@ -31,7 +31,7 @@
     && \left(\text{\AA}\right).
 \end{align}
 
-\noindent The routine fugacity campaign uses the first six species. The final three species occur only in the archived nine-species feasibility calculation. In the repository provenance record, the neutral-species parameters retain literature lineage; \ce{MEAH+} and \ce{MEACOO-} are provisional historical-evaluation values; \ce{HCO3-} is a transferred diagnostic value; and \ce{CO3^2-}, \ce{H3O+}, and \ce{OH-} are explicitly marked as diagnostic placeholders. The resulting set is therefore suitable for the present conditional benchmark but is not presented as a provenance-complete predictive nine-species fit.
+\noindent The routine fugacity campaign uses the first six species. The final three species occur only in the nine-species feasibility calculation. The retained parameter record does not contain complete source and estimation details for the neutral species. The \ce{MEAH+} and \ce{MEACOO-} values were retained from an earlier evaluation, the \ce{HCO3-} value was transferred for the numerical test, and the \ce{CO3^2-}, \ce{H3O+}, and \ce{OH-} values are assumptions used only in that test. The nine-species set is therefore used for a conditional numerical-coupling calculation and is not presented as a predictive parameterization.
 
 \begin{longtable}{llr}
     \caption{Binary interaction parameter record used for the ePC-SAFT mixture calculation. Unlisted $k_{ij}$ values in the stored matrix are zero.}
@@ -48,4 +48,4 @@
     \bottomrule
 \end{longtable}
 
-\noindent The selected artifact contains one nonzero pair coefficient, $k_{\ce{MEA},\ce{H2O}}=-0.052$. That value was retained from the repository's historical MEA--water record; its traceable literature fit used a different neutral association-scheme combination from the selected 2B/2B record. Resolving that inconsistency and rerunning the campaign is required before claiming a source-complete parameterization. No $k_{ij}$ value was refitted to the NCCC absorber rows in this study.
+\noindent The selected parameter set contains one nonzero pair coefficient, $k_{\ce{MEA},\ce{H2O}}=-0.052$. This value was retained from an earlier MEA--water record, but its source dataset, fitting procedure, and uncertainty were not recovered. The earlier record also used a different neutral association-scheme combination from the selected 2B/2B record. This inconsistency must be resolved and the calculations repeated before the parameter set can be presented as source-complete. No $k_{ij}$ value was estimated from the NCCC absorber rows in this study.

@@ -1,18 +1,18 @@
 \begin{center}
     \centering
     \small
-    \captionof{table}{Attempted one-bed NCCC validation status under the common accepted-row gate.}
+    \captionof{table}{Attempted one-bed NCCC cases. Included rows require solver success, boundary-residual norm $\leq 1.0$, predicted capture between 0 and 100\%, and runtime $\leq\SI{90}{s}$.}
     \label{tab:nccc-attempted-status}
     \renewcommand{\arraystretch}{1.15}
     \begin{tabularx}{\textwidth}{@{}ll>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}X@{}}
         \toprule
-        \textbf{Year} & \textbf{Case} & \textbf{Gate status} & \textbf{Thermo rows} & \textbf{Reason or note} \\
+        \textbf{Year} & \textbf{Case} & \textbf{Aggregate status} & \textbf{Thermodynamic calculations} & \textbf{Evidence} \\
         \midrule
-        2014 & K18 & Accepted & Henry and ePC-SAFT & Both rows converged under the common collocation gate with no domain-guard events. \\
-        2014 & K19 & Accepted & Henry and ePC-SAFT & Both rows met the gate; conditioning diagnostics recorded 166 ePC-SAFT and 183 Henry guard events. \\
-        2014 & K20 & Rejected & Henry and ePC-SAFT & Both solvers exceeded the maximum mesh-node limit and encountered hydraulics or pressure-drop domain violations; excluded from aggregate accuracy metrics. \\
-        2017 & 1C--6C & Accepted & Henry and ePC-SAFT & All twelve rows converged under the common collocation gate with no domain-guard events. \\
-        2017 & 7C & Accepted & Henry and ePC-SAFT & Both rows met the 90-s gate: ePC-SAFT ran in 13.79 s with 3 guard events; Henry ran in 19.71 s with 116 guard events. \\
+        2014 & K18 & Included & Henry and ePC-SAFT & Both rows satisfied all four criteria and recorded no domain-guard events. \\
+        2014 & K19 & Included & Henry and ePC-SAFT & Both rows satisfied all four criteria; the ePC-SAFT and Henry calculations recorded 166 and 183 guard events, respectively. \\
+        2014 & K20 & Excluded & Henry and ePC-SAFT & Both solvers exceeded the maximum mesh-node limit and encountered hydraulics or pressure-drop domain violations. \\
+        2017 & 1C--6C & Included & Henry and ePC-SAFT & All twelve rows satisfied all four criteria and recorded no domain-guard events. \\
+        2017 & 7C & Included & Henry and ePC-SAFT & Both rows satisfied all four criteria: ePC-SAFT ran in 13.79 s with 3 guard events; Henry ran in 19.71 s with 116 guard events. \\
         \bottomrule
     \end{tabularx}
 \end{center}
