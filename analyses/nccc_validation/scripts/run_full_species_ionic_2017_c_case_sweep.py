@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -125,9 +126,11 @@ def _config_row() -> pd.Series:
 
 def _portable_source_note(value: object) -> str:
     text = "" if value is None else str(value)
-    return text.replace(
-        r"C:\Users\Tanner\Documents\git\ePC-SAFT\data\reference\epcsaft_parameters\2025_Figiel\user_options.json",
-        "epcsaft reference data: epcsaft_parameters/2025_Figiel/user_options.json",
+    return re.sub(
+        r"[A-Za-z]:[\\/][^;`|]*?[\\/]data[\\/]reference[\\/]epcsaft_parameters[\\/]"
+        r"([^\\/;`|]+)[\\/]user_options\.json",
+        r"epcsaft reference data: epcsaft_parameters/\1/user_options.json",
+        text,
     )
 
 

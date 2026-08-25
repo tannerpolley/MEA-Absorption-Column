@@ -70,7 +70,9 @@ def test_final_clean_profile_index_points_to_existing_pngs():
     data = pd.read_csv(FINAL / "tables" / "clean_temperature_profile_index.csv")
 
     assert not data.empty
-    assert {"case_id", "thermo_model", "profile_png", "clean_profile", "caveat"} <= set(data.columns)
+    assert {"case_id", "thermo_model", "profile_png", "clean_profile", "caveat"} <= set(
+        data.columns
+    )
     for profile_png in data["profile_png"]:
         assert (ROOT / profile_png).exists()
 
@@ -85,5 +87,45 @@ def test_primary_final_tables_use_analysis_paths_and_metadata():
     assert set(gate["case_id"].astype(str)) == {"1C", "2C", "3C", "4C", "5C", "6C"}
     assert set(gate["thermo_model"]) == {"epcsaft_ionic"}
     assert not gate["case_id"].astype(str).str.startswith("K").any()
-    assert {"Shooting", "Collocation BVP", "Finite difference"} <= set(method_contrast["method"])
-    assert c_cases["artifact"].str.startswith("analyses/nccc_validation/results/final/tables/").all()
+    assert {"Shooting", "Collocation BVP", "Finite difference"} <= set(
+        method_contrast["method"]
+    )
+    assert (
+        c_cases["artifact"]
+        .str.startswith("analyses/nccc_validation/results/final/tables/")
+        .all()
+    )
+
+
+def test_one_bed_accepted_artifact_is_derived_from_published_gate():
+    tables = FINAL / "tables"
+    attempted = pd.read_csv(tables / "nccc_one_bed_all_attempted_results.csv")
+    accepted = pd.read_csv(tables / "nccc_one_bed_accepted_results.csv")
+
+    gate = (
+        attempted["success"].astype(str).str.lower().eq("true")
+        & attempted["boundary_residual_norm"].le(1.0)
+        & attempted["capture_pct"].between(0.0, 100.0, inclusive="both")
+        & attempted["runtime_s"].le(90.0)
+    )
+    expected_pairs = set(
+        attempted.loc[gate, ["case_id", "thermo_model"]].itertuples(
+            index=False, name=None
+        )
+    )
+    actual_pairs = set(
+        accepted[["case_id", "thermo_model"]].itertuples(index=False, name=None)
+    )
+
+    assert actual_pairs == expected_pairs
+    assert set(accepted["case_id"].astype(str)) == {
+        "K18",
+        "K19",
+        "1C",
+        "2C",
+        "3C",
+        "4C",
+        "5C",
+        "6C",
+        "7C",
+    }

@@ -3,6 +3,7 @@ import json
 import numpy as np
 import pandas as pd
 
+from mea_absorption_column.benchmark import _write_profile_rerun_files
 from mea_absorption_column.misc.Save_Run_Outputs import (
     build_profile_coordinate_frame,
     make_dfs_dict,
@@ -69,3 +70,29 @@ def test_write_profile_csvs_writes_one_file_per_legacy_sheet(tmp_path):
     manifest = json.loads((tmp_path / "profile_manifest.json").read_text(encoding="utf-8"))
     assert manifest["case_id"] == "3C"
     assert manifest["profile_csv_files"] == ["T.csv", "CO2.csv"]
+
+
+def test_profile_rerun_file_is_portable_bash(tmp_path):
+    profile_dir = tmp_path / "profiles" / "3C"
+    profile_dir.mkdir(parents=True)
+
+    _write_profile_rerun_files(
+        profile_dir,
+        {
+            "case_source": "C_cases_data",
+            "case_id": "3C",
+            "method": "scipy-bvp",
+            "thermo_model": "ideal_henry",
+        },
+        tmp_path / "results",
+        {},
+    )
+
+    rerun = profile_dir / "rerun_profile.sh"
+    assert rerun.exists()
+    assert rerun.stat().st_mode & 0o111
+    assert not (profile_dir / "rerun_profile.ps1").exists()
+    text = rerun.read_text(encoding="utf-8")
+    assert text.startswith("#!/usr/bin/env bash\nset -euo pipefail\n")
+    assert "git -C" in text
+    assert "uv run python" in text

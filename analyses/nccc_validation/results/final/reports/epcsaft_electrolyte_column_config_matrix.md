@@ -4,11 +4,11 @@ These runs use the six-species MEA absorber state with the repo-vendored `MEA_CO
 The 3C C-case is intentionally small enough to keep the comparison reproducible while still running the full column solver.
 
 - Dataset path: `src\mea_absorption_column\data\epcsaft_datasets\MEA_CO2_H2O_ionic_fit`
-- Run root: `analyses\nccc_validation\results\runs\epcsaft_electrolyte_config_matrix`
+- Run root: `analyses/nccc_validation/results/runs/epcsaft_electrolyte_config_matrix`
 - Successful column rows: 14/14
-- Primary result table: `analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_column_config_matrix.csv`
-- Pure parameter table: `analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_pure_parameters.csv`
-- Binary interaction table: `analyses\nccc_validation\results\final\tables\epcsaft_electrolyte_binary_parameters.csv`
+- Primary result table: `analyses/nccc_validation/results/final/tables/epcsaft_electrolyte_column_config_matrix.csv`
+- Pure parameter table: `analyses/nccc_validation/results/final/tables/epcsaft_electrolyte_pure_parameters.csv`
+- Binary interaction table: `analyses/nccc_validation/results/final/tables/epcsaft_electrolyte_binary_parameters.csv`
 
 ## Column Results
 

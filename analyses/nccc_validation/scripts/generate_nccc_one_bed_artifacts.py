@@ -11,80 +11,103 @@ ANALYSIS = Path(__file__).resolve().parents[1]
 TABLES = ANALYSIS / "results" / "final" / "tables"
 FIGURES = ANALYSIS / "results" / "final" / "figures"
 LATEX_TABLES = ROOT / "docs" / "latex" / "tables"
+LATEX_FIGURES = ROOT / "docs" / "latex" / "figures"
 
 SOURCE_2014 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2014_cases.csv"
 SOURCE_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_cases.csv"
-MODEL_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_model_inputs_mass.csv"
+MODEL_2017 = (
+    ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_model_inputs_mass.csv"
+)
+ATTEMPTED_RESULTS = TABLES / "nccc_one_bed_all_attempted_results.csv"
+ACCEPTED_RESULTS = TABLES / "nccc_one_bed_accepted_results.csv"
+ACCEPTED_SUMMARY = TABLES / "nccc_one_bed_accepted_summary.csv"
+
+BOUNDARY_RESIDUAL_LIMIT = 1.0
+RUNTIME_LIMIT_S = 90.0
+EXPECTED_CASES = {"K18", "K19", "K20", "1C", "2C", "3C", "4C", "5C", "6C", "7C"}
+EXPECTED_THERMO_LABELS = {"Henry", "ePC-SAFT"}
 
 
 def main() -> int:
     TABLES.mkdir(parents=True, exist_ok=True)
     FIGURES.mkdir(parents=True, exist_ok=True)
     LATEX_TABLES.mkdir(parents=True, exist_ok=True)
+    LATEX_FIGURES.mkdir(parents=True, exist_ok=True)
 
-    accepted, summary = _load_pr_backed_accepted_artifacts()
+    attempted, accepted, summary = _derive_accepted_artifacts()
+    accepted.to_csv(ACCEPTED_RESULTS, index=False)
+    summary.to_csv(ACCEPTED_SUMMARY, index=False)
 
     case_table = _build_case_table()
     case_table.to_csv(TABLES / "nccc_one_bed_case_scope.csv", index=False)
     _write_latex_case_table(case_table)
+    _write_latex_attempted_status_table(attempted)
     _plot_accepted_results(accepted, summary)
 
-    print(f"Read {TABLES / 'nccc_one_bed_accepted_results.csv'}")
+    print(f"Read {ATTEMPTED_RESULTS}")
+    print(f"Wrote {ACCEPTED_RESULTS}")
+    print(f"Wrote {ACCEPTED_SUMMARY}")
     print(f"Wrote {TABLES / 'nccc_one_bed_case_scope.csv'}")
+    print(f"Wrote {LATEX_TABLES / 'nccc_one_bed_attempted_status.tex'}")
     print(f"Wrote {FIGURES / 'nccc_one_bed_thermo_benchmark.pdf'}")
+    print(f"Wrote {LATEX_FIGURES / 'nccc-one-bed-thermo-benchmark.pdf'}")
     return 0
 
 
-def _load_pr_backed_accepted_artifacts() -> tuple[pd.DataFrame, pd.DataFrame]:
-    accepted_path = TABLES / "nccc_one_bed_accepted_results.csv"
-    summary_path = TABLES / "nccc_one_bed_accepted_summary.csv"
-    if not accepted_path.exists() or not summary_path.exists():
-        raise FileNotFoundError(
-            "Figure 4 requires the PR-backed final accepted-row tables. "
-            f"Missing {accepted_path if not accepted_path.exists() else summary_path}."
-        )
-    accepted = pd.read_csv(accepted_path)
-    summary = pd.read_csv(summary_path)
-    required_accepted = {
+def _derive_accepted_artifacts() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    attempted = pd.read_csv(ATTEMPTED_RESULTS)
+    required_columns = {
         "case_id",
         "campaign_year",
         "thermo_label",
+        "thermo_model",
+        "success",
+        "capture_pct",
         "capture_error_pct",
         "runtime_s",
+        "boundary_residual_norm",
+        "invalid_state_count",
+        "guard_penalty_count",
+        "message",
     }
-    required_summary = {
-        "thermo_label",
-        "accepted_rows",
-        "capture_mae_pct",
-        "max_abs_capture_error_pct",
-        "median_runtime_s",
-    }
-    if not required_accepted.issubset(accepted.columns) or not required_summary.issubset(summary.columns):
-        missing_accepted = sorted(required_accepted - set(accepted.columns))
-        missing_summary = sorted(required_summary - set(summary.columns))
+    missing = sorted(required_columns - set(attempted.columns))
+    if missing:
         raise ValueError(
-            "Final accepted-row artifacts are missing required columns: "
-            f"accepted={missing_accepted}, summary={missing_summary}"
-        )
-    accepted = accepted.copy()
-    if "abs_capture_error_pct" not in accepted.columns:
-        accepted["abs_capture_error_pct"] = accepted["capture_error_pct"].abs()
-    _validate_pr_backed_accepted_artifacts(accepted, summary)
-    return accepted, summary
-
-
-def _validate_pr_backed_accepted_artifacts(accepted: pd.DataFrame, summary: pd.DataFrame) -> None:
-    expected_cases = {"K18", "K19", "1C", "2C", "3C", "4C", "5C", "6C"}
-    expected_labels = {"Henry", "ePC-SAFT"}
-    actual_cases = set(accepted["case_id"].astype(str))
-    actual_labels = set(accepted["thermo_label"].astype(str))
-    if actual_cases != expected_cases or actual_labels != expected_labels or len(accepted) != 16:
-        raise ValueError(
-            "Final accepted-row table does not match the PR-backed Figure 4 scope: "
-            f"cases={sorted(actual_cases)}, labels={sorted(actual_labels)}, rows={len(accepted)}"
+            f"Attempted-row artifact is missing required columns: {missing}"
         )
 
-    computed = (
+    attempted = attempted.copy()
+    attempted["case_id"] = attempted["case_id"].astype(str)
+    actual_cases = set(attempted["case_id"])
+    actual_labels = set(attempted["thermo_label"].astype(str))
+    row_pairs = attempted[["case_id", "thermo_label"]]
+    if (
+        actual_cases != EXPECTED_CASES
+        or actual_labels != EXPECTED_THERMO_LABELS
+        or len(attempted) != len(EXPECTED_CASES) * len(EXPECTED_THERMO_LABELS)
+        or row_pairs.duplicated().any()
+    ):
+        raise ValueError(
+            "Attempted-row artifact does not contain one row per expected case and thermodynamic lane: "
+            f"cases={sorted(actual_cases)}, labels={sorted(actual_labels)}, rows={len(attempted)}"
+        )
+
+    success = attempted["success"].astype(str).str.lower().eq("true")
+    attempted["accepted_gate"] = (
+        success
+        & attempted["boundary_residual_norm"].le(BOUNDARY_RESIDUAL_LIMIT)
+        & attempted["capture_pct"].between(0.0, 100.0, inclusive="both")
+        & attempted["runtime_s"].le(RUNTIME_LIMIT_S)
+    )
+    attempted["abs_capture_error_pct"] = attempted["capture_error_pct"].abs()
+    accepted = attempted.loc[attempted["accepted_gate"]].copy()
+    accepted = accepted.sort_values(
+        ["campaign_year", "case_id", "thermo_label"],
+        key=lambda values: (
+            values.map(_case_sort_key) if values.name == "case_id" else values
+        ),
+    )
+    summary = (
         accepted.groupby("thermo_label", sort=False)
         .agg(
             accepted_rows=("case_id", "count"),
@@ -94,11 +117,7 @@ def _validate_pr_backed_accepted_artifacts(accepted: pd.DataFrame, summary: pd.D
         )
         .reset_index()
     )
-    merged = summary.merge(computed, on="thermo_label", suffixes=("_file", "_computed"), validate="one_to_one")
-    for column in ("accepted_rows", "capture_mae_pct", "max_abs_capture_error_pct", "median_runtime_s"):
-        delta = (merged[f"{column}_file"] - merged[f"{column}_computed"]).abs().max()
-        if delta > 1e-9:
-            raise ValueError(f"Final accepted-row summary disagrees with accepted results for {column}.")
+    return attempted, accepted, summary
 
 
 def _build_case_table() -> pd.DataFrame:
@@ -107,7 +126,9 @@ def _build_case_table() -> pd.DataFrame:
     model_2017 = pd.read_csv(MODEL_2017).set_index("case_no")
 
     rows: list[dict[str, object]] = []
-    for _, row in source_2014[source_2014["case_no"].isin(["K18", "K19", "K20"])].iterrows():
+    for _, row in source_2014[
+        source_2014["case_no"].isin(["K18", "K19", "K20"])
+    ].iterrows():
         rows.append(
             {
                 "campaign_year": 2014,
@@ -124,7 +145,9 @@ def _build_case_table() -> pd.DataFrame:
                 "temp_imputed": False,
             }
         )
-    c_rows = source_2017[source_2017["case_no"].isin([f"{idx}C" for idx in range(1, 8)])]
+    c_rows = source_2017[
+        source_2017["case_no"].isin([f"{idx}C" for idx in range(1, 8)])
+    ]
     for _, row in c_rows.iterrows():
         case_id = row["case_no"]
         model_row = model_2017.loc[case_id]
@@ -200,18 +223,112 @@ def _write_latex_case_table(data: pd.DataFrame) -> None:
             "",
         ]
     )
-    (LATEX_TABLES / "nccc_one_bed_case_scope.tex").write_text("\n".join(lines), encoding="utf-8")
+    (LATEX_TABLES / "nccc_one_bed_case_scope.tex").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
+
+
+def _write_latex_attempted_status_table(attempted: pd.DataFrame) -> None:
+    by_case = {
+        case_id: group.set_index("thermo_label")
+        for case_id, group in attempted.groupby("case_id")
+    }
+
+    def accepted(case_id: str) -> bool:
+        return bool(by_case[case_id]["accepted_gate"].all())
+
+    if not all(accepted(case_id) for case_id in EXPECTED_CASES - {"K20"}) or accepted(
+        "K20"
+    ):
+        raise ValueError(
+            "The generated status-table grouping no longer matches the row-level acceptance gate."
+        )
+
+    k19 = by_case["K19"]
+    c7 = by_case["7C"]
+    rows = [
+        (
+            "2014",
+            "K18",
+            "Accepted",
+            "Henry and ePC-SAFT",
+            "Both rows converged under the common collocation gate with no domain-guard events.",
+        ),
+        (
+            "2014",
+            "K19",
+            "Accepted",
+            "Henry and ePC-SAFT",
+            "Both rows met the gate; conditioning diagnostics recorded "
+            f"{int(k19.loc['ePC-SAFT', 'guard_penalty_count'])} ePC-SAFT and "
+            f"{int(k19.loc['Henry', 'guard_penalty_count'])} Henry guard events.",
+        ),
+        (
+            "2014",
+            "K20",
+            "Rejected",
+            "Henry and ePC-SAFT",
+            "Both solvers exceeded the maximum mesh-node limit and encountered hydraulics or "
+            "pressure-drop domain violations; excluded from aggregate accuracy metrics.",
+        ),
+        (
+            "2017",
+            "1C--6C",
+            "Accepted",
+            "Henry and ePC-SAFT",
+            "All twelve rows converged under the common collocation gate with no domain-guard events.",
+        ),
+        (
+            "2017",
+            "7C",
+            "Accepted",
+            "Henry and ePC-SAFT",
+            f"Both rows met the {RUNTIME_LIMIT_S:.0f}-s gate: ePC-SAFT ran in "
+            f"{c7.loc['ePC-SAFT', 'runtime_s']:.2f} s with "
+            f"{int(c7.loc['ePC-SAFT', 'guard_penalty_count'])} guard events; Henry ran in "
+            f"{c7.loc['Henry', 'runtime_s']:.2f} s with "
+            f"{int(c7.loc['Henry', 'guard_penalty_count'])} guard events.",
+        ),
+    ]
+    lines = [
+        r"\begin{center}",
+        r"    \centering",
+        r"    \small",
+        r"    \captionof{table}{Attempted one-bed NCCC validation status under the common accepted-row gate.}",
+        r"    \label{tab:nccc-attempted-status}",
+        r"    \renewcommand{\arraystretch}{1.15}",
+        r"    \begin{tabularx}{\textwidth}{@{}ll>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}X@{}}",
+        r"        \toprule",
+        r"        \textbf{Year} & \textbf{Case} & \textbf{Gate status} & \textbf{Thermo rows} & \textbf{Reason or note} \\",
+        r"        \midrule",
+    ]
+    lines.extend("        " + " & ".join(row) + r" \\" for row in rows)
+    lines.extend(
+        [
+            r"        \bottomrule",
+            r"    \end{tabularx}",
+            r"\end{center}",
+            "",
+        ]
+    )
+    (LATEX_TABLES / "nccc_one_bed_attempted_status.tex").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
 
 
 def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> None:
     colors = {"Henry": "#2f5d8c", "ePC-SAFT": "#8a4b2b"}
     markers = {2014: "s", 2017: "o"}
     accepted = accepted.copy()
-    accepted["case_label"] = accepted["campaign_year"].astype(str) + " " + accepted["case_id"].astype(str)
+    accepted["case_label"] = (
+        accepted["campaign_year"].astype(str) + " " + accepted["case_id"].astype(str)
+    )
     order = accepted.drop_duplicates("case_label")["case_label"].tolist()
 
     fig, axes = plt.subplots(1, 2, figsize=(8.0, 3.8), constrained_layout=True)
-    for (label, year), group in accepted.groupby(["thermo_label", "campaign_year"], sort=False):
+    for (label, year), group in accepted.groupby(
+        ["thermo_label", "campaign_year"], sort=False
+    ):
         axes[0].plot(
             group["case_label"],
             group["capture_error_pct"],
@@ -245,7 +362,12 @@ def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> Non
         frameon=False,
     )
     fig.savefig(FIGURES / "nccc_one_bed_thermo_benchmark.pdf", bbox_inches="tight")
-    fig.savefig(FIGURES / "nccc_one_bed_thermo_benchmark.png", bbox_inches="tight", dpi=220)
+    fig.savefig(
+        FIGURES / "nccc_one_bed_thermo_benchmark.png", bbox_inches="tight", dpi=220
+    )
+    fig.savefig(
+        LATEX_FIGURES / "nccc-one-bed-thermo-benchmark.pdf", bbox_inches="tight"
+    )
     plt.close(fig)
 
 

@@ -187,7 +187,7 @@ def _plot_recommended_profiles(metrics: pd.DataFrame, recommended_cases: list[st
     # This legacy diagnostic figure is intentionally not copied into
     # docs/latex/figures. The manuscript-facing C-case overlay is generated
     # from corrected campaign inputs by render_c_case_campaign_temperature_gallery.py
-    # and synced through docs/latex/scripts/sync_latex_figures.ps1.
+    # and synced through docs/latex/scripts/latex_workflows.py sync-figures.
 
 
 def _write_recommendation_report(metrics: pd.DataFrame, recommendations: list[str]) -> None:

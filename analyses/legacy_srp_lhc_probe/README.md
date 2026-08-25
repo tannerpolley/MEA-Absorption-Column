@@ -24,12 +24,12 @@ The runner has two vapor-water modes:
 
 Example:
 
-```powershell
+```bash
 # Validate committed probe artifacts from a current main checkout.
-.\.venv\Scripts\python.exe analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py --validate-results-only
+uv run python analyses/legacy_srp_lhc_probe/scripts/run_legacy_srp_lhc.py --validate-results-only
 
 # Re-run the probe from a legacy-compatible checkout.
-.\.venv\Scripts\python.exe analyses\legacy_srp_lhc_probe\scripts\run_legacy_srp_lhc.py --methods single --geometry srp --water-modes explicit legacy-ratio --timeout-s 60
+uv run python analyses/legacy_srp_lhc_probe/scripts/run_legacy_srp_lhc.py --methods single --geometry srp --water-modes explicit legacy-ratio --timeout-s 60
 ```
 
 Observed result in this probe:
