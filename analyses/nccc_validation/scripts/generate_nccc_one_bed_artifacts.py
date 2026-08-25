@@ -181,7 +181,7 @@ def _write_latex_case_table(data: pd.DataFrame) -> None:
         r"\begin{table}[htbp]",
         r"    \centering",
         r"    \scriptsize",
-        r"    \caption{NCCC one-bed no-intercooler MEA validation scope}",
+        r"    \caption{NCCC one-bed no-intercooler MEA physical-comparison scope}",
         r"    \label{tab:nccc-one-bed-scope}",
         r"    \renewcommand{\arraystretch}{1.16}",
         r"    \begin{adjustbox}{max width=\textwidth}",
@@ -250,40 +250,40 @@ def _write_latex_attempted_status_table(attempted: pd.DataFrame) -> None:
         (
             "2014",
             "K18",
-            "Accepted",
+            "Included",
             "Henry and ePC-SAFT",
-            "Both rows converged under the common collocation gate with no domain-guard events.",
+            "Both rows satisfied all four criteria and recorded no domain-guard events.",
         ),
         (
             "2014",
             "K19",
-            "Accepted",
+            "Included",
             "Henry and ePC-SAFT",
-            "Both rows met the gate; conditioning diagnostics recorded "
-            f"{int(k19.loc['ePC-SAFT', 'guard_penalty_count'])} ePC-SAFT and "
-            f"{int(k19.loc['Henry', 'guard_penalty_count'])} Henry guard events.",
+            "Both rows satisfied all four criteria; the ePC-SAFT and Henry calculations recorded "
+            f"{int(k19.loc['ePC-SAFT', 'guard_penalty_count'])} and "
+            f"{int(k19.loc['Henry', 'guard_penalty_count'])} guard events, respectively.",
         ),
         (
             "2014",
             "K20",
-            "Rejected",
+            "Excluded",
             "Henry and ePC-SAFT",
             "Both solvers exceeded the maximum mesh-node limit and encountered hydraulics or "
-            "pressure-drop domain violations; excluded from aggregate accuracy metrics.",
+            "pressure-drop domain violations.",
         ),
         (
             "2017",
             "1C--6C",
-            "Accepted",
+            "Included",
             "Henry and ePC-SAFT",
-            "All twelve rows converged under the common collocation gate with no domain-guard events.",
+            "All twelve rows satisfied all four criteria and recorded no domain-guard events.",
         ),
         (
             "2017",
             "7C",
-            "Accepted",
+            "Included",
             "Henry and ePC-SAFT",
-            f"Both rows met the {RUNTIME_LIMIT_S:.0f}-s gate: ePC-SAFT ran in "
+            f"Both rows satisfied all four criteria: ePC-SAFT ran in "
             f"{c7.loc['ePC-SAFT', 'runtime_s']:.2f} s with "
             f"{int(c7.loc['ePC-SAFT', 'guard_penalty_count'])} guard events; Henry ran in "
             f"{c7.loc['Henry', 'runtime_s']:.2f} s with "
@@ -294,12 +294,12 @@ def _write_latex_attempted_status_table(attempted: pd.DataFrame) -> None:
         r"\begin{center}",
         r"    \centering",
         r"    \small",
-        r"    \captionof{table}{Attempted one-bed NCCC validation status under the common accepted-row gate.}",
+        rf"    \captionof{{table}}{{Attempted one-bed NCCC cases. Included rows require solver success, boundary-residual norm $\leq {BOUNDARY_RESIDUAL_LIMIT:.1f}$, predicted capture between 0 and 100\%, and runtime $\leq\SI{{{RUNTIME_LIMIT_S:.0f}}}{{s}}$.}}",
         r"    \label{tab:nccc-attempted-status}",
         r"    \renewcommand{\arraystretch}{1.15}",
         r"    \begin{tabularx}{\textwidth}{@{}ll>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}X@{}}",
         r"        \toprule",
-        r"        \textbf{Year} & \textbf{Case} & \textbf{Gate status} & \textbf{Thermo rows} & \textbf{Reason or note} \\",
+        r"        \textbf{Year} & \textbf{Case} & \textbf{Aggregate status} & \textbf{Thermodynamic calculations} & \textbf{Evidence} \\",
         r"        \midrule",
     ]
     lines.extend("        " + " & ".join(row) + r" \\" for row in rows)
@@ -341,8 +341,8 @@ def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> Non
     axes[0].axhline(0.0, color="0.35", linewidth=0.8)
     axes[0].set_xticks(range(len(order)), order, rotation=45, ha="right")
     axes[0].set_ylabel("Capture error, predicted - measured (p.p.)")
-    axes[0].set_xlabel("Accepted one-bed NCCC case")
-    axes[0].set_title("Accepted capture validation", pad=8)
+    axes[0].set_xlabel("Included one-bed NCCC case")
+    axes[0].set_title("Case-wise capture error", pad=8)
     axes[0].grid(False)
 
     axes[1].bar(
@@ -352,7 +352,7 @@ def _plot_accepted_results(accepted: pd.DataFrame, summary: pd.DataFrame) -> Non
         width=0.55,
     )
     axes[1].set_ylabel("Median runtime (s)")
-    axes[1].set_title("Accepted-row runtime", pad=8)
+    axes[1].set_title("Median runtime for included rows", pad=8)
     axes[1].grid(False)
 
     axes[0].legend(
