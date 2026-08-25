@@ -62,6 +62,7 @@ BENCHMARK_COLUMNS = [
     "intercoolers",
     "staged_beds",
     "intercooler_model",
+    "thermal_state_mode",
     "intercooler_assumption",
     "continuation_stage",
     "continuation_success",
@@ -814,6 +815,11 @@ def parse_args(argv=None):
     parser.add_argument("--mass-transfer-factor", type=float, default=None)
     parser.add_argument("--heat-transfer-factor", type=float, default=None)
     parser.add_argument("--intercooler-strength", type=float, default=None)
+    parser.add_argument(
+        "--intercooler-model",
+        choices=["liquid_temperature_reset", "pumparound_temperature_approach"],
+        default=None,
+    )
     parser.add_argument("--success-boundary-residual-max", type=float, default=None)
     parser.add_argument("--success-capture-error-max-pct", type=float, default=None)
     parser.add_argument("--capture-correction-model", default=None)
@@ -885,6 +891,8 @@ def _solver_settings_from_args(args):
         settings["transform_mode"] = args.transform_mode
     if args.thermal_state_mode is not None:
         settings["thermal_state_mode"] = args.thermal_state_mode
+    if args.intercooler_model is not None:
+        settings["intercooler_model"] = args.intercooler_model
     if args.co2_flux_mode is not None:
         settings["co2_flux_mode"] = args.co2_flux_mode
     if args.vapor_composition_mode is not None:

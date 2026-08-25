@@ -177,6 +177,7 @@ def test_benchmark_schema_includes_staged_bed_metadata():
         "intercoolers",
         "staged_beds",
         "intercooler_model",
+        "thermal_state_mode",
         "intercooler_assumption",
         "mass_transfer_factor",
         "heat_transfer_factor",
@@ -247,6 +248,8 @@ def test_benchmark_cli_accepts_solver_settings():
         "0.5",
         "--heat-transfer-factor",
         "0.8",
+        "--intercooler-model",
+        "pumparound_temperature_approach",
         "--success-boundary-residual-max",
         "0.5",
         "--success-capture-error-max-pct",
@@ -295,6 +298,7 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.eta_psi == 1.0
     assert args.mass_transfer_factor == 0.5
     assert args.heat_transfer_factor == 0.8
+    assert args.intercooler_model == "pumparound_temperature_approach"
     assert args.success_boundary_residual_max == 0.5
     assert args.success_capture_error_max_pct == 8
     assert args.capture_correction_model == "nccc_linear"
@@ -313,6 +317,7 @@ def test_benchmark_cli_accepts_solver_settings():
     assert solver_settings["h2o_capture_guess_pct"] == -90
     assert solver_settings["epcsaft_fugacity_blend"] == 0.5
     assert solver_settings["eta_psi"] == 1.0
+    assert solver_settings["intercooler_model"] == "pumparound_temperature_approach"
     assert solver_settings["vapor_composition_mode"] == "input_o2"
     assert solver_settings["gas_flow_basis"] == "reported_dry_mass"
     assert solver_settings["gas_velocity_area_exponent"] == 1.5

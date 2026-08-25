@@ -74,6 +74,19 @@ def run_model(df,
         if staged_beds != "auto"
         else method == "scipy-bvp" and (beds_count > 1 or intercoolers_count > 0)
     )
+    intercooler_settings = dict(intercooler_settings or {})
+    requested_intercooler_model = intercooler_settings.get(
+        "model",
+        solver_settings_for_run.get("intercooler_model", "liquid_temperature_reset"),
+    )
+    if (
+        method == "scipy-bvp"
+        and use_staged_beds
+        and intercoolers_count > 0
+        and requested_intercooler_model == "pumparound_temperature_approach"
+        and "thermal_state_mode" not in solver_settings_for_run
+    ):
+        solver_settings_for_run["thermal_state_mode"] = "temperature"
     thermal_state_mode = solver_settings_for_run.get("thermal_state_mode", "enthalpy")
     if (
         method == "scipy-bvp"
@@ -217,7 +230,6 @@ def run_model(df,
     }
     solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
     parameters = scales, eq_scales, const_flow, H, A, packing, model_options
-    intercooler_settings = intercooler_settings or {}
     stack_spec = build_bed_stack_spec(
         beds=beds_count if use_staged_beds else 1,
         intercoolers=intercoolers_count if use_staged_beds else 0,
@@ -225,6 +237,7 @@ def run_model(df,
         liquid_feed_temperature_K=Tl_z,
         target_temperatures_K=intercooler_settings.get("target_temperatures_K"),
         intercooler_strength=float(intercooler_settings.get("strength", solver_settings_for_run.get("intercooler_strength", 1.0))),
+        intercooler_model=requested_intercooler_model,
     )
     if (
         method == "scipy-bvp"
@@ -537,7 +550,8 @@ Run #{run + 1:03d}:
             'beds': beds_count,
             'intercoolers': intercoolers_count,
             'staged_beds': bool(use_staged_beds),
-            'intercooler_model': 'liquid_temperature_reset' if stack_spec.intercoolers else 'none',
+            'intercooler_model': stack_spec.model if stack_spec.intercoolers else 'none',
+            'thermal_state_mode': thermal_state_mode,
             'intercooler_assumption': (
                 f"{stack_spec.assumption};strength={stack_spec.intercoolers[0].strength:g}"
                 if stack_spec.intercoolers
