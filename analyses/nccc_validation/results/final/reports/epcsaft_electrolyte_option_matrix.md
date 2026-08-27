@@ -1,5 +1,7 @@
 # ePC-SAFT Electrolyte Option Matrix
 
+> Historical pre-0.2 evidence only. This report is not a current validation result; use `epcsaft_v02_contribution_table.csv` and `epcsaft_v02_column_row.csv`.
+
 This diagnostic exercises the MEA six-species ePC-SAFT dataset at a Case-3C-like liquid state.
 It separates the neutral fugacity-coefficient path from electrolyte option paths that activate Debye-Huckel ion and Born terms.
 

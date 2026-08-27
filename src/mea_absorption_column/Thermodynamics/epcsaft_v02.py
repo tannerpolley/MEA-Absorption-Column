@@ -432,6 +432,41 @@ def parameter_document(dataset_text: str) -> dict[str, object]:
     }
 
 
+def dataset_content_sha256(dataset_text: str) -> str:
+    """Return a relocation-invariant SHA-256 for one parameter file or dataset tree."""
+    dataset = Path(dataset_text)
+    if dataset.is_file():
+        return hashlib.sha256(dataset.read_bytes()).hexdigest()
+    manifest = [
+        (path.relative_to(dataset).as_posix(), hashlib.sha256(path.read_bytes()).hexdigest())
+        for path in sorted(path for path in dataset.rglob("*") if path.is_file())
+    ]
+    return hashlib.sha256(
+        json.dumps(manifest, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
+def parameter_document_content_sha256(dataset_text: str) -> str:
+    """Hash the generated parameter document without checkout-path provenance."""
+    dataset_path = Path(dataset_text).as_posix()
+
+    def normalize(value):
+        if isinstance(value, dict):
+            return {key: normalize(item) for key, item in value.items()}
+        if isinstance(value, list):
+            return [normalize(item) for item in value]
+        if isinstance(value, str):
+            return value.replace(dataset_path, "<dataset>")
+        return value
+
+    canonical = json.dumps(
+        normalize(parameter_document(dataset_text)),
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
 def component_ids(species: Iterable[str]) -> tuple[str, ...]:
     try:
         return tuple(LEGACY_TO_COMPONENT_ID[item] for item in species)

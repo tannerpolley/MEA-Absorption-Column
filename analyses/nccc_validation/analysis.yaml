@@ -1,7 +1,7 @@
 id: nccc_validation
 title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
-summary: Reviewer-response validation evidence for one-bed NCCC cases, solver-method contrast, ideal Henry versus routine ePC-SAFT fugacity driving-force comparisons, and diagnostic activity-coupled ePC-SAFT option checks.
+summary: Reviewer-response validation evidence for one-bed NCCC cases, solver-method contrast, ideal Henry versus routine ePC-SAFT fugacity driving-force comparisons, and bounded ePC-SAFT 0.2 fixed-chemistry checks.
 owner: project
 architecture:
   standard: local_codex_project_architecture
@@ -36,24 +36,12 @@ outputs:
     kind: solver_method_diagnostic_table
   - path: results/final/tables/source_backed_1c_6c_temperature_capture_profile_metrics.csv
     kind: source_backed_temperature_capture_profile_table
-  - path: results/final/tables/epcsaft_electrolyte_option_matrix.csv
-    kind: electrolyte_option_diagnostic_table
-  - path: results/final/reports/epcsaft_electrolyte_option_matrix.md
-    kind: electrolyte_option_diagnostic_report
-  - path: results/final/tables/epcsaft_electrolyte_column_config_matrix.csv
-    kind: electrolyte_column_configuration_table
-  - path: results/final/tables/epcsaft_electrolyte_config_user_options.csv
-    kind: electrolyte_configuration_source_table
-  - path: results/final/tables/epcsaft_electrolyte_pure_parameters.csv
-    kind: electrolyte_pure_parameter_provenance_table
-  - path: results/final/tables/epcsaft_electrolyte_binary_parameters.csv
-    kind: electrolyte_binary_parameter_provenance_table
-  - path: results/final/tables/epcsaft_electrolyte_relative_permittivity_parameters.csv
-    kind: electrolyte_relative_permittivity_parameter_table
+  - path: results/final/tables/epcsaft_v02_contribution_table.csv
+    kind: current_epcsaft_v02_fixed_state_validation
+  - path: results/final/tables/epcsaft_v02_column_row.csv
+    kind: current_epcsaft_v02_fixed_chemistry_column_validation
   - path: results/final/tables/full_species_ionic_2017_c_case_sweep.csv
     kind: activity_coupled_feasibility_table
-  - path: results/final/reports/epcsaft_electrolyte_column_config_matrix.md
-    kind: electrolyte_column_configuration_report
   - path: results/final/figures/c_case_thermo_benchmark.pdf
     kind: manuscript_figure
   - path: results/final/figures/error_regime_capture_error.pdf
@@ -104,10 +92,8 @@ commands:
     - uv run python analyses/nccc_validation/scripts/generate_clean_profile_csvs.py --suite all --output-dir analyses/nccc_validation/results/runs/clean_profile_csvs
   validate:
     - uv run python analyses/nccc_validation/scripts/validate_results.py
-  epcsaft_electrolyte_options:
-    - uv run python analyses/nccc_validation/scripts/probe_epcsaft_electrolyte_options.py
-  epcsaft_electrolyte_column_matrix:
-    - uv run python analyses/nccc_validation/scripts/run_epcsaft_electrolyte_config_matrix.py
+  epcsaft_v02_validation:
+    - uv run python analyses/nccc_validation/scripts/generate_epcsaft_v02_validation.py
   retained_reactive_case3c_analysis:
     - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
     - uv run python analyses/nccc_validation/scripts/render_retained_reactive_case3c_diagnosis.py
@@ -129,8 +115,7 @@ external_dependencies:
       - thermo_model: epcsaft_reactive_six_concentration
       - thermo_model: epcsaft_reactive_six_activity
       - script: scripts/probe_reactive_epcsaft_speciation.py
-      - script: scripts/probe_epcsaft_electrolyte_options.py
-      - script: scripts/run_epcsaft_electrolyte_config_matrix.py
+      - script: scripts/generate_epcsaft_v02_validation.py
     not_required_for:
       - thermo_model: ideal_henry
       - script: scripts/generate_data.py
@@ -159,3 +144,14 @@ tracked_results:
   - results/final/tables/retained_reactive_case3c_film_summary.json
   - results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv
   - results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
+historical_outputs:
+  note: Pre-0.2 runtime-option and configuration matrices are preserved for provenance only, have no supported generator, and are not current validation evidence.
+  paths:
+    - results/final/tables/epcsaft_electrolyte_option_matrix.csv
+    - results/final/reports/epcsaft_electrolyte_option_matrix.md
+    - results/final/tables/epcsaft_electrolyte_column_config_matrix.csv
+    - results/final/tables/epcsaft_electrolyte_config_user_options.csv
+    - results/final/tables/epcsaft_electrolyte_pure_parameters.csv
+    - results/final/tables/epcsaft_electrolyte_binary_parameters.csv
+    - results/final/tables/epcsaft_electrolyte_relative_permittivity_parameters.csv
+    - results/final/reports/epcsaft_electrolyte_column_config_matrix.md
