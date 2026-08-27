@@ -1,9 +1,16 @@
 from __future__ import annotations
 
+import argparse
+import json
 import re
 from pathlib import Path
 
 import pandas as pd
+
+from analyze_issue17_enhancement_comparison import (
+    RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS,
+    stable_csv_sha256,
+)
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -13,10 +20,31 @@ TABLES = FINAL / "tables"
 FIGURES = FINAL / "figures"
 PROFILES = FINAL / "profiles"
 DOCS_LATEX = ROOT / "docs" / "latex"
+ISSUE17_INPUTS = ANALYSIS / "inputs" / "issue17_enhancement_comparison"
+ISSUE17_TABLES = [
+    TABLES / "issue17_fugacity_only_enhancement_formulations.csv",
+    TABLES / "issue17_fugacity_only_enhancement_aggregates.csv",
+    TABLES / "issue17_enhancement_stage_outcomes.csv",
+    TABLES / "issue17_fugacity_only_enhancement_summary.json",
+]
+ISSUE17_FIGURES = [
+    FIGURES / "issue17_axial_enhancement.pdf",
+    FIGURES / "issue17_axial_flux.pdf",
+    FIGURES / "issue17_parity_to_gaspar_implicit.pdf",
+]
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--issue17-only", action="store_true")
+    args = parser.parse_args()
+    if args.issue17_only:
+        _check_issue17_enhancement_comparison()
+        print("Issue 17 retained outputs are internally consistent.")
+        return 0
+
     checks = [
+        _check_issue17_enhancement_comparison,
         _check_required_files,
         _check_c_case_benchmark,
         _check_full_species_ionic_sweep,
@@ -34,6 +62,60 @@ def main() -> int:
         check()
     print("NCCC validation analysis artifacts are internally consistent.")
     return 0
+
+
+def _check_issue17_enhancement_comparison() -> None:
+    _require_existing(ISSUE17_TABLES + ISSUE17_FIGURES)
+    result = pd.read_csv(ISSUE17_TABLES[0])
+    stages = pd.read_csv(ISSUE17_TABLES[2])
+    summary = json.loads(ISSUE17_TABLES[3].read_text(encoding="utf-8"))
+    expected_positions = [index / 20.0 for index in range(21)]
+    expected_formulations = {
+        "EF-GF-IMPLICIT",
+        "EF-AOP-78-PUBLISHED-MEA",
+        "EF-AOP-73-CORRECTED-MEA",
+        "EF-CURRENT",
+    }
+    positions = result["Position"].drop_duplicates().tolist()
+    if len(result) != 84 or len(positions) != 21 or any(
+        abs(actual - expected) > 1.0e-15
+        for actual, expected in zip(positions, expected_positions, strict=True)
+    ):
+        raise AssertionError("Issue 17 must retain 84 rows at positions 0.00, 0.05, ..., 1.00.")
+    if set(result["formulation"]) != expected_formulations:
+        raise AssertionError("Issue 17 retained table does not contain exactly four formulations.")
+    if not result.groupby("Position").size().eq(4).all():
+        raise AssertionError("Each Issue 17 position must contain exactly four formulation rows.")
+    if not (
+        summary["state_count"] == 21
+        and summary["formulation_count"] == 4
+        and summary["admitted_row_count"] == 84
+        and summary["numerical_gate_pass"] is True
+        and summary["physical_gate_pass"] is False
+        and summary["stage4_allowed"] is False
+    ):
+        raise AssertionError("Issue 17 summary gates do not match the retained negative result.")
+    blocked = stages.loc[stages["stage"].isin([4, 5])]
+    if len(blocked) != 2 or not (
+        blocked["attempted"].eq("no").all()
+        and blocked["stopped_by"].eq("physical_check").all()
+        and blocked["outcome"].eq("not_attempted").all()
+    ):
+        raise AssertionError("Issue 17 Stages 4 and 5 must stop at the Stage 2 physical check.")
+
+    scientific_hash = stable_csv_sha256(
+        ISSUE17_TABLES[0], RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS
+    )
+    if summary.get("result_table_scientific_sha256") != scientific_hash:
+        raise AssertionError("Issue 17 summary is stale relative to the retained scientific values.")
+    figure_marker = f"issue17_result_scientific_sha256={scientific_hash}".encode()
+    for figure in ISSUE17_FIGURES:
+        if figure_marker not in figure.read_bytes():
+            raise AssertionError(f"Issue 17 figure is stale: {figure.name}")
+    for path in list(ISSUE17_INPUTS.glob("*")) + ISSUE17_TABLES + ISSUE17_FIGURES:
+        content = path.read_bytes()
+        if b"/home/" in content or b".codex/worktrees" in content:
+            raise AssertionError(f"Issue 17 retained file contains a machine-local path: {path.name}")
 
 
 def _check_required_files() -> None:

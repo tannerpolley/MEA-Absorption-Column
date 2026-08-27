@@ -6,6 +6,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from analyze_issue17_enhancement_comparison import (
+    RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS,
+    stable_csv_sha256,
+)
+
 
 ROOT = Path(__file__).resolve().parents[3]
 TABLE = ROOT / "analyses/nccc_validation/results/final/tables/issue17_fugacity_only_enhancement_formulations.csv"
@@ -27,6 +32,10 @@ def main() -> None:
     table = pd.read_csv(TABLE)
     if len(table) != 84:
         raise RuntimeError(f"Expected 84 retained rows, found {len(table)}")
+    metadata = {
+        "Subject": "issue17_result_scientific_sha256="
+        + stable_csv_sha256(TABLE, RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS)
+    }
     FIGURES.mkdir(parents=True, exist_ok=True)
 
     fig, ax = plt.subplots(figsize=(7.2, 5.0))
@@ -49,7 +58,7 @@ def main() -> None:
     ax.set_ylabel("Enhancement factor, E")
     ax.grid(True, which="both", alpha=0.25)
     ax.legend(frameon=False, fontsize=8, ncol=2)
-    fig.savefig(FIGURES / "issue17_axial_enhancement.pdf")
+    fig.savefig(FIGURES / "issue17_axial_enhancement.pdf", metadata=metadata)
     plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(7.2, 5.0))
@@ -71,7 +80,7 @@ def main() -> None:
     ax.set_ylabel(r"CO$_2$ flux (mol s$^{-1}$ m$^{-1}$ packed height)")
     ax.grid(True, which="both", alpha=0.25)
     ax.legend(frameon=False, fontsize=8, ncol=2)
-    fig.savefig(FIGURES / "issue17_axial_flux.pdf")
+    fig.savefig(FIGURES / "issue17_axial_flux.pdf", metadata=metadata)
     plt.close(fig)
 
     implicit = table.loc[table.formulation.eq("EF-GF-IMPLICIT"), ["Position", "E"]].rename(
@@ -94,7 +103,7 @@ def main() -> None:
     ax.set_ylabel("Compared enhancement, E")
     ax.grid(True, which="both", alpha=0.25)
     ax.legend(frameon=False, fontsize=8)
-    fig.savefig(FIGURES / "issue17_parity_to_gaspar_implicit.pdf")
+    fig.savefig(FIGURES / "issue17_parity_to_gaspar_implicit.pdf", metadata=metadata)
     plt.close(fig)
 
 

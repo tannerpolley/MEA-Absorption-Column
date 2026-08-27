@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import math
 import time
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from analyze_enhancement_consistency import implicit_enhancement
@@ -23,6 +23,7 @@ RESULT_TABLE = TABLES / "issue17_fugacity_only_enhancement_formulations.csv"
 AGGREGATE_TABLE = TABLES / "issue17_fugacity_only_enhancement_aggregates.csv"
 STAGE_TABLE = TABLES / "issue17_enhancement_stage_outcomes.csv"
 SUMMARY = TABLES / "issue17_fugacity_only_enhancement_summary.json"
+RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS = frozenset({"wall_time_seconds"})
 
 FORMULATIONS = (
     "EF-GF-IMPLICIT",
@@ -103,6 +104,15 @@ def fixed_input_units(columns) -> dict[str, str]:
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def stable_csv_sha256(path: Path, excluded_columns: frozenset[str]) -> str:
+    with path.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        columns = [column for column in (reader.fieldnames or []) if column not in excluded_columns]
+        rows = [{column: row[column] for column in columns} for row in reader]
+    payload = json.dumps({"columns": columns, "rows": rows}, separators=(",", ":"))
+    return hashlib.sha256(payload.encode()).hexdigest()
 
 
 def equation_groups(row: pd.Series) -> tuple[float, float, float, float]:
@@ -474,6 +484,11 @@ def build_summary(result: pd.DataFrame, aggregates: pd.DataFrame) -> tuple[dict[
     )
     physical_gate = result.physical_acceptance_pass.all()
     stage4_allowed = bool(numerical_gate and physical_gate)
+    downstream_stopper = (
+        "physical_check"
+        if not physical_gate
+        else "certificate_check" if not numerical_gate else "none"
+    )
     stages = pd.DataFrame(
         [
             {
@@ -511,7 +526,7 @@ def build_summary(result: pd.DataFrame, aggregates: pd.DataFrame) -> tuple[dict[
             {
                 "stage": 4,
                 "attempted": "no" if not stage4_allowed else "yes",
-                "stopped_by": "input_preflight" if not stage4_allowed else "none",
+                "stopped_by": downstream_stopper,
                 "outcome": "not_attempted" if not stage4_allowed else "evaluated",
                 "diagnostic": "Stage 2 physical gate failed; controlled column variants were not run" if not stage4_allowed else "",
                 "claim_strength": "not_established" if not stage4_allowed else "result",
@@ -519,7 +534,7 @@ def build_summary(result: pd.DataFrame, aggregates: pd.DataFrame) -> tuple[dict[
             {
                 "stage": 5,
                 "attempted": "no" if not stage4_allowed else "yes",
-                "stopped_by": "input_preflight" if not stage4_allowed else "none",
+                "stopped_by": downstream_stopper,
                 "outcome": "not_attempted" if not stage4_allowed else "evaluated",
                 "diagnostic": (
                     "A retained reactive profile exists, but the required Stage 2/4 sequence did not pass; "
@@ -600,6 +615,9 @@ def main() -> None:
     result.to_csv(RESULT_TABLE, index=False)
     aggregates.to_csv(AGGREGATE_TABLE, index=False)
     stages.to_csv(STAGE_TABLE, index=False)
+    summary["result_table_scientific_sha256"] = stable_csv_sha256(
+        RESULT_TABLE, RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS
+    )
     SUMMARY.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2))
     if not summary["numerical_gate_pass"]:

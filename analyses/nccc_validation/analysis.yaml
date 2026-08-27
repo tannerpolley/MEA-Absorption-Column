@@ -19,6 +19,16 @@ inputs:
     kind: certified_reactive_speciation_table
   - path: inputs/retained_reactive_case3c/speciation_table_summary.json
     kind: certified_reactive_speciation_identity
+  - path: inputs/issue17_enhancement_comparison/historical_fugacity_only_scalar_row.csv
+    kind: historical_scalar_evidence
+  - path: inputs/issue17_enhancement_comparison/current_fugacity_only_reconstruction_result.csv
+    kind: current_reconstruction_result
+  - path: inputs/issue17_enhancement_comparison/current_fugacity_only_full_profile.csv
+    kind: retained_fugacity_only_profile
+  - path: inputs/issue17_enhancement_comparison/current_fugacity_only_fixed_states.csv
+    kind: retained_fixed_state_sample
+  - path: inputs/issue17_enhancement_comparison/identity.json
+    kind: issue17_reproducibility_identity
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -74,6 +84,20 @@ outputs:
     kind: identical_state_enhancement_film_comparison
   - path: results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
     kind: enhancement_consistency_figure
+  - path: results/final/tables/issue17_fugacity_only_enhancement_formulations.csv
+    kind: fixed_state_enhancement_comparison
+  - path: results/final/tables/issue17_fugacity_only_enhancement_aggregates.csv
+    kind: fixed_state_enhancement_aggregates
+  - path: results/final/tables/issue17_enhancement_stage_outcomes.csv
+    kind: issue17_stage_outcomes
+  - path: results/final/tables/issue17_fugacity_only_enhancement_summary.json
+    kind: issue17_comparison_summary
+  - path: results/final/figures/issue17_axial_enhancement.pdf
+    kind: issue17_enhancement_figure
+  - path: results/final/figures/issue17_axial_flux.pdf
+    kind: issue17_flux_figure
+  - path: results/final/figures/issue17_parity_to_gaspar_implicit.pdf
+    kind: issue17_parity_figure
   - path: results/final/profiles
     kind: clean_profile_gallery
   - path: results/runs/*/profiles
@@ -101,6 +125,10 @@ commands:
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
     - uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
     - uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
+  issue17_enhancement_comparison:
+    - uv run python analyses/nccc_validation/scripts/analyze_issue17_enhancement_comparison.py
+    - uv run python analyses/nccc_validation/scripts/render_issue17_enhancement_comparison.py
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue17-only
   reactive_film:
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
@@ -144,6 +172,13 @@ tracked_results:
   - results/final/tables/retained_reactive_case3c_film_summary.json
   - results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv
   - results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
+  - results/final/tables/issue17_fugacity_only_enhancement_formulations.csv
+  - results/final/tables/issue17_fugacity_only_enhancement_aggregates.csv
+  - results/final/tables/issue17_enhancement_stage_outcomes.csv
+  - results/final/tables/issue17_fugacity_only_enhancement_summary.json
+  - results/final/figures/issue17_axial_enhancement.pdf
+  - results/final/figures/issue17_axial_flux.pdf
+  - results/final/figures/issue17_parity_to_gaspar_implicit.pdf
 historical_outputs:
   note: Pre-0.2 runtime-option and configuration matrices are preserved for provenance only, have no supported generator, and are not current validation evidence.
   paths:
