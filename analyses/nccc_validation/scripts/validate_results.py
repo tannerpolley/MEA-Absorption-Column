@@ -100,6 +100,9 @@ def _check_epcsaft_v02_validation() -> None:
         raise AssertionError("Provider parameter fingerprints must be labeled checkout-path-local.")
 
     column = pd.read_csv(TABLES / "epcsaft_v02_column_row.csv")
+    _require_columns(column, ["claim_strength", "run_directory_at_generation"])
+    if "retained_run_directory" in column.columns:
+        raise AssertionError("The disposable generation run directory must not be labeled retained.")
     if len(column) != 1:
         raise AssertionError("Current ePC-SAFT column evidence must contain exactly one row.")
     row = column.iloc[0]

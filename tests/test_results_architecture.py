@@ -55,6 +55,35 @@ def test_clean_profile_generator_defaults_to_sixty_second_case_timeout():
     assert args.per_case_timeout_s == 60.0
 
 
+def test_epcsaft_v02_claim_strength_follows_failure_triage():
+    script = ANALYSIS / "scripts" / "generate_epcsaft_v02_validation.py"
+    spec = importlib.util.spec_from_file_location("generate_epcsaft_v02_validation", script)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+
+    outcomes = (
+        "evaluated",
+        "subprocess_failure",
+        "campaign_timeout",
+        "not_attempted",
+        "input_preflight_failure",
+        "numerical_convergence_failure",
+        "certificate_failure",
+        "physical_invalidity",
+    )
+    assert [module._claim_strength(outcome) for outcome in outcomes] == [
+        "result",
+        "not_established",
+        "not_established",
+        "not_established",
+        "boundary_at_state",
+        "boundary_at_state",
+        "boundary_at_state",
+        "boundary_at_state",
+    ]
+
+
 def test_old_docs_benchmark_gallery_is_removed():
     assert not (ROOT / "docs" / "benchmark_figures").exists()
 

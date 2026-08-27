@@ -57,9 +57,12 @@ uv run python analyses/nccc_validation/scripts/generate_epcsaft_v02_validation.p
 This command writes `epcsaft_v02_contribution_table.csv` and
 `epcsaft_v02_column_row.csv`. The provider parameter fingerprint is labeled
 checkout-path-local; the dataset and generated parameter-document SHA-256
-values are the portable identities. The two current tables validate fixed
-chemistry and configuration plumbing only. They do not establish predictive
-reactive chemistry, predictive absorber performance, or parameter accuracy.
+values are the portable identities. `run_directory_at_generation` records the
+disposable run path used by the command; it is not a retained artifact. The
+final CSVs and their immutable identities are retained. The two current tables
+validate fixed chemistry and configuration plumbing only. They do not
+establish predictive reactive chemistry, predictive absorber performance, or
+parameter accuracy.
 The incompatible pre-0.2 generators were removed; their tables remain listed
 under `historical_outputs` in `analysis.yaml` for provenance only.
 

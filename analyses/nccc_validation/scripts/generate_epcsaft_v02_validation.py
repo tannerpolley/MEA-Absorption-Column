@@ -69,6 +69,14 @@ def _as_bool(value: object) -> bool:
     return str(value).strip().lower() == "true"
 
 
+def _claim_strength(outcome: str) -> str:
+    if outcome == "evaluated":
+        return "result"
+    if outcome in {"not_attempted", "campaign_timeout", "subprocess_failure"}:
+        return "not_established"
+    return "boundary_at_state"
+
+
 def _float(row: dict[str, object], key: str) -> float:
     return float(row[key])
 
@@ -305,7 +313,7 @@ def _column_row(identity: dict[str, str], provider_fingerprint: str) -> dict[str
         "validation_pass": validation_pass,
         "stopped_by": stopped_by,
         "outcome": outcome,
-        "claim_strength": "result" if validation_pass else "boundary_at_state",
+        "claim_strength": _claim_strength(outcome),
         "message": result.get("message", ""),
         "diagnostic": diagnostic,
         "check_diagnostic": check_diagnostic,
@@ -333,7 +341,7 @@ def _column_row(identity: dict[str, str], provider_fingerprint: str) -> dict[str
             sort_keys=True,
             separators=(",", ":"),
         ),
-        "retained_run_directory": relative_run_dir,
+        "run_directory_at_generation": relative_run_dir,
         **identity,
     }
 
