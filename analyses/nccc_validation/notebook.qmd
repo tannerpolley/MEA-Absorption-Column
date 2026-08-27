@@ -1,0 +1,288 @@
+---
+title: "Reactive ePC-SAFT fugacity and liquid-film consistency"
+subtitle: "Retained NCCC Case 3C analysis research notebook"
+author: "MEA Absorption Column project"
+date: 2026-08-26
+bibliography: ../../docs/latex/references.bib
+link-citations: true
+format:
+  pdf:
+    pdf-engine: lualatex
+    documentclass: scrartcl
+    classoption:
+      - 11pt
+      - oneside
+      - DIV=calc
+    toc: true
+    number-sections: true
+    colorlinks: true
+    code-overflow: wrap
+    include-in-header:
+      text: |
+        \usepackage[version=4]{mhchem}
+        \usepackage{siunitx}
+        \usepackage{booktabs}
+        \usepackage{xurl}
+---
+
+# Decision addressed
+
+This notebook asks why the retained reactive ePC-SAFT Case 3C calculation
+predicts lower carbon-dioxide capture than the prior fugacity-only calculation,
+and whether a liquid-film calculation using the same nonlinear
+fugacity--composition relation changes the transport interpretation. It
+synthesizes reviewed retained results; rendering does not rerun a column,
+thermodynamic, or film calculation.
+
+The result is a bounded diagnostic, not a predictive absorber validation. The
+nonlinear film calculation covers one retained bulk state, uses effective-Fick
+transport, and uses a forward concentration-basis carbamate rate. It does not
+establish column-wide capture, reversible absorption/desorption behavior,
+wetted-wall-column agreement, or Maxwell--Stefan transport accuracy.
+
+# Retained evidence and identity
+
+The analysis reads the following retained files:
+
+- `results/final/tables/retained_reactive_case3c_diagnosis_summary.json`
+  (SHA-256 `e41140224e1898ffb221d4eae1e5cb6c95a6d2fe24502469b6e455fc8d67cdb7`)
+- `results/final/tables/retained_reactive_case3c_enhancement_summary.json`
+  (SHA-256 `acece860b86ca5bcd56c84eee7af6295469ac8b60a25ae5c8697ae9ab27a4a05`)
+- `results/final/tables/retained_reactive_case3c_film_summary.json`
+  (SHA-256 `9cadbfa55b01b83192f6b8bc89af92c097e0475badd9e0b54b26c57d512a9c5c`)
+- `results/final/tables/retained_reactive_case3c_film_runs.csv`
+  (SHA-256 `1dda134f3015931aa8939dce33910895c869dcb5a8f6a97d49b87d8a7cc2e204`)
+- `results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv`
+  (SHA-256 `442cb2bc513e562c3763ac20a93c4a8b5dfedc895b3b8197e6f1c7f527e21353`)
+
+The retained calculation uses ePC-SAFT package commit
+\nolinkurl{d88f703974fa8d6e7be54ca3cbd51b6f0f78a372}, wheel SHA-256
+\nolinkurl{81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80},
+and parameter-document SHA-256
+\nolinkurl{66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b}.
+These identities prevent results from different package or parameter revisions
+from being combined under one label.
+
+# Calculations compared
+
+## Column driving force
+
+The absorber evaluates vapor and liquid fugacity separately at each bulk
+column state,
+
+$$
+f_{\ce{CO2}}^L=x_{\ce{CO2}}^L\phi_{\ce{CO2}}^L P,
+\qquad
+\Delta f_{\ce{CO2}}=f_{\ce{CO2}}^V-f_{\ce{CO2}}^L.
+$$
+
+The column does not impose vapor--liquid fugacity equality at a collocation
+state because doing so would eliminate the mass-transfer driving force. The
+reactive liquid calculation supplies the true liquid composition at specified
+temperature, pressure, and apparent liquid composition.
+
+## Enhancement-correlation comparison
+
+Five enhancement calculations were evaluated at the same 21 retained Case 3C
+bulk states: the current explicit Luo form, that form without the unexplained
+divisor, an explicit Putta-kinetics form, the Gaspar implicit form with the
+legacy Henry resistance, and the Gaspar implicit form with the local ePC-SAFT
+fugacity slope. Gaspar and Fosbøl formulated their general enhancement method
+for reversible reaction and both absorption and desorption [@Gaspar2015]. The
+Luo and Putta sources provide the kinetic and rate-based modeling lineage used
+in the tested alternatives [@Luo2015; @Putta2016].
+
+The local-slope calculation is a differential diagnostic. It is not a
+candidate correlation when the inferred interface concentration lies far from
+the bulk state used to calculate that slope.
+
+## Nonlinear reactive film
+
+The Stage A film calculation solves an isothermal, steady, effective-Fick
+reaction--diffusion boundary-value problem,
+
+$$
+\frac{d C_i}{d z}=-\frac{N_i}{D_i},
+\qquad
+\frac{d N_i}{d z}=\nu_i r,
+$$
+
+with bulk concentrations fixed at the liquid edge. Only carbon dioxide crosses
+the mathematical gas--liquid interface; the other species have zero normal
+interface flux. The gas-film and liquid-film fluxes close through the nonlinear
+ePC-SAFT interface fugacity,
+
+$$
+N_{\ce{CO2}}(0)
+=k_G\left[f_{\ce{CO2}}^V-f_{\ce{CO2}}^L(\mathbf{x}(0))\right].
+$$
+
+The tested forward carbamate rate is
+
+$$
+r=\left(k_{\mathrm{MEA}}C_{\mathrm{MEA}}
++k_{\ce{H2O}}C_{\ce{H2O}}\right)
+C_{\mathrm{MEA}}C_{\ce{CO2}}.
+$$
+
+No separate enhancement multiplier is applied inside this film calculation;
+reaction and diffusion determine the interface flux directly. This avoids
+combining a mechanistic film flux with an additional empirical reaction
+multiplier.
+
+# Results
+
+## The liquid fugacity is not the direct cause of lower capture
+
+The observed Case 3C capture is 89.5%. The prior fugacity-only calculation
+predicts 87.183%, whereas the retained reactive calculation predicts 71.151%
+on the 51-point mesh. Results from 21, 51, and 81 starting mesh points span
+only 0.139 percentage point, so mesh resolution does not explain the decrease.
+
+| Median retained-to-prior ratio | Value | Interpretation |
+|---|---:|---|
+| Liquid $f_{\ce{CO2}}^L$ | 1.302 | The retained reactive liquid fugacity is moderately higher. |
+| $f_{\ce{CO2}}^V-f_{\ce{CO2}}^L$ | 1.543 | The calculated bulk driving force is larger, not smaller. |
+| Enhancement factor | 0.483 | The current correlation supplies much less reaction enhancement. |
+| Local transfer rate | 0.738 | Lower enhancement outweighs the larger driving force. |
+
+At fixed states, reactive speciation raises the median molecular-carbon-dioxide
+mole fraction by a factor of 4.048. The retained parameter changes partly
+offset that increase: the total retained-reactive fugacity is 1.543 times the
+prior-parameter, legacy-speciation value. The current explicit enhancement
+correlation places molecular dissolved carbon dioxide in its instantaneous
+enhancement limit, so its median enhancement falls from 273.9 to 125.1. This
+species-basis interaction, rather than a collapse of the fugacity driving
+force, dominates the calculated transfer decrease.
+
+This result does not prove that the liquid fugacity is quantitatively correct.
+Independent pressure comparisons for this parameter document have structured
+errors of approximately a factor of two, and the available partitions are not
+an untouched replacement validation set. Thermodynamic parameters should
+therefore be judged against pressure and speciation observations, not adjusted
+to recover one column capture result.
+
+## Correlation alternatives at identical states
+
+All 105 formulation--state rows evaluated, with no failed rows. The current
+explicit formula reproduced the retained enhancement values to a maximum
+relative error of $4.44\times10^{-16}$.
+
+| Formulation | Median $E/E_{\mathrm{current}}$ | Median flux ratio |
+|---|---:|---:|
+| Current explicit Luo | 1.000 | 1.000 |
+| Explicit Luo without divisor | 0.967 | 0.968 |
+| Explicit Putta without divisor | 0.954 | 0.955 |
+| Gaspar implicit, legacy Henry resistance | 0.911 | 0.913 |
+| Gaspar implicit, local ePC-SAFT slope | 0.616 | 1.801 |
+
+Removing the divisor, changing the rate source, or solving the implicit
+equations with the legacy Henry resistance changes the median fixed-state flux
+by less than 9%. These changes cannot explain the 18.35-percentage-point
+capture error. Replacing the resistance with the local ePC-SAFT slope raises
+the median fixed-state flux to 1.801 times the current value, but the inferred
+interface-to-bulk molecular-carbon-dioxide concentration ratio has median 3.50
+and maximum 74.4. That displacement is outside the infinitesimal interval used
+to calculate the slope.
+
+![Enhancement and flux comparisons across the 21 retained Case 3C states. Lines represent correlation trajectories. The orange diamond is the accepted nonlinear film result at Position 1 and is not a continuous profile.](results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf){#fig-enhancement width=98%}
+
+## Nonlinear film result at Position 1
+
+The retained Position 1 state is $T=318.15$ K and $P=109.5$ kPa. The nonlinear
+film moves the liquid interface fugacity between the bulk liquid and bulk vapor
+values while satisfying gas--film flux closure.
+
+| Quantity | Retained value |
+|---|---:|
+| Bulk liquid $f_{\ce{CO2}}^L$ | 35.7574 Pa |
+| Interface liquid $f_{\ce{CO2}}^L$ | 2637.3664 Pa |
+| Bulk vapor $f_{\ce{CO2}}^V$ | 3077.3763 Pa |
+| Interface flux | 0.01093746 mol m$^{-2}$ s$^{-1}$ |
+| Flux per packed length | 0.80597046 mol s$^{-1}$ m$^{-1}$ |
+| Current explicit-correlation flux | 0.45198085 mol s$^{-1}$ m$^{-1}$ |
+| Film/current flux ratio | 1.783196 |
+| Local-slope implicit flux | 0.76502614 mol s$^{-1}$ m$^{-1}$ |
+
+At this state, the mechanistic film flux is 78.3% higher than the current
+explicit-correlation flux. It is 5.35% higher than the local-slope implicit
+diagnostic, which indicates that the local derivative anticipated the direction
+and approximate magnitude but was not sufficient for the finite interface
+displacement. The nonlinear calculation evaluates the fugacity along the film
+composition path and therefore removes that extrapolation.
+
+The result supports the hypothesis that the present enhancement calculation is
+inconsistent with the retained reactive liquid state. It does not yet report a
+revised capture value because only one column state has the mechanistic film
+closure.
+
+# Numerical acceptance evidence
+
+The one-state film calculation was repeated with 21 and 42 initial mesh points
+and initial flux factors of 0.5, 1.0, and 2.0. All six cases evaluated.
+
+| Check | Result |
+|---|---:|
+| Evaluated cases | 6/6 |
+| Failed cases | 0 |
+| Relative interface-flux spread | $1.48\times10^{-11}$ |
+| Maximum interface residual | $1.99\times10^{-10}$ |
+| Maximum conservation residual | $7.45\times10^{-11}$ |
+| Maximum invariant-source residual | $3.54\times10^{-16}$ |
+
+These checks establish numerical repeatability for this retained state and
+formulation. They do not test kinetic-model adequacy or transport-model
+accuracy against independent observations.
+
+# Interpretation
+
+The retained evidence rejects two simple explanations for the Case 3C
+decrease. First, the reactive liquid fugacity does not reduce the bulk driving
+force; the median driving force increases. Second, modest algebraic changes to
+the existing enhancement correlation do not restore the missing transfer.
+
+The evidence also does not demonstrate literal reaction double counting. Bulk
+chemical equilibrium defines the liquid boundary state, while film reaction
+and diffusion determine how carbon dioxide crosses from the interface to that
+bulk state. Both belong in a reactive absorber calculation. The identified
+problem is inconsistent species and thermodynamic bases: the bulk calculation
+uses reactive ePC-SAFT speciation and fugacity, while the current enhancement
+correlation retains a legacy concentration and resistance basis.
+
+The one-state nonlinear film calculation is the first direct test of the
+consistent alternative. Its higher flux shows that the current correlation can
+suppress transfer at this state. This finding is a reason to extend the film
+calculation; it is not a reason to tune thermodynamic parameters against column
+capture.
+
+# Claim boundary and manuscript use
+
+| Proposed statement | Current status | Required evidence for a stronger statement |
+|---|---|---|
+| The retained liquid fugacity alone causes the lower capture. | Rejected by the controlled comparison. | None; the retained driving force is larger. |
+| The current enhancement calculation is inconsistent with the retained reactive liquid basis. | Supported as a Case 3C diagnosis. | Replication across representative column states and independent transport observations. |
+| A nonlinear ePC-SAFT film can be solved at an absorber state without an extra enhancement multiplier. | Supported for one retained state. | Reversible kinetics, both transfer directions, and multi-state checks. |
+| The nonlinear film restores predictive Case 3C capture. | Not established. | Column integration followed by untuned capture and temperature validation. |
+| The retained parameter document is predictive for MEA absorption. | Not established. | Independent pressure and speciation validation plus multi-case absorber validation. |
+
+The manuscript may use the fugacity/enhancement diagnosis as a bounded
+limitation and may describe the one-state nonlinear film result as method
+development. It should not replace the reported column results or claim
+predictive reactive absorber performance until the consistent film closure has
+been integrated and validated without adjusting parameters to the Case 3C
+capture observation.
+
+# Next scientific checks
+
+1. Replace the irreversible forward rate with an activity-consistent reversible
+   rate and verify zero driving force, absorption, and desorption directions.
+2. Evaluate representative lean, temperature-peak, and rich-end states using
+   the same species, activity, fugacity, and kinetic bases.
+3. Integrate the accepted film closure into the column with the empirical
+   enhancement multiplier disabled, then rerun Case 3C and the retained
+   multi-case validation set.
+4. Compare film and column predictions with independent wetted-wall-column and
+   absorber observations before migrating a predictive claim to the manuscript.
+
+Until those checks pass, the retained one-state result remains a numerical
+reference case and a mechanistic diagnostic.

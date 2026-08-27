@@ -1,10 +1,13 @@
+import csv
 import json
 import math
 import os
 import time
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from scipy.optimize import least_squares, root
 
 # From Akula Appendix of Model Development, Validation, and Part-Load Optimization of a
@@ -325,6 +328,15 @@ def chemical_equilibrium_with_model(
             diagnostics=diagnostics,
         )
     if normalized_model in {
+        "epcsaft_reactive_nine_tabulated",
+        "epcsaft_nine_tabulated",
+    }:
+        return tabulated_epcsaft_reactive_chemical_equilibrium(
+            Fl,
+            Tl,
+            diagnostics=diagnostics,
+        )
+    if normalized_model in {
         "epcsaft_reactive_nine",
         "epcsaft_reactive_nine_activity",
         "epcsaft_nine_activity",
@@ -373,6 +385,72 @@ def chemical_equilibrium_with_model(
         "epcsaft_reactive_six_activity, epcsaft_reactive_six_activity_converted, "
         "epcsaft_reactive_six_activity_rebased, or epcsaft_reactive_nine_activity_rebased."
     )
+
+
+@lru_cache(maxsize=4)
+def _reactive_speciation_table(path_text):
+    path = Path(path_text)
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = [row for row in csv.DictReader(handle) if row["status"] == "evaluated"]
+    if len(rows) < 3:
+        raise ValueError(f"Reactive ePC-SAFT table needs at least three evaluated states: {path}")
+    species_columns = tuple(f"x_{name}" for name in (
+        "carbon-dioxide",
+        "monoethanolamine",
+        "water",
+        "protonated-monoethanolamine",
+        "carbamate-anion",
+        "bicarbonate-anion",
+        "carbonate-anion",
+        "hydronium-cation",
+        "hydroxide-anion",
+    ))
+    points = np.asarray(
+        [(float(row["temperature_k"]), float(row["loading"])) for row in rows],
+        dtype=float,
+    )
+    mole_fractions = np.asarray(
+        [[float(row[column]) for column in species_columns] for row in rows],
+        dtype=float,
+    )
+    nitrogen_fraction = mole_fractions[:, 1] + mole_fractions[:, 3] + mole_fractions[:, 4]
+    amounts_per_mol_mea = mole_fractions / nitrogen_fraction[:, None]
+    return (
+        LinearNDInterpolator(points, amounts_per_mol_mea),
+        NearestNDInterpolator(points, amounts_per_mol_mea),
+        LinearNDInterpolator(points, np.log(amounts_per_mol_mea[:, 0])),
+    )
+
+
+def tabulated_epcsaft_reactive_chemical_equilibrium(Fl, Tl, *, diagnostics=None):
+    table_path = os.environ.get("MEA_EPCSAFT_REACTIVE_TABLE")
+    if not table_path:
+        raise RuntimeError(
+            "MEA_EPCSAFT_REACTIVE_TABLE must name the certified reactive ePC-SAFT table."
+        )
+    apparent = _apparent_liquid_mole_fraction(Fl)
+    loading = float(apparent[0] / apparent[1])
+    linear, nearest, log_co2 = _reactive_speciation_table(table_path)
+    amounts = np.asarray(linear(float(Tl), loading), dtype=float)
+    if not np.all(np.isfinite(amounts)):
+        amounts = np.asarray(nearest(float(Tl), loading), dtype=float)
+        _increment_diagnostic(diagnostics, "epcsaft_chemistry_interpolation_fallback_count")
+    else:
+        amounts[0] = math.exp(float(log_co2(float(Tl), loading)))
+        _increment_diagnostic(diagnostics, "epcsaft_chemistry_table_hits")
+    x_true = np.maximum(amounts, 1.0e-30)
+    x_true /= float(np.sum(x_true))
+    mea_mass_fraction = (
+        float(Fl[1]) * 0.061080535833333255
+        / (float(Fl[1]) * 0.061080535833333255 + float(Fl[2]) * 0.018015221250000022)
+    )
+    _set_diagnostic_max(
+        diagnostics,
+        "epcsaft_chemistry_max_mea_mass_fraction_deviation",
+        abs(mea_mass_fraction - 0.3),
+    )
+    rho_mol_l, _, _ = density(float(Tl), apparent[:3], 0.0, phase="liquid")
+    return x_true * float(rho_mol_l), x_true
 
 
 def epcsaft_reactive_chemical_equilibrium(

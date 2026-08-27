@@ -58,6 +58,28 @@ outputs:
     kind: manuscript_figure
   - path: results/final/figures/source_backed_1c_6c_temperature_capture_profiles
     kind: source_backed_temperature_capture_gallery
+  - path: results/final/tables/retained_reactive_case3c_profile_comparison.csv
+    kind: reactive_profile_comparison_table
+  - path: results/final/tables/retained_reactive_case3c_fugacity_factorial.csv
+    kind: reactive_fugacity_factorial_table
+  - path: results/final/tables/retained_reactive_case3c_sensitivity.csv
+    kind: reactive_column_sensitivity_table
+  - path: results/final/figures/retained_reactive_case3c_diagnosis.pdf
+    kind: research_journal_figure
+  - path: results/final/tables/retained_reactive_case3c_enhancement_formulations.csv
+    kind: enhancement_consistency_table
+  - path: results/final/tables/retained_reactive_case3c_enhancement_summary.json
+    kind: enhancement_consistency_summary
+  - path: results/final/tables/retained_reactive_case3c_film_runs.csv
+    kind: reactive_film_acceptance_table
+  - path: results/final/tables/retained_reactive_case3c_film_profile.csv
+    kind: reactive_film_profile_table
+  - path: results/final/tables/retained_reactive_case3c_film_summary.json
+    kind: reactive_film_acceptance_summary
+  - path: results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv
+    kind: identical_state_enhancement_film_comparison
+  - path: results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
+    kind: enhancement_consistency_figure
   - path: results/final/profiles
     kind: clean_profile_gallery
   - path: results/runs/*/profiles
@@ -80,6 +102,15 @@ commands:
     - uv run python analyses/nccc_validation/scripts/probe_epcsaft_electrolyte_options.py
   epcsaft_electrolyte_column_matrix:
     - uv run python analyses/nccc_validation/scripts/run_epcsaft_electrolyte_config_matrix.py
+  retained_reactive_case3c_analysis:
+    - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
+    - uv run python analyses/nccc_validation/scripts/render_retained_reactive_case3c_diagnosis.py
+  enhancement_consistency:
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
+    - uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
+    - uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
+  reactive_film:
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -109,3 +140,20 @@ tracked_results:
   - results/final/tables
   - results/final/figures
   - results/final/profiles
+  - results/final/tables/retained_reactive_case3c_profile_comparison.csv
+  - results/final/tables/retained_reactive_case3c_fugacity_factorial.csv
+  - results/final/tables/retained_reactive_case3c_sensitivity.csv
+  - results/final/tables/retained_reactive_case3c_diagnosis_summary.json
+  - results/final/figures/retained_reactive_case3c_diagnosis.pdf
+  - results/final/figures/retained_reactive_case3c_diagnosis.png
+  - results/final/figures/retained_reactive_case3c_diagnosis.svg
+  - results/final/tables/retained_reactive_case3c_enhancement_formulations.csv
+  - results/final/tables/retained_reactive_case3c_enhancement_plot.csv
+  - results/final/tables/retained_reactive_case3c_enhancement_summary.json
+  - results/final/tables/retained_reactive_case3c_film_runs.csv
+  - results/final/tables/retained_reactive_case3c_film_profile.csv
+  - results/final/tables/retained_reactive_case3c_film_summary.json
+  - results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv
+  - results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
+  - results/final/figures/retained_reactive_case3c_enhancement_consistency.png
+  - results/final/figures/retained_reactive_case3c_enhancement_consistency.svg

@@ -1,0 +1,36 @@
+{
+  "issue": "https://github.com/tannerpolley/MEA-Absorption-Column/issues/16",
+  "species": [
+    "CO2",
+    "MEA",
+    "H2O",
+    "MEAH+",
+    "MEACOO-",
+    "HCO3-",
+    "CO3^2-",
+    "H3O+",
+    "OH-"
+  ],
+  "reaction_basis": "Luo pseudo-second-order concentration-basis forward carbamate rate: (k_MEA C_MEA + k_H2O C_H2O) C_MEA C_CO2",
+  "transport_basis": "isothermal effective-Fick film; CO2-only interface flux; shared ePC-SAFT liquid fugacity callback",
+  "case_count": 6,
+  "evaluated_case_count": 6,
+  "failed_case_count": 0,
+  "interface_flux_relative_spread": 1.4793055669315436e-11,
+  "maximum_interface_residual": 1.9875769539494983e-10,
+  "maximum_conservation_residual": 7.450950974572914e-11,
+  "maximum_invariant_source_residual": 3.5401245012958013e-16,
+  "parameter_document_sha256": "66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b",
+  "engine_wheel_sha256": "81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80",
+  "reactive_table_sha256": "b1bc1eafb2295e7863c38edef078078b8c4dbefde6c7f5791b38da2389edacd7",
+  "reactive_table_summary_sha256": "fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a",
+  "epcsaft_runtime_counters": {
+    "epcsaft_cache_hits": 0,
+    "epcsaft_cache_misses": 287,
+    "epcsaft_direct_density_solve_s": 6.573998961990583,
+    "epcsaft_rho_guess_hits": 286,
+    "epcsaft_rho_guess_misses": 1
+  },
+  "failed_rows": [],
+  "claim_boundary": "Single retained Case 3C bulk state and effective-Fick Stage A only; no column-wide, WWC, reversible-kinetics, or Maxwell-Stefan validation claim."
+}

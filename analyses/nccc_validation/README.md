@@ -33,6 +33,10 @@ export PYTHONPATH="src"
 | `probe_epcsaft_electrolyte_options.py` | Archived runtime-option matrix from the superseded package interface. | No supported current run. | Model-family variants now require separately identified parameter documents. |
 | `run_epcsaft_electrolyte_config_matrix.py` | Archived runtime-option column matrix from the superseded package interface. | No supported current run. | Not part of the 0.2 reproduction route. |
 | `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
+| `analyze_retained_reactive_case3c.py` | Builds the controlled retained-versus-prior Case 3C fugacity, speciation, parameter, mesh, and transfer-sensitivity tables. | Reads completed column runs and evaluates bounded liquid states. | Requires the retained ePC-SAFT wheel and parameter documents. |
+| `render_retained_reactive_case3c_diagnosis.py` | Renders the reviewed Case 3C diagnostic figure from retained tables. | No. | No direct dependency. |
+| `analyze_enhancement_consistency.py` | Compares explicit and complete Gaspar-style enhancement calculations at retained Case 3C states under fixed thermodynamic parameters. | Evaluates 21 retained liquid states. | Requires the retained ePC-SAFT wheel, parameter document, and reactive table. |
+| `render_enhancement_consistency.py` | Renders enhancement and fixed-state flux comparisons from the retained enhancement table. | No. | No direct dependency. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -113,6 +117,25 @@ Validate the analysis artifacts used by the manuscript:
 
 ```bash
 uv run python analyses/nccc_validation/scripts/validate_results.py
+```
+
+Generate and render the retained reactive Case 3C diagnosis after its named
+run folders are present:
+
+```bash
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
+uv run python analyses/nccc_validation/scripts/render_retained_reactive_case3c_diagnosis.py
+```
+
+Run the enhancement/interface consistency experiment from issue 16:
+
+```bash
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
+uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
+uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
 ```
 
 ## Result Semantics

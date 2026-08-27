@@ -1,0 +1,7 @@
+Position,height_m,method_id,method_class,E,predicted_flux_mol_s_m,current_flux_mol_s_m,flux_ratio_to_current,outcome,diagnostic
+1.0,6.0,idaes_explicit_luo_current,enhancement_correlation,382.0272890177493,0.4519808459047272,0.4519808459047272,1.0,evaluated,
+1.0,6.0,idaes_explicit_luo_uncorrected,enhancement_correlation,380.23779173839375,0.4500346889901493,0.4519808459047272,0.9956941606437275,evaluated,
+1.0,6.0,idaes_explicit_putta_uncorrected,enhancement_correlation,348.94868478159293,0.415765690152603,0.4519808459047272,0.9198745785794693,evaluated,
+1.0,6.0,gaspar_implicit_luo_legacy_henry,enhancement_correlation,296.16414661223433,0.3569027820333252,0.4519808459047272,0.7896413869461993,evaluated,
+1.0,6.0,gaspar_implicit_luo_epcsaft_local,enhancement_correlation,208.05820363991222,0.7650261425646409,0.4519808459047272,1.6926074401079827,evaluated,
+1.0,6.0,nonlinear_reactive_film_luo_epcsaft,mechanistic_reaction_diffusion,,0.8059704595755582,0.4519808459047272,1.7831960510677223,evaluated,

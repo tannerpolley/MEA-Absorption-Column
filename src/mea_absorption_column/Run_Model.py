@@ -583,6 +583,13 @@ Run #{run + 1:03d}:
             'epcsaft_chemistry_last_iterations': int(solver_diagnostics.get('epcsaft_chemistry_last_iterations', 0)),
             'epcsaft_chemistry_last_native_success': bool(solver_diagnostics.get('epcsaft_chemistry_last_native_success', False)),
             'epcsaft_chemistry_last_message': solver_diagnostics.get('epcsaft_chemistry_last_message', ''),
+            'epcsaft_chemistry_table_hits': int(solver_diagnostics.get('epcsaft_chemistry_table_hits', 0)),
+            'epcsaft_chemistry_interpolation_fallback_count': int(
+                solver_diagnostics.get('epcsaft_chemistry_interpolation_fallback_count', 0)
+            ),
+            'epcsaft_chemistry_max_mea_mass_fraction_deviation': float(
+                solver_diagnostics.get('epcsaft_chemistry_max_mea_mass_fraction_deviation', 0.0)
+            ),
             'profile_png': solver_settings_for_run.get('profile_png', ''),
             'profile_csv_dir': '',
             'profile_csv_status': '',
@@ -744,6 +751,7 @@ def _default_chemical_equilibrium_model(thermo_model):
         "epcsaft_reactive_nine_activity",
         "epcsaft_reactive_nine_activity_converted",
         "epcsaft_reactive_nine_activity_rebased",
+        "epcsaft_reactive_nine_tabulated",
         "epcsaft_full_species_activity",
         "epcsaft_full_species_activity_converted",
         "epcsaft_full_species_activity_rebased",

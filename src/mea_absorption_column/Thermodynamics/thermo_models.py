@@ -263,7 +263,11 @@ def epcsaft_dataset_mixture(species_key: tuple[str, ...], T_key: float, user_opt
             "src/mea_absorption_column/data/epcsaft_datasets, or set MEA_THERMODYNAMICS_EPCSAFT_DATASET "
             "for an explicit external comparison."
         )
-    return _v02_mixture(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), tuple(species_key))
+    return _v02_mixture(
+        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
+        tuple(species_key),
+        float(T_key),
+    )
 
 
 def epcsaft_dataset_user_options(dataset: Path | None = None) -> dict:
@@ -592,6 +596,7 @@ def compute_fugacity(
         "epcsaft_reactive_nine_activity",
         "epcsaft_reactive_nine_activity_converted",
         "epcsaft_reactive_nine_activity_rebased",
+        "epcsaft_reactive_nine_tabulated",
         "epcsaft_full_species_activity",
         "epcsaft_full_species_activity_converted",
         "epcsaft_full_species_activity_rebased",

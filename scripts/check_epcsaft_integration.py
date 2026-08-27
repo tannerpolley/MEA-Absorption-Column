@@ -218,12 +218,12 @@ def main(argv: list[str] | None = None) -> int:
         if Path(resolved.get("wheel_path", "")).name != identity["wheel_filename"]:
             errors.append(
                 f"Resolved ePC-SAFT wheel filename {Path(resolved.get('wheel_path', '')).name!r} "
-                f"does not match frozen identity {identity['wheel_filename']!r}."
+                f"does not match recorded identity {identity['wheel_filename']!r}."
             )
         if resolved.get("wheel_sha256") != identity["wheel_sha256"]:
             errors.append(
                 f"Resolved ePC-SAFT wheel SHA-256 {resolved.get('wheel_sha256')!r} "
-                f"does not match frozen identity {identity['wheel_sha256']!r}."
+                f"does not match recorded identity {identity['wheel_sha256']!r}."
             )
 
     try:
@@ -240,6 +240,11 @@ def main(argv: list[str] | None = None) -> int:
     for symbol in contract.get("required_public_symbols", []):
         if not hasattr(epcsaft, symbol):
             errors.append(f"Missing required public symbol: {symbol}")
+    for module_name, symbols in contract.get("required_public_module_symbols", {}).items():
+        module = importlib.import_module(module_name)
+        for symbol in symbols:
+            if not hasattr(module, symbol):
+                errors.append(f"Missing required public symbol: {module_name}.{symbol}")
 
     errors.extend(scan_direct_imports(contract))
 

@@ -19,9 +19,9 @@
     }
   },
   "final_identity": {
-    "engine_commit": "b64f6df906489cb132792641c5be2ee8f404b114",
+    "engine_commit": "d88f703974fa8d6e7be54ca3cbd51b6f0f78a372",
     "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-    "wheel_sha256": "a505d20ac9019e9b4edbad16df80166b6e082170ef2a2f002d897269e756d0d9"
+    "wheel_sha256": "81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80"
   },
   "required_public_symbols": [
     "Parameters",
@@ -29,6 +29,13 @@
     "State",
     "unit_registry"
   ],
+  "required_public_module_symbols": {
+    "epcsaft.equilibrium": [
+      "chemical_equilibrium",
+      "phase_equilibrium",
+      "evaluate_reactive_bubble_observations"
+    ]
+  },
   "forbidden_import_prefixes": [
     "epcsaft._"
   ],
