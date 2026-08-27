@@ -55,8 +55,7 @@ def main() -> None:
         ax.grid(alpha=0.2)
 
     stem = FIGURES / "retained_reactive_case3c_diagnosis"
-    for suffix in ("pdf", "png", "svg"):
-        fig.savefig(stem.with_suffix(f".{suffix}"), dpi=300)
+    fig.savefig(stem.with_suffix(".pdf"))
     plt.close(fig)
 
 

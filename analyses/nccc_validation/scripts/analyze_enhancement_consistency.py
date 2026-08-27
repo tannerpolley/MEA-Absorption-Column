@@ -13,8 +13,6 @@ import pandas as pd
 from scipy.optimize import least_squares
 
 
-os.environ.setdefault("MEA_EPCSAFT_DATASET_NAME", "MEA_CO2_H2O_retained_predictive")
-
 from mea_absorption_column.Thermodynamics.Chemical_Equilibrium import (  # noqa: E402
     SPECIES_9,
     tabulated_epcsaft_reactive_chemical_equilibrium,
@@ -37,7 +35,6 @@ REACTIVE_TABLE = RUN_ROOT / "speciation_table.csv"
 REACTIVE_SUMMARY = RUN_ROOT / "speciation_table_summary.json"
 FINAL = ROOT / "analyses/nccc_validation/results/final"
 RESULT_TABLE = FINAL / "tables/retained_reactive_case3c_enhancement_formulations.csv"
-PLOT_TABLE = FINAL / "tables/retained_reactive_case3c_enhancement_plot.csv"
 SUMMARY = FINAL / "tables/retained_reactive_case3c_enhancement_summary.json"
 FILM_RUNS = FINAL / "tables/retained_reactive_case3c_film_runs.csv"
 COMPARISON_TABLE = FINAL / "tables/retained_reactive_case3c_enhancement_film_comparison.csv"
@@ -264,7 +261,6 @@ def _finish_row(
 def generate() -> tuple[pd.DataFrame, pd.DataFrame, dict[str, object]]:
     os.environ["MEA_EPCSAFT_REACTIVE_TABLE"] = str(REACTIVE_TABLE)
     profile = _load_profile()
-    model_cache = {}
     rows: list[dict[str, object]] = []
     slope_checks = []
     for _, source in profile.iterrows():
@@ -274,10 +270,7 @@ def generate() -> tuple[pd.DataFrame, pd.DataFrame, dict[str, object]]:
         )
         temperature_k = float(source.Tl)
         pressure_pa = float(source.P)
-        model = model_cache.setdefault(
-            round(temperature_k, 8),
-            mixture(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), SPECIES_9, temperature_k),
-        )
+        model = mixture(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), SPECIES_9, temperature_k)
         bulk_state = state(
             model,
             temperature_k=temperature_k,
@@ -536,25 +529,13 @@ def main() -> None:
     result, comparison, summary = generate()
     RESULT_TABLE.parent.mkdir(parents=True, exist_ok=True)
     result.to_csv(RESULT_TABLE, index=False)
-    plot = result.loc[
-        result.outcome == "evaluated",
-        [
-            "Position",
-            "height_m",
-            "formulation",
-            "E",
-            "E_ratio_to_current",
-            "predicted_flux_mol_s_m",
-            "flux_ratio_to_current",
-            "interface_slope_Pa_m3_mol",
-        ],
-    ].copy()
-    plot.to_csv(PLOT_TABLE, index=False)
     comparison.to_csv(COMPARISON_TABLE, index=False)
     SUMMARY.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2))
     if summary["maximum_current_E_relative_reproduction_error"] > 1.0e-3:
         raise RuntimeError("Current explicit calculation did not reproduce the retained enhancement profile")
+    if summary["failed_row_count"]:
+        raise RuntimeError("one or more retained enhancement states failed")
 
 
 if __name__ == "__main__":

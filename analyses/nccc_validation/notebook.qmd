@@ -10,9 +10,8 @@ format:
     pdf-engine: lualatex
     documentclass: scrartcl
     classoption:
-      - 11pt
+      - 10pt
       - oneside
-      - DIV=calc
     toc: true
     number-sections: true
     colorlinks: true
@@ -23,6 +22,9 @@ format:
         \usepackage{siunitx}
         \usepackage{booktabs}
         \usepackage{xurl}
+        \usepackage[left=0.62in,right=0.62in,top=0.55in,bottom=0.55in]{geometry}
+        \setlength{\tabcolsep}{4pt}
+        \renewcommand{\arraystretch}{1.05}
 ---
 
 # Decision addressed
@@ -35,8 +37,9 @@ synthesizes reviewed retained results; rendering does not rerun a column,
 thermodynamic, or film calculation.
 
 The result is a bounded diagnostic, not a predictive absorber validation. The
-nonlinear film calculation covers one retained bulk state, uses effective-Fick
-transport, and uses a forward concentration-basis carbamate rate. It does not
+nonlinear film calculation checks three retained bulk states, with mesh and
+initialization sensitivity evaluated at Position 1. It uses effective-Fick
+transport and a forward concentration-basis carbamate rate. It does not
 establish column-wide capture, reversible absorption/desorption behavior,
 wetted-wall-column agreement, or Maxwell--Stefan transport accuracy.
 
@@ -44,16 +47,18 @@ wetted-wall-column agreement, or Maxwell--Stefan transport accuracy.
 
 The analysis reads the following retained files:
 
-- `results/final/tables/retained_reactive_case3c_diagnosis_summary.json`
-  (SHA-256 `e41140224e1898ffb221d4eae1e5cb6c95a6d2fe24502469b6e455fc8d67cdb7`)
-- `results/final/tables/retained_reactive_case3c_enhancement_summary.json`
-  (SHA-256 `acece860b86ca5bcd56c84eee7af6295469ac8b60a25ae5c8697ae9ab27a4a05`)
-- `results/final/tables/retained_reactive_case3c_film_summary.json`
-  (SHA-256 `9cadbfa55b01b83192f6b8bc89af92c097e0475badd9e0b54b26c57d512a9c5c`)
-- `results/final/tables/retained_reactive_case3c_film_runs.csv`
-  (SHA-256 `1dda134f3015931aa8939dce33910895c869dcb5a8f6a97d49b87d8a7cc2e204`)
-- `results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv`
-  (SHA-256 `442cb2bc513e562c3763ac20a93c4a8b5dfedc895b3b8197e6f1c7f527e21353`)
+- \nolinkurl{results/final/tables/retained_reactive_case3c_diagnosis_summary.json}
+  (SHA-256 \nolinkurl{e41140224e1898ffb221d4eae1e5cb6c95a6d2fe24502469b6e455fc8d67cdb7})
+- \nolinkurl{results/final/tables/retained_reactive_case3c_enhancement_summary.json}
+  (SHA-256 \nolinkurl{c5747d74bcefc735953c79a9d8cb109d9a959682e6fc43f719218202a96294d5})
+- \nolinkurl{results/final/tables/retained_reactive_case3c_film_summary.json}
+  (SHA-256 \nolinkurl{368238c97be50cddf84ff79b3ef990398d5222351c219c2ad0b3492a453677b4})
+- \nolinkurl{results/final/tables/retained_reactive_case3c_film_runs.csv}
+  (SHA-256 \nolinkurl{a6e8cffe9f8e0a11ae6f1996796875c28d539f33b00f2dcb9aeda43b02d062df})
+- \nolinkurl{results/final/tables/retained_reactive_case3c_film_numerical_gate.csv}
+  (SHA-256 \nolinkurl{09707b58eff441fa292280c1030ead160d6cac5601613d9474de60b714306651})
+- \nolinkurl{results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv}
+  (SHA-256 \nolinkurl{30d4c2a35227f9e43fafa6a5f98b59c26d81f1c2f8c2fc20dad70403294275a8})
 
 The retained calculation uses ePC-SAFT package commit
 \nolinkurl{d88f703974fa8d6e7be54ca3cbd51b6f0f78a372}, wheel SHA-256
@@ -218,17 +223,26 @@ closure.
 
 # Numerical acceptance evidence
 
-The one-state film calculation was repeated with 21 and 42 initial mesh points
-and initial flux factors of 0.5, 1.0, and 2.0. All six cases evaluated.
+The Position 1 film calculation was repeated with 21 and 42 initial mesh
+points and genuine initial flux factors of 0.5, 1.0, and 2.0. All six cases
+evaluated to the same solution. A separate three-position check evaluated the
+lean-end, middle, and rich-end retained states with the direct gas-film
+boundary condition.
 
 | Check | Result |
 |---|---:|
 | Evaluated cases | 6/6 |
 | Failed cases | 0 |
-| Relative interface-flux spread | $1.48\times10^{-11}$ |
-| Maximum interface residual | $1.99\times10^{-10}$ |
-| Maximum conservation residual | $7.45\times10^{-11}$ |
-| Maximum invariant-source residual | $3.54\times10^{-16}$ |
+| Relative interface-flux spread | $1.53\times10^{-11}$ |
+| Maximum interface residual | $1.55\times10^{-11}$ |
+| Maximum conservation residual | $5.61\times10^{-10}$ |
+| Maximum invariant-source residual | $4.72\times10^{-16}$ |
+
+The three-position gate evaluated 3/3 states with no failures. Its maximum
+interface, conservation, and invariant-source residuals were
+$1.24\times10^{-11}$, $5.61\times10^{-10}$, and
+$2.95\times10^{-16}$, respectively. These extra states test numerical closure;
+they do not constitute column-wide transport validation.
 
 These checks establish numerical repeatability for this retained state and
 formulation. They do not test kinetic-model adequacy or transport-model
@@ -249,8 +263,8 @@ problem is inconsistent species and thermodynamic bases: the bulk calculation
 uses reactive ePC-SAFT speciation and fugacity, while the current enhancement
 correlation retains a legacy concentration and resistance basis.
 
-The one-state nonlinear film calculation is the first direct test of the
-consistent alternative. Its higher flux shows that the current correlation can
+The Position 1 nonlinear film calculation is the first direct comparison with
+the current correlation. Its higher flux shows that the current correlation can
 suppress transfer at this state. This finding is a reason to extend the film
 calculation; it is not a reason to tune thermodynamic parameters against column
 capture.
@@ -261,12 +275,12 @@ capture.
 |---|---|---|
 | The retained liquid fugacity alone causes the lower capture. | Rejected by the controlled comparison. | None; the retained driving force is larger. |
 | The current enhancement calculation is inconsistent with the retained reactive liquid basis. | Supported as a Case 3C diagnosis. | Replication across representative column states and independent transport observations. |
-| A nonlinear ePC-SAFT film can be solved at an absorber state without an extra enhancement multiplier. | Supported for one retained state. | Reversible kinetics, both transfer directions, and multi-state checks. |
+| A nonlinear ePC-SAFT film can be solved at retained absorber states without an extra enhancement multiplier. | Numerically supported at three retained states; initialization and mesh repeatability tested at Position 1. | Reversible kinetics, both transfer directions, and independent transport observations. |
 | The nonlinear film restores predictive Case 3C capture. | Not established. | Column integration followed by untuned capture and temperature validation. |
 | The retained parameter document is predictive for MEA absorption. | Not established. | Independent pressure and speciation validation plus multi-case absorber validation. |
 
 The manuscript may use the fugacity/enhancement diagnosis as a bounded
-limitation and may describe the one-state nonlinear film result as method
+limitation and may describe the three-state nonlinear film result as method
 development. It should not replace the reported column results or claim
 predictive reactive absorber performance until the consistent film closure has
 been integrated and validated without adjusting parameters to the Case 3C
@@ -284,5 +298,5 @@ capture observation.
 4. Compare film and column predictions with independent wetted-wall-column and
    absorber observations before migrating a predictive claim to the manuscript.
 
-Until those checks pass, the retained one-state result remains a numerical
-reference case and a mechanistic diagnostic.
+Until those checks pass, the retained film results remain numerical reference
+cases and a mechanistic diagnostic.

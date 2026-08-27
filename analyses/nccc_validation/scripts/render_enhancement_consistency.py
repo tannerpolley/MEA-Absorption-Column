@@ -7,7 +7,7 @@ import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[3]
-TABLE = ROOT / "analyses/nccc_validation/results/final/tables/retained_reactive_case3c_enhancement_plot.csv"
+TABLE = ROOT / "analyses/nccc_validation/results/final/tables/retained_reactive_case3c_enhancement_formulations.csv"
 COMPARISON = ROOT / "analyses/nccc_validation/results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv"
 OUTPUT = ROOT / "analyses/nccc_validation/results/final/figures/retained_reactive_case3c_enhancement_consistency"
 
@@ -21,7 +21,7 @@ STYLES = {
 
 
 def main() -> None:
-    table = pd.read_csv(TABLE)
+    table = pd.read_csv(TABLE).query("outcome == 'evaluated'")
     comparison = pd.read_csv(COMPARISON)
     fig, axes = plt.subplots(2, 1, figsize=(7.2, 7.0), sharex=True, constrained_layout=True)
     for formulation, group in table.groupby("formulation", sort=False):
@@ -54,8 +54,7 @@ def main() -> None:
     axes[1].set_ylabel("CO$_2$ flux / current flux")
     axes[1].grid(True, alpha=0.25)
     axes[1].legend(frameon=False, fontsize=8)
-    for suffix in ("pdf", "png", "svg"):
-        fig.savefig(OUTPUT.with_suffix(f".{suffix}"), dpi=300)
+    fig.savefig(OUTPUT.with_suffix(".pdf"))
     plt.close(fig)
 
 

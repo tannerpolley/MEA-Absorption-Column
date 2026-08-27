@@ -52,7 +52,7 @@ def test_no_reaction_matches_linear_two_film_solution(monkeypatch, vapor_fugacit
     assert result.maximum_conservation_residual <= 1.0e-7
 
 
-def test_reactive_film_preserves_stoichiometry_and_direction_under_refinement():
+def test_reactive_film_preserves_stoichiometry_and_direction_under_refinement(monkeypatch):
     bulk = np.array([1.0, 1000.0, 5.0, 5.0])
     diffusivities = np.array([1.0e-9, 8.0e-10, 8.0e-10, 8.0e-10])
     stoichiometry = np.array([-1.0, -2.0, 1.0, 1.0])
@@ -76,11 +76,21 @@ def test_reactive_film_preserves_stoichiometry_and_direction_under_refinement():
         conservation_matrix=conservation_matrix,
     )
 
+    initial_fluxes = []
+    scipy_solve_bvp = reactive_film.solve_bvp
+
+    def capture_initial_flux(*args, **kwargs):
+        initial_fluxes.append(float(args[3][4, 0]))
+        return scipy_solve_bvp(*args, **kwargs)
+
+    monkeypatch.setattr(reactive_film, "solve_bvp", capture_initial_flux)
     coarse = solve_reactive_film(**kwargs, mesh_points=11, initial_flux_factor=0.5)
+    fine_start = len(initial_fluxes)
     fine = solve_reactive_film(**kwargs, mesh_points=22, initial_flux_factor=2.0)
     flux_difference = abs(coarse.fluxes_mol_m2_s[0, 0] / fine.fluxes_mol_m2_s[0, 0] - 1.0)
 
     assert fine.fluxes_mol_m2_s[0, 0] > 0.0
+    assert initial_fluxes[fine_start] / initial_fluxes[0] == pytest.approx(4.0)
     assert flux_difference <= 5.0e-3
     assert fine.maximum_conservation_residual <= 1.0e-7
     assert fine.maximum_invariant_source_residual <= 1.0e-14

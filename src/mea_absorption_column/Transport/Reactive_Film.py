@@ -46,7 +46,6 @@ def solve_reactive_film(
     mesh_points: int = 21,
     initial_flux_factor: float = 1.0,
     reaction_continuation_steps: int = 1,
-    rate_uses_fugacity: bool = False,
     solver_tolerance: float = 1.0e-8,
 ) -> ReactiveFilmResult:
     """Solve one isothermal effective-Fick reactive film.
@@ -132,7 +131,7 @@ def solve_reactive_film(
     def equations(_coordinate: np.ndarray, values: np.ndarray) -> np.ndarray:
         concentration_ratios = values[:n_species]
         scaled_fluxes = values[n_species:]
-        _, _, _, rates = evaluate(concentration_ratios, include_fugacity=rate_uses_fugacity)
+        _, _, _, rates = evaluate(concentration_ratios, include_fugacity=False)
         return np.vstack(
             (
                 -scaled_fluxes,
@@ -202,11 +201,7 @@ def solve_reactive_film(
     interface_concentrations = bulk.copy()
     interface_concentrations[co2_index] *= concentration_ratio
     interface_composition = interface_concentrations / np.sum(interface_concentrations)
-    interface_fugacity = (
-        liquid_co2_fugacity_pa(interface_concentrations, interface_composition)
-        if rate_uses_fugacity
-        else math.nan
-    )
+    interface_fugacity = math.nan
     interface_rate = abs(
         net_rate_mol_m3_s(
             interface_concentrations,
@@ -275,7 +270,7 @@ def solve_reactive_film(
         if first_scale == 0.0:
             guess[:n_species] = 1.0
             guess[co2_index] = concentration_ratio + (1.0 - concentration_ratio) * coordinate
-            guess[n_species + co2_index] = concentration_ratio - 1.0
+            guess[n_species + co2_index] = flux_factor * (concentration_ratio - 1.0)
             return guess
         hatta = delta * math.sqrt(
             rate_coefficient * first_scale / diffusivities[co2_index]
@@ -356,7 +351,7 @@ def solve_reactive_film(
     fluxes = check_values[n_species:] * flux_scale[:, None]
     def rate_integrand(coordinate: float) -> float:
         values = solution.sol(coordinate)[:n_species, None]
-        return float(evaluate(values, include_fugacity=rate_uses_fugacity)[3][0])
+        return float(evaluate(values, include_fugacity=False)[3][0])
 
     integrated_rate = quad(rate_integrand, 0.0, 1.0, epsabs=1.0e-8, epsrel=1.0e-10, limit=500)[0]
     integrated_source = delta * nu * integrated_rate

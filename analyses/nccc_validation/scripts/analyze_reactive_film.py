@@ -5,7 +5,6 @@ import hashlib
 import importlib.metadata
 import json
 import math
-import os
 import sys
 import time
 from pathlib import Path
@@ -15,7 +14,6 @@ import numpy as np
 import pandas as pd
 
 
-os.environ.setdefault("MEA_EPCSAFT_DATASET_NAME", "MEA_CO2_H2O_retained_predictive")
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 

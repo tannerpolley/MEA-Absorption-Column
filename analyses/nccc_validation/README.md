@@ -1,12 +1,12 @@
 # NCCC Validation Analysis
 
-This analysis owns the reviewer-response validation artifacts for the MEA absorber model. It separates disposable benchmark runs from curated final evidence so completed results can be inspected without digging through temporary solver folders.
+This analysis owns the reviewer-response validation evidence for the MEA absorber model. It separates disposable benchmark runs from curated final evidence so completed results can be inspected without digging through temporary solver folders.
 
 ## Layout
 
 - `results/runs/`: disposable benchmark runs and long diagnostics. This folder is ignored by Git.
 - `results/final/tables/`: accepted result CSVs, diagnostic CSVs, plot-ready tables, and profile indexes.
-- `results/final/figures/`: paper-ready SVG/PDF benchmark figures.
+- `results/final/figures/`: retained PDF benchmark figures.
 - `results/final/profiles/<case_id>/<thermo_model>/`: clean temperature-profile PNGs for quick visual review.
 - `results/final/reports/`: Markdown or CSV summaries for accepted rows, fallback rows, and unresolved diagnostics.
 - `results/runs/<run_id>/profiles/<case_source>/<case_id>/<method>/<thermo_model>/`: requested dense profile CSV exports. These are the CSV replacement for the older `Profiles.xlsx` workbook: each old workbook sheet is written as its own CSV, with `Position`, `height_m`, `bed_id`, and `bed_position_m` coordinate columns.
@@ -113,7 +113,7 @@ uv run python analyses/nccc_validation/scripts/generate_clean_profile_csvs.py --
 This script writes each case row as soon as it finishes. If a case exceeds the default 60-second subprocess timeout or errors, the row is logged as a failed diagnostic result and the script continues to the next case. Use `--per-case-timeout-s <seconds>` only when intentionally running a longer diagnostic probe.
 It also writes `profile_runtime_index.csv` and refreshes each profile folder's `profile_manifest.json` / `profile_manifest.csv` with `runtime_s` and a human-readable `runtime_label`.
 
-Validate the analysis artifacts used by the manuscript:
+Validate the analysis results used by the manuscript:
 
 ```bash
 uv run python analyses/nccc_validation/scripts/validate_results.py
@@ -150,4 +150,4 @@ uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numeri
 
 The clean profile gallery contains accepted validation rows and explicitly accepted fallback rows used in the manuscript. Diagnostic or unresolved rows stay in final tables and reports, but they are not mixed into the clean profile gallery unless the caveat is explicit in the profile index.
 
-The dense profile CSV folders are run artifacts, not summary tables. Use them to inspect how internal variables change with column position; use `verified_*.csv`, `raw_*.csv`, and `plot_*.csv` for manuscript validation metrics and figure generation.
+The dense profile CSV folders are run outputs, not summary tables. Use them to inspect how internal variables change with column position; use `verified_*.csv`, `raw_*.csv`, and `plot_*.csv` for manuscript validation metrics and figure generation.
