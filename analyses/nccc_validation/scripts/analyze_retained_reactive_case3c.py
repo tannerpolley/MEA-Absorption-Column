@@ -37,7 +37,9 @@ PRIOR_DATASET = ROOT / "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_
 RETAINED_DATASET = (
     ROOT / "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive"
 )
-REACTIVE_TABLE = RETAINED_ROOT / "speciation_table.csv"
+REACTIVE_TABLE = (
+    ROOT / "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv"
+)
 
 
 def _profile(path: Path, prefix: str) -> pd.DataFrame:

@@ -5,6 +5,7 @@ This analysis owns the reviewer-response validation evidence for the MEA absorbe
 ## Layout
 
 - `results/runs/`: disposable benchmark runs and long diagnostics. This folder is ignored by Git.
+- `inputs/retained_reactive_case3c/`: tracked 21-state film input and certified 44-state reactive-speciation table used by the retained calculations.
 - `results/final/tables/`: accepted result CSVs, diagnostic CSVs, plot-ready tables, and profile indexes.
 - `results/final/figures/`: retained PDF benchmark figures.
 - `results/final/profiles/<case_id>/<thermo_model>/`: clean temperature-profile PNGs for quick visual review.
@@ -123,7 +124,7 @@ Generate and render the retained reactive Case 3C diagnosis after its named
 run folders are present:
 
 ```bash
-MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
 uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
 uv run python analyses/nccc_validation/scripts/render_retained_reactive_case3c_diagnosis.py
 ```
@@ -132,7 +133,7 @@ Run the enhancement/interface consistency experiment from issue 16:
 
 ```bash
 MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
-MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
 uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
 uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
 uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
@@ -142,7 +143,7 @@ Run the three-position direct-boundary numerical gate:
 
 ```bash
 MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
-MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
 uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
 ```
 

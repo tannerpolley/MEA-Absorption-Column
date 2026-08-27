@@ -47,10 +47,16 @@ wetted-wall-column agreement, or Maxwell--Stefan transport accuracy.
 
 The analysis reads the following retained files:
 
+- \nolinkurl{inputs/retained_reactive_case3c/film_states.csv}
+  (SHA-256 \nolinkurl{2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a})
+- \nolinkurl{inputs/retained_reactive_case3c/speciation_table.csv}
+  (SHA-256 \nolinkurl{36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4})
+- \nolinkurl{inputs/retained_reactive_case3c/speciation_table_summary.json}
+  (SHA-256 \nolinkurl{fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a})
 - \nolinkurl{results/final/tables/retained_reactive_case3c_diagnosis_summary.json}
   (SHA-256 \nolinkurl{e41140224e1898ffb221d4eae1e5cb6c95a6d2fe24502469b6e455fc8d67cdb7})
 - \nolinkurl{results/final/tables/retained_reactive_case3c_enhancement_summary.json}
-  (SHA-256 \nolinkurl{c5747d74bcefc735953c79a9d8cb109d9a959682e6fc43f719218202a96294d5})
+  (SHA-256 \nolinkurl{f76fb4ee4a81a43bdb667a94878c1b4676cb30a48ba7192a96df0ab7e9986626})
 - \nolinkurl{results/final/tables/retained_reactive_case3c_film_summary.json}
   (SHA-256 \nolinkurl{368238c97be50cddf84ff79b3ef990398d5222351c219c2ad0b3492a453677b4})
 - \nolinkurl{results/final/tables/retained_reactive_case3c_film_runs.csv}
@@ -171,7 +177,7 @@ to recover one column capture result.
 
 All 105 formulation--state rows evaluated, with no failed rows. The current
 explicit formula reproduced the retained enhancement values to a maximum
-relative error of $4.44\times10^{-16}$.
+relative error of $5.55\times10^{-16}$.
 
 | Formulation | Median $E/E_{\mathrm{current}}$ | Median flux ratio |
 |---|---:|---:|

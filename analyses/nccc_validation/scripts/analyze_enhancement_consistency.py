@@ -29,10 +29,10 @@ from mea_absorption_column.Thermodynamics.thermo_models import (  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[3]
-RUN_ROOT = ROOT / "analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c"
-PROFILE = RUN_ROOT / "column_mesh21_case3c/profiles/C_cases_campaign_inputs/3C/scipy-bvp/epcsaft_reactive_nine_tabulated"
-REACTIVE_TABLE = RUN_ROOT / "speciation_table.csv"
-REACTIVE_SUMMARY = RUN_ROOT / "speciation_table_summary.json"
+INPUTS = ROOT / "analyses/nccc_validation/inputs/retained_reactive_case3c"
+PROFILE = INPUTS / "film_states.csv"
+REACTIVE_TABLE = INPUTS / "speciation_table.csv"
+REACTIVE_SUMMARY = INPUTS / "speciation_table_summary.json"
 FINAL = ROOT / "analyses/nccc_validation/results/final"
 RESULT_TABLE = FINAL / "tables/retained_reactive_case3c_enhancement_formulations.csv"
 SUMMARY = FINAL / "tables/retained_reactive_case3c_enhancement_summary.json"
@@ -200,16 +200,7 @@ def implicit_enhancement(
 
 
 def _load_profile() -> pd.DataFrame:
-    names = ("Fl", "x", "y", "Cl", "T", "Prop_l", "transport", "CO2", "enhance_factor")
-    tables = [pd.read_csv(PROFILE / f"{name}.csv") for name in names]
-    merged = tables[0]
-    coordinates = ["Position", "height_m", "bed_id", "bed_position_m"]
-    for table in tables[1:]:
-        duplicate_values = [column for column in table if column in merged and column not in coordinates]
-        table = table.drop(columns=duplicate_values)
-        merged = merged.merge(table, on=coordinates, how="inner", validate="one_to_one")
-    selected = np.linspace(0, len(merged) - 1, 21, dtype=int)
-    return merged.iloc[selected].reset_index(drop=True)
+    return pd.read_csv(PROFILE)
 
 
 def _base_row(source: pd.Series, formulation: str) -> dict[str, object]:

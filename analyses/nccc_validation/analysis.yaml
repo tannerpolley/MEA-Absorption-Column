@@ -1,7 +1,7 @@
 id: nccc_validation
 title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
-summary: Reviewer-response validation artifacts for one-bed NCCC cases, solver-method contrast, ideal Henry versus routine ePC-SAFT fugacity driving-force comparisons, and diagnostic activity-coupled ePC-SAFT option checks.
+summary: Reviewer-response validation evidence for one-bed NCCC cases, solver-method contrast, ideal Henry versus routine ePC-SAFT fugacity driving-force comparisons, and diagnostic activity-coupled ePC-SAFT option checks.
 owner: project
 architecture:
   standard: local_codex_project_architecture
@@ -13,6 +13,12 @@ inputs:
     kind: packaged_reference_data
   - path: ../../src/mea_absorption_column/data/NCCC_Data.csv
     kind: packaged_reference_data
+  - path: inputs/retained_reactive_case3c/film_states.csv
+    kind: retained_reactive_film_states
+  - path: inputs/retained_reactive_case3c/speciation_table.csv
+    kind: certified_reactive_speciation_table
+  - path: inputs/retained_reactive_case3c/speciation_table_summary.json
+    kind: certified_reactive_speciation_identity
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -103,15 +109,15 @@ commands:
   epcsaft_electrolyte_column_matrix:
     - uv run python analyses/nccc_validation/scripts/run_epcsaft_electrolyte_config_matrix.py
   retained_reactive_case3c_analysis:
-    - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
+    - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
     - uv run python analyses/nccc_validation/scripts/render_retained_reactive_case3c_diagnosis.py
   enhancement_consistency:
-    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
     - uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
     - uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
   reactive_film:
-    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
-    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
 runtime:
   quick_seconds: 10
   full_seconds: 600

@@ -2,4 +2,3 @@
 set -euo pipefail
 
 quarto render "$@" --no-execute
-
