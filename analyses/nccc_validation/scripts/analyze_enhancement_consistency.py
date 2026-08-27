@@ -154,6 +154,7 @@ def implicit_enhancement(
         )
 
     solutions = []
+    attempts = []
     for guess in ((max(1.01, hatta), 0.9), (10.0, 0.5), (100.0, 0.1)):
         solved = least_squares(
             residual,
@@ -165,12 +166,23 @@ def implicit_enhancement(
             max_nfev=2000,
         )
         norm = float(np.max(np.abs(residual(solved.x))))
+        attempts.append(
+            {
+                "initial_E": guess[0],
+                "initial_y_MEA_interface": guess[1],
+                "success": bool(solved.success),
+                "E": float(solved.x[0]),
+                "y_MEA_interface": float(solved.x[1]),
+                "residual_inf": norm,
+            }
+        )
         if solved.success and np.all(np.isfinite(solved.x)) and norm <= 1.0e-7:
             solutions.append((float(solved.x[0]), float(solved.x[1]), norm))
     if len(solutions) != 3:
         return {
             "outcome": "numerical_convergence_failure",
             "diagnostic": f"{len(solutions)} of 3 initial guesses met the residual tolerance",
+            "initial_guess_results_json": json.dumps(attempts, separators=(",", ":")),
         }
     spread = (max(value[0] for value in solutions) - min(value[0] for value in solutions)) / max(
         value[0] for value in solutions
@@ -179,6 +191,7 @@ def implicit_enhancement(
         return {
             "outcome": "numerical_convergence_failure",
             "diagnostic": f"initial-guess enhancement spread {spread:.6g} exceeded 0.001",
+            "initial_guess_results_json": json.dumps(attempts, separators=(",", ":")),
         }
     enhancement = float(np.mean([value[0] for value in solutions]))
     y_mea_i = float(np.mean([value[1] for value in solutions]))
@@ -196,6 +209,7 @@ def implicit_enhancement(
         "C_CO2_interface_mol_m3": c_co2_i,
         "residual_inf": max(value[2] for value in solutions),
         "initial_guess_relative_spread": spread,
+        "initial_guess_results_json": json.dumps(attempts, separators=(",", ":")),
     }
 
 

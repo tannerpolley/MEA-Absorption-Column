@@ -37,6 +37,8 @@ export PYTHONPATH="src"
 | `render_retained_reactive_case3c_diagnosis.py` | Renders the reviewed Case 3C diagnostic figure from retained tables. | No. | No direct dependency. |
 | `analyze_enhancement_consistency.py` | Compares explicit and complete Gaspar-style enhancement calculations at retained Case 3C states under fixed thermodynamic parameters. | Evaluates 21 retained liquid states. | Requires the retained ePC-SAFT wheel, parameter document, and reactive table. |
 | `render_enhancement_consistency.py` | Renders enhancement and fixed-state flux comparisons from the retained enhancement table. | No. | No direct dependency. |
+| `analyze_issue17_enhancement_comparison.py` | Evaluates the four issue 17 enhancement equations on 21 retained current-reconstruction fugacity-only states and applies the staged numerical and physical gates. | Evaluates 84 fixed-state rows. | No direct dependency; reads the retained fixed-state table. |
+| `render_issue17_enhancement_comparison.py` | Renders the three issue 17 equation-comparison figures from the retained 84-row table. | No. | No direct dependency. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -149,6 +151,23 @@ uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.p
 uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
 uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
 ```
+
+Regenerate the issue 17 fixed-state comparison and its three retained-table
+figures:
+
+```bash
+uv run python analyses/nccc_validation/scripts/analyze_issue17_enhancement_comparison.py
+uv run python analyses/nccc_validation/scripts/render_issue17_enhancement_comparison.py
+uv run pytest -q analyses/nccc_validation/tests/test_issue17_enhancement_comparison.py
+```
+
+The historical 89.832629% row lacks a retained ePC-SAFT wheel identity and
+dense profile. Issue 17 therefore uses the separately named
+`current_fugacity_only_reconstruction_b2d6636` input snapshot; its exact
+identity and the historical gap are recorded in
+`inputs/issue17_enhancement_comparison/identity.json`. The retained 101-state
+profile supplies the 21 exact positions at 0.05 intervals, including both
+boundaries.
 
 Run the three-position direct-boundary numerical gate:
 
