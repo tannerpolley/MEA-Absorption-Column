@@ -138,6 +138,14 @@ uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
 uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
 ```
 
+Run the three-position direct-boundary numerical gate:
+
+```bash
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
+```
+
 ## Result Semantics
 
 The clean profile gallery contains accepted validation rows and explicitly accepted fallback rows used in the manuscript. Diagnostic or unresolved rows stay in final tables and reports, but they are not mixed into the clean profile gallery unless the caveat is explicit in the profile index.

@@ -477,7 +477,18 @@ def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral"
     else:
         raise ValueError(f"Unknown ePC-SAFT mixture kind: {mixture_kind}")
     start = time.perf_counter()
-    state = _pressure_state_with_optional_rho_guess(mixture, T, P, composition_arr, phase, mixture_kind)
+    if cache:
+        state = _pressure_state_with_optional_rho_guess(
+            mixture, T, P, composition_arr, phase, mixture_kind
+        )
+    else:
+        state = _v02_state(
+            mixture,
+            temperature_k=float(T),
+            pressure_pa=float(P),
+            composition=composition_arr,
+            phase=phase,
+        )
     _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] += time.perf_counter() - start
     phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
     phi_co2 = float(phi[CO2_INDEX])

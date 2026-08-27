@@ -111,6 +111,7 @@ commands:
     - uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
   reactive_film:
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/results/runs/retained_predictive_reactive_epcsaft_3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
 runtime:
   quick_seconds: 10
   full_seconds: 600

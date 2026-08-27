@@ -172,171 +172,174 @@ def solve_reactive_film(
             raise ReactiveFilmSolveError("could not bracket the interfacial fugacity-equilibrium state")
         equilibrium_log_ratio = float(brentq(phase_residual, *bracket, xtol=1.0e-12))
 
-    continuation = np.linspace(0.0, 1.0, int(reaction_continuation_steps) + 1)[1:] ** 2
+    continuation = np.linspace(0.0, 1.0, int(reaction_continuation_steps) + 1) ** 2
+    def physical_film_residual(log_ratio: float) -> float:
+        trial_concentrations = bulk.copy()
+        trial_concentrations[co2_index] *= np.exp(log_ratio)
+        trial_composition = trial_concentrations / np.sum(trial_concentrations)
+        trial_fugacity = float(
+            liquid_co2_fugacity_pa(trial_concentrations, trial_composition)
+        )
+        liquid_flux = (np.exp(log_ratio) - 1.0) * flux_scale[co2_index]
+        gas_flux = float(gas_transfer_coefficient_mol_m2_s_pa) * (
+            float(vapor_bulk_fugacity_pa) - trial_fugacity
+        )
+        return float(liquid_flux - gas_flux)
 
-    solved_interfaces = {}
-
-    def solve_at_interface(interface_log_ratio: float, tolerance: float):
-        nonlocal reaction_scale, recovery_used
-
-        def boundary(interface: np.ndarray, bulk_edge: np.ndarray) -> np.ndarray:
-            residual = np.empty(2 * n_species, dtype=float)
-            residual[:n_species] = bulk_edge[:n_species] - 1.0
-            residual[n_species] = interface[co2_index] - np.exp(interface_log_ratio)
-            residual[n_species + 1 :] = np.delete(interface[n_species:], co2_index)
-            return residual
-
-        warm = [
-            (abs(key[0] - interface_log_ratio), value[0])
-            for key, value in solved_interfaces.items()
-            if key[1] == float(tolerance)
-        ]
-        warm_solution = min(warm, default=(math.inf, None), key=lambda item: item[0])[1]
-        if warm_solution is None:
-            coordinate = np.linspace(0.0, 1.0, int(mesh_points)) ** 3
-            concentration_ratio = np.exp(interface_log_ratio)
-            interface_concentrations = bulk.copy()
-            interface_concentrations[co2_index] *= concentration_ratio
-            interface_composition = interface_concentrations / np.sum(interface_concentrations)
-            interface_fugacity = (
-                liquid_co2_fugacity_pa(interface_concentrations, interface_composition)
-                if rate_uses_fugacity
-                else math.nan
+    physical_log_ratio = 0.0
+    if direction:
+        physical_log_ratio = float(
+            brentq(
+                physical_film_residual,
+                min(0.0, equilibrium_log_ratio),
+                max(0.0, equilibrium_log_ratio),
+                xtol=1.0e-12,
             )
-            interface_rate = abs(
-                net_rate_mol_m3_s(
-                    interface_concentrations,
-                    interface_composition,
-                    interface_fugacity,
-                )
-            )
-            rate_coefficient = interface_rate / interface_concentrations[co2_index]
+        )
 
-            def initial_guess(first_scale: float, flux_factor: float) -> np.ndarray:
-                guess = np.zeros((2 * n_species, coordinate.size), dtype=float)
-                hatta = delta * math.sqrt(
-                    rate_coefficient * first_scale / diffusivities[co2_index]
-                )
-                reaction_shape = np.exp(-hatta * coordinate)
-                concentration_ratios = np.ones((n_species, coordinate.size), dtype=float)
-                concentration_ratios[co2_index] += (concentration_ratio - 1.0) * reaction_shape
-                co2_flux = (
-                    flux_factor
-                    * flux_scale[co2_index]
-                    * hatta
-                    * (concentration_ratio - 1.0)
-                    * reaction_shape
-                )
-                physical_fluxes = np.zeros_like(concentration_ratios)
-                physical_fluxes[co2_index] = co2_flux
-                for index in range(n_species):
-                    if index == co2_index:
-                        continue
-                    physical_fluxes[index] = nu[index] * (co2_flux[0] - co2_flux)
-                    reverse_integral = -cumulative_trapezoid(
-                        physical_fluxes[index, ::-1], coordinate[::-1], initial=0.0
-                    )[::-1]
-                    concentration_ratios[index] += (
-                        delta * reverse_integral / (diffusivities[index] * bulk[index])
-                    )
-                guess[:n_species] = concentration_ratios
-                guess[n_species:] = physical_fluxes / flux_scale[:, None]
-                return guess
+    coordinate = np.linspace(0.0, 1.0, int(mesh_points)) ** 3
+    concentration_ratio = np.exp(physical_log_ratio)
+    interface_concentrations = bulk.copy()
+    interface_concentrations[co2_index] *= concentration_ratio
+    interface_composition = interface_concentrations / np.sum(interface_concentrations)
+    interface_fugacity = (
+        liquid_co2_fugacity_pa(interface_concentrations, interface_composition)
+        if rate_uses_fugacity
+        else math.nan
+    )
+    interface_rate = abs(
+        net_rate_mol_m3_s(
+            interface_concentrations,
+            interface_composition,
+            interface_fugacity,
+        )
+    )
+    rate_coefficient = interface_rate / interface_concentrations[co2_index]
+    if rate_coefficient == 0.0:
+        continuation = np.asarray((1.0,))
+    closure_scale = max(
+        flux_scale[co2_index],
+        float(gas_transfer_coefficient_mol_m2_s_pa)
+        * abs(float(vapor_bulk_fugacity_pa) - bulk_fugacity),
+        1.0e-30,
+    )
 
-            alternate = np.linspace(0.2, 1.0, max(5, int(reaction_continuation_steps))) ** 2
-            schedules = (
-                (continuation, float(initial_flux_factor), False),
-                (alternate, float(initial_flux_factor), False),
-                (alternate, 1.0, True),
-            )
-        else:
-            coordinate, schedules = warm_solution.x, (((1.0,), 1.0, False),)
-        failure = None
-        for scales, flux_factor, recovered in schedules:
-            solution = warm_solution
-            guess = (
-                warm_solution.y
-                if warm_solution is not None
-                else initial_guess(float(scales[0]), flux_factor)
-            )
-            for scale in scales:
-                reaction_scale = float(scale)
-                solution = solve_bvp(
-                    equations,
-                    boundary,
-                    coordinate if solution is None else solution.x,
-                    guess if solution is None else solution.y,
-                    tol=float(tolerance),
-                    max_nodes=20000,
-                )
-                if not solution.success:
-                    failure = (
-                        f"reactive film solve failed at reaction scale {reaction_scale:g}: "
-                        f"{solution.message}"
-                    )
-                    break
-            if solution.success:
-                recovery_used = recovery_used or recovered
-                break
-        if not solution.success:
-            raise ReactiveFilmSolveError(str(failure))
-        return solution, boundary
-
-    search_tolerance = max(float(solver_tolerance), 1.0e-6)
-
-    def interface_closure(log_ratio: float, tolerance: float = search_tolerance) -> float:
-        key = (float(log_ratio), float(tolerance))
-        solution, boundary = solve_at_interface(key[0], key[1])
-        interface_concentrations = bulk * solution.y[:n_species, 0]
+    def boundary(interface: np.ndarray, bulk_edge: np.ndarray) -> np.ndarray:
+        interface_concentrations = bulk * np.maximum(interface[:n_species], 1.0e-30)
         interface_composition = interface_concentrations / np.sum(interface_concentrations)
         interface_fugacity = float(
             liquid_co2_fugacity_pa(interface_concentrations, interface_composition)
         )
-        liquid_flux = solution.y[n_species + co2_index, 0] * flux_scale[co2_index]
+        liquid_flux = interface[n_species + co2_index] * flux_scale[co2_index]
         gas_flux = float(gas_transfer_coefficient_mol_m2_s_pa) * (
             float(vapor_bulk_fugacity_pa) - interface_fugacity
         )
-        closure_scale = max(abs(liquid_flux), abs(gas_flux), flux_scale[co2_index])
-        residual = (liquid_flux - gas_flux) / closure_scale
-        solved_interfaces[key] = (solution, boundary, residual)
-        return float(residual)
+        residual = np.empty(2 * n_species, dtype=float)
+        residual[:n_species] = bulk_edge[:n_species] - 1.0
+        residual[n_species] = (liquid_flux - gas_flux) / closure_scale
+        residual[n_species + 1 :] = np.delete(interface[n_species:], co2_index)
+        return residual
 
-    if direction:
-        previous_log = float(0.9999 * equilibrium_log_ratio)
-        previous_closure = interface_closure(previous_log)
-        closure_bracket = None
-        for fraction in (0.999, 0.995, 0.98, 0.9, 0.75, 0.5, 0.25, 0.0):
-            candidate_log = float(fraction * equilibrium_log_ratio)
-            candidate_closure = interface_closure(candidate_log)
-            if previous_closure * candidate_closure <= 0.0:
-                closure_bracket = (
-                    min(previous_log, candidate_log),
-                    max(previous_log, candidate_log),
+    def boundary_jacobian(interface: np.ndarray, _bulk_edge: np.ndarray):
+        interface_jacobian = np.zeros((2 * n_species, 2 * n_species), dtype=float)
+        bulk_jacobian = np.zeros_like(interface_jacobian)
+        bulk_jacobian[:n_species, :n_species] = np.eye(n_species)
+
+        ratio = max(float(interface[co2_index]), 1.0e-30)
+        step = max(1.0e-6 * ratio, 1.0e-8)
+        lower = max(ratio - step, 0.5 * ratio)
+        upper = ratio + step
+
+        def fugacity_at(co2_ratio: float) -> float:
+            concentrations = bulk * np.maximum(interface[:n_species], 1.0e-30)
+            concentrations[co2_index] = bulk[co2_index] * co2_ratio
+            composition = concentrations / np.sum(concentrations)
+            return float(liquid_co2_fugacity_pa(concentrations, composition))
+
+        fugacity_derivative = (fugacity_at(upper) - fugacity_at(lower)) / (upper - lower)
+        interface_jacobian[n_species, co2_index] = (
+            float(gas_transfer_coefficient_mol_m2_s_pa)
+            * fugacity_derivative
+            / closure_scale
+        )
+        interface_jacobian[n_species, n_species + co2_index] = (
+            flux_scale[co2_index] / closure_scale
+        )
+        other_species = [index for index in range(n_species) if index != co2_index]
+        for row, index in enumerate(other_species, start=n_species + 1):
+            interface_jacobian[row, n_species + index] = 1.0
+        return interface_jacobian, bulk_jacobian
+
+    def initial_guess(first_scale: float, flux_factor: float) -> np.ndarray:
+        guess = np.zeros((2 * n_species, coordinate.size), dtype=float)
+        if first_scale == 0.0:
+            guess[:n_species] = 1.0
+            guess[co2_index] = concentration_ratio + (1.0 - concentration_ratio) * coordinate
+            guess[n_species + co2_index] = concentration_ratio - 1.0
+            return guess
+        hatta = delta * math.sqrt(
+            rate_coefficient * first_scale / diffusivities[co2_index]
+        )
+        reaction_shape = np.exp(-hatta * coordinate)
+        concentration_ratios = np.ones((n_species, coordinate.size), dtype=float)
+        concentration_ratios[co2_index] += (concentration_ratio - 1.0) * reaction_shape
+        co2_flux = (
+            flux_factor
+            * flux_scale[co2_index]
+            * hatta
+            * (concentration_ratio - 1.0)
+            * reaction_shape
+        )
+        physical_fluxes = np.zeros_like(concentration_ratios)
+        physical_fluxes[co2_index] = co2_flux
+        for index in range(n_species):
+            if index == co2_index:
+                continue
+            physical_fluxes[index] = nu[index] * (co2_flux[0] - co2_flux)
+            reverse_integral = -cumulative_trapezoid(
+                physical_fluxes[index, ::-1], coordinate[::-1], initial=0.0
+            )[::-1]
+            concentration_ratios[index] += (
+                delta * reverse_integral / (diffusivities[index] * bulk[index])
+            )
+        guess[:n_species] = concentration_ratios
+        guess[n_species:] = physical_fluxes / flux_scale[:, None]
+        return guess
+
+    alternate = np.linspace(0.0, 1.0, max(6, int(reaction_continuation_steps) + 1)) ** 2
+    schedules = (
+        (continuation, float(initial_flux_factor), False),
+        (alternate, float(initial_flux_factor), False),
+        (alternate, 1.0, True),
+    )
+    solution = None
+    failure = None
+    for scales, flux_factor, recovered in schedules:
+        solution = None
+        guess = initial_guess(float(scales[0]), flux_factor)
+        for scale in scales:
+            reaction_scale = float(scale)
+            solution = solve_bvp(
+                equations,
+                boundary,
+                coordinate if solution is None else solution.x,
+                guess if solution is None else solution.y,
+                tol=float(solver_tolerance),
+                max_nodes=20000,
+                bc_jac=boundary_jacobian,
+            )
+            if not solution.success:
+                failure = (
+                    f"reactive film solve failed at reaction scale {reaction_scale:g}: "
+                    f"{solution.message}"
                 )
                 break
-            previous_log, previous_closure = candidate_log, candidate_closure
-        if closure_bracket is None:
-            raise ReactiveFilmSolveError("gas-film flux closure has no root in the physical interface interval")
-        interface_log_ratio = float(
-            brentq(
-                interface_closure,
-                *closure_bracket,
-                xtol=1.0e-12,
-            )
-        )
-        interface_log_ratio = float(
-            brentq(
-                lambda value: interface_closure(value, float(solver_tolerance)),
-                *closure_bracket,
-                xtol=1.0e-12,
-            )
-        )
-    else:
-        interface_log_ratio = 0.0
-    interface_closure(interface_log_ratio, float(solver_tolerance))
-    solution, boundary, closure_residual = solved_interfaces[
-        (interface_log_ratio, float(solver_tolerance))
-    ]
+        if solution.success:
+            recovery_used = recovery_used or recovered
+            break
+    if solution is None or not solution.success:
+        raise ReactiveFilmSolveError(str(failure))
+    closure_residual = float(boundary(solution.y[:, 0], solution.y[:, -1])[n_species])
 
     check_coordinate = np.linspace(0.0, 1.0, max(201, 10 * int(mesh_points)))
     check_values = solution.sol(check_coordinate)

@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+import mea_absorption_column.Transport.Reactive_Film as reactive_film
 from mea_absorption_column.Transport.Reactive_Film import (
     ReactiveFilmDomainError,
     solve_reactive_film,
@@ -11,17 +12,27 @@ def _linear_fugacity(henry_pa_m3_mol):
     return lambda concentrations, _composition: henry_pa_m3_mol * concentrations[0]
 
 
-def test_no_reaction_matches_linear_two_film_solution():
+@pytest.mark.parametrize("vapor_fugacity", (1.0e4, 5.0e3, 2.5e3))
+def test_no_reaction_matches_linear_two_film_solution(monkeypatch, vapor_fugacity):
     bulk = np.array([1.0, 10.0])
     diffusivities = np.array([1.0e-9, 8.0e-10])
     delta = 1.0e-4
     k_g = 1.0e-7
     henry = 5.0e3
-    vapor_fugacity = 1.0e4
     expected_flux = k_g * (vapor_fugacity - henry * bulk[0]) / (
         1.0 + k_g * henry * delta / diffusivities[0]
     )
 
+    bvp_calls = 0
+    scipy_solve_bvp = reactive_film.solve_bvp
+
+    def counted_solve_bvp(*args, **kwargs):
+        nonlocal bvp_calls
+        bvp_calls += 1
+        assert callable(kwargs.get("bc_jac"))
+        return scipy_solve_bvp(*args, **kwargs)
+
+    monkeypatch.setattr(reactive_film, "solve_bvp", counted_solve_bvp)
     result = solve_reactive_film(
         bulk_concentrations_mol_m3=bulk,
         diffusivities_m2_s=diffusivities,
@@ -36,6 +47,7 @@ def test_no_reaction_matches_linear_two_film_solution():
     )
 
     assert result.fluxes_mol_m2_s[0, 0] == pytest.approx(expected_flux, rel=5.0e-4)
+    assert bvp_calls == 1
     assert result.maximum_interface_residual <= 1.0e-7
     assert result.maximum_conservation_residual <= 1.0e-7
 
