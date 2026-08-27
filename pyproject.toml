@@ -11,7 +11,7 @@ license = {text = "MIT"}
 authors = [{ name = "Tanner Polley", email = "tannerwpolley@gmail.com" }]
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    "epcsaft @ file:///home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project/build/environment-wheel/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "epcsaft @ file:///home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-local-state/artifacts/objects/sha256/81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
     "matplotlib>=3.8",
     "numpy>=1.26",
     "openpyxl>=3.1",

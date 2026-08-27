@@ -1,0 +1,68 @@
+{
+  "issue": "https://github.com/tannerpolley/MEA-Absorption-Column/issues/17",
+  "scientific_question": "Does enhancement/interface inconsistency explain the retained Case 3C transfer decrease?",
+  "state_count": 21,
+  "formulation_count": 5,
+  "evaluated_row_count": 105,
+  "failed_row_count": 0,
+  "maximum_current_E_relative_reproduction_error": 5.551115123125783e-16,
+  "maximum_local_slope_relative_step_difference": 3.661643031886537e-08,
+  "local_interface_concentration_ratio_median": 3.504453642347864,
+  "local_interface_concentration_ratio_maximum": 74.3990977326235,
+  "physical_check_failure_count": 0,
+  "parameter_document_sha256": "66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b",
+  "engine_wheel_sha256": "81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80",
+  "reactive_table_sha256": "b1bc1eafb2295e7863c38edef078078b8c4dbefde6c7f5791b38da2389edacd7",
+  "reactive_table_summary_sha256": "fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a",
+  "aggregates": [
+    {
+      "formulation": "gaspar_implicit_luo_epcsaft_local",
+      "state_count": 21,
+      "median_E": 78.770454638763,
+      "median_E_ratio_to_current": 0.6158292509931772,
+      "median_flux_ratio_to_current": 1.8012440882517184,
+      "minimum_E": 41.78696523618996,
+      "maximum_E": 208.05820363991222
+    },
+    {
+      "formulation": "gaspar_implicit_luo_legacy_henry",
+      "state_count": 21,
+      "median_E": 115.8255838523042,
+      "median_E_ratio_to_current": 0.9111116624778618,
+      "median_flux_ratio_to_current": 0.9129014152200133,
+      "minimum_E": 70.18217956845307,
+      "maximum_E": 296.16414661223433
+    },
+    {
+      "formulation": "idaes_explicit_luo_current",
+      "state_count": 21,
+      "median_E": 126.13661634463179,
+      "median_E_ratio_to_current": 1.0,
+      "median_flux_ratio_to_current": 1.0000000000000002,
+      "minimum_E": 93.2240846099593,
+      "maximum_E": 382.0272890177493
+    },
+    {
+      "formulation": "idaes_explicit_luo_uncorrected",
+      "state_count": 21,
+      "median_E": 121.92377180872117,
+      "median_E_ratio_to_current": 0.9670234584243322,
+      "median_flux_ratio_to_current": 0.9678317666535023,
+      "minimum_E": 90.10333840229009,
+      "maximum_E": 380.23779173839375
+    },
+    {
+      "formulation": "idaes_explicit_putta_uncorrected",
+      "state_count": 21,
+      "median_E": 120.28624447141165,
+      "median_E_ratio_to_current": 0.9536187663601525,
+      "median_flux_ratio_to_current": 0.9546408532707094,
+      "minimum_E": 90.45640049308085,
+      "maximum_E": 348.94868478159293
+    }
+  ],
+  "failed_rows": [],
+  "mechanistic_film_flux_ratio_to_current_at_position_one": 1.7831960362855195,
+  "mechanistic_film_run_table_sha256": "a6e8cffe9f8e0a11ae6f1996796875c28d539f33b00f2dcb9aeda43b02d062df",
+  "claim_boundary": "Correlation comparison over retained Case 3C states plus one accepted Stage A mechanistic film state at Position 1; no column-wide film, WWC, reversible-kinetics, or Maxwell-Stefan validation claim."
+}

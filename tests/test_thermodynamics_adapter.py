@@ -4,10 +4,12 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+import mea_absorption_column.Thermodynamics.thermo_models as thermo_models
 from mea_absorption_column.Thermodynamics.Fugacity import fugacity
 from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
     fugacity_coefficients,
     parameter_document,
+    parameters,
     state as epcsaft_state,
 )
 from mea_absorption_column.Thermodynamics.thermo_models import (
@@ -220,3 +222,48 @@ def test_full_species_ionic_epcsaft_state_uses_all_nine_species():
     assert len(phi) == len(IONIC_LIQUID_SPECIES_9)
     assert abs(float(state.debye_huckel)) > 1.0e-8
     assert abs(float(state.born)) > 1.0e-8
+
+
+def test_retained_predictive_parameters_apply_co2_water_temperature_relationship():
+    dataset = (
+        Path(__file__).parents[1]
+        / "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive"
+    )
+
+    def co2_water_kij(temperature_k):
+        mapping = parameters(
+            str(dataset), tuple(IONIC_LIQUID_SPECIES_9), temperature_k
+        ).to_mapping()
+        return next(
+            coefficient["value"]["magnitude"]
+            for pair in mapping["pairs"]
+            for coefficient in pair["coefficients"]
+            if coefficient["identity"] == "pair/carbon-dioxide/water/k_ij"
+        )
+
+    assert co2_water_kij(313.15) == pytest.approx(0.0)
+    assert co2_water_kij(333.15) == pytest.approx(0.006032)
+
+
+def test_uncached_fugacity_uses_canonical_pressure_state(monkeypatch):
+    sentinel_state = object()
+    monkeypatch.setattr(thermo_models, "epcsaft_mixture", lambda: object())
+    monkeypatch.setattr(thermo_models, "_v02_state", lambda *args, **kwargs: sentinel_state)
+    monkeypatch.setattr(
+        thermo_models,
+        "_pressure_state_with_optional_rho_guess",
+        lambda *args, **kwargs: pytest.fail("uncached fugacity used the approximate warm-density solve"),
+    )
+    monkeypatch.setattr(
+        thermo_models,
+        "_v02_fugacity_coefficients",
+        lambda state: (2.0, 1.0, 1.0) if state is sentinel_state else (),
+    )
+
+    assert thermo_models.epcsaft_phi_co2(
+        323.15,
+        109500.0,
+        np.array([0.02, 0.24, 0.74]),
+        phase="liq",
+        cache=False,
+    ) == pytest.approx(2.0)

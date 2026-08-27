@@ -1,0 +1,15 @@
+{
+  "state_count": 44,
+  "evaluated_count": 44,
+  "failed_count": 0,
+  "elapsed_seconds": 605.2890968210004,
+  "fit_input_sha256": "3aa0e900f78cb1f389e6966c23c2097dc0a9659319a352d5870db06510f65562",
+  "state_table_sha256": "b45dc2c81b08d6594f313ec49f1e7431b75a433b12b11463e03660412f4c23bc",
+  "parameter_document_sha256": "66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b",
+  "temperature_adjustments_sha256": "502033bb303bd80aaddcbba817058e20572f675ed5dbc478de9e022c11fe6da8",
+  "engine_wheel_sha256": "81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80",
+  "engine_wheel_path": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-local-state/artifacts/objects/sha256/81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+  "maximum_mole_fraction_sum_error": 2.220446049250313e-16,
+  "maximum_absolute_charge_residual": 1.245650884181892e-17,
+  "failures": []
+}

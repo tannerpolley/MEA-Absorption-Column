@@ -61,12 +61,12 @@ wheels = [
 [[package]]
 name = "epcsaft"
 version = "0.2.0.dev0"
-source = { path = "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project/build/environment-wheel/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl" }
+source = { path = "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-local-state/artifacts/objects/sha256/81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl" }
 dependencies = [
     { name = "pint" },
 ]
 wheels = [
-    { filename = "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl", hash = "sha256:a505d20ac9019e9b4edbad16df80166b6e082170ef2a2f002d897269e756d0d9" },
+    { filename = "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl", hash = "sha256:81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80" },
 ]
 
 [package.metadata]
@@ -224,7 +224,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "epcsaft", path = "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project/build/environment-wheel/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl" },
+    { name = "epcsaft", path = "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-local-state/artifacts/objects/sha256/81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl" },
     { name = "matplotlib", specifier = ">=3.8" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "openpyxl", specifier = ">=3.1" },

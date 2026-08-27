@@ -1,12 +1,13 @@
 # NCCC Validation Analysis
 
-This analysis owns the reviewer-response validation artifacts for the MEA absorber model. It separates disposable benchmark runs from curated final evidence so completed results can be inspected without digging through temporary solver folders.
+This analysis owns the reviewer-response validation evidence for the MEA absorber model. It separates disposable benchmark runs from curated final evidence so completed results can be inspected without digging through temporary solver folders.
 
 ## Layout
 
 - `results/runs/`: disposable benchmark runs and long diagnostics. This folder is ignored by Git.
+- `inputs/retained_reactive_case3c/`: tracked 21-state film input and certified 44-state reactive-speciation table used by the retained calculations.
 - `results/final/tables/`: accepted result CSVs, diagnostic CSVs, plot-ready tables, and profile indexes.
-- `results/final/figures/`: paper-ready SVG/PDF benchmark figures.
+- `results/final/figures/`: retained PDF benchmark figures.
 - `results/final/profiles/<case_id>/<thermo_model>/`: clean temperature-profile PNGs for quick visual review.
 - `results/final/reports/`: Markdown or CSV summaries for accepted rows, fallback rows, and unresolved diagnostics.
 - `results/runs/<run_id>/profiles/<case_source>/<case_id>/<method>/<thermo_model>/`: requested dense profile CSV exports. These are the CSV replacement for the older `Profiles.xlsx` workbook: each old workbook sheet is written as its own CSV, with `Position`, `height_m`, `bed_id`, and `bed_position_m` coordinate columns.
@@ -33,6 +34,10 @@ export PYTHONPATH="src"
 | `probe_epcsaft_electrolyte_options.py` | Archived runtime-option matrix from the superseded package interface. | No supported current run. | Model-family variants now require separately identified parameter documents. |
 | `run_epcsaft_electrolyte_config_matrix.py` | Archived runtime-option column matrix from the superseded package interface. | No supported current run. | Not part of the 0.2 reproduction route. |
 | `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
+| `analyze_retained_reactive_case3c.py` | Builds the controlled retained-versus-prior Case 3C fugacity, speciation, parameter, mesh, and transfer-sensitivity tables. | Reads completed column runs and evaluates bounded liquid states. | Requires the retained ePC-SAFT wheel and parameter documents. |
+| `render_retained_reactive_case3c_diagnosis.py` | Renders the reviewed Case 3C diagnostic figure from retained tables. | No. | No direct dependency. |
+| `analyze_enhancement_consistency.py` | Compares explicit and complete Gaspar-style enhancement calculations at retained Case 3C states under fixed thermodynamic parameters. | Evaluates 21 retained liquid states. | Requires the retained ePC-SAFT wheel, parameter document, and reactive table. |
+| `render_enhancement_consistency.py` | Renders enhancement and fixed-state flux comparisons from the retained enhancement table. | No. | No direct dependency. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -109,14 +114,41 @@ uv run python analyses/nccc_validation/scripts/generate_clean_profile_csvs.py --
 This script writes each case row as soon as it finishes. If a case exceeds the default 60-second subprocess timeout or errors, the row is logged as a failed diagnostic result and the script continues to the next case. Use `--per-case-timeout-s <seconds>` only when intentionally running a longer diagnostic probe.
 It also writes `profile_runtime_index.csv` and refreshes each profile folder's `profile_manifest.json` / `profile_manifest.csv` with `runtime_s` and a human-readable `runtime_label`.
 
-Validate the analysis artifacts used by the manuscript:
+Validate the analysis results used by the manuscript:
 
 ```bash
 uv run python analyses/nccc_validation/scripts/validate_results.py
+```
+
+Generate and render the retained reactive Case 3C diagnosis after its named
+run folders are present:
+
+```bash
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
+uv run python analyses/nccc_validation/scripts/render_retained_reactive_case3c_diagnosis.py
+```
+
+Run the enhancement/interface consistency experiment from issue 16:
+
+```bash
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
+uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
+uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
+```
+
+Run the three-position direct-boundary numerical gate:
+
+```bash
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
 ```
 
 ## Result Semantics
 
 The clean profile gallery contains accepted validation rows and explicitly accepted fallback rows used in the manuscript. Diagnostic or unresolved rows stay in final tables and reports, but they are not mixed into the clean profile gallery unless the caveat is explicit in the profile index.
 
-The dense profile CSV folders are run artifacts, not summary tables. Use them to inspect how internal variables change with column position; use `verified_*.csv`, `raw_*.csv`, and `plot_*.csv` for manuscript validation metrics and figure generation.
+The dense profile CSV folders are run outputs, not summary tables. Use them to inspect how internal variables change with column position; use `verified_*.csv`, `raw_*.csv`, and `plot_*.csv` for manuscript validation metrics and figure generation.

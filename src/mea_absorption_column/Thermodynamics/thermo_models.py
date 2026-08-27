@@ -263,7 +263,11 @@ def epcsaft_dataset_mixture(species_key: tuple[str, ...], T_key: float, user_opt
             "src/mea_absorption_column/data/epcsaft_datasets, or set MEA_THERMODYNAMICS_EPCSAFT_DATASET "
             "for an explicit external comparison."
         )
-    return _v02_mixture(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), tuple(species_key))
+    return _v02_mixture(
+        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
+        tuple(species_key),
+        float(T_key),
+    )
 
 
 def epcsaft_dataset_user_options(dataset: Path | None = None) -> dict:
@@ -473,7 +477,18 @@ def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral"
     else:
         raise ValueError(f"Unknown ePC-SAFT mixture kind: {mixture_kind}")
     start = time.perf_counter()
-    state = _pressure_state_with_optional_rho_guess(mixture, T, P, composition_arr, phase, mixture_kind)
+    if cache:
+        state = _pressure_state_with_optional_rho_guess(
+            mixture, T, P, composition_arr, phase, mixture_kind
+        )
+    else:
+        state = _v02_state(
+            mixture,
+            temperature_k=float(T),
+            pressure_pa=float(P),
+            composition=composition_arr,
+            phase=phase,
+        )
     _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] += time.perf_counter() - start
     phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
     phi_co2 = float(phi[CO2_INDEX])
@@ -592,6 +607,7 @@ def compute_fugacity(
         "epcsaft_reactive_nine_activity",
         "epcsaft_reactive_nine_activity_converted",
         "epcsaft_reactive_nine_activity_rebased",
+        "epcsaft_reactive_nine_tabulated",
         "epcsaft_full_species_activity",
         "epcsaft_full_species_activity_converted",
         "epcsaft_full_species_activity_rebased",

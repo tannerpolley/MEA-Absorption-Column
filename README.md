@@ -55,7 +55,7 @@ Set up the project-local Python environment once from the repository root:
 uv sync --group test
 ```
 
-The local environment lives at `.venv/` and is ignored by Git. The project dependency points to the ePC-SAFT 0.2 wheel built by `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project`; the final integration check enforces the recorded Engine commit and wheel SHA-256. The absorber adapter uses only the public `Parameters`, `Mixture`, and `State` API. Model-family choices are encoded in the parameter document, and CppAD is the package's sole production derivative authority; there is no downstream derivative-backend selector. Henry-only validation can still run without evaluating ePC-SAFT. Use the project-local interpreter directly for normal checks:
+The local environment lives at `.venv/` and is ignored by Git. The project dependency points to a read-only, hash-addressed ePC-SAFT 0.2 wheel built with Meson from Engine commit `d88f703974fa8d6e7be54ca3cbd51b6f0f78a372`; the integration record names that commit and the final check enforces the wheel SHA-256. The absorber adapter uses only public ePC-SAFT APIs. Model-family choices are encoded in the parameter document, and CppAD is the package's sole production derivative authority; there is no downstream derivative-backend selector. Henry-only validation can still run without evaluating ePC-SAFT. Use the project-local interpreter directly for normal checks:
 
 ```bash
 uv run python -m pytest -q -p no:cacheprovider
