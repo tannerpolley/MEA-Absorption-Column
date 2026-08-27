@@ -22,6 +22,7 @@ def main() -> int:
         _check_full_species_ionic_sweep,
         _check_accuracy_credibility_tables,
         _check_method_contrast,
+        _check_epcsaft_v02_validation,
         _check_profile_index,
         _check_referenced_profile_csv_dirs,
         _check_final_tables_do_not_point_to_removed_docs_paths,
@@ -48,6 +49,8 @@ def _check_required_files() -> None:
         TABLES / "primary_validation_gate_summary.csv",
         TABLES / "method_case_contrast.csv",
         TABLES / "full_species_ionic_2017_c_case_sweep.csv",
+        TABLES / "epcsaft_v02_contribution_table.csv",
+        TABLES / "epcsaft_v02_column_row.csv",
         FIGURES / "nccc_one_bed_thermo_benchmark.pdf",
         FIGURES
         / "nccc_2017_epcsaft_temperature_overlays"
@@ -59,6 +62,68 @@ def _check_required_files() -> None:
         ANALYSIS / "scripts" / "generate_accuracy_credibility_artifacts.py",
     ]
     _require_existing(required)
+
+
+def _check_epcsaft_v02_validation() -> None:
+    contributions = pd.read_csv(TABLES / "epcsaft_v02_contribution_table.csv")
+    _require_columns(
+        contributions,
+        [
+            "mixture_kind",
+            "co2_fugacity_Pa",
+            "a_ion",
+            "a_born",
+            "contribution_check_pass",
+            "dataset_content_sha256",
+            "parameter_document_content_sha256",
+            "provider_parameter_fingerprint_scope",
+            "engine_wheel_sha256",
+            "repository_base_commit",
+            "reproduction_command",
+        ],
+    )
+    if set(contributions["mixture_kind"]) != {"neutral", "ionic"}:
+        raise AssertionError("Current ePC-SAFT contribution evidence must contain neutral and ionic rows only.")
+    neutral = contributions.loc[contributions["mixture_kind"] == "neutral"].iloc[0]
+    ionic = contributions.loc[contributions["mixture_kind"] == "ionic"].iloc[0]
+    if abs(float(neutral["a_ion"])) > 1e-12 or abs(float(neutral["a_born"])) > 1e-12:
+        raise AssertionError("Neutral ePC-SAFT state has nonzero electrolyte-only contributions.")
+    if abs(float(ionic["a_ion"])) <= 1e-8 or abs(float(ionic["a_born"])) <= 1e-8:
+        raise AssertionError("Ionic ePC-SAFT state does not activate both ion and Born contributions.")
+    if float(ionic["co2_fugacity_Pa"]) <= 0.0:
+        raise AssertionError("Ionic ePC-SAFT state has nonpositive CO2 fugacity.")
+    if not contributions["contribution_check_pass"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Current ePC-SAFT contribution check contains a failed row.")
+    if set(contributions["provider_parameter_fingerprint_scope"]) != {
+        "checkout-path-local; not portable provenance"
+    }:
+        raise AssertionError("Provider parameter fingerprints must be labeled checkout-path-local.")
+
+    column = pd.read_csv(TABLES / "epcsaft_v02_column_row.csv")
+    if len(column) != 1:
+        raise AssertionError("Current ePC-SAFT column evidence must contain exactly one row.")
+    row = column.iloc[0]
+    if str(row["thermo_model"]) != "epcsaft_ionic" or str(row["chemical_equilibrium_model"]) != "legacy":
+        raise AssertionError("Current ePC-SAFT column row must use the ionic fixed-chemistry lane.")
+    if not str(row["validation_pass"]).lower() == "true":
+        raise AssertionError("Current ePC-SAFT column row did not pass its retained checks.")
+    if str(row["stopped_by"]) != "none" or str(row["outcome"]) != "evaluated":
+        raise AssertionError("Current ePC-SAFT column row has an incomplete status.")
+    if not 0.0 <= float(row["capture_pct"]) <= 100.0:
+        raise AssertionError("Current ePC-SAFT column capture is outside physical bounds.")
+    if float(row["boundary_residual_norm"]) > 1.0:
+        raise AssertionError("Current ePC-SAFT column boundary residual exceeds 1.0.")
+    if max(
+        float(row["co2_conservation_relative_residual"]),
+        float(row["h2o_conservation_relative_residual"]),
+    ) > float(row["conservation_relative_tolerance"]):
+        raise AssertionError("Current ePC-SAFT column row fails component conservation.")
+    if int(row["invalid_state_count"]) or int(row["guard_penalty_count"]):
+        raise AssertionError("Current ePC-SAFT column row contains invalid or guarded states.")
+    if row["dataset_content_sha256"] != ionic["dataset_content_sha256"] or row[
+        "parameter_document_content_sha256"
+    ] != ionic["parameter_document_content_sha256"]:
+        raise AssertionError("Column and ionic-state parameter content identities disagree.")
 
 
 def _check_c_case_benchmark() -> None:

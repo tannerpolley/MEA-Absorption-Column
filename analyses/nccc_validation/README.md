@@ -31,8 +31,7 @@ export PYTHONPATH="src"
 | `generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and writes dense profile CSV folders. | Yes. | Required only for ePC-SAFT rows in the selected suite. |
 | `render_c_case_campaign_temperature_gallery.py` | Renders the corrected one-bed C-case temperature overlay gallery from a completed campaign-input benchmark run. | No. | No direct dependency; the source run may include ePC-SAFT rows. |
 | `probe_reactive_epcsaft_speciation.py` | Archived probe for the superseded reactive package interface. | No supported current run. | Retained for provenance pending typed-equilibrium migration. |
-| `probe_epcsaft_electrolyte_options.py` | Archived runtime-option matrix from the superseded package interface. | No supported current run. | Model-family variants now require separately identified parameter documents. |
-| `run_epcsaft_electrolyte_config_matrix.py` | Archived runtime-option column matrix from the superseded package interface. | No supported current run. | Not part of the 0.2 reproduction route. |
+| `generate_epcsaft_v02_validation.py` | Writes the current neutral-versus-ionic contribution table and exactly one fixed-chemistry Case 3C column row. | Yes, one column row. | Requires the locked ePC-SAFT 0.2 wheel and `MEA_CO2_H2O_ionic_fit` parameter document. |
 | `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
 | `analyze_retained_reactive_case3c.py` | Builds the controlled retained-versus-prior Case 3C fugacity, speciation, parameter, mesh, and transfer-sensitivity tables. | Reads completed column runs and evaluates bounded liquid states. | Requires the retained ePC-SAFT wheel and parameter documents. |
 | `render_retained_reactive_case3c_diagnosis.py` | Renders the reviewed Case 3C diagnostic figure from retained tables. | No. | No direct dependency. |
@@ -49,11 +48,20 @@ export MEA_EPCSAFT_DATASET_NAME="MEA_CO2_H2O_ionic_fit"
 
 Runtime derivative and Born-model option matrices are not supported by API 0.2. CppAD is the sole production derivative authority; alternative model families require separately identified parameter documents.
 
-Run the column-level electrolyte configuration matrix and regenerate the pure-component and binary-interaction parameter provenance tables:
+Regenerate the current ePC-SAFT 0.2 fixed-state table and one bounded ionic/fixed-chemistry column row:
 
 ```bash
-uv run python analyses/nccc_validation/scripts/run_epcsaft_electrolyte_config_matrix.py
+uv run python analyses/nccc_validation/scripts/generate_epcsaft_v02_validation.py
 ```
+
+This command writes `epcsaft_v02_contribution_table.csv` and
+`epcsaft_v02_column_row.csv`. The provider parameter fingerprint is labeled
+checkout-path-local; the dataset and generated parameter-document SHA-256
+values are the portable identities. The two current tables validate fixed
+chemistry and configuration plumbing only. They do not establish predictive
+reactive chemistry, predictive absorber performance, or parameter accuracy.
+The incompatible pre-0.2 generators were removed; their tables remain listed
+under `historical_outputs` in `analysis.yaml` for provenance only.
 
 Regenerate plot-ready tables from curated inputs or available run folders:
 
