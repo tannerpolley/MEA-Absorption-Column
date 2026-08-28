@@ -91,6 +91,14 @@ That lock reproduces Stage A only. A newer upstream wheel, including one used
 for diagnostic fitting, is neither this locked runtime nor evidence that a
 predictive parameter set was accepted.
 
+The issue 16 derivative-integration lane separately uses Engine commit
+`41e7dc1984d00f82785900b314a0135beebe56cd`, wheel SHA-256
+`2d089d5bdeda5b1655c5e6cf5df7308507233381175745889f8430c22ffe1edb`, and
+native-core SHA-256
+`fc1f1a78b2fe5c68a54b8678ce6bc844a2eba11edec91d49e6f9a51c62e1132f`.
+Its retained results are labeled `provisional_concept_only`; the Stage A and
+predictive-transfer claim boundaries remain unchanged.
+
 ## Manuscript boundary
 
 Existing fixed-chemistry column evidence remains distinct from a future
