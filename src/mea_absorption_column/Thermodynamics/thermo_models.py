@@ -4,6 +4,7 @@ import json
 import math
 import os
 import time
+from dataclasses import dataclass
 from functools import lru_cache
 import importlib
 import importlib.metadata
@@ -12,7 +13,10 @@ from pathlib import Path
 
 import numpy as np
 
-from mea_absorption_column.BVP.robust_core import record_guard_penalty, record_invalid_state
+from mea_absorption_column.BVP.robust_core import (
+    record_guard_penalty,
+    record_invalid_state,
+)
 from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
     fugacity_coefficients as _v02_fugacity_coefficients,
     mixture as _v02_mixture,
@@ -25,8 +29,29 @@ from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
 
 SPECIES = ["CO2", "MEA", "H2O"]
 IONIC_LIQUID_SPECIES_6 = ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-"]
-IONIC_LIQUID_SPECIES_9 = ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"]
+IONIC_LIQUID_SPECIES_9 = [
+    "CO2",
+    "MEA",
+    "H2O",
+    "MEAH+",
+    "MEACOO-",
+    "HCO3-",
+    "CO3^2-",
+    "H3O+",
+    "OH-",
+]
 IONIC_LIQUID_SPECIES = IONIC_LIQUID_SPECIES_6
+IONIC_CHARGE_BY_SPECIES = {
+    "CO2": 0.0,
+    "MEA": 0.0,
+    "H2O": 0.0,
+    "MEAH+": 1.0,
+    "MEACOO-": -1.0,
+    "HCO3-": -1.0,
+    "CO3^2-": -2.0,
+    "H3O+": 1.0,
+    "OH-": -1.0,
+}
 CO2_INDEX = 0
 MEA_INDEX = 1
 H2O_INDEX = 2
@@ -34,12 +59,18 @@ COMPOSITION_FLOOR = 1e-12
 TEMPERATURE_MIN_K = 250.0
 TEMPERATURE_MAX_K = 500.0
 FUGACITY_FLOOR_PA = 1.0e-9
-PACKAGED_EPCSAFT_DATASETS = resources.files("mea_absorption_column").joinpath("data/epcsaft_datasets")
-DEFAULT_EPCSAFT_DATASET_NAME = os.environ.get("MEA_EPCSAFT_DATASET_NAME", "MEA_CO2_H2O_ionic_fit")
+PACKAGED_EPCSAFT_DATASETS = resources.files("mea_absorption_column").joinpath(
+    "data/epcsaft_datasets"
+)
+DEFAULT_EPCSAFT_DATASET_NAME = os.environ.get(
+    "MEA_EPCSAFT_DATASET_NAME", "MEA_CO2_H2O_ionic_fit"
+)
 
 
 def _resolve_epcsaft_dataset_path() -> Path:
-    packaged = Path(str(PACKAGED_EPCSAFT_DATASETS.joinpath(DEFAULT_EPCSAFT_DATASET_NAME)))
+    packaged = Path(
+        str(PACKAGED_EPCSAFT_DATASETS.joinpath(DEFAULT_EPCSAFT_DATASET_NAME))
+    )
     override = os.environ.get("MEA_THERMODYNAMICS_EPCSAFT_DATASET")
     if override:
         override_path = Path(override)
@@ -64,8 +95,61 @@ _EPCSAFT_CACHE_STATS = {
 }
 
 
+class EpcsaftFixedPressureDerivativeError(RuntimeError):
+    def __init__(self, code: str, diagnostic: str):
+        self.code = str(code)
+        self.diagnostic = str(diagnostic)
+        super().__init__(f"{self.code}: {self.diagnostic}")
+
+
+@dataclass(frozen=True)
+class EpcsaftLiquidTransportState:
+    composition: np.ndarray
+    fugacities_pa: np.ndarray
+    log_composition_basis: np.ndarray
+    chemical_potential_derivatives_over_rt: np.ndarray
+    coordinate_component_ids: tuple[str, ...]
+    dependent_component_ids: tuple[str, ...]
+    condition_measure: float | None
+    artifact_fingerprint: str
+    parameter_fingerprint: str
+
+    def log_fugacity_derivative(
+        self, component_index: int, log_composition_direction
+    ) -> float:
+        direction = np.asarray(log_composition_direction, dtype=float)
+        if direction.shape != self.composition.shape or not np.all(
+            np.isfinite(direction)
+        ):
+            raise ValueError(
+                "log-composition direction must have one finite value per species"
+            )
+        coordinates, *_ = np.linalg.lstsq(
+            self.log_composition_basis, direction, rcond=None
+        )
+        reconstructed = self.log_composition_basis @ coordinates
+        scale = max(float(np.max(np.abs(direction))), 1.0)
+        if float(np.max(np.abs(reconstructed - direction))) > 1.0e-10 * scale:
+            raise EpcsaftFixedPressureDerivativeError(
+                "invalid_composition_direction",
+                "requested direction is outside the normalization/electroneutral tangent",
+            )
+        return float(
+            self.chemical_potential_derivatives_over_rt[component_index] @ coordinates
+        )
+
+    def fixed_other_concentrations_log_fugacity_derivative(
+        self, component_index: int
+    ) -> float:
+        direction = np.full(self.composition.size, -self.composition[component_index])
+        direction[component_index] += 1.0
+        return self.log_fugacity_derivative(component_index, direction)
+
+
 def _parameter_resource():
-    return resources.files("mea_absorption_column").joinpath("data/epcsaft_neutral/parameters.json")
+    return resources.files("mea_absorption_column").joinpath(
+        "data/epcsaft_neutral/parameters.json"
+    )
 
 
 @lru_cache(maxsize=1)
@@ -133,7 +217,9 @@ def epcsaft_source_fingerprint() -> dict:
         "module_path": str(module_file),
         "exists": module_file.exists(),
         "source_kind": _epcsaft_source_kind(direct_url),
-        "source_detail": json.dumps(direct_url, sort_keys=True) if direct_url else str(module_file),
+        "source_detail": json.dumps(direct_url, sort_keys=True)
+        if direct_url
+        else str(module_file),
     }
 
 
@@ -170,31 +256,28 @@ def ionic_liquid_composition(x_true) -> np.ndarray:
     return _enforce_electroneutrality(ionic, species)
 
 
-def _enforce_electroneutrality(composition: np.ndarray, species: list[str] | tuple[str, ...]) -> np.ndarray:
-    charges_by_species = {
-        "CO2": 0.0,
-        "MEA": 0.0,
-        "H2O": 0.0,
-        "MEAH+": 1.0,
-        "MEACOO-": -1.0,
-        "HCO3-": -1.0,
-        "CO3^2-": -2.0,
-        "H3O+": 1.0,
-        "OH-": -1.0,
-    }
+def _enforce_electroneutrality(
+    composition: np.ndarray, species: list[str] | tuple[str, ...]
+) -> np.ndarray:
     values = np.asarray(composition, dtype=float).copy()
-    charges = np.asarray([charges_by_species[item] for item in species], dtype=float)
+    charges = np.asarray(
+        [IONIC_CHARGE_BY_SPECIES[item] for item in species], dtype=float
+    )
     residual = float(np.dot(values, charges))
     if abs(residual) > 1.0e-15:
         candidate_sign = -1.0 if residual > 0.0 else 1.0
         candidates = np.flatnonzero(charges * candidate_sign > 0.0)
         if candidates.size == 0:
-            raise ValueError("Ionic ePC-SAFT composition cannot be projected to electroneutrality.")
+            raise ValueError(
+                "Ionic ePC-SAFT composition cannot be projected to electroneutrality."
+            )
         index = int(candidates[np.argmax(values[candidates])])
         values[index] += abs(residual / charges[index])
         values /= float(np.sum(values))
     if abs(float(np.dot(values, charges))) > 1.0e-12:
-        raise ValueError("Ionic ePC-SAFT composition does not satisfy electroneutrality.")
+        raise ValueError(
+            "Ionic ePC-SAFT composition does not satisfy electroneutrality."
+        )
     return values
 
 
@@ -249,7 +332,9 @@ def epcsaft_runtime_user_options() -> dict:
 
 
 @lru_cache(maxsize=512)
-def epcsaft_dataset_mixture(species_key: tuple[str, ...], T_key: float, user_options_json: str = "{}"):
+def epcsaft_dataset_mixture(
+    species_key: tuple[str, ...], T_key: float, user_options_json: str = "{}"
+):
     ensure_epcsaft_importable()
     if user_options_json and _user_options_from_json(user_options_json):
         raise ValueError(
@@ -270,8 +355,77 @@ def epcsaft_dataset_mixture(species_key: tuple[str, ...], T_key: float, user_opt
     )
 
 
+def epcsaft_liquid_transport_state(T, P, composition) -> EpcsaftLiquidTransportState:
+    """Evaluate one charged liquid state and its exact fixed-T,P tangent block."""
+
+    values = np.asarray(composition, dtype=float)
+    species = tuple(_ionic_species_for_size(values.size))
+    if (
+        values.shape != (len(species),)
+        or np.any(~np.isfinite(values))
+        or np.any(values <= 0.0)
+    ):
+        raise EpcsaftFixedPressureDerivativeError(
+            "provider_domain_rejection",
+            "composition must contain one positive finite mole fraction per ionic species",
+        )
+    if abs(float(np.sum(values)) - 1.0) > 1.0e-12:
+        raise EpcsaftFixedPressureDerivativeError(
+            "normalization_failure", "composition must sum to one without clipping"
+        )
+    charges = np.asarray([IONIC_CHARGE_BY_SPECIES[item] for item in species])
+    if abs(float(charges @ values)) > 1.0e-12:
+        raise EpcsaftFixedPressureDerivativeError(
+            "electroneutrality_failure",
+            "composition must be electroneutral without projection",
+        )
+
+    model = epcsaft_dataset_mixture(species, _epcsaft_dataset_T_key(T))
+    state = _v02_state(
+        model,
+        temperature_k=float(T),
+        pressure_pa=float(P),
+        composition=values,
+        phase="liquid",
+    )
+    block = state.fixed_pressure_composition_derivatives
+    if block is None or block.get("status") != "available":
+        failure = None if block is None else block.get("failure")
+        raise EpcsaftFixedPressureDerivativeError(
+            getattr(failure, "code", "fixed_pressure_derivatives_unavailable"),
+            getattr(failure, "diagnostic", str(failure)),
+        )
+    if state.fugacity is None:
+        raise EpcsaftFixedPressureDerivativeError(
+            "fugacity_unavailable", "liquid state did not return species fugacities"
+        )
+    fugacities = np.asarray(
+        [float(value.to("pascal").magnitude) for value in state.fugacity.value],
+        dtype=float,
+    )
+    return EpcsaftLiquidTransportState(
+        composition=values.copy(),
+        fugacities_pa=fugacities,
+        log_composition_basis=np.asarray(block["log_composition_basis"], dtype=float),
+        chemical_potential_derivatives_over_rt=np.asarray(
+            block["chemical_potential_derivatives_over_rt"], dtype=float
+        ),
+        coordinate_component_ids=tuple(block["coordinate_component_ids"]),
+        dependent_component_ids=tuple(block["dependent_component_ids"]),
+        condition_measure=(
+            None
+            if block["condition_measure"] is None
+            else float(block["condition_measure"])
+        ),
+        artifact_fingerprint=str(block["artifact_fingerprint"]),
+        parameter_fingerprint=str(model.parameter_fingerprint),
+    )
+
+
 def epcsaft_dataset_user_options(dataset: Path | None = None) -> dict:
-    dataset_path = Path(dataset) if dataset is not None else MEA_THERMODYNAMICS_EPCSAFT_DATASET
+    dataset_path = (
+        Path(dataset) if dataset is not None else MEA_THERMODYNAMICS_EPCSAFT_DATASET
+    )
     options_path = dataset_path / "user_options.json"
     if not options_path.exists():
         return {}
@@ -394,7 +548,9 @@ def _store_rho_guess(mixture_kind, phase, state):
         _EPCSAFT_RHO_GUESS_CACHE[_rho_guess_key(mixture_kind, phase)] = rho
 
 
-def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, mixture_kind):
+def _pressure_state_with_optional_rho_guess(
+    mixture, T, P, composition, phase, mixture_kind
+):
     rho_guess = _rho_guess_from_cache(mixture_kind, phase)
     if rho_guess is not None:
         try:
@@ -433,7 +589,9 @@ def _state_from_density_newton(mixture, *, T, P, composition, rho_guess):
         residual = _v02_pressure_value(current) - target
         if abs(residual) <= max(1.0e-5 * target, 1.0e-2):
             if current.fugacity is None:
-                raise RuntimeError("Density-closed ePC-SAFT state has no stable fugacity value.")
+                raise RuntimeError(
+                    "Density-closed ePC-SAFT state has no stable fugacity value."
+                )
             return current
 
         step = max(1.0e-5 * rho, 1.0e-4)
@@ -452,7 +610,9 @@ def _state_from_density_newton(mixture, *, T, P, composition, rho_guess):
     raise RuntimeError("Warm-started ePC-SAFT density closure did not converge.")
 
 
-def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral") -> float:
+def epcsaft_phi_co2(
+    T, P, composition, phase, cache=True, mixture_kind="neutral"
+) -> float:
     composition_arr = np.asarray(composition, dtype=float)
     if mixture_kind == "ionic":
         epcsaft_runtime_user_options()
@@ -489,7 +649,9 @@ def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral"
             composition=composition_arr,
             phase=phase,
         )
-    _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] += time.perf_counter() - start
+    _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] += (
+        time.perf_counter() - start
+    )
     phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
     phi_co2 = float(phi[CO2_INDEX])
     if not math.isfinite(phi_co2) or phi_co2 <= 0.0:
@@ -513,7 +675,9 @@ def epcsaft_phi_co2_batch(records, cache=True) -> list[float]:
         mixture_kind = record.get("mixture_kind", "neutral")
         key = (
             str(mixture_kind),
-            *_epcsaft_cache_key(record["T"], record["P"], record["composition"], record["phase"]),
+            *_epcsaft_cache_key(
+                record["T"], record["P"], record["composition"], record["phase"]
+            ),
         )
         if key not in resolved:
             resolved[key] = epcsaft_phi_co2(
@@ -558,7 +722,9 @@ def epcsaft_ionic_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O):
     liquid_x = ionic_liquid_composition(x_true)
     vapor_x = neutral_vapor_composition(y)
     phi_l_co2 = epcsaft_phi_co2(Tl, P, liquid_x, phase="liq", mixture_kind="ionic")
-    phi_v_co2 = epcsaft_phi_co2(Tv, P, vapor_x, phase="vap", mixture_kind="external_neutral")
+    phi_v_co2 = epcsaft_phi_co2(
+        Tv, P, vapor_x, phase="vap", mixture_kind="external_neutral"
+    )
 
     fl_co2 = liquid_x[CO2_INDEX] * phi_l_co2 * float(P)
     fv_co2 = float(y[0]) * phi_v_co2 * float(P)
@@ -694,7 +860,9 @@ def _fallback_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O):
     cl_arr = np.nan_to_num(np.asarray(Cl_true, dtype=float), nan=COMPOSITION_FLOOR)
     pressure = max(float(np.nan_to_num(P, nan=101325.0)), 1.0)
     henry = max(float(np.nan_to_num(H_CO2_mix, nan=1.0)), 1.0)
-    psat = max(float(np.nan_to_num(P_sat_H2O, nan=FUGACITY_FLOOR_PA)), FUGACITY_FLOOR_PA)
+    psat = max(
+        float(np.nan_to_num(P_sat_H2O, nan=FUGACITY_FLOOR_PA)), FUGACITY_FLOOR_PA
+    )
     return (
         max(float(cl_arr[0]) * henry, FUGACITY_FLOOR_PA),
         max(float(y_arr[0]) * pressure, FUGACITY_FLOOR_PA),

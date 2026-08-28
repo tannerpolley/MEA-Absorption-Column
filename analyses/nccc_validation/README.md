@@ -174,8 +174,16 @@ Run the three-position direct-boundary numerical gate:
 ```bash
 MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
 MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
-uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
+uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
 ```
+
+This issue 16 command consumes the public exact fixed-\(T,P\) derivative and
+writes `issue16_exact_reactive_film_*` outputs. It retains every failed row and
+returns nonzero when a physical or numerical gate fails. The prior Stage A
+tables remain unchanged. Gate and immutable-input identities are in
+`issue16_reactive_film_gate.csv` and
+`inputs/issue16_reactive_film_identity.json`;
+all placeholder-dependent evidence is `provisional_concept_only`.
 
 ## Result Semantics
 

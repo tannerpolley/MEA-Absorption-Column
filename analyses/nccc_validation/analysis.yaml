@@ -29,6 +29,8 @@ inputs:
     kind: retained_fixed_state_sample
   - path: inputs/issue17_enhancement_comparison/identity.json
     kind: issue17_reproducibility_identity
+  - path: inputs/issue16_reactive_film_identity.json
+    kind: issue16_immutable_input_receipt
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -80,6 +82,18 @@ outputs:
     kind: reactive_film_profile_table
   - path: results/final/tables/retained_reactive_case3c_film_summary.json
     kind: reactive_film_acceptance_summary
+  - path: results/final/tables/issue16_exact_reactive_film_runs.csv
+    kind: issue16_exact_derivative_attempt_table
+  - path: results/final/tables/issue16_exact_reactive_film_summary.json
+    kind: issue16_exact_derivative_attempt_summary
+  - path: results/final/tables/issue16_exact_reactive_film_numerical_gate.csv
+    kind: issue16_numerical_gate_table
+  - path: results/final/tables/issue16_exact_reactive_film_numerical_gate_summary.json
+    kind: issue16_numerical_gate_summary
+  - path: results/final/tables/issue16_reactive_film_gate.csv
+    kind: issue16_scientific_gate_table
+  - path: results/final/tables/issue16_manufactured_reversible_film.csv
+    kind: issue16_reversible_architecture_check
   - path: results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv
     kind: identical_state_enhancement_film_comparison
   - path: results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
@@ -132,6 +146,12 @@ commands:
   reactive_film:
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
+  issue16_reactive_film:
+    - uv run python scripts/check_epcsaft_integration.py --mode final
+    - uv run pytest -q tests/test_reactive_film.py -k exact_epcsaft_tangent_closes_through_zero_drive_film
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 10
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/generate_issue16_evidence.py
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -170,6 +190,12 @@ tracked_results:
   - results/final/tables/retained_reactive_case3c_film_runs.csv
   - results/final/tables/retained_reactive_case3c_film_profile.csv
   - results/final/tables/retained_reactive_case3c_film_summary.json
+  - results/final/tables/issue16_exact_reactive_film_runs.csv
+  - results/final/tables/issue16_exact_reactive_film_summary.json
+  - results/final/tables/issue16_exact_reactive_film_numerical_gate.csv
+  - results/final/tables/issue16_exact_reactive_film_numerical_gate_summary.json
+  - results/final/tables/issue16_reactive_film_gate.csv
+  - results/final/tables/issue16_manufactured_reversible_film.csv
   - results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv
   - results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
   - results/final/tables/issue17_fugacity_only_enhancement_formulations.csv
