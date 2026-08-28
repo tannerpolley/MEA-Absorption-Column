@@ -67,8 +67,11 @@ def test_issue17_four_formulation_reference_and_gates() -> None:
     assert not result.fallback_used.any()
     assert result.current_E_relative_reproduction_error.max() <= 1.0e-12
     implicit = result.loc[result.formulation.eq("EF-GF-IMPLICIT")]
+    explicit = result.loc[result.formulation.ne("EF-GF-IMPLICIT")]
     assert implicit.scaled_equation_residual.max() <= 1.0e-8
     assert implicit.initial_guess_relative_spread.max() <= 1.0e-3
+    assert len(explicit) == 63
+    assert explicit.scalar_reference_relative_error.between(0.0, 1.0e-12).all()
     published = result.loc[result.formulation.eq("EF-AOP-78-PUBLISHED-MEA")]
     assert published.E.lt(1.0).all()
     assert published.outcome.eq("physical_invalidity").all()

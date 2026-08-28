@@ -67,6 +67,7 @@ def main() -> int:
 def _check_issue17_enhancement_comparison() -> None:
     _require_existing(ISSUE17_TABLES + ISSUE17_FIGURES)
     result = pd.read_csv(ISSUE17_TABLES[0])
+    aggregates = pd.read_csv(ISSUE17_TABLES[1])
     stages = pd.read_csv(ISSUE17_TABLES[2])
     summary = json.loads(ISSUE17_TABLES[3].read_text(encoding="utf-8"))
     expected_positions = [index / 20.0 for index in range(21)]
@@ -86,6 +87,11 @@ def _check_issue17_enhancement_comparison() -> None:
         raise AssertionError("Issue 17 retained table does not contain exactly four formulations.")
     if not result.groupby("Position").size().eq(4).all():
         raise AssertionError("Each Issue 17 position must contain exactly four formulation rows.")
+    explicit = result.loc[result["formulation"].ne("EF-GF-IMPLICIT")]
+    if len(explicit) != 63 or not explicit["scalar_reference_relative_error"].between(
+        0.0, 1.0e-12
+    ).all():
+        raise AssertionError("All 63 explicit Issue 17 rows must agree with scalar transcription.")
     if not (
         summary["state_count"] == 21
         and summary["formulation_count"] == 4
@@ -95,6 +101,17 @@ def _check_issue17_enhancement_comparison() -> None:
         and summary["stage4_allowed"] is False
     ):
         raise AssertionError("Issue 17 summary gates do not match the retained negative result.")
+    try:
+        pd.testing.assert_frame_equal(
+            aggregates,
+            pd.DataFrame(summary["aggregates"]),
+            check_dtype=False,
+            check_exact=False,
+            rtol=1.0e-12,
+            atol=1.0e-12,
+        )
+    except AssertionError as error:
+        raise AssertionError("Issue 17 aggregate table is stale relative to the summary.") from error
     blocked = stages.loc[stages["stage"].isin([4, 5])]
     if len(blocked) != 2 or not (
         blocked["attempted"].eq("no").all()
