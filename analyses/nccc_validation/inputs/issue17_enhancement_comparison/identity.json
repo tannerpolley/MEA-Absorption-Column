@@ -1,0 +1,51 @@
+{
+  "issue": "https://github.com/tannerpolley/MEA-Absorption-Column/issues/17",
+  "historical_run": {
+    "label": "historical_fugacity_only_scalar_only",
+    "capture_pct": 89.8326294032528,
+    "runtime_s": 12.169651746749878,
+    "solver_settings": {
+      "case_id": "3C",
+      "case_source": "C_cases_data",
+      "method": "scipy-bvp",
+      "chemical_equilibrium_model": "legacy",
+      "mesh_points": 21,
+      "tol": 0.5,
+      "bc_tol": 0.001,
+      "max_nodes": 250,
+      "co2_capture_guess_pct": 95.0,
+      "h2o_capture_guess_pct": -100.0,
+      "epcsaft_fugacity_blend": 1.0
+    },
+    "boundary_residual_norm": 1.2123331770265856e-13,
+    "source_file_sha256": "440a872bb34d1de26f1afc6df2f58c46c196cf94a66f2746c418e344817a1798",
+    "case_input_sha256": "c24eecf75d572e7144221a189ee5978ec40c7f1c1eeb865d8f043e41809a3f0f",
+    "repository_revision": "unknown; scalar also appears at commit 0e2fec952561e2eb6d66ac12db0ce18c6158505d, but the ignored run schema indicates an uncommitted or otherwise unrecorded source state",
+    "tracked_scalar_history": "analyses/nccc_validation/results/final/tables/case3c_epcsaft_pressure_state_smoke.csv at 0e2fec952561e2eb6d66ac12db0ce18c6158505d; deleted by 8beffeb4fcd6095b61f6625b4a49a38e8f5e4d4c",
+    "epcsaft_revision_or_wheel_sha256": "unknown",
+    "dataset_identity": "unknown; historical adapter defaults are not accepted as run identity evidence",
+    "profile": "not retained",
+    "identity_status": "gap_reported",
+    "retained_scalar_row_sha256": "3e4140897788a781a546733b6fb53c560e8caeca74e4838d905da2d336e34757"
+  },
+  "current_reconstruction": {
+    "label": "current_fugacity_only_reconstruction_b2d6636",
+    "repository_commit": "b2d6636c735c09e9ac8540e4ebb3d4fccd8f6455",
+    "engine_commit": "d88f703974fa8d6e7be54ca3cbd51b6f0f78a372",
+    "epcsaft_version": "0.2.0.dev0",
+    "engine_wheel_sha256": "81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80",
+    "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_ionic_fit",
+    "dataset_content_sha256": "f7ad460743352cfc4e6683bee4f7718d1628f94bf80fc6e9c15f2d0e14675b1c",
+    "command": "env PYTHONPATH=src uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models epcsaft_ionic --c-case-ids 3C --nccc-case-limit 0 --srp-case-limit 0 --c-case-dataset legacy --staged-beds false --mesh-points 21 --tol 0.5 --bc-tol 0.001 --max-nodes 250 --co2-capture-guess-pct 95 --h2o-capture-guess-pct -100 --epcsaft-fugacity-blend 1.0 --profile-csvs --output-dir analyses/nccc_validation/results/runs/issue17_current_fugacity_only_reconstruction",
+    "runtime_s": 15.914878606796265,
+    "capture_pct": 89.81726259472458,
+    "historical_capture_difference_percentage_point": -0.015366808528213483,
+    "boundary_residual_norm": 5.6724776741037054e-14,
+    "fixed_state_count": 21,
+    "full_profile_state_count": 101,
+    "full_profile_sha256": "c93d50b40a7739b54c2e7a206c989537f9f20f89410a851544ccbec38fb19836",
+    "fixed_state_selection": "Positions 0.00, 0.05, ..., 1.00 from the retained 0.01-spaced full profile, including both boundaries",
+    "fixed_states_sha256": "fd252f4b05d4cbdffb506e18b65f0ef967f0ebcad8e1a83f62193eacdfc5ac23",
+    "reconstruction_result_sha256": "9bc47ae1a779d13c8b7e1678cd09bfb26ea7bea64383e69e3b68aa5a14eed591"
+  }
+}
