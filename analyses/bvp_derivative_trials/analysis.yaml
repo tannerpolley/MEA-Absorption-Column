@@ -15,9 +15,10 @@ outputs:
     kind: retained_summary
 commands:
   generate:
-    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py --case-timeout-s 100
   validate:
+    - uv run pytest analyses/bvp_derivative_trials/tests/test_analysis.py -q
     - uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py --validate-only
 runtime:
   per_case_timeout_seconds: 100
-claim_boundary: Fixed-chemistry numerical solution evidence only; no physical reactive-film or predictive-chemistry claim.
+claim_boundary: Fixed-chemistry numerical solution evidence only; scalar capture clusters do not establish solution-profile or branch identity, and no physical reactive-film or predictive-chemistry claim is made.

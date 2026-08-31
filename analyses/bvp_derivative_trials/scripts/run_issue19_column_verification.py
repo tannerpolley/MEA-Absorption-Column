@@ -31,8 +31,9 @@ RUNS = ANALYSIS / "results/runs/issue19_scipy_bvp"
 TABLES = ANALYSIS / "results/final/tables"
 ROWS_PATH = TABLES / "issue19_scipy_bvp_candidate_rows.csv"
 SUMMARY_PATH = TABLES / "issue19_scipy_bvp_summary.json"
-COMMAND = "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py"
+COMMAND_BASE = "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py"
 CONSERVATION_TOLERANCE = 1.0e-8
+CAPTURE_CLUSTER_TOLERANCE_PCT = 0.5
 
 
 @dataclass(frozen=True)
@@ -76,7 +77,11 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _identity() -> dict[str, object]:
+def _command(case_timeout_s: float) -> str:
+    return f"{COMMAND_BASE} --case-timeout-s {case_timeout_s:g}"
+
+
+def _identity(case_timeout_s: float) -> dict[str, object]:
     contract = load_contract()
     expected = contract["final_identity"]
     resolved = resolve_epcsaft(contract)
@@ -98,7 +103,8 @@ def _identity() -> dict[str, object]:
         "machine_node": platform.node(),
         "machine_platform": platform.platform(),
         "logical_cpu_count": os.cpu_count(),
-        "reproduction_command": COMMAND,
+        "case_timeout_s": case_timeout_s,
+        "reproduction_command": _command(case_timeout_s),
     }
 
 
@@ -138,14 +144,16 @@ def _number(row: dict[str, object], key: str) -> float | None:
 
 def _classify(row: dict[str, object]) -> tuple[str, str, str]:
     message = str(row.get("message") or "")
-    if "exceeded subprocess_timeout_s" in message:
+    if row.get("jacobian_status") == "subprocess_timeout" or "exceeded subprocess_timeout_s" in message:
         return "campaign_watchdog", "campaign_timeout", "not_established"
+    if message.startswith("Benchmark subprocess failed with return code") or message == "Benchmark subprocess completed without writing output row.":
+        return "subprocess", "subprocess_failure", "not_established"
     if not bool(row.get("success")):
         return "solver", "numerical_convergence_failure", "boundary_at_state"
     if not row["certificate_pass"]:
         return "certificate_check", "certificate_failure", "boundary_at_state"
-    if not row["physical_check_pass"]:
-        return "physical_check", "physical_invalidity", "boundary_at_state"
+    if not row["basic_state_check_pass"]:
+        return "basic_state_check", "physical_invalidity", "boundary_at_state"
     return "none", "evaluated", "result"
 
 
@@ -170,35 +178,36 @@ def _annotate(raw: dict[str, object], attempt: Attempt, identity: dict[str, obje
             "reported_boundary_check_pass": boundary is not None and boundary <= 1.0,
             "conservation_tolerance": CONSERVATION_TOLERANCE,
             "conservation_check_pass": co2_balance is not None and h2o_balance is not None and max(co2_balance, h2o_balance) <= CONSERVATION_TOLERANCE,
-            "physical_check_pass": capture is not None and 0.0 <= capture <= 100.0 and int(_number(row, "invalid_state_count") or 0) == 0 and int(_number(row, "guard_penalty_count") or 0) == 0,
+            "basic_state_check_pass": capture is not None and 0.0 <= capture <= 100.0 and int(_number(row, "invalid_state_count") or 0) == 0 and int(_number(row, "guard_penalty_count") or 0) == 0,
             **identity,
         }
     )
     row["certificate_pass"] = bool(row["dense_ode_check_pass"] and row["dense_boundary_check_pass"] and row["reported_boundary_check_pass"] and row["conservation_check_pass"])
     row["stopped_by"], row["outcome"], row["claim_strength"] = _classify(row)
-    row["validation_pass"] = bool(row.get("success") and row["certificate_pass"] and row["physical_check_pass"])
+    row["validation_pass"] = bool(row.get("success") and row["certificate_pass"] and row["basic_state_check_pass"])
     run_payload = json.dumps({"attempt": asdict(attempt), "identity": identity}, sort_keys=True, separators=(",", ":"))
     row["run_id"] = hashlib.sha256(run_payload.encode()).hexdigest()
     row["timing_kind"] = "cold_isolated_subprocess_wall"
     return row
 
 
-def _assign_branches(rows: list[dict[str, object]]) -> None:
+def _assign_capture_clusters(rows: list[dict[str, object]]) -> None:
     for row in rows:
-        row["branch_id"] = ""
+        row["capture_cluster_id"] = ""
+        row["capture_cluster_tolerance_pct"] = CAPTURE_CLUSTER_TOLERANCE_PCT
     groups: dict[tuple[str, str], list[dict[str, object]]] = {}
     for row in rows:
         if row["validation_pass"]:
             groups.setdefault((str(row["case_id"]), str(row["thermo_model"])), []).append(row)
     for group in groups.values():
-        branch_references: list[float] = []
+        cluster_references: list[float] = []
         for row in sorted(group, key=lambda item: float(item["capture_pct"])):
             capture = float(row["capture_pct"])
-            branch = next((index for index, reference in enumerate(branch_references, 1) if abs(capture - reference) <= 0.5), None)
-            if branch is None:
-                branch_references.append(capture)
-                branch = len(branch_references)
-            row["branch_id"] = f"capture_branch_{branch}"
+            cluster = next((index for index, reference in enumerate(cluster_references, 1) if abs(capture - reference) <= CAPTURE_CLUSTER_TOLERANCE_PCT), None)
+            if cluster is None:
+                cluster_references.append(capture)
+                cluster = len(cluster_references)
+            row["capture_cluster_id"] = f"capture_cluster_{cluster}"
 
 
 def _reference_deltas(rows: list[dict[str, object]]) -> None:
@@ -210,7 +219,7 @@ def _reference_deltas(rows: list[dict[str, object]]) -> None:
 
 
 def _validate(rows: pd.DataFrame, summary: dict[str, object]) -> None:
-    required = {"run_id", "stopped_by", "outcome", "claim_strength", "dense_ode_residual_max", "dense_boundary_residual_max", "branch_id", "engine_wheel_sha256", "repository_code_commit"}
+    required = {"run_id", "stopped_by", "outcome", "claim_strength", "dense_ode_residual_max", "dense_boundary_residual_max", "capture_cluster_id", "capture_cluster_tolerance_pct", "case_timeout_s", "engine_wheel_sha256", "repository_code_commit"}
     missing = required - set(rows.columns)
     if missing:
         raise AssertionError(f"Retained Issue 19 rows are missing columns: {sorted(missing)}")
@@ -225,6 +234,11 @@ def _validate(rows: pd.DataFrame, summary: dict[str, object]) -> None:
         raise AssertionError("Every incomplete or failed row must retain its diagnostic message.")
     if summary["row_count"] != len(rows):
         raise AssertionError("Issue 19 summary row count is stale.")
+    timeout_values = pd.to_numeric(rows["case_timeout_s"], errors="coerce").dropna().unique()
+    if len(timeout_values) != 1 or float(timeout_values[0]) != float(summary["case_timeout_s"]):
+        raise AssertionError("Retained rows and summary must record one matching per-case timeout.")
+    if rows["reproduction_command"].nunique() != 1 or rows["reproduction_command"].iloc[0] != summary["reproduction_command"]:
+        raise AssertionError("Retained rows and summary must record the same exact reproduction command.")
     retained_text = rows.to_csv(index=False) + json.dumps(summary, sort_keys=True)
     if "/home/" in retained_text or ".codex/worktrees" in retained_text:
         raise AssertionError("Retained Issue 19 evidence contains a machine-local path.")
@@ -242,11 +256,16 @@ def _write(rows: list[dict[str, object]], identity: dict[str, object]) -> None:
         "campaign_timeout_count": int(frame["outcome"].eq("campaign_timeout").sum()),
         "failed_or_incomplete_count": int(frame["outcome"].ne("evaluated").sum()),
         "three_initialization_outcomes_retained": len(initialization) == 3,
-        "three_initializations_same_branch": bool(len(initialization) == 3 and initialization["validation_pass"].all() and initialization["branch_id"].nunique() == 1),
+        "three_initializations_same_capture_cluster": bool(len(initialization) == 3 and initialization["validation_pass"].all() and initialization["capture_cluster_id"].nunique() == 1),
+        "capture_cluster_rule": f"Within each case and thermodynamic model, validated captures are assigned in ascending order to the first cluster whose initial capture reference differs by no more than {CAPTURE_CLUSTER_TOLERANCE_PCT:g} percentage point.",
+        "capture_cluster_tolerance_pct": CAPTURE_CLUSTER_TOLERANCE_PCT,
+        "true_profile_branch_identity_established": False,
+        "profile_branch_claim_boundary": "Capture clustering compares scalar outlet capture only; retained profiles are absent, so numerical solution-profile or branch identity is not established.",
         "attempt_matrix": [asdict(attempt) for attempt in ATTEMPTS],
         "identity": identity,
         "candidate_rows_sha256": _sha256(ROWS_PATH),
-        "reproduction_command": COMMAND,
+        "case_timeout_s": identity["case_timeout_s"],
+        "reproduction_command": identity["reproduction_command"],
     }
     SUMMARY_PATH.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     _validate(frame, summary)
@@ -266,13 +285,13 @@ def main() -> int:
         print("Issue 19 retained SciPy BVP rows are internally consistent.")
         return 0
 
-    identity = _identity()
+    identity = _identity(args.case_timeout_s)
     rows = []
     for sequence, attempt in enumerate(ATTEMPTS, 1):
         run_dir = RUNS / f"{sequence:02d}_{attempt.setting_id}"
         result = run_benchmark(_settings(attempt, args.case_timeout_s, run_dir)).iloc[0].to_dict()
         rows.append(_annotate(result, attempt, identity, sequence))
-    _assign_branches(rows)
+    _assign_capture_clusters(rows)
     _reference_deltas(rows)
     _write(rows, identity)
     print(f"Wrote {ROWS_PATH.relative_to(ROOT)}")
