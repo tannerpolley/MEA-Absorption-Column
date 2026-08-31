@@ -17,8 +17,12 @@ def test_failure_classification_and_capture_cluster_accounting():
     assert MODULE._classify(subprocess_failure) == ("subprocess", "subprocess_failure", "not_established")
     crashed_subprocess = {"message": "Benchmark subprocess failed with return code 1: traceback", "success": False, "certificate_pass": False, "basic_state_check_pass": False}
     assert MODULE._classify(crashed_subprocess) == ("subprocess", "subprocess_failure", "not_established")
-    solver_failure = {"message": "The maximum number of mesh nodes is exceeded.", "success": False, "certificate_pass": False, "basic_state_check_pass": False}
-    assert MODULE._classify(solver_failure) == ("solver", "numerical_convergence_failure", "boundary_at_state")
+    arbitrary_worker_exception = {"message": "unexpected unit conversion error", "success": False, "certificate_pass": False, "basic_state_check_pass": False}
+    assert MODULE._classify(arbitrary_worker_exception) == ("subprocess", "subprocess_failure", "not_established")
+    maximum_nodes = {"message": "The maximum number of mesh nodes is exceeded.", "success": False, "certificate_pass": False, "basic_state_check_pass": False}
+    assert MODULE._classify(maximum_nodes) == ("solver", "numerical_convergence_failure", "boundary_at_state")
+    singular_jacobian = {"message": "A singular Jacobian encountered when solving the collocation system.", "jacobian_status": "2", "success": False, "certificate_pass": False, "basic_state_check_pass": False}
+    assert MODULE._classify(singular_jacobian) == ("solver", "numerical_convergence_failure", "boundary_at_state")
     certificate_failure = {"message": "The algorithm converged.", "success": True, "certificate_pass": False, "basic_state_check_pass": True}
     assert MODULE._classify(certificate_failure) == ("certificate_check", "certificate_failure", "boundary_at_state")
     state_failure = {"message": "The algorithm converged.", "success": True, "certificate_pass": True, "basic_state_check_pass": False}

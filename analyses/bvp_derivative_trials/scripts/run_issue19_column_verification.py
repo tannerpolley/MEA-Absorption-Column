@@ -34,6 +34,12 @@ SUMMARY_PATH = TABLES / "issue19_scipy_bvp_summary.json"
 COMMAND_BASE = "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py"
 CONSERVATION_TOLERANCE = 1.0e-8
 CAPTURE_CLUSTER_TOLERANCE_PCT = 0.5
+SCIPY_FAILURE_STATUSES = {"1", "2", "3"}
+SCIPY_FAILURE_MESSAGES = (
+    "The maximum number of mesh nodes is exceeded.",
+    "A singular Jacobian encountered when solving the collocation system.",
+    "The solver was unable to satisfy boundary conditions tolerance on iteration 10.",
+)
 
 
 @dataclass(frozen=True)
@@ -149,7 +155,10 @@ def _classify(row: dict[str, object]) -> tuple[str, str, str]:
     if message.startswith("Benchmark subprocess failed with return code") or message == "Benchmark subprocess completed without writing output row.":
         return "subprocess", "subprocess_failure", "not_established"
     if not bool(row.get("success")):
-        return "solver", "numerical_convergence_failure", "boundary_at_state"
+        status = str(row.get("jacobian_status") or "").strip()
+        if status in SCIPY_FAILURE_STATUSES or message.startswith(SCIPY_FAILURE_MESSAGES):
+            return "solver", "numerical_convergence_failure", "boundary_at_state"
+        return "subprocess", "subprocess_failure", "not_established"
     if not row["certificate_pass"]:
         return "certificate_check", "certificate_failure", "boundary_at_state"
     if not row["basic_state_check_pass"]:
