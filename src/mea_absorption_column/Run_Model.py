@@ -524,6 +524,12 @@ Run #{run + 1:03d}:
             settings=solver_settings_for_run,
         )
         cache_stats = _epcsaft_cache_delta(epcsaft_cache_start, epcsaft_cache_stats())
+        co2_conservation_relative_residual = abs(
+            (Fl_CO2_b + Fv_CO2_a) - (Fl_CO2_a_sim + Fv_CO2_b_sim)
+        ) / max(abs(Fl_CO2_b + Fv_CO2_a), np.finfo(float).tiny)
+        h2o_conservation_relative_residual = abs(
+            (Fl_H2O_b + Fv_H2O_a) - (Fl_H2O_a_sim + Fv_H2O_b_sim)
+        ) / max(abs(Fl_H2O_b + Fv_H2O_a), np.finfo(float).tiny)
         result = {
             'case_id': str(df.index[run]),
             'method': method,
@@ -537,6 +543,8 @@ Run #{run + 1:03d}:
             'temperature_rmse_K': temperature_rmse,
             'boundary_residual_norm': boundary_residual_norm,
             'boundary_residual_components': json.dumps(boundary_residual_components, sort_keys=True),
+            'co2_conservation_relative_residual': float(co2_conservation_relative_residual),
+            'h2o_conservation_relative_residual': float(h2o_conservation_relative_residual),
             'mesh_points': int(settings.get('mesh_points', len(z))),
             'tol': settings.get('tol'),
             'bc_tol': settings.get('bc_tol'),
@@ -564,6 +572,17 @@ Run #{run + 1:03d}:
             'domain_guard_counts': _format_domain_guard_counts(solver_diagnostics.get('domain_guard_counts', {})),
             'first_failed_domain': solver_diagnostics.get('first_failed_domain', ''),
             'jacobian_status': solver_diagnostics.get('jacobian_status', ''),
+            'solver_rhs_calls': int(solver_diagnostics.get('solver_rhs_calls', 0)),
+            'solver_rhs_node_evaluations': int(solver_diagnostics.get('solver_rhs_node_evaluations', 0)),
+            'solver_boundary_calls': int(solver_diagnostics.get('solver_boundary_calls', 0)),
+            'solver_jacobian_calls': int(solver_diagnostics.get('solver_jacobian_calls', 0)),
+            'solver_iterations': int(solver_diagnostics.get('solver_iterations', 0)),
+            'solver_final_nodes': int(solver_diagnostics.get('solver_final_nodes', 0)),
+            'solver_mesh_nodes_added': int(solver_diagnostics.get('solver_mesh_nodes_added', 0)),
+            'solver_max_rms_residual': float(solver_diagnostics.get('solver_max_rms_residual', float('nan'))),
+            'dense_grid_points': int(solver_diagnostics.get('dense_grid_points', 0)),
+            'dense_ode_residual_max': float(solver_diagnostics.get('dense_ode_residual_max', float('nan'))),
+            'dense_boundary_residual_max': float(solver_diagnostics.get('dense_boundary_residual_max', float('nan'))),
             'scaling_mode': solver_settings_for_run.get('scaling_mode', 'legacy_flow_enthalpy'),
             'transform_mode': solver_settings_for_run.get('transform_mode', 'bounded_guarded_raw_state'),
             'continuation_path': solver_settings_for_run.get('continuation_path', 'none'),
