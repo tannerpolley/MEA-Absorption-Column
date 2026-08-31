@@ -1,0 +1,23 @@
+id: bvp_derivative_trials
+title: SciPy BVP formulation and verification
+status: active
+summary: Retains Issue 19 fixed-chemistry SciPy BVP column evidence under Issue 18 ownership.
+owner: github_issue_18
+inputs:
+  - path: src/mea_absorption_column/data/SRP_method_cases.csv
+    kind: reference_case
+  - path: src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv
+    kind: reference_case
+outputs:
+  - path: results/final/tables/issue19_scipy_bvp_candidate_rows.csv
+    kind: retained_results
+  - path: results/final/tables/issue19_scipy_bvp_summary.json
+    kind: retained_summary
+commands:
+  generate:
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py
+  validate:
+    - uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py --validate-only
+runtime:
+  per_case_timeout_seconds: 100
+claim_boundary: Fixed-chemistry numerical solution evidence only; no physical reactive-film or predictive-chemistry claim.

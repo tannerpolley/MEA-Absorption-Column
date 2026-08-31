@@ -90,13 +90,19 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
     class FakeSolution:
         success = True
         message = "ok"
+        status = 0
+        niter = 1
+        rms_residuals = np.zeros(2)
 
         def __init__(self, x, y):
             self.x = x
+            self.y = y
             self._y = y
 
-        def sol(self, _z):
-            return self._y
+        def sol(self, z, derivative=0):
+            if derivative:
+                return np.zeros((self._y.shape[0], len(z)))
+            return np.repeat(self._y[:, :1], len(z), axis=1)
 
     def fake_solve_bvp(_fun, _bc, z, y, **_kwargs):
         captured["initial_guess"] = y
@@ -105,10 +111,12 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
 
     monkeypatch.setattr(scipy_bvp_module, "polynomial_fit", fake_polynomial_fit)
     monkeypatch.setattr(scipy_bvp_module, "solve_bvp", fake_solve_bvp)
+    monkeypatch.setattr(scipy_bvp_module, "_column_rhs", lambda *_args, **_kwargs: np.zeros(7))
 
     y_a_scaled = np.ones(7)
     y_b_scaled = np.ones(7)
-    parameters = (np.ones(7),)
+    diagnostics = {}
+    parameters = (np.ones(7), None, None, None, None, None, {"solver_diagnostics": diagnostics})
 
     scipy_bvp_module.scipy_BVP_solve(
         y_a_scaled,
@@ -119,6 +127,8 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
     )
 
     assert "initial_guess" in captured
+    assert diagnostics["dense_grid_points"] == 12
+    assert diagnostics["solver_final_nodes"] == 3
 
 
 def test_sanitize_scaled_state_clips_flows_and_pressure_without_mutating_input():
