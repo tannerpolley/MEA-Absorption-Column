@@ -41,12 +41,20 @@ The immutable refusal is recorded at upstream commit
 and transfer-refusal SHA-256
 `6a14cfa988660596fcbeb7516b7123c45da558ef00311b72306fdcb1b859e835`.
 
-Engine issues #30, #31, #44, and #48 and MEA-Thermodynamics issues #61--#67,
-#13, and #14 are closed historical prerequisites. MEA-Thermodynamics #68
-remains open for its upstream manuscript work, not as a column transfer.
-Closing the prerequisites did not create an accepted predictive parameter set.
-Future capability and application work remains in Engine #79,
-MEA-Thermodynamics #72, and local issues #3 and #16.
+Engine issues #30, #31, #44, #48, and #79, local issue #3, and
+MEA-Thermodynamics issues #61--#67, #13, and #14 are closed historical
+prerequisites. MEA-Thermodynamics #68 remains open for its upstream manuscript
+work, not as a column transfer. Closing these prerequisites did not create an
+accepted predictive parameter set.
+
+The current predictive critical path is Engine #80, followed by
+MEA-Thermodynamics #72 Work Package B and local issue #16. Work Package A of
+MEA-Thermodynamics #72 may establish source-complete chemistry and transport
+records without an active parameter set, but its packet-bound activity closure
+and downstream scientific adoption remain blocked by Engine #80. Local issues
+#18--#22 own equation-preserving numerical-method comparisons; their
+manufactured, fixed-chemistry, and packed-column checks do not authorize a
+physical reactive-film or predictive-column claim.
 
 ## Evidence and claim ladder
 
