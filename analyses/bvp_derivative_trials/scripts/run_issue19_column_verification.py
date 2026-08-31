@@ -150,7 +150,8 @@ def _classify(row: dict[str, object]) -> tuple[str, str, str]:
 
 
 def _annotate(raw: dict[str, object], attempt: Attempt, identity: dict[str, object], sequence: int) -> dict[str, object]:
-    row = {key: value for key, value in raw.items() if key not in {"profile_png", "profile_csv_dir", "profile_csv_files"}}
+    machine_local_columns = {"epcsaft_dataset", "profile_png", "profile_csv_dir", "profile_csv_files"}
+    row = {key: value for key, value in raw.items() if key not in machine_local_columns}
     dense_ode = _number(row, "dense_ode_residual_max")
     dense_boundary = _number(row, "dense_boundary_residual_max")
     boundary = _number(row, "boundary_residual_norm")
@@ -224,6 +225,9 @@ def _validate(rows: pd.DataFrame, summary: dict[str, object]) -> None:
         raise AssertionError("Every incomplete or failed row must retain its diagnostic message.")
     if summary["row_count"] != len(rows):
         raise AssertionError("Issue 19 summary row count is stale.")
+    retained_text = rows.to_csv(index=False) + json.dumps(summary, sort_keys=True)
+    if "/home/" in retained_text or ".codex/worktrees" in retained_text:
+        raise AssertionError("Retained Issue 19 evidence contains a machine-local path.")
 
 
 def _write(rows: list[dict[str, object]], identity: dict[str, object]) -> None:
