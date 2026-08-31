@@ -23,3 +23,10 @@ uv run pytest analyses/bvp_derivative_trials/tests/test_analysis.py -q
 ```
 
 Per-attempt subprocess output is disposable under `results/runs/`. The candidate table and summary under `results/final/tables/` retain successes, typed failures, configuration, solver counters, residuals, conservation checks, scalar capture-cluster accounting, the per-case timeout, and immutable Engine identity. Capture clusters use a 0.5 percentage-point rule; they do not establish numerical solution-profile or branch identity because profiles are not retained.
+
+After independent review admits the retained rows, regenerate the summary figure and render the notebook without executing scientific code:
+
+```bash
+uv run python analyses/bvp_derivative_trials/scripts/render_issue19_summary.py
+bash analyses/bvp_derivative_trials/render.sh
+```

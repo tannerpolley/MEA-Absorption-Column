@@ -13,12 +13,19 @@ outputs:
     kind: retained_results
   - path: results/final/tables/issue19_scipy_bvp_summary.json
     kind: retained_summary
+  - path: results/final/figures/issue19_scipy_bvp_summary.png
+    kind: retained_summary_figure
+  - path: notebook.qmd
+    kind: reviewed_analysis_notebook_source
 commands:
   generate:
     - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py --case-timeout-s 100
   validate:
     - uv run pytest analyses/bvp_derivative_trials/tests/test_analysis.py -q
     - uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py --validate-only
+  summarize:
+    - uv run python analyses/bvp_derivative_trials/scripts/render_issue19_summary.py
+    - bash analyses/bvp_derivative_trials/render.sh
 runtime:
   per_case_timeout_seconds: 100
 claim_boundary: Fixed-chemistry numerical solution evidence only; scalar capture clusters do not establish solution-profile or branch identity, and no physical reactive-film or predictive-chemistry claim is made.
