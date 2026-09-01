@@ -19,12 +19,12 @@ ISSUE33_TABLE = ROOT / "analyses/nccc_validation/results/final/tables/issue33_co
 FINITE_TABLE = TABLES / "issue34_finite_reactions.csv"
 PARTITION_TABLE = TABLES / "issue34_partition_decisions.csv"
 OBSERVATION_TABLE = TABLES / "issue34_rate_observation_comparisons.csv"
-SENSITIVITY_TABLE = TABLES / "issue34_kinetic_sensitivity.csv"
+SOURCE_CORRELATION_TABLE = TABLES / "issue34_source_correlation_arithmetic_reconstruction.csv"
 SUMMARY = TABLES / "issue34_kinetics_summary.json"
 REPORT = ANALYSIS / "results/final/reports/issue34_reaction_kinetics.md"
 
 ELEMENTS = ("C", "H", "N", "O", "charge")
-DETAILED_BALANCE_TOLERANCE = 1.0e-7
+REVERSE_RATE_IDENTITY_TOLERANCE = 1.0e-12
 REACTION_TERMS = {
     "F1": ({"MEA": 2, "CO2": 1}, {"MEAH+": 1, "MEACOO-": 1}),
     "F2": ({"H2O": 1, "MEA": 1, "CO2": 1}, {"H3O+": 1, "MEACOO-": 1}),
@@ -182,19 +182,23 @@ def reconstructed_coefficient_unit(reaction_id: str) -> str:
     return f"{length} {amount} s^-1"
 
 
-def finite_rows(config: dict, reaction_vectors: dict[str, list[int]]) -> tuple[list[dict], list[dict], dict, bool]:
+def finite_rows(config: dict, reaction_vectors: dict[str, list[int]]) -> tuple[list[dict], list[dict], dict, bool, bool]:
     finite = []
-    sensitivity = []
+    reconstruction_rows = []
     anchors = config["source_domain"]["reconstruction_anchor_temperature_K"]
     by_basis_temperature: dict[tuple[str, float], float] = {}
-    dimensional_pass = True
+    f1_f2_dimensional_pass = True
+    f3_theoretical_unit_pass = True
     for record in config["finite_reactions"]:
         reaction_id = record["id"]
         vector = reaction_vectors[reaction_id]
         coefficient_status = "recovered" if record["pre_exponential"] is not None else "unavailable"
         reconstructed_unit = reconstructed_coefficient_unit(reaction_id)
         this_dimensional_pass = record["required_coefficient_unit"] == reconstructed_unit
-        dimensional_pass &= this_dimensional_pass
+        if reaction_id in ("F1", "F2"):
+            f1_f2_dimensional_pass &= record["pre_exponential"] is not None and this_dimensional_pass
+        else:
+            f3_theoretical_unit_pass &= this_dimensional_pass
         finite.append({
             "reaction_id": reaction_id,
             "basis": record["basis"],
@@ -227,7 +231,7 @@ def finite_rows(config: dict, reaction_vectors: dict[str, list[int]]) -> tuple[l
             by_basis_temperature[(reaction_id, record["basis"], temperature_K)] = floating
             absolute_difference = abs(floating - decimal)
             relative_difference = absolute_difference / abs(decimal)
-            sensitivity.append({
+            reconstruction_rows.append({
                 "record_type": "temperature_reconstruction",
                 "reaction_id": reaction_id,
                 "basis": record["basis"],
@@ -237,8 +241,8 @@ def finite_rows(config: dict, reaction_vectors: dict[str, list[int]]) -> tuple[l
                 "k_decimal": decimal,
                 "absolute_float_decimal_difference": absolute_difference,
                 "relative_float_decimal_difference": relative_difference,
-                "activity_to_concentration_ratio": "",
-                "sensitivity_status": "reconstructed_at_source_temperature_anchor",
+                "activity_basis_to_concentration_basis_coefficient_ratio": "",
+                "reconstruction_status": "reconstructed_at_source_temperature_anchor",
                 "reason": "Source coefficient is independent of concentration; source 1 M and 5 M labels are retained as labels only.",
             })
     for reaction_id in ("F1", "F2"):
@@ -246,10 +250,10 @@ def finite_rows(config: dict, reaction_vectors: dict[str, list[int]]) -> tuple[l
             concentration = by_basis_temperature[(reaction_id, "concentration", temperature_K)]
             activity = by_basis_temperature[(reaction_id, "activity", temperature_K)]
             ratio = activity / concentration
-            for row in sensitivity:
+            for row in reconstruction_rows:
                 if row["reaction_id"] == reaction_id and row["temperature_K"] == temperature_K:
-                    row["activity_to_concentration_ratio"] = ratio
-    sensitivity.append({
+                    row["activity_basis_to_concentration_basis_coefficient_ratio"] = ratio
+    reconstruction_rows.append({
         "record_type": "pathway_exclusion",
         "reaction_id": "F3",
         "basis": "concentration",
@@ -259,61 +263,64 @@ def finite_rows(config: dict, reaction_vectors: dict[str, list[int]]) -> tuple[l
         "k_decimal": "",
         "absolute_float_decimal_difference": "",
         "relative_float_decimal_difference": "",
-        "activity_to_concentration_ratio": "",
-        "sensitivity_status": "not_quantified_supported_negative",
+        "activity_basis_to_concentration_basis_coefficient_ratio": "",
+        "reconstruction_status": "not_quantified_supported_negative",
         "reason": "Excluding F3 removes the CO2/OH-/HCO3- pathway, but its primary coefficient and an admitted local film state are unavailable; flux impact is not evaluable.",
     })
-    return finite, sensitivity, {"temperature_reconstruction_count": len(sensitivity) - 1}, dimensional_pass
+    return finite, reconstruction_rows, {"temperature_reconstruction_count": len(reconstruction_rows) - 1}, f1_f2_dimensional_pass, f3_theoretical_unit_pass
 
 
 def source_state_closure(config: dict, finite_records: list[dict]) -> tuple[list[dict], dict]:
     state = config["source_state_reconstruction"]["concentrations"]
     temperature_K = config["source_state_reconstruction"]["temperature_K"]
     closure_rows = []
-    max_balance_residual = 0.0
+    max_identity_residual = 0.0
     for record in finite_records:
         if record["reaction_id"] == "F3" or record["basis"] != "concentration":
             continue
         reactants, products = REACTION_TERMS[record["reaction_id"]]
         forward_concentration = math.prod(state[name] ** power for name, power in reactants.items())
         product_concentration = math.prod(state[name] ** power for name, power in products.items())
-        quotient = product_concentration / forward_concentration
-        equilibrium_constant = quotient
-        ln_residual = abs(math.log(quotient) - math.log(equilibrium_constant))
+        raw_quotient = product_concentration / forward_concentration
         coefficient_record = next(
             item for item in config["finite_reactions"]
             if item["id"] == record["reaction_id"] and item["basis"] == "concentration"
         )
         coefficient, _ = coefficient_value(coefficient_record, temperature_K)
         forward_rate = coefficient * forward_concentration
-        reverse_coefficient = coefficient / equilibrium_constant
+        reverse_coefficient = coefficient / raw_quotient
         reverse_rate = reverse_coefficient * product_concentration
-        rate_residual = abs(forward_rate - reverse_rate)
-        max_balance_residual = max(max_balance_residual, ln_residual)
+        identity_residual = abs(forward_rate - reverse_rate) / abs(forward_rate)
+        max_identity_residual = max(max_identity_residual, identity_residual)
         closure_rows.append({
             "reaction_id": record["reaction_id"],
             "basis": "concentration",
             "temperature_K": temperature_K,
             "state_role": config["source_state_reconstruction"]["state_role"],
-            "equilibrium_quotient_Q": quotient,
-            "selected_equilibrium_constant_K": equilibrium_constant,
+            "raw_quotient_value": raw_quotient,
             "raw_quotient_units": "m^3 kmol^-1",
-            "absolute_ln_Q_minus_ln_K": ln_residual,
-            "detailed_balance_tolerance": DETAILED_BALANCE_TOLERANCE,
-            "detailed_balance_pass": ln_residual <= DETAILED_BALANCE_TOLERANCE,
+            "source_provider_equilibrium_constant": "not supplied",
+            "source_provider_standard_state_conversion": "not supplied",
+            "source_provider_detailed_balance_status": "not_evaluable",
+            "source_provider_detailed_balance_pass": False,
             "coefficient_unit": "m6 kmol^-2 s^-1",
             "forward_rate_kmol_m3_s": forward_rate,
-            "reverse_coefficient_m6_kmol_m3_s": reverse_coefficient,
+            "reverse_coefficient_value": reverse_coefficient,
+            "reverse_coefficient_unit": "m3 kmol^-1 s^-1",
             "reverse_rate_kmol_m3_s": reverse_rate,
-            "absolute_rate_residual_kmol_m3_s": rate_residual,
-            "closure_status": "source_state_algebraic_reconstruction_only",
+            "algebraic_reverse_rate_identity_relative_residual": identity_residual,
+            "algebraic_reverse_rate_identity_pass": identity_residual <= REVERSE_RATE_IDENTITY_TOLERANCE,
+            "closure_status": "algebraic_reverse_rate_identity_only",
             "physical_admission": "not_admitted_basis_unresolved",
         })
     return closure_rows, {
         "state_temperature_K": temperature_K,
-        "max_absolute_ln_Q_minus_ln_K": max_balance_residual,
-        "detailed_balance_tolerance": DETAILED_BALANCE_TOLERANCE,
-        "detailed_balance_pass": max_balance_residual <= DETAILED_BALANCE_TOLERANCE,
+        "max_algebraic_reverse_rate_identity_relative_residual": max_identity_residual,
+        "algebraic_reverse_rate_identity_tolerance": REVERSE_RATE_IDENTITY_TOLERANCE,
+        "algebraic_reverse_rate_identity_pass": max_identity_residual <= REVERSE_RATE_IDENTITY_TOLERANCE,
+        "source_provider_detailed_balance_status": "not_evaluable_missing_independent_K_and_standard_state",
+        "source_provider_detailed_balance_pass": False,
+        "raw_quotient_log_evaluation": "not_performed; Q_raw is dimensional",
         "activity_closure": "not_evaluable_activity_coefficients_and_standard_state_unavailable",
     }
 
@@ -340,7 +347,7 @@ def observation_rows(config: dict) -> list[dict]:
     return rows
 
 
-def partition_rows(config: dict, reaction_rows_: list[dict]) -> list[dict]:
+def partition_rows(reaction_rows_: list[dict]) -> list[dict]:
     rows = []
     for row in reaction_rows_:
         if row["record_type"] == "source_reaction":
@@ -386,7 +393,7 @@ def partition_rows(config: dict, reaction_rows_: list[dict]) -> list[dict]:
     return rows
 
 
-def report_text(config: dict, summary: dict, closure: dict) -> str:
+def report_text(config: dict, closure: dict) -> str:
     dependency = config["issue33_dependency"]
     return f"""# Issue 34: reversible MEA film kinetics and reaction partition
 
@@ -401,7 +408,7 @@ Status: **supported-negative source-faithful record complete**. This record pres
 
 ## Source and basis boundary
 
-Putta2016 (DOI `10.1016/j.ijggc.2016.08.009`, attachment SHA-256 `{next(source['attachment_sha256'] for source in config['source_records'] if source['id'] == 'Putta2016')}`) is the primary finite-rate source. Luo2015 (DOI `10.1016/j.ces.2014.10.013`) supplies secondary mechanism context. The cited Gondal2015 source (DOI `10.1016/j.ces.2014.10.038`) is not present in local Zotero, so no F3 coefficient is invented.
+Putta2016 (DOI `10.1016/j.ijggc.2016.08.009`, Zotero attachment inspection receipt SHA-256 `{next(source['attachment_sha256_inspection_receipt'] for source in config['source_records'] if source['id'] == 'Putta2016')}`) is the primary finite-rate source. Luo2015 (DOI `10.1016/j.ces.2014.10.013`) supplies secondary mechanism context. The cited Gondal2015 source (DOI `10.1016/j.ces.2014.10.038`) is not present in local Zotero, so no F3 coefficient is invented. These hashes are provenance receipts only; this generator does not runtime-verify source PDFs.
 
 Putta's 1 M and 5 M values are source labels only. The immutable issue 33 dependency remains `basis_unresolved`: Position 1 analytical MEA is `{dependency['required_position_1_analytical_mol_L']:.16g} mol L^-1` and free MEA is `{dependency['required_position_1_free_mea_mol_L']:.16g} mol L^-1`; it is not rounded or admitted as exact 5 M. No capture or kinetic tuning was performed.
 
@@ -411,7 +418,7 @@ The retained species order is `{', '.join(config['species_order'])}`. The checke
 
 Putta prints `m^6 kmol^-2 s^-2` for the third-order F1/F2 coefficient, but a rate in kmol m^-3 s^-1 requires `m^6 kmol^-2 s^-1`. The printed unit is retained as rejected source metadata and the dimensionally required unit is recorded separately. F3 would require `m^3 kmol^-1 s^-1`, but its coefficient is unavailable.
 
-The source-state closure rows use a strictly positive synthetic state at {config['source_state_reconstruction']['temperature_K']} K only to verify `k_reverse = k_forward/K_raw`; the maximum absolute ln(Q/K) is `{closure['max_absolute_ln_Q_minus_ln_K']:.3e}`. This is not a retained NCCC state, a fitted result, or an activity closure.
+The source-state rows use a strictly positive synthetic state at {config['source_state_reconstruction']['temperature_K']} K only to verify the algebraic reverse-rate identity `k_reverse = k_forward/Q_raw`; the maximum relative forward/reverse arithmetic residual is `{closure['max_algebraic_reverse_rate_identity_relative_residual']:.3e}`. No logarithm of the dimensional Q_raw is taken. Source/provider detailed balance remains not evaluable because an independently sourced K(T) and explicit standard-state conversion are unavailable.
 
 ## Timescale evidence and observations
 
@@ -423,7 +430,7 @@ Putta Table 4 aggregate AARD values are retained as summary-only observations. R
 
 ## Outputs
 
-The input record is `inputs/issue34_kinetics.json`. The generated tables are `issue34_finite_reactions.csv`, `issue34_partition_decisions.csv`, `issue34_rate_observation_comparisons.csv`, and `issue34_kinetic_sensitivity.csv`; gate and identity data are in `issue34_kinetics_summary.json`.
+The input record is `inputs/issue34_kinetics.json`. The generated tables are `issue34_finite_reactions.csv`, `issue34_partition_decisions.csv`, `issue34_rate_observation_comparisons.csv`, and `issue34_source_correlation_arithmetic_reconstruction.csv`; gate and identity data are in `issue34_kinetics_summary.json`.
 """
 
 
@@ -435,9 +442,9 @@ def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
         writer.writerows(rows)
 
 
-def build_summary(config: dict, issue33: dict, reaction_rows_: list[dict], finite: list[dict], sensitivities: list[dict], observations: list[dict], closure: dict, closure_rows: list[dict], stoich: bool, elements: bool, charge: bool, dimensional_pass: bool) -> dict:
+def build_summary(config: dict, issue33: dict, finite: list[dict], reconstruction_rows: list[dict], observations: list[dict], closure: dict, closure_rows: list[dict], stoich: bool, elements: bool, charge: bool, f1_f2_dimensional_pass: bool, f3_theoretical_unit_pass: bool) -> dict:
     aard_values = [float(row["value"]) for row in observations]
-    f1_f2 = [row for row in sensitivities if row["record_type"] == "temperature_reconstruction"]
+    f1_f2 = [row for row in reconstruction_rows if row["record_type"] == "temperature_reconstruction"]
     max_reconstruction_error = max(float(row["relative_float_decimal_difference"]) for row in f1_f2)
     return {
         "schema_version": config["schema_version"],
@@ -448,7 +455,10 @@ def build_summary(config: dict, issue33: dict, reaction_rows_: list[dict], finit
         "species_order": config["species_order"],
         "reaction_projection_order": [row["id"] for row in config["reaction_combinations"]],
         "source_records": config["source_records"],
-        "finite_candidate_count": len(finite),
+        "finite_reaction_record_count": len(finite),
+        "finite_rate_relationship_candidate_ids": ["F1", "F2"],
+        "finite_rate_relationship_candidate_count": 2,
+        "unavailable_finite_relationship_ids": ["F3"],
         "source_anchor_temperatures_K": config["source_domain"]["reconstruction_anchor_temperature_K"],
         "source_domain": config["source_domain"],
         "issue33_dependency": {
@@ -466,15 +476,17 @@ def build_summary(config: dict, issue33: dict, reaction_rows_: list[dict], finit
             "reaction_projection_stoichiometry_pass": stoich,
             "element_balance_pass": elements,
             "charge_balance_pass": charge,
-            "f1_f2_required_coefficient_unit_reconstructed": dimensional_pass,
+            "f1_f2_recovered_coefficient_dimensional_reconstruction_pass": f1_f2_dimensional_pass,
+            "f3_theoretical_required_unit_pass": f3_theoretical_unit_pass,
             "f1_f2_source_printed_s_minus_2_rejected": True,
             "source_coefficient_reconstruction_float_decimal_relative_tolerance": 1.0e-12,
             "max_float_decimal_relative_difference": max_reconstruction_error,
             "f3_primary_coefficient_recovered": False,
             "activity_standard_state_conversion_admitted": False,
-            "source_state_detailed_balance_pass": closure["detailed_balance_pass"],
-            "max_absolute_ln_Q_minus_ln_K": closure["max_absolute_ln_Q_minus_ln_K"],
-            "detailed_balance_target": DETAILED_BALANCE_TOLERANCE,
+            "algebraic_reverse_rate_identity_pass": closure["algebraic_reverse_rate_identity_pass"],
+            "source_provider_detailed_balance_status": closure["source_provider_detailed_balance_status"],
+            "source_provider_detailed_balance_pass": closure["source_provider_detailed_balance_pass"],
+            "raw_quotient_log_evaluation": closure["raw_quotient_log_evaluation"],
             "physical_equilibrium_state_admitted": False,
             "rate_observation_admission": False,
             "independent_raw_rate_validation_available": False,
@@ -497,19 +509,20 @@ def build_summary(config: dict, issue33: dict, reaction_rows_: list[dict], finit
             "uncertainty_status": "not_reported_in_aggregate_table",
             "admission_decision": "aggregate_summary_only_not_admitted",
         },
-        "sensitivity_summary": {
+        "source_correlation_arithmetic_reconstruction": {
             "temperature_reconstruction_rows": len(f1_f2),
             "max_float_decimal_relative_difference": max_reconstruction_error,
-            "f3_exclusion_effect": "not_quantified; primary k14 and admitted local film transport state unavailable",
-            "activity_to_concentration_ratios": [
+            "activity_basis_to_concentration_basis_coefficient_ratios": [
                 {
                     "reaction_id": row["reaction_id"],
                     "temperature_K": row["temperature_K"],
-                    "ratio": row["activity_to_concentration_ratio"],
+                    "ratio": row["activity_basis_to_concentration_basis_coefficient_ratio"],
                 }
                 for row in f1_f2
                 if row["basis"] == "activity"
             ],
+            "physical_kinetic_transport_sensitivity": "not_evaluable; arithmetic reconstruction is not a physical sensitivity study",
+            "f3_exclusion_effect": "not_quantified; primary k14 and admitted local film transport state unavailable",
         },
         "rejected_or_unresolved_cases": [
             "Putta2016 prints F1/F2 third-order coefficient units with s^-2; dimensional reconstruction requires m6 kmol^-2 s^-1 for r in kmol m^-3 s^-1, so the printed unit is rejected and the correction is retained as an adjudication.",
@@ -521,7 +534,7 @@ def build_summary(config: dict, issue33: dict, reaction_rows_: list[dict], finit
         "conclusions": [
             "F1 and F2 concentration and activity relationships are recovered from Putta2016 with the source-printed dimensional inconsistency explicitly corrected for comparison use.",
             "F3 remains a supported-negative source gap rather than a guessed hydroxide coefficient.",
-            "The retained result supports a source-faithful finite-reaction record and algebraic source-state detailed-balance check, not a packet-bound activity closure or physical reactive-film model.",
+            "The retained result supports a source-faithful finite-reaction record and algebraic reverse-rate identity only; source/provider detailed balance is not evaluable without an independent K(T) and standard-state conversion.",
             "No coefficient was tuned to NCCC Case 3C, packed capture, or any absorber result.",
         ],
         "limitations": [
@@ -534,7 +547,7 @@ def build_summary(config: dict, issue33: dict, reaction_rows_: list[dict], finit
             "finite_reactions": FINITE_TABLE.relative_to(ROOT).as_posix(),
             "partition_decisions": PARTITION_TABLE.relative_to(ROOT).as_posix(),
             "rate_observation_comparisons": OBSERVATION_TABLE.relative_to(ROOT).as_posix(),
-            "kinetic_sensitivity": SENSITIVITY_TABLE.relative_to(ROOT).as_posix(),
+            "source_correlation_arithmetic_reconstruction": SOURCE_CORRELATION_TABLE.relative_to(ROOT).as_posix(),
             "report": REPORT.relative_to(ROOT).as_posix(),
         },
         "regeneration_command": "uv run python analyses/nccc_validation/scripts/resolve_issue34_kinetics.py",
@@ -548,10 +561,15 @@ def main() -> int:
     config = load_inputs()
     issue33 = validate_issue33_dependency(config)
     reaction_rows_, reaction_vectors, stoich, elements, charge = reaction_rows(config)
-    finite, sensitivities, _, dimensional_pass = finite_rows(config, reaction_vectors)
+    finite, reconstruction_rows, _, f1_f2_dimensional_pass, f3_theoretical_unit_pass = finite_rows(config, reaction_vectors)
     closure_rows, closure = source_state_closure(config, finite)
     observations = observation_rows(config)
-    partitions = partition_rows(config, reaction_rows_)
+    require(stoich, "source-reaction/projection stoichiometry validation failed")
+    require(elements, "element-balance validation failed")
+    require(charge, "charge-balance validation failed")
+    require(f1_f2_dimensional_pass, "F1/F2 recovered-coefficient dimensional reconstruction failed")
+    require(f3_theoretical_unit_pass, "F3 theoretical required-unit reconstruction failed")
+    partitions = partition_rows(reaction_rows_)
 
     write_csv(
         FINITE_TABLE,
@@ -585,23 +603,23 @@ def main() -> int:
         ],
     )
     write_csv(
-        SENSITIVITY_TABLE,
-        sensitivities,
+        SOURCE_CORRELATION_TABLE,
+        reconstruction_rows,
         [
             "record_type", "reaction_id", "basis", "temperature_K", "source_concentration_labels_mol_L", "k_float",
             "k_decimal", "absolute_float_decimal_difference", "relative_float_decimal_difference",
-            "activity_to_concentration_ratio", "sensitivity_status", "reason",
+            "activity_basis_to_concentration_basis_coefficient_ratio", "reconstruction_status", "reason",
         ],
     )
-    summary = build_summary(config, issue33, reaction_rows_, finite, sensitivities, observations, closure, closure_rows, stoich, elements, charge, dimensional_pass)
+    summary = build_summary(config, issue33, finite, reconstruction_rows, observations, closure, closure_rows, stoich, elements, charge, f1_f2_dimensional_pass, f3_theoretical_unit_pass)
     summary["input_sha256"] = sha256(INPUT)
     summary["generator_sha256"] = sha256(Path(__file__))
-    REPORT.write_text(report_text(config, summary, closure), encoding="utf-8")
+    REPORT.write_text(report_text(config, closure), encoding="utf-8")
     summary["output_sha256"] = {
         "finite_reactions": sha256(FINITE_TABLE),
         "partition_decisions": sha256(PARTITION_TABLE),
         "rate_observation_comparisons": sha256(OBSERVATION_TABLE),
-        "kinetic_sensitivity": sha256(SENSITIVITY_TABLE),
+        "source_correlation_arithmetic_reconstruction": sha256(SOURCE_CORRELATION_TABLE),
         "report": sha256(REPORT),
     }
     SUMMARY.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")

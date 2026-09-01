@@ -120,8 +120,8 @@ outputs:
     kind: issue34_reaction_partition_table
   - path: results/final/tables/issue34_rate_observation_comparisons.csv
     kind: issue34_rate_observation_comparison_table
-  - path: results/final/tables/issue34_kinetic_sensitivity.csv
-    kind: issue34_kinetic_sensitivity_table
+  - path: results/final/tables/issue34_source_correlation_arithmetic_reconstruction.csv
+    kind: issue34_source_correlation_arithmetic_reconstruction_table
   - path: results/final/tables/issue34_kinetics_summary.json
     kind: issue34_kinetics_summary
   - path: results/final/reports/issue34_reaction_kinetics.md
@@ -234,7 +234,7 @@ tracked_results:
   - results/final/tables/issue34_finite_reactions.csv
   - results/final/tables/issue34_partition_decisions.csv
   - results/final/tables/issue34_rate_observation_comparisons.csv
-  - results/final/tables/issue34_kinetic_sensitivity.csv
+  - results/final/tables/issue34_source_correlation_arithmetic_reconstruction.csv
   - results/final/tables/issue34_kinetics_summary.json
   - results/final/reports/issue34_reaction_kinetics.md
 historical_outputs:

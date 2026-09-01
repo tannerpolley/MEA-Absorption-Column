@@ -11,7 +11,7 @@ Status: **supported-negative source-faithful record complete**. This record pres
 
 ## Source and basis boundary
 
-Putta2016 (DOI `10.1016/j.ijggc.2016.08.009`, attachment SHA-256 `fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99`) is the primary finite-rate source. Luo2015 (DOI `10.1016/j.ces.2014.10.013`) supplies secondary mechanism context. The cited Gondal2015 source (DOI `10.1016/j.ces.2014.10.038`) is not present in local Zotero, so no F3 coefficient is invented.
+Putta2016 (DOI `10.1016/j.ijggc.2016.08.009`, Zotero attachment inspection receipt SHA-256 `fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99`) is the primary finite-rate source. Luo2015 (DOI `10.1016/j.ces.2014.10.013`) supplies secondary mechanism context. The cited Gondal2015 source (DOI `10.1016/j.ces.2014.10.038`) is not present in local Zotero, so no F3 coefficient is invented. These hashes are provenance receipts only; this generator does not runtime-verify source PDFs.
 
 Putta's 1 M and 5 M values are source labels only. The immutable issue 33 dependency remains `basis_unresolved`: Position 1 analytical MEA is `4.889309897097635 mol L^-1` and free MEA is `2.491683471902737 mol L^-1`; it is not rounded or admitted as exact 5 M. No capture or kinetic tuning was performed.
 
@@ -21,7 +21,7 @@ The retained species order is `CO2, MEA, H2O, MEAH+, MEACOO-, HCO3-, CO3^2-, H3O
 
 Putta prints `m^6 kmol^-2 s^-2` for the third-order F1/F2 coefficient, but a rate in kmol m^-3 s^-1 requires `m^6 kmol^-2 s^-1`. The printed unit is retained as rejected source metadata and the dimensionally required unit is recorded separately. F3 would require `m^3 kmol^-1 s^-1`, but its coefficient is unavailable.
 
-The source-state closure rows use a strictly positive synthetic state at 313.15 K only to verify `k_reverse = k_forward/K_raw`; the maximum absolute ln(Q/K) is `0.000e+00`. This is not a retained NCCC state, a fitted result, or an activity closure.
+The source-state rows use a strictly positive synthetic state at 313.15 K only to verify the algebraic reverse-rate identity `k_reverse = k_forward/Q_raw`; the maximum relative forward/reverse arithmetic residual is `0.000e+00`. No logarithm of the dimensional Q_raw is taken. Source/provider detailed balance remains not evaluable because an independently sourced K(T) and explicit standard-state conversion are unavailable.
 
 ## Timescale evidence and observations
 
@@ -33,4 +33,4 @@ Putta Table 4 aggregate AARD values are retained as summary-only observations. R
 
 ## Outputs
 
-The input record is `inputs/issue34_kinetics.json`. The generated tables are `issue34_finite_reactions.csv`, `issue34_partition_decisions.csv`, `issue34_rate_observation_comparisons.csv`, and `issue34_kinetic_sensitivity.csv`; gate and identity data are in `issue34_kinetics_summary.json`.
+The input record is `inputs/issue34_kinetics.json`. The generated tables are `issue34_finite_reactions.csv`, `issue34_partition_decisions.csv`, `issue34_rate_observation_comparisons.csv`, and `issue34_source_correlation_arithmetic_reconstruction.csv`; gate and identity data are in `issue34_kinetics_summary.json`.
