@@ -35,6 +35,8 @@ inputs:
     kind: issue33_source_backed_concentration_basis_input
   - path: inputs/issue34_kinetics.json
     kind: issue34_source_faithful_kinetics_input
+  - path: inputs/issue35_transport.json
+    kind: issue35_source_faithful_transport_input
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -126,6 +128,14 @@ outputs:
     kind: issue34_kinetics_summary
   - path: results/final/reports/issue34_reaction_kinetics.md
     kind: issue34_reaction_kinetics_report
+  - path: results/final/tables/issue35_transport_correlations.csv
+    kind: issue35_transport_correlation_table
+  - path: results/final/tables/issue35_transport_sensitivity.csv
+    kind: issue35_transport_sensitivity_table
+  - path: results/final/tables/issue35_transport_summary.json
+    kind: issue35_transport_summary
+  - path: results/final/reports/issue35_transport_inputs.md
+    kind: issue35_transport_input_report
   - path: results/final/figures/issue17_axial_enhancement.pdf
     kind: issue17_enhancement_figure
   - path: results/final/figures/issue17_axial_flux.pdf
@@ -176,6 +186,8 @@ commands:
     - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/resolve_concentration_bases.py
   issue34_kinetics:
     - uv run python analyses/nccc_validation/scripts/resolve_issue34_kinetics.py
+  issue35_transport:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -237,6 +249,10 @@ tracked_results:
   - results/final/tables/issue34_source_correlation_arithmetic_reconstruction.csv
   - results/final/tables/issue34_kinetics_summary.json
   - results/final/reports/issue34_reaction_kinetics.md
+  - results/final/tables/issue35_transport_correlations.csv
+  - results/final/tables/issue35_transport_sensitivity.csv
+  - results/final/tables/issue35_transport_summary.json
+  - results/final/reports/issue35_transport_inputs.md
 historical_outputs:
   note: Pre-0.2 runtime-option and configuration matrices are preserved for provenance only, have no supported generator, and are not current validation evidence.
   paths:

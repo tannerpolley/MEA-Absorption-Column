@@ -1,0 +1,264 @@
+{
+  "schema_version": "issue35_source_faithful_transport_v1",
+  "claim_label": "supported_negative_source_faithful_transport_inputs",
+  "owner": "MEA-Absorption-Column/analyses/nccc_validation",
+  "issue": 35,
+  "scope": "Reconstruct source-labeled effective diffusivity, density, and viscosity inputs and retain the unequal-ion closure decision without adopting a physical transport film.",
+  "common_domain": {
+    "temperature_K": [293.15, 323.15],
+    "loading_mol_CO2_per_mol_MEA": [0.0, 0.5],
+    "concentration_basis_status": "basis_unresolved_from_issue33",
+    "exact_1M_or_5M_admission": false
+  },
+  "issue33_dependency": {
+    "summary_path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis_summary.json",
+    "summary_sha256": "28363ae5d9b18b93b03988976abdba14d4e6035ebfac224962b685258c8bc75e",
+    "table_path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis.csv",
+    "table_sha256": "1d8c6cc7ff3a801a8b8e1975a6b7f8618ae2bcef3a01a63df08c49bdfeb09b1d",
+    "required_claim_label": "reference_backed_mapping_with_basis_unresolved_admission",
+    "required_position_1_analytical_mol_L": 4.889309897097635,
+    "required_position_1_free_mea_mol_L": 2.491683471902737,
+    "required_row_admission_decision": "basis_unresolved"
+  },
+  "issue34_dependency": {
+    "report_path": "analyses/nccc_validation/results/final/reports/issue34_reaction_kinetics.md",
+    "report_sha256": "764d615ed0802d57fedf1dd468d63de56f621d8c17611857c406b97839c0938b",
+    "required_claim_label": "supported_negative_source_faithful_kinetics_reaction_partition"
+  },
+  "source_records": [
+    {
+      "id": "Putta2017",
+      "citation": "Putta et al. (2017), CO2 absorption into loaded aqueous MEA solutions: Impact of different model parameter correlations and thermodynamic models",
+      "doi": "10.1016/j.cej.2017.06.134",
+      "zotero_parent_key": "WMNI4QQ6",
+      "zotero_attachment_key": "YPM9CEQV",
+      "attachment_sha256_inspection_receipt": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "locators": [
+        "PDF p. 14, Section 2.3, Eqs. 12--13: N2O analogy and modified Stokes-Einstein CO2 diffusivity",
+        "PDF pp. 14--15, Table 4: source domains for DC1--DC6",
+        "PDF p. 6, Table 1: source-labeled solution and loading ranges"
+      ]
+    },
+    {
+      "id": "Putta2016",
+      "citation": "Putta et al. (2016), CO2 absorption into loaded aqueous MEA solutions: Kinetics assessment using penetration theory",
+      "doi": "10.1016/j.ijggc.2016.08.009",
+      "zotero_parent_key": "VR43Z4ZX",
+      "zotero_attachment_key": "BSUB8BSF",
+      "attachment_sha256_inspection_receipt": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "locators": [
+        "PDF p. 6 (printed p. 343), Table 3: density, viscosity, and diffusivity source chain",
+        "PDF p. 6 (printed p. 343), Table 3: Snijder1993 is the MEA-in-aqueous-MEA diffusivity source"
+      ]
+    },
+    {
+      "id": "Luo2015",
+      "citation": "Luo et al. (2015), Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutions",
+      "doi": "10.1016/j.ces.2014.10.013",
+      "zotero_parent_key": "KAB4KF8F",
+      "zotero_attachment_key": "MFRDNYCS",
+      "attachment_sha256_inspection_receipt": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "locators": [
+        "PDF p. 5 (printed p. 61), Section 3.2, Eqs. 21--24: CO2-water, modified Stokes-Einstein, and MEA diffusivity",
+        "PDF p. 5 (printed p. 61), Eqs. 15--18: source-labeled 1 M/5 M density and viscosity correlations"
+      ]
+    },
+    {
+      "id": "Snijder1993",
+      "citation": "Snijder et al. (1993), Diffusion coefficients of several aqueous alkanolamine solutions",
+      "doi": "10.1021/je00011a037",
+      "zotero_parent_key": "CSSPBD9J",
+      "zotero_attachment_key": "ANNK86SA",
+      "attachment_sha256_inspection_receipt": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "locators": [
+        "PDF p. 3 (printed p. 477), Table III: MEA diffusivity, density, and viscosity observations",
+        "PDF p. 3 (printed p. 477), Eq. 8: ln(D) correlation and stated 298--333 K, 43--5016 mol/m3 domain",
+        "PDF p. 5 (printed p. 479), discussion: Stokes-Einstein extension can deviate at high concentration"
+      ]
+    },
+    {
+      "id": "Amundsen2009",
+      "citation": "Amundsen et al. (2009), Density and viscosity of monoethanolamine + water + carbon dioxide from (25 to 80) deg C",
+      "doi": "10.1021/je900188m",
+      "zotero_parent_key": "3QJR6RHH",
+      "zotero_attachment_key": "NGQVTDX7",
+      "attachment_sha256_inspection_receipt": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "locators": [
+        "PDF p. 3 (printed p. 3098), Eqs. 4--6 and Table 10: Weiland density relationship and parameters",
+        "PDF p. 4 (printed p. 3099), Eqs. 9--10 and Table 12: Weiland viscosity relationship and parameters",
+        "PDF p. 4 (printed p. 3099), uncertainty text: typical loaded viscosity uncertainty about 3% or 0.1 mPa s"
+      ]
+    },
+    {
+      "id": "Hartono2014",
+      "citation": "Hartono et al. (2014), Density and viscosity of aqueous monoethanolamine solutions",
+      "doi": "10.1021/je401081e",
+      "zotero_parent_key": "5VGPDVGB",
+      "zotero_attachment_key": "L7SKR73P",
+      "attachment_sha256_inspection_receipt": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "locators": [
+        "PDF p. 2 (printed p. 1809), Tables 1--2: density observations and fitted density model",
+        "PDF p. 5 (printed p. 1812), Table 7 and Eqs. 8--9: 30 mass% viscosity observations and loaded correction"
+      ]
+    },
+    {
+      "id": "Gaspar2015",
+      "citation": "Gaspar and Fosbol (2015), A general enhancement factor model for absorption and desorption systems",
+      "doi": "10.1016/j.ces.2015.08.023",
+      "zotero_parent_key": "PPDL8269",
+      "zotero_attachment_key": "PW5C8YSL",
+      "attachment_sha256_inspection_receipt": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "role": "unequal-diffusivity enhancement context only; no source coefficient is admitted",
+      "locators": [
+        "PDF p. 2 (printed p. 204), introduction: equal-diffusivity and unequal-diffusivity model context"
+      ]
+    },
+    {
+      "id": "Ko_primary_N2O",
+      "citation": "Ko et al., primary N2O diffusivity source cited by Putta2017 for DC1",
+      "doi": null,
+      "zotero_parent_key": null,
+      "zotero_attachment_key": null,
+      "attachment_sha256_inspection_receipt": null,
+      "evidence_status": "not_recovered_in_local_zotero",
+      "locators": ["Putta2017 PDF p. 14, Eq. 12 and Table 4, DC1"]
+    },
+    {
+      "id": "Jamal_primary_N2O",
+      "citation": "Jamal, primary N2O diffusivity source cited by Putta2017 for DC2",
+      "doi": null,
+      "zotero_parent_key": null,
+      "zotero_attachment_key": null,
+      "attachment_sha256_inspection_receipt": null,
+      "evidence_status": "not_recovered_in_local_zotero",
+      "locators": ["Putta2017 PDF p. 14, Eq. 12 and Table 4, DC2"]
+    },
+    {
+      "id": "Ying_Eimer_primary_N2O",
+      "citation": "Ying and Eimer, primary N2O diffusivity source cited by Putta2017 for DC3",
+      "doi": null,
+      "zotero_parent_key": null,
+      "zotero_attachment_key": null,
+      "attachment_sha256_inspection_receipt": null,
+      "evidence_status": "not_recovered_in_local_zotero",
+      "locators": ["Putta2017 PDF p. 14, Eq. 12 and Table 4, DC3"]
+    }
+  ],
+  "correlations": {
+    "co2_water": {
+      "id": "co2_water_luo2015_eq21",
+      "equation": "D_CO2_water = 2.35e-6 exp(-2119/T)",
+      "source": "Luo2015",
+      "source_locator": "Luo2015 PDF p. 5 (printed p. 61), Eq. 21",
+      "temperature_domain_K": [298.0, 343.0],
+      "output_unit": "m2/s",
+      "uncertainty": "not reported"
+    },
+    "co2_amine_modified_stokes": {
+      "id": "co2_amine_modified_stokes_luo2015_eq22",
+      "equation": "D_CO2_amine = D_CO2_water (mu_water/mu_amine)^0.8",
+      "source": "Luo2015",
+      "source_locator": "Luo2015 PDF p. 5 (printed p. 61), Eq. 22",
+      "viscosity_source": "Amundsen2009 Weiland Eq. 9 and Eq. 10",
+      "temperature_domain_K": [298.0, 353.0],
+      "mass_fraction_domain_percent": [20.0, 40.0],
+      "loading_domain_mol_CO2_per_mol_MEA": [0.0, 0.5],
+      "output_unit": "m2/s",
+      "uncertainty": "Amundsen2009 reports about 3% or 0.1 mPa s for typical loaded viscosity; propagated diffusivity uncertainty is not calculated"
+    },
+    "mea_free": {
+      "id": "mea_free_snijder1993_eq8",
+      "equation": "ln(D_MEA) = -13.275 - 2198.3/T - 7.8142e-5 C",
+      "source": "Snijder1993",
+      "source_locator": "Snijder1993 PDF p. 3 (printed p. 477), Eq. 8",
+      "temperature_domain_K": [298.0, 333.0],
+      "concentration_domain_mol_m3": [43.0, 5016.0],
+      "input_concentration_unit": "mol/m3",
+      "output_unit": "m2/s",
+      "uncertainty": "source states fit within 5% over the complete temperature and concentration range; displayed Table III values are rounded"
+    },
+    "n2o_analogy": {
+      "id": "co2_amine_n2o_analogy_putta2017_eq12",
+      "equation": "D_CO2_amine = (D_CO2_water/D_N2O_water) D_N2O_amine",
+      "source": "Putta2017",
+      "source_locator": "Putta2017 PDF p. 14, Eq. 12; PDF pp. 14--15, Table 4",
+      "required_inputs": ["D_N2O_water(T)", "D_N2O_amine(T,C,loading)"],
+      "status": "blocked_missing_source_complete_primary_N2O_chain",
+      "uncertainty": "unknown because primary N2O rows and fit uncertainty were not recovered"
+    },
+    "weiland_density": {
+      "id": "density_weiland_amundsen_eq4_to_eq6",
+      "equation": "rho = sum(x_i M_i)/V; V = x1 V1 + x2 V2 + x3 V3 + x1 x2 A + x1 x3(B + C x1); V1 = M1/(D T_K^2 + E T_K + F)",
+      "source": "Amundsen2009",
+      "source_locator": "Amundsen2009 PDF p. 3 (printed p. 3098), Eqs. 4--6 and Table 10",
+      "parameters": {"A": -1.8218, "B": 0.0, "C": 0.0, "D": -5.35162e-7, "E": -4.51417e-4, "F": 1.19451, "M1": 61.08, "V3": 0.04747},
+      "input_basis": "true species mole fractions and molecular masses; conversion is not admitted while issue33 basis is unresolved",
+      "output_unit": "kg/m3",
+      "uncertainty": "about 0.2% for typical loaded systems, except highest temperatures/loadings"
+    },
+    "weiland_viscosity": {
+      "id": "viscosity_weiland_amundsen_eq9_to_eq10",
+      "equation": "eta/eta_water = exp((((a w+b)T_K + (c w+d))(alpha(e w+f T_K+g)+1)w)/T_K^2)",
+      "source": "Amundsen2009",
+      "source_locator": "Amundsen2009 PDF p. 4 (printed p. 3099), Eqs. 9--10 and Table 12",
+      "parameters": {"a": 0.0, "b": 0.0, "c": 21.186, "d": 2373.0, "e": 0.01015, "f": 0.0093, "g": -2.2589, "eta_water_at_20C_mPa_s": 1.0020},
+      "input_basis": "w is numerical MEA mass percent and alpha is mol CO2 per mol MEA",
+      "output_unit": "Pa s",
+      "uncertainty": "about 3% or 0.1 mPa s for typical loaded MEA-water systems"
+    },
+    "legacy_ion_scalar": {
+      "id": "ion_effective_diffusivity_legacy_scalar",
+      "equation": "D_ion = exp(-22.64 - 1000/T - 0.7 ln(mu_mix))",
+      "source": null,
+      "source_locator": "src/mea_absorption_column/Properties/Transport_Properties.py legacy code path",
+      "status": "rejected_unattributed_legacy_numeric_default",
+      "uncertainty": "unknown"
+    }
+  },
+  "snijder_table_iii": [
+    {"temperature_K": 298.0, "concentration_mol_m3": 43.0, "diffusivity_1e9_m2_s": 1.12, "density_kg_m3": 996.9, "viscosity_mPa_s": 0.89},
+    {"temperature_K": 297.9, "concentration_mol_m3": 1012.0, "diffusivity_1e9_m2_s": 1.00, "density_kg_m3": 999.1, "viscosity_mPa_s": 1.07},
+    {"temperature_K": 297.9, "concentration_mol_m3": 2009.0, "diffusivity_1e9_m2_s": 0.91, "density_kg_m3": 1001.6, "viscosity_mPa_s": 1.31},
+    {"temperature_K": 298.1, "concentration_mol_m3": 5012.0, "diffusivity_1e9_m2_s": 0.69, "density_kg_m3": 1010.0, "viscosity_mPa_s": 2.31},
+    {"temperature_K": 308.0, "concentration_mol_m3": 49.0, "diffusivity_1e9_m2_s": 1.39, "density_kg_m3": 994.1, "viscosity_mPa_s": 0.73},
+    {"temperature_K": 308.0, "concentration_mol_m3": 1014.0, "diffusivity_1e9_m2_s": 1.28, "density_kg_m3": 995.1, "viscosity_mPa_s": 0.85},
+    {"temperature_K": 308.0, "concentration_mol_m3": 2012.0, "diffusivity_1e9_m2_s": 1.17, "density_kg_m3": 998.1, "viscosity_mPa_s": 1.02},
+    {"temperature_K": 308.0, "concentration_mol_m3": 5011.0, "diffusivity_1e9_m2_s": 0.93, "density_kg_m3": 1006.0, "viscosity_mPa_s": 1.78},
+    {"temperature_K": 318.0, "concentration_mol_m3": 55.0, "diffusivity_1e9_m2_s": 1.75, "density_kg_m3": 990.4, "viscosity_mPa_s": 0.60},
+    {"temperature_K": 318.0, "concentration_mol_m3": 1015.0, "diffusivity_1e9_m2_s": 1.59, "density_kg_m3": 992.1, "viscosity_mPa_s": 0.68},
+    {"temperature_K": 318.1, "concentration_mol_m3": 2017.0, "diffusivity_1e9_m2_s": 1.45, "density_kg_m3": 994.1, "viscosity_mPa_s": 0.79},
+    {"temperature_K": 318.1, "concentration_mol_m3": 5016.0, "diffusivity_1e9_m2_s": 1.18, "density_kg_m3": 1001.0, "viscosity_mPa_s": 1.22},
+    {"temperature_K": 333.0, "concentration_mol_m3": 58.0, "diffusivity_1e9_m2_s": 2.26, "density_kg_m3": 983.3, "viscosity_mPa_s": 0.47},
+    {"temperature_K": 332.9, "concentration_mol_m3": 1020.0, "diffusivity_1e9_m2_s": 2.10, "density_kg_m3": 984.8, "viscosity_mPa_s": 0.53},
+    {"temperature_K": 333.0, "concentration_mol_m3": 2016.0, "diffusivity_1e9_m2_s": 1.99, "density_kg_m3": 986.5, "viscosity_mPa_s": 0.60},
+    {"temperature_K": 333.0, "concentration_mol_m3": 5015.0, "diffusivity_1e9_m2_s": 1.64, "density_kg_m3": 992.5, "viscosity_mPa_s": 0.90}
+  ],
+  "candidate_A": {
+    "id": "A_equal_ion_effective_fick",
+    "flux_equation": "N_i = -D_i_eff dc_i/dz",
+    "closure": "charged species share one source-defined effective diffusivity only if the source defines that lumping",
+    "status": "reconstructable_as_reduced_form_but_not_admitted",
+    "missing_inputs": ["source-complete effective diffusivity for each of the nine species or a source-defined ion lump", "accepted concentration basis and local state"]
+  },
+  "candidate_B": {
+    "id": "B_unequal_ion_zero_current",
+    "flux_equation": "J = -c M(x,D) [Gamma(x) d(ln x)/dz + z F/(R T) dpsi/dz]; N_i = J_i + x_i N_total",
+    "constraints": ["N_total = sum(N_i)", "J_i = N_i - x_i N_total", "sum(J_i) = 0", "sum(z_i F N_i) = 0", "psi(delta_L) = 0"],
+    "required_inputs": ["true-species mole fractions", "Gamma from ePC-SAFT", "complete cited mobility law", "source-complete unequal ion diffusivities", "density in mol/m3"],
+    "status": "non_executable_missing_complete_mobility_law_and_ion_inputs",
+    "decision": "not_evaluable"
+  },
+  "no_admission_rules": [
+    "Do not compare candidate fluxes without an identical accepted state, admitted kinetics, and source-complete transport inputs.",
+    "Do not convert source mass density to a film molar density while issue33 concentration basis remains unresolved.",
+    "Do not construct a Maxwell-Stefan matrix or infer off-diagonal mobilities from one scalar ion value.",
+    "Do not tune a correlation to Case 3C, NCCC capture, or a physical film result."
+  ]
+}

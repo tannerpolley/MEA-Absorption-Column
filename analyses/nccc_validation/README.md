@@ -40,6 +40,7 @@ export PYTHONPATH="src"
 | `analyze_issue17_enhancement_comparison.py` | Evaluates the four issue 17 enhancement equations on 21 retained current-reconstruction fugacity-only states and applies the staged numerical and physical gates. | Evaluates 84 fixed-state rows. | No direct dependency; reads the retained fixed-state table. |
 | `render_issue17_enhancement_comparison.py` | Renders the three issue 17 equation-comparison figures from the retained 84-row table. | No. | No direct dependency. |
 | `resolve_concentration_bases.py` | Reconstructs prepared, loaded analytical, and free-MEA concentration bases for Putta/Luo labels and retained NCCC Case 3C states. | Reconstructs retained nine-species states. | Requires the certified reactive ePC-SAFT table. |
+| `resolve_issue35_transport.py` | Reconstructs source-labeled diffusivity, density, and viscosity inputs and retains the unequal-ion closure decision. | No. | No. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -216,6 +217,14 @@ source-correlation arithmetic reconstruction table is explicitly not a
 physical kinetic or transport sensitivity study. It also refreshes the
 source-faithful report at
 `results/final/reports/issue34_reaction_kinetics.md`.
+
+Regenerate the Issue 35 source-faithful transport-input and unequal-ion closure record:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py
+```
+
+This retains the Luo/Snijder/Amundsen source reconstructions, density and viscosity observations, the blocked Putta N2O analogy, and the unattributed legacy ion-scalar rejection. Candidate B remains non-executable until a complete mobility law, unequal-ion inputs, and an accepted true-species basis are available. No physical flux comparison or transport adoption is performed.
 
 Morgan's 7.3% campaign uncertainty is used only for the diagnostic unloaded
 concentration at each local state temperature; it is not a prepared-concentration
