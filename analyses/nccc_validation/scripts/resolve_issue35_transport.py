@@ -6,6 +6,13 @@ import json
 import math
 from pathlib import Path
 
+EXPECTED_OBSERVATION_ROW_COUNTS = {
+    "amundsen_weiland_density": 5,
+    "amundsen_weiland_unloaded_density": 5,
+    "hartono_density": 8,
+    "hartono_viscosity": 8,
+}
+
 
 ROOT = Path(__file__).resolve().parents[3]
 ANALYSIS = ROOT / "analyses/nccc_validation"
@@ -100,11 +107,17 @@ def validate_parameters(name: str, record: dict) -> None:
         require(float(parameters[key]) > 0.0, f"{name} parameter {key} must be positive")
 
 
-def validate_observation_block(name: str, block: dict, expected_unit: str) -> None:
+def validate_observation_block(name: str, block: dict, correlation: dict, expected_unit: str, expected_temperature_unit: str, expected_loading_unit: str) -> None:
+    require(block.get("source") and block.get("source_locator"), f"{name} source or locator is missing")
+    require(block["temperature_unit"] == expected_temperature_unit, f"{name} temperature unit changed")
+    require(block["loading_unit"] == expected_loading_unit, f"{name} loading unit changed")
     require(block["value_unit"] == expected_unit, f"{name} value unit changed")
+    require(block["expected_row_count"] == EXPECTED_OBSERVATION_ROW_COUNTS[name], f"{name} expected row count changed")
+    require(block["expected_row_count"] > 0 and len(block["rows"]) == block["expected_row_count"], f"{name} row count is not the source-record count")
     validate_domain(f"{name}.temperature_domain_C", block["temperature_domain_C"])
     validate_domain(f"{name}.loading_domain_mol_CO2_per_mol_MEA", block["loading_domain_mol_CO2_per_mol_MEA"])
     require(finite_number(block["mass_fraction_percent"]) and float(block["mass_fraction_percent"]) > 0.0, f"{name} mass fraction is invalid")
+    require(in_domain(float(block["mass_fraction_percent"]), correlation["mass_fraction_domain_percent"]) == "pass", f"{name} mass fraction is outside its associated correlation domain")
     for index, source_row in enumerate(block["rows"], start=1):
         require(finite_number(source_row["temperature_C"]), f"{name} row {index} temperature is invalid")
         require(in_domain(float(source_row["temperature_C"]), block["temperature_domain_C"]) == "pass", f"{name} row {index} temperature is outside its declared domain")
@@ -156,9 +169,10 @@ def validate_config(config: dict) -> None:
         require(in_domain(float(observation["temperature_K"]), config["correlations"]["mea_free"]["temperature_domain_K"]) == "pass", f"Snijder row {index} temperature is outside its declared domain")
         require(in_domain(float(observation["concentration_mol_m3"]), config["correlations"]["mea_free"]["concentration_domain_mol_m3"]) == "pass", f"Snijder row {index} concentration is outside its declared domain")
 
-    validate_observation_block("amundsen_weiland_density", config["source_observations"]["amundsen_weiland_density"], "g/cm3")
-    validate_observation_block("hartono_density", config["source_observations"]["hartono_density"], "kg/m3")
-    validate_observation_block("hartono_viscosity", config["source_observations"]["hartono_viscosity"], "mPa s")
+    validate_observation_block("amundsen_weiland_unloaded_density", config["source_observations"]["amundsen_weiland_unloaded_density"], config["correlations"]["weiland_density"], "g/cm3", "deg C", "mol CO2/mol MEA")
+    validate_observation_block("amundsen_weiland_density", config["source_observations"]["amundsen_weiland_density"], config["correlations"]["weiland_density"], "g/cm3", "deg C", "mol CO2/mol MEA")
+    validate_observation_block("hartono_density", config["source_observations"]["hartono_density"], config["correlations"]["hartono_density"], "kg/m3", "deg C", "mol CO2/mol MEA")
+    validate_observation_block("hartono_viscosity", config["source_observations"]["hartono_viscosity"], config["correlations"]["hartono_viscosity"], "mPa s", "deg C", "mol CO2/mol MEA")
 
 
 def validate_dependencies(config: dict) -> dict:
@@ -209,6 +223,40 @@ def weiland_viscosity(T_K: float, mass_percent: float, loading: float, correlati
     return eta_water * math.exp(exponent)
 
 
+def molecular_fractions(mass_percent: float, loading: float, parameters: dict) -> tuple[float, float, float]:
+    mass_fraction = mass_percent / 100.0
+    n_mea = 1.0
+    n_water = parameters["M1"] * (1.0 - mass_fraction) / (mass_fraction * parameters["M2"])
+    n_co2 = loading
+    total = n_mea + n_water + n_co2
+    return n_mea / total, n_water / total, n_co2 / total
+
+
+def weiland_density(T_K: float, mass_percent: float, loading: float, correlation: dict, unloaded_source_g_cm3: float) -> float:
+    p = correlation["parameters"]
+    x1, x2, x3 = molecular_fractions(mass_percent, loading, p)
+    x1_0, x2_0, _ = molecular_fractions(mass_percent, 0.0, p)
+    v1 = p["M1"] / (p["D"] * T_K**2 + p["E"] * T_K + p["F"])
+    v2 = ((x1_0 * p["M1"] + x2_0 * p["M2"]) / unloaded_source_g_cm3 - x1_0 * v1 - x1_0 * x2_0 * p["A"]) / x2_0
+    volume = x1 * v1 + x2 * v2 + x3 * p["V3"] + x1 * x2 * p["A"] + x1 * x3 * (p["B"] + p["C"] * x1)
+    return 1000.0 * (x1 * p["M1"] + x2 * p["M2"] + x3 * p["M3"]) / volume
+
+
+def hartono_density(T_K: float, mass_percent: float, loading: float, correlation: dict, unloaded_source_kg_m3: float) -> float:
+    p = correlation["parameters"]
+    x1, _, _ = molecular_fractions(mass_percent, loading, p)
+    w_co2_added = loading * x1 * p["M3"] / (x1 * p["M1"] + (1.0 - x1 - loading * x1) * p["M2"] + loading * x1 * p["M3"])
+    phi = (p["a1"] * x1 * loading + p["a2"] * x1) / (p["a3"] + x1)
+    return unloaded_source_kg_m3 / (1.0 - w_co2_added * (1.0 - phi))
+
+
+def hartono_viscosity(T_K: float, mass_percent: float, loading: float, correlation: dict, unloaded_source_pa_s: float) -> float:
+    p = correlation["parameters"]
+    x1, _, x3 = molecular_fractions(mass_percent, loading, p)
+    eta_gamma_star = 1e-3 * math.exp((p["loaded_coefficient_1"] * x1 + p["loaded_coefficient_2"] * loading * x1) / (p["loaded_denominator_intercept"] + x1))
+    return math.exp(x3 * math.log(eta_gamma_star) + (1.0 - x3) * math.log(unloaded_source_pa_s))
+
+
 def row(**values: object) -> dict:
     return {field: values.get(field, "") for field in CORRELATION_FIELDS}
 
@@ -219,6 +267,16 @@ def source_status(T_K: float, mass_percent: float | None, loading: float | None,
         checks.append(in_domain(mass_percent, correlation.get("mass_fraction_domain_percent")))
     if loading is not None:
         checks.append(in_domain(loading, correlation.get("loading_domain_mol_CO2_per_mol_MEA")))
+    return "pass" if all(check == "pass" for check in checks) else "outside_source_domain"
+
+
+def observation_status(T_C: float, block: dict, correlation: dict, loading: float) -> str:
+    checks = (
+        in_domain(T_C, block["temperature_domain_C"]),
+        in_domain(T_C + 273.15, correlation.get("temperature_domain_K")),
+        in_domain(block["mass_fraction_percent"], correlation.get("mass_fraction_domain_percent")),
+        in_domain(loading, block["loading_domain_mol_CO2_per_mol_MEA"]),
+    )
     return "pass" if all(check == "pass" for check in checks) else "outside_source_domain"
 
 
@@ -244,7 +302,30 @@ def add_observation_rows(rows: list[dict], config: dict, block_name: str, correl
         for loading, source_value in zip(source_row["loading"], source_row["values"]):
             loading = float(loading)
             source_value = float(source_value)
-            rows.append(row(record_type="source_observation", record_id=f"{block_name}_T{source_row['temperature_C']:.2f}_a{loading:.2f}", property=property_name, source=block["source"], source_locator=block["source_locator"], equation=correlation["equation"], temperature_K=T_K, mass_fraction_percent=block["mass_fraction_percent"], loading_mol_CO2_per_mol_MEA=loading, source_value=source_value, source_value_unit=block["value_unit"], value=source_value * factor, value_unit=output_unit, source_domain_status="pass", common_issue_domain_status=in_domain(T_K, config["common_domain"]["temperature_K"]), uncertainty_status=block["uncertainty_status"], admission_decision="required_input_retained_not_admitted", reason=reason))
+            rows.append(row(record_type="source_observation", record_id=f"{block_name}_T{source_row['temperature_C']:.2f}_a{loading:.2f}", property=property_name, source=block["source"], source_locator=block["source_locator"], equation=correlation["equation"], temperature_K=T_K, mass_fraction_percent=block["mass_fraction_percent"], loading_mol_CO2_per_mol_MEA=loading, source_value=source_value, source_value_unit=block["value_unit"], value=source_value * factor, value_unit=output_unit, source_domain_status=observation_status(float(source_row["temperature_C"]), block, correlation, loading), common_issue_domain_status=in_domain(T_K, config["common_domain"]["temperature_K"]), uncertainty_status=block["uncertainty_status"], admission_decision="required_input_retained_not_admitted", reason=reason))
+            count += 1
+    return count
+
+
+def add_model_comparison_rows(rows: list[dict], config: dict, block_name: str, correlation_name: str, anchor_block_name: str, property_name: str, output_unit: str, source_factor: float, anchor_factor: float, evaluator, reason: str) -> int:
+    block = config["source_observations"][block_name]
+    anchor_block = config["source_observations"][anchor_block_name]
+    correlation = config["correlations"][correlation_name]
+    count = 0
+    for source_row in block["rows"]:
+        T_C = float(source_row["temperature_C"])
+        T_K = T_C + 273.15
+        anchor_row = next(row for row in anchor_block["rows"] if float(row["temperature_C"]) == T_C)
+        anchor_value = next(float(value) for loading, value in zip(anchor_row["loading"], anchor_row["values"]) if float(loading) == 0.0) * anchor_factor
+        for loading, source_value in zip(source_row["loading"], source_row["values"]):
+            loading = float(loading)
+            source_value = float(source_value)
+            calculated = evaluator(T_K, float(block["mass_fraction_percent"]), loading, correlation, anchor_value)
+            require(math.isfinite(calculated) and calculated > 0.0, f"{correlation_name} generated value is not finite and positive")
+            reference = source_value * source_factor
+            absolute_residual = abs(calculated - reference)
+            relative_residual = absolute_residual / reference
+            rows.append(row(record_type="source_model_evaluation", record_id=f"{block_name}_model_T{T_C:.2f}_a{loading:.2f}", property=property_name, source=block["source"], source_locator=correlation["source_locator"], equation=correlation["equation"], source_parameters_json=parameters_json(correlation["parameters"]), temperature_K=T_K, mass_fraction_percent=block["mass_fraction_percent"], loading_mol_CO2_per_mol_MEA=loading, source_value=source_value, source_value_unit=block["value_unit"], value=calculated, value_unit=output_unit, reference_value=reference, reference_unit=output_unit, absolute_residual=absolute_residual, absolute_residual_unit=output_unit, relative_residual=relative_residual, source_domain_status=observation_status(T_C, block, correlation, loading), common_issue_domain_status=in_domain(T_K, config["common_domain"]["temperature_K"]), uncertainty_status=block["uncertainty_status"], admission_decision="source_reconstruction_only_not_physical_admission", reason=reason))
             count += 1
     return count
 
@@ -300,9 +381,15 @@ def build_rows(config: dict) -> tuple[list[dict], dict]:
         rows.append(row(record_type="source_observation", record_id=f"snijder_table_iii_{index:02d}_viscosity", property="solution viscosity", source="Snijder1993", source_locator="Snijder1993 PDF p. 3 (printed p. 477), Table III", temperature_K=T_K, concentration_mol_m3=concentration, source_value=observation["viscosity_mPa_s"], source_value_unit="mPa s", value=float(observation["viscosity_mPa_s"]) * 1e-3, value_unit="Pa s", source_domain_status=combined_status, common_issue_domain_status=in_domain(T_K, domain["temperature_K"]), uncertainty_status="not reported at retained Table III locator", admission_decision="required_input_retained_not_admitted", reason="Source viscosity is reported in mPa s and is emitted in this CSV after conversion to Pa s."))
 
     observation_counts = {
+        "amundsen_weiland_unloaded_density": add_observation_rows(rows, config, "amundsen_weiland_unloaded_density", "weiland_density", "unloaded 30 mass% MEA density", "g/cm3", 1.0, "Amundsen2009 unloaded density anchor retained in its source units; it is used only to reconstruct the unprinted Weiland V2 term."),
         "amundsen_weiland_density": add_observation_rows(rows, config, "amundsen_weiland_density", "weiland_density", "loaded 30 mass% MEA density", "g/cm3", 1.0, "Amundsen2009 density observation retained in its source units; no conversion to absorber molar density is made."),
         "hartono_density": add_observation_rows(rows, config, "hartono_density", "hartono_density", "loaded 30 mass% MEA density", "kg/m3", 1.0, "Hartono2014 density observation retained in its source units; no conversion to absorber molar density is made."),
         "hartono_viscosity": add_observation_rows(rows, config, "hartono_viscosity", "hartono_viscosity", "loaded 30 mass% MEA viscosity", "Pa s", 1e-3, "Hartono2014 source viscosity is reported in mPa s and is emitted in this CSV after conversion to Pa s."),
+    }
+    model_counts = {
+        "weiland_density": add_model_comparison_rows(rows, config, "amundsen_weiland_density", "weiland_density", "amundsen_weiland_unloaded_density", "loaded 30 mass% MEA density (Weiland reconstruction)", "kg/m3", 1000.0, 1.0, weiland_density, "Weiland density evaluated against Amundsen2009 loaded 30 mass% observations; V2 is reconstructed from the same-temperature unloaded Table 1 anchor because Table 10 does not print V2. This is source-labeled and non-admitted."),
+        "hartono_density": add_model_comparison_rows(rows, config, "hartono_density", "hartono_density", "hartono_density", "loaded 30 mass% MEA density (Hartono Eq. 5)", "kg/m3", 1.0, 1.0, hartono_density, "Hartono Eq. 5 evaluated against Table 3 30 mass% density observations using the same-temperature alpha=0 Table 3 observation as the unloaded-density anchor. This is source-labeled and non-admitted."),
+        "hartono_viscosity": add_model_comparison_rows(rows, config, "hartono_viscosity", "hartono_viscosity", "hartono_viscosity", "loaded 30 mass% MEA viscosity (Hartono loaded correction)", "Pa s", 1e-3, 1e-3, hartono_viscosity, "Hartono loaded viscosity correction evaluated against Table 7 30 mass% observations using the same-temperature alpha=0 source observation as the unloaded-viscosity anchor; this is not a full independent Eq. 6--9 prediction. The result is source-labeled and non-admitted."),
     }
 
     n2o = config["correlations"]["n2o_analogy"]
@@ -314,10 +401,25 @@ def build_rows(config: dict) -> tuple[list[dict], dict]:
         "snijder_max_relative_residual": max(snijder_residuals),
         "snijder_max_absolute_residual_m2_s": max(snijder_absolute_residuals),
         "snijder_row_count": len(snijder_residuals),
-        "positive_evaluated_values": all(float(item["value"]) > 0.0 for item in rows if item["value"] != ""),
+        "positive_evaluated_values": all(math.isfinite(float(item["value"])) and float(item["value"]) > 0.0 for item in rows if item["value"] != ""),
         "source_observation_counts": observation_counts,
+        "source_model_evaluation_counts": model_counts,
     }
     return rows, diagnostics
+
+
+def validate_generated_rows(rows: list[dict]) -> None:
+    for index, item in enumerate(rows, start=1):
+        for field in ("value", "reference_value", "absolute_residual", "relative_residual"):
+            if item[field] == "":
+                continue
+            try:
+                value = float(item[field])
+            except (TypeError, ValueError) as error:
+                raise ValueError(f"generated row {index} field {field} is not numeric") from error
+            require(math.isfinite(value), f"generated row {index} field {field} is not finite")
+            if field == "value":
+                require(value > 0.0, f"generated row {index} value is not positive")
 
 
 def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
@@ -360,7 +462,7 @@ Candidate B, the unequal-ion zero-current form, is not executable. Its minimum r
 
 Snijder1993 Eq. 8 retains `ln(D_MEA) = -13.275 - 2198.3/T - 7.8142e-5 C`, with `C` in `mol/m3` and `D` in `m2/s`. The 16 Table III observations retain density and viscosity. Snijder source viscosity is reported in `mPa s`; its emitted CSV value is converted to `Pa s`. The maximum absolute residual is `{diagnostics['snijder_max_absolute_residual_m2_s']:.9e} m2/s` and the maximum relative residual is `{diagnostics['snijder_max_relative_residual']:.6f}` against the displayed, rounded diffusivities. Snijder's source statement that the fit is within 5% is preserved as source metadata; the rounded table alone does not reproduce that statement at every displayed row.
 
-Amundsen2009 Weiland density parameters and loaded 30 mass% density observations are retained with the source `g/cm3` units. Hartono2014 density observations are retained in `kg/m3`; Hartono2014 viscosity observations are reported in `mPa s` and emitted in `Pa s`. All are source-labeled and non-admitted. Density is not converted to a total molar-density film state while Issue 33 remains basis_unresolved.
+Amundsen2009 Weiland density parameters and loaded 30 mass% density observations are retained with the source `g/cm3` units. The Weiland density equation is numerically evaluated at those retained loaded states; because Amundsen Table 10 does not print V2, V2 is reconstructed at each temperature from the retained Amundsen Table 1 unloaded 30 mass% density anchor. The reconstructed values are source-labeled residual checks, not an independent fit or physical admission. Hartono2014 density observations are Table 3 30 mass% observations, retained in `kg/m3`; Hartono2014 viscosity observations are Table 7 30 mass% observations, reported in `mPa s` and emitted in `Pa s`. Hartono Eq. 5 density and the loaded viscosity correction are numerically evaluated at the retained states using the same-temperature alpha=0 source observation as the unloaded anchor. The viscosity check is therefore an anchored loaded-correction reconstruction, not a full independent Eq. 6--9 prediction. All model values, references, absolute residuals with units, relative residuals, domains, and source parameters are retained in the correlation table as source-labeled and non-admitted. Density is not converted to a total molar-density film state while Issue 33 remains basis_unresolved.
 
 Putta2017 Eq. 12 is retained as a blocked N2O analogy because the cited Ko, Jamal, and Ying/Eimer primary N2O-water and N2O-amine inputs were not recovered with source-complete coefficients and uncertainty. The legacy scalar ion expression in `src/mea_absorption_column/Properties/Transport_Properties.py` is rejected as unattributed and is not retained as a default.
 
@@ -378,6 +480,7 @@ def main() -> int:
     issue33 = validate_dependencies(config)
     validate_sources(config)
     rows, diagnostics = build_rows(config)
+    validate_generated_rows(rows)
     sensitivity = build_sensitivity(config)
     require(diagnostics["positive_evaluated_values"], "known evaluated transport values are not all positive")
     require(diagnostics["snijder_row_count"] == 16, "Snijder reproduction row count changed")

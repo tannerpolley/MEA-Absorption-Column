@@ -109,7 +109,7 @@
       "attachment_sha256_inspection_receipt": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
       "evidence_status": "local_zotero_pdf_inspected",
       "locators": [
-        "PDF p. 2 (printed p. 1809), Tables 1--2: density observations and fitted density model",
+        "PDF p. 3 (printed p. 1810), Table 3: 30 mass% density observations and loaded-density model context",
         "PDF p. 5 (printed p. 1812), Table 7 and Eqs. 8--9: 30 mass% viscosity observations and loaded correction"
       ]
     },
@@ -209,13 +209,14 @@
       "equation": "rho = sum(x_i M_i)/V; V = x1 V1 + x2 V2 + x3 V3 + x1 x2 A + x1 x3(B + C x1); V1 = M1/(D T_K^2 + E T_K + F)",
       "source": "Amundsen2009",
       "source_locator": "Amundsen2009 PDF p. 3 (printed p. 3098), Eqs. 4--6 and Table 10",
-      "parameters": {"A": -1.8218, "B": 0.0, "C": 0.0, "D": -5.35162e-7, "E": -4.51417e-4, "F": 1.19451, "M1": 61.08, "V3": 0.04747},
+      "parameters": {"A": -1.8218, "B": 0.0, "C": 0.0, "D": -5.35162e-7, "E": -4.51417e-4, "F": 1.19451, "M1": 61.08, "M2": 18.01528, "M3": 44.01, "V3": 0.04747},
       "temperature_domain_K": [298.15, 353.15],
       "mass_fraction_domain_percent": [20.0, 40.0],
       "loading_domain_mol_CO2_per_mol_MEA": [0.0, 0.5],
       "input_basis": "true species mole fractions and molecular masses; conversion is not admitted while issue33 basis is unresolved",
       "output_unit": "kg/m3",
-      "uncertainty": "about 0.2% for typical loaded systems, except highest temperatures/loadings"
+      "uncertainty": "about 0.2% for typical loaded systems, except highest temperatures/loadings",
+      "evaluation_basis": "V2 is reconstructed at each temperature from the retained Amundsen 30 mass% unloaded density anchor because Table 10 does not print a separate V2 parameter."
     },
     "weiland_viscosity": {
       "id": "viscosity_weiland_amundsen_eq9_to_eq10",
@@ -234,8 +235,8 @@
       "id": "density_hartono2014_eq3_to_eq5",
       "equation": "rho_loaded = rho_unloaded/(1 - w_CO2_added(1 - Phi)); Phi = (a1 x1 alpha + a2 x1)/(a3 + x1)",
       "source": "Hartono2014",
-      "source_locator": "Hartono2014 PDF p. 2 (printed p. 1809), Eqs. 3--5 and PDF p. 3 (printed p. 1810), Table 4",
-      "parameters": {"a1": 0.29, "a2": 0.18, "a3": 0.66},
+      "source_locator": "Hartono2014 PDF p. 3 (printed p. 1810), Eqs. 3--5 and Table 3",
+      "parameters": {"a1": 0.29, "a2": 0.18, "a3": 0.66, "M1": 61.08, "M2": 18.01528, "M3": 44.01},
       "temperature_domain_K": [293.15, 423.15],
       "mass_fraction_domain_percent": [0.0, 100.0],
       "loading_domain_mol_CO2_per_mol_MEA": [0.0, 0.5],
@@ -247,7 +248,7 @@
       "equation": "ln(eta_loaded) = x3 ln(eta_gamma_star) + (1-x3) ln(eta_unloaded); ln(10^3 eta_gamma_star) = ((6.98)x1 + (10.48)alpha x1)/(0.049 + x1)",
       "source": "Hartono2014",
       "source_locator": "Hartono2014 PDF p. 4 (printed p. 1811), Eqs. 6--7 and PDF p. 5 (printed p. 1812), Eqs. 8--9 and Table 8",
-      "parameters": {"l1": 8.36, "l2_per_C": -0.04664, "l3_per_C2": 0.00016, "l4": -4.14, "loaded_coefficient_1": 6.98, "loaded_coefficient_2": 10.48, "loaded_denominator_intercept": 0.049},
+      "parameters": {"l1": 8.36, "l2_per_C": -0.04664, "l3_per_C2": 0.00016, "l4": -4.14, "loaded_coefficient_1": 6.98, "loaded_coefficient_2": 10.48, "loaded_denominator_intercept": 0.049, "M1": 61.08, "M2": 18.01528, "M3": 44.01},
       "temperature_domain_K": [293.15, 423.15],
       "mass_fraction_domain_percent": [0.0, 100.0],
       "loading_domain_mol_CO2_per_mol_MEA": [0.0, 0.5],
@@ -283,11 +284,32 @@
     {"temperature_K": 333.0, "concentration_mol_m3": 5015.0, "diffusivity_1e9_m2_s": 1.64, "density_kg_m3": 992.5, "viscosity_mPa_s": 0.90}
   ],
   "source_observations": {
+    "amundsen_weiland_unloaded_density": {
+      "source": "Amundsen2009",
+      "source_locator": "Amundsen2009 PDF p. 2 (printed p. 3097), Table 1, 30 mass% column",
+      "record_type": "unloaded_30_mass_percent_mea_density_anchor",
+      "temperature_unit": "deg C",
+      "expected_row_count": 5,
+      "mass_fraction_percent": 30.0,
+      "loading_unit": "mol CO2/mol MEA",
+      "value_unit": "g/cm3",
+      "temperature_domain_C": [25.0, 80.0],
+      "loading_domain_mol_CO2_per_mol_MEA": [0.0, 0.5],
+      "uncertainty_status": "Amundsen2009 reports about 0.05% or 0.0005 g/cm3 for typical unloaded density, except highest temperatures/loadings",
+      "rows": [
+        {"temperature_C": 25.0, "loading": [0.0], "values": [1.0106]},
+        {"temperature_C": 40.0, "loading": [0.0], "values": [1.0034]},
+        {"temperature_C": 50.0, "loading": [0.0], "values": [0.9981]},
+        {"temperature_C": 70.0, "loading": [0.0], "values": [0.9858]},
+        {"temperature_C": 80.0, "loading": [0.0], "values": [0.9794]}
+      ]
+    },
     "amundsen_weiland_density": {
       "source": "Amundsen2009",
       "source_locator": "Amundsen2009 PDF p. 2 (printed p. 3097), Table 3",
       "record_type": "loaded_30_mass_percent_mea_density",
       "temperature_unit": "deg C",
+      "expected_row_count": 5,
       "mass_fraction_percent": 30.0,
       "loading_unit": "mol CO2/mol MEA",
       "value_unit": "g/cm3",
@@ -307,6 +329,7 @@
       "source_locator": "Hartono2014 PDF p. 3 (printed p. 1810), Table 3",
       "record_type": "first_displayed_row_at_each_temperature_loaded_30_mass_percent_mea_density",
       "temperature_unit": "deg C",
+      "expected_row_count": 8,
       "mass_fraction_percent": 30.0,
       "loading_unit": "mol CO2/mol MEA",
       "value_unit": "kg/m3",
@@ -330,6 +353,7 @@
       "source_locator": "Hartono2014 PDF p. 5 (printed p. 1812), Table 7",
       "record_type": "first_displayed_row_at_each_temperature_loaded_30_mass_percent_mea_viscosity",
       "temperature_unit": "deg C",
+      "expected_row_count": 8,
       "mass_fraction_percent": 30.0,
       "loading_unit": "mol CO2/mol MEA",
       "value_unit": "mPa s",

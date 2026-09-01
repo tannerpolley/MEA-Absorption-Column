@@ -82,7 +82,7 @@
       "attachment_sha256_inspection_receipt": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
       "evidence_status": "local_zotero_pdf_inspected",
       "locators": [
-        "PDF p. 2 (printed p. 1809), Tables 1--2: density observations and fitted density model",
+        "PDF p. 3 (printed p. 1810), Table 3: 30 mass% density observations and loaded-density model context",
         "PDF p. 5 (printed p. 1812), Table 7 and Eqs. 8--9: 30 mass% viscosity observations and loaded correction"
       ]
     },
@@ -157,7 +157,13 @@
     "snijder_row_count": 16,
     "positive_evaluated_values": true,
     "source_observation_counts": {
+      "amundsen_weiland_unloaded_density": 5,
       "amundsen_weiland_density": 23,
+      "hartono_density": 48,
+      "hartono_viscosity": 48
+    },
+    "source_model_evaluation_counts": {
+      "weiland_density": 23,
       "hartono_density": 48,
       "hartono_viscosity": 48
     }
@@ -225,11 +231,11 @@
   },
   "regeneration_command": "uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py",
   "claim_boundary": "This result is a source-faithful Work Package A transport-input record and supported-negative unequal-ion closure decision. It does not establish a physical reactive film, source-complete ionic transport, flux agreement, rate comparison, or packed-column capture.",
-  "input_sha256": "dc744114a578a2b695d36d142756b13c3b0407a46c80a6b37f4a0ec1d02feae8",
-  "generator_sha256": "5a727c32f64d611213e4950e053a4c3071b39fdd416aaa6cbc9f700030792faa",
+  "input_sha256": "10751418c1bb813de0f9c665ae86b153c21cd5e3c8ba1db28a7867ef55839eaf",
+  "generator_sha256": "837d73ed52d3947c49bca5ebd3690a01a1aded923a557583b1517fad9b6e3a07",
   "output_sha256": {
-    "transport_correlations": "f8795317cdff74e2dbd41627ca3d488b098c51b29e95eb4882855b4ccafaa3e4",
+    "transport_correlations": "8e3b447676f0d37c1d83c01db9fc97fbd8a5366c9e6e6d961c7471d5ceecbbaf",
     "transport_sensitivity": "6fa9d797013eaf5999612be67036ddbdb4e309db2cd0460ad09eb511c7f46a91",
-    "report": "a8b64b2ca6f42a761ef83b1f5bfa0d3660abdeed5badcf60909ed4f4bc4669fd"
+    "report": "d8c6f55256713d6869522fb094c77b493b7f15a57da6c71eb3e7bb07c9210cbf"
   }
 }
