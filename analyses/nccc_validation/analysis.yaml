@@ -31,6 +31,8 @@ inputs:
     kind: issue17_reproducibility_identity
   - path: inputs/issue16_reactive_film_identity.json
     kind: issue16_immutable_input_receipt
+  - path: inputs/issue33_concentration_basis.json
+    kind: issue33_source_backed_concentration_basis_input
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -106,6 +108,10 @@ outputs:
     kind: issue17_stage_outcomes
   - path: results/final/tables/issue17_fugacity_only_enhancement_summary.json
     kind: issue17_comparison_summary
+  - path: results/final/tables/issue33_concentration_basis.csv
+    kind: issue33_concentration_basis_source_table
+  - path: results/final/tables/issue33_concentration_basis_summary.json
+    kind: issue33_concentration_basis_summary
   - path: results/final/figures/issue17_axial_enhancement.pdf
     kind: issue17_enhancement_figure
   - path: results/final/figures/issue17_axial_flux.pdf
@@ -152,6 +158,8 @@ commands:
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 10
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
     - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/generate_issue16_evidence.py
+  issue33_concentration_basis:
+    - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/resolve_concentration_bases.py
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -205,6 +213,8 @@ tracked_results:
   - results/final/figures/issue17_axial_enhancement.pdf
   - results/final/figures/issue17_axial_flux.pdf
   - results/final/figures/issue17_parity_to_gaspar_implicit.pdf
+  - results/final/tables/issue33_concentration_basis.csv
+  - results/final/tables/issue33_concentration_basis_summary.json
 historical_outputs:
   note: Pre-0.2 runtime-option and configuration matrices are preserved for provenance only, have no supported generator, and are not current validation evidence.
   paths:
