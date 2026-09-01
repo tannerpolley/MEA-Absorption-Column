@@ -8,16 +8,18 @@ Candidate A, the equal-ion effective-Fick reduction, is retained as a reduced-fo
 
 Candidate B, the unequal-ion zero-current form, is not executable. Its minimum requirements are the true-species state, ePC-SAFT Gamma, a complete cited mobility law, source-complete unequal ion diffusivities, molar density, electroneutrality, zero current, and the potential gauge. The retained sensitivity table therefore has no flux values, charge residual, current residual, or transfer direction.
 
-## Source reconstruction
+## Source authority and reconstruction
 
-Luo2015 Eq. 21 retains `D_CO2_water = 2.35e-6 exp(-2119/T)` in `m2/s`. Luo2015 Eq. 22 retains the modified Stokes-Einstein form `D_CO2_amine = D_CO2_water (mu_water/mu_amine)^0.8`; Amundsen2009 Weiland Eqs. 9--10 and Table 12 supply the source-labeled viscosity relationship for the evaluated 30 mass% and 0--0.5 loading rows. These values are source reconstructions, not absorber inputs.
+`inputs/issue35_transport.json` is the authoritative coefficient record. Every evaluated correlation row carries its numeric source parameters in `source_parameters_json`; no coefficient is duplicated independently in the resolver. Luo2015 Eq. 21 retains `D_CO2_water = 2.35e-6 exp(-2119/T)` in `m2/s`. Luo2015 Eq. 22 retains `D_CO2_amine = D_CO2_water (mu_water/mu_amine)^0.8`; the evaluated viscosity input uses the Weiland parameters reproduced by Amundsen2009, not a claim that Amundsen originated that correlation.
 
-Snijder1993 Eq. 8 retains `ln(D_MEA) = -13.275 - 2198.3/T - 7.8142e-5 C`, with `C` in `mol/m3` and `D` in `m2/s`. The 16 Table III observations retain density and viscosity in `kg/m3` and `mPa s`; the density is not converted to molar density while Issue 33 remains basis_unresolved. The maximum relative residual against the displayed, rounded Table III diffusivities is `0.054757`. Snijder's source statement that the fit is within 5% is preserved as source metadata; the rounded table alone does not reproduce that statement at every displayed row.
+Snijder1993 Eq. 8 retains `ln(D_MEA) = -13.275 - 2198.3/T - 7.8142e-5 C`, with `C` in `mol/m3` and `D` in `m2/s`. The 16 Table III observations retain density and viscosity. Snijder source viscosity is reported in `mPa s`; its emitted CSV value is converted to `Pa s`. The maximum absolute residual is `6.401227067e-11 m2/s` and the maximum relative residual is `0.054757` against the displayed, rounded diffusivities. Snijder's source statement that the fit is within 5% is preserved as source metadata; the rounded table alone does not reproduce that statement at every displayed row.
+
+Amundsen2009 Weiland density parameters and loaded 30 mass% density observations are retained with the source `g/cm3` units. Hartono2014 density observations are retained in `kg/m3`; Hartono2014 viscosity observations are reported in `mPa s` and emitted in `Pa s`. All are source-labeled and non-admitted. Density is not converted to a total molar-density film state while Issue 33 remains basis_unresolved.
 
 Putta2017 Eq. 12 is retained as a blocked N2O analogy because the cited Ko, Jamal, and Ying/Eimer primary N2O-water and N2O-amine inputs were not recovered with source-complete coefficients and uncertainty. The legacy scalar ion expression in `src/mea_absorption_column/Properties/Transport_Properties.py` is rejected as unattributed and is not retained as a default.
 
 ## Dependency and claim boundary
 
-Issue 33 remains `basis_unresolved`: Position 1 analytical MEA is `4.889309897097635 mol/L` and free MEA is `2.491683471902737 mol/L`; neither is rounded to exact 5 M. Issue 34 remains the merged supported-negative kinetics record. No rate comparison, Case 3C tuning, physical film result, or production transport-adoption change is made here.
+Issue 33 remains `basis_unresolved`: Position 1 analytical MEA is `4.889309897097635 mol/L` and free MEA is `2.491683471902737 mol/L`; neither is rounded to exact 5 M. Issue 34 remains the merged supported-negative kinetics record. No rate comparison, Case 3C tuning, physical film result, production transport-adoption change, or packed-column capture claim is made here.
 
-The input record is `inputs/issue35_transport.json`. Generated tables are `issue35_transport_correlations.csv`, `issue35_transport_sensitivity.csv`, and `issue35_transport_summary.json`.
+The generated tables are `issue35_transport_correlations.csv`, `issue35_transport_sensitivity.csv`, and `issue35_transport_summary.json`.

@@ -3,6 +3,7 @@
   "claim_label": "supported_negative_source_faithful_transport_inputs",
   "analysis": "nccc_validation",
   "issue": 35,
+  "source_parameters_authority": "analyses/nccc_validation/inputs/issue35_transport.json",
   "source_records": [
     {
       "id": "Putta2017",
@@ -152,13 +153,21 @@
   },
   "diagnostics": {
     "snijder_max_relative_residual": 0.05475741057031899,
+    "snijder_max_absolute_residual_m2_s": 6.401227067369358e-11,
     "snijder_row_count": 16,
-    "positive_evaluated_values": true
+    "positive_evaluated_values": true,
+    "source_observation_counts": {
+      "amundsen_weiland_density": 23,
+      "hartono_density": 48,
+      "hartono_viscosity": 48
+    }
   },
   "gates": {
+    "input_units_domains_signs_and_evaluation_points_validated": true,
     "source_pdf_inspection_receipts_present_for_local_sources": true,
     "known_correlation_positivity_pass": true,
-    "snijder_arithmetic_reproduction_status": "rounded_table_residual_exceeds_source_stated_5_percent_at_one_or_more_rows",
+    "snijder_absolute_residual_unit": "m2/s",
+    "snijder_relative_residual_retained": true,
     "snijder_source_fit_statement_preserved": true,
     "n2o_chain_complete": false,
     "ion_diffusivity_input_complete": false,
@@ -204,7 +213,7 @@
   "rejected_or_unresolved_cases": [
     "Putta2017 Eq. 12 cannot be evaluated without source-complete primary N2O-water and N2O-amine correlations.",
     "The legacy scalar ion expression has no source, species mapping, or uncertainty and is rejected.",
-    "Snijder Table III density observations cannot be converted to total molar density while Issue 33 basis remains unresolved.",
+    "Source density observations cannot be converted to total molar density while Issue 33 basis remains unresolved.",
     "Candidate B cannot be evaluated without Gamma, a complete mobility law, unequal ion diffusivities, and an accepted true-species state.",
     "No identical-state candidate flux comparison or physical transport sensitivity is performed."
   ],
@@ -216,11 +225,11 @@
   },
   "regeneration_command": "uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py",
   "claim_boundary": "This result is a source-faithful Work Package A transport-input record and supported-negative unequal-ion closure decision. It does not establish a physical reactive film, source-complete ionic transport, flux agreement, rate comparison, or packed-column capture.",
-  "input_sha256": "f347a6d822a027ac5b064ee0b4e082d4e89a54dc6303e202597d3b5adf38f2f4",
-  "generator_sha256": "68af991d1f8a8c84d04e0520b508eaf39bb6c9af14240f7be3be28cea2ec617f",
+  "input_sha256": "dc744114a578a2b695d36d142756b13c3b0407a46c80a6b37f4a0ec1d02feae8",
+  "generator_sha256": "5a727c32f64d611213e4950e053a4c3071b39fdd416aaa6cbc9f700030792faa",
   "output_sha256": {
-    "transport_correlations": "8b54b4d70a5a32b09a48745f1b573e2482b6126c2eb0bdd455be2d4ffc68aeca",
+    "transport_correlations": "f8795317cdff74e2dbd41627ca3d488b098c51b29e95eb4882855b4ccafaa3e4",
     "transport_sensitivity": "6fa9d797013eaf5999612be67036ddbdb4e309db2cd0460ad09eb511c7f46a91",
-    "report": "491426792fb448488d2c6509dc958693f681bd9a236153401515a08fb755a049"
+    "report": "a8b64b2ca6f42a761ef83b1f5bfa0d3660abdeed5badcf60909ed4f4bc4669fd"
   }
 }
