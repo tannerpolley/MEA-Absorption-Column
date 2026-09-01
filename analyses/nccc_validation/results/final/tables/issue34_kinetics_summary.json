@@ -1,0 +1,345 @@
+{
+  "schema_version": "issue34_source_faithful_kinetics_v1",
+  "claim_label": "supported_negative_source_faithful_kinetics_reaction_partition",
+  "analysis": "nccc_validation",
+  "issue": 34,
+  "source_order": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+  ],
+  "species_order": [
+    "CO2",
+    "MEA",
+    "H2O",
+    "MEAH+",
+    "MEACOO-",
+    "HCO3-",
+    "CO3^2-",
+    "H3O+",
+    "OH-"
+  ],
+  "reaction_projection_order": [
+    "F1",
+    "F2",
+    "F3"
+  ],
+  "source_records": [
+    {
+      "id": "Putta2016",
+      "citation": "Putta et al. (2016), CO2 absorption into loaded aqueous MEA solutions: Kinetics assessment using penetration theory",
+      "doi": "10.1016/j.ijggc.2016.08.009",
+      "zotero_parent_key": "VR43Z4ZX",
+      "zotero_attachment_key": "BSUB8BSF",
+      "attachment_sha256_inspection_receipt": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "hash_role": "Zotero attachment inspection receipt only; not runtime-verified by this generator",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "reported_uncertainties": {
+        "kinetic_coefficient_fit_uncertainty": "not reported",
+        "aggregate_rate_comparison_uncertainty": "not reported",
+        "source_domain_measurement_uncertainties": "not recovered at the retained Putta2016 locators"
+      },
+      "locators": [
+        "printed p. 341, Eqs. 1--5: R1--R5 acid/base source reactions",
+        "printed p. 341, Eq. 15: concentration F3/r14 form",
+        "printed p. 342, Eqs. 16--22: concentration and activity F1/F2/F3 rate and equilibrium-quotient forms",
+        "printed pp. 345--346, Eqs. I--II and text: concentration and activity kinetic correlations and 198-point fitting domain",
+        "printed p. 349, Table 4: aggregate AARD comparison only"
+      ]
+    },
+    {
+      "id": "Putta2017",
+      "citation": "Putta et al. (2017), CO2 absorption into loaded aqueous MEA solutions: Impact of different model parameter correlations and thermodynamic models",
+      "doi": "10.1016/j.ijggc.2017.01.012",
+      "zotero_parent_key": "WMNI4QQ6",
+      "zotero_attachment_key": "YPM9CEQV",
+      "attachment_sha256_inspection_receipt": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+      "hash_role": "Zotero attachment inspection receipt only; not runtime-verified by this generator",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "reported_uncertainties": {
+        "temperature_C": 0.1,
+        "pressure_percent": 0.25,
+        "loading_mol_CO2_per_mol_MEA": 0.01,
+        "density_regression_relative_total_standard_deviation_percent": {
+          "1_M": 0.06,
+          "5_M": 0.17
+        },
+        "kinetic_coefficient_fit_uncertainty": "not reported in retained source locators"
+      },
+      "locators": [
+        "printed pp. 347--349, Section 2.4 and Table 5: repeated Kin6 correlation ranges",
+        "printed pp. 357--358, Table 9: repeated aggregate AARD comparison"
+      ]
+    },
+    {
+      "id": "Luo2015",
+      "citation": "Luo et al. (2015), Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutions",
+      "doi": "10.1016/j.ces.2014.10.013",
+      "zotero_parent_key": "KAB4KF8F",
+      "zotero_attachment_key": "MFRDNYCS",
+      "attachment_sha256_inspection_receipt": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "hash_role": "Zotero attachment inspection receipt only; not runtime-verified by this generator",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "locators": [
+        "printed pp. 58--59, Eqs. 1--4: net carbamate and bicarbonate reaction mechanism",
+        "printed pp. 60--61, Eq. 8 and surrounding text: Hatta-number treatment and pseudo-first-order discussion",
+        "printed p. 61, Section 3.2, Eqs. 15--16: 1 M/5 M preparation and density correlations"
+      ]
+    },
+    {
+      "id": "Gaspar2015",
+      "citation": "Gaspar and Fosb\u00f8l (2015), A general enhancement factor model for absorption and desorption systems",
+      "doi": "10.1016/j.ces.2015.08.023",
+      "zotero_parent_key": "PPDL8269",
+      "zotero_attachment_key": "PW5C8YSL",
+      "attachment_sha256_inspection_receipt": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "hash_role": "Zotero attachment inspection receipt only; not runtime-verified by this generator",
+      "evidence_status": "local_zotero_pdf_available",
+      "role": "enhancement-method context only; not used to admit a reaction coefficient"
+    },
+    {
+      "id": "Gondal2015",
+      "citation": "Gondal et al. (2015), Kinetics of the absorption of carbon dioxide into aqueous hydroxides of lithium, sodium and potassium and blends of hydroxides and carbonates",
+      "doi": "10.1016/j.ces.2014.10.038",
+      "zotero_parent_key": null,
+      "zotero_attachment_key": null,
+      "attachment_sha256_inspection_receipt": null,
+      "hash_role": "no local Zotero attachment",
+      "evidence_status": "not_found_in_local_zotero",
+      "role": "Putta2016 source for F3 k14 and activation energy; coefficient not recovered",
+      "locator": "Putta2016 printed p. 353 reference 29"
+    },
+    {
+      "id": "PachecoRochelle1998",
+      "citation": "Pacheco and Rochelle (1998), Rate-based modeling of reactive absorption of CO2 into aqueous MEA",
+      "doi": "10.1021/ie980123g",
+      "zotero_parent_key": null,
+      "zotero_attachment_key": null,
+      "attachment_sha256_inspection_receipt": null,
+      "hash_role": "no local Zotero attachment",
+      "evidence_status": "not_found_in_local_zotero",
+      "role": "requested comparison source; no coefficient or partition claim uses it"
+    }
+  ],
+  "finite_reaction_record_count": 5,
+  "finite_rate_relationship_candidate_ids": [
+    "F1",
+    "F2"
+  ],
+  "finite_rate_relationship_candidate_count": 2,
+  "unavailable_finite_relationship_ids": [
+    "F3"
+  ],
+  "source_anchor_temperatures_K": [
+    293.15,
+    313.15,
+    323.15
+  ],
+  "source_domain": {
+    "putta2016_temperature_K": [
+      293.15,
+      343.15
+    ],
+    "putta2016_concentration_labels_mol_L": [
+      1.0,
+      5.0
+    ],
+    "putta2016_loading_mol_CO2_per_mol_MEA": [
+      0.0,
+      0.4
+    ],
+    "putta2016_lmpd_kPa": [
+      0.58,
+      14.7
+    ],
+    "putta2016_fit_points": 198,
+    "concentration_labels_use": "source-state labels only; no exact discrete absorber admission",
+    "retained_overlap_temperature_K": [
+      293.15,
+      323.15
+    ],
+    "reconstruction_anchor_temperature_K": [
+      293.15,
+      313.15,
+      323.15
+    ],
+    "retained_issue33_concentration_basis_status": "basis_unresolved"
+  },
+  "issue33_dependency": {
+    "summary_path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis_summary.json",
+    "summary_sha256": "28363ae5d9b18b93b03988976abdba14d4e6035ebfac224962b685258c8bc75e",
+    "table_path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis.csv",
+    "table_sha256": "1d8c6cc7ff3a801a8b8e1975a6b7f8618ae2bcef3a01a63df08c49bdfeb09b1d",
+    "claim_label": "reference_backed_mapping_with_basis_unresolved_admission",
+    "position_1_analytical_mol_L": 4.889309897097635,
+    "position_1_free_mea_mol_L": 2.491683471902737,
+    "all_rows_basis_unresolved": true
+  },
+  "gates": {
+    "species_and_reaction_order_preserved": true,
+    "reaction_projection_stoichiometry_pass": true,
+    "element_balance_pass": true,
+    "charge_balance_pass": true,
+    "f1_f2_recovered_coefficient_dimensional_reconstruction_pass": true,
+    "f3_theoretical_required_unit_pass": true,
+    "f1_f2_source_printed_s_minus_2_rejected": true,
+    "source_coefficient_reconstruction_float_decimal_relative_tolerance": 1e-12,
+    "max_float_decimal_relative_difference": 2.7796082268064072e-15,
+    "f3_primary_coefficient_recovered": false,
+    "activity_standard_state_conversion_admitted": false,
+    "algebraic_reverse_rate_identity_pass": true,
+    "source_provider_detailed_balance_status": "not_evaluable_missing_independent_K_and_standard_state",
+    "source_provider_detailed_balance_pass": false,
+    "raw_quotient_log_evaluation": "not_performed; Q_raw is dimensional",
+    "physical_equilibrium_state_admitted": false,
+    "rate_observation_admission": false,
+    "independent_raw_rate_validation_available": false,
+    "reaction_timescale_partition_admitted": false,
+    "packet_bound_activity_closure_performed": false,
+    "physical_reactive_film_adoption": false,
+    "issue33_basis_unresolved_preserved": true,
+    "position_1_not_rounded_to_5M": true,
+    "supported_negative": true
+  },
+  "source_state_reconstruction": {
+    "rows": [
+      {
+        "reaction_id": "F1",
+        "basis": "concentration",
+        "temperature_K": 313.15,
+        "state_role": "synthetic positive concentration diagnostic for algebraic detailed-balance reconstruction; not a retained NCCC state and not a packet-bound closure",
+        "raw_quotient_value": 0.22222222222222227,
+        "raw_quotient_units": "m^3 kmol^-1",
+        "source_provider_equilibrium_constant": "not supplied",
+        "source_provider_standard_state_conversion": "not supplied",
+        "source_provider_detailed_balance_status": "not_evaluable",
+        "source_provider_detailed_balance_pass": false,
+        "coefficient_unit": "m6 kmol^-2 s^-1",
+        "forward_rate_kmol_m3_s": 40.679756179526294,
+        "reverse_coefficient_value": 2033.9878089763145,
+        "reverse_coefficient_unit": "m3 kmol^-1 s^-1",
+        "reverse_rate_kmol_m3_s": 40.679756179526294,
+        "algebraic_reverse_rate_identity_relative_residual": 0.0,
+        "algebraic_reverse_rate_identity_pass": true,
+        "closure_status": "algebraic_reverse_rate_identity_only",
+        "physical_admission": "not_admitted_basis_unresolved"
+      },
+      {
+        "reaction_id": "F2",
+        "basis": "concentration",
+        "temperature_K": 313.15,
+        "state_role": "synthetic positive concentration diagnostic for algebraic detailed-balance reconstruction; not a retained NCCC state and not a packet-bound closure",
+        "raw_quotient_value": 7.407407407407407e-05,
+        "raw_quotient_units": "m^3 kmol^-1",
+        "source_provider_equilibrium_constant": "not supplied",
+        "source_provider_standard_state_conversion": "not supplied",
+        "source_provider_detailed_balance_status": "not_evaluable",
+        "source_provider_detailed_balance_pass": false,
+        "coefficient_unit": "m6 kmol^-2 s^-1",
+        "forward_rate_kmol_m3_s": 573.1886015267368,
+        "reverse_coefficient_value": 5731886.0152673675,
+        "reverse_coefficient_unit": "m3 kmol^-1 s^-1",
+        "reverse_rate_kmol_m3_s": 573.1886015267368,
+        "algebraic_reverse_rate_identity_relative_residual": 0.0,
+        "algebraic_reverse_rate_identity_pass": true,
+        "closure_status": "algebraic_reverse_rate_identity_only",
+        "physical_admission": "not_admitted_basis_unresolved"
+      }
+    ],
+    "summary": {
+      "state_temperature_K": 313.15,
+      "max_algebraic_reverse_rate_identity_relative_residual": 0.0,
+      "algebraic_reverse_rate_identity_tolerance": 1e-12,
+      "algebraic_reverse_rate_identity_pass": true,
+      "source_provider_detailed_balance_status": "not_evaluable_missing_independent_K_and_standard_state",
+      "source_provider_detailed_balance_pass": false,
+      "raw_quotient_log_evaluation": "not_performed; Q_raw is dimensional",
+      "activity_closure": "not_evaluable_activity_coefficients_and_standard_state_unavailable"
+    }
+  },
+  "observation_summary": {
+    "aggregate_row_count": 20,
+    "aard_min_percent": 10.2,
+    "aard_max_percent": 38.2,
+    "raw_rows_retained": false,
+    "uncertainty_status": "not_reported_in_aggregate_table",
+    "admission_decision": "aggregate_summary_only_not_admitted"
+  },
+  "source_correlation_arithmetic_reconstruction": {
+    "temperature_reconstruction_rows": 12,
+    "max_float_decimal_relative_difference": 2.7796082268064072e-15,
+    "activity_basis_to_concentration_basis_coefficient_ratios": [
+      {
+        "reaction_id": "F1",
+        "temperature_K": 293.15,
+        "ratio": 6.278508205059977
+      },
+      {
+        "reaction_id": "F1",
+        "temperature_K": 313.15,
+        "ratio": 7.663744982045062
+      },
+      {
+        "reaction_id": "F1",
+        "temperature_K": 323.15,
+        "ratio": 8.389078240969035
+      },
+      {
+        "reaction_id": "F2",
+        "temperature_K": 293.15,
+        "ratio": 3.435291053310758
+      },
+      {
+        "reaction_id": "F2",
+        "temperature_K": 313.15,
+        "ratio": 2.4681516887100505
+      },
+      {
+        "reaction_id": "F2",
+        "temperature_K": 323.15,
+        "ratio": 2.1244242547480847
+      }
+    ],
+    "physical_kinetic_transport_sensitivity": "not_evaluable; arithmetic reconstruction is not a physical sensitivity study",
+    "f3_exclusion_effect": "not_quantified; primary k14 and admitted local film transport state unavailable"
+  },
+  "rejected_or_unresolved_cases": [
+    "Putta2016 prints F1/F2 third-order coefficient units with s^-2; dimensional reconstruction requires m6 kmol^-2 s^-1 for r in kmol m^-3 s^-1, so the printed unit is rejected and the correction is retained as an adjudication.",
+    "F3 is retained as a reaction form but its Gondal2015 coefficient and activation energy were not recovered in local Zotero; no invented value or fallback fit is used.",
+    "Putta2016 activity equations are retained for comparison, but the source standard-state convention and source-to-provider activity conversion are unavailable.",
+    "R1/R3/R4/R5 fast-equilibrium partition is not admitted because source bulk-equilibrium statements and a Hatta-number definition do not provide a local reaction-specific D, film thickness, and rate timescale.",
+    "Putta2016 Table 4 aggregate AARD rows are retained as source observations only; raw rows and non-overlap fit/validation membership are unavailable, so no rate-data admission or uncertainty fit is claimed."
+  ],
+  "conclusions": [
+    "F1 and F2 concentration and activity relationships are recovered from Putta2016 with the source-printed dimensional inconsistency explicitly corrected for comparison use.",
+    "F3 remains a supported-negative source gap rather than a guessed hydroxide coefficient.",
+    "The retained result supports a source-faithful finite-reaction record and algebraic reverse-rate identity only; source/provider detailed balance is not evaluable without an independent K(T) and standard-state conversion.",
+    "No coefficient was tuned to NCCC Case 3C, packed capture, or any absorber result."
+  ],
+  "limitations": [
+    "Issue 33 concentration mappings remain basis_unresolved; Position 1 analytical MEA is preserved as 4.889309897097635 mol/L and free MEA as 2.491683471902737 mol/L.",
+    "The 1 M and 5 M values are source labels only and are not admitted as exact absorber states.",
+    "No raw kinetic observations or coefficient uncertainty distribution is retained in the available Putta aggregate table.",
+    "No source-complete reaction/diffusion timescale is available for fast/finite partition."
+  ],
+  "output_paths": {
+    "finite_reactions": "analyses/nccc_validation/results/final/tables/issue34_finite_reactions.csv",
+    "partition_decisions": "analyses/nccc_validation/results/final/tables/issue34_partition_decisions.csv",
+    "rate_observation_comparisons": "analyses/nccc_validation/results/final/tables/issue34_rate_observation_comparisons.csv",
+    "source_correlation_arithmetic_reconstruction": "analyses/nccc_validation/results/final/tables/issue34_source_correlation_arithmetic_reconstruction.csv",
+    "report": "analyses/nccc_validation/results/final/reports/issue34_reaction_kinetics.md"
+  },
+  "regeneration_command": "uv run python analyses/nccc_validation/scripts/resolve_issue34_kinetics.py",
+  "claim_boundary": "This result is a source-faithful Work Package A kinetics and reaction-partition record. It does not establish provider-compatible activity closure, finite-film transport timescales, NCCC rate-data admission, or physical reactive-film adoption.",
+  "input_sha256": "da2a2933d0f4d6711e2116b6238c9aed96bf5cee91ffe5051725799dccb8c6eb",
+  "generator_sha256": "78e9422b4543da27e82e2cac092d54b35e23ef30d383a76738a68325db30cac0",
+  "output_sha256": {
+    "finite_reactions": "78d0c67bc39cfd79bcec107bb80da1fadf227fac801ba0cb5bc9c6c137f324c5",
+    "partition_decisions": "d5bd3f4d86e14009c3192ab0e3b01df59e4570a9654aee2c3026c90d38f36a9f",
+    "rate_observation_comparisons": "118d6fe9009936dd50e2fe3653349b660e97a044bb29efd73ca0257332603e70",
+    "source_correlation_arithmetic_reconstruction": "b8e99f4ed60cc4fd17e47e69a004199e472c96d24e17ea6aed939d39c4cab813",
+    "report": "764d615ed0802d57fedf1dd468d63de56f621d8c17611857c406b97839c0938b"
+  }
+}
