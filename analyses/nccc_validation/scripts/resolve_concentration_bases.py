@@ -28,7 +28,7 @@ IDENTITY = ANALYSIS / "inputs/issue16_reactive_film_identity.json"
 TABLE = ANALYSIS / "results/final/tables/issue33_concentration_basis.csv"
 SUMMARY = ANALYSIS / "results/final/tables/issue33_concentration_basis_summary.json"
 
-MEAN_MOLAR_MASS_KG_PER_MOL = 0.06108
+MEA_MOLAR_MASS_KG_PER_MOL = 0.06108
 CO2_SPECIES = ("CO2", "MEACOO-", "HCO3-", "CO3^2-")
 PROFILE_SPECIES_COLUMNS = {
     "CO2": "Cl_CO2_true",
@@ -129,7 +129,7 @@ def _load_inputs() -> tuple[dict, pd.DataFrame, pd.Series, dict]:
     return config, profile, case, identity
 
 
-def _source_label_row(config: dict, nominal_mol_L: float) -> dict[str, object]:
+def _source_label_row(nominal_mol_L: float) -> dict[str, object]:
     reasons = (
         "Putta literature row supplies a nominal 1/5 mol/L label only; preparation temperature, "
         "local loaded analytical concentration, free-MEA concentration, loaded volume basis, and "
@@ -149,12 +149,16 @@ def _source_label_row(config: dict, nominal_mol_L: float) -> dict[str, object]:
         "nominal_mea_mass_fraction": "",
         "nominal_mea_mass_fraction_uncertainty_relative_expanded_percent": "",
         "prepared_density_kg_m3": "",
-        "prepared_density_uncertainty_kg_m3": "",
+        "prepared_density_instrument_uncertainty_g_cm3": "",
+        "prepared_density_combined_relative_uncertainty_percent": "",
+        "prepared_density_combined_uncertainty_kg_m3": "",
         "prepared_density_source": "not_reported_for_local_literature_row",
         "prepared_concentration_mol_L": nominal_mol_L,
         "prepared_concentration_uncertainty_composition_only_mol_L": "",
         "loaded_density_kg_m3": "",
-        "loaded_density_uncertainty_kg_m3": "",
+        "loaded_density_instrument_uncertainty_g_cm3": "",
+        "loaded_density_combined_relative_uncertainty_percent": "",
+        "loaded_density_combined_uncertainty_kg_m3": "",
         "loaded_density_source": "not_reported_for_local_literature_row",
         "loaded_analytical_concentration_mol_L": "",
         "free_MEA_concentration_mol_L": "",
@@ -167,8 +171,11 @@ def _source_label_row(config: dict, nominal_mol_L: float) -> dict[str, object]:
         "n_CO3_2_minus_mol_L": "",
         "n_H3O_plus_mol_L": "",
         "n_OH_minus_mol_L": "",
+        "analytical_balance_reference_mol_L": "",
         "analytical_balance_reconstructed_mol_L": "",
         "analytical_balance_residual_mol_L": "",
+        "analytical_balance_relative_residual": "",
+        "analytical_balance_pass": "",
         "source_profile_rho_mol_L": "",
         "volume_basis": "unresolved",
         "prepared_to_loaded_volume_ratio": "unresolved",
@@ -189,18 +196,30 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
     _, composition = tabulated_epcsaft_reactive_chemical_equilibrium(
         apparent_flows, float(source["Tl"]), diagnostics={}
     )
-    concentrations_mol_m3 = dict(zip(SPECIES_9, composition * float(source["rho_mol_l"]), strict=True))
+    concentrations_mol_m3 = dict(
+        zip(SPECIES_9, composition * float(source["rho_mol_l"]), strict=True)
+    )
+    reconstructed_analytical_mol_L = sum(
+        concentrations_mol_m3[species] / 1000.0
+        for species in ("MEA", "MEAH+", "MEACOO-")
+    )
+    profile_analytical_mol_L = sum(
+        float(source[column]) / 1000.0
+        for column in ("Cl_MEA_true", "Cl_MEAH_true", "Cl_MEACOO_true")
+    )
+    balance_residual_mol_L = reconstructed_analytical_mol_L - profile_analytical_mol_L
+    balance_relative_residual = abs(balance_residual_mol_L) / abs(profile_analytical_mol_L)
     for species, column in PROFILE_SPECIES_COLUMNS.items():
         if abs(concentrations_mol_m3[species] - float(source[column])) > 1.0e-8:
-            raise ValueError(f"retained equilibrium reconstruction disagrees with profile column {column}")
+            raise ValueError(
+                f"retained equilibrium reconstruction disagrees with profile column {column}"
+            )
         concentrations_mol_m3[species] = float(source[column])
     analytical_components_mol_L = [
         concentrations_mol_m3[species] / 1000.0 for species in ("MEA", "MEAH+", "MEACOO-")
     ]
     co2_components_mol_L = [concentrations_mol_m3[species] / 1000.0 for species in CO2_SPECIES]
-    analytical_mol_L = sum(analytical_components_mol_L)
-    balance_mol_L = sum(analytical_components_mol_L)
-    balance_residual_mol_L = balance_mol_L - analytical_mol_L
+    analytical_mol_L = profile_analytical_mol_L
     loading = sum(co2_components_mol_L) / analytical_mol_L
     temperature_K = float(source["Tl"])
     prepared_mass_fraction = float(config["nccc_case"]["nominal_mea_mass_fraction"])
@@ -211,7 +230,7 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
         config["density_observations"]["loaded"], temperature_K, loading
     )
     prepared_concentration_mol_L = (
-        prepared_density_kg_m3 * prepared_mass_fraction / MEAN_MOLAR_MASS_KG_PER_MOL / 1000.0
+        prepared_density_kg_m3 * prepared_mass_fraction / MEA_MOLAR_MASS_KG_PER_MOL / 1000.0
     )
     nominal_uncertainty_percent = float(
         config["nccc_case"]["nominal_mea_composition_uncertainty_relative_expanded_percent"]
@@ -253,12 +272,16 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
         "nominal_mea_mass_fraction": prepared_mass_fraction,
         "nominal_mea_mass_fraction_uncertainty_relative_expanded_percent": nominal_uncertainty_percent,
         "prepared_density_kg_m3": prepared_density_kg_m3,
-        "prepared_density_uncertainty_kg_m3": config["density_observations"]["unloaded_density_uncertainty_kg_m3"],
+        "prepared_density_instrument_uncertainty_g_cm3": config["density_observations"]["instrument_density_uncertainty_g_cm3"],
+        "prepared_density_combined_relative_uncertainty_percent": config["density_observations"]["combined_density_relative_uncertainty_percent"]["unloaded"],
+        "prepared_density_combined_uncertainty_kg_m3": prepared_density_kg_m3 * config["density_observations"]["combined_density_relative_uncertainty_percent"]["unloaded"] / 100.0,
         "prepared_density_source": "Amundsen2009 30 wt% unloaded density; bilinear source interpolation",
         "prepared_concentration_mol_L": prepared_concentration_mol_L,
         "prepared_concentration_uncertainty_composition_only_mol_L": prepared_concentration_uncertainty_mol_L,
         "loaded_density_kg_m3": loaded_density_kg_m3,
-        "loaded_density_uncertainty_kg_m3": config["density_observations"]["loaded_density_uncertainty_kg_m3"],
+        "loaded_density_instrument_uncertainty_g_cm3": config["density_observations"]["instrument_density_uncertainty_g_cm3"],
+        "loaded_density_combined_relative_uncertainty_percent": config["density_observations"]["combined_density_relative_uncertainty_percent"]["loaded"],
+        "loaded_density_combined_uncertainty_kg_m3": loaded_density_kg_m3 * config["density_observations"]["combined_density_relative_uncertainty_percent"]["loaded"] / 100.0,
         "loaded_density_source": "Amundsen2009 30 wt% loaded density; bilinear source interpolation",
         "loaded_analytical_concentration_mol_L": analytical_mol_L,
         "free_MEA_concentration_mol_L": concentrations_mol_m3["MEA"] / 1000.0,
@@ -271,17 +294,20 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
         "n_CO3_2_minus_mol_L": concentrations_mol_m3["CO3^2-"] / 1000.0,
         "n_H3O_plus_mol_L": concentrations_mol_m3["H3O+"] / 1000.0,
         "n_OH_minus_mol_L": concentrations_mol_m3["OH-"] / 1000.0,
-        "analytical_balance_reconstructed_mol_L": balance_mol_L,
+        "analytical_balance_reference_mol_L": profile_analytical_mol_L,
+        "analytical_balance_reconstructed_mol_L": reconstructed_analytical_mol_L,
         "analytical_balance_residual_mol_L": balance_residual_mol_L,
+        "analytical_balance_relative_residual": balance_relative_residual,
+        "analytical_balance_pass": balance_relative_residual <= BALANCE_TOLERANCE_MOL_L,
         "source_profile_rho_mol_L": float(source["rho_mol_l"]) / 1000.0,
         "volume_basis": "1 L of retained loaded liquid solution",
         "prepared_to_loaded_volume_ratio": "unresolved",
         "difference_to_5M_mol_L": difference_to_5M,
         "difference_to_5M_relative_percent": _relative_error_percent(analytical_mol_L, 5.0),
-        "within_campaign_composition_uncertainty": abs(difference_to_5M) <= analytical_mol_L * nominal_uncertainty_percent / 100.0,
+        "within_campaign_composition_uncertainty": "not_assessed_basis_unresolved",
         "admission_decision": "basis_unresolved",
         "admission_reasons": "; ".join(reasons),
-        "source_uncertainties": "Morgan2018: nominal amine composition +/- 7.3% expanded (approximately 95%, k=2); Amundsen2009: +/- 0.5 kg/m3 unloaded density and +/- 2.0 kg/m3 loaded density combined estimates; NCCC Case 3C-specific preparation-temperature and volume uncertainty unavailable",
+        "source_uncertainties": "Morgan2018: nominal amine composition +/- 7.3% expanded (approximately 95%, k=2), applied only to the prepared mass-basis conversion; Amundsen2009: instrument density uncertainty +/- 0.00005 g/cm3 and combined relative estimates +/- 0.05% unloaded and +/- 0.2% loaded, converted row-wise from each interpolated density; NCCC Case 3C-specific preparation-temperature and volume uncertainty unavailable",
         "source_locators": "Morgan2018 printed p. 10468 Section 2.2 and printed pp. 10469-10470 Section 2.4/Table 4; Amundsen2009 printed pp. 3096-3099; retained profile",
         "source_identities": "Morgan2018; Amundsen2009; retained Case 3C profile; Issue 16 identity",
         "source_attachment_sha256": "Morgan2018=bf9cfa2877c31a1ed8346951e149b6af7fc7e8413e3f62fde22a76e6c31b5ddb; Amundsen2009=a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
@@ -307,7 +333,7 @@ def main() -> int:
         SUMMARY = args.output_dir / SUMMARY.name
 
     config, profile, case, identity = _load_inputs()
-    rows = [_source_label_row(config, nominal) for nominal in DISCRETE_LABELS_MOL_L]
+    rows = [_source_label_row(nominal) for nominal in DISCRETE_LABELS_MOL_L]
     for position in POSITIONS:
         candidates = profile.iloc[(profile["Position"] - position).abs().argsort()[:1]]
         if len(candidates) != 1 or abs(float(candidates.iloc[0]["Position"]) - position) > 1.0e-12:
@@ -315,7 +341,12 @@ def main() -> int:
         rows.append(_state_row(config, candidates.iloc[0], identity))
 
     state_rows = [row for row in rows if row["record_kind"] == "retained_case3c_state"]
-    max_balance_residual = max(abs(float(row["analytical_balance_residual_mol_L"])) for row in state_rows)
+    max_balance_residual = max(
+        abs(float(row["analytical_balance_residual_mol_L"])) for row in state_rows
+    )
+    max_balance_relative_residual = max(
+        float(row["analytical_balance_relative_residual"]) for row in state_rows
+    )
     position_1 = next(row for row in state_rows if abs(float(row["position"]) - 1.0) <= 1.0e-12)
     summary = {
         "claim_label": config["claim_label"],
@@ -327,8 +358,10 @@ def main() -> int:
         "gates": {
             "all_requested_positions_present": len(state_rows) == len(POSITIONS),
             "analytical_balance_max_abs_residual_mol_L": max_balance_residual,
+            "analytical_balance_max_relative_residual": max_balance_relative_residual,
             "analytical_balance_tolerance_mol_L": BALANCE_TOLERANCE_MOL_L,
-            "analytical_balance_pass": max_balance_residual <= BALANCE_TOLERANCE_MOL_L,
+            "analytical_balance_relative_tolerance": BALANCE_TOLERANCE_MOL_L,
+            "analytical_balance_pass": max_balance_relative_residual <= BALANCE_TOLERANCE_MOL_L,
             "position_1_analytical_concentration_mol_L": position_1["loaded_analytical_concentration_mol_L"],
             "position_1_exact_value_preserved": abs(
                 float(position_1["loaded_analytical_concentration_mol_L"])
@@ -345,12 +378,12 @@ def main() -> int:
             "Loaded analytical concentration is the conserved sum of MEA, MEAH+, and MEACOO- on the loaded-solution volume basis.",
             "Free MEA is the molecular MEA species concentration and remains separate from both prepared and analytical concentration.",
             "The retained Position 1 calculation is 4.889309897097635 mol/L (4.8893098971 mol/L at the requested display precision), not exact 5 M.",
-            "Morgan2018 supplies a 7.3% campaign-level expanded uncertainty for nominal NCCC amine composition; it does not establish a Case 3C-specific prepared-to-loaded volume ratio.",
+            "Morgan2018 supplies a 7.3% campaign-level expanded uncertainty for nominal NCCC amine composition; it is applied only to the prepared mass-basis conversion and not to loaded-versus-5 M admission.",
         ],
         "limitations": [
             "Putta/Luo do not report all source-local preparation temperatures, loaded analytical concentrations, or paired volume bases needed to admit exact 1 M/5 M literature inputs.",
             "NCCC Case 3C preparation temperature and prepared-to-loaded solution-volume ratio are absent from the retained case record.",
-            "Amundsen density values are used as source-backed interpolation evidence; the retained ePC-SAFT profile density is retained separately and does not redefine a literature label.",
+            "Amundsen density values are used as source-backed interpolation evidence; instrument and combined uncertainties are retained separately, and the retained ePC-SAFT profile density does not redefine a literature label.",
             "All source and retained state rows are reported, but every mapping row remains basis_unresolved for exact discrete absorber admission.",
         ],
         "immutable_inputs": config["immutable_inputs"],

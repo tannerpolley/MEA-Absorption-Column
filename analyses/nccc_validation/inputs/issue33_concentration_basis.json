@@ -128,7 +128,7 @@
       "attachment_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
       "locators": [
         "printed p. 3096, Experimental Section: unloaded solutions were made with deionized water; loaded solutions were prepared by bubbling CO2",
-        "printed p. 3096, Experimental Section: density uncertainty +/- 0.00005 g/cm3 and temperature uncertainty +/- 0.03 K",
+        "printed p. 3096, Experimental Section: instrument density uncertainty +/- 0.00005 g/cm3 and temperature uncertainty +/- 0.03 K",
         "printed p. 3097, Tables 1 and 3: 30 wt% MEA unloaded and loaded density observations",
         "printed p. 3099: combined density uncertainty +/- 0.05% for unloaded and +/- 0.2% for loaded systems, except highest temperatures/loadings"
       ],
@@ -137,8 +137,11 @@
         "The loaded density source is distinct from the retained ePC-SAFT profile density and does not redefine a literature concentration label."
       ],
       "reported_uncertainties": {
-        "unloaded_density_g_cm3": 0.0005,
-        "loaded_density_g_cm3": 0.002,
+        "instrument_density_uncertainty_g_cm3": 0.00005,
+        "combined_density_relative_percent": {
+          "unloaded": 0.05,
+          "loaded": 0.2
+        },
         "temperature_K": 0.03,
         "mea_mass_fraction_percent": 0.5,
         "co2_loading_percent": 2.0
@@ -170,8 +173,11 @@
     "source": "Amundsen2009",
     "composition": "30 wt% MEA in water, loaded with CO2",
     "units": "density_kg_m3; temperature_K; loading_mol_CO2_per_mol_MEA",
-    "unloaded_density_uncertainty_kg_m3": 0.5,
-    "loaded_density_uncertainty_kg_m3": 2.0,
+    "instrument_density_uncertainty_g_cm3": 0.00005,
+    "combined_density_relative_uncertainty_percent": {
+      "unloaded": 0.05,
+      "loaded": 0.2
+    },
     "unloaded": [
       {"temperature_K": 298.15, "loading": 0.0, "density_kg_m3": 1010.6},
       {"temperature_K": 313.15, "loading": 0.0, "density_kg_m3": 1003.4},

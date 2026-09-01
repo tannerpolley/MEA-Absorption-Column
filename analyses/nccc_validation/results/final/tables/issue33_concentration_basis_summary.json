@@ -11,8 +11,10 @@
   ],
   "gates": {
     "all_requested_positions_present": true,
-    "analytical_balance_max_abs_residual_mol_L": 0.0,
+    "analytical_balance_max_abs_residual_mol_L": 8.881784197001252e-16,
+    "analytical_balance_max_relative_residual": 1.816572151066474e-16,
     "analytical_balance_tolerance_mol_L": 1e-10,
+    "analytical_balance_relative_tolerance": 1e-10,
     "analytical_balance_pass": true,
     "position_1_analytical_concentration_mol_L": 4.889309897097635,
     "position_1_exact_value_preserved": true,
@@ -25,12 +27,12 @@
     "Loaded analytical concentration is the conserved sum of MEA, MEAH+, and MEACOO- on the loaded-solution volume basis.",
     "Free MEA is the molecular MEA species concentration and remains separate from both prepared and analytical concentration.",
     "The retained Position 1 calculation is 4.889309897097635 mol/L (4.8893098971 mol/L at the requested display precision), not exact 5 M.",
-    "Morgan2018 supplies a 7.3% campaign-level expanded uncertainty for nominal NCCC amine composition; it does not establish a Case 3C-specific prepared-to-loaded volume ratio."
+    "Morgan2018 supplies a 7.3% campaign-level expanded uncertainty for nominal NCCC amine composition; it is applied only to the prepared mass-basis conversion and not to loaded-versus-5 M admission."
   ],
   "limitations": [
     "Putta/Luo do not report all source-local preparation temperatures, loaded analytical concentrations, or paired volume bases needed to admit exact 1 M/5 M literature inputs.",
     "NCCC Case 3C preparation temperature and prepared-to-loaded solution-volume ratio are absent from the retained case record.",
-    "Amundsen density values are used as source-backed interpolation evidence; the retained ePC-SAFT profile density is retained separately and does not redefine a literature label.",
+    "Amundsen density values are used as source-backed interpolation evidence; instrument and combined uncertainties are retained separately, and the retained ePC-SAFT profile density does not redefine a literature label.",
     "All source and retained state rows are reported, but every mapping row remains basis_unresolved for exact discrete absorber admission."
   ],
   "immutable_inputs": {
@@ -79,5 +81,5 @@
       "attachment_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e"
     }
   ],
-  "source_table_sha256": "8b2b491624c3887ab8a9811b82a46954e800aa660b42c704e0503f7f1a4cefd2"
+  "source_table_sha256": "efb8e6509c3c795d48c45ded3e5e318505e369fea1616cda5e6c3932a0b1f525"
 }

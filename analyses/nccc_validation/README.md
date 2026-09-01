@@ -202,6 +202,11 @@ MEA concentration; it is not rounded or admitted as exact 5 M. Every row
 remains `basis_unresolved` until the missing preparation-temperature and
 prepared-to-loaded-volume evidence is supplied.
 
+Morgan's 7.3% campaign uncertainty is applied only to the prepared mass-basis
+conversion; loaded-versus-5 M uncertainty comparison is not assessed while the
+volume ratio is unresolved. Amundsen's instrument density uncertainty is kept
+separate from its combined relative estimates, which are converted row-wise.
+
 ## Result Semantics
 
 The clean profile gallery contains accepted validation rows and explicitly accepted fallback rows used in the manuscript. Diagnostic or unresolved rows stay in final tables and reports, but they are not mixed into the clean profile gallery unless the caveat is explicit in the profile index.
