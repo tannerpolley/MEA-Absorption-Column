@@ -1,0 +1,2 @@
+comparison_id,candidate_A_status,candidate_B_status,candidate_A_co2_flux_mol_m2_s,candidate_B_co2_flux_mol_m2_s,charge_residual,current_residual,transfer_direction,decision,reason
+identical_state_transport,reconstructable_as_reduced_form_but_not_admitted,non_executable_missing_complete_mobility_law_and_ion_inputs,,,,,,not_evaluable_blocked,"No identical accepted state, admitted kinetics, complete ion inputs, or complete Candidate B mobility law is available; no flux comparison is performed."
