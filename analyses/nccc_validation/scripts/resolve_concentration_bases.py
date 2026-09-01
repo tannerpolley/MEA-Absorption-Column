@@ -4,6 +4,7 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -25,6 +26,7 @@ PROFILE = ANALYSIS / "inputs/retained_reactive_case3c/film_states.csv"
 CASE_INPUT = ROOT / "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv"
 SOURCE_CASE_INPUT = ROOT / "src/mea_absorption_column/data/NCCC_2017_cases.csv"
 IDENTITY = ANALYSIS / "inputs/issue16_reactive_film_identity.json"
+SPEC_TABLE_SUMMARY = ANALYSIS / "inputs/retained_reactive_case3c/speciation_table_summary.json"
 TABLE = ANALYSIS / "results/final/tables/issue33_concentration_basis.csv"
 SUMMARY = ANALYSIS / "results/final/tables/issue33_concentration_basis_summary.json"
 
@@ -41,7 +43,7 @@ POSITIONS = (0.0, 0.5, 1.0)
 DOMAIN_TEMPERATURE_K = (293.15, 323.15)
 DOMAIN_LOADING = (0.0, 0.5)
 DISCRETE_LABELS_MOL_L = (1.0, 5.0)
-BALANCE_TOLERANCE_MOL_L = 1.0e-10
+BALANCE_RELATIVE_TOLERANCE = 1.0e-10
 
 
 def _sha256(path: Path) -> str:
@@ -94,8 +96,35 @@ def _require_hash(path: Path, expected: str, label: str) -> None:
         raise ValueError(f"{label} hash changed: expected {expected}, got {actual}")
 
 
-def _load_inputs() -> tuple[dict, pd.DataFrame, pd.Series, dict]:
+def _selected_speciation_table(config: dict) -> tuple[Path, dict]:
+    selected_text = os.environ.get("MEA_EPCSAFT_REACTIVE_TABLE")
+    if not selected_text:
+        raise RuntimeError("MEA_EPCSAFT_REACTIVE_TABLE must select the retained certified table")
+    selected = Path(selected_text).expanduser()
+    if not selected.is_absolute():
+        selected = (Path.cwd() / selected).resolve()
+    expected = (ROOT / config["immutable_inputs"]["retained_speciation_table_path"]).resolve()
+    if selected != expected:
+        raise ValueError(
+            "MEA_EPCSAFT_REACTIVE_TABLE must select the retained Issue 33 table: "
+            f"expected {config['immutable_inputs']['retained_speciation_table_path']}"
+        )
+    _require_hash(
+        selected,
+        config["immutable_inputs"]["retained_speciation_table_sha256"],
+        "retained speciation table",
+    )
+    _require_hash(
+        SPEC_TABLE_SUMMARY,
+        config["immutable_inputs"]["speciation_table_generation_summary_sha256"],
+        "speciation table generation summary",
+    )
+    return selected, json.loads(SPEC_TABLE_SUMMARY.read_text(encoding="utf-8"))
+
+
+def _load_inputs() -> tuple[dict, pd.DataFrame, pd.Series, dict, Path, dict]:
     config = json.loads(INPUT.read_text(encoding="utf-8"))
+    speciation_table, speciation_summary = _selected_speciation_table(config)
     _require_hash(PROFILE, config["retained_profile"]["sha256"], "retained profile")
     _require_hash(CASE_INPUT, config["nccc_case"]["input_sha256"], "NCCC case input")
     _require_hash(
@@ -126,7 +155,7 @@ def _load_inputs() -> tuple[dict, pd.DataFrame, pd.Series, dict]:
     if len(source_case) != 1 or not pd.isna(source_case.iloc[0]["absorber_lean_solvent_temp_C"]):
         raise ValueError("source-preserving Case 3C input must retain its missing lean temperature")
     identity = json.loads(IDENTITY.read_text(encoding="utf-8"))
-    return config, profile, case, identity
+    return config, profile, case, identity, speciation_table, speciation_summary
 
 
 def _source_label_row(nominal_mol_L: float) -> dict[str, object]:
@@ -155,6 +184,12 @@ def _source_label_row(nominal_mol_L: float) -> dict[str, object]:
         "prepared_density_source": "not_reported_for_local_literature_row",
         "prepared_concentration_mol_L": nominal_mol_L,
         "prepared_concentration_uncertainty_composition_only_mol_L": "",
+        "unloaded_density_at_local_state_temperature_kg_m3": "",
+        "unloaded_density_at_local_state_temperature_instrument_uncertainty_g_cm3": "",
+        "unloaded_density_at_local_state_temperature_combined_relative_uncertainty_percent": "",
+        "unloaded_density_at_local_state_temperature_combined_uncertainty_kg_m3": "",
+        "unloaded_concentration_at_local_state_temperature_mol_L": "",
+        "unloaded_concentration_at_local_state_temperature_uncertainty_composition_only_mol_L": "",
         "loaded_density_kg_m3": "",
         "loaded_density_instrument_uncertainty_g_cm3": "",
         "loaded_density_combined_relative_uncertainty_percent": "",
@@ -223,20 +258,25 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
     loading = sum(co2_components_mol_L) / analytical_mol_L
     temperature_K = float(source["Tl"])
     prepared_mass_fraction = float(config["nccc_case"]["nominal_mea_mass_fraction"])
-    prepared_density_kg_m3 = _density(
+    unloaded_density_at_local_state_temperature_kg_m3 = _density(
         config["density_observations"]["unloaded"], temperature_K, 0.0
     )
     loaded_density_kg_m3 = _density(
         config["density_observations"]["loaded"], temperature_K, loading
     )
-    prepared_concentration_mol_L = (
-        prepared_density_kg_m3 * prepared_mass_fraction / MEA_MOLAR_MASS_KG_PER_MOL / 1000.0
+    unloaded_concentration_at_local_state_temperature_mol_L = (
+        unloaded_density_at_local_state_temperature_kg_m3
+        * prepared_mass_fraction
+        / MEA_MOLAR_MASS_KG_PER_MOL
+        / 1000.0
     )
     nominal_uncertainty_percent = float(
         config["nccc_case"]["nominal_mea_composition_uncertainty_relative_expanded_percent"]
     )
-    prepared_concentration_uncertainty_mol_L = (
-        prepared_concentration_mol_L * nominal_uncertainty_percent / 100.0
+    unloaded_concentration_at_local_state_temperature_uncertainty_mol_L = (
+        unloaded_concentration_at_local_state_temperature_mol_L
+        * nominal_uncertainty_percent
+        / 100.0
     )
     difference_to_5M = analytical_mol_L - 5.0
     reasons = [
@@ -271,13 +311,19 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
         "loading_source": "retained nine-species concentrations; CO2 + MEACOO- + HCO3- + CO3^2- over analytical MEA",
         "nominal_mea_mass_fraction": prepared_mass_fraction,
         "nominal_mea_mass_fraction_uncertainty_relative_expanded_percent": nominal_uncertainty_percent,
-        "prepared_density_kg_m3": prepared_density_kg_m3,
-        "prepared_density_instrument_uncertainty_g_cm3": config["density_observations"]["instrument_density_uncertainty_g_cm3"],
-        "prepared_density_combined_relative_uncertainty_percent": config["density_observations"]["combined_density_relative_uncertainty_percent"]["unloaded"],
-        "prepared_density_combined_uncertainty_kg_m3": prepared_density_kg_m3 * config["density_observations"]["combined_density_relative_uncertainty_percent"]["unloaded"] / 100.0,
-        "prepared_density_source": "Amundsen2009 30 wt% unloaded density; bilinear source interpolation",
-        "prepared_concentration_mol_L": prepared_concentration_mol_L,
-        "prepared_concentration_uncertainty_composition_only_mol_L": prepared_concentration_uncertainty_mol_L,
+        "prepared_density_kg_m3": "",
+        "prepared_density_instrument_uncertainty_g_cm3": "",
+        "prepared_density_combined_relative_uncertainty_percent": "",
+        "prepared_density_combined_uncertainty_kg_m3": "",
+        "prepared_density_source": "unresolved_NCCC_preparation_temperature",
+        "prepared_concentration_mol_L": "",
+        "prepared_concentration_uncertainty_composition_only_mol_L": "",
+        "unloaded_density_at_local_state_temperature_kg_m3": unloaded_density_at_local_state_temperature_kg_m3,
+        "unloaded_density_at_local_state_temperature_instrument_uncertainty_g_cm3": config["density_observations"]["instrument_density_uncertainty_g_cm3"],
+        "unloaded_density_at_local_state_temperature_combined_relative_uncertainty_percent": config["density_observations"]["combined_density_relative_uncertainty_percent"]["unloaded"],
+        "unloaded_density_at_local_state_temperature_combined_uncertainty_kg_m3": unloaded_density_at_local_state_temperature_kg_m3 * config["density_observations"]["combined_density_relative_uncertainty_percent"]["unloaded"] / 100.0,
+        "unloaded_concentration_at_local_state_temperature_mol_L": unloaded_concentration_at_local_state_temperature_mol_L,
+        "unloaded_concentration_at_local_state_temperature_uncertainty_composition_only_mol_L": unloaded_concentration_at_local_state_temperature_uncertainty_mol_L,
         "loaded_density_kg_m3": loaded_density_kg_m3,
         "loaded_density_instrument_uncertainty_g_cm3": config["density_observations"]["instrument_density_uncertainty_g_cm3"],
         "loaded_density_combined_relative_uncertainty_percent": config["density_observations"]["combined_density_relative_uncertainty_percent"]["loaded"],
@@ -298,7 +344,7 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
         "analytical_balance_reconstructed_mol_L": reconstructed_analytical_mol_L,
         "analytical_balance_residual_mol_L": balance_residual_mol_L,
         "analytical_balance_relative_residual": balance_relative_residual,
-        "analytical_balance_pass": balance_relative_residual <= BALANCE_TOLERANCE_MOL_L,
+        "analytical_balance_pass": balance_relative_residual <= BALANCE_RELATIVE_TOLERANCE,
         "source_profile_rho_mol_L": float(source["rho_mol_l"]) / 1000.0,
         "volume_basis": "1 L of retained loaded liquid solution",
         "prepared_to_loaded_volume_ratio": "unresolved",
@@ -307,9 +353,9 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
         "within_campaign_composition_uncertainty": "not_assessed_basis_unresolved",
         "admission_decision": "basis_unresolved",
         "admission_reasons": "; ".join(reasons),
-        "source_uncertainties": "Morgan2018: nominal amine composition +/- 7.3% expanded (approximately 95%, k=2), applied only to the prepared mass-basis conversion; Amundsen2009: instrument density uncertainty +/- 0.00005 g/cm3 and combined relative estimates +/- 0.05% unloaded and +/- 0.2% loaded, converted row-wise from each interpolated density; NCCC Case 3C-specific preparation-temperature and volume uncertainty unavailable",
+        "source_uncertainties": "Morgan2018: nominal amine composition +/- 7.3% expanded (approximately 95%, k=2), applied only to the diagnostic unloaded concentration at local state temperature; it is not a prepared-concentration result or a loaded-versus-5 M admission basis; Amundsen2009: instrument density uncertainty +/- 0.00005 g/cm3 and combined relative estimates +/- 0.05% unloaded and +/- 0.2% loaded, converted row-wise from each interpolated density; NCCC Case 3C-specific preparation-temperature and volume uncertainty unavailable",
         "source_locators": "Morgan2018 printed p. 10468 Section 2.2 and printed pp. 10469-10470 Section 2.4/Table 4; Amundsen2009 printed pp. 3096-3099; retained profile",
-        "source_identities": "Morgan2018; Amundsen2009; retained Case 3C profile; Issue 16 identity",
+        "source_identities": "Morgan2018; Amundsen2009; retained Case 3C profile; speciation-table generation identity; Issue 16 downstream derivative/runtime identity",
         "source_attachment_sha256": "Morgan2018=bf9cfa2877c31a1ed8346951e149b6af7fc7e8413e3f62fde22a76e6c31b5ddb; Amundsen2009=a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
     }
 
@@ -332,7 +378,7 @@ def main() -> int:
         TABLE = args.output_dir / TABLE.name
         SUMMARY = args.output_dir / SUMMARY.name
 
-    config, profile, case, identity = _load_inputs()
+    config, profile, case, identity, speciation_table, speciation_summary = _load_inputs()
     rows = [_source_label_row(nominal) for nominal in DISCRETE_LABELS_MOL_L]
     for position in POSITIONS:
         candidates = profile.iloc[(profile["Position"] - position).abs().argsort()[:1]]
@@ -359,9 +405,8 @@ def main() -> int:
             "all_requested_positions_present": len(state_rows) == len(POSITIONS),
             "analytical_balance_max_abs_residual_mol_L": max_balance_residual,
             "analytical_balance_max_relative_residual": max_balance_relative_residual,
-            "analytical_balance_tolerance_mol_L": BALANCE_TOLERANCE_MOL_L,
-            "analytical_balance_relative_tolerance": BALANCE_TOLERANCE_MOL_L,
-            "analytical_balance_pass": max_balance_relative_residual <= BALANCE_TOLERANCE_MOL_L,
+            "analytical_balance_relative_tolerance": BALANCE_RELATIVE_TOLERANCE,
+            "analytical_balance_pass": max_balance_relative_residual <= BALANCE_RELATIVE_TOLERANCE,
             "position_1_analytical_concentration_mol_L": position_1["loaded_analytical_concentration_mol_L"],
             "position_1_exact_value_preserved": abs(
                 float(position_1["loaded_analytical_concentration_mol_L"])
@@ -374,11 +419,11 @@ def main() -> int:
             "capture_or_kinetic_tuning_performed": False,
         },
         "conclusions": [
-            "Prepared concentration is a mass-fraction/density conversion on an unloaded-solution basis.",
+            "The prepared-concentration definition is a mass-fraction/density conversion on an unloaded-solution basis, but the NCCC preparation temperature is unreported so its true prepared concentration remains unresolved.",
             "Loaded analytical concentration is the conserved sum of MEA, MEAH+, and MEACOO- on the loaded-solution volume basis.",
             "Free MEA is the molecular MEA species concentration and remains separate from both prepared and analytical concentration.",
             "The retained Position 1 calculation is 4.889309897097635 mol/L (4.8893098971 mol/L at the requested display precision), not exact 5 M.",
-            "Morgan2018 supplies a 7.3% campaign-level expanded uncertainty for nominal NCCC amine composition; it is applied only to the prepared mass-basis conversion and not to loaded-versus-5 M admission.",
+            "The local-temperature unloaded concentration is a diagnostic conversion only; Morgan2018 supplies its 7.3% campaign-level expanded uncertainty, and neither is a prepared concentration or a loaded-versus-5 M admission basis.",
         ],
         "limitations": [
             "Putta/Luo do not report all source-local preparation temperatures, loaded analytical concentrations, or paired volume bases needed to admit exact 1 M/5 M literature inputs.",
@@ -387,7 +432,27 @@ def main() -> int:
             "All source and retained state rows are reported, but every mapping row remains basis_unresolved for exact discrete absorber admission.",
         ],
         "immutable_inputs": config["immutable_inputs"],
-        "retained_engine_identity": identity["engine"],
+        "selected_speciation_table_path": speciation_table.relative_to(ROOT).as_posix(),
+        "selected_speciation_table_sha256": config["immutable_inputs"]["retained_speciation_table_sha256"],
+        "speciation_table_generation_identity": {
+            "role": "generation identity for the retained certified reactive speciation table",
+            "summary_path": config["immutable_inputs"]["speciation_table_generation_summary_path"],
+            "summary_sha256": config["immutable_inputs"]["speciation_table_generation_summary_sha256"],
+            "table_path": config["immutable_inputs"]["retained_speciation_table_path"],
+            "table_sha256": config["immutable_inputs"]["retained_speciation_table_sha256"],
+            "engine_wheel_sha256": speciation_summary["engine_wheel_sha256"],
+            "generation_input_state_table_sha256": speciation_summary["state_table_sha256"],
+        },
+        "issue16_downstream_derivative_runtime_identity": {
+            "role": "Issue 16 downstream derivative/runtime identity for the retained film evidence",
+            "identity_path": config["immutable_inputs"]["issue16_identity_path"],
+            "identity_sha256": config["immutable_inputs"]["issue16_identity_sha256"],
+            "engine_commit": identity["engine"]["commit"],
+            "wheel_filename": identity["engine"]["wheel_filename"],
+            "wheel_sha256": identity["engine"]["wheel_sha256"],
+            "core_sha256": identity["engine"]["core_sha256"],
+            "speciation_table_sha256": identity["retained_position_1"]["speciation_table_sha256"],
+        },
         "source_records": [
             {
                 "id": source["id"],

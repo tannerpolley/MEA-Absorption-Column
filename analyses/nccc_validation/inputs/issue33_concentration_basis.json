@@ -161,6 +161,7 @@
     "nominal_mea_composition_uncertainty_relative_expanded_percent": 7.3,
     "preparation_temperature_K": null,
     "preparation_temperature_status": "unreported_in_retained_case_record",
+    "prepared_concentration_status": "unresolved_for_NCCC_case_record",
     "lean_solvent_temperature_K": 318.15,
     "lean_solvent_temperature_status": "45 C imputation in run-ready input; not a preparation temperature",
     "prepared_solution_volume_basis": null,
@@ -224,6 +225,10 @@
   "immutable_inputs": {
     "issue16_identity_path": "analyses/nccc_validation/inputs/issue16_reactive_film_identity.json",
     "issue16_identity_sha256": "1b18c1a02e1371ed83001c82ddbe7216d163ecb71488bb2fcab676bf950bb5ca",
+    "retained_speciation_table_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv",
+    "retained_speciation_table_sha256": "36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4",
+    "speciation_table_generation_summary_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table_summary.json",
+    "speciation_table_generation_summary_sha256": "fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a",
     "nccc_source_preserving_case_path": "src/mea_absorption_column/data/NCCC_2017_cases.csv",
     "nccc_source_preserving_case_sha256": "165e974d53a90e0570955aea766642eb823f7865914dac6d8761f75f484f7834",
     "case_source_path": "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv",
