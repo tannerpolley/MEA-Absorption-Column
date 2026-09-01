@@ -39,6 +39,7 @@ export PYTHONPATH="src"
 | `render_enhancement_consistency.py` | Renders enhancement and fixed-state flux comparisons from the retained enhancement table. | No. | No direct dependency. |
 | `analyze_issue17_enhancement_comparison.py` | Evaluates the four issue 17 enhancement equations on 21 retained current-reconstruction fugacity-only states and applies the staged numerical and physical gates. | Evaluates 84 fixed-state rows. | No direct dependency; reads the retained fixed-state table. |
 | `render_issue17_enhancement_comparison.py` | Renders the three issue 17 equation-comparison figures from the retained 84-row table. | No. | No direct dependency. |
+| `resolve_concentration_bases.py` | Reconstructs prepared, loaded analytical, and free-MEA concentration bases for Putta/Luo labels and retained NCCC Case 3C states. | Reconstructs retained nine-species states. | Requires the certified reactive ePC-SAFT table. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -184,6 +185,29 @@ tables remain unchanged. Gate and immutable-input identities are in
 `issue16_reactive_film_gate.csv` and
 `inputs/issue16_reactive_film_identity.json`;
 all placeholder-dependent evidence is `provisional_concept_only`.
+
+Resolve the Issue 33 concentration bases and retain the source table:
+
+```bash
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/resolve_concentration_bases.py
+```
+
+The input record `inputs/issue33_concentration_basis.json` keeps the equations,
+source locators, Zotero attachment hashes, density observations, uncertainty,
+and admission rules. The output table reports Putta's nominal 1 M and 5 M
+labels plus Case 3C positions 0, 0.5, and 1. Position 1 retains the computed
+`4.889309897097635 mol/L` analytical MEA concentration and its separate free
+MEA concentration; it is not rounded or admitted as exact 5 M. Every row
+remains `basis_unresolved` until the missing preparation-temperature and
+prepared-to-loaded-volume evidence is supplied.
+
+Morgan's 7.3% campaign uncertainty is used only for the diagnostic unloaded
+concentration at each local state temperature; it is not a prepared-concentration
+result or a loaded-versus-5 M admission basis. The NCCC preparation temperature is
+unreported, so true prepared concentration remains unresolved. Amundsen's
+instrument density uncertainty is kept separate from its combined relative
+estimates, which are converted row-wise for the diagnostic local-state density.
 
 ## Result Semantics
 

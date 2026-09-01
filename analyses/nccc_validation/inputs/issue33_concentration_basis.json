@@ -1,0 +1,239 @@
+{
+  "schema_version": "issue33_concentration_basis_v1",
+  "claim_label": "reference_backed_mapping_with_basis_unresolved_admission",
+  "owner": "MEA-Absorption-Column/analyses/nccc_validation",
+  "scope": "Resolve prepared, loaded analytical, and free-MEA concentration definitions without changing absorber kinetics or thermodynamics.",
+  "definitions": {
+    "prepared_unloaded_concentration": {
+      "symbol": "C_MEA,prepared",
+      "equation": "C_MEA,prepared = rho_solution * w_MEA / M_MEA",
+      "units": "mol/L of unloaded solution",
+      "basis": "mass fraction of MEA in the unloaded MEA-water solution and solution density at the stated conversion temperature",
+      "source_locators": ["Morgan2018: printed p. 10468, Section 2.2", "Amundsen2009: printed p. 3097, Tables 1 and 3"]
+    },
+    "loaded_analytical_concentration": {
+      "symbol": "C_MEA,analytical",
+      "equation": "C_MEA,analytical = (n_MEA + n_MEAH+ + n_MEACOO-) / V_loaded",
+      "units": "mol/L of loaded liquid solution",
+      "basis": "one litre of the loaded liquid volume; analytical MEA moles are conserved across speciation",
+      "source_locators": ["Morgan2018: printed p. 10468, Section 2.2", "retained Case 3C profile: film_states.csv"]
+    },
+    "free_mea_concentration": {
+      "symbol": "C_MEA,free",
+      "equation": "C_MEA,free = n_MEA / V_loaded",
+      "units": "mol/L of loaded liquid solution",
+      "basis": "true molecular MEA species only; it is not a replacement for prepared or analytical concentration",
+      "source_locators": ["Putta2016: printed p. 347, Figures 6 and 7 captions", "retained Case 3C profile: film_states.csv"]
+    },
+    "loading": {
+      "symbol": "alpha",
+      "equation": "alpha = (n_CO2 + n_MEACOO- + n_HCO3- + n_CO3^2-) / (n_MEA + n_MEAH+ + n_MEACOO-)",
+      "units": "mol CO2 per mol analytical MEA",
+      "basis": "nine-species balance on the loaded liquid volume",
+      "source_locators": ["Morgan2018: printed p. 10468, Equation 2", "retained Case 3C profile: film_states.csv"]
+    },
+    "solution_volume": {
+      "prepared": "V_prepared is the volume of unloaded solution used to establish the mass-basis preparation concentration.",
+      "loaded": "V_loaded is the loaded liquid solution volume used by analytical and free-species concentrations.",
+      "conversion": "C_MEA,analytical = C_MEA,prepared * V_prepared / V_loaded",
+      "status": "basis_unresolved_for_literature_and_NCCC_case_record",
+      "reason": "The retained Putta/Luo and NCCC Case 3C records do not provide paired gravimetric sample masses or a reported prepared-to-loaded volume ratio."
+    }
+  },
+  "source_records": [
+    {
+      "id": "Putta2016",
+      "citation_key": "Putta2016",
+      "doi": "10.1016/j.ijggc.2016.08.009",
+      "zotero_parent_key": "VR43Z4ZX",
+      "zotero_attachment_key": "BSUB8BSF",
+      "attachment_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "locators": [
+        "printed p. 340, Table 1: literature rows labelled MEA = 1 kmol/m3 and 5 kmol/m3",
+        "printed p. 340, Section 2: procedures are already published and are not repeated",
+        "printed pp. 347--348, Figures 6 and 7 captions: molarity of MEA solution and free MEA concentration are separate quantities"
+      ],
+      "resolved_claims": [
+        "The concentration-model literature labels include 1 M and 5 M ranges.",
+        "Free MEA is a separate model quantity from molarity of the MEA solution."
+      ],
+      "unresolved_claims": [
+        "Putta does not establish the preparation temperature, local loaded analytical concentration, or solution-volume convention for the inherited literature rows.",
+        "Putta does not provide a row-specific concentration uncertainty that admits an exact discrete 1 M or 5 M absorber input."
+      ]
+    },
+    {
+      "id": "Luo2015",
+      "citation_key": "Luo2015",
+      "doi": "10.1016/j.ces.2014.10.013",
+      "zotero_parent_key": "KAB4KF8F",
+      "zotero_attachment_key": "MFRDNYCS",
+      "attachment_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "locators": [
+        "printed p. 59, Section 3.1: 1 M and 5 M aqueous MEA labels, loading 0--0.4, temperature 298--343 K",
+        "printed p. 61, Section 3.2: aqueous MEA solutions were prepared on a mass basis and MEA was dissolved in deionized water",
+        "printed p. 61, Section 3.2, Equations 15 and 16: 1 M and 5 M density correlations; relative total standard deviation 0.06% and 0.17%, respectively"
+      ],
+      "resolved_claims": [
+        "Preparation is mass-basis, not a stated fixed-volume preparation.",
+        "The 1 M and 5 M labels are prepared-solution labels used for the kinetic experiments."
+      ],
+      "unresolved_claims": [
+        "No preparation temperature or paired prepared/loaded solution volume is reported in the retained article locations.",
+        "The balance accuracy of +/- 1e-5 kg is not enough to reconstruct a row-specific final concentration uncertainty without the actual preparation masses."
+      ],
+      "reported_uncertainties": {
+        "temperature_C": 0.1,
+        "pressure_percent": 0.25,
+        "co2_loading_mol_per_mol": 0.01,
+        "density_regression_relative_total_standard_deviation_percent": {
+          "1_M": 0.06,
+          "5_M": 0.17
+        },
+        "preparation_balance_accuracy_kg": 0.00001
+      }
+    },
+    {
+      "id": "Morgan2018",
+      "citation_key": "Morgan2018a",
+      "doi": "10.1021/acs.iecr.8b01472",
+      "zotero_parent_key": "RCZFHMRH",
+      "zotero_attachment_key": "HCDWUYJZ",
+      "attachment_sha256": "bf9cfa2877c31a1ed8346951e149b6af7fc7e8413e3f62fde22a76e6c31b5ddb",
+      "locators": [
+        "printed p. 10467, Table 1: NCCC steady-state rows and nominal lean-solvent MEA weight fraction",
+        "printed p. 10468, Section 2.2, Equations 1 and 2: nominal MEA is the no-CO2 mass-basis amount and loading is CO2/MEA",
+        "printed p. 10469--10470, Section 2.4 and Table 4: steady-state campaign expanded uncertainty estimates"
+      ],
+      "resolved_claims": [
+        "NCCC nominal MEA composition is a no-CO2, mass-basis solvent amount.",
+        "Campaign-level nominal amine composition uncertainty is 7.3% expanded uncertainty at approximately 95% confidence (k = 2).",
+        "Campaign-level process amine concentration uncertainty is 6.0% and process CO2 loading uncertainty is 10.7% expanded uncertainty."
+      ],
+      "reported_uncertainties": {
+        "nominal_amine_composition_relative_expanded_percent": 7.3,
+        "process_amine_concentration_relative_expanded_percent": 6.0,
+        "process_co2_concentration_relative_expanded_percent": 16.7,
+        "co2_loading_relative_expanded_percent": 10.7,
+        "confidence": "approximately 95%, k = 2",
+        "applicability": "NCCC steady-state campaign-level estimate; not a Case 3C-specific paired sample remeasurement"
+      }
+    },
+    {
+      "id": "Amundsen2009",
+      "citation_key": "Amundsen2009",
+      "doi": "10.1021/je900188m",
+      "zotero_parent_key": "3QJR6RHH",
+      "zotero_attachment_key": "NGQVTDX7",
+      "attachment_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+      "locators": [
+        "printed p. 3096, Experimental Section: unloaded solutions were made with deionized water; loaded solutions were prepared by bubbling CO2",
+        "printed p. 3096, Experimental Section: instrument density uncertainty +/- 0.00005 g/cm3 and temperature uncertainty +/- 0.03 K",
+        "printed p. 3097, Tables 1 and 3: 30 wt% MEA unloaded and loaded density observations",
+        "printed p. 3099: combined density uncertainty +/- 0.05% for unloaded and +/- 0.2% for loaded systems, except highest temperatures/loadings"
+      ],
+      "resolved_claims": [
+        "Density observations provide an independent mass-fraction-to-molarity conversion for 30 wt% MEA.",
+        "The loaded density source is distinct from the retained ePC-SAFT profile density and does not redefine a literature concentration label."
+      ],
+      "reported_uncertainties": {
+        "instrument_density_uncertainty_g_cm3": 0.00005,
+        "combined_density_relative_percent": {
+          "unloaded": 0.05,
+          "loaded": 0.2
+        },
+        "temperature_K": 0.03,
+        "mea_mass_fraction_percent": 0.5,
+        "co2_loading_percent": 2.0
+      }
+    }
+  ],
+  "nccc_case": {
+    "case_id": "3C",
+    "source_preserving_input_path": "src/mea_absorption_column/data/NCCC_2017_cases.csv",
+    "source_preserving_input_sha256": "165e974d53a90e0570955aea766642eb823f7865914dac6d8761f75f484f7834",
+    "input_path": "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv",
+    "input_sha256": "5cfb1ab670adcfbdb90a003c5e163262470d85e1467aa250ff6e50ab7a79785f",
+    "nominal_mea_mass_fraction": 0.3,
+    "nominal_mea_mass_fraction_unit": "kg MEA/kg unloaded MEA-water solvent",
+    "nominal_mea_mass_fraction_source": "Morgan2018 Table 1 / retained NCCC 2017 input row",
+    "nominal_mea_composition_uncertainty_source": "Morgan2018 Table 4",
+    "nominal_mea_composition_uncertainty_relative_expanded_percent": 7.3,
+    "preparation_temperature_K": null,
+    "preparation_temperature_status": "unreported_in_retained_case_record",
+    "prepared_concentration_status": "unresolved_for_NCCC_case_record",
+    "lean_solvent_temperature_K": 318.15,
+    "lean_solvent_temperature_status": "45 C imputation in run-ready input; not a preparation temperature",
+    "prepared_solution_volume_basis": null,
+    "prepared_solution_volume_basis_status": "unreported_in_retained_case_record",
+    "loading_mol_co2_per_mol_mea": 0.25,
+    "lean_temperature_K": 318.15,
+    "pressure_Pa": 109500.0
+  },
+  "density_observations": {
+    "source": "Amundsen2009",
+    "composition": "30 wt% MEA in water, loaded with CO2",
+    "units": "density_kg_m3; temperature_K; loading_mol_CO2_per_mol_MEA",
+    "instrument_density_uncertainty_g_cm3": 0.00005,
+    "combined_density_relative_uncertainty_percent": {
+      "unloaded": 0.05,
+      "loaded": 0.2
+    },
+    "unloaded": [
+      {"temperature_K": 298.15, "loading": 0.0, "density_kg_m3": 1010.6},
+      {"temperature_K": 313.15, "loading": 0.0, "density_kg_m3": 1003.4},
+      {"temperature_K": 323.15, "loading": 0.0, "density_kg_m3": 998.1},
+      {"temperature_K": 343.15, "loading": 0.0, "density_kg_m3": 985.8},
+      {"temperature_K": 353.15, "loading": 0.0, "density_kg_m3": 979.4}
+    ],
+    "loaded": [
+      {"temperature_K": 298.15, "loading": 0.1, "density_kg_m3": 1028.0},
+      {"temperature_K": 298.15, "loading": 0.2, "density_kg_m3": 1048.0},
+      {"temperature_K": 298.15, "loading": 0.3, "density_kg_m3": 1070.0},
+      {"temperature_K": 298.15, "loading": 0.4, "density_kg_m3": 1095.7},
+      {"temperature_K": 298.15, "loading": 0.5, "density_kg_m3": 1121.1},
+      {"temperature_K": 313.15, "loading": 0.1, "density_kg_m3": 1021.0},
+      {"temperature_K": 313.15, "loading": 0.2, "density_kg_m3": 1041.0},
+      {"temperature_K": 313.15, "loading": 0.3, "density_kg_m3": 1062.9},
+      {"temperature_K": 313.15, "loading": 0.4, "density_kg_m3": 1088.5},
+      {"temperature_K": 313.15, "loading": 0.5, "density_kg_m3": 1114.0},
+      {"temperature_K": 323.15, "loading": 0.1, "density_kg_m3": 1016.0},
+      {"temperature_K": 323.15, "loading": 0.2, "density_kg_m3": 1035.5},
+      {"temperature_K": 323.15, "loading": 0.3, "density_kg_m3": 1058.0},
+      {"temperature_K": 323.15, "loading": 0.4, "density_kg_m3": 1083.0},
+      {"temperature_K": 323.15, "loading": 0.5, "density_kg_m3": 1108.0},
+      {"temperature_K": 343.15, "loading": 0.1, "density_kg_m3": 1004.0},
+      {"temperature_K": 343.15, "loading": 0.2, "density_kg_m3": 1024.0},
+      {"temperature_K": 343.15, "loading": 0.3, "density_kg_m3": 1046.4},
+      {"temperature_K": 343.15, "loading": 0.4, "density_kg_m3": 1071.9},
+      {"temperature_K": 353.15, "loading": 0.1, "density_kg_m3": 997.0},
+      {"temperature_K": 353.15, "loading": 0.2, "density_kg_m3": 1017.6},
+      {"temperature_K": 353.15, "loading": 0.3, "density_kg_m3": 1040.2},
+      {"temperature_K": 353.15, "loading": 0.4, "density_kg_m3": 1066.0}
+    ],
+    "interpolation": "bilinear in temperature and loading using only the tabulated bracketing observations; no extrapolation"
+  },
+  "retained_profile": {
+    "path": "analyses/nccc_validation/inputs/retained_reactive_case3c/film_states.csv",
+    "sha256": "2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a",
+    "species_order": ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"],
+    "profile_concentration_columns": ["Cl_CO2_true", "Cl_MEA_true", "Cl_H2O_true", "Cl_MEAH_true", "Cl_MEACOO_true"],
+    "full_species_reconstruction": "The retained profile stores the five neutral/primary species columns; the nine-species concentration vector is reconstructed by the retained tabulated reactive-equilibrium call from Fl_CO2, Fl_MEA, Fl_H2O, Tl, and rho_mol_l.",
+    "volume_basis": "mol/m3 concentrations in the retained loaded liquid state; converted to mol/L by division by 1000",
+    "positions_reported": [0.0, 0.5, 1.0]
+  },
+  "immutable_inputs": {
+    "issue16_identity_path": "analyses/nccc_validation/inputs/issue16_reactive_film_identity.json",
+    "issue16_identity_sha256": "1b18c1a02e1371ed83001c82ddbe7216d163ecb71488bb2fcab676bf950bb5ca",
+    "retained_speciation_table_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv",
+    "retained_speciation_table_sha256": "36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4",
+    "speciation_table_generation_summary_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table_summary.json",
+    "speciation_table_generation_summary_sha256": "fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a",
+    "nccc_source_preserving_case_path": "src/mea_absorption_column/data/NCCC_2017_cases.csv",
+    "nccc_source_preserving_case_sha256": "165e974d53a90e0570955aea766642eb823f7865914dac6d8761f75f484f7834",
+    "case_source_path": "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv",
+    "case_source_sha256": "5cfb1ab670adcfbdb90a003c5e163262470d85e1467aa250ff6e50ab7a79785f",
+    "retained_profile_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/film_states.csv",
+    "retained_profile_sha256": "2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a"
+  }
+}
