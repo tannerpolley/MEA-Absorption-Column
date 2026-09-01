@@ -1,0 +1,321 @@
+{
+  "schema_version": "issue34_source_faithful_kinetics_v1",
+  "issue": 34,
+  "claim_label": "supported_negative_source_faithful_kinetics_reaction_partition",
+  "owner": "MEA-Absorption-Column/analyses/nccc_validation",
+  "scope": "Retain source-faithful MEA film-reaction kinetics, reaction partition evidence, source-state closure checks, and explicit unsupported outcomes without adopting a physical reactive film.",
+  "species_order": [
+    "CO2",
+    "MEA",
+    "H2O",
+    "MEAH+",
+    "MEACOO-",
+    "HCO3-",
+    "CO3^2-",
+    "H3O+",
+    "OH-"
+  ],
+  "species_formulae": {
+    "CO2": {"C": 1, "H": 0, "N": 0, "O": 2, "charge": 0},
+    "MEA": {"C": 2, "H": 7, "N": 1, "O": 1, "charge": 0},
+    "H2O": {"C": 0, "H": 2, "N": 0, "O": 1, "charge": 0},
+    "MEAH+": {"C": 2, "H": 8, "N": 1, "O": 1, "charge": 1},
+    "MEACOO-": {"C": 3, "H": 6, "N": 1, "O": 3, "charge": -1},
+    "HCO3-": {"C": 1, "H": 1, "N": 0, "O": 3, "charge": -1},
+    "CO3^2-": {"C": 1, "H": 0, "N": 0, "O": 3, "charge": -2},
+    "H3O+": {"C": 0, "H": 3, "N": 0, "O": 1, "charge": 1},
+    "OH-": {"C": 0, "H": 1, "N": 0, "O": 1, "charge": -1}
+  },
+  "source_records": [
+    {
+      "id": "Putta2016",
+      "citation": "Putta et al. (2016), CO2 absorption into loaded aqueous MEA solutions: Kinetics assessment using penetration theory",
+      "doi": "10.1016/j.ijggc.2016.08.009",
+      "zotero_parent_key": "VR43Z4ZX",
+      "zotero_attachment_key": "BSUB8BSF",
+      "attachment_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "reported_uncertainties": {
+        "kinetic_coefficient_fit_uncertainty": "not reported",
+        "aggregate_rate_comparison_uncertainty": "not reported",
+        "source_domain_measurement_uncertainties": "not recovered at the retained Putta2016 locators"
+      },
+      "locators": [
+        "printed p. 341, Eqs. 1--5: R1--R5 acid/base source reactions",
+        "printed p. 341, Eq. 15: concentration F3/r14 form",
+        "printed p. 342, Eqs. 16--22: concentration and activity F1/F2/F3 rate and equilibrium-quotient forms",
+        "printed pp. 345--346, Eqs. I--II and text: concentration and activity kinetic correlations and 198-point fitting domain",
+        "printed p. 349, Table 4: aggregate AARD comparison only"
+      ]
+    },
+    {
+      "id": "Putta2017",
+      "citation": "Putta et al. (2017), CO2 absorption into loaded aqueous MEA solutions: Impact of different model parameter correlations and thermodynamic models",
+      "doi": "10.1016/j.ijggc.2017.01.012",
+      "zotero_parent_key": "WMNI4QQ6",
+      "zotero_attachment_key": "YPM9CEQV",
+      "attachment_sha256": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "reported_uncertainties": {
+        "temperature_C": 0.1,
+        "pressure_percent": 0.25,
+        "loading_mol_CO2_per_mol_MEA": 0.01,
+        "density_regression_relative_total_standard_deviation_percent": {"1_M": 0.06, "5_M": 0.17},
+        "kinetic_coefficient_fit_uncertainty": "not reported in retained source locators"
+      },
+      "locators": [
+        "printed pp. 347--349, Section 2.4 and Table 5: repeated Kin6 correlation ranges",
+        "printed pp. 357--358, Table 9: repeated aggregate AARD comparison"
+      ]
+    },
+    {
+      "id": "Luo2015",
+      "citation": "Luo et al. (2015), Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutions",
+      "doi": "10.1016/j.ces.2014.10.013",
+      "zotero_parent_key": "KAB4KF8F",
+      "zotero_attachment_key": "MFRDNYCS",
+      "attachment_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "evidence_status": "local_zotero_pdf_inspected",
+      "locators": [
+        "printed pp. 58--59, Eqs. 1--4: net carbamate and bicarbonate reaction mechanism",
+        "printed pp. 60--61, Eq. 8 and surrounding text: Hatta-number treatment and pseudo-first-order discussion",
+        "printed p. 61, Section 3.2, Eqs. 15--16: 1 M/5 M preparation and density correlations"
+      ]
+    },
+    {
+      "id": "Gaspar2015",
+      "citation": "Gaspar and Fosbøl (2015), A general enhancement factor model for absorption and desorption systems",
+      "doi": "10.1016/j.ces.2015.08.023",
+      "zotero_parent_key": "PPDL8269",
+      "zotero_attachment_key": "PW5C8YSL",
+      "attachment_sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "evidence_status": "local_zotero_pdf_available",
+      "role": "enhancement-method context only; not used to admit a reaction coefficient"
+    },
+    {
+      "id": "Gondal2015",
+      "citation": "Gondal et al. (2015), Kinetics of the absorption of carbon dioxide into aqueous hydroxides of lithium, sodium and potassium and blends of hydroxides and carbonates",
+      "doi": "10.1016/j.ces.2014.10.038",
+      "zotero_parent_key": null,
+      "zotero_attachment_key": null,
+      "attachment_sha256": null,
+      "evidence_status": "not_found_in_local_zotero",
+      "role": "Putta2016 source for F3 k14 and activation energy; coefficient not recovered",
+      "locator": "Putta2016 printed p. 353 reference 29"
+    },
+    {
+      "id": "PachecoRochelle1998",
+      "citation": "Pacheco and Rochelle (1998), Rate-based modeling of reactive absorption of CO2 into aqueous MEA",
+      "doi": "10.1021/ie980123g",
+      "zotero_parent_key": null,
+      "zotero_attachment_key": null,
+      "attachment_sha256": null,
+      "evidence_status": "not_found_in_local_zotero",
+      "role": "requested comparison source; no coefficient or partition claim uses it"
+    }
+  ],
+  "source_reactions": [
+    {
+      "id": "R1",
+      "equation": "2 H2O <=> H3O+ + OH-",
+      "source_equation": "2 H2O ↔ OH− + H3O+",
+      "source_locator": "Putta2016 printed p. 341, Eq. 1",
+      "stoichiometry": [0, 0, -2, 0, 0, 0, 0, 1, 1],
+      "role": "water autoionization source reaction"
+    },
+    {
+      "id": "R2",
+      "equation": "2 H2O + CO2 <=> H3O+ + HCO3-",
+      "source_equation": "2 H2O + CO2 ↔ H3O+ + HCO3−",
+      "source_locator": "Putta2016 printed p. 341, Eq. 2",
+      "stoichiometry": [-1, 0, -2, 0, 0, 1, 0, 1, 0],
+      "role": "carbon dioxide hydration source reaction"
+    },
+    {
+      "id": "R3",
+      "equation": "H2O + HCO3- <=> H3O+ + CO3^2-",
+      "source_equation": "H2O + HCO3− ↔ H3O+ + CO3^2−",
+      "source_locator": "Putta2016 printed p. 341, Eq. 3",
+      "stoichiometry": [0, 0, -1, 0, 0, -1, 1, 1, 0],
+      "role": "bicarbonate dissociation source reaction"
+    },
+    {
+      "id": "R4",
+      "equation": "MEACOO- + H2O <=> MEA + HCO3-",
+      "source_equation": "MEACOO− + H2O ↔ MEA + HCO3−",
+      "source_locator": "Putta2016 printed p. 341, Eq. 5",
+      "stoichiometry": [0, 1, -1, 0, -1, 1, 0, 0, 0],
+      "role": "carbamate hydrolysis source reaction"
+    },
+    {
+      "id": "R5",
+      "equation": "MEAH+ + H2O <=> MEA + H3O+",
+      "source_equation": "MEAH+ + H2O ↔ H3O+ + MEA",
+      "source_locator": "Putta2016 printed p. 341, Eq. 4",
+      "stoichiometry": [0, 1, -1, -1, 0, 0, 0, 1, 0],
+      "role": "protonated-MEA dissociation source reaction"
+    }
+  ],
+  "reaction_combinations": [
+    {
+      "id": "F1",
+      "equation": "CO2 + 2 MEA <=> MEACOO- + MEAH+",
+      "source_reaction_coefficients": {"R2": 1, "R4": -1, "R5": -1},
+      "expected_stoichiometry": [-1, -2, 0, 1, 1, 0, 0, 0, 0],
+      "source_locator": "Putta2016 printed p. 342, Eq. 16 and printed pp. 345--346, Eq. I"
+    },
+    {
+      "id": "F2",
+      "equation": "CO2 + MEA + H2O <=> MEACOO- + H3O+",
+      "source_reaction_coefficients": {"R2": 1, "R4": -1},
+      "expected_stoichiometry": [-1, -1, -1, 0, 1, 0, 0, 1, 0],
+      "source_locator": "Putta2016 printed p. 342, Eq. 17 and printed pp. 345--346, Eq. II"
+    },
+    {
+      "id": "F3",
+      "equation": "CO2 + OH- <=> HCO3-",
+      "source_reaction_coefficients": {"R2": 1, "R1": -1},
+      "expected_stoichiometry": [-1, 0, 0, 0, 0, 1, 0, 0, -1],
+      "source_locator": "Putta2016 printed p. 341, Eq. 15; source coefficient cited to Gondal2015"
+    }
+  ],
+  "finite_reactions": [
+    {
+      "id": "F1",
+      "basis": "concentration",
+      "rate_law": "r_F1 = k_MEA,c [MEA]^2 [CO2] - (k_MEA,c / K_eq,9,c) [MEAH+] [MEACOO-]",
+      "equilibrium_quotient": "K_eq,9,c = [MEAH+][MEACOO-] / ([MEA]^2 [CO2])",
+      "coefficient_symbol": "k_MEA,c",
+      "source_formula": "3.1732e9 exp(-4936.6/T)",
+      "pre_exponential": 3173200000.0,
+      "activation_temperature_K": 4936.6,
+      "source_locator": "Putta2016 printed pp. 345--346, Eq. I, concentration F1",
+      "source_printed_coefficient_unit": "m6 kmol^-2 s^-2",
+      "required_coefficient_unit": "m6 kmol^-2 s^-1",
+      "unit_status": "source_printed_unit_rejected_by_rate_dimension_reconstruction",
+      "standard_state": "not specified by source; concentration comparison only",
+      "coefficient_uncertainty": "not reported",
+      "admission_decision": "source_relationship_retained_comparison_only",
+      "admission_reason": "Issue 33 leaves concentration basis unresolved and the source does not state a provider-compatible standard state."
+    },
+    {
+      "id": "F1",
+      "basis": "activity",
+      "rate_law": "r_F1 = k_MEA,a a_MEA^2 a_CO2 - (k_MEA,a / K_eq,9,a) a_MEAH+ a_MEACOO-",
+      "equilibrium_quotient": "K_eq,9,a = a_MEAH+ a_MEACOO- / (a_MEA^2 a_CO2)",
+      "coefficient_symbol": "k_MEA,a",
+      "source_formula": "4.5191e11 exp(-5851.7/T)",
+      "pre_exponential": 451910000000.0,
+      "activation_temperature_K": 5851.7,
+      "source_locator": "Putta2016 printed pp. 345--346, Eq. I, activity F1",
+      "source_printed_coefficient_unit": "m6 kmol^-2 s^-2",
+      "required_coefficient_unit": "m6 kmol^-2 s^-1",
+      "unit_status": "source_printed_unit_rejected_by_rate_dimension_reconstruction",
+      "standard_state": "activity coefficients shown by source; standard-state convention not specified",
+      "coefficient_uncertainty": "not reported",
+      "admission_decision": "source_relationship_retained_comparison_only",
+      "admission_reason": "Activity form is retained for comparison, but no source-to-provider standard-state conversion is available."
+    },
+    {
+      "id": "F2",
+      "basis": "concentration",
+      "rate_law": "r_F2 = k_H2O,c [H2O][MEA][CO2] - (k_H2O,c / K_eq,10,c) [H3O+][MEACOO-]",
+      "equilibrium_quotient": "K_eq,10,c = [H3O+][MEACOO-] / ([H2O][MEA][CO2])",
+      "coefficient_symbol": "k_H2O,c",
+      "source_formula": "1.0882e8 exp(-3900/T)",
+      "pre_exponential": 108820000.0,
+      "activation_temperature_K": 3900.0,
+      "source_locator": "Putta2016 printed pp. 345--346, Eq. II, concentration F2",
+      "source_printed_coefficient_unit": "m6 kmol^-2 s^-2",
+      "required_coefficient_unit": "m6 kmol^-2 s^-1",
+      "unit_status": "source_printed_unit_rejected_by_rate_dimension_reconstruction",
+      "standard_state": "not specified by source; concentration comparison only",
+      "coefficient_uncertainty": "not reported",
+      "admission_decision": "source_relationship_retained_comparison_only",
+      "admission_reason": "Issue 33 leaves concentration basis unresolved and the source does not state a provider-compatible standard state."
+    },
+    {
+      "id": "F2",
+      "basis": "activity",
+      "rate_law": "r_F2 = k_H2O,a a_H2O a_MEA a_CO2 - (k_H2O,a / K_eq,10,a) a_H3O+ a_MEACOO-",
+      "equilibrium_quotient": "K_eq,10,a = a_H3O+ a_MEACOO- / (a_H2O a_MEA a_CO2)",
+      "coefficient_symbol": "k_H2O,a",
+      "source_formula": "2.1105e6 exp(-2382.4/T)",
+      "pre_exponential": 2110500.0,
+      "activation_temperature_K": 2382.4,
+      "source_locator": "Putta2016 printed pp. 345--346, Eq. II, activity F2",
+      "source_printed_coefficient_unit": "m6 kmol^-2 s^-2",
+      "required_coefficient_unit": "m6 kmol^-2 s^-1",
+      "unit_status": "source_printed_unit_rejected_by_rate_dimension_reconstruction",
+      "standard_state": "activity coefficients shown by source; standard-state convention not specified",
+      "coefficient_uncertainty": "not reported",
+      "admission_decision": "source_relationship_retained_comparison_only",
+      "admission_reason": "Activity form is retained for comparison, but no source-to-provider standard-state conversion is available."
+    },
+    {
+      "id": "F3",
+      "basis": "concentration",
+      "rate_law": "r_F3 = k14,c [CO2][OH-] - (k14,c / K_eq,14,c) [HCO3-]",
+      "equilibrium_quotient": "K_eq,14,c = [HCO3-] / ([CO2][OH-])",
+      "coefficient_symbol": "k14,c",
+      "source_formula": null,
+      "pre_exponential": null,
+      "activation_temperature_K": null,
+      "source_locator": "Putta2016 printed p. 341, Eq. 15; coefficient and activation energy cited to Gondal2015",
+      "source_printed_coefficient_unit": null,
+      "required_coefficient_unit": "m3 kmol^-1 s^-1",
+      "unit_status": "not_evaluable_coefficient_unavailable",
+      "standard_state": "concentration source form only",
+      "coefficient_uncertainty": "not reported",
+      "admission_decision": "source_relationship_unavailable_supported_negative",
+      "admission_reason": "The cited Gondal2015 source and coefficient were not recovered in local Zotero; no primary F3 coefficient is admitted."
+    }
+  ],
+  "source_domain": {
+    "putta2016_temperature_K": [293.15, 343.15],
+    "putta2016_concentration_labels_mol_L": [1.0, 5.0],
+    "putta2016_loading_mol_CO2_per_mol_MEA": [0.0, 0.4],
+    "putta2016_lmpd_kPa": [0.58, 14.7],
+    "putta2016_fit_points": 198,
+    "concentration_labels_use": "source-state labels only; no exact discrete absorber admission",
+    "retained_overlap_temperature_K": [293.15, 323.15],
+    "reconstruction_anchor_temperature_K": [293.15, 313.15, 323.15],
+    "retained_issue33_concentration_basis_status": "basis_unresolved"
+  },
+  "issue33_dependency": {
+    "summary_path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis_summary.json",
+    "summary_sha256": "28363ae5d9b18b93b03988976abdba14d4e6035ebfac224962b685258c8bc75e",
+    "table_path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis.csv",
+    "table_sha256": "1d8c6cc7ff3a801a8b8e1975a6b7f8618ae2bcef3a01a63df08c49bdfeb09b1d",
+    "required_claim_label": "reference_backed_mapping_with_basis_unresolved_admission",
+    "required_position_1_analytical_mol_L": 4.889309897097635,
+    "required_position_1_free_mea_mol_L": 2.491683471902737,
+    "required_position_1_not_rounded_to_5M": true,
+    "required_exact_discrete_1M_or_5M_admission": false,
+    "required_capture_or_kinetic_tuning_performed": false,
+    "required_row_admission_decision": "basis_unresolved"
+  },
+  "source_state_reconstruction": {
+    "temperature_K": 313.15,
+    "concentration_unit": "kmol m^-3",
+    "state_role": "synthetic positive concentration diagnostic for algebraic detailed-balance reconstruction; not a retained NCCC state and not a packet-bound closure",
+    "concentrations": {
+      "CO2": 0.01,
+      "MEA": 3.0,
+      "H2O": 45.0,
+      "MEAH+": 0.2,
+      "MEACOO-": 0.1,
+      "HCO3-": 0.01,
+      "CO3^2-": 0.001,
+      "H3O+": 0.001,
+      "OH-": 0.001
+    }
+  },
+  "observed_aggregate_aard": [
+    {"model": "Aboudheir2003 concentration", "SDC Luo": 24.3, "WWC Luo": 15.6, "WWC Puxty": 37.8, "laminar jet Aboudheir": 15.0},
+    {"model": "Luo2015 concentration", "SDC Luo": 17.3, "WWC Luo": 19.3, "WWC Puxty": 37.2, "laminar jet Aboudheir": 38.2},
+    {"model": "Luo2015 activity", "SDC Luo": 15.0, "WWC Luo": 18.6, "WWC Puxty": 36.3, "laminar jet Aboudheir": 32.2},
+    {"model": "Present concentration", "SDC Luo": 14.2, "WWC Luo": 14.0, "WWC Puxty": 12.4, "laminar jet Aboudheir": 13.7},
+    {"model": "Present activity", "SDC Luo": 18.9, "WWC Luo": 14.8, "WWC Puxty": 13.8, "laminar jet Aboudheir": 10.2}
+  ]
+}

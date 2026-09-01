@@ -202,6 +202,19 @@ MEA concentration; it is not rounded or admitted as exact 5 M. Every row
 remains `basis_unresolved` until the missing preparation-temperature and
 prepared-to-loaded-volume evidence is supplied.
 
+Regenerate the Issue 34 source-faithful kinetics and reaction-partition record:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue34_kinetics.py
+```
+
+This retains the Putta F1/F2 relationships, rejects the printed third-order
+`s^-2` coefficient unit by dimensional reconstruction, records the unavailable
+Gondal F3 coefficient as a supported negative, and keeps unresolved film
+timescales and aggregate rate comparisons out of physical film adoption. It
+also refreshes the source-faithful report at
+`results/final/reports/issue34_reaction_kinetics.md`.
+
 Morgan's 7.3% campaign uncertainty is used only for the diagnostic unloaded
 concentration at each local state temperature; it is not a prepared-concentration
 result or a loaded-versus-5 M admission basis. The NCCC preparation temperature is
