@@ -16,7 +16,7 @@ The comparison table retains 5 declared states: two source-label rows, two out-o
 
 ## Provenance and claim boundary
 
-Source revision: `8628aa88b7bbe3c22eeebbe890d24c62e480bb9c`; generator SHA-256: `ac52d67884bc9112fa2f046a3339de7b382be52985a8daf08380b2235a03f627`; input SHA-256: `d3be7270e622eaae39da2db6e6ff2d9fe66854ae41bc234fb689dfcbe1760f2a`; machine: `Linux-7.0.0-30-generic-x86_64-with-glibc2.39`; workers: `1`; run identity: `issue42_source_only_8628aa88b7bb`.
+Source revision: `cc709f41e7438cfc8be6f6c5210f6350a8564a2b`; generator SHA-256: `353660f4641545c40d4bbb3af4642f7776af93ca05e90f41f3d89adf9627ba75`; input SHA-256: `7add22f65906ae9548827896c6f19dd3062e5c272d6999e75b43e76b562bd181`; machine: `Linux-7.0.0-30-generic-x86_64-with-glibc2.39`; workers: `1`; run identity: `issue42_source_only_cc709f41e743`.
 
 No ePC-SAFT package, parameter document, parameter bundle, or mutable sibling checkout was used. The result does not establish Candidate A or Candidate B adequacy, universal unequal-ion mobility/friction adequacy, thermodynamic or kinetic validation, packed-column capture, or a manuscript result. Physical transport selection remains unresolved until source-complete inputs, an admitted common true-species/kinetic state, and the stated physical checks exist.
 

@@ -2,57 +2,105 @@
   "schema_version": "issue42_film_transport_result_v1",
   "issue": 42,
   "claim_label": "supported_negative_source_only_transport_and_ionic_closure",
-  "source_revision": "8628aa88b7bbe3c22eeebbe890d24c62e480bb9c",
+  "source_revision": "cc709f41e7438cfc8be6f6c5210f6350a8564a2b",
   "source_worktree_clean_at_generation": true,
   "source_revision_protocol": "Run from a clean source commit; commit the input and resolver first, then commit generated result files separately. The recorded source commit is not the result-containing commit.",
-  "input_sha256": "d3be7270e622eaae39da2db6e6ff2d9fe66854ae41bc234fb689dfcbe1760f2a",
-  "generator_sha256": "ac52d67884bc9112fa2f046a3339de7b382be52985a8daf08380b2235a03f627",
+  "input_sha256": "7add22f65906ae9548827896c6f19dd3062e5c272d6999e75b43e76b562bd181",
+  "generator_sha256": "353660f4641545c40d4bbb3af4642f7776af93ca05e90f41f3d89adf9627ba75",
   "exact_command": "uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py",
   "machine": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
   "workers": 1,
-  "run_id": "issue42_source_only_8628aa88b7bb",
+  "run_id": "issue42_source_only_cc709f41e743",
   "source_documents": [
     {
       "id": "Putta2017",
-      "sha256": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+      "citation": "Putta et al. (2017), CO2 absorption into loaded aqueous MEA solutions: Impact of different model parameter correlations and thermodynamic models",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/YPM9CEQV/Putta et al. - 2017 - CO2 absorption into loaded aqueous MEA solutions Impact of different model parameter correlations a.pdf",
+      "source_pdf_sha256": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
       "role": "CO2 diffusivity correlation and transport-correlation context",
-      "status": "verified"
+      "locators": [
+        "PDF p. 14, Section 2.3, Eqs. 12--13",
+        "PDF pp. 14--15, Table 4"
+      ],
+      "verified_sha256": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+      "verification_status": "verified"
     },
     {
       "id": "Putta2016",
-      "sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "citation": "Putta et al. (2016), CO2 absorption into loaded aqueous MEA solutions: Kinetics assessment using penetration theory",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/BSUB8BSF/Putta et al. - 2016 - CO2 absorption into loaded aqueous MEA solutions Kinetics assessment using penetration theory.pdf",
+      "source_pdf_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
       "role": "film boundary and liquid-property source inventory",
-      "status": "verified"
+      "locators": [
+        "printed p. 343, Eqs. 31--37 and Table 3",
+        "printed p. 353, reference 29"
+      ],
+      "verified_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "verification_status": "verified"
     },
     {
       "id": "Luo2015",
-      "sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "citation": "Luo et al. (2015), Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutions",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/MFRDNYCS/Luo et al. - 2015 - Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutio.pdf",
+      "source_pdf_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
       "role": "CO2, MEA, density, viscosity, and source-basis transport relationships",
-      "status": "verified"
+      "locators": [
+        "printed p. 61, Eqs. 15--24"
+      ],
+      "verified_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "verification_status": "verified"
     },
     {
       "id": "Snijder1993",
-      "sha256": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+      "citation": "Snijder et al. (1993), Diffusion coefficients of several aqueous alkanolamine solutions",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/ANNK86SA/Snijder et al. - 1993 - Diffusion coefficients of several aqueous alkanolamine solutions.pdf",
+      "source_pdf_sha256": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
       "role": "free-MEA diffusivity correlation and Table III source states",
-      "status": "verified"
+      "locators": [
+        "printed p. 477, Table III and Eq. 8",
+        "printed p. 479, concentration-extension discussion"
+      ],
+      "verified_sha256": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+      "verification_status": "verified"
     },
     {
       "id": "Amundsen2009",
-      "sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+      "citation": "Amundsen et al. (2009), Density and viscosity of monoethanolamine + water + carbon dioxide from (25 to 80) deg C",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/NGQVTDX7/Amundsen et al. - 2009 - Density and Viscosity of Monoethanolamine + Water + Carbon Dioxide from (25 to 80) \u00b0C.pdf",
+      "source_pdf_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
       "role": "Weiland density and viscosity source reconstruction",
-      "status": "verified"
+      "locators": [
+        "printed p. 3098, Eqs. 4--6 and Table 10",
+        "printed p. 3099, Eqs. 9--10 and Table 12"
+      ],
+      "verified_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+      "verification_status": "verified"
     },
     {
       "id": "Hartono2014",
-      "sha256": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+      "citation": "Hartono et al. (2014), Physical Properties of Partially CO2 Loaded Aqueous Monoethanolamine (MEA)",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/L7SKR73P/Hartono et al. - 2014 - Physical Properties of Partially CO2 Loaded Aqueous Monoethanolamine (MEA).pdf",
+      "source_pdf_sha256": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
       "role": "loaded density and viscosity source reconstruction",
-      "status": "verified"
+      "locators": [
+        "printed p. 1810, Table 3 and Eqs. 3--5",
+        "printed pp. 1811--1812, Eqs. 6--9 and Table 7"
+      ],
+      "verified_sha256": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+      "verification_status": "verified"
     },
     {
       "id": "Gaspar2015",
-      "sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "citation": "Gaspar and Fosbol (2015), A general enhancement factor model for absorption and desorption systems",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/PW5C8YSL/Gaspar and Fosb\u00f8l - 2015 - A general enhancement factor model for absorption and desorption systems A CO2 capture case-study.pdf",
+      "source_pdf_sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
       "role": "equal/unequal diffusivity comparison context only",
-      "status": "verified"
+      "locators": [
+        "printed p. 204, introduction",
+        "printed p. 209, equal-diffusivity comparison"
+      ],
+      "verified_sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "verification_status": "verified"
     }
   ],
   "unrecovered_source_records": [
@@ -214,7 +262,26 @@
       "admitted concentration basis",
       "admitted kinetic state"
     ],
-    "decision": "not_attempted"
+    "decision": "not_attempted",
+    "canonical_evidence": {
+      "source_documents_verified": true,
+      "source_pdf_sha256": {
+        "Putta2017": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+        "Putta2016": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+        "Luo2015": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+        "Snijder1993": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+        "Amundsen2009": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+        "Hartono2014": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+        "Gaspar2015": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7"
+      },
+      "transport_records": 13,
+      "ionic_diffusivity_records": 6,
+      "declared_comparison_states": 5,
+      "evaluated_comparison_states": 0,
+      "scientifically_admitted_states": 0,
+      "issue40_scientifically_admitted_rows": 0,
+      "issue41_scientifically_admitted_packet_rows": 0
+    }
   },
   "candidate_B": {
     "id": "B_unequal_ion_zero_current",
@@ -234,7 +301,26 @@
       "admitted true-species state",
       "molar density"
     ],
-    "decision": "not_attempted"
+    "decision": "not_attempted",
+    "canonical_evidence": {
+      "source_documents_verified": true,
+      "source_pdf_sha256": {
+        "Putta2017": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+        "Putta2016": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+        "Luo2015": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+        "Snijder1993": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+        "Amundsen2009": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+        "Hartono2014": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+        "Gaspar2015": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7"
+      },
+      "transport_records": 13,
+      "ionic_diffusivity_records": 6,
+      "declared_comparison_states": 5,
+      "evaluated_comparison_states": 0,
+      "scientifically_admitted_states": 0,
+      "issue40_scientifically_admitted_rows": 0,
+      "issue41_scientifically_admitted_packet_rows": 0
+    }
   },
   "package_parameter_identity": {
     "used": false,
@@ -259,8 +345,8 @@
   ],
   "regeneration_command": "uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py",
   "output_sha256": {
-    "transport_inputs": "677d8c992ea2bb5823e9db637fb01f191a7c84422771d915ab658920dd122f4d",
-    "transport_comparison": "f57973aa6fb3e1c5a63fae333fe9a687102035070fc898d740f06f17b0eddf41",
-    "report": "82e43ceb9af94cbbfac08ccf0ac7af63678f68f44764a7c9918b8f459e63b30a"
+    "transport_inputs": "090f2d7f3e038692d26095892daa1da654f53a5602d594b71e388fc5cb9fa4a3",
+    "transport_comparison": "95d2dd9409a0f9ebe9373d75340530d2ef39b50d845c1cfc356ab42df7f3567c",
+    "report": "da951400981cc2c6e5ff2c5016d70c7ebb87b102730dc57c8bd7f9b7efde410c"
   }
 }
