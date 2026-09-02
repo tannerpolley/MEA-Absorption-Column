@@ -44,6 +44,7 @@ export PYTHONPATH="src"
 | `resolve_issue40_apparent_true_species.py` | Maps retained apparent Case 3C inputs to one authoritative packet-bound nine-species single-liquid state while retaining unresolved and out-of-domain rows. | Yes, one packet-bound state plus replay. | Requires Python 3.13 with the immutable handoff wheel installed. |
 | `resolve_issue41_reversible_kinetics.py` | Retains source-rate laws, exact reaction projections, raw-observation availability, provider K(T), and packet-bound blockers. | No. | No direct ePC-SAFT dependency; reads the immutable handoff archive. |
 | `resolve_issue42_film_transport.py` | Retains species-resolved transport source records and the blocked Candidate A/B film-transport decision. | No. | No ePC-SAFT package or parameter identity is used. |
+| `resolve_issue36_film_input_release.py` | Retains the packet-bound Work Package B release decision and five typed state-level blockers. | No physical calculation. | Verifies the immutable handoff archive; no package import is used. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -205,6 +206,16 @@ lump. Candidate B remains blocked without a complete primary unequal-ion
 mobility/friction law. The five declared states remain `not_attempted`, so no
 film flux, species flux, uncertainty interval, residual, transport selection,
 or capture result is retained.
+
+Resolve the Issue 36 packet-bound film-input release decision:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue36_film_input_release.py \
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue36-only
+```
+
+The result verifies the immutable bundle, records the Work Package A owner and exact #40/#41/#42 identities, and retains five blocked state rows. It creates no `data/reference/MEA/film_chemistry_inputs/2` release files; bulk equilibrium, detailed balance, rate comparison, transport comparison, uncertainty propagation, and downstream issue #30 remain blocked.
 
 Resolve the Issue 33 concentration bases and retain the source table:
 
