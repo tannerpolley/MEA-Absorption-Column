@@ -31,6 +31,23 @@ from resolve_issue42_film_transport import (
     validate_source_documents as validate_issue42_source_documents,
     report_text as build_issue42_report_text,
 )
+from resolve_issue36_film_input_release import (
+    INPUT as ISSUE36_INPUT,
+    REPORT as ISSUE36_REPORT,
+    RESULT_FIELDS as ISSUE36_RESULT_FIELDS,
+    SUMMARY as ISSUE36_SUMMARY,
+    TABLE as ISSUE36_TABLE,
+    build_rows as build_issue36_rows,
+    canonical_summary as build_issue36_summary,
+    git_blob_sha256 as issue36_git_blob_sha256,
+    load_json as issue36_load_json,
+    report_text as build_issue36_report_text,
+    source_revision_has_issue36_outputs,
+    validate_bundle as validate_issue36_bundle,
+    validate_dependency_files as validate_issue36_dependencies,
+    validate_release_guard as validate_issue36_release_guard,
+    validate_work_package_a as validate_issue36_work_package_a,
+)
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -96,6 +113,7 @@ def main() -> int:
     parser.add_argument("--issue40-only", action="store_true")
     parser.add_argument("--issue41-only", action="store_true")
     parser.add_argument("--issue42-only", action="store_true")
+    parser.add_argument("--issue36-only", action="store_true")
     args = parser.parse_args()
     if args.issue17_only:
         _check_issue17_enhancement_comparison()
@@ -113,12 +131,17 @@ def main() -> int:
         _check_issue42_film_transport()
         print("Issue 42 source-only film-transport consistency checks passed.")
         return 0
+    if args.issue36_only:
+        _check_issue36_film_input_release()
+        print("Issue 36 blocked film-input release consistency checks passed.")
+        return 0
 
     checks = [
         _check_issue17_enhancement_comparison,
         _check_issue40_apparent_true_species,
         _check_issue41_reversible_kinetics,
         _check_issue42_film_transport,
+        _check_issue36_film_input_release,
         _check_required_files,
         _check_c_case_benchmark,
         _check_full_species_ionic_sweep,
@@ -348,6 +371,93 @@ def _check_issue40_apparent_true_species() -> None:
         raise AssertionError("Issue 40 report must describe the focused validator as a lineage check.")
     if any(data[column].eq("").any() for column in ("workers", "machine", "run_id", "reproduction_command")):
         raise AssertionError("Every Issue 40 row must retain run identity and reproduction metadata.")
+
+
+def _check_issue36_film_input_release() -> None:
+    if subprocess.run(
+        ["git", "status", "--porcelain"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip():
+        raise AssertionError("Issue 36 validator requires a clean current worktree.")
+    required = [ISSUE36_INPUT, ISSUE36_TABLE, ISSUE36_SUMMARY, ISSUE36_REPORT]
+    _require_existing(required)
+    config = issue36_load_json(ISSUE36_INPUT)
+    summary = issue36_load_json(ISSUE36_SUMMARY)
+    if config.get("schema_version") != "issue36_packet_bound_film_input_release_v1":
+        raise AssertionError("Issue 36 input record changed.")
+    if config.get("species_order") != ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"]:
+        raise AssertionError("Issue 36 species order changed.")
+    if config.get("reaction_order") != ["R1", "R2", "R3", "R4", "R5"]:
+        raise AssertionError("Issue 36 reaction order changed.")
+
+    current_revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip()
+    source_revision = summary.get("source_revision", "")
+    if not source_revision or source_revision == current_revision:
+        raise AssertionError("Issue 36 result must record a distinct source revision.")
+    if subprocess.run(["git", "cat-file", "-e", f"{source_revision}^{{commit}}"], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 36 source revision is not a local commit.")
+    if source_revision_has_issue36_outputs(source_revision):
+        raise AssertionError("Issue 36 source revision contains generated outputs.")
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_revision, current_revision], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 36 source revision is not an ancestor of the result commit.")
+    if summary.get("source_worktree_clean_at_generation") is not True:
+        raise AssertionError("Issue 36 generation was not clean.")
+
+    input_hash = hashlib.sha256(ISSUE36_INPUT.read_bytes()).hexdigest()
+    generator = ANALYSIS / "scripts/resolve_issue36_film_input_release.py"
+    generator_hash = hashlib.sha256(generator.read_bytes()).hexdigest()
+    if summary.get("input_sha256") != input_hash or summary.get("generator_sha256") != generator_hash:
+        raise AssertionError("Issue 36 current source hashes disagree with the retained summary.")
+    source_blobs = {
+        "input": issue36_git_blob_sha256(source_revision, ISSUE36_INPUT.relative_to(ROOT).as_posix()),
+        "generator": issue36_git_blob_sha256(source_revision, generator.relative_to(ROOT).as_posix()),
+    }
+    if source_blobs != {"input": input_hash, "generator": generator_hash}:
+        raise AssertionError("Issue 36 source revision/blob lineage is stale or tampered.")
+    if summary.get("source_revision_protocol") != config["reproduction"]["source_revision_protocol"]:
+        raise AssertionError("Issue 36 source revision protocol changed.")
+
+    bundle = validate_issue36_bundle(config)
+    owner = validate_issue36_work_package_a(config)
+    release_guard = validate_issue36_release_guard(config)
+    dependency_data = validate_issue36_dependencies(config)
+    metadata = {
+        key: summary[key]
+        for key in ("source_revision", "input_sha256", "generator_sha256", "exact_command", "machine", "workers", "run_id")
+    }
+    expected_rows = build_issue36_rows(config, dependency_data, metadata)
+    header, actual_rows = _read_csv_rows(ISSUE36_TABLE)
+    if header != ISSUE36_RESULT_FIELDS or actual_rows != _canonical_csv_rows(expected_rows, ISSUE36_RESULT_FIELDS):
+        raise AssertionError("Issue 36 state rows differ from canonical dependency-derived rows.")
+    if summary.get("output_sha256") != {
+        "table": hashlib.sha256(ISSUE36_TABLE.read_bytes()).hexdigest(),
+        "report": hashlib.sha256(ISSUE36_REPORT.read_bytes()).hexdigest(),
+    }:
+        raise AssertionError("Issue 36 output hashes are stale.")
+    expected_report = build_issue36_report_text(config, metadata, bundle, owner, expected_rows)
+    if ISSUE36_REPORT.read_text(encoding="utf-8") != expected_report:
+        raise AssertionError("Issue 36 report differs from canonical dependency-derived text.")
+    expected_summary = build_issue36_summary(
+        config,
+        metadata,
+        bundle,
+        owner,
+        release_guard,
+        dependency_data,
+        expected_rows,
+        summary["output_sha256"],
+    )
+    if summary != expected_summary:
+        raise AssertionError("Issue 36 summary differs from canonical source/dependency-derived content.")
+    if summary["row_counts"] != {"declared_states": 5, "blocked_states": 5, "admitted_states": 0, "release_files_created": 0}:
+        raise AssertionError("Issue 36 state counts changed.")
+    if summary["release"]["status"] != "blocked" or summary["release"]["files_created"]:
+        raise AssertionError("Issue 36 release status crossed the blocked boundary.")
+    if summary["downstream"]["issue30"] != "blocked":
+        raise AssertionError("Issue 36 downstream issue #30 is not blocked.")
+    if any(row["admission_decision"] == "admitted" for row in actual_rows):
+        raise AssertionError("Issue 36 contains an admitted state.")
 
 
 def _check_required_files() -> None:
