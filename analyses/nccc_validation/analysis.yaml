@@ -37,6 +37,8 @@ inputs:
     kind: issue34_source_faithful_kinetics_input
   - path: inputs/issue35_transport.json
     kind: issue35_source_faithful_transport_input
+  - path: inputs/issue40_apparent_true_species.json
+    kind: issue40_packet_bound_apparent_true_species_input
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -136,6 +138,12 @@ outputs:
     kind: issue35_transport_summary
   - path: results/final/reports/issue35_transport_inputs.md
     kind: issue35_transport_input_report
+  - path: results/final/tables/issue40_apparent_true_species.csv
+    kind: issue40_apparent_true_species_result_table
+  - path: results/final/tables/issue40_apparent_true_species_summary.json
+    kind: issue40_apparent_true_species_summary
+  - path: results/final/reports/issue40_apparent_true_species.md
+    kind: issue40_apparent_true_species_report
   - path: results/final/figures/issue17_axial_enhancement.pdf
     kind: issue17_enhancement_figure
   - path: results/final/figures/issue17_axial_flux.pdf
@@ -188,6 +196,8 @@ commands:
     - uv run python analyses/nccc_validation/scripts/resolve_issue34_kinetics.py
   issue35_transport:
     - uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py
+  issue40_apparent_true_species:
+    - python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -200,6 +210,7 @@ external_dependencies:
       - thermo_model: epcsaft_reactive_six_activity
       - script: scripts/probe_reactive_epcsaft_speciation.py
       - script: scripts/generate_epcsaft_v02_validation.py
+      - script: analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py
     not_required_for:
       - thermo_model: ideal_henry
       - script: scripts/generate_data.py
@@ -253,6 +264,9 @@ tracked_results:
   - results/final/tables/issue35_transport_sensitivity.csv
   - results/final/tables/issue35_transport_summary.json
   - results/final/reports/issue35_transport_inputs.md
+  - results/final/tables/issue40_apparent_true_species.csv
+  - results/final/tables/issue40_apparent_true_species_summary.json
+  - results/final/reports/issue40_apparent_true_species.md
 historical_outputs:
   note: Pre-0.2 runtime-option and configuration matrices are preserved for provenance only, have no supported generator, and are not current validation evidence.
   paths:

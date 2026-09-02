@@ -41,6 +41,7 @@ export PYTHONPATH="src"
 | `render_issue17_enhancement_comparison.py` | Renders the three issue 17 equation-comparison figures from the retained 84-row table. | No. | No direct dependency. |
 | `resolve_concentration_bases.py` | Reconstructs prepared, loaded analytical, and free-MEA concentration bases for Putta/Luo labels and retained NCCC Case 3C states. | Reconstructs retained nine-species states. | Requires the certified reactive ePC-SAFT table. |
 | `resolve_issue35_transport.py` | Reconstructs source-labeled diffusivity, density, and viscosity inputs and retains the unequal-ion closure decision. | No. | No. |
+| `resolve_issue40_apparent_true_species.py` | Maps retained apparent Case 3C inputs to one authoritative packet-bound nine-species single-liquid state while retaining unresolved and out-of-domain rows. | Yes, one packet-bound state plus replay. | Requires Python 3.13 with the immutable handoff wheel installed. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -225,6 +226,22 @@ uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py
 ```
 
 This retains the Luo/Snijder/Amundsen source reconstructions, density and viscosity observations, the blocked Putta N2O analogy, and the unattributed legacy ion-scalar rejection. Candidate B remains non-executable until a complete mobility law, unequal-ion inputs, and an accepted true-species basis are available. No physical flux comparison or transport adoption is performed.
+
+Resolve the Issue 40 apparent-to-true species mapping with the supplied immutable handoff bundle:
+
+```bash
+python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py \
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+```
+
+Install the bundle wheel in an isolated Python 3.13 environment first and run
+the bundle verifier. The resolver verifies the outer and member hashes and the
+installed wheel hash before solving. It retains all five Issue 33 source rows,
+evaluates only the in-domain Position 1 state as one finite liquid phase, and
+keeps every row `basis_unresolved` for scientific admission. Its result table
+records the fixed species order, explicit apparent transform, source reporting
+interval status, true concentrations, inverse residuals, branch identity,
+replay identity, exact source values, and the no-capture/no-fit boundary.
 
 Morgan's 7.3% campaign uncertainty is used only for the diagnostic unloaded
 concentration at each local state temperature; it is not a prepared-concentration

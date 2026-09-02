@@ -45,7 +45,8 @@
     "src/mea_absorption_column/Thermodynamics/thermo_models.py",
     "src/mea_absorption_column/Thermodynamics/epcsaft_v02.py",
     "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py",
-    "analyses/nccc_validation/scripts/probe_reactive_epcsaft_speciation.py"
+    "analyses/nccc_validation/scripts/probe_reactive_epcsaft_speciation.py",
+    "analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py"
   ],
   "private_import_exception_paths": [
     "src/mea_absorption_column/Thermodynamics/thermo_models.py"

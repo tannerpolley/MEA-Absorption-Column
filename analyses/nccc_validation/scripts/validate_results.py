@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -32,19 +33,29 @@ ISSUE17_FIGURES = [
     FIGURES / "issue17_axial_flux.pdf",
     FIGURES / "issue17_parity_to_gaspar_implicit.pdf",
 ]
+ISSUE40_INPUT = ANALYSIS / "inputs/issue40_apparent_true_species.json"
+ISSUE40_TABLE = TABLES / "issue40_apparent_true_species.csv"
+ISSUE40_SUMMARY = TABLES / "issue40_apparent_true_species_summary.json"
+ISSUE40_REPORT = FINAL / "reports/issue40_apparent_true_species.md"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--issue17-only", action="store_true")
+    parser.add_argument("--issue40-only", action="store_true")
     args = parser.parse_args()
     if args.issue17_only:
         _check_issue17_enhancement_comparison()
         print("Issue 17 retained outputs are internally consistent.")
         return 0
+    if args.issue40_only:
+        _check_issue40_apparent_true_species()
+        print("Issue 40 retained apparent-to-true species outputs are internally consistent.")
+        return 0
 
     checks = [
         _check_issue17_enhancement_comparison,
+        _check_issue40_apparent_true_species,
         _check_required_files,
         _check_c_case_benchmark,
         _check_full_species_ionic_sweep,
@@ -133,6 +144,71 @@ def _check_issue17_enhancement_comparison() -> None:
         content = path.read_bytes()
         if b"/home/" in content or b".codex/worktrees" in content:
             raise AssertionError(f"Issue 17 retained file contains a machine-local path: {path.name}")
+
+
+def _check_issue40_apparent_true_species() -> None:
+    _require_existing([ISSUE40_INPUT, ISSUE40_TABLE, ISSUE40_SUMMARY, ISSUE40_REPORT])
+    config = json.loads(ISSUE40_INPUT.read_text(encoding="utf-8"))
+    summary = json.loads(ISSUE40_SUMMARY.read_text(encoding="utf-8"))
+    data = pd.read_csv(ISSUE40_TABLE, keep_default_na=False)
+    expected_species = [
+        "carbon-dioxide", "monoethanolamine", "water", "protonated-monoethanolamine",
+        "carbamate-anion", "bicarbonate-anion", "carbonate-anion", "hydronium-cation", "hydroxide-anion",
+    ]
+    if len(data) != 5 or set(data["source_row_id"]) != {
+        "Putta2016_1M", "Putta2016_5M", "Case3C_position_0", "Case3C_position_0.5", "Case3C_position_1"
+    }:
+        raise AssertionError("Issue 40 must retain the two source labels and three Case 3C positions.")
+    if data["scientific_admission"].ne("basis_unresolved").any():
+        raise AssertionError("Issue 40 must not scientifically admit a source-basis-unresolved row.")
+    if data["packet_bound_status"].value_counts().to_dict() != {"not_attempted": 4, "evaluated": 1}:
+        raise AssertionError("Issue 40 packet row accounting changed.")
+    p1 = data.loc[data["source_row_id"] == "Case3C_position_1"].iloc[0]
+    if not (
+        abs(float(p1["source_loaded_analytical_MEA_mol_L"]) - 4.889309897097635) <= 1.0e-15
+        and abs(float(p1["source_free_MEA_mol_L"]) - 2.491683471902737) <= 1.0e-15
+        and p1["packet_bound_status"] == "evaluated"
+        and p1["inverse_mapping_status"] == "evaluated_packet_equilibrium_roundtrip"
+        and p1["forward_transform_status"] == "evaluated"
+        and p1["inverse_replay_status"] == "identity_pass"
+        and p1["forward_replay_status"] == "identity_pass"
+        and p1["packet_density_status"] == "ePC-SAFT phase density; true-state mapping diagnostic only"
+        and p1["diagnostic_density_marker"] == "source density does not define prepared or analytical basis"
+        and float(p1["inverse_max_abs_residual"]) <= 1.0e-10
+        and float(p1["charge_residual"]) <= 1.0e-10
+    ):
+        raise AssertionError("Issue 40 Position 1 packet mapping or exact source values failed.")
+    if summary["species_order"] != expected_species or summary["gates"] != {
+        "fixed_nine_species_order": True,
+        "single_liquid_only": True,
+        "vle_fugacity_equality_imposed": False,
+        "position_1_exact_source_analytical_mol_L": 4.889309897097635,
+        "position_1_exact_source_free_MEA_mol_L": 2.491683471902737,
+        "position_1_source_basis_unresolved": True,
+        "packet_evaluated_at_least_one_row": True,
+        "analytical_and_elemental_residual_pass": True,
+        "mole_fraction_normalization_pass": True,
+        "charge_residual_pass": True,
+        "deterministic_replay_pass": True,
+        "no_capture_inference": True,
+        "no_thermo_or_kinetic_fit": True,
+    }:
+        raise AssertionError("Issue 40 summary gates or species order changed.")
+    for identity in ("outer_sha256", "parameter_document_sha256", "engine_wheel_sha256", "state_packet_sha256", "parameter_fingerprint", "chemistry_sha256"):
+        expected = config["bundle"].get(identity)
+        if expected is not None and summary["bundle"].get(identity) != expected:
+            raise AssertionError(f"Issue 40 bundle identity changed: {identity}")
+    if summary["row_counts"] != {
+        "source_rows": 5, "literature_label_rows": 2, "retained_case3c_rows": 3,
+        "packet_candidate_rows": 1, "packet_evaluated_rows": 1, "packet_non_evaluable_rows": 0,
+        "packet_not_attempted_rows": 4, "scientifically_admitted_rows": 0, "basis_unresolved_rows": 5,
+    }:
+        raise AssertionError("Issue 40 row counts changed.")
+    result_hash = hashlib.sha256(ISSUE40_TABLE.read_bytes()).hexdigest()
+    if summary.get("result_table_sha256") != result_hash or summary["packet_state_evidence"]["non_evaluable_state_count"] != 31:
+        raise AssertionError("Issue 40 retained result hash or historical failure accounting is stale.")
+    if any(data[column].eq("").any() for column in ("workers", "machine", "run_id", "reproduction_command")):
+        raise AssertionError("Every Issue 40 row must retain run identity and reproduction metadata.")
 
 
 def _check_required_files() -> None:
