@@ -1,0 +1,27 @@
+record_type,choice_or_model,parameter,value,units,source_locator,evidence_label,claim_scope
+S3.1,gas_phase_thermodynamics,thermodynamic_property,PC-SAFT,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,liquid_phase_thermodynamics,thermodynamic_property,E-NRTL,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,VLE,equilibrium_parameters,Austgen et al.,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,gas_phase_diffusion,diffusion_coefficients,Chapman-Enskog,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,liquid_phase_diffusion,diffusion_coefficients,Wilke-Chang / Nernst-Hartley,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,gas_phase_viscosity,viscosity,Chapman-Enskog - Brokaw,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,liquid_phase_viscosity,viscosity,Jones-Dole model,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,gas_liquid_mass_transfer,mass_transfer_correlation,Bravo et al. 1985,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,interface_heat_transfer,heat_transfer_correlation,Chilton & Colburn,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,interfacial_area,area_correlation,Bravo et al. 1985,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,holdup,holdup_correlation,Bravo et al. 1992,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,CO2_H2O,solubility,Aspen databank,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,CO2_MEA,solubility,Liu et al.,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S3.1,structured_packing,packing,Mellapak 250X,,Ganesan2026 supplied SI PDF p. 3 Table S3.1,verified,retained_model_choice
+S4.2,Aboudheir et al.,beta_factor,1.011,dimensionless,Ganesan2026 supplied SI PDF p. 5 Table S4.2,verified,retained_Henry_correction
+S4.2,Luo 2012 et al.,beta_factor,0.983,dimensionless,Ganesan2026 supplied SI PDF p. 5 Table S4.2,verified,retained_Henry_correction
+S4.2,Luo 2015 et al.,beta_factor,0.977,dimensionless,Ganesan2026 supplied SI PDF p. 5 Table S4.2,verified,retained_Henry_correction
+S4.2,Putta et al.,beta_factor,1.006,dimensionless,Ganesan2026 supplied SI PDF p. 5 Table S4.2,verified,retained_Henry_correction
+S4.3,NGCC_case,LG_ratio,0.85,kg/kg,Ganesan2026 supplied SI PDF p. 5 Figure S4.3,verified,retained_operating_case
+S4.3,NGCC_case,alpha_in,0.06,mol CO2/mol MEA,Ganesan2026 supplied SI PDF p. 5 Figure S4.3,verified,retained_operating_case
+S4.4,NGCC_case,LG_ratio,1.22,kg/kg,Ganesan2026 supplied SI PDF p. 5 Figure S4.4,verified,retained_operating_case
+S4.4,NGCC_case,alpha_in,0.09,mol CO2/mol MEA,Ganesan2026 supplied SI PDF p. 5 Figure S4.4,verified,retained_operating_case
+S4.5,NGCC_case,LG_ratio,1.61,kg/kg,Ganesan2026 supplied SI PDF p. 5 Figure S4.5,verified,retained_operating_case
+S4.5,NGCC_case,alpha_in,0.16,mol CO2/mol MEA,Ganesan2026 supplied SI PDF p. 5 Figure S4.5,verified,retained_operating_case
+S4.6,NGCC_case,LG_ratio,1.75,kg/kg,Ganesan2026 supplied SI PDF p. 5 Figure S4.6,verified,retained_operating_case
+S4.6,NGCC_case,alpha_in,0.18,mol CO2/mol MEA,Ganesan2026 supplied SI PDF p. 5 Figure S4.6,verified,retained_operating_case
