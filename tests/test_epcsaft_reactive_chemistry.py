@@ -1,5 +1,6 @@
 import csv
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -9,6 +10,7 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
 )
+from mea_absorption_column.Thermodynamics.reactive_bundle import compile_reaction_constants
 
 def _requires_reactive_epcsaft_dataset():
     try:
@@ -31,7 +33,6 @@ def _case_3c_liquid_state():
         "epcsaft_reactive_six_concentration",
         "epcsaft_reactive_six_activity",
         "epcsaft_reactive_six_activity_converted",
-        "epcsaft_reactive_nine_activity_rebased",
     ),
 )
 def test_legacy_reactive_modes_fail_closed_until_constants_meet_v02_contract(model):
@@ -40,6 +41,27 @@ def test_legacy_reactive_modes_fail_closed_until_constants_meet_v02_contract(mod
 
     with pytest.raises(RuntimeError, match="independently sourced.*standard-state conversion"):
         chemical_equilibrium_with_model(Fl, Tl, model=model, P=P, diagnostics={})
+
+
+def test_bundle_reactive_nine_species_state_compiles_temperature_dependent_constants():
+    _requires_reactive_epcsaft_dataset()
+    constants = compile_reaction_constants(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), 313.15)
+    diagnostics = {}
+    concentrations, composition = chemical_equilibrium_with_model(
+        [0.1529, 1.0, 7.911],
+        313.15,
+        model="epcsaft_reactive_nine",
+        P=101325.0,
+        diagnostics=diagnostics,
+    )
+
+    assert [entry[0] for entry in constants] == pytest.approx(
+        [-31.17540213354555, -14.505037067112221, -23.53653838436852, -2.7007932503784, -20.889878783626997]
+    )
+    assert concentrations.shape == composition.shape == (9,)
+    assert composition.sum() == pytest.approx(1.0, abs=1.0e-12)
+    assert np.dot(composition, [0, 0, 0, 1, -1, -1, -2, 1, -1]) == pytest.approx(0.0, abs=1.0e-12)
+    assert diagnostics["epcsaft_chemistry_reaction_affinity_inf_norm"] < 1.0e-8
 
 
 def test_tabulated_reactive_equilibrium_interpolates_certified_amounts(tmp_path, monkeypatch):

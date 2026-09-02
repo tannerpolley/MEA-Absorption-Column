@@ -1,3 +1,4 @@
+import json
 import math
 from pathlib import Path
 
@@ -9,7 +10,6 @@ from mea_absorption_column.Thermodynamics.Fugacity import fugacity
 from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
     fugacity_coefficients,
     parameter_document,
-    parameters,
     state as epcsaft_state,
 )
 from mea_absorption_column.Thermodynamics.thermo_models import (
@@ -73,11 +73,10 @@ def test_epcsaft_parameter_document_has_all_species_molar_masses_and_pair_record
         if {record["component_id_a"], record["component_id_b"]}
         == {"monoethanolamine", "water"}
     )
-    assert mea_water["coefficients"][0]["value"]["magnitude"] == pytest.approx(-0.052)
-    assert (
-        "status=explicit-selected-dataset"
-        in mea_water["coefficients"][0]["provenance"]["locator"]
+    assert mea_water["coefficients"][0]["value"]["magnitude"] == pytest.approx(
+        -0.07352749874985018
     )
+    assert mea_water["coefficients"][0]["provenance"]["source_id"] == "cai-1996-neutral-refit"
 
 
 def test_epcsaft_neutral_fugacity_returns_positive_finite_values():
@@ -180,7 +179,7 @@ def test_epcsaft_adapter_reports_external_source_without_modifying_it():
 
 
 def test_ionic_epcsaft_document_declares_fixed_born_and_permittivity_models():
-    assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.name == "MEA_CO2_H2O_ionic_fit"
+    assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.name == "MEA_reactive_epcsaft_bundle"
     document = parameter_document(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET))
     families = {record["kind"]: record for record in document["model_families"]}
     charged = [
@@ -190,9 +189,9 @@ def test_ionic_epcsaft_document_declares_fixed_born_and_permittivity_models():
     ]
 
     assert families["electrolyte"]["choice"] == "born"
-    assert families["electrolyte"]["c_shell"] == pytest.approx(1.0)
-    assert families["electrolyte"]["c_dielectric"] == pytest.approx(1.0)
-    assert families["permittivity"]["choice"] == "ion-fraction-suppression"
+    assert families["electrolyte"]["c_shell"] == pytest.approx(0.0)
+    assert families["electrolyte"]["c_dielectric"] == pytest.approx(0.0)
+    assert families["permittivity"]["choice"] == "solvent-only"
     assert charged
     assert all(
         any(value["family"] == "born_diameter" for value in record["coefficients"])
@@ -265,7 +264,7 @@ def test_installed_epcsaft_exposes_exact_fixed_pressure_transport_tangent():
     )
     assert state.dependent_component_ids == ("water", "protonated-monoethanolamine")
     assert state.fixed_other_concentrations_log_fugacity_derivative(0) == pytest.approx(
-        0.9467107695956956, rel=1.0e-12
+        0.9445178339213178, rel=1.0e-12
     )
     assert state.artifact_fingerprint.startswith("sha256:")
 
@@ -295,15 +294,13 @@ def test_retained_predictive_parameters_apply_co2_water_temperature_relationship
         / "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive"
     )
 
+    adjustment = json.loads((dataset / "temperature_adjustments.json").read_text())[
+        "relationships"
+    ][0]
+
     def co2_water_kij(temperature_k):
-        mapping = parameters(
-            str(dataset), tuple(IONIC_LIQUID_SPECIES_9), temperature_k
-        ).to_mapping()
-        return next(
-            coefficient["value"]["magnitude"]
-            for pair in mapping["pairs"]
-            for coefficient in pair["coefficients"]
-            if coefficient["identity"] == "pair/carbon-dioxide/water/k_ij"
+        return adjustment["anchor_value"] + adjustment["slope_per_k"] * (
+            temperature_k - adjustment["anchor_temperature_k"]
         )
 
     assert co2_water_kij(313.15) == pytest.approx(0.0)

@@ -237,12 +237,28 @@ def run_smoke(contract: dict[str, Any]) -> dict[str, Any]:
         [value / total for value in composition],
     )
     derivative = state.fixed_other_concentrations_log_fugacity_derivative(0)
+    reactive_bundle = importlib.import_module(
+        "mea_absorption_column.Thermodynamics.reactive_bundle"
+    )
+    bundle = reactive_bundle.validate_reactive_bundle(str(dataset_path))
+    constants = reactive_bundle.compile_reaction_constants(str(dataset_path), 313.15)
+    equilibrium = reactive_bundle.solve_homogeneous_reactive_state(
+        str(dataset_path), 313.15, 101325.0, (0.1529, 1.0, 7.911)
+    )
     return {
         "dataset": str(dataset_path),
         "parameter_fingerprint": state.parameter_fingerprint,
         "artifact_fingerprint": state.artifact_fingerprint,
         "co2_fugacity_pa": float(state.fugacities_pa[0]),
         "co2_log_fugacity_derivative": derivative,
+        "bundle_id": bundle["bundle"]["bundle_id"],
+        "parameter_document_sha256": bundle["bundle"]["parameter_document_sha256"],
+        "reaction_system_sha256": hashlib.sha256(
+            (dataset_path / "reaction-system.json").read_bytes()
+        ).hexdigest(),
+        "compiled_log_k_313_15": [float(value[0]) for value in constants],
+        "equilibrium_composition": equilibrium["composition"].tolist(),
+        "equilibrium_evidence": equilibrium["evidence"],
     }
 
 
@@ -350,6 +366,20 @@ def main(argv: list[str] | None = None) -> int:
         print(
             "CO2 d(ln f)/d(ln C) at fixed other concentrations: "
             f"{smoke_payload['co2_log_fugacity_derivative']}"
+        )
+        print(f"reactive bundle: {smoke_payload['bundle_id']}")
+        print(
+            "reactive parameter document SHA-256: "
+            f"{smoke_payload['parameter_document_sha256']}"
+        )
+        print(
+            "reactive reaction system SHA-256: "
+            f"{smoke_payload['reaction_system_sha256']}"
+        )
+        print(f"compiled ln(K) at 313.15 K: {smoke_payload['compiled_log_k_313_15']}")
+        print(
+            "homogeneous reactive residuals: "
+            f"{smoke_payload['equilibrium_evidence']}"
         )
 
     if errors:
