@@ -77,7 +77,7 @@ def main() -> None:
         fontsize=8,
     )
     fig.savefig(FIGURE.with_suffix(".png"), dpi=240)
-    fig.savefig(FIGURE.with_suffix(".pdf"))
+    fig.savefig(FIGURE.with_suffix(".pdf"), metadata={"CreationDate": None, "ModDate": None})
     plt.close(fig)
 
 
