@@ -202,7 +202,7 @@ def source_rows(config: dict, run_metadata: dict) -> list[dict]:
 
 
 def state_domain_status(row: dict[str, str], common_domain: dict) -> str:
-    if row["state_id"].startswith("Putta"):
+    if row["source_row_id"].startswith("Putta"):
         return "not_evaluable_source_label_only"
     temperature = float(row["temperature_K"])
     lower, upper = common_domain["temperature_K"]
