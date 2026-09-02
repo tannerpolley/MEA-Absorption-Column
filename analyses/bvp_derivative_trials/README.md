@@ -1,5 +1,13 @@
 # SciPy BVP verification
 
+The exploratory constrained chemical-potential film is run with:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_chemical_potential_film.py --mesh-points 11
+```
+
+It uses the retained Case 3C Position 1 state, a seven-coordinate fixed path, a provisional common unit diagonal mobility, and zero reaction source because finite-rate kinetics and calibrated ion mobility inputs are unresolved. Fluxes are exploratory only.
+
 This Issue #18 analysis set retains the executable Issue #19 column tranche. It compares the existing direct SciPy BVP route for `SRP-LG7` and NCCC 2017 Case 3C with concentration-based chemistry fixed and the existing `ideal_henry` and `epcsaft_ionic` driving-force closures.
 
 The retained campaign does not run or interpret the Issue #16 physical 21-state reactive-film calculation. It changes no thermodynamic, chemistry, kinetic, transport, hydraulic, area, or acceptance parameter.
