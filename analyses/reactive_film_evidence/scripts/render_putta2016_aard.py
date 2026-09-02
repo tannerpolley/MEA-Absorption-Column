@@ -74,7 +74,7 @@ def main() -> None:
     ax.set_xticks(range(len(DATA_GROUPS)), DATA_GROUPS, rotation=20, ha="right")
     ax.set_yticks(range(len(MODELS)), MODELS)
     ax.set_title("Putta2016 aggregate errors do not establish row-level film validation")
-    ax.set_xlabel("Reported apparatus/data group in Table 4")
+    ax.set_xlabel("Apparatus/data grouping reported in Table 4")
     ax.set_ylabel("Rate-model basis")
     for y, values in enumerate(matrix):
         for x, value in enumerate(values):
