@@ -121,9 +121,10 @@ def validate_work_package_a(config: dict[str, Any]) -> dict[str, Any]:
 
 
 def validate_release_guard(config: dict[str, Any]) -> dict[str, Any]:
-    paths = [ROOT / path for path in config["release_guard"]["paths"]]
-    paths.extend(Path(path) for path in config["release_guard"]["external_paths"])
-    observed = [{"path": str(path), "exists": path.is_file()} for path in paths]
+    local_paths = config["release_guard"]["paths"]
+    external_paths = config["release_guard"]["external_paths"]
+    observed = [{"path": path, "exists": (ROOT / path).is_file()} for path in local_paths]
+    observed.extend({"path": path, "exists": Path(path).is_file()} for path in external_paths)
     require(not any(item["exists"] for item in observed), "a canonical version-2 release file exists; refusing to overwrite it")
     return {
         "paths": config["release_guard"]["paths"],
