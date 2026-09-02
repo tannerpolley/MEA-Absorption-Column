@@ -541,6 +541,10 @@ def _check_issue42_film_transport() -> None:
     expected_run_metadata = canonical_run_metadata(config, source_revision, input_hash, generator_hash)
     if any(summary.get(key) != value for key, value in expected_run_metadata.items()):
         raise AssertionError("Issue 42 run metadata differs from canonical input/source-derived values.")
+    if summary.get("source_revision_protocol") != config["reproduction"]["source_revision_protocol"]:
+        raise AssertionError("Issue 42 source revision protocol differs from the pinned input.")
+    if summary.get("regeneration_command") != config["reproduction"]["command"]:
+        raise AssertionError("Issue 42 regeneration command differs from the pinned input.")
 
     issue35 = json.loads((ROOT / config["dependencies"]["issue35_summary"]["path"]).read_text(encoding="utf-8"))
     reconstruction = summary.get("source_reconstruction", {})

@@ -146,7 +146,7 @@ def canonical_source_documents(config: dict, verified: list[dict]) -> list[dict]
 def canonical_run_metadata(config: dict, revision: str, input_hash: str, generator_hash: str) -> dict:
     canonical = config["reproduction"]["canonical_run_metadata"]
     require(canonical["exact_command"] == config["reproduction"]["command"], "canonical command differs from reproduction command")
-    require(canonical["workers"] == 1, "Issue 42 worker count changed")
+    require(canonical["workers"] == config["reproduction"]["workers"] == 1, "Issue 42 worker count changed")
     return {
         "source_revision": revision,
         "input_sha256": input_hash,
