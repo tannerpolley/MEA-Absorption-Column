@@ -3,8 +3,10 @@
   "analysis": "nccc_validation",
   "issue": 40,
   "rows": 5,
-  "generator_sha256": "d436d86c960b8f9a410709446e796b4eac2b724bd5956f3cb1231aa6a4c62d5f",
-  "repository_commit": "616ff267253cfecde4a395984a94c1b455db8c85",
+  "generator_sha256": "96a3b2f77fb2b576825962cf1c36fed703425f73863706d2e8c13eed9faffc6e",
+  "source_repository_commit": "a98bdc43af8aefe46d2c3e746354fc19c63f7509",
+  "source_worktree_clean_at_generation": true,
+  "source_revision_protocol": "Run the resolver from a clean source commit; commit the generated result artifacts separately. The recorded source commit is not the result-containing commit.",
   "machine": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
   "workers": 1,
   "reproduction_command": "python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
@@ -17,6 +19,7 @@
     "chemistry_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c"
   },
   "source_inputs": {
+    "config_sha256": "4cdc29a5ae5f95624f70010c016c8d6637fe93cbc90f87247975f04710c5303d",
     "issue33_table_sha256": "1d8c6cc7ff3a801a8b8e1975a6b7f8618ae2bcef3a01a63df08c49bdfeb09b1d",
     "issue33_summary_sha256": "28363ae5d9b18b93b03988976abdba14d4e6035ebfac224962b685258c8bc75e",
     "retained_profile_sha256": "2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a"
@@ -157,12 +160,17 @@
     "vle_fugacity_equality_imposed": false,
     "position_1_exact_source_analytical_mol_L": 4.889309897097635,
     "position_1_exact_source_free_MEA_mol_L": 2.491683471902737,
+    "position_1_issue33_reconstructed_true_species_loading": 0.24999627615967537,
+    "position_1_apparent_flow_ratio": 0.25000000000000006,
+    "position_1_apparent_minus_issue33_loading": 3.7238403246819818e-06,
+    "loading_and_apparent_ratio_distinct_not_relabelled_or_fitted": true,
     "position_1_source_basis_unresolved": true,
     "packet_evaluated_at_least_one_row": true,
     "analytical_and_elemental_residual_pass": true,
     "mole_fraction_normalization_pass": true,
     "charge_residual_pass": true,
     "deterministic_replay_pass": true,
+    "replay_branch_match_pass": true,
     "no_capture_inference": true,
     "no_thermo_or_kinetic_fit": true
   },
@@ -187,5 +195,5 @@
     "The historical packet contains non-evaluable states; those states are retained as evidence and no historical continuation state is reused as a process-column initial condition.",
     "No vapor phase, VLE fugacity equality, packed-column capture, transport, area, hydraulic, or fitted quantity is used."
   ],
-  "result_table_sha256": "f29af498c54aaedb0fde06efd8a37843eff15c700f9c353ff7c6e75b2f1d6bbb"
+  "result_table_sha256": "231e103ad50994041f8cb7752841b56740701409ecf3eeafdf8ce65b56165848"
 }

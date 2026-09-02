@@ -5,9 +5,11 @@ This retained analysis reconstructs source apparent component flows and maps the
 ## Reproduction and identities
 
 Command: `python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip`<br>
-Repository commit: `616ff267253cfecde4a395984a94c1b455db8c85`<br>
-Generator SHA-256: `d436d86c960b8f9a410709446e796b4eac2b724bd5956f3cb1231aa6a4c62d5f`<br>
+Source repository commit: `a98bdc43af8aefe46d2c3e746354fc19c63f7509` (result artifacts are committed separately)<br>
+Generator SHA-256: `96a3b2f77fb2b576825962cf1c36fed703425f73863706d2e8c13eed9faffc6e`<br>
 Machine: `Linux-7.0.0-30-generic-x86_64-with-glibc2.39`; workers: `1`
+
+The source revision protocol is: `Run the resolver from a clean source commit; commit the generated result artifacts separately. The recorded source commit is not the result-containing commit.` The focused validator rehashes the current source files and retained outputs against these recorded identities; it is a retained-output/source-lineage consistency check, not an independent physical reproduction. Checking out the recorded source commit and rerunning the command reproduces the retained result artifacts before their separate result-artifact commit.
 
 The immutable bundle identities are outer zip `4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b`, parameter document `2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c`, ePC-SAFT wheel `d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a`, state packet `41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef`, and parameter fingerprint `sha256:c1fc2665e94d136eb85f27c793b7defbd16d1d82cb3173cb50a9aaf6513c8940`. The bundle verifier was run before this analysis.
 
@@ -30,7 +32,7 @@ The packet request is one finite liquid phase at `T=318.15 K`, `P=109500 Pa`, wi
 | Scientific admissions | 0 |
 | Basis-unresolved rows | 5 |
 
-Position 1 is packet-evaluated with a single `strict_stable_local_minimum` liquid branch. It remains scientifically unadmitted because the source prepared/loaded volume basis is unresolved. Positions 0 and 0.5 are retained as out-of-common-domain, not attempted; Putta labels are retained as source-label-only rows.
+Position 1 is packet-evaluated with a single `strict_stable_local_minimum` liquid branch. It remains scientifically unadmitted because the source prepared/loaded volume basis is unresolved. Positions 0 and 0.5 are retained as out-of-common-domain, not attempted; Putta labels are retained as source-label-only rows. For Position 1, the Issue 33 reconstructed true-species loading is **0.24999627615967537 mol CO2 per mol MEA** and is used only for the domain gate. The packet input is the distinct apparent total-inorganic-carbon/analytical-MEA flow ratio **0.25000000000000006 mol per mol**, with difference **3.7238403246819818e-06 mol per mol**; neither value is relabelled or fitted.
 
 ## Claim boundary
 
