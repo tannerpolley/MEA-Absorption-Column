@@ -391,6 +391,12 @@
     "command": "uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py",
     "runtime": "Python 3.13; standard library plus the existing Issue 35 source resolver; no ePC-SAFT package or parameter bundle is used",
     "workers": 1,
+    "canonical_run_metadata": {
+      "exact_command": "uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py",
+      "machine": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+      "workers": 1,
+      "run_id_prefix": "issue42_source_only_"
+    },
     "source_revision_protocol": "Run from a clean source commit; commit the input and resolver first, then commit generated result files separately. The recorded source commit is not the result-containing commit."
   }
 }

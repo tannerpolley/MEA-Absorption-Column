@@ -19,8 +19,15 @@ from analyze_issue17_enhancement_comparison import (
 from resolve_issue42_film_transport import (
     COMPARISON_FIELDS,
     SOURCE_FIELDS,
+    canonical_decision_summaries,
+    canonical_run_metadata,
+    canonical_source_documents,
     comparison_rows as build_issue42_comparison_rows,
+    replay_issue35 as replay_issue42_issue35,
     source_rows as build_issue42_source_rows,
+    validate_dependencies as validate_issue42_dependencies,
+    validate_source_documents as validate_issue42_source_documents,
+    report_text as build_issue42_report_text,
 )
 
 
@@ -518,16 +525,22 @@ def _check_issue42_film_transport() -> None:
     if source_blob_hashes != {"input": input_hash, "generator": generator_hash}:
         raise AssertionError("Issue 42 retained source revision/blob lineage is stale or tampered.")
 
-    for source in config["source_documents"]:
-        source_path = Path(source["local_pdf_path"])
-        if not source_path.is_file() or hashlib.sha256(source_path.read_bytes()).hexdigest() != source["source_pdf_sha256"]:
-            raise AssertionError(f"Issue 42 source PDF is missing or changed: {source['id']}")
+    verified_source_files = validate_issue42_source_documents(config)
+    canonical_sources = canonical_source_documents(config, verified_source_files)
+    if summary.get("source_documents") != canonical_sources:
+        raise AssertionError("Issue 42 source-document summary differs from canonical input-derived records.")
+    if summary.get("unrecovered_source_records") != config["unrecovered_source_records"]:
+        raise AssertionError("Issue 42 unrecovered-source summary differs from the pinned input.")
     for key, item in config["dependencies"].items():
         path = ROOT / item["path"]
         if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != item["sha256"]:
             raise AssertionError(f"Issue 42 dependency is missing or changed: {key}")
     if summary.get("dependencies") != config["dependencies"]:
         raise AssertionError("Issue 42 dependency provenance is stale.")
+    dependency_rows = validate_issue42_dependencies(config)[3]
+    expected_run_metadata = canonical_run_metadata(config, source_revision, input_hash, generator_hash)
+    if any(summary.get(key) != value for key, value in expected_run_metadata.items()):
+        raise AssertionError("Issue 42 run metadata differs from canonical input/source-derived values.")
 
     issue35 = json.loads((ROOT / config["dependencies"]["issue35_summary"]["path"]).read_text(encoding="utf-8"))
     reconstruction = summary.get("source_reconstruction", {})
@@ -587,10 +600,7 @@ def _check_issue42_film_transport() -> None:
     }
     if source_table.set_index("record_id")["admission_decision"].to_dict() != expected_admissions:
         raise AssertionError("Issue 42 source table admission decisions changed.")
-    run_metadata = {
-        key: summary[key]
-        for key in ("source_revision", "input_sha256", "generator_sha256", "exact_command", "machine", "workers", "run_id")
-    }
+    run_metadata = expected_run_metadata
     source_header, actual_source_rows = _read_csv_rows(ISSUE42_TABLES["transport_inputs"])
     if source_header != SOURCE_FIELDS or actual_source_rows != _canonical_csv_rows(
         build_issue42_source_rows(config, run_metadata), SOURCE_FIELDS
@@ -619,21 +629,34 @@ def _check_issue42_film_transport() -> None:
         raise AssertionError("Issue 42 comparison contains evaluated physical outputs.")
     issue40_header, issue40_rows = _read_csv_rows(ISSUE40_TABLE)
     comparison_header, actual_comparison_rows = _read_csv_rows(ISSUE42_TABLES["transport_comparison"])
-    if not issue40_header or comparison_header != COMPARISON_FIELDS or actual_comparison_rows != _canonical_csv_rows(
-        build_issue42_comparison_rows(config, issue40_rows, run_metadata), COMPARISON_FIELDS
-    ):
+    expected_comparison_rows = build_issue42_comparison_rows(config, issue40_rows, run_metadata)
+    if not issue40_header or comparison_header != COMPARISON_FIELDS or actual_comparison_rows != _canonical_csv_rows(expected_comparison_rows, COMPARISON_FIELDS):
         raise AssertionError("Issue 42 comparison rows differ from canonical input-derived rows.")
 
+    expected_decision_summaries = canonical_decision_summaries(
+        config,
+        canonical_sources,
+        build_issue42_source_rows(config, run_metadata),
+        expected_comparison_rows,
+        dependency_rows,
+    )
+    if summary.get("candidate_A") != expected_decision_summaries["candidate_A"] or summary.get("candidate_B") != expected_decision_summaries["candidate_B"]:
+        raise AssertionError("Issue 42 candidate decision summaries differ from canonical input/dependency-derived records.")
+
+    expected_report = build_issue42_report_text(
+        config,
+        canonical_sources,
+        replay_issue42_issue35(config),
+        expected_comparison_rows,
+        run_metadata,
+    )
+    if ISSUE42_REPORT.read_text(encoding="utf-8") != expected_report:
+        raise AssertionError("Issue 42 report differs from canonical input/dependency-derived text.")
     for key, path in ISSUE42_TABLES.items():
         if summary["output_sha256"][key] != hashlib.sha256(path.read_bytes()).hexdigest():
             raise AssertionError(f"Issue 42 output hash is stale: {key}")
     if summary["output_sha256"]["report"] != hashlib.sha256(ISSUE42_REPORT.read_bytes()).hexdigest():
         raise AssertionError("Issue 42 report hash is stale.")
-    report = ISSUE42_REPORT.read_text(encoding="utf-8")
-    if "supported-negative source-only transport evidence complete" not in report or "No physical film flux is calculated or adopted" not in report or "All 5 rows are `not_attempted`" not in report:
-        raise AssertionError("Issue 42 report does not state its evidence boundary.")
-
-
 def _check_issue41_external_provenance(config: dict, summary: dict) -> None:
     for source in config["source_documents"]:
         path = source.get("local_pdf_path")

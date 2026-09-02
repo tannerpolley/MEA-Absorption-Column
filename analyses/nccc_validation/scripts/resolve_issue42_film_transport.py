@@ -131,6 +131,33 @@ def validate_source_documents(config: dict) -> list[dict]:
     return verified
 
 
+def canonical_source_documents(config: dict, verified: list[dict]) -> list[dict]:
+    verified_by_id = {item["id"]: item for item in verified}
+    return [
+        {
+            **source,
+            "verified_sha256": verified_by_id[source["id"]]["sha256"],
+            "verification_status": "verified",
+        }
+        for source in config["source_documents"]
+    ]
+
+
+def canonical_run_metadata(config: dict, revision: str, input_hash: str, generator_hash: str) -> dict:
+    canonical = config["reproduction"]["canonical_run_metadata"]
+    require(canonical["exact_command"] == config["reproduction"]["command"], "canonical command differs from reproduction command")
+    require(canonical["workers"] == 1, "Issue 42 worker count changed")
+    return {
+        "source_revision": revision,
+        "input_sha256": input_hash,
+        "generator_sha256": generator_hash,
+        "exact_command": canonical["exact_command"],
+        "machine": canonical["machine"],
+        "workers": canonical["workers"],
+        "run_id": f"{canonical['run_id_prefix']}{revision[:12]}",
+    }
+
+
 def validate_dependencies(config: dict) -> tuple[dict, dict, dict, dict]:
     for item in config["dependencies"].values():
         path = ROOT / item["path"]
@@ -177,18 +204,6 @@ def replay_issue35(config: dict) -> dict:
     return {"row_count": len(rows), "replay_sha256": replay_hash, "diagnostics": diagnostics}
 
 
-def metadata(revision: str, input_hash: str, generator_hash: str, machine: str, run_id: str) -> dict:
-    return {
-        "source_revision": revision,
-        "input_sha256": input_hash,
-        "generator_sha256": generator_hash,
-        "exact_command": load_json(INPUT)["reproduction"]["command"],
-        "machine": machine,
-        "workers": 1,
-        "run_id": run_id,
-    }
-
-
 def source_rows(config: dict, run_metadata: dict) -> list[dict]:
     rows = []
     for record in config["transport_records"]:
@@ -200,6 +215,34 @@ def source_rows(config: dict, run_metadata: dict) -> list[dict]:
     require({row["species"] for row in rows if row["species"]} <= set(config["species_order"]), "unknown species in transport records")
     require({row["species"] for row in rows if row["record_kind"] == "ionic_diffusivity"} == set(config["charged_species"]), "charged species coverage changed")
     return rows
+
+
+def canonical_decision_summaries(
+    config: dict,
+    source_documents: list[dict],
+    source_rows: list[dict],
+    comparison_rows: list[dict],
+    dependency_rows: dict,
+) -> dict[str, dict]:
+    evidence = {
+        "source_documents_verified": all(item["verification_status"] == "verified" for item in source_documents),
+        "source_pdf_sha256": {item["id"]: item["verified_sha256"] for item in source_documents},
+        "transport_records": len(source_rows),
+        "ionic_diffusivity_records": sum(row["record_kind"] == "ionic_diffusivity" for row in source_rows),
+        "declared_comparison_states": len(comparison_rows),
+        "evaluated_comparison_states": sum(row["attempt_status"] != "not_attempted" for row in comparison_rows),
+        "scientifically_admitted_states": sum(row["decision"] == "admitted" for row in comparison_rows),
+        "issue40_scientifically_admitted_rows": sum(
+            row.get("scientific_admission") == "admitted" for row in dependency_rows["issue40_rows"]
+        ),
+        "issue41_scientifically_admitted_packet_rows": sum(
+            row.get("scientific_admission") == "admitted" for row in dependency_rows["issue41_packet"]
+        ),
+    }
+    return {
+        "candidate_A": {**config["candidate_A"], "canonical_evidence": evidence},
+        "candidate_B": {**config["candidate_B"], "canonical_evidence": evidence},
+    }
 
 
 def state_domain_status(row: dict[str, str], common_domain: dict) -> str:
@@ -291,14 +334,18 @@ def main() -> int:
     source_files = validate_source_documents(config)
     issue35, issue40, issue41, dependency_rows = validate_dependencies(config)
     replay = replay_issue35(config)
-    machine = platform.platform()
-    run_id = f"issue42_source_only_{revision[:12]}"
-    run_metadata = metadata(revision, input_hash, generator_hash, machine, run_id)
+    canonical = config["reproduction"]["canonical_run_metadata"]
+    require(platform.platform() == canonical["machine"], "current machine differs from pinned Issue 42 generation machine")
+    run_metadata = canonical_run_metadata(config, revision, input_hash, generator_hash)
     source_output_rows = source_rows(config, run_metadata)
     comparison = comparison_rows(config, dependency_rows["issue40_rows"], run_metadata)
+    source_documents = canonical_source_documents(config, source_files)
+    decision_summaries = canonical_decision_summaries(
+        config, source_documents, source_output_rows, comparison, dependency_rows
+    )
     write_csv(SOURCE_TABLE, source_output_rows, SOURCE_FIELDS)
     write_csv(COMPARISON_TABLE, comparison, COMPARISON_FIELDS)
-    REPORT.write_text(report_text(config, source_files, replay, comparison, run_metadata), encoding="utf-8")
+    REPORT.write_text(report_text(config, source_documents, replay, comparison, run_metadata), encoding="utf-8")
     summary = {
         "schema_version": "issue42_film_transport_result_v1",
         "issue": 42,
@@ -309,10 +356,10 @@ def main() -> int:
         "input_sha256": input_hash,
         "generator_sha256": generator_hash,
         "exact_command": run_metadata["exact_command"],
-        "machine": machine,
+        "machine": run_metadata["machine"],
         "workers": 1,
-        "run_id": run_id,
-        "source_documents": source_files,
+        "run_id": run_metadata["run_id"],
+        "source_documents": source_documents,
         "unrecovered_source_records": config["unrecovered_source_records"],
         "source_reconstruction": {
             "issue35_correlation_table_sha256": sha256(ISSUE35_CORRELATIONS),
@@ -356,8 +403,8 @@ def main() -> int:
             "no_capture_inference": True,
             "supported_negative": True,
         },
-        "candidate_A": config["candidate_A"],
-        "candidate_B": config["candidate_B"],
+        "candidate_A": decision_summaries["candidate_A"],
+        "candidate_B": decision_summaries["candidate_B"],
         "package_parameter_identity": {"used": False, "package": None, "parameter": None},
         "dependencies_have_zero_admitted_physical_rows": True,
         "output_paths": {
