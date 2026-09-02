@@ -21,7 +21,7 @@ MODELS = [
     "Present concentration",
     "Present activity",
 ]
-APPARATUSES = ["SDC Luo", "WWC Luo", "WWC Puxty", "laminar jet Aboudheir"]
+DATA_GROUPS = ["SDC Luo", "WWC Luo", "WWC Puxty", "laminar jet Aboudheir"]
 
 
 def main() -> None:
@@ -34,7 +34,6 @@ def main() -> None:
         raise AssertionError("aggregate evidence must not be relabeled as row-level validation")
 
     by_key = {(row["model"], row["apparatus_or_dataset"]): float(row["value"]) for row in rows}
-    matrix = [[by_key[(model, apparatus)] for apparatus in APPARATUSES] for model in MODELS]
 
     PLOT_DATA.parent.mkdir(parents=True, exist_ok=True)
     FIGURE.parent.mkdir(parents=True, exist_ok=True)
@@ -42,10 +41,11 @@ def main() -> None:
         writer = csv.DictWriter(
             stream,
             fieldnames=["model", "apparatus_or_dataset", "AARD_percent", "source_locator", "evidence_scope"],
+            lineterminator="\n",
         )
         writer.writeheader()
         for model in MODELS:
-            for apparatus in APPARATUSES:
+            for apparatus in DATA_GROUPS:
                 writer.writerow(
                     {
                         "model": model,
@@ -56,13 +56,25 @@ def main() -> None:
                     }
                 )
 
+    expected = {
+        (model, data_group): f"{by_key[(model, data_group)]:.1f}"
+        for model in MODELS
+        for data_group in DATA_GROUPS
+    }
+    with PLOT_DATA.open(newline="") as stream:
+        plotted = list(csv.DictReader(stream))
+    actual = {(row["model"], row["apparatus_or_dataset"]): row["AARD_percent"] for row in plotted}
+    if len(plotted) != 20 or actual != expected:
+        raise AssertionError("plot CSV must retain the exact 20 Table 4 cells")
+    matrix = [[float(actual[(model, data_group)]) for data_group in DATA_GROUPS] for model in MODELS]
+
     fig, ax = plt.subplots(figsize=(9.2, 6.0))
     fig.subplots_adjust(left=0.29, right=0.88, bottom=0.30, top=0.90)
     image = ax.imshow(matrix, cmap="viridis_r", vmin=0, vmax=40, aspect="auto")
-    ax.set_xticks(range(len(APPARATUSES)), APPARATUSES, rotation=20, ha="right")
+    ax.set_xticks(range(len(DATA_GROUPS)), DATA_GROUPS, rotation=20, ha="right")
     ax.set_yticks(range(len(MODELS)), MODELS)
     ax.set_title("Putta2016 aggregate errors do not establish row-level film validation")
-    ax.set_xlabel("Independent apparatus/data grouping reported in Table 4")
+    ax.set_xlabel("Reported apparatus/data group in Table 4")
     ax.set_ylabel("Rate-model basis")
     for y, values in enumerate(matrix):
         for x, value in enumerate(values):
@@ -72,7 +84,7 @@ def main() -> None:
     fig.text(
         0.5,
         0.025,
-        "Source: Putta et al. (2016), printed p. 349, Table 4. Aggregate comparisons only; raw flux rows and uncertainties are not retained.",
+        "Source: Putta et al. (2016), printed p. 349, Table 4. Reported groups only; raw flux rows and uncertainties are not retained.",
         ha="center",
         fontsize=8,
     )
