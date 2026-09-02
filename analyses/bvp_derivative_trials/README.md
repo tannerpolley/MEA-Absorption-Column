@@ -3,10 +3,10 @@
 The exploratory constrained chemical-potential film is run with:
 
 ```bash
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_chemical_potential_film.py --mesh-points 11
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_chemical_potential_film.py --quadrature-points 11
 ```
 
-It uses the retained Case 3C Position 1 state, a seven-coordinate fixed path, a provisional common unit diagonal mobility, and zero reaction source because finite-rate kinetics and calibrated ion mobility inputs are unresolved. Fluxes are exploratory only.
+**The retained Case 3C Position 1 state is basis-unresolved and scientifically unadmitted; it is used only as a provisional numerical state.** The calculation uses a seven-coordinate fixed path, a provisional common unit diagonal mobility, and zero reaction source because finite-rate kinetics and calibrated ion mobility inputs are unresolved. The comparator is a constrained ideal-log-composition-force reference, not the production effective-Fick film, and dimensional fluxes are arbitrary/provisional.
 
 This Issue #18 analysis set retains the executable Issue #19 column tranche. It compares the existing direct SciPy BVP route for `SRP-LG7` and NCCC 2017 Case 3C with concentration-based chemistry fixed and the existing `ideal_henry` and `epcsaft_ionic` driving-force closures.
 
