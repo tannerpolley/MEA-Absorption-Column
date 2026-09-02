@@ -42,6 +42,7 @@ export PYTHONPATH="src"
 | `resolve_concentration_bases.py` | Reconstructs prepared, loaded analytical, and free-MEA concentration bases for Putta/Luo labels and retained NCCC Case 3C states. | Reconstructs retained nine-species states. | Requires the certified reactive ePC-SAFT table. |
 | `resolve_issue35_transport.py` | Reconstructs source-labeled diffusivity, density, and viscosity inputs and retains the unequal-ion closure decision. | No. | No. |
 | `resolve_issue40_apparent_true_species.py` | Maps retained apparent Case 3C inputs to one authoritative packet-bound nine-species single-liquid state while retaining unresolved and out-of-domain rows. | Yes, one packet-bound state plus replay. | Requires Python 3.13 with the immutable handoff wheel installed. |
+| `resolve_issue41_reversible_kinetics.py` | Retains source-rate laws, exact reaction projections, raw-observation availability, provider K(T), and packet-bound blockers. | No. | No direct ePC-SAFT dependency; reads the immutable handoff archive. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -259,6 +260,24 @@ result or a loaded-versus-5 M admission basis. The NCCC preparation temperature 
 unreported, so true prepared concentration remains unresolved. Amundsen's
 instrument density uncertainty is kept separate from its combined relative
 estimates, which are converted row-wise for the diagnostic local-state density.
+
+Resolve the Issue 41 source-rate evidence and packet-consistent reversible
+kinetics record:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py \
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue41-only
+```
+
+This command reads the immutable bundle archive and the retained Issue 34/40
+artifacts without importing ePC-SAFT. It writes the fixed stoichiometric
+projections, five source-rate rows, 23-row raw/aggregate observation inventory,
+nine provider `K(T)` rows, five predeclared estimation/validation rows, and
+five packet comparison rows. The result is supported-negative: F3 has no
+recovered coefficient, no row-level rate fit is possible, and all packet rows
+remain `basis_unresolved`, so detailed balance and physical film rates are not
+evaluated.
 
 ## Result Semantics
 

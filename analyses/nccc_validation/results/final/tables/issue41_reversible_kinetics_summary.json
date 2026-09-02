@@ -1,0 +1,165 @@
+{
+  "schema_version": "issue41_reversible_kinetics_result_v1",
+  "issue": 41,
+  "claim_label": "supported_negative_source_rate_evidence_packet_consistent_kinetics",
+  "source_revision": "6907acbc5a6fb8734ab62fa48460b1cfe611eed6",
+  "source_worktree_dirty_during_generation": false,
+  "input_sha256": "bd3f19214798ab6746c2c767425a0e9f9c6d5cfc2df3c50d35745d352f196601",
+  "generator_sha256": "6ce4a6771b9bfefa867d128473d29c68e22e6dac8ca616eac840e4ae8dda2a5e",
+  "bundle": {
+    "bundle_id": "mea-reactive-epcsaft-parameter-bundle",
+    "outer_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+    "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+    "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+    "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
+    "chemistry_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c",
+    "parameter_fingerprint": "sha256:c1fc2665e94d136eb85f27c793b7defbd16d1d82cb3173cb50a9aaf6513c8940",
+    "parameter_fingerprint_status": "recorded_authorized_handoff_identity_not_recomputed_by_stdlib_source_law_script"
+  },
+  "source_documents": [
+    {
+      "id": "Putta2016",
+      "doi": "10.1016/j.ijggc.2016.08.009",
+      "source_pdf_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "evidence_status": "local Zotero PDF content; source-evidence receipt"
+    },
+    {
+      "id": "Luo2015",
+      "doi": "10.1016/j.ces.2014.10.013",
+      "source_pdf_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "evidence_status": "local Zotero PDF content; source-evidence receipt"
+    },
+    {
+      "id": "Gaspar2015",
+      "doi": "10.1016/j.ces.2015.08.023",
+      "source_pdf_sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "evidence_status": "local Zotero PDF content; comparison-source receipt"
+    },
+    {
+      "id": "Gondal2015",
+      "doi": "10.1016/j.ces.2014.10.038",
+      "source_pdf_sha256": null,
+      "evidence_status": "no local Zotero attachment"
+    },
+    {
+      "id": "PachecoRochelle1998",
+      "doi": "10.1021/ie980123g",
+      "source_pdf_sha256": null,
+      "evidence_status": "requested comparison source; no local attachment"
+    }
+  ],
+  "gates": {
+    "fixed_nine_species_order": true,
+    "fixed_reaction_projections": true,
+    "source_pdf_hashes_verified": true,
+    "bundle_outer_and_member_hashes_match": true,
+    "bundle_identity_matches_input": true,
+    "source_f1_f2_coefficients_recovered": true,
+    "source_f3_coefficient_recovered": false,
+    "source_printed_third_order_s_minus_2_rejected": true,
+    "source_observations_row_level_available": false,
+    "estimation_validation_partition_predeclared_only": true,
+    "issue40_basis_unresolved_preserved": true,
+    "packet_bound_scientific_admission": false,
+    "packet_activity_closure_attempted": false,
+    "detailed_balance_evaluable": false,
+    "reaction_timescale_evaluable": false,
+    "physical_reactive_film_adoption": false,
+    "supported_negative": true
+  },
+  "row_counts": {
+    "stoichiometry": 8,
+    "source_rate_evidence": 5,
+    "raw_observation_inventory": 23,
+    "provider_equilibrium_relationships": 9,
+    "estimation_validation_partition": 5,
+    "packet_bound_comparison": 5,
+    "scientifically_admitted_packet_rows": 0
+  },
+  "detailed_balance": {
+    "orientation": "products_positive",
+    "acceptance_abs_lnQ_minus_lnK": 1e-07,
+    "quotient_requirement": "Q must be formed from dimensionless activities on the bundle source standard state.",
+    "unavailable_state_policy": "Do not evaluate lnQ, residual, or pass/fail when no scientifically admitted true-species state exists."
+  },
+  "source_rate_domain": {
+    "temperature_K": [
+      293.15,
+      343.15
+    ],
+    "mea_concentration_labels_mol_L": [
+      1.0,
+      5.0
+    ],
+    "loading_mol_CO2_per_mol_MEA": [
+      0.0,
+      0.4
+    ],
+    "log_mean_pressure_difference_kPa": [
+      0.58,
+      14.7
+    ],
+    "source_label_status": "labels and source-domain bounds only; no exact absorber-state admission"
+  },
+  "common_application_domain": {
+    "temperature_K": [
+      293.15,
+      323.15
+    ],
+    "loading_mol_CO2_per_mol_MEA": [
+      0.0,
+      0.5
+    ],
+    "loading_upper_bound": "exclusive",
+    "mea_basis_status": "basis_unresolved_from_issue40",
+    "reason": "R5/provider and retained source overlap ends at 323.15 K; Issue 40 supplies no scientifically admitted true-species row."
+  },
+  "dependencies": {
+    "issue34_input": {
+      "path": "analyses/nccc_validation/inputs/issue34_kinetics.json",
+      "sha256": "da2a2933d0f4d6711e2116b6238c9aed96bf5cee91ffe5051725799dccb8c6eb"
+    },
+    "issue34_summary": {
+      "path": "analyses/nccc_validation/results/final/tables/issue34_kinetics_summary.json",
+      "sha256": "37097fccbf841d71c37f867efd6c5a78d02e5e3a5378537ec7d5c80cd5be44ce"
+    },
+    "issue40_input": {
+      "path": "analyses/nccc_validation/inputs/issue40_apparent_true_species.json",
+      "sha256": "4cdc29a5ae5f95624f70010c016c8d6637fe93cbc90f87247975f04710c5303d"
+    },
+    "issue40_summary": {
+      "path": "analyses/nccc_validation/results/final/tables/issue40_apparent_true_species_summary.json",
+      "sha256": "1b1f678c495de625971820dbc77cbfe7797aafe5c1bcaad5fc5ecf79e84b7118"
+    },
+    "issue40_table": {
+      "path": "analyses/nccc_validation/results/final/tables/issue40_apparent_true_species.csv",
+      "sha256": "231e103ad50994041f8cb7752841b56740701409ecf3eeafdf8ce65b56165848"
+    }
+  },
+  "output_paths": {
+    "stoichiometry": "analyses/nccc_validation/results/final/tables/issue41_stoichiometry.csv",
+    "source_rate_evidence": "analyses/nccc_validation/results/final/tables/issue41_source_rate_evidence.csv",
+    "raw_observations": "analyses/nccc_validation/results/final/tables/issue41_raw_rate_observations.csv",
+    "provider_equilibrium_relationships": "analyses/nccc_validation/results/final/tables/issue41_provider_equilibrium_relationships.csv",
+    "estimation_validation_partition": "analyses/nccc_validation/results/final/tables/issue41_estimation_validation_partition.csv",
+    "packet_bound_comparison": "analyses/nccc_validation/results/final/tables/issue41_packet_bound_comparison.csv",
+    "report": "analyses/nccc_validation/results/final/reports/issue41_reversible_kinetics.md"
+  },
+  "claim_boundary": "Source-faithful and provider-equilibrium evidence is retained. No raw-rate fit, packet-bound activity closure, reaction timescale, reaction partition, or physical reactive film is admitted.",
+  "limitations": [
+    "Source rows and uncertainty covariance are unavailable; retained observations are counts and aggregate AARD only.",
+    "F3 primary coefficient is unavailable.",
+    "Issue 40 provides no scientifically admitted true-species activity state because the source concentration basis remains unresolved.",
+    "Transport-state admission remains downstream of Issue 42."
+  ],
+  "regeneration_command": "uv run python analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+  "output_sha256": {
+    "stoichiometry": "0bc796ec762e1cef53cca1bfb36f28f7716f3b707ed70a4e2a53afab6f061960",
+    "source_rate_evidence": "9cbf42ad2c8db766219a54ca364fe7a9bb3bd52b6be5eb3bc7c7cde3e86279d9",
+    "raw_observations": "59ace27fd5587109921694293e018a8909c39a8d6cdb264966b1adf260857799",
+    "provider_equilibrium_relationships": "d2210337ca389275361a11b300ff9d7e6bb346462d754a6d64e1a57bca03ea12",
+    "estimation_validation_partition": "4adeb6d20c1f030895eae9f9515c7f72bc3ab4026182a93937c3ac4032dcbee1",
+    "packet_bound_comparison": "0c5d7d644359d5e0a80d022e352caf7db8ade5dca0917e60a4cb47d2056b1c4d",
+    "report": "2f6d51802c160668580ec621bd272f209ac90518f00c667bc1fddf8ba08f89c2"
+  }
+}

@@ -5,6 +5,7 @@ import hashlib
 import json
 import re
 import subprocess
+import zipfile
 from pathlib import Path
 
 import pandas as pd
@@ -38,12 +39,24 @@ ISSUE40_INPUT = ANALYSIS / "inputs/issue40_apparent_true_species.json"
 ISSUE40_TABLE = TABLES / "issue40_apparent_true_species.csv"
 ISSUE40_SUMMARY = TABLES / "issue40_apparent_true_species_summary.json"
 ISSUE40_REPORT = FINAL / "reports/issue40_apparent_true_species.md"
+ISSUE41_INPUT = ANALYSIS / "inputs/issue41_reversible_kinetics.json"
+ISSUE41_TABLES = {
+    "stoichiometry": TABLES / "issue41_stoichiometry.csv",
+    "source_rate_evidence": TABLES / "issue41_source_rate_evidence.csv",
+    "raw_observations": TABLES / "issue41_raw_rate_observations.csv",
+    "provider_equilibrium_relationships": TABLES / "issue41_provider_equilibrium_relationships.csv",
+    "estimation_validation_partition": TABLES / "issue41_estimation_validation_partition.csv",
+    "packet_bound_comparison": TABLES / "issue41_packet_bound_comparison.csv",
+}
+ISSUE41_SUMMARY = TABLES / "issue41_reversible_kinetics_summary.json"
+ISSUE41_REPORT = FINAL / "reports/issue41_reversible_kinetics.md"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--issue17-only", action="store_true")
     parser.add_argument("--issue40-only", action="store_true")
+    parser.add_argument("--issue41-only", action="store_true")
     args = parser.parse_args()
     if args.issue17_only:
         _check_issue17_enhancement_comparison()
@@ -53,10 +66,15 @@ def main() -> int:
         _check_issue40_apparent_true_species()
         print("Issue 40 retained-output/source-lineage consistency checks passed.")
         return 0
+    if args.issue41_only:
+        _check_issue41_reversible_kinetics()
+        print("Issue 41 source-rate and packet-bound consistency checks passed.")
+        return 0
 
     checks = [
         _check_issue17_enhancement_comparison,
         _check_issue40_apparent_true_species,
+        _check_issue41_reversible_kinetics,
         _check_required_files,
         _check_c_case_benchmark,
         _check_full_species_ionic_sweep,
@@ -314,6 +332,137 @@ def _check_required_files() -> None:
         ANALYSIS / "scripts" / "generate_accuracy_credibility_artifacts.py",
     ]
     _require_existing(required)
+
+
+def _check_issue41_reversible_kinetics() -> None:
+    _require_existing([ISSUE41_INPUT, ISSUE41_SUMMARY, ISSUE41_REPORT, *ISSUE41_TABLES.values()])
+    config = json.loads(ISSUE41_INPUT.read_text(encoding="utf-8"))
+    summary = json.loads(ISSUE41_SUMMARY.read_text(encoding="utf-8"))
+    if config.get("schema_version") != "issue41_source_rate_evidence_v1":
+        raise AssertionError("Issue 41 input schema changed.")
+    if config.get("species_order") != [
+        "CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"
+    ]:
+        raise AssertionError("Issue 41 species order changed.")
+    if summary.get("input_sha256") != hashlib.sha256(ISSUE41_INPUT.read_bytes()).hexdigest():
+        raise AssertionError("Issue 41 summary input hash is stale.")
+    generator = ANALYSIS / "scripts/resolve_issue41_reversible_kinetics.py"
+    if summary.get("generator_sha256") != hashlib.sha256(generator.read_bytes()).hexdigest():
+        raise AssertionError("Issue 41 generator hash is stale.")
+    source_revision = summary.get("source_revision", "")
+    if not source_revision or subprocess.run(["git", "cat-file", "-e", f"{source_revision}^{{commit}}"], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 41 source revision is not a local commit.")
+    current_revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip()
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_revision, current_revision], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 41 source revision is not an ancestor of the retained result commit.")
+    if summary.get("source_worktree_dirty_during_generation") is not False:
+        raise AssertionError("Issue 41 retained outputs were not generated from a clean source worktree.")
+    source_blob_hashes = {
+        "input": hashlib.sha256(subprocess.run(["git", "show", f"{source_revision}:analyses/nccc_validation/inputs/issue41_reversible_kinetics.json"], cwd=ROOT, check=True, capture_output=True).stdout).hexdigest(),
+        "generator": hashlib.sha256(subprocess.run(["git", "show", f"{source_revision}:analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py"], cwd=ROOT, check=True, capture_output=True).stdout).hexdigest(),
+    }
+    if source_blob_hashes != {"input": summary["input_sha256"], "generator": summary["generator_sha256"]}:
+        raise AssertionError("Issue 41 retained source revision/blob lineage is stale or tampered.")
+    _check_issue41_external_provenance(config, summary)
+    expected_gates = {
+        "fixed_nine_species_order": True, "fixed_reaction_projections": True,
+        "source_pdf_hashes_verified": True, "bundle_outer_and_member_hashes_match": True,
+        "bundle_identity_matches_input": True, "source_f1_f2_coefficients_recovered": True,
+        "source_f3_coefficient_recovered": False, "source_printed_third_order_s_minus_2_rejected": True,
+        "source_observations_row_level_available": False, "estimation_validation_partition_predeclared_only": True,
+        "issue40_basis_unresolved_preserved": True, "packet_bound_scientific_admission": False,
+        "packet_activity_closure_attempted": False, "detailed_balance_evaluable": False,
+        "reaction_timescale_evaluable": False, "physical_reactive_film_adoption": False, "supported_negative": True,
+    }
+    if summary.get("gates") != expected_gates:
+        raise AssertionError("Issue 41 gates changed.")
+    expected_bundle = {
+        "outer_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+        "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+        "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+        "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
+        "chemistry_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c",
+        "parameter_fingerprint": "sha256:c1fc2665e94d136eb85f27c793b7defbd16d1d82cb3173cb50a9aaf6513c8940",
+    }
+    if any(summary.get("bundle", {}).get(key) != value for key, value in expected_bundle.items()):
+        raise AssertionError("Issue 41 bundle identity changed.")
+    expected_counts = {
+        "stoichiometry": 8, "source_rate_evidence": 5, "raw_observation_inventory": 23,
+        "provider_equilibrium_relationships": 9, "estimation_validation_partition": 5,
+        "packet_bound_comparison": 5, "scientifically_admitted_packet_rows": 0,
+    }
+    if summary.get("row_counts") != expected_counts:
+        raise AssertionError("Issue 41 row counts changed.")
+    tables = {key: pd.read_csv(path, keep_default_na=False) for key, path in ISSUE41_TABLES.items()}
+    stoich = tables["stoichiometry"]
+    if len(stoich) != 8 or set(stoich["reaction_id"]) != {"R1", "R2", "R3", "R4", "R5", "F1", "F2", "F3"} or not stoich["stoichiometry_balance_pass"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Issue 41 stoichiometry table is incomplete or unbalanced.")
+    rates = tables["source_rate_evidence"]
+    if len(rates) != 5 or not rates["dimensional_reconstruction_pass"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Issue 41 source-rate table is incomplete.")
+    if len(rates.loc[rates["coefficient_status"] == "recovered"]) != 4 or len(rates.loc[rates["reaction_id"] == "F3"]) != 1 or rates.loc[rates["reaction_id"] == "F3", "coefficient_status"].iloc[0] != "unavailable":
+        raise AssertionError("Issue 41 F1/F2/F3 source-rate statuses changed.")
+    raw = tables["raw_observations"]
+    if len(raw) != 23 or not raw["raw_rate_value_available"].astype(str).str.lower().eq("false").all():
+        raise AssertionError("Issue 41 raw observation inventory must remain non-row-level.")
+    partition = tables["estimation_validation_partition"]
+    if len(partition) != 5 or partition["dataset_id"].duplicated().any() or not partition["status"].eq("predeclared_only_no_row_ids").all() or not bool(partition[["row_ids_used", "rate_values_used", "uncertainty_weights_used"]].apply(lambda col: col.astype(str).str.lower().eq("false").all()).all()):
+        raise AssertionError("Issue 41 estimation/validation partition changed.")
+    provider = tables["provider_equilibrium_relationships"]
+    if len(provider) != 9 or not provider["detailed_balance_status"].eq("not_evaluable_basis_unresolved").all() or not provider[["lnQ", "detailed_balance_residual", "detailed_balance_pass"]].eq("").all().all():
+        raise AssertionError("Issue 41 provider relationship table evaluated unavailable Q data.")
+    packet = tables["packet_bound_comparison"]
+    if len(packet) != 5 or not packet["source_basis_status"].eq("basis_unresolved").all() or not packet["scientific_admission"].eq("basis_unresolved").all() or not packet["lnQ"].eq("").all() or not packet["detailed_balance_residual"].eq("").all() or not packet["detailed_balance_pass"].eq("").all():
+        raise AssertionError("Issue 41 packet-bound comparison crossed the basis-admission boundary.")
+    for key, path in ISSUE41_TABLES.items():
+        if summary["output_sha256"][key] != hashlib.sha256(path.read_bytes()).hexdigest():
+            raise AssertionError(f"Issue 41 output hash is stale: {key}")
+    if summary["output_sha256"]["report"] != hashlib.sha256(ISSUE41_REPORT.read_bytes()).hexdigest():
+        raise AssertionError("Issue 41 report hash is stale.")
+    report = ISSUE41_REPORT.read_text(encoding="utf-8")
+    if "supported-negative" not in report or "No physical reactive film is adopted" not in report or "No bundle provenance mismatch was found" not in report:
+        raise AssertionError("Issue 41 report does not state its evidence boundary.")
+
+
+def _check_issue41_external_provenance(config: dict, summary: dict) -> None:
+    for source in config["source_documents"]:
+        path = source.get("local_pdf_path")
+        expected = source.get("source_pdf_sha256")
+        if path is None:
+            if expected is not None:
+                raise AssertionError(f"Issue 41 source {source['id']} has an unresolvable PDF hash.")
+            continue
+        source_path = Path(path)
+        if not source_path.is_file() or hashlib.sha256(source_path.read_bytes()).hexdigest() != expected:
+            raise AssertionError(f"Issue 41 source PDF is missing or changed: {source['id']}")
+    bundle_config = config["bundle"]
+    bundle_path = Path(bundle_config["path"])
+    if not bundle_path.is_file() or hashlib.sha256(bundle_path.read_bytes()).hexdigest() != bundle_config["outer_sha256"]:
+        raise AssertionError("Issue 41 authorized bundle is missing or changed.")
+    with zipfile.ZipFile(bundle_path) as archive:
+        manifest_names = [name for name in archive.namelist() if name.endswith("/bundle.json")]
+        if len(manifest_names) != 1:
+            raise AssertionError("Issue 41 bundle manifest is not unique.")
+        manifest_name = manifest_names[0]
+        prefix = manifest_name[: -len("bundle.json")]
+        manifest = json.loads(archive.read(manifest_name))
+        for item in manifest["files"]:
+            member = prefix + item["path"]
+            data = archive.read(member)
+            if len(data) != item["bytes"] or hashlib.sha256(data).hexdigest() != item["sha256"]:
+                raise AssertionError(f"Issue 41 bundle member is missing or changed: {item['path']}")
+        expected = {
+            "parameter_document_sha256": bundle_config["parameter_document_sha256"],
+            "engine_wheel_sha256": bundle_config["engine_wheel_sha256"],
+            "state_packet_sha256": bundle_config["state_packet_sha256"],
+        }
+        if any(manifest[key] != value for key, value in expected.items()):
+            raise AssertionError("Issue 41 bundle manifest identity changed.")
+        chemistry_path = prefix + "chemistry/reaction-system.json"
+        if hashlib.sha256(archive.read(chemistry_path)).hexdigest() != bundle_config["chemistry_sha256"]:
+            raise AssertionError("Issue 41 bundle chemistry member identity changed.")
+    if summary.get("bundle", {}).get("outer_sha256") != bundle_config["outer_sha256"]:
+        raise AssertionError("Issue 41 summary bundle identity is stale.")
 
 
 def _check_epcsaft_v02_validation() -> None:

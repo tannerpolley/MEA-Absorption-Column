@@ -21,6 +21,19 @@ numeric kinetic coefficients are rejected or unavailable. The implementation
 therefore tests reversible architecture with manufactured rates and does not
 promote those rates to a physical MEA model.
 
+Issue 41 now retains the source-rate evidence separately from that architecture
+test. Putta2016 F1/F2 concentration and activity forms, source domains, source
+units, and the 20-cell aggregate AARD comparison are preserved; the printed
+third-order `s^-2` unit is rejected by dimensional reconstruction. The
+Gondal2015 F3 coefficient and row-level rate observations remain unavailable,
+and the declared Luo/WWC/SDC and literature apparatus split has no retained row
+IDs or uncertainty weights. The immutable provider bundle supplies `K(T)` on
+its aqueous-molality standard state, but Issue 40 admits no true-species row:
+all five packet candidates remain `basis_unresolved`. Consequently `ln Q`,
+detailed-balance residuals, reaction timescales, rate fitting, and physical
+film adoption remain unevaluated. The retained result is a supported-negative
+source-evidence record, not a predictive kinetic model.
+
 ## Effective-Fick film
 
 For film coordinate \(z\), positive from interface to bulk,
