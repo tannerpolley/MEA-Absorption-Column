@@ -48,6 +48,7 @@ from resolve_issue36_film_input_release import (
     validate_release_guard as validate_issue36_release_guard,
     validate_work_package_a as validate_issue36_work_package_a,
 )
+from resolve_issue30_film_validation_gate import validate_outputs as validate_issue30_outputs
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -114,6 +115,7 @@ def main() -> int:
     parser.add_argument("--issue41-only", action="store_true")
     parser.add_argument("--issue42-only", action="store_true")
     parser.add_argument("--issue36-only", action="store_true")
+    parser.add_argument("--issue30-only", action="store_true")
     args = parser.parse_args()
     if args.issue17_only:
         _check_issue17_enhancement_comparison()
@@ -135,6 +137,10 @@ def main() -> int:
         _check_issue36_film_input_release()
         print("Issue 36 blocked film-input release consistency checks passed.")
         return 0
+    if args.issue30_only:
+        validate_issue30_outputs()
+        print("Issue 30 supported-negative film-validation gate consistency checks passed.")
+        return 0
 
     checks = [
         _check_issue17_enhancement_comparison,
@@ -142,6 +148,7 @@ def main() -> int:
         _check_issue41_reversible_kinetics,
         _check_issue42_film_transport,
         _check_issue36_film_input_release,
+        validate_issue30_outputs,
         _check_required_files,
         _check_c_case_benchmark,
         _check_full_species_ionic_sweep,
