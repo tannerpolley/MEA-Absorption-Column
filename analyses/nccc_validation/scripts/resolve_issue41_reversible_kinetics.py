@@ -354,6 +354,8 @@ def main() -> int:
     parser.add_argument("--bundle", type=Path, default=Path("/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip"))
     args = parser.parse_args()
     config = load_json(INPUT)
+    revision, dirty = git_revision()
+    require(not dirty, "source worktree must be clean before generating Issue 41 outputs")
     issue34 = load_json(ISSUE34_INPUT)
     issue34_summary = load_json(ISSUE34_SUMMARY)
     issue40_summary = load_json(ISSUE40_SUMMARY)
@@ -380,7 +382,6 @@ def main() -> int:
     write_csv(PROVIDER_K, provider_rows_, ["projection_id", "equation", "temperature_K", "source_reaction_coefficients", "ln_K", "K", "standard_state_id", "activity_convention", "reaction_sign_convention", "provider_domain_status", "lnQ", "detailed_balance_residual", "detailed_balance_pass", "detailed_balance_status", "reason"])
     write_csv(PARTITION, partition_rows_, ["dataset_id", "source_id", "apparatus", "declared_role", "source_locator", "status", "row_ids_used", "rate_values_used", "uncertainty_weights_used", "reason"])
     write_csv(PACKET, packet_rows_, ["source_row_id", "case_id", "position", "temperature_K", "pressure_Pa", "source_basis_status", "packet_bound_candidate", "packet_bound_status", "solver_status", "numerical_status", "physical_status", "provider_domain_status", "balance_inf_norm", "charge_residual", "reaction_affinity_inf_norm", "scientific_admission", "admission_reason", "state_packet_sha256", "lnQ", "detailed_balance_residual", "detailed_balance_pass", "activity_closure_status", "rate_evaluation_status", "physical_film_admission"])
-    revision, dirty = git_revision()
     bundle_summary = {
         "bundle_id": manifest["bundle_id"], "outer_sha256": sha256(args.bundle),
         "parameter_document_sha256": manifest["parameter_document_sha256"], "engine_wheel_sha256": manifest["engine_wheel_sha256"],

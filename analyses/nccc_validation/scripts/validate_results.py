@@ -5,6 +5,7 @@ import hashlib
 import json
 import re
 import subprocess
+import zipfile
 from pathlib import Path
 
 import pandas as pd
@@ -348,6 +349,21 @@ def _check_issue41_reversible_kinetics() -> None:
     generator = ANALYSIS / "scripts/resolve_issue41_reversible_kinetics.py"
     if summary.get("generator_sha256") != hashlib.sha256(generator.read_bytes()).hexdigest():
         raise AssertionError("Issue 41 generator hash is stale.")
+    source_revision = summary.get("source_revision", "")
+    if not source_revision or subprocess.run(["git", "cat-file", "-e", f"{source_revision}^{{commit}}"], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 41 source revision is not a local commit.")
+    current_revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip()
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_revision, current_revision], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 41 source revision is not an ancestor of the retained result commit.")
+    if summary.get("source_worktree_dirty_during_generation") is not False:
+        raise AssertionError("Issue 41 retained outputs were not generated from a clean source worktree.")
+    source_blob_hashes = {
+        "input": hashlib.sha256(subprocess.run(["git", "show", f"{source_revision}:analyses/nccc_validation/inputs/issue41_reversible_kinetics.json"], cwd=ROOT, check=True, capture_output=True).stdout).hexdigest(),
+        "generator": hashlib.sha256(subprocess.run(["git", "show", f"{source_revision}:analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py"], cwd=ROOT, check=True, capture_output=True).stdout).hexdigest(),
+    }
+    if source_blob_hashes != {"input": summary["input_sha256"], "generator": summary["generator_sha256"]}:
+        raise AssertionError("Issue 41 retained source revision/blob lineage is stale or tampered.")
+    _check_issue41_external_provenance(config, summary)
     expected_gates = {
         "fixed_nine_species_order": True, "fixed_reaction_projections": True,
         "source_pdf_hashes_verified": True, "bundle_outer_and_member_hashes_match": True,
@@ -406,6 +422,48 @@ def _check_issue41_reversible_kinetics() -> None:
     report = ISSUE41_REPORT.read_text(encoding="utf-8")
     if "supported-negative" not in report or "No physical reactive film is adopted" not in report or "No bundle provenance mismatch was found" not in report:
         raise AssertionError("Issue 41 report does not state its evidence boundary.")
+
+
+def _check_issue41_external_provenance(config: dict, summary: dict) -> None:
+    for source in config["source_documents"]:
+        path = source.get("local_pdf_path")
+        expected = source.get("source_pdf_sha256")
+        if path is None:
+            if expected is not None:
+                raise AssertionError(f"Issue 41 source {source['id']} has an unresolvable PDF hash.")
+            continue
+        source_path = Path(path)
+        if not source_path.is_file() or hashlib.sha256(source_path.read_bytes()).hexdigest() != expected:
+            raise AssertionError(f"Issue 41 source PDF is missing or changed: {source['id']}")
+    bundle_config = config["bundle"]
+    bundle_path = Path(bundle_config["path"])
+    if not bundle_path.is_file() or hashlib.sha256(bundle_path.read_bytes()).hexdigest() != bundle_config["outer_sha256"]:
+        raise AssertionError("Issue 41 authorized bundle is missing or changed.")
+    with zipfile.ZipFile(bundle_path) as archive:
+        manifest_names = [name for name in archive.namelist() if name.endswith("/bundle.json")]
+        if len(manifest_names) != 1:
+            raise AssertionError("Issue 41 bundle manifest is not unique.")
+        manifest_name = manifest_names[0]
+        prefix = manifest_name[: -len("bundle.json")]
+        manifest = json.loads(archive.read(manifest_name))
+        for item in manifest["files"]:
+            member = prefix + item["path"]
+            data = archive.read(member)
+            if len(data) != item["bytes"] or hashlib.sha256(data).hexdigest() != item["sha256"]:
+                raise AssertionError(f"Issue 41 bundle member is missing or changed: {item['path']}")
+        expected = {
+            "outer_sha256": bundle_config["outer_sha256"],
+            "parameter_document_sha256": bundle_config["parameter_document_sha256"],
+            "engine_wheel_sha256": bundle_config["engine_wheel_sha256"],
+            "state_packet_sha256": bundle_config["state_packet_sha256"],
+        }
+        if any(manifest[key] != value for key, value in expected.items()):
+            raise AssertionError("Issue 41 bundle manifest identity changed.")
+        chemistry_path = prefix + "chemistry/reaction-system.json"
+        if hashlib.sha256(archive.read(chemistry_path)).hexdigest() != bundle_config["chemistry_sha256"]:
+            raise AssertionError("Issue 41 bundle chemistry member identity changed.")
+    if summary.get("bundle", {}).get("outer_sha256") != bundle_config["outer_sha256"]:
+        raise AssertionError("Issue 41 summary bundle identity is stale.")
 
 
 def _check_epcsaft_v02_validation() -> None:
