@@ -41,6 +41,8 @@ inputs:
     kind: issue40_packet_bound_apparent_true_species_input
   - path: inputs/issue41_reversible_kinetics.json
     kind: issue41_source_rate_evidence_input
+  - path: inputs/issue42_film_transport.json
+    kind: issue42_species_resolved_transport_input
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -162,6 +164,14 @@ outputs:
     kind: issue41_reversible_kinetics_summary
   - path: results/final/reports/issue41_reversible_kinetics.md
     kind: issue41_reversible_kinetics_report
+  - path: results/final/tables/issue42_transport_inputs.csv
+    kind: issue42_transport_input_inventory
+  - path: results/final/tables/issue42_transport_comparison.csv
+    kind: issue42_transport_comparison
+  - path: results/final/tables/issue42_film_transport_summary.json
+    kind: issue42_film_transport_summary
+  - path: results/final/reports/issue42_film_transport.md
+    kind: issue42_film_transport_report
   - path: results/final/figures/issue17_axial_enhancement.pdf
     kind: issue17_enhancement_figure
   - path: results/final/figures/issue17_axial_flux.pdf
@@ -220,6 +230,9 @@ commands:
   issue41_reversible_kinetics:
     - uv run python analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
     - uv run python analyses/nccc_validation/scripts/validate_results.py --issue41-only
+  issue42_film_transport:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue42-only
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -239,6 +252,7 @@ external_dependencies:
       - script: scripts/render_figures.py
       - script: scripts/validate_results.py
       - script: analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py
+      - script: analyses/nccc_validation/scripts/resolve_issue42_film_transport.py
     package_contract: external package is read-only from this repo; adapter, caching, guards, and benchmark scripts live here
     optional_env:
       MEA_EPCSAFT_DATASET_NAME: MEA_CO2_H2O_ionic_fit
@@ -298,6 +312,10 @@ tracked_results:
   - results/final/tables/issue41_packet_bound_comparison.csv
   - results/final/tables/issue41_reversible_kinetics_summary.json
   - results/final/reports/issue41_reversible_kinetics.md
+  - results/final/tables/issue42_transport_inputs.csv
+  - results/final/tables/issue42_transport_comparison.csv
+  - results/final/tables/issue42_film_transport_summary.json
+  - results/final/reports/issue42_film_transport.md
 historical_outputs:
   note: Pre-0.2 runtime-option and configuration matrices are preserved for provenance only, have no supported generator, and are not current validation evidence.
   paths:
