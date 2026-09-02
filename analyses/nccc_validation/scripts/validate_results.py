@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
+import io
 import json
 import re
 import subprocess
@@ -13,6 +15,12 @@ import pandas as pd
 from analyze_issue17_enhancement_comparison import (
     RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS,
     stable_csv_sha256,
+)
+from resolve_issue42_film_transport import (
+    COMPARISON_FIELDS,
+    SOURCE_FIELDS,
+    comparison_rows as build_issue42_comparison_rows,
+    source_rows as build_issue42_source_rows,
 )
 
 
@@ -57,6 +65,20 @@ ISSUE42_TABLES = {
 }
 ISSUE42_SUMMARY = TABLES / "issue42_film_transport_summary.json"
 ISSUE42_REPORT = FINAL / "reports/issue42_film_transport.md"
+
+
+def _read_csv_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
+    with path.open(newline="", encoding="utf-8-sig") as handle:
+        reader = csv.DictReader(handle)
+        return reader.fieldnames or [], list(reader)
+
+
+def _canonical_csv_rows(rows: list[dict], fields: list[str]) -> list[dict[str, str]]:
+    buffer = io.StringIO(newline="")
+    writer = csv.DictWriter(buffer, fieldnames=fields, extrasaction="raise", lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    return list(csv.DictReader(io.StringIO(buffer.getvalue(), newline="")))
 
 
 def main() -> int:
@@ -438,6 +460,11 @@ def _check_issue41_reversible_kinetics() -> None:
 
 
 def _check_issue42_film_transport() -> None:
+    current_status = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout
+    if current_status.strip():
+        raise AssertionError("Issue 42 validator requires a clean current worktree.")
     _require_existing([ISSUE42_INPUT, ISSUE42_SUMMARY, ISSUE42_REPORT, *ISSUE42_TABLES.values()])
     config = json.loads(ISSUE42_INPUT.read_text(encoding="utf-8"))
     summary = json.loads(ISSUE42_SUMMARY.read_text(encoding="utf-8"))
@@ -560,6 +587,15 @@ def _check_issue42_film_transport() -> None:
     }
     if source_table.set_index("record_id")["admission_decision"].to_dict() != expected_admissions:
         raise AssertionError("Issue 42 source table admission decisions changed.")
+    run_metadata = {
+        key: summary[key]
+        for key in ("source_revision", "input_sha256", "generator_sha256", "exact_command", "machine", "workers", "run_id")
+    }
+    source_header, actual_source_rows = _read_csv_rows(ISSUE42_TABLES["transport_inputs"])
+    if source_header != SOURCE_FIELDS or actual_source_rows != _canonical_csv_rows(
+        build_issue42_source_rows(config, run_metadata), SOURCE_FIELDS
+    ):
+        raise AssertionError("Issue 42 transport source rows differ from canonical input-derived rows.")
 
     comparison = pd.read_csv(ISSUE42_TABLES["transport_comparison"], keep_default_na=False)
     if len(comparison) != 5 or set(comparison["state_id"]) != {row["state_id"] for row in config["required_state_rows"]}:
@@ -581,6 +617,12 @@ def _check_issue42_film_transport() -> None:
     ]
     if not comparison[blank_fields].eq("").all().all() or not comparison["positivity_status"].eq("not_attempted").all():
         raise AssertionError("Issue 42 comparison contains evaluated physical outputs.")
+    issue40_header, issue40_rows = _read_csv_rows(ISSUE40_TABLE)
+    comparison_header, actual_comparison_rows = _read_csv_rows(ISSUE42_TABLES["transport_comparison"])
+    if not issue40_header or comparison_header != COMPARISON_FIELDS or actual_comparison_rows != _canonical_csv_rows(
+        build_issue42_comparison_rows(config, issue40_rows, run_metadata), COMPARISON_FIELDS
+    ):
+        raise AssertionError("Issue 42 comparison rows differ from canonical input-derived rows.")
 
     for key, path in ISSUE42_TABLES.items():
         if summary["output_sha256"][key] != hashlib.sha256(path.read_bytes()).hexdigest():
