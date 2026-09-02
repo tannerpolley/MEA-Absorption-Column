@@ -555,8 +555,11 @@ def _check_issue42_film_transport() -> None:
         raise AssertionError("Issue 42 transport source table is incomplete.")
     if len(source_table.loc[source_table["record_kind"] == "ionic_diffusivity"]) != 6:
         raise AssertionError("Issue 42 transport source table ionic rows changed.")
-    if not source_table["admission_decision"].str.contains("not_admitted|not_physical_admission|non_executable", regex=True).all():
-        raise AssertionError("Issue 42 source table contains an unbounded admission decision.")
+    expected_admissions = {
+        row["id"]: row["admission_decision"] for row in config["transport_records"]
+    }
+    if source_table.set_index("record_id")["admission_decision"].to_dict() != expected_admissions:
+        raise AssertionError("Issue 42 source table admission decisions changed.")
 
     comparison = pd.read_csv(ISSUE42_TABLES["transport_comparison"], keep_default_na=False)
     if len(comparison) != 5 or set(comparison["state_id"]) != {row["state_id"] for row in config["required_state_rows"]}:
