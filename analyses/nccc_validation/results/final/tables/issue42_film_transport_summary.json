@@ -2,15 +2,15 @@
   "schema_version": "issue42_film_transport_result_v1",
   "issue": 42,
   "claim_label": "supported_negative_source_only_transport_and_ionic_closure",
-  "source_revision": "0449b563020ba46429110331450cc609bf26b490",
+  "source_revision": "8628aa88b7bbe3c22eeebbe890d24c62e480bb9c",
   "source_worktree_clean_at_generation": true,
   "source_revision_protocol": "Run from a clean source commit; commit the input and resolver first, then commit generated result files separately. The recorded source commit is not the result-containing commit.",
-  "input_sha256": "5b9ed099d77719e13a63936ae3a1a63fc9f306cd17075fc543d9d8accd9b33ac",
-  "generator_sha256": "fc953be1217c66f57b4b1376a0e930b145a81a0a46a95e917adb9be65125d3ee",
+  "input_sha256": "d3be7270e622eaae39da2db6e6ff2d9fe66854ae41bc234fb689dfcbe1760f2a",
+  "generator_sha256": "ac52d67884bc9112fa2f046a3339de7b382be52985a8daf08380b2235a03f627",
   "exact_command": "uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py",
   "machine": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
   "workers": 1,
-  "run_id": "issue42_source_only_0449b563020b",
+  "run_id": "issue42_source_only_8628aa88b7bb",
   "source_documents": [
     {
       "id": "Putta2017",
@@ -259,8 +259,8 @@
   ],
   "regeneration_command": "uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py",
   "output_sha256": {
-    "transport_inputs": "c204163c79336fc8052b94c5a5e5e62efd930d76a15356f0fc05482ce91b0d41",
-    "transport_comparison": "0f905919dbe99e6300a9a00e83ea95c76b0f0f6ea012e4e8b53d84dd461d6bf7",
-    "report": "7567ea458d7835c0be34a7728b093b75a01ab774f786a6fc3ab737ad5107265c"
+    "transport_inputs": "677d8c992ea2bb5823e9db637fb01f191a7c84422771d915ab658920dd122f4d",
+    "transport_comparison": "f57973aa6fb3e1c5a63fae333fe9a687102035070fc898d740f06f17b0eddf41",
+    "report": "82e43ceb9af94cbbfac08ccf0ac7af63678f68f44764a7c9918b8f459e63b30a"
   }
 }
