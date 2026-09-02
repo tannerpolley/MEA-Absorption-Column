@@ -43,6 +43,7 @@ export PYTHONPATH="src"
 | `resolve_issue35_transport.py` | Reconstructs source-labeled diffusivity, density, and viscosity inputs and retains the unequal-ion closure decision. | No. | No. |
 | `resolve_issue40_apparent_true_species.py` | Maps retained apparent Case 3C inputs to one authoritative packet-bound nine-species single-liquid state while retaining unresolved and out-of-domain rows. | Yes, one packet-bound state plus replay. | Requires Python 3.13 with the immutable handoff wheel installed. |
 | `resolve_issue41_reversible_kinetics.py` | Retains source-rate laws, exact reaction projections, raw-observation availability, provider K(T), and packet-bound blockers. | No. | No direct ePC-SAFT dependency; reads the immutable handoff archive. |
+| `resolve_issue42_film_transport.py` | Retains species-resolved transport source records and the blocked Candidate A/B film-transport decision. | No. | No ePC-SAFT package or parameter identity is used. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -188,6 +189,22 @@ tables remain unchanged. Gate and immutable-input identities are in
 `issue16_reactive_film_gate.csv` and
 `inputs/issue16_reactive_film_identity.json`;
 all placeholder-dependent evidence is `provisional_concept_only`.
+
+Resolve the Issue 42 source-only species-resolved film-transport record:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue42-only
+```
+
+This command rehashes the seven retained local source PDFs, replays the Issue
+35 correlation table exactly, and inventories molecular, ionic, mobility-law,
+density, and viscosity transport records. Candidate A remains blocked without
+source-complete nine-species effective diffusivities or a source-defined ionic
+lump. Candidate B remains blocked without a complete primary unequal-ion
+mobility/friction law. The five declared states remain `not_attempted`, so no
+film flux, species flux, uncertainty interval, residual, transport selection,
+or capture result is retained.
 
 Resolve the Issue 33 concentration bases and retain the source table:
 
