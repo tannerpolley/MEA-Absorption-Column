@@ -18,6 +18,7 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
     epcsaft_dataset_mixture,
+    epcsaft_liquid_fugacities,
     epcsaft_liquid_transport_state,
     epcsaft_source_fingerprint,
     ionic_liquid_composition,
@@ -246,12 +247,17 @@ def test_full_species_ionic_epcsaft_state_uses_all_nine_species():
 
 
 def test_installed_epcsaft_exposes_exact_fixed_pressure_transport_tangent():
+    thermo_models.clear_epcsaft_phi_cache()
     composition = np.array([1.0, 20.0, 70.0, 3.0, 2.0, 0.5, 0.25, 0.5, 0.5])
     composition /= composition.sum()
 
     state = epcsaft_liquid_transport_state(318.15, 109500.0, composition)
+    fast_fugacities = epcsaft_liquid_fugacities(318.15, 109500.0, composition)
 
     assert state.fugacities_pa.shape == (9,)
+    assert fast_fugacities == pytest.approx(state.fugacities_pa, rel=1.0e-9)
+    assert thermo_models.epcsaft_cache_stats()["epcsaft_density_anchor_misses"] == 1
+    assert thermo_models.epcsaft_cache_stats()["epcsaft_density_anchor_hits"] == 1
     assert state.log_composition_basis.shape == (9, 7)
     assert state.chemical_potential_derivatives_over_rt.shape == (9, 7)
     assert state.coordinate_component_ids == (

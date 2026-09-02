@@ -86,12 +86,15 @@ EPCSAFT_CACHE_P_ROUND_PA = float(os.environ.get("MEA_EPCSAFT_CACHE_P_ROUND_PA", 
 EPCSAFT_DATASET_T_DIGITS = int(os.environ.get("MEA_EPCSAFT_DATASET_T_DIGITS", "1"))
 _EPCSAFT_PHI_CACHE: dict[tuple, float] = {}
 _EPCSAFT_RHO_GUESS_CACHE: dict[tuple, float] = {}
+_EPCSAFT_LIQUID_STATE_ANCHORS: dict[tuple, object] = {}
 _EPCSAFT_CACHE_STATS = {
     "epcsaft_cache_hits": 0,
     "epcsaft_cache_misses": 0,
     "epcsaft_direct_density_solve_s": 0.0,
     "epcsaft_rho_guess_hits": 0,
     "epcsaft_rho_guess_misses": 0,
+    "epcsaft_density_anchor_hits": 0,
+    "epcsaft_density_anchor_misses": 0,
 }
 
 
@@ -355,9 +358,7 @@ def epcsaft_dataset_mixture(
     )
 
 
-def epcsaft_liquid_transport_state(T, P, composition) -> EpcsaftLiquidTransportState:
-    """Evaluate one charged liquid state and its exact fixed-T,P tangent block."""
-
+def _epcsaft_liquid_state_inputs(T, composition):
     values = np.asarray(composition, dtype=float)
     species = tuple(_ionic_species_for_size(values.size))
     if (
@@ -379,15 +380,31 @@ def epcsaft_liquid_transport_state(T, P, composition) -> EpcsaftLiquidTransportS
             "electroneutrality_failure",
             "composition must be electroneutral without projection",
         )
-
-    model = epcsaft_dataset_mixture(species, _epcsaft_dataset_T_key(T))
-    state = _v02_state(
-        model,
-        temperature_k=float(T),
-        pressure_pa=float(P),
-        composition=values,
-        phase="liquid",
+    return values, species, epcsaft_dataset_mixture(
+        species, _epcsaft_dataset_T_key(T)
     )
+
+
+def epcsaft_liquid_fugacities(T, P, composition) -> np.ndarray:
+    """Evaluate charged-liquid fugacities on the public continued branch."""
+
+    values, species, model = _epcsaft_liquid_state_inputs(T, composition)
+    state = _epcsaft_continued_liquid_state(T, P, values, species, model)
+    if state.fugacity is None:
+        raise EpcsaftFixedPressureDerivativeError(
+            "fugacity_unavailable", "liquid state did not return species fugacities"
+        )
+    return np.asarray(
+        [float(value.to("pascal").magnitude) for value in state.fugacity.value],
+        dtype=float,
+    )
+
+
+def epcsaft_liquid_transport_state(T, P, composition) -> EpcsaftLiquidTransportState:
+    """Evaluate one charged liquid state and its exact fixed-T,P tangent block."""
+
+    values, species, model = _epcsaft_liquid_state_inputs(T, composition)
+    state = _epcsaft_continued_liquid_state(T, P, values, species, model)
     block = state.fixed_pressure_composition_derivatives
     if block is None or block.get("status") != "available":
         failure = None if block is None else block.get("failure")
@@ -493,11 +510,14 @@ def epcsaft_state_contribution_diagnostics(
 def clear_epcsaft_phi_cache():
     _EPCSAFT_PHI_CACHE.clear()
     _EPCSAFT_RHO_GUESS_CACHE.clear()
+    _EPCSAFT_LIQUID_STATE_ANCHORS.clear()
     _EPCSAFT_CACHE_STATS["epcsaft_cache_hits"] = 0
     _EPCSAFT_CACHE_STATS["epcsaft_cache_misses"] = 0
     _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] = 0.0
     _EPCSAFT_CACHE_STATS["epcsaft_rho_guess_hits"] = 0
     _EPCSAFT_CACHE_STATS["epcsaft_rho_guess_misses"] = 0
+    _EPCSAFT_CACHE_STATS["epcsaft_density_anchor_hits"] = 0
+    _EPCSAFT_CACHE_STATS["epcsaft_density_anchor_misses"] = 0
 
 
 def epcsaft_cache_stats() -> dict:
@@ -523,6 +543,29 @@ def _epcsaft_cache_key(T, P, composition, phase):
 
 def _epcsaft_dataset_T_key(T):
     return float(np.round(float(T), EPCSAFT_DATASET_T_DIGITS))
+
+
+def _epcsaft_continued_liquid_state(T, P, values, species, model):
+    key = (
+        str(model.parameter_fingerprint),
+        tuple(species),
+        float(T),
+        float(P),
+        "liquid",
+    )
+    anchor = _EPCSAFT_LIQUID_STATE_ANCHORS.get(key)
+    counter = "hits" if anchor is not None else "misses"
+    _EPCSAFT_CACHE_STATS[f"epcsaft_density_anchor_{counter}"] += 1
+    state = _v02_state(
+        model,
+        temperature_k=float(T),
+        pressure_pa=float(P),
+        composition=values,
+        phase="liquid",
+        density_anchor=anchor,
+    )
+    _EPCSAFT_LIQUID_STATE_ANCHORS[key] = state
+    return state
 
 
 def _rho_guess_key(mixture_kind, phase):

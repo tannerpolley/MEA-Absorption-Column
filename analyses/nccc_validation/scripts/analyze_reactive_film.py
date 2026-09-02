@@ -40,12 +40,15 @@ from mea_absorption_column.Transport.Reactive_Film import (  # noqa: E402
 
 
 FINAL = ROOT / "analyses/nccc_validation/results/final"
-RUN_TABLE = FINAL / "tables/issue16_exact_reactive_film_runs.csv"
-PROFILE_TABLE = FINAL / "tables/issue16_exact_reactive_film_profile.csv"
-SUMMARY = FINAL / "tables/issue16_exact_reactive_film_summary.json"
-NUMERICAL_GATE_TABLE = FINAL / "tables/issue16_exact_reactive_film_numerical_gate.csv"
+IDENTITY = ROOT / "analyses/nccc_validation/inputs/issue16_provisional_reactive_film_identity.json"
+PROBE_TABLE = FINAL / "tables/issue16_provisional_reactive_film_probe.csv"
+PROBE_SUMMARY = FINAL / "tables/issue16_provisional_reactive_film_probe_summary.json"
+RUN_TABLE = FINAL / "tables/issue16_provisional_reactive_film_runs.csv"
+PROFILE_TABLE = FINAL / "tables/issue16_provisional_reactive_film_profile.csv"
+SUMMARY = FINAL / "tables/issue16_provisional_reactive_film_summary.json"
+NUMERICAL_GATE_TABLE = FINAL / "tables/issue16_provisional_reactive_film_numerical_gate.csv"
 NUMERICAL_GATE_SUMMARY = (
-    FINAL / "tables/issue16_exact_reactive_film_numerical_gate_summary.json"
+    FINAL / "tables/issue16_provisional_reactive_film_numerical_gate_summary.json"
 )
 PARAMETERS = Path(MEA_THERMODYNAMICS_EPCSAFT_DATASET) / "parameters.json"
 CO2, MEA, H2O = 0, 1, 2
@@ -76,10 +79,6 @@ CONSERVATION = np.asarray(
 )
 
 
-class Issue16InputBlocker(RuntimeError):
-    code = "work_package_a_inputs_not_admitted"
-
-
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -96,18 +95,14 @@ def _raise_case_timeout(_signal_number, _frame) -> None:
 
 
 def _failure_record(error: Exception) -> dict[str, object]:
-    if isinstance(error, Issue16InputBlocker):
-        return {
-            "outcome": "input_preflight_failure",
-            "stopped_by": "input_preflight",
-            "next_probe": "obtain source-admitted exact-1-or-5 M states, rate coefficients, and diffusion inputs",
-            "claim_strength": "boundary_at_state",
-        }
     if isinstance(error, TimeoutError):
         return {
             "outcome": "campaign_timeout",
             "stopped_by": "campaign_watchdog",
-            "next_probe": "run a separately authorized longer numerical experiment",
+            "next_probe": (
+                "inspect the retained public density-anchor diagnostics and the "
+                "last branch-certified state reached before timeout"
+            ),
             "claim_strength": "not_established",
         }
     if isinstance(error, ReactiveFilmSolveError):
@@ -138,36 +133,69 @@ def _retained_state(position: float = 1.0) -> tuple[pd.Series, np.ndarray]:
     return source, concentrations
 
 
-def _require_admitted_work_package_a_inputs(
+def _assess_work_package_a_inputs(
     source: pd.Series, concentrations: np.ndarray
-) -> None:
+) -> dict[str, object]:
+    work_package = json.loads(IDENTITY.read_text(encoding="utf-8"))["work_package_a"]
+    domain = work_package["domain"]
     mea_molarity = float(np.sum(concentrations[[1, 3, 4]]) / 1000.0)
     loading = float(np.sum(concentrations[[0, 4, 5, 6]]) / np.sum(concentrations[[1, 3, 4]]))
-    blockers = []
-    if not 293.15 <= float(source.Tl) <= 323.15:
-        blockers.append(f"temperature {float(source.Tl):.12g} K is outside 293.15--323.15 K")
-    if not any(abs(mea_molarity - admitted) <= 1.0e-12 for admitted in (1.0, 5.0)):
-        blockers.append(f"MEA molarity {mea_molarity:.12g} mol/L is not exactly 1 or 5 mol/L")
-    if not 0.0 <= loading < 0.5:
-        blockers.append(f"loading {loading:.12g} is outside [0, 0.5)")
-    blockers.extend(
-        (
-            "F1/F2 coefficients have rejected source-unit consistency and F3 has no admitted primary coefficient",
-            "all Work Package A numeric diffusion candidates are rejected",
-        )
+    temperature_ok = domain["temperature_K"][0] <= float(source.Tl) <= domain["temperature_K"][1]
+    mea_label_ok = any(
+        abs(mea_molarity - admitted) <= 1.0e-12
+        for admitted in domain["mea_molarity_mol_L_exact"]
     )
-    raise Issue16InputBlocker("; ".join(blockers))
+    loading_ok = domain["loading_min_inclusive"] <= loading < domain["loading_max_exclusive"]
+    limitations = []
+    if not temperature_ok:
+        limitations.append(
+            f"temperature {float(source.Tl):.12g} K is outside "
+            f"{domain['temperature_K'][0]:g}--{domain['temperature_K'][1]:g} K"
+        )
+    if not mea_label_ok:
+        limitations.append(
+            f"calculated analytical MEA {mea_molarity:.12g} mol/L does not equal "
+            "a discrete 1 or 5 mol/L Work Package A source label"
+        )
+    if not loading_ok:
+        limitations.append(
+            f"loading {loading:.12g} is outside "
+            f"[{domain['loading_min_inclusive']:g}, {domain['loading_max_exclusive']:g})"
+        )
+    limitations.extend(
+        (work_package["finite_rate_status"], work_package["transport_status"])
+    )
+    return {
+        "temperature_domain_status": "within_common_domain" if temperature_ok else "outside_common_domain",
+        "mea_source_label_status": "exact_source_label_match" if mea_label_ok else "source_label_mismatch_unadjudicated_basis",
+        "loading_domain_status": "within_common_domain" if loading_ok else "outside_common_domain",
+        "f1_f2_coefficient_status": work_package["f1_f2_coefficient_status"],
+        "f3_coefficient_status": work_package["f3_coefficient_status"],
+        "diffusivity_provenance_status": work_package["transport_status"],
+        "scientifically_admissible": False,
+        "input_limitations": "; ".join(limitations),
+    }
 
 
 def _run(
     mesh_points: int,
     initial_flux_factor: float,
     position: float = 1.0,
+    *,
+    source: pd.Series | None = None,
+    bulk: np.ndarray | None = None,
+    assessment: dict[str, object] | None = None,
 ) -> tuple[dict[str, object], pd.DataFrame]:
-    source, bulk = _retained_state(position)
-    _require_admitted_work_package_a_inputs(source, bulk)
+    if source is None or bulk is None:
+        source, bulk = _retained_state(position)
+    assessment = assessment or _assess_work_package_a_inputs(source, bulk)
     temperature = float(source.Tl)
     pressure = float(source.P)
+    thermodynamic_state_requests = 0
+    thermodynamic_state_evaluations = 0
+    thermodynamic_state_cache: dict[
+        tuple[tuple[int, ...], str, bytes], FilmThermodynamicState
+    ] = {}
     diffusivities = np.asarray(
         [source.Dl_CO2, source.Dl_MEA, source.Dl_MEA, *([source.Dl_ion] * 6)],
         dtype=float,
@@ -176,15 +204,22 @@ def _run(
     def thermodynamic_state(
         _concentrations: np.ndarray, composition: np.ndarray
     ) -> FilmThermodynamicState:
+        nonlocal thermodynamic_state_requests, thermodynamic_state_evaluations
+        thermodynamic_state_requests += 1
+        key = (composition.shape, composition.dtype.str, composition.tobytes())
+        if key in thermodynamic_state_cache:
+            return thermodynamic_state_cache[key]
         state = epcsaft_liquid_transport_state(temperature, pressure, composition)
-        return FilmThermodynamicState(
+        thermodynamic_state_evaluations += 1
+        film_state = FilmThermodynamicState(
             state.fugacities_pa,
             state.fixed_other_concentrations_log_fugacity_derivative(CO2),
+            state.log_fugacity_derivative,
         )
+        thermodynamic_state_cache[key] = film_state
+        return film_state
 
-    bulk_fugacities = epcsaft_liquid_transport_state(
-        temperature, pressure, bulk / bulk.sum()
-    ).fugacities_pa
+    bulk_fugacities = thermodynamic_state(bulk, bulk / bulk.sum()).fugacities_pa
 
     def rate(
         _concentrations: np.ndarray, _composition: np.ndarray, fugacities
@@ -200,6 +235,41 @@ def _run(
             )
         )
 
+    def rate_jacobian(
+        _concentrations: np.ndarray,
+        _composition: np.ndarray,
+        fugacities: np.ndarray,
+        log_fugacity_jacobian: np.ndarray,
+    ) -> np.ndarray:
+        activity_ratio = fugacities / bulk_fugacities
+        forward_f1 = activity_ratio[CO2] * activity_ratio[MEA] ** 2
+        reverse_f1 = activity_ratio[3] * activity_ratio[4]
+        forward_f2 = (
+            activity_ratio[CO2] * activity_ratio[MEA] * activity_ratio[H2O]
+        )
+        reverse_f2 = activity_ratio[4] * activity_ratio[7]
+        forward_f3 = activity_ratio[CO2] * activity_ratio[8]
+        reverse_f3 = activity_ratio[5]
+        return 1.0e-4 * np.vstack(
+            (
+                forward_f1
+                * (log_fugacity_jacobian[CO2] + 2.0 * log_fugacity_jacobian[MEA])
+                - reverse_f1
+                * (log_fugacity_jacobian[3] + log_fugacity_jacobian[4]),
+                forward_f2
+                * (
+                    log_fugacity_jacobian[CO2]
+                    + log_fugacity_jacobian[MEA]
+                    + log_fugacity_jacobian[H2O]
+                )
+                - reverse_f2
+                * (log_fugacity_jacobian[4] + log_fugacity_jacobian[7]),
+                forward_f3
+                * (log_fugacity_jacobian[CO2] + log_fugacity_jacobian[8])
+                - reverse_f3 * log_fugacity_jacobian[5],
+            )
+        )
+
     started = time.perf_counter()
     result = solve_reactive_film(
         bulk_concentrations_mol_m3=bulk,
@@ -208,14 +278,16 @@ def _run(
         conservation_matrix=CONSERVATION,
         charge_numbers=CHARGES,
         liquid_thermodynamic_state=thermodynamic_state,
+        liquid_thermodynamic_derivative_state=thermodynamic_state,
         net_rate_mol_m3_s=rate,
+        net_rate_jacobian=rate_jacobian,
         vapor_bulk_fugacity_pa=float(source.fv_CO2),
         gas_transfer_coefficient_mol_m2_s_pa=float(source.kv_CO2),
         film_thickness_m=float(source.Dl_CO2 / source.kl_CO2),
         co2_index=CO2,
         mesh_points=mesh_points,
         initial_flux_factor=initial_flux_factor,
-        reaction_continuation_steps=16,
+        reaction_continuation_steps=1,
         solver_tolerance=1.0e-6,
     )
     runtime = time.perf_counter() - started
@@ -223,6 +295,9 @@ def _run(
     record = {
         "outcome": "evaluated",
         "attempted": True,
+        "declared": True,
+        "model_reached": True,
+        "evaluated": True,
         "stopped_by": "none",
         "next_probe": "none",
         "claim_strength": "result",
@@ -236,6 +311,14 @@ def _run(
         "mesh_points": mesh_points,
         "initial_flux_factor": initial_flux_factor,
         "wall_time_seconds": runtime,
+        "ode_jacobian": "exact_epcsaft_activity_chain_rule",
+        "thermodynamic_state_request_count": thermodynamic_state_requests,
+        "thermodynamic_state_evaluation_count": thermodynamic_state_evaluations,
+        "thermodynamic_state_cache_hit_count": (
+            thermodynamic_state_requests - thermodynamic_state_evaluations
+        ),
+        "solver_iteration_count": result.solver_iterations,
+        "solver_mesh_point_count": result.solver_mesh_points,
         "bulk_liquid_CO2_fugacity_Pa": float(
             result.liquid_species_fugacity_pa[CO2, -1]
         ),
@@ -252,6 +335,7 @@ def _run(
         "maximum_electroneutrality_residual": result.maximum_electroneutrality_residual,
         "maximum_zero_current_residual": result.maximum_zero_current_residual,
         "solver_message": result.solver_message,
+        **assessment,
     }
     profile = pd.DataFrame(
         {
@@ -306,12 +390,16 @@ def main() -> None:
         parser.error("--full and --numerical-gate are separate retained studies")
     if args.numerical_gate:
         cases = [(position, 21, 1.0) for position in (0.0, 0.5, 1.0)]
+        run_table = NUMERICAL_GATE_TABLE
+        summary_path = NUMERICAL_GATE_SUMMARY
     elif args.full:
         cases = [(1.0, mesh, factor) for mesh in (21, 42) for factor in (0.5, 1.0, 2.0)]
+        run_table = RUN_TABLE
+        summary_path = SUMMARY
     else:
         cases = [(1.0, 21, 1.0)]
-    run_table = NUMERICAL_GATE_TABLE if args.numerical_gate else RUN_TABLE
-    summary_path = NUMERICAL_GATE_SUMMARY if args.numerical_gate else SUMMARY
+        run_table = PROBE_TABLE
+        summary_path = PROBE_SUMMARY
     retained = {}
     if args.resume and run_table.exists():
         existing = pd.read_csv(run_table)
@@ -329,13 +417,35 @@ def main() -> None:
         if (position, mesh, factor) in retained:
             rows.append(retained[(position, mesh, factor)])
             continue
+        assessment: dict[str, object] = {
+            "temperature_domain_status": "not_evaluated",
+            "mea_source_label_status": "not_evaluated",
+            "loading_domain_status": "not_evaluated",
+            "f1_f2_coefficient_status": "not_evaluated",
+            "f3_coefficient_status": "not_evaluated",
+            "diffusivity_provenance_status": "not_evaluated",
+            "scientifically_admissible": False,
+            "input_limitations": "input assessment did not complete",
+        }
+        model_reached = False
         try:
             started = time.perf_counter()
             signal.signal(signal.SIGALRM, _raise_case_timeout)
             signal.setitimer(signal.ITIMER_REAL, args.case_timeout_s)
-            row, profile = _run(mesh, factor, position)
+            source, bulk = _retained_state(position)
+            assessment = _assess_work_package_a_inputs(source, bulk)
+            model_reached = True
+            row, profile = _run(
+                mesh,
+                factor,
+                position,
+                source=source,
+                bulk=bulk,
+                assessment=assessment,
+            )
             if (
-                position == 1.0
+                args.full
+                and position == 1.0
                 and mesh == max(case[1] for case in cases)
                 and factor == 1.0
             ):
@@ -352,11 +462,16 @@ def main() -> None:
                     "case_timeout" if isinstance(error, TimeoutError) else "unclassified",
                 ),
                 "attempted": True,
+                "declared": True,
+                "model_reached": model_reached,
+                "evaluated": False,
+                "scientifically_admissible": False,
                 "claim_label": "provisional_concept_only",
                 "wall_time_seconds": time.perf_counter() - started,
                 "Position": position,
                 "mesh_points": mesh,
                 "initial_flux_factor": factor,
+                **assessment,
             }
         finally:
             signal.setitimer(signal.ITIMER_REAL, 0.0)
@@ -378,13 +493,20 @@ def main() -> None:
         "issue": "https://github.com/tannerpolley/MEA-Absorption-Column/issues/16",
         "species": list(SPECIES_9),
         "claim_label": "provisional_concept_only",
-        "reaction_basis": "Work Package A F1/F2/F3 reversible stoichiometry; manufactured relative-fugacity rates are limited to the separate architecture check and are not admitted in physical runs",
-        "transport_basis": "planned isothermal effective-Fick film with CO2-only interface flux and public ePC-SAFT exact fixed-T,P tangent; rejected transport inputs stop at preflight",
-        "solver_formulation": "reduced electroneutral and zero-current coordinates with direct gas-film closure and exact CO2-direction boundary derivative",
+        "reaction_basis": "Work Package A F1/F2/F3 reversible stoichiometry with a provisional relative-fugacity rate scale; the rates are not scientifically admitted MEA kinetics",
+        "transport_basis": "provisional isothermal effective-Fick film using retained column diffusivities, CO2-only interface flux, and the public ePC-SAFT exact fixed-T,P tangent; rejected source inputs remain scientific-adoption limitations",
+        "solver_formulation": "reduced electroneutral and zero-current coordinates with direct gas-film closure, exact CO2-direction boundary derivative, and exact ePC-SAFT activity-rate ODE Jacobian",
         "case_count": len(cases),
+        "declared_case_count": int(table.declared.astype(bool).sum()),
+        "model_reached_case_count": int(table.model_reached.astype(bool).sum()),
         "evaluated_case_count": len(evaluated),
+        "scientifically_admitted_case_count": int(table.scientifically_admissible.astype(bool).sum()),
         "failed_case_count": int(len(table) - len(evaluated)),
-        "profile_status": "generated" if not reference_profile.empty else "not_generated_input_preflight",
+        "profile_status": (
+            "generated"
+            if not reference_profile.empty
+            else "not_generated" if args.full else "not_requested"
+        ),
         "interface_flux_relative_spread": flux_spread,
         "maximum_interface_residual": float(evaluated.maximum_interface_residual.max())
         if len(evaluated)
@@ -432,11 +554,11 @@ def main() -> None:
                 "claim_strength",
             ],
         ].to_dict(orient="records"),
-        "claim_boundary": "Provisional reversible architecture check only; manufactured rate scales and out-of-domain placeholder inputs cannot support column-wide, WWC, kinetic, Maxwell-Stefan, predictive, or manuscript claims.",
+        "claim_boundary": "Provisional numerical method-development result only; manufactured rate scales and scientifically inadmissible retained inputs cannot support column-wide, wetted-wall, kinetic, Maxwell-Stefan, predictive, or manuscript claims.",
     }
     run_table.parent.mkdir(parents=True, exist_ok=True)
     table.to_csv(run_table, index=False)
-    if not args.numerical_gate and not reference_profile.empty:
+    if args.full and not reference_profile.empty:
         reference_profile.to_csv(PROFILE_TABLE, index=False)
     summary_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2))

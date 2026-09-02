@@ -21,6 +21,7 @@ class ReactiveFilmSolveError(RuntimeError):
 class FilmThermodynamicState:
     fugacities_pa: np.ndarray
     co2_log_fugacity_derivative: float
+    log_fugacity_directional_derivative: Callable[[int, np.ndarray], float] | None = None
 
 
 @dataclass(frozen=True)
@@ -36,6 +37,8 @@ class ReactiveFilmResult:
     maximum_invariant_source_residual: float
     maximum_electroneutrality_residual: float
     maximum_zero_current_residual: float
+    solver_iterations: int
+    solver_mesh_points: int
     solver_message: str
 
 
@@ -47,9 +50,17 @@ def solve_reactive_film(
     liquid_thermodynamic_state: Callable[
         [np.ndarray, np.ndarray], FilmThermodynamicState
     ],
+    liquid_thermodynamic_derivative_state: Callable[
+        [np.ndarray, np.ndarray], FilmThermodynamicState
+    ]
+    | None = None,
     net_rate_mol_m3_s: Callable[
         [np.ndarray, np.ndarray, np.ndarray], np.ndarray | float
     ],
+    net_rate_jacobian: Callable[
+        [np.ndarray, np.ndarray, np.ndarray, np.ndarray], np.ndarray
+    ]
+    | None = None,
     vapor_bulk_fugacity_pa: float,
     gas_transfer_coefficient_mol_m2_s_pa: float,
     film_thickness_m: float,
@@ -251,6 +262,73 @@ def solve_reactive_film(
             )
         )
 
+    def equation_jacobian(_coordinate: np.ndarray, values: np.ndarray) -> np.ndarray:
+        concentration_ratios, _ = expand_values(values)
+        concentrations, compositions, fugacities, _, states = evaluate(
+            concentration_ratios
+        )
+        jacobian = np.zeros(
+            (2 * n_independent, 2 * n_independent, values.shape[1]), dtype=float
+        )
+        jacobian[:n_independent, n_independent:] = -np.eye(n_independent)[
+            :, :, None
+        ]
+        for column, state in enumerate(states):
+            if liquid_thermodynamic_derivative_state is not None:
+                state = liquid_thermodynamic_derivative_state(
+                    concentrations[:, column], compositions[:, column]
+                )
+            derivative = state.log_fugacity_directional_derivative
+            if derivative is None:
+                raise ReactiveFilmDomainError(
+                    "exact rate Jacobian requires liquid log-fugacity derivatives"
+                )
+            log_fugacity_jacobian = np.empty(
+                (n_species, n_independent), dtype=float
+            )
+            for variable, species_index in enumerate(independent):
+                concentration_direction = np.zeros(n_species, dtype=float)
+                concentration_direction[species_index] = bulk[species_index]
+                if dependent_index is not None:
+                    concentration_direction[dependent_index] = -(
+                        charges[species_index]
+                        * bulk[species_index]
+                        / charges[dependent_index]
+                    )
+                log_composition_direction = (
+                    concentration_direction / concentrations[:, column]
+                    - np.sum(concentration_direction)
+                    / np.sum(concentrations[:, column])
+                )
+                log_fugacity_jacobian[:, variable] = [
+                    derivative(component, log_composition_direction)
+                    for component in range(n_species)
+                ]
+            rate_jacobian = np.asarray(
+                net_rate_jacobian(
+                    concentrations[:, column],
+                    compositions[:, column],
+                    fugacities[:, column],
+                    log_fugacity_jacobian,
+                ),
+                dtype=float,
+            )
+            if rate_jacobian.shape != (nu.shape[1], n_independent) or np.any(
+                ~np.isfinite(rate_jacobian)
+            ):
+                raise ReactiveFilmDomainError(
+                    "net rate Jacobian must be finite with one row per reaction "
+                    "and one column per independent concentration ratio"
+                )
+            source_jacobian = nu @ rate_jacobian
+            jacobian[n_independent:, :n_independent, column] = (
+                reaction_scale
+                * delta
+                * source_jacobian[independent]
+                / flux_scale[independent, None]
+            )
+        return jacobian
+
     bulk_composition = bulk / np.sum(bulk)
     bulk_fugacity = float(
         liquid_thermodynamic_state(bulk, bulk_composition).fugacities_pa[co2_index]
@@ -398,7 +476,10 @@ def solve_reactive_film(
             )
         concentrations = bulk * ratios[:, 0]
         composition = concentrations / np.sum(concentrations)
-        state = liquid_thermodynamic_state(concentrations, composition)
+        state_callback = (
+            liquid_thermodynamic_derivative_state or liquid_thermodynamic_state
+        )
+        state = state_callback(concentrations, composition)
         fugacity = float(state.fugacities_pa[co2_index])
         log_derivative = float(state.co2_log_fugacity_derivative)
         if not math.isfinite(log_derivative):
@@ -484,6 +565,7 @@ def solve_reactive_film(
                 guess if solution is None else solution.y,
                 tol=float(solver_tolerance),
                 max_nodes=20000,
+                fun_jac=equation_jacobian if net_rate_jacobian is not None else None,
                 bc_jac=boundary_jacobian,
             )
             if not solution.success:
@@ -575,6 +657,8 @@ def solve_reactive_film(
         maximum_invariant_source_residual=invariant_residual,
         maximum_electroneutrality_residual=electroneutrality_residual,
         maximum_zero_current_residual=zero_current_residual,
+        solver_iterations=int(solution.niter),
+        solver_mesh_points=int(solution.x.size),
         solver_message=str(solution.message)
         + ("; canonical initialization recovery used" if recovery_used else ""),
     )

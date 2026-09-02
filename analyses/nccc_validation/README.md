@@ -169,21 +169,40 @@ identity and the historical gap are recorded in
 profile supplies the 21 exact positions at 0.05 intervals, including both
 boundaries.
 
-Run the three-position direct-boundary numerical gate:
+Run the corrected Issue 16 provisional method-development sequence. The first
+command retains an independently identified Position 1 probe, the second runs
+the six-row mesh/initialization study, and the third evaluates the three
+column-derived positions:
 
 ```bash
 MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
 MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
-uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
+uv run --locked python analyses/nccc_validation/scripts/analyze_reactive_film.py --case-timeout-s 600
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run --locked python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 600
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run --locked python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 600
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/generate_issue16_evidence.py
 ```
 
-This issue 16 command consumes the public exact fixed-\(T,P\) derivative and
-writes `issue16_exact_reactive_film_*` outputs. It retains every failed row and
-returns nonzero when a physical or numerical gate fails. The prior Stage A
-tables remain unchanged. Gate and immutable-input identities are in
-`issue16_reactive_film_gate.csv` and
-`inputs/issue16_reactive_film_identity.json`;
-all placeholder-dependent evidence is `provisional_concept_only`.
+These commands consume the public exact fixed-\(T,P\) derivative and write only
+`issue16_provisional_reactive_film_*` outputs. They retain every failed row and
+return nonzero when a required numerical-reachability or residual check fails.
+The earlier executable Stage A tables and the historical preflight-blocked
+`issue16_exact_reactive_film_*` tables remain unchanged.
+
+Each new row reports whether it was declared, reached the governing film
+calculation, returned a result, and passed scientific input admission. The
+retained source limitations do not prevent provisional numerical execution,
+but every current row remains scientifically inadmissible. The separate
+`scientific_adoption` gate stays blocked, and no provisional value is manuscript
+evidence. The merged Work Package A, wheel, parameter, and retained-input
+identities are in
+`inputs/issue16_provisional_reactive_film_identity.json`.
 
 ## Result Semantics
 

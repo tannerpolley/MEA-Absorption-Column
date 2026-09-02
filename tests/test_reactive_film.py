@@ -1,6 +1,3 @@
-import json
-from pathlib import Path
-
 import numpy as np
 import pytest
 
@@ -13,10 +10,6 @@ from mea_absorption_column.Transport.Reactive_Film import (
     ReactiveFilmDomainError,
     solve_reactive_film,
 )
-
-
-ROOT = Path(__file__).parents[1]
-
 
 def _linear_thermodynamics(henry_pa_m3_mol, derivative=1.0):
     def evaluate(concentrations, _composition):
@@ -125,6 +118,77 @@ def test_reactive_film_preserves_stoichiometry_and_direction_under_refinement(
     assert flux_difference <= 5.0e-3
     assert fine.maximum_conservation_residual <= 1.0e-7
     assert fine.maximum_invariant_source_residual <= 1.0e-14
+
+
+def test_exact_rate_jacobian_matches_directional_differences(monkeypatch):
+    bulk = np.array([1.0, 10.0, 1.0])
+    pressure = 1.0e5
+
+    def thermodynamics(_concentrations, composition):
+        return FilmThermodynamicState(
+            composition * pressure,
+            1.0 - composition[0],
+            lambda component, direction: float(direction[component]),
+        )
+
+    bulk_fugacities = thermodynamics(bulk, bulk / bulk.sum()).fugacities_pa
+
+    def rate(_concentrations, _composition, fugacities):
+        activity_ratio = fugacities / bulk_fugacities
+        return np.array([1.0e-4 * (activity_ratio[0] * activity_ratio[1] - activity_ratio[2])])
+
+    def rate_jacobian(_concentrations, _composition, fugacities, log_fugacity_jacobian):
+        activity_ratio = fugacities / bulk_fugacities
+        return np.array(
+            [
+                1.0e-4
+                * (
+                    activity_ratio[0]
+                    * activity_ratio[1]
+                    * (log_fugacity_jacobian[0] + log_fugacity_jacobian[1])
+                    - activity_ratio[2] * log_fugacity_jacobian[2]
+                )
+            ]
+        )
+
+    scipy_solve_bvp = reactive_film.solve_bvp
+
+    def checked_solve_bvp(*args, **kwargs):
+        fun, coordinate, values = args[0], args[2], args[3]
+        analytic = kwargs["fun_jac"](coordinate, values)
+        difference = np.empty_like(analytic)
+        for variable in range(values.shape[0]):
+            step = 1.0e-6 * max(float(np.max(np.abs(values[variable]))), 1.0)
+            plus = values.copy()
+            minus = values.copy()
+            plus[variable] += step
+            minus[variable] -= step
+            difference[:, variable] = (fun(coordinate, plus) - fun(coordinate, minus)) / (
+                2.0 * step
+            )
+        error = np.abs(analytic - difference)
+        assert np.all(
+            (error <= 1.0e-8)
+            | (error / np.maximum(np.abs(difference), 1.0e-30) <= 1.0e-5)
+        )
+        return scipy_solve_bvp(*args, **kwargs)
+
+    monkeypatch.setattr(reactive_film, "solve_bvp", checked_solve_bvp)
+    result = solve_reactive_film(
+        bulk_concentrations_mol_m3=bulk,
+        diffusivities_m2_s=np.full(3, 1.0e-9),
+        stoichiometry=np.array([-1.0, -1.0, 1.0]),
+        conservation_matrix=np.array([[1.0, 0.0, 1.0], [0.0, 1.0, 1.0]]),
+        liquid_thermodynamic_state=thermodynamics,
+        net_rate_mol_m3_s=rate,
+        net_rate_jacobian=rate_jacobian,
+        vapor_bulk_fugacity_pa=1.2 * bulk_fugacities[0],
+        gas_transfer_coefficient_mol_m2_s_pa=1.0e-7,
+        film_thickness_m=1.0e-4,
+        co2_index=0,
+        mesh_points=7,
+    )
+    assert result.maximum_conservation_residual <= 1.0e-7
 
 
 def test_reactive_film_rejects_nonpositive_scientific_inputs():
@@ -267,25 +331,3 @@ def test_exact_epcsaft_tangent_closes_through_zero_drive_film():
     assert result.maximum_interface_residual <= 1.0e-7
     assert result.maximum_electroneutrality_residual <= 1.0e-12
     assert result.maximum_zero_current_residual <= 1.0e-12
-
-
-def test_issue16_retained_identity_matches_integration_contract():
-    identity = json.loads(
-        (
-            ROOT
-            / "analyses/nccc_validation/inputs/issue16_reactive_film_identity.json"
-        ).read_text(encoding="utf-8")
-    )
-    contract = json.loads(
-        (ROOT / "integration/epcsaft_contract.json").read_text(encoding="utf-8")
-    )
-
-    assert identity["engine"]["commit"] == contract["final_identity"]["engine_commit"]
-    assert (
-        identity["engine"]["wheel_sha256"] == contract["final_identity"]["wheel_sha256"]
-    )
-    assert (
-        identity["engine"]["core_sha256"] == contract["final_identity"]["core_sha256"]
-    )
-    assert identity["claim_label"] == "provisional_concept_only"
-    assert identity["retained_position_1"]["domain_admitted"] is False

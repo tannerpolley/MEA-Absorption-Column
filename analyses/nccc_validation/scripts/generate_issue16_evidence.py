@@ -14,6 +14,8 @@ sys.path.insert(0, str(ROOT))
 from analyses.nccc_validation.scripts.analyze_reactive_film import (  # noqa: E402
     CHARGES,
     CONSERVATION,
+    NUMERICAL_GATE_TABLE,
+    PROBE_TABLE,
     RUN_TABLE,
     STOICHIOMETRY,
     _retained_state,
@@ -27,10 +29,10 @@ from mea_absorption_column.Transport.Reactive_Film import (  # noqa: E402
 )
 
 
-IDENTITY = ROOT / "analyses/nccc_validation/inputs/issue16_reactive_film_identity.json"
+IDENTITY = ROOT / "analyses/nccc_validation/inputs/issue16_provisional_reactive_film_identity.json"
 TABLES = ROOT / "analyses/nccc_validation/results/final/tables"
-MANUFACTURED = TABLES / "issue16_manufactured_reversible_film.csv"
-GATE = TABLES / "issue16_reactive_film_gate.csv"
+MANUFACTURED = TABLES / "issue16_provisional_manufactured_reversible_film.csv"
+GATE = TABLES / "issue16_provisional_reactive_film_gate.csv"
 
 
 def _validate_derivative_receipt(identity: dict) -> None:
@@ -115,10 +117,36 @@ def _manufactured_rows(identity: dict) -> list[dict[str, object]]:
 
 
 def _gate_rows(identity: dict) -> list[dict[str, str]]:
+    probe = pd.read_csv(PROBE_TABLE)
     runs = pd.read_csv(RUN_TABLE)
-    blocked = bool(
-        len(runs) == 6 and runs.outcome.eq("input_preflight_failure").all()
-    )
+    positions = pd.read_csv(NUMERICAL_GATE_TABLE)
+    required_columns = {
+        "declared",
+        "model_reached",
+        "evaluated",
+        "scientifically_admissible",
+    }
+    for name, table, count in (("probe", probe, 1), ("repeatability", runs, 6), ("positions", positions, 3)):
+        missing = required_columns - set(table.columns)
+        if missing:
+            raise RuntimeError(f"{name} table lacks reachability columns: {sorted(missing)}")
+        if len(table) != count:
+            raise RuntimeError(f"{name} table has {len(table)} rows, expected {count}")
+
+    def reached_and_evaluated(table: pd.DataFrame) -> bool:
+        def truth(column: str) -> pd.Series:
+            return table[column].astype(str).str.lower().eq("true")
+
+        return bool(
+            truth("declared").all()
+            and truth("model_reached").all()
+            and truth("evaluated").all()
+            and table["outcome"].eq("evaluated").all()
+        )
+
+    probe_pass = reached_and_evaluated(probe)
+    repeatability_pass = reached_and_evaluated(runs)
+    positions_pass = reached_and_evaluated(positions)
     engine = identity["engine"]
     derivative = identity["derivative_check"]
     work_package = identity["work_package_a"]
@@ -154,11 +182,25 @@ def _gate_rows(identity: dict) -> list[dict[str, str]]:
             "diagnostic": "manufactured F1/F2/F3 zero-drive, absorption, and desorption checks",
         },
         {
-            "gate": "stage_a_exact_retained_attempt",
-            "status": "blocked" if blocked else "failed",
+            "gate": "provisional_position1_probe",
+            "status": "pass" if probe_pass else "failed",
+            "claim_level": "provisional_concept_only",
+            "evidence": PROBE_TABLE.name,
+            "diagnostic": "1/1 retained column-derived state reached and evaluated the governing film calculation" if probe_pass else "required Position 1 probe did not evaluate",
+        },
+        {
+            "gate": "provisional_stage_a_repeatability",
+            "status": "pass" if repeatability_pass else "failed",
             "claim_level": "provisional_concept_only",
             "evidence": RUN_TABLE.name,
-            "diagnostic": "all rows stopped at typed input preflight" if blocked else "unexpected retained outcome",
+            "diagnostic": "6/6 Position 1 mesh/initialization rows evaluated" if repeatability_pass else "one or more required repeatability rows did not evaluate",
+        },
+        {
+            "gate": "provisional_three_position_reachability",
+            "status": "pass" if positions_pass else "failed",
+            "claim_level": "provisional_concept_only",
+            "evidence": NUMERICAL_GATE_TABLE.name,
+            "diagnostic": "3/3 column-derived positions reached and evaluated the governing film calculation" if positions_pass else "one or more required position rows did not evaluate",
         },
         {
             "gate": "work_package_a_state_domain",
@@ -180,6 +222,13 @@ def _gate_rows(identity: dict) -> list[dict[str, str]]:
             "claim_level": "provisional_concept_only",
             "evidence": work_package["transport_status"],
             "diagnostic": "no source-complete executable transport coefficient chain",
+        },
+        {
+            "gate": "scientific_adoption",
+            "status": "blocked",
+            "claim_level": "no_claim",
+            "evidence": "scientifically_admitted_case_count=0",
+            "diagnostic": "provisional numerical reachability does not admit rejected kinetics, diffusivities, or out-of-domain states",
         },
         *[
             {
@@ -204,7 +253,18 @@ def main() -> None:
     _validate_derivative_receipt(identity)
     TABLES.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(_manufactured_rows(identity)).to_csv(MANUFACTURED, index=False)
-    pd.DataFrame(_gate_rows(identity)).to_csv(GATE, index=False)
+    gates = pd.DataFrame(_gate_rows(identity))
+    gates.to_csv(GATE, index=False)
+    required = {
+        "provisional_position1_probe",
+        "provisional_stage_a_repeatability",
+        "provisional_three_position_reachability",
+    }
+    if not gates.loc[gates.gate.isin(required), "status"].eq("pass").all():
+        raise RuntimeError("Issue 16 provisional reachability gate failed")
+    scientific_adoption = gates.loc[gates.gate.eq("scientific_adoption")]
+    if len(scientific_adoption) != 1 or scientific_adoption.iloc[0].status != "blocked":
+        raise RuntimeError("Issue 16 scientific-adoption gate must remain blocked")
 
 
 if __name__ == "__main__":

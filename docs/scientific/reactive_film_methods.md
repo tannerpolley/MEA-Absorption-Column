@@ -61,14 +61,21 @@ uses RF-4 directly. Mesh doubling and three initial-flux factors test refinement
 and branch agreement; provider rejections and solver failures retain their
 typed error and stopping gate.
 
-Before a physical-basis run, the analysis enforces the Work Package A
-temperature, exact MEA-molarity, and loading domain and requires admitted
-finite-rate coefficients and diffusion inputs. The retained column states stop
-at this preflight gate; rejected inputs never enter the film solver.
+For provisional numerical method development, the analysis records the Work
+Package A temperature, discrete MEA source-label, loading, finite-rate
+coefficient, and diffusion-input status on every row without using those source
+limitations as an unconditional exception. The calculation reports separately
+whether a row was declared, reached the governing film equations, returned a
+result, and passed scientific input admission.
+
+The retained column-derived states use manufactured relative-fugacity rates and
+retained diffusivities. They may establish numerical reachability and
+repeatability only. Scientific adoption still requires source-admitted kinetics,
+transport inputs, state domain, parameter identity, and Review Pass.
 
 ## Acceptance and stopping rules
 
-Admitted solutions require positive finite concentrations, interface closure,
+Numerically accepted provisional solutions require positive finite concentrations, interface closure,
 species conservation, stoichiometric invariants, electroneutrality, zero
 current, mesh agreement, and initialization/branch agreement. Provider domain
 failures remain typed failed rows.

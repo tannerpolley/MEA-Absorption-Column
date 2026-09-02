@@ -210,12 +210,6 @@ def _model_families(dataset: Path) -> list[dict[str, object]]:
                 f"{base}/user_options.json:empirical relative-permittivity rule"
             ),
         },
-        {
-            "family_id": "model/polar",
-            "kind": "polar",
-            "choice": "none",
-            "provenance": _model_provenance(f"{base}/pure/any_solvent.csv:no polar model"),
-        },
     ]
 
 
@@ -477,9 +471,18 @@ def component_ids(species: Iterable[str]) -> tuple[str, ...]:
 def _parameters_at_temperature(parameter_path: Path, temperature_k: float | None):
     import epcsaft
 
+    mapping = json.loads(parameter_path.read_text(encoding="utf-8"))
+    retired_polar = [
+        family for family in mapping["model_families"] if family["kind"] == "polar"
+    ]
+    if any(family["choice"] != "none" for family in retired_polar):
+        raise ValueError("The installed ePC-SAFT Engine does not support a polar model")
+    mapping["model_families"] = [
+        family for family in mapping["model_families"] if family["kind"] != "polar"
+    ]
     adjustment_path = parameter_path.with_name("temperature_adjustments.json")
     if not adjustment_path.exists():
-        return epcsaft.Parameters.from_json(parameter_path)
+        return epcsaft.Parameters.from_mapping(mapping)
     if temperature_k is None:
         raise ValueError(f"Temperature is required by {adjustment_path}")
 
@@ -490,7 +493,6 @@ def _parameters_at_temperature(parameter_path: Path, temperature_k: float | None
         raise RuntimeError(
             f"ePC-SAFT parameter document hash mismatch: expected {expected_hash}, got {actual_hash}"
         )
-    mapping = json.loads(parameter_path.read_text(encoding="utf-8"))
     for relationship in adjustments["relationships"]:
         if relationship["form"] != "linear_anchor":
             raise ValueError(f"Unsupported ePC-SAFT temperature relationship: {relationship['form']}")
@@ -532,7 +534,15 @@ def mixture(dataset_text: str, species: tuple[str, ...], temperature_k: float | 
     return epcsaft.Mixture(parameters(dataset_text, species, temperature_k))
 
 
-def state(mixture_model, *, temperature_k: float, pressure_pa: float, composition, phase: str):
+def state(
+    mixture_model,
+    *,
+    temperature_k: float,
+    pressure_pa: float,
+    composition,
+    phase: str,
+    density_anchor=None,
+):
     import epcsaft
 
     normalized_phase = {"liq": "liquid", "liquid": "liquid", "vap": "vapor", "vapor": "vapor"}.get(
@@ -545,6 +555,7 @@ def state(mixture_model, *, temperature_k: float, pressure_pa: float, compositio
         P=float(pressure_pa) * epcsaft.unit_registry.pascal,
         x=tuple(float(value) for value in composition),
         phase=normalized_phase,
+        density_anchor=density_anchor,
     )
 
 

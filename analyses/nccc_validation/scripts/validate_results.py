@@ -32,6 +32,18 @@ ISSUE17_FIGURES = [
     FIGURES / "issue17_axial_flux.pdf",
     FIGURES / "issue17_parity_to_gaspar_implicit.pdf",
 ]
+ISSUE16_IDENTITY = ANALYSIS / "inputs" / "issue16_provisional_reactive_film_identity.json"
+EPCSAFT_CONTRACT = ROOT / "integration" / "epcsaft_contract.json"
+ISSUE16_PROBE = TABLES / "issue16_provisional_reactive_film_probe.csv"
+ISSUE16_RUNS = TABLES / "issue16_provisional_reactive_film_runs.csv"
+ISSUE16_POSITIONS = TABLES / "issue16_provisional_reactive_film_numerical_gate.csv"
+ISSUE16_PROFILE = TABLES / "issue16_provisional_reactive_film_profile.csv"
+ISSUE16_SUMMARIES = [
+    TABLES / "issue16_provisional_reactive_film_probe_summary.json",
+    TABLES / "issue16_provisional_reactive_film_summary.json",
+    TABLES / "issue16_provisional_reactive_film_numerical_gate_summary.json",
+]
+ISSUE16_GATE = TABLES / "issue16_provisional_reactive_film_gate.csv"
 
 
 def main() -> int:
@@ -44,6 +56,7 @@ def main() -> int:
         return 0
 
     checks = [
+        _check_issue16_provisional_reactive_film,
         _check_issue17_enhancement_comparison,
         _check_required_files,
         _check_c_case_benchmark,
@@ -62,6 +75,123 @@ def main() -> int:
         check()
     print("NCCC validation analysis artifacts are internally consistent.")
     return 0
+
+
+def _check_issue16_provisional_reactive_film() -> None:
+    identity = _check_issue16_identity()
+    paths = [
+        ISSUE16_PROBE,
+        ISSUE16_RUNS,
+        ISSUE16_POSITIONS,
+        ISSUE16_PROFILE,
+        ISSUE16_GATE,
+        *ISSUE16_SUMMARIES,
+    ]
+    _require_existing(paths)
+    required_columns = [
+        "declared",
+        "model_reached",
+        "evaluated",
+        "scientifically_admissible",
+        "temperature_domain_status",
+        "mea_source_label_status",
+        "loading_domain_status",
+        "f1_f2_coefficient_status",
+        "f3_coefficient_status",
+        "diffusivity_provenance_status",
+        "input_limitations",
+        "claim_label",
+    ]
+    campaigns = [
+        ("probe", pd.read_csv(ISSUE16_PROBE), 1),
+        ("repeatability", pd.read_csv(ISSUE16_RUNS), 6),
+        ("positions", pd.read_csv(ISSUE16_POSITIONS), 3),
+    ]
+    for name, table, expected_count in campaigns:
+        _require_columns(table, required_columns)
+
+        def true(column: str) -> pd.Series:
+            return table[column].astype(str).str.lower().eq("true")
+
+        if len(table) != expected_count:
+            raise AssertionError(f"Issue 16 {name} table must contain {expected_count} rows.")
+        if not (
+            true("declared").all()
+            and true("model_reached").all()
+            and true("evaluated").all()
+            and table["outcome"].eq("evaluated").all()
+        ):
+            raise AssertionError(f"Issue 16 {name} campaign did not evaluate every required row.")
+        if true("scientifically_admissible").any():
+            raise AssertionError("Provisional Issue 16 rows cannot be scientifically admitted.")
+        if not table["claim_label"].eq("provisional_concept_only").all():
+            raise AssertionError("Issue 16 provisional rows have an incorrect claim label.")
+        limits = {
+            "maximum_interface_residual": 1.0e-7,
+            "maximum_conservation_residual": 1.0e-7,
+            "maximum_invariant_source_residual": 1.0e-12,
+            "maximum_electroneutrality_residual": 1.0e-12,
+            "maximum_zero_current_residual": 1.0e-12,
+        }
+        for column, limit in limits.items():
+            if table[column].max() > limit:
+                raise AssertionError(f"Issue 16 {name} exceeds {column}={limit:g}.")
+
+    if set(campaigns[2][1]["Position"]) != {0.0, 0.5, 1.0}:
+        raise AssertionError("Issue 16 position gate must retain Positions 0, 0.5, and 1.")
+    if not campaigns[2][1].loc[
+        campaigns[2][1]["Position"].isin([0.0, 0.5]), "temperature_domain_status"
+    ].eq("outside_common_domain").all():
+        raise AssertionError("Issue 16 out-of-temperature-domain positions are not labeled.")
+
+    for summary_path, expected_count in zip(ISSUE16_SUMMARIES, (1, 6, 3), strict=True):
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        if not (
+            summary["declared_case_count"] == expected_count
+            and summary["model_reached_case_count"] == expected_count
+            and summary["evaluated_case_count"] == expected_count
+            and summary["scientifically_admitted_case_count"] == 0
+        ):
+            raise AssertionError(f"Issue 16 counts are inconsistent in {summary_path.name}.")
+        if summary["engine_wheel_sha256"] != identity["engine"]["wheel_sha256"]:
+            raise AssertionError(f"Issue 16 wheel identity is inconsistent in {summary_path.name}.")
+    if json.loads(ISSUE16_SUMMARIES[1].read_text(encoding="utf-8"))[
+        "interface_flux_relative_spread"
+    ] > 5.0e-3:
+        raise AssertionError("Issue 16 repeatability flux spread exceeds 0.5%.")
+
+    gates = pd.read_csv(ISSUE16_GATE).set_index("gate")
+    for gate in (
+        "provisional_position1_probe",
+        "provisional_stage_a_repeatability",
+        "provisional_three_position_reachability",
+    ):
+        if gates.at[gate, "status"] != "pass":
+            raise AssertionError(f"Issue 16 reachability gate did not pass: {gate}.")
+    if gates.at["scientific_adoption", "status"] != "blocked":
+        raise AssertionError("Issue 16 scientific adoption must remain blocked.")
+
+
+def _check_issue16_identity() -> dict:
+    _require_existing([ISSUE16_IDENTITY, EPCSAFT_CONTRACT])
+    identity = json.loads(ISSUE16_IDENTITY.read_text(encoding="utf-8"))
+    final_identity = json.loads(EPCSAFT_CONTRACT.read_text(encoding="utf-8"))[
+        "final_identity"
+    ]
+    for identity_field, contract_field in (
+        ("commit", "engine_commit"),
+        ("wheel_sha256", "wheel_sha256"),
+        ("core_sha256", "core_sha256"),
+    ):
+        if identity["engine"][identity_field] != final_identity[contract_field]:
+            raise AssertionError(
+                f"Issue 16 provisional {identity_field} does not match the integration identity."
+            )
+    if identity["claim_label"] != "provisional_concept_only":
+        raise AssertionError("Issue 16 provisional identity has an incorrect claim label.")
+    if identity["retained_position_1"]["scientifically_admissible"] is not False:
+        raise AssertionError("Issue 16 Position 1 cannot be scientifically admitted.")
+    return identity
 
 
 def _check_issue17_enhancement_comparison() -> None:
