@@ -5,10 +5,10 @@
     "branch": "codex/issue-16-reactive-film-integration"
   },
   "engine": {
-    "commit": "41e7dc1984d00f82785900b314a0135beebe56cd",
+    "commit": "38e91823b6d4f26c1d549f07aaef24a089d8e16d",
     "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-    "wheel_sha256": "2d089d5bdeda5b1655c5e6cf5df7308507233381175745889f8430c22ffe1edb",
-    "core_sha256": "fc1f1a78b2fe5c68a54b8678ce6bc844a2eba11edec91d49e6f9a51c62e1132f",
+    "wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+    "core_sha256": "39c8f4aa0bc0455f3b192258a05329ad47547919ba420d16ab830fa84e4dee6e",
     "upstream_pr_reported_wheel_sha256": "8f52d7591613a1714cb0fe2c3220d24817d5eba3650b399e8ffdf9adbea2daca",
     "build_command": "timeout 1200s bash .codex/environments/setup.sh",
     "build_elapsed_s": 76,

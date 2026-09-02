@@ -11,11 +11,48 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
 from mea_absorption_column.Transport.Reactive_Film import (
     FilmThermodynamicState,
     ReactiveFilmDomainError,
+    binary_diffusivities_from_species,
+    constrained_onsager_mobility,
     solve_reactive_film,
 )
 
 
 ROOT = Path(__file__).parents[1]
+
+
+def test_constrained_onsager_mobility_is_psd_and_recovers_binary_fick_limit():
+    composition = np.array([0.3, 0.7])
+    concentration = 1000.0
+    diffusivity = 2.0e-9
+    pairs = binary_diffusivities_from_species([diffusivity, diffusivity])
+    mobility = constrained_onsager_mobility(composition, concentration, pairs)
+    ideal_log_tangent = np.array([[1.0], [-composition[0] / composition[1]]])
+
+    flux_per_log_gradient = -mobility @ ideal_log_tangent
+
+    assert mobility == pytest.approx(mobility.T)
+    assert np.linalg.eigvalsh(mobility).min() >= -1.0e-18
+    assert mobility.sum(axis=0) == pytest.approx(0.0, abs=1.0e-18)
+    assert flux_per_log_gradient[:, 0] == pytest.approx(
+        [-concentration * diffusivity * composition[0],
+         concentration * diffusivity * composition[0]]
+    )
+
+
+def test_constrained_onsager_mobility_enforces_zero_current_without_equal_ions():
+    composition = np.array([0.8, 0.1, 0.1])
+    charges = np.array([0.0, 1.0, -1.0])
+    pairs = binary_diffusivities_from_species([2.0e-9, 8.4e-10, 6.8e-10])
+    mobility = constrained_onsager_mobility(
+        composition, 50000.0, pairs, charge_numbers=charges
+    )
+    force = np.array([0.2, -0.4, 0.1])
+    flux = -mobility @ force
+
+    assert np.linalg.eigvalsh(mobility).min() >= -1.0e-18
+    assert flux.sum() == pytest.approx(0.0, abs=1.0e-18)
+    assert charges @ flux == pytest.approx(0.0, abs=1.0e-18)
+    assert -(flux @ force) >= 0.0
 
 
 def _linear_thermodynamics(henry_pa_m3_mol, derivative=1.0):
@@ -248,6 +285,18 @@ def test_exact_epcsaft_tangent_closes_through_zero_drive_film():
         )
 
     bulk_state = thermodynamics(bulk, bulk / bulk.sum())
+    tangent = epcsaft_liquid_transport_state(
+        temperature, pressure, bulk / bulk.sum()
+    )
+    constrained_hessian = (
+        tangent.log_composition_basis.T
+        @ np.diag(tangent.composition)
+        @ tangent.chemical_potential_derivatives_over_rt
+    )
+    assert constrained_hessian == pytest.approx(
+        constrained_hessian.T, abs=1.0e-12
+    )
+    assert np.linalg.eigvalsh(constrained_hessian).min() >= -1.0e-12
     result = solve_reactive_film(
         bulk_concentrations_mol_m3=bulk,
         diffusivities_m2_s=np.full(9, 1.0e-9),

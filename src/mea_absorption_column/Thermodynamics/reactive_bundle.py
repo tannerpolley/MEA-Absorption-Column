@@ -249,6 +249,9 @@ def solve_homogeneous_reactive_state(
     return {
         "composition": np.asarray(phase.mole_fractions, dtype=float),
         "density_mol_m3": float(phase.molar_density_mol_m3),
+        "chemical_potentials_over_rt": np.asarray(
+            phase.chemical_potential_over_rt, dtype=float
+        ),
         "parameter_fingerprint": result.descriptor.parameter_fingerprint,
         "evidence": dict(result.evidence),
     }

@@ -10,7 +10,11 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
 )
-from mea_absorption_column.Thermodynamics.reactive_bundle import compile_reaction_constants
+from mea_absorption_column.Thermodynamics.reactive_bundle import (
+    compile_reaction_constants,
+    solve_homogeneous_reactive_state,
+    validate_reactive_bundle,
+)
 
 def _requires_reactive_epcsaft_dataset():
     try:
@@ -62,6 +66,21 @@ def test_bundle_reactive_nine_species_state_compiles_temperature_dependent_const
     assert composition.sum() == pytest.approx(1.0, abs=1.0e-12)
     assert np.dot(composition, [0, 0, 0, 1, -1, -1, -2, 1, -1]) == pytest.approx(0.0, abs=1.0e-12)
     assert diagnostics["epcsaft_chemistry_reaction_affinity_inf_norm"] < 1.0e-8
+    state = solve_homogeneous_reactive_state(
+        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
+        313.15,
+        101325.0,
+        (0.1529, 1.0, 7.911),
+    )
+    reactions = validate_reactive_bundle(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET))[
+        "reactions"
+    ]["reactions"]
+    reaction_matrix = np.asarray(
+        [reaction["stoichiometry"] for reaction in reactions], dtype=float
+    )
+    assert reaction_matrix @ state["chemical_potentials_over_rt"] == pytest.approx(
+        0.0, abs=1.0e-10
+    )
 
 
 def test_tabulated_reactive_equilibrium_interpolates_certified_amounts(tmp_path, monkeypatch):
