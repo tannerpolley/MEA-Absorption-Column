@@ -193,6 +193,7 @@ def source_rows(config: dict, run_metadata: dict) -> list[dict]:
     rows = []
     for record in config["transport_records"]:
         row = {field: record.get(field, "") for field in SOURCE_FIELDS}
+        row["record_id"] = record["id"]
         row.update(run_metadata)
         rows.append(row)
     require(len(rows) == 13, "Issue 42 transport record count changed")
