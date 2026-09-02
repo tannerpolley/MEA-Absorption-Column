@@ -44,6 +44,13 @@ ISSUE41_SUMMARY = TABLES / "issue41_reversible_kinetics_summary.json"
 ISSUE41_PACKET = TABLES / "issue41_packet_bound_comparison.csv"
 ISSUE41_REPORT = REPORTS / "issue41_reversible_kinetics.md"
 
+ISSUE42_OUTPUT_PATHS = (
+    "analyses/nccc_validation/results/final/tables/issue42_transport_inputs.csv",
+    "analyses/nccc_validation/results/final/tables/issue42_transport_comparison.csv",
+    "analyses/nccc_validation/results/final/tables/issue42_film_transport_summary.json",
+    "analyses/nccc_validation/results/final/reports/issue42_film_transport.md",
+)
+
 SOURCE_FIELDS = [
     "record_id", "record_kind", "species", "quantity_type", "quantity_type_note", "units",
     "source_status", "source", "source_locator", "source_chain", "conversion", "standard_state_basis",
@@ -102,6 +109,15 @@ def git_blob_sha256(revision: str, relative_path: str) -> str:
         ["git", "show", f"{revision}:{relative_path}"], cwd=ROOT, check=True, capture_output=True
     )
     return sha256_bytes(result.stdout)
+
+
+def source_revision_contains_issue42_outputs(revision: str) -> bool:
+    return any(
+        subprocess.run(
+            ["git", "cat-file", "-e", f"{revision}:{path}"], cwd=ROOT, capture_output=True
+        ).returncode == 0
+        for path in ISSUE42_OUTPUT_PATHS
+    )
 
 
 def write_csv(path: Path, rows: list[dict], fields: list[str]) -> None:
@@ -245,6 +261,116 @@ def canonical_decision_summaries(
     }
 
 
+def canonical_summary(
+    config: dict,
+    revision: str,
+    source_documents: list[dict],
+    replay: dict,
+    source_output_rows: list[dict],
+    comparison: list[dict],
+    dependency_summaries: tuple[dict, dict, dict],
+    dependency_rows: dict,
+    run_metadata: dict,
+    issue35_correlation_sha256: str,
+    output_sha256: dict,
+) -> dict:
+    issue35, issue40, issue41 = dependency_summaries
+    unrecovered_ids = {item["id"] for item in config["unrecovered_source_records"]}
+    record_by_id = {item["id"]: item for item in config["transport_records"]}
+    source_pdf_hashes_verified = all(item["verification_status"] == "verified" for item in source_documents)
+    issue40_admitted = issue40["row_counts"]["scientifically_admitted_rows"]
+    issue41_admitted = issue41["row_counts"]["scientifically_admitted_packet_rows"]
+    n2o_chain_complete = not {"Ko_primary_N2O", "Jamal_primary_N2O", "Ying_Eimer_primary_N2O"} & unrecovered_ids
+    water_diffusivity_complete = record_by_id["water_self_diffusivity_holz2000"]["source_status"] != "missing_source_complete_local_record"
+    ion_diffusivity_input_complete = all(
+        record_by_id[f"ion_diffusivity_{species}"]["source_status"]
+        != "not_recovered_source_complete_primary_ion_record"
+        for species in config["charged_species"]
+    )
+    candidate_A_complete = not config["candidate_A"]["status"].startswith("blocked")
+    candidate_B_complete = not config["candidate_B"]["status"].startswith("blocked")
+    physical_outputs_evaluated = any(
+        row["candidate_A_co2_flux_mol_m2_s"] or row["candidate_B_co2_flux_mol_m2_s"] for row in comparison
+    )
+    row_counts = {
+        "transport_records": len(source_output_rows),
+        "ionic_diffusivity_records": sum(row["record_kind"] == "ionic_diffusivity" for row in source_output_rows),
+        "declared_comparison_states": len(comparison),
+        "evaluated_comparison_states": sum(row["attempt_status"] != "not_attempted" for row in comparison),
+        "scientifically_admitted_states": sum(row["decision"] == "admitted" for row in comparison),
+        "candidate_A_evaluated_states": sum(row["candidate_A_status"] != config["candidate_A"]["status"] for row in comparison),
+        "candidate_B_evaluated_states": sum(row["candidate_B_status"] != config["candidate_B"]["status"] for row in comparison),
+    }
+    gates = {
+        "source_pdf_hashes_verified": source_pdf_hashes_verified,
+        "source_input_and_generator_committed": True,
+        "issue35_reconstruction_replayed_exactly": replay["replay_sha256"] == issue35_correlation_sha256,
+        "issue35_supported_negative_preserved": issue35["gates"]["supported_negative"],
+        "issue40_scientifically_admitted_rows": issue40_admitted,
+        "issue41_scientifically_admitted_packet_rows": issue41_admitted,
+        "n2o_chain_complete": n2o_chain_complete,
+        "water_diffusivity_complete": water_diffusivity_complete,
+        "ion_diffusivity_input_complete": ion_diffusivity_input_complete,
+        "candidate_A_all_species_effective_diffusivities_complete": candidate_A_complete,
+        "candidate_A_source_defined_equal_ion_lump": False,
+        "candidate_B_complete_mobility_law": candidate_B_complete,
+        "candidate_B_gamma_and_admitted_true_state_available": False,
+        "identical_state_flux_comparison_evaluated": physical_outputs_evaluated,
+        "paired_delta_J_evaluated": any(row["paired_delta_J_interval_mol_m2_s"] for row in comparison),
+        "physical_checks_evaluated": any(row["positivity_status"] != "not_attempted" for row in comparison),
+        "physical_transport_adoption": False,
+        "no_package_or_parameter_identity_used": config["package_parameter_identity"]["used"] is False,
+        "no_capture_inference": True,
+        "supported_negative": True,
+    }
+    decision_summaries = canonical_decision_summaries(
+        config, source_documents, source_output_rows, comparison, dependency_rows
+    )
+    return {
+        "schema_version": "issue42_film_transport_result_v1",
+        "issue": config["issue"],
+        "claim_label": config["claim_label"],
+        "source_revision": revision,
+        "source_worktree_clean_at_generation": True,
+        "source_revision_protocol": config["reproduction"]["source_revision_protocol"],
+        "input_sha256": run_metadata["input_sha256"],
+        "generator_sha256": run_metadata["generator_sha256"],
+        "exact_command": run_metadata["exact_command"],
+        "machine": run_metadata["machine"],
+        "workers": run_metadata["workers"],
+        "run_id": run_metadata["run_id"],
+        "source_documents": source_documents,
+        "unrecovered_source_records": config["unrecovered_source_records"],
+        "source_reconstruction": {
+            "issue35_correlation_table_sha256": issue35_correlation_sha256,
+            "issue35_replay_sha256": replay["replay_sha256"],
+            "issue35_replay_exact_match": replay["replay_sha256"] == issue35_correlation_sha256,
+            "issue35_source_observation_counts": replay["diagnostics"]["source_observation_counts"],
+            "issue35_source_model_evaluation_counts": replay["diagnostics"]["source_model_evaluation_counts"],
+            "issue35_snijder_row_count": replay["diagnostics"]["snijder_row_count"],
+            "issue35_snijder_max_relative_residual": replay["diagnostics"]["snijder_max_relative_residual"],
+            "issue35_snijder_max_absolute_residual_m2_s": replay["diagnostics"]["snijder_max_absolute_residual_m2_s"],
+        },
+        "dependencies": config["dependencies"],
+        "row_counts": row_counts,
+        "gates": gates,
+        "candidate_A": decision_summaries["candidate_A"],
+        "candidate_B": decision_summaries["candidate_B"],
+        "package_parameter_identity": config["package_parameter_identity"],
+        "dependencies_have_zero_admitted_physical_rows": issue40_admitted == 0 and issue41_admitted == 0,
+        "output_paths": {
+            "transport_inputs": SOURCE_TABLE.relative_to(ROOT).as_posix(),
+            "transport_comparison": COMPARISON_TABLE.relative_to(ROOT).as_posix(),
+            "summary": SUMMARY.relative_to(ROOT).as_posix(),
+            "report": REPORT.relative_to(ROOT).as_posix(),
+        },
+        "claim_boundary": config["claim_boundary"],
+        "limitations": config["limitations"],
+        "regeneration_command": config["reproduction"]["command"],
+        "output_sha256": output_sha256,
+    }
+
+
 def state_domain_status(row: dict[str, str], common_domain: dict) -> str:
     if row["source_row_id"].startswith("Putta"):
         return "not_evaluable_source_label_only"
@@ -323,6 +449,10 @@ Regenerate with:
 def main() -> int:
     revision, dirty = git_revision()
     require(not dirty, "source worktree must be clean before writing Issue 42 outputs")
+    require(
+        not source_revision_contains_issue42_outputs(revision),
+        "Issue 42 source revision must exclude all generated output paths",
+    )
     config = load_json(INPUT)
     require(config["schema_version"] == "issue42_species_resolved_transport_v1", "unexpected Issue 42 input schema")
     require(config["species_order"] == ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"], "Issue 42 species order changed")
@@ -340,95 +470,26 @@ def main() -> int:
     source_output_rows = source_rows(config, run_metadata)
     comparison = comparison_rows(config, dependency_rows["issue40_rows"], run_metadata)
     source_documents = canonical_source_documents(config, source_files)
-    decision_summaries = canonical_decision_summaries(
-        config, source_documents, source_output_rows, comparison, dependency_rows
-    )
     write_csv(SOURCE_TABLE, source_output_rows, SOURCE_FIELDS)
     write_csv(COMPARISON_TABLE, comparison, COMPARISON_FIELDS)
     REPORT.write_text(report_text(config, source_documents, replay, comparison, run_metadata), encoding="utf-8")
-    summary = {
-        "schema_version": "issue42_film_transport_result_v1",
-        "issue": 42,
-        "claim_label": config["claim_label"],
-        "source_revision": revision,
-        "source_worktree_clean_at_generation": True,
-        "source_revision_protocol": config["reproduction"]["source_revision_protocol"],
-        "input_sha256": input_hash,
-        "generator_sha256": generator_hash,
-        "exact_command": run_metadata["exact_command"],
-        "machine": run_metadata["machine"],
-        "workers": 1,
-        "run_id": run_metadata["run_id"],
-        "source_documents": source_documents,
-        "unrecovered_source_records": config["unrecovered_source_records"],
-        "source_reconstruction": {
-            "issue35_correlation_table_sha256": sha256(ISSUE35_CORRELATIONS),
-            "issue35_replay_sha256": replay["replay_sha256"],
-            "issue35_replay_exact_match": True,
-            "issue35_source_observation_counts": replay["diagnostics"]["source_observation_counts"],
-            "issue35_source_model_evaluation_counts": replay["diagnostics"]["source_model_evaluation_counts"],
-            "issue35_snijder_row_count": replay["diagnostics"]["snijder_row_count"],
-            "issue35_snijder_max_relative_residual": replay["diagnostics"]["snijder_max_relative_residual"],
-            "issue35_snijder_max_absolute_residual_m2_s": replay["diagnostics"]["snijder_max_absolute_residual_m2_s"],
-        },
-        "dependencies": config["dependencies"],
-        "row_counts": {
-            "transport_records": len(source_output_rows),
-            "ionic_diffusivity_records": sum(row["record_kind"] == "ionic_diffusivity" for row in source_output_rows),
-            "declared_comparison_states": len(comparison),
-            "evaluated_comparison_states": 0,
-            "scientifically_admitted_states": 0,
-            "candidate_A_evaluated_states": 0,
-            "candidate_B_evaluated_states": 0,
-        },
-        "gates": {
-            "source_pdf_hashes_verified": True,
-            "source_input_and_generator_committed": True,
-            "issue35_reconstruction_replayed_exactly": True,
-            "issue35_supported_negative_preserved": True,
-            "issue40_scientifically_admitted_rows": 0,
-            "issue41_scientifically_admitted_packet_rows": 0,
-            "n2o_chain_complete": False,
-            "water_diffusivity_complete": False,
-            "ion_diffusivity_input_complete": False,
-            "candidate_A_all_species_effective_diffusivities_complete": False,
-            "candidate_A_source_defined_equal_ion_lump": False,
-            "candidate_B_complete_mobility_law": False,
-            "candidate_B_gamma_and_admitted_true_state_available": False,
-            "identical_state_flux_comparison_evaluated": False,
-            "paired_delta_J_evaluated": False,
-            "physical_checks_evaluated": False,
-            "physical_transport_adoption": False,
-            "no_package_or_parameter_identity_used": True,
-            "no_capture_inference": True,
-            "supported_negative": True,
-        },
-        "candidate_A": decision_summaries["candidate_A"],
-        "candidate_B": decision_summaries["candidate_B"],
-        "package_parameter_identity": {"used": False, "package": None, "parameter": None},
-        "dependencies_have_zero_admitted_physical_rows": True,
-        "output_paths": {
-            "transport_inputs": SOURCE_TABLE.relative_to(ROOT).as_posix(),
-            "transport_comparison": COMPARISON_TABLE.relative_to(ROOT).as_posix(),
-            "summary": SUMMARY.relative_to(ROOT).as_posix(),
-            "report": REPORT.relative_to(ROOT).as_posix(),
-        },
-        "claim_boundary": "Source-only transport records and a supported unresolved Candidate A/B decision are retained. No physical film, flux, uncertainty interval, transport selection, thermodynamic validation, kinetic validation, or packed-column capture claim is admitted.",
-        "limitations": [
-            "The H2O self-diffusivity source chain is named by Putta2016 but its primary coefficient record is not retained.",
-            "The Putta2017 N2O analogy lacks the primary Ko, Jamal, and Ying-Eimer input records and uncertainty.",
-            "No species-resolved ionic diffusivities or source-defined equal-ion lump are retained.",
-            "No complete primary unequal-ion mobility/friction law is retained; scalar diffusivities are not promoted to a matrix.",
-            "Issue 40 has zero scientifically admitted true-species rows and Issue 41 has zero admitted packet/kinetic rows.",
-            "Density and viscosity reconstructions remain source-labeled and cannot become film inputs without an admitted concentration basis.",
-        ],
-        "regeneration_command": config["reproduction"]["command"],
-        "output_sha256": {
+    summary = canonical_summary(
+        config,
+        revision,
+        source_documents,
+        replay,
+        source_output_rows,
+        comparison,
+        (issue35, issue40, issue41),
+        dependency_rows,
+        run_metadata,
+        sha256(ISSUE35_CORRELATIONS),
+        {
             "transport_inputs": sha256(SOURCE_TABLE),
             "transport_comparison": sha256(COMPARISON_TABLE),
             "report": sha256(REPORT),
         },
-    }
+    )
     SUMMARY.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"summary": SUMMARY.relative_to(ROOT).as_posix(), "gates": summary["gates"]}, indent=2))
     return 0

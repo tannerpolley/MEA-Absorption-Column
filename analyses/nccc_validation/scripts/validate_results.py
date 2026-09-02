@@ -22,8 +22,10 @@ from resolve_issue42_film_transport import (
     canonical_decision_summaries,
     canonical_run_metadata,
     canonical_source_documents,
+    canonical_summary,
     comparison_rows as build_issue42_comparison_rows,
     replay_issue35 as replay_issue42_issue35,
+    source_revision_contains_issue42_outputs,
     source_rows as build_issue42_source_rows,
     validate_dependencies as validate_issue42_dependencies,
     validate_source_documents as validate_issue42_source_documents,
@@ -503,6 +505,8 @@ def _check_issue42_film_transport() -> None:
         ["git", "cat-file", "-e", f"{source_revision}^{{commit}}"], cwd=ROOT, capture_output=True
     ).returncode != 0:
         raise AssertionError("Issue 42 source revision is not a local commit.")
+    if source_revision_contains_issue42_outputs(source_revision):
+        raise AssertionError("Issue 42 recorded source revision contains generated outputs.")
     current_revision = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
     ).stdout.strip()
@@ -537,7 +541,7 @@ def _check_issue42_film_transport() -> None:
             raise AssertionError(f"Issue 42 dependency is missing or changed: {key}")
     if summary.get("dependencies") != config["dependencies"]:
         raise AssertionError("Issue 42 dependency provenance is stale.")
-    dependency_rows = validate_issue42_dependencies(config)[3]
+    issue35, issue40, issue41, dependency_rows = validate_issue42_dependencies(config)
     expected_run_metadata = canonical_run_metadata(config, source_revision, input_hash, generator_hash)
     if any(summary.get(key) != value for key, value in expected_run_metadata.items()):
         raise AssertionError("Issue 42 run metadata differs from canonical input/source-derived values.")
@@ -546,7 +550,7 @@ def _check_issue42_film_transport() -> None:
     if summary.get("regeneration_command") != config["reproduction"]["command"]:
         raise AssertionError("Issue 42 regeneration command differs from the pinned input.")
 
-    issue35 = json.loads((ROOT / config["dependencies"]["issue35_summary"]["path"]).read_text(encoding="utf-8"))
+    replay = replay_issue42_issue35(config)
     reconstruction = summary.get("source_reconstruction", {})
     expected_observations = {
         "amundsen_weiland_density": 23,
@@ -605,9 +609,10 @@ def _check_issue42_film_transport() -> None:
     if source_table.set_index("record_id")["admission_decision"].to_dict() != expected_admissions:
         raise AssertionError("Issue 42 source table admission decisions changed.")
     run_metadata = expected_run_metadata
+    expected_source_rows = build_issue42_source_rows(config, run_metadata)
     source_header, actual_source_rows = _read_csv_rows(ISSUE42_TABLES["transport_inputs"])
     if source_header != SOURCE_FIELDS or actual_source_rows != _canonical_csv_rows(
-        build_issue42_source_rows(config, run_metadata), SOURCE_FIELDS
+        expected_source_rows, SOURCE_FIELDS
     ):
         raise AssertionError("Issue 42 transport source rows differ from canonical input-derived rows.")
 
@@ -640,7 +645,7 @@ def _check_issue42_film_transport() -> None:
     expected_decision_summaries = canonical_decision_summaries(
         config,
         canonical_sources,
-        build_issue42_source_rows(config, run_metadata),
+        expected_source_rows,
         expected_comparison_rows,
         dependency_rows,
     )
@@ -650,12 +655,31 @@ def _check_issue42_film_transport() -> None:
     expected_report = build_issue42_report_text(
         config,
         canonical_sources,
-        replay_issue42_issue35(config),
+        replay,
         expected_comparison_rows,
         run_metadata,
     )
     if ISSUE42_REPORT.read_text(encoding="utf-8") != expected_report:
         raise AssertionError("Issue 42 report differs from canonical input/dependency-derived text.")
+    expected_summary = canonical_summary(
+        config,
+        source_revision,
+        canonical_sources,
+        replay,
+        expected_source_rows,
+        expected_comparison_rows,
+        (issue35, issue40, issue41),
+        dependency_rows,
+        run_metadata,
+        correlation_hash,
+        {
+            "transport_inputs": hashlib.sha256(ISSUE42_TABLES["transport_inputs"].read_bytes()).hexdigest(),
+            "transport_comparison": hashlib.sha256(ISSUE42_TABLES["transport_comparison"].read_bytes()).hexdigest(),
+            "report": hashlib.sha256(ISSUE42_REPORT.read_bytes()).hexdigest(),
+        },
+    )
+    if summary != expected_summary:
+        raise AssertionError("Issue 42 summary differs from canonical input/dependency-derived records.")
     for key, path in ISSUE42_TABLES.items():
         if summary["output_sha256"][key] != hashlib.sha256(path.read_bytes()).hexdigest():
             raise AssertionError(f"Issue 42 output hash is stale: {key}")

@@ -4,6 +4,16 @@
   "owner": "MEA-Absorption-Column/analyses/nccc_validation",
   "issue": 42,
   "scope": "Extend the retained Issue 35 transport evidence with explicit species, quantity-type, provenance, and candidate-closure records without adopting a physical film.",
+  "claim_boundary": "Source-only transport records and a supported unresolved Candidate A/B decision are retained. No physical film, flux, uncertainty interval, transport selection, thermodynamic validation, kinetic validation, or packed-column capture claim is admitted.",
+  "limitations": [
+    "The H2O self-diffusivity source chain is named by Putta2016 but its primary coefficient record is not retained.",
+    "The Putta2017 N2O analogy lacks the primary Ko, Jamal, and Ying-Eimer input records and uncertainty.",
+    "No species-resolved ionic diffusivities or source-defined equal-ion lump are retained.",
+    "No complete primary unequal-ion mobility/friction law is retained; scalar diffusivities are not promoted to a matrix.",
+    "Issue 40 has zero scientifically admitted true-species rows and Issue 41 has zero admitted packet/kinetic rows.",
+    "Density and viscosity reconstructions remain source-labeled and cannot become film inputs without an admitted concentration basis."
+  ],
+  "package_parameter_identity": {"used": false, "package": null, "parameter": null},
   "species_order": ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"],
   "charged_species": ["MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"],
   "common_domain": {
