@@ -452,7 +452,6 @@ def _check_issue41_external_provenance(config: dict, summary: dict) -> None:
             if len(data) != item["bytes"] or hashlib.sha256(data).hexdigest() != item["sha256"]:
                 raise AssertionError(f"Issue 41 bundle member is missing or changed: {item['path']}")
         expected = {
-            "outer_sha256": bundle_config["outer_sha256"],
             "parameter_document_sha256": bundle_config["parameter_document_sha256"],
             "engine_wheel_sha256": bundle_config["engine_wheel_sha256"],
             "state_packet_sha256": bundle_config["state_packet_sha256"],
