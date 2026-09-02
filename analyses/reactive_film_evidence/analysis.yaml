@@ -1,0 +1,27 @@
+id: reactive_film_evidence
+title: Physical inputs and observations for reactive-film development
+status: active
+summary: Source availability, finite-rate kinetics, transport quantities, and aggregate film-model comparison evidence.
+owner: project
+inputs:
+  - path: inputs/source_data_availability.csv
+    kind: source_availability_matrix
+  - path: ../nccc_validation/results/final/tables/issue34_rate_observation_comparisons.csv
+    kind: retained_putta2016_table4_aggregate_aard
+  - path: ../nccc_validation/results/final/tables/issue35_transport_correlations.csv
+    kind: retained_transport_correlations
+  - path: ../nccc_validation/results/final/tables/issue41_source_rate_evidence.csv
+    kind: retained_finite_rate_kinetics
+  - path: ../nccc_validation/results/final/tables/issue42_transport_inputs.csv
+    kind: retained_species_transport_inventory
+outputs:
+  - path: results/final/tables/putta2016_table4_aard_plot.csv
+    kind: exact_plot_data
+  - path: results/final/figures/putta2016_table4_aard.png
+    kind: aggregate_model_comparison_figure
+  - path: results/final/figures/putta2016_table4_aard.pdf
+    kind: aggregate_model_comparison_figure
+commands:
+  render:
+    - uv run python analyses/reactive_film_evidence/scripts/render_putta2016_aard.py
+claim_boundary: Source-availability and aggregate model-comparison evidence only; no row-level flux validation, mobility-matrix admission, kinetic fit, or column-capture claim.
