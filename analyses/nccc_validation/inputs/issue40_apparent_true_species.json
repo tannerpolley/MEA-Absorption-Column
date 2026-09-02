@@ -76,6 +76,22 @@
     "pressure_Pa": 109500.0,
     "source_loaded_analytical_MEA_mol_L": 4.889309897097635,
     "source_free_MEA_mol_L": 2.491683471902737,
+    "issue33_reconstructed_true_species_loading": {
+      "value": 0.24999627615967537,
+      "unit": "mol CO2 per mol MEA",
+      "basis": "Issue 33 retained reactive true-species reconstruction; domain gate only"
+    },
+    "apparent_total_inorganic_carbon_to_analytical_MEA_flow_ratio": {
+      "value": 0.25000000000000006,
+      "unit": "mol apparent total inorganic carbon flow per mol analytical MEA flow",
+      "basis": "retained film_states.csv Fl_CO2/Fl_MEA apparent component-flow input to the packet"
+    },
+    "loading_apparent_flow_ratio_difference": {
+      "value": 3.7238403246819818e-06,
+      "unit": "mol per mol",
+      "basis": "apparent flow ratio minus Issue 33 reconstructed loading"
+    },
+    "loading_apparent_not_relabelled_or_fitted": true,
     "source_basis_status": "basis_unresolved",
     "source_locator": "retained Case 3C profile: film_states.csv Position=1.0; Issue 33 concentration-basis table"
   },
@@ -89,6 +105,7 @@
   "reproduction": {
     "command": "python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
     "runtime": "Python 3.13 with the bundle wheel installed in an isolated environment",
-    "workers": 1
+    "workers": 1,
+    "source_revision_protocol": "Run the resolver from a clean source commit; commit the generated result artifacts separately. The recorded source commit is not the result-containing commit."
   }
 }

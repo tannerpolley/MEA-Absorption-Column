@@ -198,6 +198,7 @@ commands:
     - uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py
   issue40_apparent_true_species:
     - python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue40-only
 runtime:
   quick_seconds: 10
   full_seconds: 600

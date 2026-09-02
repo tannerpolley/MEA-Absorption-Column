@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
 
 import pandas as pd
@@ -50,7 +51,7 @@ def main() -> int:
         return 0
     if args.issue40_only:
         _check_issue40_apparent_true_species()
-        print("Issue 40 retained apparent-to-true species outputs are internally consistent.")
+        print("Issue 40 retained-output/source-lineage consistency checks passed.")
         return 0
 
     checks = [
@@ -151,6 +152,60 @@ def _check_issue40_apparent_true_species() -> None:
     config = json.loads(ISSUE40_INPUT.read_text(encoding="utf-8"))
     summary = json.loads(ISSUE40_SUMMARY.read_text(encoding="utf-8"))
     data = pd.read_csv(ISSUE40_TABLE, keep_default_na=False)
+
+    def git_blob_sha256(revision: str, path: Path) -> str:
+        result = subprocess.run(
+            ["git", "show", f"{revision}:{path.relative_to(ROOT)}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        )
+        return hashlib.sha256(result.stdout).hexdigest()
+
+    source_commit = summary.get("source_repository_commit", "")
+    current_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip()
+    if not source_commit or source_commit == current_commit:
+        raise AssertionError("Issue 40 retained results must record a distinct source commit from the result-artifact commit.")
+    if subprocess.run(
+        ["git", "cat-file", "-e", f"{source_commit}^{{commit}}"], cwd=ROOT, capture_output=True
+    ).returncode != 0:
+        raise AssertionError("Issue 40 source repository commit is not a local commit.")
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_commit, current_commit], cwd=ROOT).returncode != 0:
+        raise AssertionError("Issue 40 source repository commit is not an ancestor of the retained result commit.")
+    if summary.get("source_worktree_clean_at_generation") is not True:
+        raise AssertionError("Issue 40 source commit was not generated from a clean worktree.")
+    source_inputs = summary.get("source_inputs", {})
+    actual_source_inputs = {
+        "config_sha256": hashlib.sha256(ISSUE40_INPUT.read_bytes()).hexdigest(),
+        "issue33_table_sha256": hashlib.sha256((TABLES / "issue33_concentration_basis.csv").read_bytes()).hexdigest(),
+        "issue33_summary_sha256": hashlib.sha256((TABLES / "issue33_concentration_basis_summary.json").read_bytes()).hexdigest(),
+        "retained_profile_sha256": hashlib.sha256((ANALYSIS / "inputs/retained_reactive_case3c/film_states.csv").read_bytes()).hexdigest(),
+    }
+    expected_inputs = config["source_inputs"]
+    if (
+        actual_source_inputs["issue33_table_sha256"] != expected_inputs["issue33_table"]["sha256"]
+        or actual_source_inputs["issue33_summary_sha256"] != expected_inputs["issue33_summary"]["sha256"]
+        or actual_source_inputs["retained_profile_sha256"] != expected_inputs["retained_profile"]["sha256"]
+    ):
+        raise AssertionError("Issue 40 current source input hash disagrees with the input record.")
+    if source_inputs != actual_source_inputs:
+        raise AssertionError("Issue 40 recorded source input hashes are stale.")
+    issue33_summary = json.loads(
+        (TABLES / "issue33_concentration_basis_summary.json").read_text(encoding="utf-8")
+    )
+    if issue33_summary.get("source_table_sha256") != actual_source_inputs["issue33_table_sha256"]:
+        raise AssertionError("Issue 40 Issue 33 summary hash does not match the current Issue 33 table.")
+    if summary.get("generator_sha256") != git_blob_sha256(
+        source_commit, ANALYSIS / "scripts/resolve_issue40_apparent_true_species.py"
+    ):
+        raise AssertionError("Issue 40 generator hash does not match the recorded source commit.")
+    if actual_source_inputs["config_sha256"] != git_blob_sha256(source_commit, ISSUE40_INPUT):
+        raise AssertionError("Issue 40 input hash does not match the recorded source commit.")
+    if summary.get("source_revision_protocol") != config["reproduction"]["source_revision_protocol"]:
+        raise AssertionError("Issue 40 source revision protocol is stale.")
+
     expected_species = [
         "carbon-dioxide", "monoethanolamine", "water", "protonated-monoethanolamine",
         "carbamate-anion", "bicarbonate-anion", "carbonate-anion", "hydronium-cation", "hydroxide-anion",
@@ -172,10 +227,16 @@ def _check_issue40_apparent_true_species() -> None:
         and p1["forward_transform_status"] == "evaluated"
         and p1["inverse_replay_status"] == "identity_pass"
         and p1["forward_replay_status"] == "identity_pass"
+        and p1["replay_branch_match_status"] == "identity_pass"
+        and p1["branch_identity"] == p1["replay_branch_identity"]
         and p1["packet_density_status"] == "ePC-SAFT phase density; true-state mapping diagnostic only"
         and p1["diagnostic_density_marker"] == "source density does not define prepared or analytical basis"
         and float(p1["inverse_max_abs_residual"]) <= 1.0e-10
         and float(p1["charge_residual"]) <= 1.0e-10
+        and abs(float(p1["issue33_reconstructed_true_species_loading_mol_CO2_per_mol_MEA"]) - 0.24999627615967537) <= 1.0e-15
+        and abs(float(p1["apparent_total_inorganic_carbon_to_analytical_MEA_flow_ratio_mol_per_mol"]) - 0.25000000000000006) <= 1.0e-15
+        and abs(float(p1["apparent_minus_issue33_loading_mol_per_mol"]) - 3.7238403246819818e-06) <= 1.0e-15
+        and p1["loading_apparent_difference_status"] == "distinct inputs; neither relabelled nor fitted"
     ):
         raise AssertionError("Issue 40 Position 1 packet mapping or exact source values failed.")
     if summary["species_order"] != expected_species or summary["gates"] != {
@@ -184,12 +245,17 @@ def _check_issue40_apparent_true_species() -> None:
         "vle_fugacity_equality_imposed": False,
         "position_1_exact_source_analytical_mol_L": 4.889309897097635,
         "position_1_exact_source_free_MEA_mol_L": 2.491683471902737,
+        "position_1_issue33_reconstructed_true_species_loading": 0.24999627615967537,
+        "position_1_apparent_flow_ratio": 0.25000000000000006,
+        "position_1_apparent_minus_issue33_loading": 3.7238403246819818e-06,
+        "loading_and_apparent_ratio_distinct_not_relabelled_or_fitted": True,
         "position_1_source_basis_unresolved": True,
         "packet_evaluated_at_least_one_row": True,
         "analytical_and_elemental_residual_pass": True,
         "mole_fraction_normalization_pass": True,
         "charge_residual_pass": True,
         "deterministic_replay_pass": True,
+        "replay_branch_match_pass": True,
         "no_capture_inference": True,
         "no_thermo_or_kinetic_fit": True,
     }:
@@ -207,6 +273,17 @@ def _check_issue40_apparent_true_species() -> None:
     result_hash = hashlib.sha256(ISSUE40_TABLE.read_bytes()).hexdigest()
     if summary.get("result_table_sha256") != result_hash or summary["packet_state_evidence"]["non_evaluable_state_count"] != 31:
         raise AssertionError("Issue 40 retained result hash or historical failure accounting is stale.")
+    for _, row in data.loc[data["source_row_id"].astype(str).str.startswith("Putta")].iterrows():
+        inputs = json.loads(row["apparent_inputs_json"])
+        intervals = json.loads(row["apparent_input_reporting_intervals_json"])
+        if inputs != {"CO2": None, "H2O": None, "MEA": None, "normalized_CO2_MEA_H2O": None, "status": "not_reported_source_label_only"}:
+            raise AssertionError("Issue 40 Putta source-label row must retain structured null apparent inputs.")
+        if any(intervals[key] != {"interval": None, "status": "not_reported"} for key in ("CO2_mol_s", "MEA_mol_s", "H2O_mol_s", "temperature_K", "pressure_Pa")):
+            raise AssertionError("Issue 40 Putta source-label row must retain structured null interval metadata.")
+        if any(row[key] != "not_reported" for key in ("temperature_K", "pressure_Pa")) or any(row[key] != "not_reported_source_label_only" for key in ("temperature_reporting_interval", "pressure_reporting_interval")):
+            raise AssertionError("Issue 40 Putta source-label row has incomplete T/P not-reported metadata.")
+    if "retained-output/source-lineage consistency" not in ISSUE40_REPORT.read_text(encoding="utf-8"):
+        raise AssertionError("Issue 40 report must describe the focused validator as a lineage check.")
     if any(data[column].eq("").any() for column in ("workers", "machine", "run_id", "reproduction_command")):
         raise AssertionError("Every Issue 40 row must retain run identity and reproduction metadata.")
 

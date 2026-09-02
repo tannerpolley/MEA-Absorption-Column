@@ -234,6 +234,16 @@ python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_specie
   --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
 ```
 
+After committing the generated result artifacts separately from the source
+revision, run the retained-output/source-lineage consistency validator:
+
+```bash
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue40-only
+```
+
+This validator rehashes the current source inputs and result table against the
+recorded identities; it is not an independent physical reproduction.
+
 Install the bundle wheel in an isolated Python 3.13 environment first and run
 the bundle verifier. The resolver verifies the outer and member hashes and the
 installed wheel hash before solving. It retains all five Issue 33 source rows,
