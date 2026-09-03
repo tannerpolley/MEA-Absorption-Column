@@ -45,6 +45,7 @@ export PYTHONPATH="src"
 | `resolve_issue41_reversible_kinetics.py` | Retains source-rate laws, exact reaction projections, raw-observation availability, provider K(T), and packet-bound blockers. | No. | No direct ePC-SAFT dependency; reads the immutable handoff archive. |
 | `resolve_issue42_film_transport.py` | Retains species-resolved transport source records and the blocked Candidate A/B film-transport decision. | No. | No ePC-SAFT package or parameter identity is used. |
 | `resolve_issue36_film_input_release.py` | Retains the packet-bound Work Package B release decision and five typed state-level blockers. | No physical calculation. | Verifies the immutable handoff archive; no package import is used. |
+| `resolve_issue30_film_validation_gate.py` | Retains the supported-negative Issue 30 no-run gate across seven predeclared film-validation case classes. | No physical calculation. | Verifies the accepted Issue 36 result and no-run boundary; no package import is used. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -216,6 +217,15 @@ uv run python analyses/nccc_validation/scripts/validate_results.py --issue36-onl
 ```
 
 The result verifies the immutable bundle, records the Work Package A owner and exact #40/#41/#42 identities, and retains five blocked state rows. It creates no `data/reference/MEA/film_chemistry_inputs/2` release files; bulk equilibrium, detailed balance, rate comparison, transport comparison, uncertainty propagation, and downstream issue #30 remain blocked.
+
+Retain the Issue 30 supported-negative film-validation gate without running a physical campaign:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue30_film_validation_gate.py
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue30-only
+```
+
+The gate retains all seven predeclared case classes as `not_attempted`, distinguishes dependency-blocked or incomplete evidence from model disagreement, records zero admitted physical states, and blocks column replacement and downstream Issue 31 execution. It creates no film values or physical run outputs.
 
 Resolve the Issue 33 concentration bases and retain the source table:
 

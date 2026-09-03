@@ -45,6 +45,8 @@ inputs:
     kind: issue42_species_resolved_transport_input
   - path: inputs/issue36_film_input_release.json
     kind: issue36_packet_bound_release_input
+  - path: inputs/issue30_film_validation_gate.json
+    kind: issue30_no_run_gate_input
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -180,6 +182,12 @@ outputs:
     kind: issue36_release_summary
   - path: results/final/reports/issue36_film_input_release.md
     kind: issue36_release_report
+  - path: results/final/tables/issue30_film_validation_gate.csv
+    kind: issue30_case_class_gate_table
+  - path: results/final/tables/issue30_film_validation_gate_summary.json
+    kind: issue30_no_run_gate_summary
+  - path: results/final/reports/issue30_film_validation_gate.md
+    kind: issue30_no_run_gate_report
   - path: results/final/figures/issue17_axial_enhancement.pdf
     kind: issue17_enhancement_figure
   - path: results/final/figures/issue17_axial_flux.pdf
@@ -244,6 +252,9 @@ commands:
   issue36_film_input_release:
     - uv run python analyses/nccc_validation/scripts/resolve_issue36_film_input_release.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
     - uv run python analyses/nccc_validation/scripts/validate_results.py --issue36-only
+  issue30_film_validation_gate:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue30_film_validation_gate.py
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue30-only
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -330,6 +341,9 @@ tracked_results:
   - results/final/tables/issue36_film_input_release.csv
   - results/final/tables/issue36_film_input_release_summary.json
   - results/final/reports/issue36_film_input_release.md
+  - results/final/tables/issue30_film_validation_gate.csv
+  - results/final/tables/issue30_film_validation_gate_summary.json
+  - results/final/reports/issue30_film_validation_gate.md
 historical_outputs:
   note: Pre-0.2 runtime-option and configuration matrices are preserved for provenance only, have no supported generator, and are not current validation evidence.
   paths:
