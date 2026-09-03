@@ -130,7 +130,6 @@ def extract_ramezani(path: Path, docx_path: Path, output: Path) -> None:
             if len(values) not in (10, 11) or not values[0].startswith(("298.", "313.", "323.", "333.", "343.")):
                 continue
             T, mea, water, water_u, sugar = values[:5]
-            sugar_u = values[5] if len(values) == 11 else ""
             data = values[6:] if len(values) == 11 else values[5:]
             for loading, value in zip(("0", "0.100", "0.200", "0.300", "0.400"), data):
                 rows.append(_row(

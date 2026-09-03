@@ -91,9 +91,10 @@ def _build_chemical_potential() -> None:
     basis, derivative, _constrained, projection = module._constrained_block(bulk_state)
     interface_values = module._interface_coordinates(case, bulk_state, 1.01, independent, dependent)
     absorption = result["absorption"]["chemical_potential"]
-    matrix_text = lambda matrix: ";".join(
-        ",".join(f"{value:.17e}" for value in row) for row in matrix
-    )
+    def matrix_text(matrix):
+        return ";".join(
+            ",".join(f"{value:.17e}" for value in row) for row in matrix
+        )
     trace_rows = [
         {
             "definition_id": "integrated_boundary_response",

@@ -12,9 +12,9 @@ uv run python scripts/check_epcsaft_integration.py --mode final
 ```
 
 `pyproject.toml` pins the ePC-SAFT 0.2 wheel built from Engine commit
-`b64f6df906489cb132792641c5be2ee8f404b114`; the final integration gate
+`38e91823b6d4f26c1d549f07aaef24a089d8e16d`; the final integration gate
 requires wheel SHA-256
-`a505d20ac9019e9b4edbad16df80166b6e082170ef2a2f002d897269e756d0d9`.
+`d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a`.
 The downstream adapter uses the public `Parameters`, `Mixture`, and `State`
 API, and the package uses CppAD as its sole production derivative authority.
 Runtime derivative and Born-model switches from the superseded API are

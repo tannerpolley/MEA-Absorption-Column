@@ -69,6 +69,15 @@ Table~\ref{tab:full-ionic-speciation-timing} compares this calculation with the 
 
         \FloatBarrier
 
+    \subsection{Reactive Thermodynamic Formulation Diagnostic}
+        A separate diagnostic checked the internal thermodynamic and transport structure of the vendored nine-species reactive bundle without treating it as column-validation evidence. At \SI{313.15}{K} and \SI{101325}{Pa}, a fresh homogeneous equilibrium solve satisfied the retained balance and reaction-affinity checks; the reaction-affinity infinity norm was $1.7\times10^{-13}$. The exact composition-tangent construction had a symmetry residual of $4.7\times10^{-17}$ and a positive constrained Hessian in the retained evaluation, but its condition number was approximately $5.3\times10^{10}$ because hydronium is a trace species.
+
+        The exploratory transport closure forms a symmetric pair-friction mobility from labeled diffusivity anchors, then removes total-molar-flow and electrical-current modes. It recovered the ideal binary Fick limit, produced nonnegative entropy production, and gave zero total-flux and zero-current residuals at approximately $10^{-26}$ in the local check. These are algebraic and limiting-behavior checks on the formulation, not measurements of the nine-species mobility matrix. The inorganic-ion and hydronium diffusivities remain bounded assumptions, and the forward rate prefactors retain the source concentration basis. With a 100-micrometre film thickness, the local CO$_2$ diffusion time was \SI{11.1}{s} while the detailed-balance reaction-time estimate was \SI{1.45e-3}{s}, giving a local Damkoehler estimate of $7.6\times10^{3}$. The scale separation indicates a stiff fast-reaction manifold and motivates reduction or continuation before any column coupling.
+
+        The diagnostic therefore supports internal thermodynamic consistency and identifies the numerical stiffness expected from the proposed formulation. It does not establish predictive reactive chemistry, a measured mobility law, physical film flux, or packed-column capture; those claims require source-complete transport and kinetics plus held-out film observations.
+
+        \FloatBarrier
+
     \subsection{Limitations and Future Work}
         The absorber model is a simplified one-bed benchmark built from literature submodels for reaction enhancement, transport properties, hydraulics, and heat transfer. The primary physical-comparison set contains one-bed NCCC cases from the 2014 K and 2017 C campaigns. Attempted two-bed 2017 D cases and higher-height cases did not satisfy the stated solver, boundary-residual, physical-capture, and runtime criteria, so they are excluded from the reported aggregate. The thermodynamic conclusions remain conditional on the selected ePC-SAFT parameters and fixed transport correlations; this work includes neither parameter uncertainty propagation nor transport-correlation uncertainty propagation.
 

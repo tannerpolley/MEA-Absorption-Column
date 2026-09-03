@@ -1,0 +1,86 @@
+\documentclass[10pt,landscape,letterpaper]{article}
+\usepackage[margin=0.38in]{geometry}
+\usepackage{booktabs,tabularx,array,xcolor,amssymb,enumitem}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\definecolor{navy}{HTML}{173B68}
+\definecolor{pale}{HTML}{EAF2F8}
+\definecolor{partial}{HTML}{A66A00}
+\definecolor{open}{HTML}{657184}
+\setlength{\parindent}{0pt}
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.12}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\status}[2]{\textcolor{#1}{#2}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\begin{document}
+\color{black}
+\begin{flushleft}
+{\color{navy}\fontsize{23}{25}\selectfont\bfseries Reviewer Comment Progress Summary\par}
+{\large Current evidence reconciliation - 2 September 2026\par}
+\end{flushleft}
+
+\vspace{5pt}
+\noindent\colorbox{pale}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\textbf{Assessment basis.} This update combines the current manuscript and response letter with retained results through 2 September 2026: merged Issues 33-36, the Issue 30 gate worktree, and exploratory chemical-potential-film work. A branch/worktree result is counted only at its stated claim boundary. Scores are internal assessments, not reviewer-assigned grades. Scale: 5 = complete, 4 = strong, 3 = partial, 2 = weak, 1 = absent.}}
+
+\vspace{7pt}
+{\color{navy}\Large Category Assessment\par}
+\vspace{2pt}
+\small
+\begin{tabularx}{\linewidth}{@{}P{1.45in}P{0.84in}P{0.76in}P{0.46in}P{0.56in}Y@{}}
+\toprule
+\textbf{Category} & \textbf{Comments} & \textbf{Status} & \textbf{Before} & \textbf{Current} & \textbf{Current evidence and remaining work}\\
+\midrule
+Thermodynamic theory and scope & R1.1-R1.4 & \status{green!50!black}{Addressed} & 1.5, F & 4.8, A & Scope separates reaction equilibrium, transport, and molecular fugacity; the workflow and model context are explicit.\\[2pt]
+Parameters, provenance, and sensitivity & R1.5-R1.8; R2.3 & \status{partial}{Partial} & 1.4, F & 3.0, C & The hash-consistent candidate bundle and 131-row regression are retained, but basis admission, independent thermodynamic validation, uncertainty/covariance, complete provenance, and pressure/VLE evidence remain open. No predictive parameter set is authorized for column transfer.\\[2pt]
+Transport-property uncertainty & R1.9 & \status{partial}{Partial} & 2.0, D & 3.5, C+ & Issues 35/42 catalogue source correlations, units, domains, and uncertainty statements. A provisional PSD Onsager closure now passes conservation/current/entropy checks, but species-resolved ionic diffusivities, source-complete cross-friction data, and propagated transport uncertainty remain absent; no physical film flux is compared.\\[2pt]
+Numerical convergence and cost & R1.10-R1.11 & \status{partial}{Partial} & 2.0, D & 3.0, C & Fixed-chemistry rows and diagnostic BVP/film calculations run, but activity-coupled chemistry is not a production lane. Iteration/refinement counts, memory, and same-hardware profiling remain incomplete.\\[2pt]
+Other amines and transferability & R1.12; R2.6 & \status{partial}{Partial} & 1.0, F & 3.7, B & Solvent-specific requirements are described. No second-solvent demonstration or held-out calibration workflow has been shown.\\[2pt]
+Limitations and model context & R1.13-R1.14; R2.2 & \status{green!50!black}{Addressed} & 2.0, D & 4.8, A & Claim boundaries, literature gap, and comparisons with eNRTL, Kent-Eisenberg, CPA, and ePC-SAFT are explicit.\\[2pt]
+Formatting and references & R2.1 & \status{green!50!black}{Addressed} & 2.0, D & 5.0, A & Numeric references are in place and citations begin with [1].\\[2pt]
+Validation breadth & R2.4 & \status{partial}{Partial} & 2.5, D & 3.4, C+ & Eighteen fixed-chemistry rows pass across K18, K19, and 1C-7C; K20 is rejected. Issue 40 evaluates one packet state but admits zero scientific rows; independent cross-facility validation remains absent.\\[2pt]
+Operating study and optimization & R2.5 & \status{open}{Open} & 1.0, F & 1.0, F & Still needed: a controlled operating envelope, constraints, objective, sensitivity study, and reproducible optimization.\\[2pt]
+Fully predictive reactive ePC-SAFT & Cross-cutting endpoint & \status{open}{Open} & 1.0, F & 1.0, F & The bundle is loadable and packet-replayable, but Issue 40 has 0/5 scientifically admitted rows; Issues 41/42 and release Issue 36 remain supported-negative or blocked. No validated predictive reactive chemistry or column transfer is established.\\[2pt]
+Physical reactive film and column transfer & Issues 30, 36, 42 & \status{open}{Open} & 1.0, F & 1.0, F & Issue 30 records seven predeclared classes as not attempted because dependencies are blocked. No physical film flux, model disagreement, or packed-column adoption is demonstrated.\\
+\bottomrule
+\end{tabularx}
+
+\newpage
+{\color{navy}\Large Overall Assessment\par}
+\vspace{2pt}
+\small
+\begin{tabularx}{\linewidth}{@{}P{2.45in}P{0.8in}P{1.0in}Y@{}}
+\toprule
+\textbf{Assessment} & \textbf{Before} & \textbf{Current} & \textbf{Interpretation}\\
+\midrule
+Overall response to all requested reviewer items & 1.8 / 5, D & 3.1 / 5, C & Theory, scope, limitations, fixed-chemistry reproducibility, source records, and formatting improved. The current evidence does not support predictive reactive chemistry, physical film validation, independent external validation, or optimization.\\[6pt]
+Current re-scoped fixed-chemistry benchmark & 1.0 / 5, F & 4.3 / 5, B+/A- & The benchmark has a clear claim boundary and stronger reproducibility evidence: 18 accepted rows across K18, K19, and 1C-7C for both closures, with K20 retained as rejected.\\[6pt]
+Fully predictive reactive ePC-SAFT endpoint & 1.0 / 5, F & 1.0 / 5, F & A loadable bundle, stable packet replay, and converged prototypes are feasibility/readiness evidence only. The endpoint still lacks admitted basis, complete kinetics and transport, pressure-domain replay, independent validation, and column transfer.\\[6pt]
+Physical reactive-film / column-adoption gate & 1.0 / 5, F & 1.0 / 5, F & Issue 36 has 0/5 admitted film-input states and a blocked release; Issue 30 therefore launches no physical campaign. Exploratory source and aggregate film evidence does not establish a film model or capture result.\\
+\bottomrule
+\end{tabularx}
+
+\vspace{9pt}
+{\color{navy}\Large Verified Updates and Claim Boundaries\par}
+\vspace{3pt}
+\begin{itemize}[leftmargin=0.18in,itemsep=3pt,topsep=2pt]
+\item \textbf{Genuine progress:} the fixed-chemistry manuscript is reconciled, with 18 accepted rows and K20 visibly rejected; Issues 33-36 preserve source-faithful mapping, kinetics, transport, and release records; and the immutable candidate bundle is internally hash-consistent.
+\item \textbf{Issue 40:} one nine-species packet state is numerically replayable, but all five declared rows remain basis-unresolved and the scientific-admission count is zero.
+\item \textbf{Issues 41/42 and 36:} source-rate and transport evidence is retained, but detailed balance, reaction timescales, physical transport, uncertainty propagation, and film-input release are not attempted; Issue 36 creates zero release files.
+\item \textbf{Issue 30:} all seven predeclared validation classes are not attempted because the dependency gate is blocked. This is a supported-negative no-run decision, not evidence of model agreement or disagreement.
+\item \textbf{Reactive formulation diagnostic:} the vendored bundle gives a fresh homogeneous equilibrium with reaction-affinity residual $1.7\times10^{-13}$; its exact tangent is symmetric and positive-curvature, and the provisional Onsager closure enforces zero total flux/current with positive entropy production. A reaction-to-diffusion time-scale ratio of about $7.6\times10^{3}$ identifies a stiff fast-reaction manifold. These are internal consistency checks only; the assumed ion diffusivities, source-basis rate prefactors, row-level flux validation, and packed-column capture evidence remain absent.
+\item \textbf{Exploratory film branch:} Putta aggregate AARD values, Dugas dimensional film rows, and tracer/self-diffusion anchors improve source awareness only. They are not promoted to predictive or validation claims.
+\end{itemize}
+
+\vspace{4pt}
+\noindent\fcolorbox{navy}{pale}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Bottom line.} The revised record is materially stronger as a bounded fixed-chemistry benchmark and as a map of what is missing. It is not materially closer to an accepted fully predictive reactive ePC-SAFT absorber: that endpoint remains open at 1.0/5 until the scientific admission and downstream film/column gates pass.}}
+
+\vfill
+\scriptsize\textit{Source context: integration branch \texttt{codex/reactive-bundle-film} at 31623bb, exact ePC-SAFT bundle diagnostic, Issue 30 gate at 298d2ac, and exploratory film evidence through 2 September 2026.}
+\end{document}
