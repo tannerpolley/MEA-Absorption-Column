@@ -37,6 +37,16 @@ outputs:
     kind: campaign_capture_comparison_figure
   - path: results/final/figures/column_film_capture_comparison.pdf
     kind: campaign_capture_comparison_figure
+  - path: results/final/tables/column_film_temperature_metrics.csv
+    kind: six_case_liquid_temperature_tap_metrics
+  - path: results/final/figures/column_film_temperature_overlay.png
+    kind: six_case_reactive_film_temperature_figure
+  - path: results/final/figures/column_film_temperature_overlay.pdf
+    kind: six_case_reactive_film_temperature_figure
+  - path: results/final/figures/column_film_3c_temperature.png
+    kind: case_3c_reactive_film_temperature_figure
+  - path: results/final/figures/column_film_3c_temperature.pdf
+    kind: case_3c_reactive_film_temperature_figure
   - path: results/final/tables/putta2016_table4_aard_plot.csv
     kind: exact_plot_data
   - path: results/final/tables/chemical_potential_isolation_plot.csv

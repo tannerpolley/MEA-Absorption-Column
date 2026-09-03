@@ -72,4 +72,4 @@ uv run python analyses/reactive_film_evidence/scripts/promote_column_film_result
 uv run python analyses/reactive_film_evidence/scripts/render_column_film_comparison.py
 ```
 
-The main column outputs are `results/final/tables/column_film_capture_comparison.csv`, `results/final/tables/column_film_nodes.csv`, `results/final/tables/column_film_axial_profiles.csv`, and `results/final/figures/column_film_capture_comparison.{png,pdf}`. The earlier source-evidence panels remain explicitly labeled non-predictive or non-validation where a physical scale or complete transport closure is missing.
+The main column outputs are `results/final/tables/column_film_capture_comparison.csv`, `results/final/tables/column_film_nodes.csv`, `results/final/tables/column_film_axial_profiles.csv`, `results/final/tables/column_film_temperature_metrics.csv`, and the `column_film_capture_comparison`, `column_film_temperature_overlay`, and `column_film_3c_temperature` figures in both PNG and PDF formats. The earlier source-evidence panels remain explicitly labeled non-predictive or non-validation where a physical scale or complete transport closure is missing.

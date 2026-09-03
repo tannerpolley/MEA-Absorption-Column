@@ -75,9 +75,9 @@ def _render_temperature_figures(comparison: pd.DataFrame) -> None:
             "tap_max_abs_K": float(np.max(np.abs(residual))),
             "outer_iteration_converged": bool(row["outer_iteration_converged"]),
         })
-        status = "" if row["outer_iteration_converged"] else "; outer limit"
+        status = "" if row["outer_iteration_converged"] else "; outer field not converged"
         ax.plot(case_profile["position"], case_profile["liquid_temperature_K"], color="#CC6677", linewidth=2.0,
-                label=f"film liquid ({row['film_capture_pct']:.1f}%, err {row['film_capture_error_pp']:+.1f}{status})")
+                label=f"film: {row['film_capture_pct']:.1f}%; capture error {row['film_capture_error_pp']:+.1f} pp{status}")
         ax.scatter(positions, taps, marker="x", s=38, color="black", label="NCCC liquid taps")
         ax.set_title(f"{case_id} reactive-film temperature profile")
         ax.grid(alpha=0.24)
@@ -100,7 +100,7 @@ def _render_temperature_figures(comparison: pd.DataFrame) -> None:
     row = metrics_frame.loc[metrics_frame["case_id"] == case_id].iloc[0]
     fig, ax = plt.subplots(figsize=(7.4, 4.4))
     ax.plot(case_profile["position"], case_profile["liquid_temperature_K"], color="#CC6677", linewidth=2.15,
-            label=f"reactive film ({row['film_capture_pct']:.1f}%, err {row['film_capture_error_pp']:+.1f})")
+            label=f"film: {row['film_capture_pct']:.1f}%; capture error {row['film_capture_error_pp']:+.1f} pp")
     ax.scatter(taps.index.astype(float), taps, marker="x", s=48, color="black", label="NCCC liquid taps")
     ax.set(title="3C reactive-film temperature profile", xlabel="Normalized column position", ylabel="Temperature (K)")
     ax.grid(alpha=0.24)
