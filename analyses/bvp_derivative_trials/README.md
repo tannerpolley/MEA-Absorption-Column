@@ -14,7 +14,10 @@ Issue #22's CasADi probe wraps the live seven-state SciPy column RHS without
 copying equations. It retains fresh SciPy reference diagnostics and all five
 outer-film-node rows for K18, 1C, and 5C. The probe rejects the candidate when
 CasADi cannot form a checked RHS Jacobian; it does not enable CasADi finite
-differences or add CasADi to project dependencies.
+differences or add CasADi to project dependencies. For interface exploration,
+`--diagnostic-fd-ipopt` supplies a deliberately non-admissible finite-difference
+Callback Jacobian and runs a five-point IPOPT transcription; this proves the
+NLP seam is workable while keeping the adoption decision negative.
 
 Run the bounded probe with the optional analysis dependency installed:
 
@@ -29,6 +32,9 @@ spatial BVP; direct CasADi coupling would additionally require a differentiable
 contract through its nested reactive-state and quadrature callbacks.
 
 The retained campaign does not run or interpret the Issue #16 physical 21-state reactive-film calculation. It changes no thermodynamic, chemistry, kinetic, transport, hydraulic, area, or acceptance parameter.
+
+The exact derivative chain still needed for an admissible route is recorded in
+`results/final/reports/issue22_casadi_comparison.md`.
 
 Run the bounded campaign after committing the executable code:
 

@@ -27,6 +27,13 @@ from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import (
     _column_rhs,
     _physical_rhs_to_solver_rhs,
 )
+from mea_absorption_column.BVP.robust_core import (
+    POSITIVE_SOLVER_IDXS,
+    POSITIVE_TRANSFORM_CEILING,
+    POSITIVE_TRANSFORM_FLOOR,
+    scaled_physical_to_solver,
+    solver_to_scaled_physical,
+)
 from mea_absorption_column.Thermodynamics import thermo_models
 
 
@@ -77,14 +84,30 @@ def _number(value: str) -> object:
         return value
 
 
+def _solver_to_scaled_physical_casadi(y_solver, transform_mode: str):
+    if transform_mode in {None, "", "none", "bounded_guarded_raw_state", "raw"}:
+        return y_solver
+    if transform_mode != "positive_flow_pressure":
+        raise ValueError(f"Unknown transform_mode: {transform_mode}")
+    values = [y_solver[index] for index in range(7)]
+    for index in POSITIVE_SOLVER_IDXS:
+        values[int(index)] = POSITIVE_TRANSFORM_FLOOR + (
+            POSITIVE_TRANSFORM_CEILING - POSITIVE_TRANSFORM_FLOOR
+        ) / (1.0 + ca.exp(-y_solver[int(index)]))
+    return ca.vertcat(*values)
+
+
 class _LiveColumnRhs(ca.Callback):
     """CasADi value callback for the unchanged scaled SciPy column RHS."""
 
-    def __init__(self, parameters, transform_mode: str, guard_rhs: bool):
+    def __init__(self, parameters, transform_mode: str, guard_rhs: bool, diagnostic_fd: bool = False):
         self.parameters = parameters
         self.transform_mode = transform_mode
         self.guard_rhs = guard_rhs
+        self.diagnostic_fd = diagnostic_fd
         self.evaluations = 0
+        self.jacobian_evaluations = 0
+        self.derivative_callbacks = []
         super().__init__()
         self.construct("live_column_rhs", {})
 
@@ -103,6 +126,10 @@ class _LiveColumnRhs(ca.Callback):
     def eval(self, arguments):
         self.evaluations += 1
         payload = np.asarray(arguments[0], dtype=float).reshape(-1)
+        return [ca.DM(self.evaluate_payload(payload))]
+
+    def evaluate_payload(self, payload):
+        payload = np.asarray(payload, dtype=float).reshape(-1)
         z = float(payload[0])
         y_solver = payload[1:]
         rhs = _column_rhs(
@@ -112,7 +139,51 @@ class _LiveColumnRhs(ca.Callback):
             transform_mode=self.transform_mode,
             guard_rhs=self.guard_rhs,
         )
-        return [ca.DM(_physical_rhs_to_solver_rhs(y_solver, rhs, self.transform_mode))]
+        return _physical_rhs_to_solver_rhs(y_solver, rhs, self.transform_mode)
+
+    def has_jacobian(self):
+        return self.diagnostic_fd
+
+    def get_jacobian(self, name, _inames, _onames, opts):
+        derivative = _FiniteDifferenceJacobian(self, name, opts)
+        self.derivative_callbacks.append(derivative)
+        return derivative
+
+
+class _FiniteDifferenceJacobian(ca.Callback):
+    """Diagnostic-only Callback Jacobian; Issue #22 does not admit this."""
+
+    def __init__(self, parent, name, opts):
+        self.parent = parent
+        super().__init__()
+        self.construct(f"{name}_diagnostic_fd", opts)
+
+    def get_n_in(self):
+        return 2  # nominal callback input and nominal callback output
+
+    def get_n_out(self):
+        return 1
+
+    def get_sparsity_in(self, index):
+        return self.parent.get_sparsity_in(0) if index == 0 else self.parent.get_sparsity_out(0)
+
+    def get_sparsity_out(self, _index):
+        return ca.Sparsity.dense(7, 8)
+
+    def eval(self, arguments):
+        self.parent.jacobian_evaluations += 1
+        payload = np.asarray(arguments[0], dtype=float).reshape(-1)
+        jacobian = np.empty((7, 8), dtype=float)
+        step = np.sqrt(np.finfo(float).eps) * (1.0 + np.abs(payload))
+        for index, h in enumerate(step):
+            plus = payload.copy()
+            minus = payload.copy()
+            plus[index] += h
+            minus[index] -= h
+            jacobian[:, index] = (
+                self.parent.evaluate_payload(plus) - self.parent.evaluate_payload(minus)
+            ) / (2.0 * h)
+        return [ca.DM(jacobian)]
 
 
 def _capture_scipy_run(dataframe, data_type: str, case_id: str) -> dict[str, object]:
@@ -123,10 +194,14 @@ def _capture_scipy_run(dataframe, data_type: str, case_id: str) -> dict[str, obj
         captured.update(
             parameters=parameters,
             y_a=np.asarray(y_a, dtype=float).copy(),
+            y_b=np.asarray(y_b, dtype=float).copy(),
             z=np.asarray(z, dtype=float).copy(),
             settings=dict(settings or {}),
         )
-        return original(y_a, y_b, z, parameters, settings=settings)
+        solved = original(y_a, y_b, z, parameters, settings=settings)
+        captured["reference_profile_scaled"] = np.asarray(solved[0], dtype=float).copy()
+        captured["reference_z"] = np.asarray(solved[1], dtype=float).copy()
+        return solved
 
     run_model_module.scipy_BVP_solve = wrapped
     started = time.perf_counter()
@@ -143,6 +218,7 @@ def _capture_scipy_run(dataframe, data_type: str, case_id: str) -> dict[str, obj
                 "tol": 0.1,
                 "bc_tol": 0.001,
                 "max_nodes": 1000,
+                "return_internal_profile": True,
             },
         )
     finally:
@@ -153,7 +229,107 @@ def _capture_scipy_run(dataframe, data_type: str, case_id: str) -> dict[str, obj
     return result | {"_captured": captured}
 
 
-def _casadi_attempt(run: dict[str, object]) -> dict[str, object]:
+def _diagnostic_fd_ipopt(captured: dict[str, object], callback: _LiveColumnRhs) -> dict[str, object]:
+    parameters = captured["parameters"]
+    settings = captured["settings"]
+    transform_mode = str(settings.get("transform_mode", "bounded_guarded_raw_state"))
+    # scipy_BVP_solve returns its profile sampled on the original requested z;
+    # the adaptive mesh is retained separately in its internal diagnostics.
+    z_reference = np.asarray(captured["z"], dtype=float)
+    profile_reference = np.asarray(captured["reference_profile_scaled"], dtype=float)
+    grid = np.linspace(float(z_reference[0]), float(z_reference[-1]), 5)
+    profile = np.vstack([
+        np.interp(grid, z_reference, profile_reference[row])
+        for row in range(profile_reference.shape[0])
+    ])
+    initial = np.column_stack([
+        scaled_physical_to_solver(profile[:, index], transform_mode=transform_mode)
+        for index in range(grid.size)
+    ])
+
+    states = ca.MX.sym("X", 7, grid.size)
+    constraints = []
+    for index in range(grid.size - 1):
+        left = callback(ca.vertcat(float(grid[index]), states[:, index]))
+        right = callback(ca.vertcat(float(grid[index + 1]), states[:, index + 1]))
+        step = float(grid[index + 1] - grid[index])
+        constraints.append(states[:, index + 1] - states[:, index] - 0.5 * step * (left + right))
+    defect = ca.vertcat(*constraints)
+
+    y_a = np.asarray(captured["y_a"], dtype=float)
+    y_b = np.asarray(captured["y_b"], dtype=float)
+    scales = np.asarray(parameters[0], dtype=float)
+    bottom = _solver_to_scaled_physical_casadi(states[:, 0], transform_mode)
+    top = _solver_to_scaled_physical_casadi(states[:, -1], transform_mode)
+    boundary = ca.vertcat(
+        (top[0] - y_b[0]) / scales[0],
+        (top[1] - y_b[1]) / scales[1],
+        (bottom[2] - y_a[2]) / scales[2],
+        (bottom[3] - y_a[3]) / scales[3],
+        (top[4] - y_b[4]) / scales[4],
+        (bottom[5] - y_a[5]) / scales[5],
+        (bottom[6] - y_a[6]) / scales[6],
+    )
+    nlp = {"x": ca.vec(states), "f": ca.DM(0), "g": ca.vertcat(defect, boundary)}
+    solver = ca.nlpsol(
+        "issue22_fd_diagnostic",
+        "ipopt",
+        nlp,
+        {
+            "ipopt.print_level": 0,
+            "print_time": False,
+            "ipopt.max_iter": 80,
+            "ipopt.tol": 1.0e-7,
+            "ipopt.acceptable_tol": 1.0e-5,
+            # The disposable RHS callback supplies first derivatives only.
+            # An admissible production path must either expose second-order
+            # information or make this explicit Hessian choice part of its
+            # solver contract.
+            "ipopt.hessian_approximation": "limited-memory",
+        },
+    )
+    started = time.perf_counter()
+    try:
+        solved = solver(
+            x0=ca.vec(ca.DM(initial)),
+            lbg=0.0,
+            ubg=0.0,
+        )
+        stats = solver.stats()
+        status = "solved" if bool(stats.get("success", False)) else "failed"
+        solution = np.asarray(solved["x"], dtype=float).reshape(7, grid.size, order="F")
+        residual = np.asarray(solved["g"], dtype=float).reshape(-1)
+        return {
+            "status": status,
+            "runtime_s": time.perf_counter() - started,
+            "ipopt_return_status": stats.get("return_status", ""),
+            "ipopt_iterations": int(stats.get("iter_count", -1)),
+            "primal_infeasibility_inf": float(np.linalg.norm(residual, ord=np.inf)),
+            "defect_inf": float(np.linalg.norm(residual[: defect.shape[0]], ord=np.inf)),
+            "boundary_inf": float(np.linalg.norm(residual[defect.shape[0] :], ord=np.inf)),
+            "reference_initial_defect_inf": float(
+                np.linalg.norm(np.asarray(ca.Function("defect", [states], [defect])(ca.DM(initial))).reshape(-1), ord=np.inf)
+            ),
+            "callback_evaluations": callback.evaluations,
+            "callback_jacobian_evaluations": callback.jacobian_evaluations,
+            "solution_state_inf_norm": float(np.linalg.norm(solution, ord=np.inf)),
+            "derivative_status": "diagnostic_finite_difference_only",
+            "admissible": False,
+        }
+    except Exception as exc:
+        return {
+            "status": "failed",
+            "runtime_s": time.perf_counter() - started,
+            "ipopt_return_status": f"{type(exc).__name__}: {exc}".splitlines()[0],
+            "ipopt_exception": str(exc),
+            "callback_evaluations": callback.evaluations,
+            "callback_jacobian_evaluations": callback.jacobian_evaluations,
+            "derivative_status": "diagnostic_finite_difference_only",
+            "admissible": False,
+        }
+
+
+def _casadi_attempt(run: dict[str, object], diagnostic_fd_ipopt: bool = False) -> dict[str, object]:
     captured = run.pop("_captured")
     parameters = captured["parameters"]
     settings = captured["settings"]
@@ -161,6 +337,7 @@ def _casadi_attempt(run: dict[str, object]) -> dict[str, object]:
         parameters,
         str(settings.get("transform_mode", "bounded_guarded_raw_state")),
         bool(settings.get("guard_rhs", True)),
+        diagnostic_fd=diagnostic_fd_ipopt,
     )
     y0 = np.asarray(captured["y_a"], dtype=float)
     z0 = np.asarray(captured["z"], dtype=float)
@@ -182,10 +359,9 @@ def _casadi_attempt(run: dict[str, object]) -> dict[str, object]:
         ca.jacobian(defect, ca.vec(states))
     except Exception as exc:  # typed negative result required by Issue #22
         jacobian_error = f"{type(exc).__name__}: {exc}".splitlines()[0]
-    if jacobian_error is None:
-        raise RuntimeError("unexpectedly obtained an unchecked live RHS Jacobian")
+    jacobian_status = "diagnostic_fd_checked" if jacobian_error is None else "missing_checked_derivative"
 
-    return {
+    result = {
         "callback_value_status": "evaluated",
         "callback_value_inf_norm": float(np.linalg.norm(value, ord=np.inf)),
         "callback_eval_runtime_s": callback_eval_s,
@@ -195,10 +371,13 @@ def _casadi_attempt(run: dict[str, object]) -> dict[str, object]:
         "direct_collocation_state_dimension": 7,
         "direct_collocation_defect_count": int(defect.shape[0]),
         "ipopt_available": bool(ca.has_nlpsol("ipopt")),
-        "jacobian_status": "missing_checked_derivative",
+        "jacobian_status": jacobian_status,
         "jacobian_error": jacobian_error,
-        "ipopt_status": "not_attempted_missing_derivative",
+        "ipopt_status": "not_attempted_missing_derivative" if jacobian_error else "available_diagnostic_only",
     }
+    if diagnostic_fd_ipopt:
+        result["diagnostic_fd_ipopt"] = _diagnostic_fd_ipopt(captured, callback)
+    return result
 
 
 def _eos_derivative_probe() -> dict[str, object]:
@@ -221,6 +400,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--case-ids", nargs="+", default=["K18", "1C", "5C"])
     parser.add_argument("--output", type=Path, default=RESULT)
+    parser.add_argument(
+        "--diagnostic-fd-ipopt",
+        action="store_true",
+        help="Run a non-admissible finite-difference Callback Jacobian through IPOPT.",
+    )
     args = parser.parse_args()
     campaign_rows = _read_campaign_rows(args.case_ids)
     campaign_nodes = _read_campaign_nodes(args.case_ids)
@@ -241,7 +425,7 @@ def main() -> int:
                 },
                 "retained_outer_fixed_point": campaign_rows.get(case_id),
                 "retained_outer_node_diagnostics": campaign_nodes.get(case_id, []),
-                "casadi_probe": _casadi_attempt(run),
+                "casadi_probe": _casadi_attempt(run, diagnostic_fd_ipopt=args.diagnostic_fd_ipopt),
             }
         )
 
