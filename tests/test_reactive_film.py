@@ -42,18 +42,24 @@ def test_constrained_onsager_mobility_is_psd_and_recovers_binary_fick_limit():
 
 
 def test_constrained_onsager_mobility_enforces_zero_current_without_equal_ions():
-    composition = np.array([0.8, 0.1, 0.1])
-    charges = np.array([0.0, 1.0, -1.0])
-    pairs = binary_diffusivities_from_species([2.0e-9, 8.4e-10, 6.8e-10])
+    composition = np.array([0.7, 0.1, 0.1, 0.1])
+    charges = np.array([0.0, 1.0, -1.0, 0.0])
+    stationary = np.array([0.0, 0.0, 0.0, 1.0])
+    pairs = binary_diffusivities_from_species([2.0e-9, 8.4e-10, 6.8e-10, 8.8e-10])
     mobility = constrained_onsager_mobility(
-        composition, 50000.0, pairs, charge_numbers=charges
+        composition,
+        50000.0,
+        pairs,
+        charge_numbers=charges,
+        additional_flux_constraints=stationary,
     )
-    force = np.array([0.2, -0.4, 0.1])
+    force = np.array([0.2, -0.4, 0.1, 0.3])
     flux = -mobility @ force
 
     assert np.linalg.eigvalsh(mobility).min() >= -1.0e-18
     assert flux.sum() == pytest.approx(0.0, abs=1.0e-18)
     assert charges @ flux == pytest.approx(0.0, abs=1.0e-18)
+    assert stationary @ flux == pytest.approx(0.0, abs=1.0e-18)
     assert -(flux @ force) >= 0.0
 
 

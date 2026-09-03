@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import math
+import platform
+import subprocess
+import sys
 import time
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
@@ -22,6 +26,9 @@ CASE_FILES = {
 }
 CHARGES = np.asarray((0, 0, 0, 1, -1, -1, -2, 1, -1), dtype=float)
 CO2_COMPONENT = np.asarray((1, 0, 0, 0, 1, 1, 1, 0, 0), dtype=float)
+MEA_COMPONENT = np.asarray((0, 1, 0, 1, 1, 0, 0, 0, 0), dtype=float)
+WATER_COMPONENT = np.asarray((0, 0, 1, 0, 0, 1, 1, 1, 1), dtype=float)
+STATIONARY_COMPONENTS = np.vstack((MEA_COMPONENT, WATER_COMPONENT))
 _WORKER_STATE_PATHS = {}
 
 
@@ -148,6 +155,7 @@ def _film_node(job):
             film_thickness_m=values["film_thickness_m"],
             co2_index=0,
             charge_numbers=CHARGES,
+            stationary_component_coefficients=STATIONARY_COMPONENTS,
             quadrature_points=5,
             maximum_quadrature_points=65,
             quadrature_tolerance=1.0e-3,
@@ -170,6 +178,9 @@ def _film_node(job):
         "reactive_bulk_fugacity_Pa": bulk_fugacity,
         "quadrature_relative_change": result.quadrature_relative_change,
         "maximum_interface_residual": result.maximum_interface_residual,
+        "maximum_stationary_component_flux_residual": (
+            result.maximum_stationary_component_flux_residual
+        ),
         "maximum_tangent_directional_error": result.maximum_tangent_directional_error,
         "current_column_flux_mol_m2_s": values["current_column_flux_mol_m2_s"],
     }
@@ -194,10 +205,20 @@ def _sample_jobs(candidate: Path, profiles, positions):
     return jobs
 
 
-def _run_case(case_id, dataframe, data_type, candidate, positions, iterations, workers, relaxation):
+def _run_case(
+    case_id, dataframe, data_type, candidate, positions, iterations, workers,
+    relaxation, mesh_points, tolerance, maximum_nodes,
+):
     started = time.perf_counter()
     run = list(dataframe.index).index(case_id)
-    common = dict(mesh_points=11, tol=0.5, bc_tol=0.001, max_nodes=500, return_profiles=True, return_internal_profile=True)
+    common = dict(
+        mesh_points=mesh_points,
+        tol=tolerance,
+        bc_tol=0.001,
+        max_nodes=maximum_nodes,
+        return_profiles=True,
+        return_internal_profile=True,
+    )
     baseline = run_model(dataframe, method="scipy-bvp", thermo_model="epcsaft_ionic",
                          data_type=data_type, run=run,
                          return_details=True, solver_settings=common)
@@ -287,6 +308,12 @@ def _run_case(case_id, dataframe, data_type, candidate, positions, iterations, w
         "observed_capture_pct": observed,
         "baseline_capture_pct": baseline["capture_pct"],
         "baseline_capture_error_pp": baseline["capture_pct"] - observed,
+        "baseline_boundary_residual_norm": baseline["boundary_residual_norm"],
+        "baseline_co2_conservation_relative_residual": baseline["co2_conservation_relative_residual"],
+        "baseline_h2o_conservation_relative_residual": baseline["h2o_conservation_relative_residual"],
+        "baseline_solver_max_rms_residual": baseline["solver_max_rms_residual"],
+        "baseline_dense_ode_residual_max": baseline["dense_ode_residual_max"],
+        "baseline_solver_final_nodes": baseline["solver_final_nodes"],
         "film_capture_pct": current["capture_pct"],
         "film_capture_error_pp": current["capture_pct"] - observed,
         "capture_change_percentage_points": current["capture_pct"] - baseline["capture_pct"],
@@ -294,6 +321,11 @@ def _run_case(case_id, dataframe, data_type, candidate, positions, iterations, w
         "message": current["message"],
         "boundary_residual_norm": current["boundary_residual_norm"],
         "boundary_residual_components": current["boundary_residual_components"],
+        "film_co2_conservation_relative_residual": current["co2_conservation_relative_residual"],
+        "film_h2o_conservation_relative_residual": current["h2o_conservation_relative_residual"],
+        "film_solver_max_rms_residual": current["solver_max_rms_residual"],
+        "film_dense_ode_residual_max": current["dense_ode_residual_max"],
+        "film_solver_final_nodes": current["solver_final_nodes"],
         "outer_iterations": max((row["outer_iteration"] for row in rows), default=0),
         "final_capture_change_pp": abs(current["capture_pct"] - previous_capture),
         "final_conductance_change_relative": final_conductance_change,
@@ -305,6 +337,9 @@ def _run_case(case_id, dataframe, data_type, candidate, positions, iterations, w
         ),
         "fresh_worker_retries": sum(row["fresh_worker_retry"] for row in rows),
         "maximum_temperature_K": max(row["temperature_K"] for row in rows),
+        "final_film_nodes_above_R5_source_domain": sum(
+            row["temperature_K"] > 323.15 for row in final_rows
+        ),
         "runtime_s": time.perf_counter() - started,
     }
     profile_rows = []
@@ -332,6 +367,9 @@ def main():
     parser.add_argument("--outer-iterations", type=int, default=3)
     parser.add_argument("--workers", type=int, default=5)
     parser.add_argument("--relaxation", type=float, default=0.25)
+    parser.add_argument("--mesh-points", type=int, default=21)
+    parser.add_argument("--tol", type=float, default=0.1)
+    parser.add_argument("--max-nodes", type=int, default=1000)
     parser.add_argument("--output-dir", type=Path)
     args = parser.parse_args()
     positions = np.linspace(0.0, 1.0, args.film_nodes)
@@ -342,7 +380,8 @@ def main():
         dataframe = pd.read_csv(case_file, index_col=0)
         summary, case_nodes, case_profile = _run_case(
             case_id, dataframe, data_type, BUNDLE, positions,
-            args.outer_iterations, args.workers, args.relaxation
+            args.outer_iterations, args.workers, args.relaxation,
+            args.mesh_points, args.tol, args.max_nodes,
         )
         summaries.append(summary)
         nodes.extend(case_nodes)
@@ -354,6 +393,10 @@ def main():
             pd.DataFrame(profile_rows).to_csv(args.output_dir / "axial_profiles.csv", index=False)
     if args.output_dir:
         bundle = json.loads((BUNDLE / "bundle.json").read_text(encoding="utf-8"))
+        reaction_system = json.loads(
+            (BUNDLE / "reaction-system.json").read_text(encoding="utf-8")
+        )
+        r5 = next(item for item in reaction_system["reactions"] if item["reaction_id"] == "R5")
         provenance = {
             "parameter_document_sha256": hashlib.sha256((BUNDLE / "parameters.json").read_bytes()).hexdigest(),
             "reaction_system_sha256": hashlib.sha256((BUNDLE / "reaction-system.json").read_bytes()).hexdigest(),
@@ -363,6 +406,28 @@ def main():
             "film_nodes": args.film_nodes,
             "outer_iterations": args.outer_iterations,
             "relaxation": args.relaxation,
+            "workers": args.workers,
+            "mesh_points": args.mesh_points,
+            "solver_tolerance": args.tol,
+            "maximum_solver_nodes": args.max_nodes,
+            "r5_source_temperature_domain_K": r5["source_temperature_domain_k"],
+            "r5_application_temperature_domain_K": r5["temperature_domain_k"],
+            "r5_qualification": r5["qualification"],
+            "case_input_sha256": {
+                path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                for path, _ in CASE_FILES.values()
+            },
+            "repository_commit": subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True,
+                capture_output=True, text=True,
+            ).stdout.strip(),
+            "command": " ".join(sys.argv),
+            "python": platform.python_version(),
+            "platform": platform.platform(),
+            "packages": {
+                name: importlib.metadata.version(name)
+                for name in ("epcsaft", "numpy", "pandas", "scipy")
+            },
         }
         (args.output_dir / "run_provenance.json").write_text(
             json.dumps(provenance, indent=2) + "\n", encoding="utf-8"

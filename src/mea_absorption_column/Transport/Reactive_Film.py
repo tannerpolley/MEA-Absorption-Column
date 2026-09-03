@@ -65,6 +65,7 @@ class EquilibriumManifoldFilmResult:
     interface_fugacity_pa: float
     maximum_interface_residual: float
     maximum_component_flux_residual: float
+    maximum_stationary_component_flux_residual: float
     maximum_zero_total_flux_residual: float
     maximum_zero_current_residual: float
     minimum_entropy_production_over_r: float
@@ -96,12 +97,14 @@ def constrained_onsager_mobility(
     total_concentration_mol_m3: float,
     binary_diffusivities_m2_s,
     charge_numbers=None,
+    additional_flux_constraints=None,
 ):
-    """Return a symmetric Onsager mobility with zero molar flux and current.
+    """Return a symmetric mobility satisfying the requested zero-flux modes.
 
     Pair weights ``c*x_i*x_j*D_ij`` recover ordinary binary Fick diffusion for
     ideal chemical potentials.  Eliminating the electric-potential force by a
-    Schur complement imposes zero current without equal ion diffusivities.
+    Schur complement imposes zero current and any stationary component fluxes
+    without sacrificing symmetry or positive semidefiniteness.
     """
 
     x = np.asarray(composition, dtype=float)
@@ -132,16 +135,30 @@ def constrained_onsager_mobility(
 
     weights = float(total_concentration_mol_m3) * x[:, None] * x[None, :] * pairs
     mobility = np.diag(weights.sum(axis=1)) - weights
+    constraints = []
     if charge_numbers is not None:
         charges = np.asarray(charge_numbers, dtype=float)
         if charges.shape != x.shape or np.any(~np.isfinite(charges)):
             raise ReactiveFilmDomainError(
                 "charge_numbers must have one finite value per species"
             )
-        electrical_direction = mobility @ charges
-        denominator = float(charges @ electrical_direction)
-        if denominator > np.finfo(float).eps * max(float(np.trace(mobility)), 1.0):
-            mobility -= np.outer(electrical_direction, electrical_direction) / denominator
+        constraints.append(charges)
+    if additional_flux_constraints is not None:
+        additional = np.atleast_2d(np.asarray(additional_flux_constraints, dtype=float))
+        if additional.shape[1] != x.size or np.any(~np.isfinite(additional)):
+            raise ReactiveFilmDomainError(
+                "additional_flux_constraints must have one finite column per species"
+            )
+        constraints.extend(additional)
+    if constraints:
+        constraint_matrix = np.asarray(constraints, dtype=float)
+        norms = np.linalg.norm(constraint_matrix, axis=1)
+        if np.any(norms <= np.finfo(float).eps):
+            raise ReactiveFilmDomainError("zero-flux constraints must be nonzero")
+        constraint_matrix /= norms[:, None]
+        directions = mobility @ constraint_matrix.T
+        gram = constraint_matrix @ directions
+        mobility -= directions @ np.linalg.pinv(gram, rcond=1.0e-12, hermitian=True) @ directions.T
     return 0.5 * (mobility + mobility.T)
 
 
@@ -155,6 +172,7 @@ def solve_equilibrium_manifold_film(
     film_thickness_m: float,
     co2_index: int,
     charge_numbers=None,
+    stationary_component_coefficients=None,
     quadrature_points: int = 9,
     maximum_quadrature_points: int = 65,
     quadrature_tolerance: float = 1.0e-3,
@@ -171,6 +189,11 @@ def solve_equilibrium_manifold_film(
     diffusivities = np.asarray(species_diffusivities_m2_s, dtype=float)
     component = np.asarray(co2_component_coefficients, dtype=float)
     charges = None if charge_numbers is None else np.asarray(charge_numbers, dtype=float)
+    stationary = (
+        np.empty((0, diffusivities.size))
+        if stationary_component_coefficients is None
+        else np.atleast_2d(np.asarray(stationary_component_coefficients, dtype=float))
+    )
     if (
         diffusivities.ndim != 1
         or diffusivities.size < 2
@@ -187,6 +210,10 @@ def solve_equilibrium_manifold_film(
         charges.shape != diffusivities.shape or np.any(~np.isfinite(charges))
     ):
         raise ReactiveFilmDomainError("charge_numbers must have one finite value per species")
+    if stationary.shape[1] != diffusivities.size or np.any(~np.isfinite(stationary)):
+        raise ReactiveFilmDomainError(
+            "stationary_component_coefficients must have one finite column per species"
+        )
     if not 0 <= int(co2_index) < diffusivities.size:
         raise ReactiveFilmDomainError("co2_index is outside the species array")
     positive = (
@@ -250,6 +277,7 @@ def solve_equilibrium_manifold_film(
             bulk.total_concentration_mol_m3,
             pairs,
             charge_numbers=charges,
+            additional_flux_constraints=stationary,
         )
         return EquilibriumManifoldFilmResult(
             coordinate_m=coordinate,
@@ -260,6 +288,7 @@ def solve_equilibrium_manifold_film(
             interface_fugacity_pa=bulk_fugacity,
             maximum_interface_residual=0.0,
             maximum_component_flux_residual=0.0,
+            maximum_stationary_component_flux_residual=0.0,
             maximum_zero_total_flux_residual=0.0,
             maximum_zero_current_residual=0.0,
             minimum_entropy_production_over_r=0.0,
@@ -311,6 +340,7 @@ def solve_equilibrium_manifold_film(
                 item.total_concentration_mol_m3,
                 pairs,
                 charge_numbers=charges,
+                additional_flux_constraints=stationary,
             )
             value = float(component @ mobility @ tangent)
             if not np.isfinite(value) or value <= 0.0:
@@ -428,10 +458,16 @@ def solve_equilibrium_manifold_film(
             for index in range(count)
         ]
     )
+    # A common linear weight preserves every projected linear flux constraint.
     profile_fluxes = np.vstack(
-        [PchipInterpolator(loading, row)(profile_loading) for row in flux_grid]
+        [np.interp(profile_loading, loading, row) for row in flux_grid]
     )
     component_residual = np.max(np.abs(component @ profile_fluxes - component_flux))
+    stationary_residual = (
+        0.0
+        if stationary.size == 0
+        else float(np.max(np.abs(stationary @ profile_fluxes)))
+    )
     total_residual = np.max(np.abs(np.sum(profile_fluxes, axis=0)))
     current_residual = (
         0.0 if charges is None else float(np.max(np.abs(charges @ profile_fluxes)))
@@ -455,6 +491,7 @@ def solve_equilibrium_manifold_film(
         interface_fugacity_pa=interface_fugacity,
         maximum_interface_residual=abs(interface_residual(interface_loading)) / interface_scale,
         maximum_component_flux_residual=float(component_residual),
+        maximum_stationary_component_flux_residual=stationary_residual,
         maximum_zero_total_flux_residual=float(total_residual),
         maximum_zero_current_residual=float(current_residual),
         minimum_entropy_production_over_r=float(entropy.min()),

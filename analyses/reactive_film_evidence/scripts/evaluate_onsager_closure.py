@@ -26,6 +26,9 @@ SPECIES = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "
 CHARGES = np.asarray((0, 0, 0, 1, -1, -1, -2, 1, -1), dtype=float)
 FILM_THICKNESS_M = 1.0e-4
 CO2_COMPONENT = np.asarray((1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0))
+MEA_COMPONENT = np.asarray((0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0))
+WATER_COMPONENT = np.asarray((0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0))
+STATIONARY_COMPONENTS = np.vstack((MEA_COMPONENT, WATER_COMPONENT))
 
 
 def _diffusivity_bounds(temperature_k: float) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[str]]:
@@ -216,6 +219,7 @@ def main() -> None:
                 film_thickness_m=FILM_THICKNESS_M,
                 co2_index=0,
                 charge_numbers=CHARGES,
+                stationary_component_coefficients=STATIONARY_COMPONENTS,
                 quadrature_points=5,
                 maximum_quadrature_points=17,
                 quadrature_tolerance=2.0e-3,
@@ -297,6 +301,9 @@ def main() -> None:
                             "maximum_interface_residual": result.maximum_interface_residual,
                             "maximum_component_flux_residual": (
                                 result.maximum_component_flux_residual
+                            ),
+                            "maximum_stationary_component_flux_residual": (
+                                result.maximum_stationary_component_flux_residual
                             ),
                             "maximum_zero_total_flux_residual": (
                                 result.maximum_zero_total_flux_residual

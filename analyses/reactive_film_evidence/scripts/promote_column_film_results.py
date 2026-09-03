@@ -35,8 +35,12 @@ def main() -> None:
     )
     if tuple(comparison["case_id"]) != CASES:
         raise AssertionError("campaign must contain each declared case exactly once and in order")
-    common = provenance[0]
-    if any(item != common for item in provenance[1:]):
+    commands = [item["command"] for item in provenance]
+    common = {key: value for key, value in provenance[0].items() if key != "command"}
+    if any(
+        {key: value for key, value in item.items() if key != "command"} != common
+        for item in provenance[1:]
+    ):
         raise AssertionError("campaign provenance differs between cases")
     FINAL.mkdir(parents=True, exist_ok=True)
     comparison.to_csv(FINAL / "column_film_capture_comparison.csv", index=False)
@@ -49,6 +53,7 @@ def main() -> None:
             "parameter_source_commit": bundle["parameter_source_commit"],
             "engine_source_commit": bundle["engine_source_commit"],
             "engine_wheel_sha256": bundle["engine_wheel_sha256"],
+            "commands": commands,
             "case_ids": list(CASES),
         }, indent=2) + "\n",
         encoding="utf-8",
