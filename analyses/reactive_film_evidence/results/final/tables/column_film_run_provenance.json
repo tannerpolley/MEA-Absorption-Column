@@ -2,11 +2,47 @@
   "parameter_document_sha256": "00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
   "reaction_system_sha256": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
   "parameter_source_commit": "bbd50204c428ef9d40fad69550dea298fe276967",
-  "film_nodes": 5,
-  "outer_iterations": 9,
-  "relaxation": 0.75,
   "engine_source_commit": "8007a70815efcd277f06eddc4df9fffdd8cdca48",
   "engine_wheel_sha256": "f6e5b51dad79741c759393688f7daa547c9eb73f5944d5f877b3b32b1e56714a",
+  "film_nodes": 5,
+  "outer_iterations": 15,
+  "relaxation": 0.5,
+  "workers": 2,
+  "mesh_points": 21,
+  "solver_tolerance": 0.1,
+  "maximum_solver_nodes": 1000,
+  "r5_source_temperature_domain_K": [
+    273.15,
+    323.15
+  ],
+  "r5_application_temperature_domain_K": [
+    293.15,
+    393.15
+  ],
+  "r5_qualification": "selected against the complete nine-species pressure/speciation comparison evaluated over 293.15--393.15 K",
+  "case_input_sha256": {
+    "C_cases_campaign_inputs.csv": "3bec69ea9a5f15c10308db7e2341cd19aa6951daa5e6c2a25dd4da8d1f723c1c",
+    "NCCC_2014_model_inputs_mass.csv": "5c18656ffacf1c8b9bc9b1b22fba3a83e2dcd85f4535636967498bdd49d66c75"
+  },
+  "repository_commit": "3b345bb4ea57d56c13846fa7b4fd371714fb0506",
+  "python": "3.13.13",
+  "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+  "packages": {
+    "epcsaft": "0.2.0.dev0",
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "scipy": "1.17.1"
+  },
+  "commands": [
+    "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids K18 --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir analyses/reactive_film_evidence/results/runs/current_bundle_campaign_K18",
+    "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids K19 --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir analyses/reactive_film_evidence/results/runs/current_bundle_campaign_K19",
+    "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids 1C --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir analyses/reactive_film_evidence/results/runs/current_bundle_campaign_1C",
+    "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids 2C --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir analyses/reactive_film_evidence/results/runs/current_bundle_campaign_2C",
+    "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids 3C --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir analyses/reactive_film_evidence/results/runs/current_bundle_campaign_3C",
+    "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids 4C --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir analyses/reactive_film_evidence/results/runs/current_bundle_campaign_4C",
+    "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids 5C --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir analyses/reactive_film_evidence/results/runs/current_bundle_campaign_5C",
+    "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids 6C --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir analyses/reactive_film_evidence/results/runs/current_bundle_campaign_6C"
+  ],
   "case_ids": [
     "K18",
     "K19",
