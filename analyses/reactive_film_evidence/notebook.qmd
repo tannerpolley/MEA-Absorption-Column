@@ -38,6 +38,16 @@ Exact values and diagnostics are retained in `results/final/tables/column_film_c
 
 The reactive-film closure changes predicted capture by -0.031 to +8.526 percentage points relative to the enhancement-factor calculation. Its all-case observed-capture mean absolute error is 6.677 percentage points, compared with 4.038 percentage points for the enhancement-factor comparator. The film formulation therefore changes the physical model but does not improve aggregate agreement with these observations. The three non-field-converged values are retained as visibly provisional rows rather than silently omitted.
 
+## Temperature-profile comparison
+
+![Reactive-film liquid-temperature profiles against the measured 2017 C-case taps.](results/final/figures/column_film_temperature_overlay.png){width=95%}
+
+The six C-case liquid-temperature tap RMSE values range from 3.73 K (2C) to 8.05 K (4C), with a mean of 5.65 K. These profiles replace the temperature figures generated with the former enhancement-factor calculation; they do not add a temperature acceptance criterion. The terminal drop near normalized position 1 is the imposed lean-liquid inlet boundary response.
+
+![Case 3C reactive-film liquid-temperature profile.](results/final/figures/column_film_3c_temperature.png){width=90%}
+
+For 3C, the reactive-film result is 97.91% capture against 89.50% observed, while the liquid-temperature tap RMSE is 4.18 K. Exact temperature metrics are retained in `results/final/tables/column_film_temperature_metrics.csv`.
+
 ## Numerical status
 
 All eight packed-column solves satisfy their mixed boundary conditions at numerical precision. Their maximum collocation RMS residual is 0.066 under the declared 0.1 solver tolerance, and the maximum retained dense-grid ODE residual is 0.112. K19, 2C, 3C, 4C, and 6C meet the declared outer-film stopping rule. K18, 1C, and 5C reach the common 15-update limit first and remain marked non-field-converged. The maximum stationary-component flux residual is $1.32\times10^{-12}$ mol m$^{-2}$ s$^{-1}$, or $9.57\times10^{-10}$ relative to local CO2 component flux.

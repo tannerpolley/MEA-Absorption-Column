@@ -50,6 +50,8 @@ Across K18, K19, and 1C--6C, the film calculation changes predicted capture by -
 
 All eight packed-column solves satisfy their boundary conditions at numerical precision, and their maximum collocation RMS residual is 0.066 under the declared 0.1 tolerance. Five cases (K19, 2C, 3C, 4C, and 6C) also meet the declared outer-film stopping rule: less than 0.05 percentage-point capture change and less than 2% maximum change in both the interpolated conductance and reactive bulk-fugacity fields. K18, 1C, and 5C reach the common 15-update cap first and remain explicitly marked provisional/non-field-converged in the aggregate and figure. **[verified]**
 
+The retained film axial profiles reproduce the six 2017 C-case temperature comparisons without reusing the former enhancement-factor profiles. Their liquid-temperature tap RMSE values range from 3.73 to 8.05 K, with a mean of 5.65 K; Case 3C has a 4.18 K tap RMSE. These are descriptive comparisons rather than acceptance criteria. **[verified]**
+
 The result is predictive only in the conditional engineering sense: case inputs, the selected nine-species ePC-SAFT bundle, gas/liquid transfer correlations, and labeled diffusivity estimates determine the outputs without capture fitting. The selected bundle was evaluated against pressure/speciation data through 393.15 K, but its R5 source correlation is used beyond its 323.15 K source-qualified range and remains an explicit temperature extrapolation. It is not a source-complete transport prediction because the nine-species Maxwell--Stefan/Onsager matrix has not been measured or independently identified, and the campaign does not validate the estimated mobility closure. **[inference]**
 
 ## Best next strategy
