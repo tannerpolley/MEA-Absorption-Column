@@ -31,6 +31,7 @@ from mea_absorption_column.calibration import (
 )
 from mea_absorption_column.uq import UQPlan, estimate_two_tier_throughput
 from mea_absorption_column.Thermodynamics.thermo_models import guarded_compute_fugacity
+import mea_absorption_column.Thermodynamics.thermo_models as thermo_models
 from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     clear_epcsaft_phi_cache,
@@ -189,6 +190,29 @@ def test_guarded_epcsaft_invalid_state_returns_structured_penalty():
     assert all(math.isfinite(value) for value in result)
     assert diagnostics["invalid_state_count"] == 1
     assert diagnostics["guard_penalty_count"] == 1
+
+
+def test_guarded_reactive_epcsaft_preserves_provider_failure(monkeypatch):
+    diagnostics = make_solver_diagnostics()
+
+    def fail(*_args, **_kwargs):
+        raise RuntimeError("native reactive provider failed")
+
+    monkeypatch.setattr(thermo_models, "compute_fugacity", fail)
+    with pytest.raises(RuntimeError, match="native reactive provider failed"):
+        guarded_compute_fugacity(
+            "epcsaft_reactive_nine",
+            y=[0.10, 0.08],
+            x_true=[1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001, 1.0e-6, 3.0e-6, 1.0e-6],
+            Cl_true=[1.0e-4, 2400.0, 39000.0, 1200.0, 1180.0, 20.0, 1.0e-3, 3.0e-3, 1.0e-3],
+            Tl=320.0,
+            Tv=320.0,
+            H_CO2_mix=1.0,
+            P=109500.0,
+            P_sat_H2O=12000.0,
+            diagnostics=diagnostics,
+        )
+    assert "native reactive provider failed" in diagnostics["last_invalid_state"]
 
 
 def test_benchmark_schema_contains_convergence_diagnostic_columns():
@@ -373,7 +397,7 @@ def test_epcsaft_pressure_state_reuses_density_guess_after_first_miss():
     assert stats["epcsaft_rho_guess_hits"] == 1
 
 
-def test_epcsaft_ionic_fugacity_uses_six_species_liquid_state():
+def test_epcsaft_ionic_fugacity_uses_bundle_nine_species_liquid_state():
     try:
         ensure_epcsaft_importable()
     except RuntimeError as exc:
@@ -381,8 +405,8 @@ def test_epcsaft_ionic_fugacity_uses_six_species_liquid_state():
     assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.exists()
     clear_epcsaft_phi_cache()
     y = np.array([0.10, 0.08])
-    x_true = np.array([1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001])
-    Cl_true = np.array([1.0e-4, 2400.0, 39000.0, 1200.0, 1180.0, 20.0])
+    x_true = np.array([1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001, 1.0e-6, 3.0e-6, 1.0e-6])
+    Cl_true = np.array([1.0e-4, 2400.0, 39000.0, 1200.0, 1180.0, 20.0, 1.0e-3, 3.0e-3, 1.0e-3])
 
     values = compute_fugacity(
         "epcsaft_ionic",

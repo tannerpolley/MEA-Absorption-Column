@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "bundle_id": "mea-reactive-epcsaft-parameter-bundle",
+  "bundle_date": "2026-09-02",
+  "model": "nine-species reactive aqueous MEA ePC-SAFT",
+  "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+  "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+  "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2653,
+      "sha256": "6493c9e6aab8571db3c9835fe0fcfd5dd7b036bdfb3ddd5209fe9d26ef468c22"
+    },
+    {
+      "path": "chemistry/reaction-system.json",
+      "bytes": 5374,
+      "sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c"
+    },
+    {
+      "path": "documentation/research-notebook.pdf",
+      "bytes": 353746,
+      "sha256": "30bb2a90940083e1575ba85b7cf9a112bd5fe2bb02a0cf7810f4d02062940a64"
+    },
+    {
+      "path": "engine/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+      "bytes": 4557547,
+      "sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a"
+    },
+    {
+      "path": "figures/pressure.pdf",
+      "bytes": 40002,
+      "sha256": "79271e1bafeed2df52efae35ad8f2733e2451bedc1a666d66ece660b8497dc95"
+    },
+    {
+      "path": "parameters/parameters.json",
+      "bytes": 118731,
+      "sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c"
+    },
+    {
+      "path": "validation/final-candidate-comparison.csv",
+      "bytes": 2175,
+      "sha256": "d0a964e83b439ad2f9e0fdee6f71d9cd820da49ed7fccd527a7314e498048c3c"
+    },
+    {
+      "path": "validation/fit-residuals.csv",
+      "bytes": 26191,
+      "sha256": "a3adde678e54afd18d8017835785049bd31b0cb0c53661704ec5bd7b19622b79"
+    },
+    {
+      "path": "validation/fit-statistics.csv",
+      "bytes": 10190,
+      "sha256": "0c27b0d40db14f28089a41d3a121830e16aab185d0ee335f8141325910e87bd2"
+    },
+    {
+      "path": "validation/non-evaluable-states.csv",
+      "bytes": 4089,
+      "sha256": "7319794109bf25b253a9e9362788574b009803df7fe9326a93499b20ad3f3fc9"
+    },
+    {
+      "path": "validation/state-packet.json",
+      "bytes": 2052081,
+      "sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef"
+    },
+    {
+      "path": "verify_bundle.py",
+      "bytes": 1053,
+      "sha256": "64f416c52978b27b3aef1c4631b3165ec6b32bbdfaf5e2f248e94c328455ae9a"
+    }
+  ]
+}

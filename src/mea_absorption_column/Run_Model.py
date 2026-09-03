@@ -761,12 +761,16 @@ def _epcsaft_cache_delta(start, end):
 def _default_chemical_equilibrium_model(thermo_model):
     normalized = (thermo_model or "").lower()
     if normalized in {
+        "epcsaft_ionic",
+        "epcsaft_electrolyte",
+        "epcsaft_full_ionic",
         "epcsaft_reactive_six",
         "epcsaft_reactive_six_concentration",
         "epcsaft_reactive_six_activity",
         "epcsaft_reactive_six_activity_converted",
         "epcsaft_reactive_six_activity_rebased",
         "epcsaft_reactive_nine",
+        "epcsaft_reactive_nine_bundle",
         "epcsaft_reactive_nine_activity",
         "epcsaft_reactive_nine_activity_converted",
         "epcsaft_reactive_nine_activity_rebased",

@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import math
 import os
@@ -19,6 +20,10 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
     epcsaft_runtime_user_options,
+)
+from mea_absorption_column.Thermodynamics.reactive_bundle import (
+    solve_homogeneous_reactive_state,
+    validate_reactive_bundle,
 )
 
 
@@ -255,7 +260,7 @@ def chemical_equilibrium(Fl, Tl):
             max_nfev=60,
         )
 
-    Cl_true_scaled, solution, success = result.x, result.message, result.success
+    Cl_true_scaled = result.x
 
     Cl_true = np.maximum(Cl_true_scaled*scales, 1.0e-30)
 
@@ -337,54 +342,77 @@ def chemical_equilibrium_with_model(
             diagnostics=diagnostics,
         )
     if normalized_model in {
+        "epcsaft_ionic",
+        "epcsaft_electrolyte",
+        "epcsaft_full_ionic",
         "epcsaft_reactive_nine",
+        "epcsaft_reactive_nine_bundle",
         "epcsaft_reactive_nine_activity",
         "epcsaft_nine_activity",
         "epcsaft_full_species_activity",
     }:
-        return epcsaft_reactive_chemical_equilibrium(
-            Fl,
-            Tl,
-            P=P,
-            standard_state="mole_fraction_activity",
-            species_set="nine",
-            calibrate_activity_to_legacy=False,
-            diagnostics=diagnostics,
-        )
+        return bundle_reactive_chemical_equilibrium(Fl, Tl, P=P, diagnostics=diagnostics)
     if normalized_model in {
         "epcsaft_reactive_nine_activity_rebased",
         "epcsaft_nine_activity_rebased",
         "epcsaft_full_species_activity_rebased",
     }:
-        return epcsaft_reactive_chemical_equilibrium(
-            Fl,
-            Tl,
-            P=P,
-            standard_state="mole_fraction_activity",
-            species_set="nine",
-            calibrate_activity_to_legacy=True,
-            diagnostics=diagnostics,
+        raise RuntimeError(
+            "converted/rebased nine-species ePC-SAFT aliases are rejected; use the "
+            "bundle-backed native nine-species route"
         )
     if normalized_model in {
         "epcsaft_reactive_nine_activity_converted",
         "epcsaft_nine_activity_converted",
         "epcsaft_full_species_activity_converted",
     }:
-        return epcsaft_reactive_chemical_equilibrium(
-            Fl,
-            Tl,
-            P=P,
-            standard_state="mole_fraction_activity",
-            log_k_basis="concentration_to_mole_fraction",
-            species_set="nine",
-            calibrate_activity_to_legacy=False,
-            diagnostics=diagnostics,
+        raise RuntimeError(
+            "converted/rebased nine-species ePC-SAFT aliases are rejected; use the "
+            "bundle-backed native nine-species route"
         )
     raise ValueError(
         "Choose legacy, epcsaft_reactive_six_concentration, "
         "epcsaft_reactive_six_activity, epcsaft_reactive_six_activity_converted, "
         "epcsaft_reactive_six_activity_rebased, or epcsaft_reactive_nine_activity_rebased."
     )
+
+
+@lru_cache(maxsize=512)
+def _cached_bundle_reactive_state(temperature, pressure, apparent):
+    return solve_homogeneous_reactive_state(
+        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), temperature, pressure, apparent
+    )
+
+
+def bundle_reactive_chemical_equilibrium(Fl, Tl, *, P=101325.0, diagnostics=None):
+    if diagnostics is None:
+        diagnostics = {}
+    apparent = _apparent_liquid_mole_fraction(Fl)
+    temperature = float(np.round(float(Tl), EPCSAFT_CHEMISTRY_CACHE_T_DIGITS))
+    pressure_increment = max(EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA, 1.0e-12)
+    pressure = float(np.round(float(P) / pressure_increment) * pressure_increment)
+    apparent_key = tuple(
+        float(np.round(value, EPCSAFT_CHEMISTRY_CACHE_X_DIGITS)) for value in apparent
+    )
+    before = _cached_bundle_reactive_state.cache_info()
+    started = time.perf_counter()
+    result = _cached_bundle_reactive_state(temperature, pressure, apparent_key)
+    elapsed = time.perf_counter() - started
+    after = _cached_bundle_reactive_state.cache_info()
+    _increment_diagnostic(
+        diagnostics,
+        "epcsaft_chemistry_cache_hits" if after.hits > before.hits else "epcsaft_chemistry_cache_misses",
+    )
+    _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", elapsed)
+    for name in (
+        "balance_inf_norm",
+        "reaction_affinity_inf_norm",
+        "pressure_relative_inf_norm",
+        "kkt_stationarity_inf_norm",
+    ):
+        _set_diagnostic_max(diagnostics, f"epcsaft_chemistry_{name}", result["evidence"][name])
+    composition = np.asarray(result["composition"], dtype=float)
+    return composition * float(result["density_mol_m3"]), composition.copy()
 
 
 @lru_cache(maxsize=4)
@@ -428,9 +456,28 @@ def tabulated_epcsaft_reactive_chemical_equilibrium(Fl, Tl, *, diagnostics=None)
         raise RuntimeError(
             "MEA_EPCSAFT_REACTIVE_TABLE must name the certified reactive ePC-SAFT table."
         )
+    table = Path(table_path)
+    identity_path = Path(f"{table}.identity.json")
+    if not identity_path.exists():
+        raise RuntimeError(
+            "Reactive ePC-SAFT tables require a sidecar identity bound to the "
+            "active parameter bundle."
+        )
+    identity = json.loads(identity_path.read_text(encoding="utf-8"))
+    bundle = validate_reactive_bundle(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET))["bundle"]
+    expected = {
+        "bundle_id": bundle["bundle_id"],
+        "parameter_document_sha256": bundle["parameter_document_sha256"],
+        "reaction_system_sha256": hashlib.sha256(
+            (MEA_THERMODYNAMICS_EPCSAFT_DATASET / "reaction-system.json").read_bytes()
+        ).hexdigest(),
+        "table_sha256": hashlib.sha256(table.read_bytes()).hexdigest(),
+    }
+    if any(identity.get(key) != value for key, value in expected.items()):
+        raise RuntimeError("Reactive ePC-SAFT table identity does not match the active bundle.")
     apparent = _apparent_liquid_mole_fraction(Fl)
     loading = float(apparent[0] / apparent[1])
-    linear, nearest, log_co2 = _reactive_speciation_table(table_path)
+    linear, nearest, log_co2 = _reactive_speciation_table(str(table))
     amounts = np.asarray(linear(float(Tl), loading), dtype=float)
     if not np.all(np.isfinite(amounts)):
         amounts = np.asarray(nearest(float(Tl), loading), dtype=float)

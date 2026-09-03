@@ -40,7 +40,7 @@ IONIC_LIQUID_SPECIES_9 = [
     "H3O+",
     "OH-",
 ]
-IONIC_LIQUID_SPECIES = IONIC_LIQUID_SPECIES_6
+IONIC_LIQUID_SPECIES = IONIC_LIQUID_SPECIES_9
 IONIC_CHARGE_BY_SPECIES = {
     "CO2": 0.0,
     "MEA": 0.0,
@@ -59,11 +59,38 @@ COMPOSITION_FLOOR = 1e-12
 TEMPERATURE_MIN_K = 250.0
 TEMPERATURE_MAX_K = 500.0
 FUGACITY_FLOOR_PA = 1.0e-9
+_REACTIVE_EPCSAFT_ALIASES = {
+    "epcsaft_ionic",
+    "epcsaft_electrolyte",
+    "epcsaft_full_ionic",
+    "epcsaft_reactive_six",
+    "epcsaft_reactive_six_concentration",
+    "epcsaft_six_concentration",
+    "epcsaft_reactive_six_activity",
+    "epcsaft_six_activity",
+    "epcsaft_reactive_six_activity_converted",
+    "epcsaft_six_activity_converted",
+    "epcsaft_reactive_six_activity_rebased",
+    "epcsaft_six_activity_rebased",
+    "epcsaft_reactive_nine",
+    "epcsaft_reactive_nine_bundle",
+    "epcsaft_reactive_nine_activity",
+    "epcsaft_nine_activity",
+    "epcsaft_reactive_nine_activity_converted",
+    "epcsaft_nine_activity_converted",
+    "epcsaft_reactive_nine_activity_rebased",
+    "epcsaft_nine_activity_rebased",
+    "epcsaft_reactive_nine_tabulated",
+    "epcsaft_nine_tabulated",
+    "epcsaft_full_species_activity",
+    "epcsaft_full_species_activity_converted",
+    "epcsaft_full_species_activity_rebased",
+}
 PACKAGED_EPCSAFT_DATASETS = resources.files("mea_absorption_column").joinpath(
     "data/epcsaft_datasets"
 )
 DEFAULT_EPCSAFT_DATASET_NAME = os.environ.get(
-    "MEA_EPCSAFT_DATASET_NAME", "MEA_CO2_H2O_ionic_fit"
+    "MEA_EPCSAFT_DATASET_NAME", "MEA_reactive_epcsaft_bundle"
 )
 
 
@@ -359,7 +386,7 @@ def epcsaft_liquid_transport_state(T, P, composition) -> EpcsaftLiquidTransportS
     """Evaluate one charged liquid state and its exact fixed-T,P tangent block."""
 
     values = np.asarray(composition, dtype=float)
-    species = tuple(_ionic_species_for_size(values.size))
+    species = tuple(IONIC_LIQUID_SPECIES_9)
     if (
         values.shape != (len(species),)
         or np.any(~np.isfinite(values))
@@ -380,6 +407,9 @@ def epcsaft_liquid_transport_state(T, P, composition) -> EpcsaftLiquidTransportS
             "composition must be electroneutral without projection",
         )
 
+    from mea_absorption_column.Thermodynamics.reactive_bundle import validate_reactive_bundle
+
+    validate_reactive_bundle(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET))
     model = epcsaft_dataset_mixture(species, _epcsaft_dataset_T_key(T))
     state = _v02_state(
         model,
@@ -446,10 +476,14 @@ def epcsaft_state_contribution_diagnostics(
             "Runtime ePC-SAFT user-option overrides were removed in API 0.2. "
             "Diagnostic variants must use separately identified parameter documents."
         )
-    species_key = tuple(IONIC_LIQUID_SPECIES if mixture_kind == "ionic" else SPECIES)
     composition_arr = np.asarray(composition, dtype=float)
     composition_arr = np.maximum(composition_arr, COMPOSITION_FLOOR)
     composition_arr = composition_arr / float(np.sum(composition_arr))
+    species_key = tuple(
+        _ionic_species_for_size(composition_arr.size)
+        if mixture_kind == "ionic"
+        else SPECIES
+    )
     if mixture_kind == "ionic":
         composition_arr = _enforce_electroneutrality(composition_arr, species_key)
     if mixture_kind == "neutral":
@@ -719,6 +753,10 @@ def epcsaft_neutral_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O):
 
 
 def epcsaft_ionic_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O):
+    if np.asarray(x_true, dtype=float).size != len(IONIC_LIQUID_SPECIES_9):
+        raise ValueError(
+            "epcsaft_ionic requires the bundle-backed nine-species liquid state"
+        )
     liquid_x = ionic_liquid_composition(x_true)
     vapor_x = neutral_vapor_composition(y)
     phi_l_co2 = epcsaft_phi_co2(Tl, P, liquid_x, phase="liq", mixture_kind="ionic")
@@ -761,22 +799,44 @@ def compute_fugacity(
             for henry_value, epcsaft_value in zip(henry_values, epcsaft_values)
         )
     if normalized_model in {
-        "epcsaft_ionic",
-        "epcsaft_electrolyte",
-        "epcsaft_full_ionic",
         "epcsaft_reactive_six",
         "epcsaft_reactive_six_concentration",
         "epcsaft_reactive_six_activity",
         "epcsaft_reactive_six_activity_converted",
         "epcsaft_reactive_six_activity_rebased",
-        "epcsaft_reactive_nine",
-        "epcsaft_reactive_nine_activity",
+    }:
+        raise ValueError(
+            "six-species reactive ePC-SAFT aliases are incompatible with the "
+            "bundle-backed nine-species route"
+        )
+    if normalized_model in {
         "epcsaft_reactive_nine_activity_converted",
-        "epcsaft_reactive_nine_activity_rebased",
-        "epcsaft_reactive_nine_tabulated",
-        "epcsaft_full_species_activity",
+        "epcsaft_nine_activity_converted",
         "epcsaft_full_species_activity_converted",
+        "epcsaft_reactive_nine_activity_rebased",
+        "epcsaft_nine_activity_rebased",
         "epcsaft_full_species_activity_rebased",
+    }:
+        raise ValueError(
+            "converted/rebased nine-species ePC-SAFT aliases are rejected; use the "
+            "bundle-backed native nine-species route"
+        )
+    if normalized_model in {
+        "epcsaft_reactive_nine_tabulated",
+        "epcsaft_nine_tabulated",
+    }:
+        raise ValueError(
+            "tabulated nine-species ePC-SAFT aliases require an identity-bound table "
+            "validated through the table-owning path"
+        )
+    if normalized_model in {
+        "epcsaft_ionic",
+        "epcsaft_electrolyte",
+        "epcsaft_full_ionic",
+        "epcsaft_reactive_nine",
+        "epcsaft_reactive_nine_bundle",
+        "epcsaft_reactive_nine_activity",
+        "epcsaft_full_species_activity",
     }:
         blend = float(np.clip(epcsaft_fugacity_blend, 0.0, 1.0))
         epcsaft_values = epcsaft_ionic_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O)
@@ -826,6 +886,8 @@ def guarded_compute_fugacity(
     except Exception as exc:
         record_invalid_state(diagnostics, f"fugacity guard: {exc}")
         record_guard_penalty(diagnostics)
+        if str(model or "").lower() in _REACTIVE_EPCSAFT_ALIASES:
+            raise
         return _fallback_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
 
 

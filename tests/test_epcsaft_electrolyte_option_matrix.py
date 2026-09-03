@@ -15,10 +15,11 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     ensure_epcsaft_importable,
     epcsaft_phi_co2,
     epcsaft_state_contribution_diagnostics,
+    guarded_compute_fugacity,
 )
 
 
-IONIC_X = np.array([1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001], dtype=float)
+IONIC_X = np.array([1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001, 1.0e-6, 3.0e-6, 1.0e-6], dtype=float)
 IONIC_X = IONIC_X / IONIC_X.sum()
 
 
@@ -142,3 +143,54 @@ def test_electrolyte_aliases_route_to_ionic_fugacity(alias):
     )
 
     np.testing.assert_allclose(actual, expected)
+
+
+@pytest.mark.parametrize(
+    "alias",
+    [
+        "epcsaft_reactive_nine_activity_converted",
+        "epcsaft_nine_activity_converted",
+        "epcsaft_full_species_activity_converted",
+        "epcsaft_reactive_nine_activity_rebased",
+        "epcsaft_nine_activity_rebased",
+        "epcsaft_full_species_activity_rebased",
+    ],
+)
+def test_converted_and_rebased_fugacity_aliases_fail_closed(alias):
+    with pytest.raises(ValueError, match="converted/rebased nine-species"):
+        compute_fugacity(
+            alias,
+            np.array([0.10, 0.08]),
+            IONIC_X,
+            np.ones(9),
+            Tl=323.15,
+            Tv=323.15,
+            H_CO2_mix=1.0,
+            P=109500.0,
+            P_sat_H2O=12000.0,
+        )
+
+
+@pytest.mark.parametrize(
+    "alias", ["epcsaft_reactive_nine_tabulated", "epcsaft_nine_tabulated"]
+)
+def test_tabulated_fugacity_aliases_fail_closed_at_public_and_guarded_seams(alias):
+    arguments = dict(
+        model=alias,
+        y=np.array([0.10, 0.08]),
+        x_true=IONIC_X,
+        Cl_true=np.ones(9),
+        Tl=323.15,
+        Tv=323.15,
+        H_CO2_mix=1.0,
+        P=109500.0,
+        P_sat_H2O=12000.0,
+    )
+    with pytest.raises(ValueError, match="tabulated nine-species"):
+        compute_fugacity(**arguments)
+
+    diagnostics = {}
+    with pytest.raises(ValueError, match="tabulated nine-species"):
+        guarded_compute_fugacity(**arguments, diagnostics=diagnostics)
+    assert diagnostics["invalid_state_count"] == 1
+    assert diagnostics["guard_penalty_count"] == 1

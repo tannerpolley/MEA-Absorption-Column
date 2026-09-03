@@ -403,6 +403,9 @@ def _pair_records(dataset: Path) -> list[dict[str, object]]:
 @lru_cache(maxsize=8)
 def parameter_document(dataset_text: str) -> dict[str, object]:
     dataset = Path(dataset_text)
+    parameter_path = dataset if dataset.is_file() else dataset / "parameters.json"
+    if parameter_path.exists():
+        return json.loads(parameter_path.read_text(encoding="utf-8"))
     rows = _load_pure_rows(dataset)
     return {
         "schema": "epcsaft.parameters",

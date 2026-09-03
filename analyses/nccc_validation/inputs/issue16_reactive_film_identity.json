@@ -5,20 +5,26 @@
     "branch": "codex/issue-16-reactive-film-integration"
   },
   "engine": {
-    "commit": "41e7dc1984d00f82785900b314a0135beebe56cd",
+    "commit": null,
     "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-    "wheel_sha256": "2d089d5bdeda5b1655c5e6cf5df7308507233381175745889f8430c22ffe1edb",
-    "core_sha256": "fc1f1a78b2fe5c68a54b8678ce6bc844a2eba11edec91d49e6f9a51c62e1132f",
+    "wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+    "core_sha256": "39c8f4aa0bc0455f3b192258a05329ad47547919ba420d16ab830fa84e4dee6e",
     "upstream_pr_reported_wheel_sha256": "8f52d7591613a1714cb0fe2c3220d24817d5eba3650b399e8ffdf9adbea2daca",
     "build_command": "timeout 1200s bash .codex/environments/setup.sh",
     "build_elapsed_s": 76,
     "build_note": "Fresh wheel built from a task-owned clean detached clone; the upstream source was not edited."
   },
+  "bundle": {
+    "bundle_id": "mea-reactive-epcsaft-parameter-bundle",
+    "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+    "reaction_system_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c",
+    "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef"
+  },
   "derivative_check": {
     "temperature_K": 318.15000000000015,
     "pressure_Pa": 109500.0,
-    "co2_fugacity_Pa": 35.75741547579932,
-    "co2_log_fugacity_derivative_fixed_other_concentrations": 0.9999970079124699,
+    "co2_fugacity_Pa": 55.07061144931774,
+    "co2_log_fugacity_derivative_fixed_other_concentrations": 0.9999967098183219,
     "condition_measure": 1.0,
     "coordinate_component_ids": [
       "carbon-dioxide",
@@ -53,14 +59,6 @@
       "loading_max_exclusive": 0.5
     }
   },
-  "downstream_placeholder_parameter_input": {
-    "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive/parameters.json",
-    "sha256": "66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b",
-    "temperature_adjustments_path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive/temperature_adjustments.json",
-    "temperature_adjustments_sha256": "502033bb303bd80aaddcbba817058e20572f675ed5dbc478de9e022c11fe6da8",
-    "lineage_commit": "65fdd6f4ed739d8ac39f9efdda7450d90d14df7a",
-    "domain": "mea-diagnostic-293-15-to-393-15-k; retained Case 3C use only; not an accepted predictive parameter packet"
-  },
   "retained_position_1": {
     "source_profile_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/film_states.csv",
     "source_profile_sha256": "2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a",
@@ -76,9 +74,9 @@
   },
   "reproduction_commands": [
     "uv run python scripts/check_epcsaft_integration.py --mode final",
-    "MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/generate_issue16_evidence.py",
-    "MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 10",
-    "MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10"
+    "uv run python analyses/nccc_validation/scripts/generate_issue16_evidence.py",
+    "uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 10",
+    "uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10"
   ],
   "stopping_decision": "The exact derivative, charge-constrained formulation, and manufactured reversible architecture gates pass, but every retained physical-basis case stops at typed input admission because the state, kinetic coefficients, and diffusion candidates are not admitted. Raw rate observations, Maxwell-Stefan comparison, and column integration remain blocked."
 }
