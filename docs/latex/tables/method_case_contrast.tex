@@ -1,21 +1,21 @@
-\begin{center}
-    \centering
-    \small
-    \captionof{table}{Representative one-bed solver-method comparison. Solver success and boundary residual are numerical criteria; capture is compared separately with its physical range or measured value.}
-    \label{tab:method-case-contrast}
-    \renewcommand{\arraystretch}{1.2}
-    \begin{adjustbox}{max width=\textwidth}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.11\textwidth}>{\raggedleft\arraybackslash}p{0.08\textwidth}>{\raggedleft\arraybackslash}p{0.08\textwidth}>{\raggedright\arraybackslash}X@{}}
-        \toprule
-        \textbf{Scenario} & \textbf{Method} & \textbf{Solver report} & \textbf{Capture comparison} & \textbf{Runtime (s)} & \textbf{Capture (\%)} & \textbf{Interpretation} \\
-        \midrule
+\begin{table}[htbp]
+  \centering
+  \caption{Representative one-bed solver-method comparison. Solver success and boundary residual are numerical criteria; capture is compared separately with its physical range or measured value.}
+  \label{tab:method-case-contrast}
+  \scriptsize
+  \renewcommand{\arraystretch}{1.08}
+  \setlength{\tabcolsep}{2pt}
+  \begin{tabularx}{\textwidth}{@{}p{0.13\textwidth} p{0.12\textwidth} p{0.16\textwidth} p{0.16\textwidth}
+    S[table-format=2.2] S[table-format=3.2] X@{}}
+    \toprule
+    Scenario & Method & Solver report & Capture comparison & {Runtime (\unit{s})} & {Capture (\unit{\percent})} & Interpretation \\
+    \midrule
         Smooth one-bed & Shooting & Success; boundary residual 0.0437 & Within 0--100\% & 4.91 & 90.17 & Shortest runtime among the three smooth-case calculations. \\
         Smooth one-bed & Collocation BVP & Success; boundary residual $4.11\times10^{-11}$ & Within 0--100\% & 7.61 & 89.95 & Shooting-seeded collocation calculation. \\
         Smooth one-bed & Finite difference & Success; boundary residual $9.93\times10^{-13}$ & Exceeds 100\% & 15.62 & 107.65 & Low boundary residual but capture outside the physical range. \\
-        NCCC 3C thermal pinch & Shooting & Unsuccessful run; no retained residual & No capture reported & 62.73 & -- & Did not return a row satisfying the reported numerical criteria. \\
-        NCCC 3C thermal pinch & Collocation BVP & Solver reported success & $-0.10$ percentage points from measured capture & 9.40 & 89.40 & Temperature RMSE \SI{3.94}{K}; no temperature-error criterion was applied. \\
+        NCCC 3C thermal pinch & Shooting & Unsuccessful run; no retained residual & No capture reported & 62.73 & {--} & Did not return a row satisfying the reported numerical criteria. \\
+        NCCC 3C thermal pinch & Collocation BVP & Solver reported success & $-0.10$ percentage points from measured capture & 9.40 & 89.40 & Temperature RMSE \qty{3.94}{K}; no temperature-error criterion was applied. \\
         NCCC 3C thermal pinch & Finite difference & Alternative branch; no retained residual & $-89.50$ percentage points from measured capture & 16.61 & 0.00 & Boundary-satisfying zero-capture branch. \\
         \bottomrule
-    \end{tabularx}
-    \end{adjustbox}
-\end{center}
+  \end{tabularx}
+\end{table}

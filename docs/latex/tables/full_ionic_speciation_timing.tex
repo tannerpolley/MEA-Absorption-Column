@@ -1,17 +1,16 @@
-\begin{center}
-    \centering
-    \small
-    \captionof{table}{Capture-error and runtime comparison for the routine fugacity calculations and the nine-species activity-rebased ePC-SAFT calculation.}
-    \label{tab:full-ionic-speciation-timing}
-    \renewcommand{\arraystretch}{1.2}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}X@{}}
-        \toprule
-        \textbf{Calculation} & \textbf{Cases} & \textbf{Capture comparison} & \textbf{Runtime} & \textbf{Interpretation} \\
-        \midrule
-        Henry-law reference closure & 9 rows satisfying the stated inclusion criteria & Mean absolute capture error 3.14 percentage points & Median \SI{5.25}{s} & Reference driving-force calculation with concentration-based chemistry. \\
-        ePC-SAFT fugacity calculation & 9 rows satisfying the stated inclusion criteria & Mean absolute capture error 3.32 percentage points & Median \SI{7.70}{s} & ePC-SAFT CO$_2$ fugacity coefficients with the same concentration-based chemistry. \\
-        Nine-species activity-rebased Case 3C calculation & Case 3C & Capture error $-0.764$ percentage points & \SI{139.420}{s}; \SI{102.267}{s} chemistry solve & Numerical-coupling result under feasibility settings; reaction constants were locally rebased. \\
-        Nine-species activity-rebased C-case calculation & 7 C rows & Mean absolute capture error 6.595 percentage points; maximum absolute error 16.514 percentage points & Mean \SI{171.102}{s}; mean chemistry solve \SI{127.764}{s} & The solver returned all seven rows with zero invalid states, zero guard penalties, and chemistry residuals below $10^{-8}$; the calculation does not establish predictive reactive thermodynamics. \\
+\begin{table}[htbp]
+  \centering
+  \caption{Capture-error and runtime comparison for the routine fugacity calculations and the nine-species activity-rebased ePC-SAFT calculation.}
+  \label{tab:full-ionic-speciation-timing}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}p{0.20\textwidth} p{0.12\textwidth} p{0.19\textwidth} p{0.16\textwidth} X@{}}
+    \toprule
+    Calculation & Cases & Capture comparison & Runtime & Interpretation \\
+    \midrule
+        Henry-law reference closure & 9 rows satisfying the stated inclusion criteria & Mean absolute capture error 3.14 percentage points & Median \qty{5.25}{s} & Reference driving-force calculation with concentration-based chemistry. \\
+        ePC-SAFT fugacity calculation & 9 rows satisfying the stated inclusion criteria & Mean absolute capture error 3.32 percentage points & Median \qty{7.70}{s} & ePC-SAFT CO$_2$ fugacity coefficients with the same concentration-based chemistry. \\
+        Nine-species activity-rebased Case 3C calculation & Case 3C & Capture error $-0.764$ percentage points & \qty{139.420}{s}; \qty{102.267}{s} chemistry solve & Numerical-coupling result under feasibility settings; reaction constants were locally rebased. \\
+        Nine-species activity-rebased C-case calculation & 7 C rows & Mean absolute capture error 6.595 percentage points; maximum absolute error 16.514 percentage points & Mean \qty{171.102}{s}; mean chemistry solve \qty{127.764}{s} & The solver returned all seven rows with zero invalid states, zero guard penalties, and chemistry residuals below $10^{-8}$; the calculation does not establish predictive reactive thermodynamics. \\
         \bottomrule
-    \end{tabularx}
-\end{center}
+  \end{tabularx}
+\end{table}
