@@ -178,8 +178,6 @@ boundaries.
 Run the three-position direct-boundary numerical gate:
 
 ```bash
-MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
-MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
 uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
 ```
 

@@ -218,14 +218,14 @@ commands:
     - uv run python analyses/nccc_validation/scripts/render_issue17_enhancement_comparison.py
     - uv run python analyses/nccc_validation/scripts/validate_results.py --issue17-only
   reactive_film:
-    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
-    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
+    - uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
+    - uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
   issue16_reactive_film:
     - uv run python scripts/check_epcsaft_integration.py --mode final
     - uv run pytest -q tests/test_reactive_film.py -k exact_epcsaft_tangent_closes_through_zero_drive_film
-    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 10
-    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
-    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/generate_issue16_evidence.py
+    - uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 10
+    - uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
+    - uv run python analyses/nccc_validation/scripts/generate_issue16_evidence.py
   issue33_concentration_basis:
     - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/resolve_concentration_bases.py
   issue34_kinetics:

@@ -18,13 +18,11 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 
 from analyses.nccc_validation.scripts.analyze_enhancement_consistency import (  # noqa: E402
-    REACTIVE_SUMMARY,
-    REACTIVE_TABLE,
     _load_profile,
 )
 from mea_absorption_column.Thermodynamics.Chemical_Equilibrium import (  # noqa: E402
     SPECIES_9,
-    tabulated_epcsaft_reactive_chemical_equilibrium,
+    bundle_reactive_chemical_equilibrium,
 )
 from mea_absorption_column.Thermodynamics.thermo_models import (  # noqa: E402
     IONIC_CHARGE_BY_SPECIES,
@@ -32,6 +30,7 @@ from mea_absorption_column.Thermodynamics.thermo_models import (  # noqa: E402
     epcsaft_cache_stats,
     epcsaft_liquid_transport_state,
 )
+from mea_absorption_column.Thermodynamics.reactive_bundle import validate_reactive_bundle  # noqa: E402
 from mea_absorption_column.Transport.Reactive_Film import (  # noqa: E402
     FilmThermodynamicState,
     ReactiveFilmSolveError,
@@ -40,6 +39,7 @@ from mea_absorption_column.Transport.Reactive_Film import (  # noqa: E402
 
 
 FINAL = ROOT / "analyses/nccc_validation/results/final"
+IDENTITY = ROOT / "analyses/nccc_validation/inputs/issue16_reactive_film_identity.json"
 RUN_TABLE = FINAL / "tables/issue16_exact_reactive_film_runs.csv"
 PROFILE_TABLE = FINAL / "tables/issue16_exact_reactive_film_profile.csv"
 SUMMARY = FINAL / "tables/issue16_exact_reactive_film_summary.json"
@@ -47,7 +47,9 @@ NUMERICAL_GATE_TABLE = FINAL / "tables/issue16_exact_reactive_film_numerical_gat
 NUMERICAL_GATE_SUMMARY = (
     FINAL / "tables/issue16_exact_reactive_film_numerical_gate_summary.json"
 )
-PARAMETERS = Path(MEA_THERMODYNAMICS_EPCSAFT_DATASET) / "parameters.json"
+DIFFUSIVITY_POLICY = (
+    ROOT / "analyses/reactive_film_evidence/inputs/onsager_diffusivity_closure_policy.json"
+)
 CO2, MEA, H2O = 0, 1, 2
 STOICHIOMETRY = np.asarray(
     (
@@ -131,11 +133,18 @@ def _retained_state(position: float = 1.0) -> tuple[pd.Series, np.ndarray]:
     if abs(float(source.Position) - float(position)) > 1.0e-12:
         raise ValueError(f"Position {position:g} is absent from the retained profile")
     apparent_flows = source[["Fl_CO2", "Fl_MEA", "Fl_H2O"]].to_numpy(float)
-    _, composition = tabulated_epcsaft_reactive_chemical_equilibrium(
-        apparent_flows, float(source.Tl), diagnostics={}
+    _, composition = bundle_reactive_chemical_equilibrium(
+        apparent_flows, float(source.Tl), P=float(source.P), diagnostics={}
     )
     concentrations = composition * float(source.rho_mol_l)
     return source, concentrations
+
+
+def _load_diffusivity_policy() -> dict:
+    policy = json.loads(DIFFUSIVITY_POLICY.read_text(encoding="utf-8"))
+    if policy["species_order"] != list(SPECIES_9):
+        raise ValueError("retained Onsager diffusivity policy species order changed")
+    return policy
 
 
 def _require_admitted_work_package_a_inputs(
@@ -168,10 +177,8 @@ def _run(
     _require_admitted_work_package_a_inputs(source, bulk)
     temperature = float(source.Tl)
     pressure = float(source.P)
-    diffusivities = np.asarray(
-        [source.Dl_CO2, source.Dl_MEA, source.Dl_MEA, *([source.Dl_ion] * 6)],
-        dtype=float,
-    )
+    diffusivity_policy = _load_diffusivity_policy()
+    diffusivities = np.asarray(diffusivity_policy["species_diffusivities_m2_s"], dtype=float)
 
     def thermodynamic_state(
         _concentrations: np.ndarray, composition: np.ndarray
@@ -180,6 +187,8 @@ def _run(
         return FilmThermodynamicState(
             state.fugacities_pa,
             state.fixed_other_concentrations_log_fugacity_derivative(CO2),
+            state.log_composition_basis,
+            state.chemical_potential_derivatives_over_rt,
         )
 
     bulk_fugacities = epcsaft_liquid_transport_state(
@@ -217,6 +226,8 @@ def _run(
         initial_flux_factor=initial_flux_factor,
         reaction_continuation_steps=16,
         solver_tolerance=1.0e-6,
+        transport_model="onsager",
+        diffusivity_metadata=diffusivity_policy,
     )
     runtime = time.perf_counter() - started
     flux = float(result.fluxes_mol_m2_s[CO2, 0])
@@ -252,6 +263,8 @@ def _run(
         "maximum_electroneutrality_residual": result.maximum_electroneutrality_residual,
         "maximum_zero_current_residual": result.maximum_zero_current_residual,
         "solver_message": result.solver_message,
+        "diffusivity_policy_id": result.diffusivity_policy_id,
+        "diffusivity_uncertainty_factor": result.diffusivity_uncertainty_factor,
     }
     profile = pd.DataFrame(
         {
@@ -374,12 +387,19 @@ def main() -> None:
         else None
     )
     wheel = _wheel_path()
+    identity = json.loads(IDENTITY.read_text(encoding="utf-8"))
+    diffusivity_policy = _load_diffusivity_policy()
+    bundle = validate_reactive_bundle(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET))["bundle"]
+    retained_source, retained_bulk = _retained_state(1.0)
+    runtime_state = epcsaft_liquid_transport_state(
+        float(retained_source.Tl), float(retained_source.P), retained_bulk / retained_bulk.sum()
+    )
     summary = {
         "issue": "https://github.com/tannerpolley/MEA-Absorption-Column/issues/16",
         "species": list(SPECIES_9),
         "claim_label": "provisional_concept_only",
         "reaction_basis": "Work Package A F1/F2/F3 reversible stoichiometry; manufactured relative-fugacity rates are limited to the separate architecture check and are not admitted in physical runs",
-        "transport_basis": "planned isothermal effective-Fick film with CO2-only interface flux and public ePC-SAFT exact fixed-T,P tangent; rejected transport inputs stop at preflight",
+        "transport_basis": "isothermal constrained Onsager film with public ePC-SAFT exact fixed-T,P tangent; explicit effective-Fick comparison is separate; compact diffusivity policy is estimated and non-predictive; rejected physical inputs stop at preflight",
         "solver_formulation": "reduced electroneutral and zero-current coordinates with direct gas-film closure and exact CO2-direction boundary derivative",
         "case_count": len(cases),
         "evaluated_case_count": len(evaluated),
@@ -409,10 +429,13 @@ def main() -> None:
         )
         if len(evaluated)
         else None,
-        "parameter_document_sha256": _sha256(PARAMETERS),
+        "parameter_document_sha256": bundle["parameter_document_sha256"],
+        "reaction_system_sha256": identity["bundle"]["reaction_system_sha256"],
+        "reactive_bundle_id": bundle["bundle_id"],
         "engine_wheel_sha256": _sha256(wheel),
-        "reactive_table_sha256": _sha256(REACTIVE_TABLE),
-        "reactive_table_summary_sha256": _sha256(REACTIVE_SUMMARY),
+        "engine_core_sha256": runtime_state.artifact_fingerprint.removeprefix("sha256:"),
+        "diffusivity_policy_id": diffusivity_policy["policy_id"],
+        "diffusivity_uncertainty_factor": diffusivity_policy["relative_uncertainty_factor"],
         "epcsaft_runtime_counters": epcsaft_cache_stats(),
         "failed_rows": table.loc[
             ~table.outcome.eq("evaluated"),

@@ -16,6 +16,7 @@ from analyses.nccc_validation.scripts.analyze_reactive_film import (  # noqa: E4
     CONSERVATION,
     RUN_TABLE,
     STOICHIOMETRY,
+    _load_diffusivity_policy,
     _retained_state,
 )
 from mea_absorption_column.Thermodynamics.thermo_models import (  # noqa: E402
@@ -55,35 +56,58 @@ def _validate_derivative_receipt(identity: dict) -> None:
 
 def _manufactured_rows(identity: dict) -> list[dict[str, object]]:
     bulk = np.array([1.0, 100.0, 1000.0, 10.0, 7.0, 2.0, 0.5, 1.0, 1.0])
+    charges = CHARGES
+    exact = epcsaft_liquid_transport_state(318.15, 109500.0, bulk / bulk.sum())
+    coordinate = np.asarray([0, 1, 4, 5, 6, 7, 8], dtype=int)
+    dependent = np.asarray([2, 3], dtype=int)
+    diffusivity_policy = _load_diffusivity_policy()
 
-    def thermodynamics(concentrations, _composition):
-        fugacities = concentrations.copy()
-        fugacities[0] *= 5.0e3
-        return FilmThermodynamicState(fugacities, 1.0)
+    def basis(composition):
+        result = np.zeros((9, 7), dtype=float)
+        constraint = np.vstack((composition[dependent], charges[dependent] * composition[dependent]))
+        for column, index in enumerate(coordinate):
+            result[index, column] = 1.0
+            result[dependent, column] = np.linalg.solve(
+                constraint, -np.asarray((composition[index], charges[index] * composition[index]))
+            )
+        return result
+
+    def thermodynamics(_concentrations, composition):
+        composition = np.asarray(composition, dtype=float)
+        local_basis = basis(composition)
+        fugacities = exact.fugacities_pa * np.exp(
+            exact.chemical_potential_derivatives_over_rt
+            @ np.log(composition[coordinate] / exact.composition[coordinate])
+        )
+        return FilmThermodynamicState(
+            fugacities,
+            exact.fixed_other_concentrations_log_fugacity_derivative(0),
+            local_basis,
+            exact.chemical_potential_derivatives_over_rt,
+        )
 
     bulk_fugacities = thermodynamics(bulk, bulk / bulk.sum()).fugacities_pa
 
     def rates(_concentrations, _composition, fugacities):
         activity_ratio = fugacities / bulk_fugacities
-        return 1.0e-4 * np.array(
+        raw = np.array(
             [
-                activity_ratio[0] * activity_ratio[1] ** 2
-                - activity_ratio[3] * activity_ratio[4],
-                activity_ratio[0] * activity_ratio[1] * activity_ratio[2]
-                - activity_ratio[4] * activity_ratio[7],
+                activity_ratio[0] * activity_ratio[1] ** 2 - activity_ratio[3] * activity_ratio[4],
+                activity_ratio[0] * activity_ratio[1] * activity_ratio[2] - activity_ratio[4] * activity_ratio[7],
                 activity_ratio[0] * activity_ratio[8] - activity_ratio[5],
             ]
         )
+        return 1.0e-8 * (raw - np.mean(raw))
 
     rows = []
     for vapor_fugacity, direction in (
-        (5.0e3, "zero_drive"),
-        (1.0e4, "absorption"),
-        (2.5e3, "desorption"),
+        (bulk_fugacities[0], "zero_drive"),
+        (bulk_fugacities[0] * 1.01, "absorption"),
+        (bulk_fugacities[0] * 0.99, "desorption"),
     ):
         result = solve_reactive_film(
             bulk_concentrations_mol_m3=bulk,
-            diffusivities_m2_s=np.full(9, 1.0e-9),
+            diffusivities_m2_s=np.asarray(diffusivity_policy["species_diffusivities_m2_s"], dtype=float),
             stoichiometry=STOICHIOMETRY,
             conservation_matrix=CONSERVATION,
             charge_numbers=CHARGES,
@@ -95,6 +119,8 @@ def _manufactured_rows(identity: dict) -> list[dict[str, object]]:
             co2_index=0,
             mesh_points=11,
             reaction_continuation_steps=3,
+            transport_model="onsager",
+            diffusivity_metadata=diffusivity_policy,
         )
         rows.append(
             {
@@ -106,6 +132,12 @@ def _manufactured_rows(identity: dict) -> list[dict[str, object]]:
                 "max_electroneutrality_residual": result.maximum_electroneutrality_residual,
                 "max_zero_current_residual": result.maximum_zero_current_residual,
                 "max_abs_rate_mol_m3_s": np.max(np.abs(result.net_rate_mol_m3_s)),
+                "transport_rank": result.transport_rank,
+                "transport_nullity": result.transport_nullity,
+                "minimum_mobility_eigenvalue": result.minimum_mobility_eigenvalue,
+                "diffusivity_policy_id": result.diffusivity_policy_id,
+                "diffusivity_uncertainty_factor": result.diffusivity_uncertainty_factor,
+                "parameter_document_sha256": identity["bundle"]["parameter_document_sha256"],
                 "engine_wheel_sha256": identity["engine"]["wheel_sha256"],
                 "engine_core_sha256": identity["engine"]["core_sha256"],
                 "claim_label": "provisional_concept_only",
@@ -122,6 +154,8 @@ def _gate_rows(identity: dict) -> list[dict[str, str]]:
     engine = identity["engine"]
     derivative = identity["derivative_check"]
     work_package = identity["work_package_a"]
+    _, retained_bulk = _retained_state(1.0)
+    retained_mea_molarity = float(np.sum(retained_bulk[[1, 3, 4]]) / 1000.0)
     return [
         {
             "gate": "immutable_engine_wheel",
@@ -164,7 +198,7 @@ def _gate_rows(identity: dict) -> list[dict[str, str]]:
             "gate": "work_package_a_state_domain",
             "status": "failed",
             "claim_level": "provisional_concept_only",
-            "evidence": "retained position 1 MEA=4.8893098971 mol/L",
+            "evidence": f"retained position 1 bundle-derived MEA={retained_mea_molarity:.12g} mol/L",
             "diagnostic": "not an admitted exact 1.0 or 5.0 mol/L state",
         },
         {
@@ -175,7 +209,7 @@ def _gate_rows(identity: dict) -> list[dict[str, str]]:
             "diagnostic": "no source-admitted executable reversible rate coefficients",
         },
         {
-            "gate": "effective_fick_transport_inputs",
+            "gate": "compact_onsager_transport_inputs",
             "status": "blocked",
             "claim_level": "provisional_concept_only",
             "evidence": work_package["transport_status"],

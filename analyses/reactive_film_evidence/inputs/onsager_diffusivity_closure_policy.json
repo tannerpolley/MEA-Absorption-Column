@@ -1,0 +1,48 @@
+{
+  "policy_id": "estimated_compact_onsager_v1",
+  "status": "estimated_compact_policy",
+  "species_order": [
+    "CO2",
+    "MEA",
+    "H2O",
+    "MEAH+",
+    "MEACOO-",
+    "HCO3-",
+    "CO3^2-",
+    "H3O+",
+    "OH-"
+  ],
+  "species_diffusivities_m2_s": [
+    2.626371057498789e-09,
+    1.4380630694971035e-09,
+    1.2e-09,
+    8.4e-10,
+    6.8e-10,
+    6.0e-10,
+    5.5e-10,
+    1.0e-09,
+    1.0e-09
+  ],
+  "species_status": {
+    "CO2": "estimated_from_retained_correlation",
+    "MEA": "estimated_from_retained_correlation",
+    "H2O": "unavailable_estimated_compact_anchor",
+    "MEAH+": "low_concentration_dosy_anchor",
+    "MEACOO-": "low_concentration_dosy_anchor",
+    "HCO3-": "unavailable_estimated_compact_anchor",
+    "CO3^2-": "unavailable_estimated_compact_anchor",
+    "H3O+": "unavailable_estimated_compact_anchor",
+    "OH-": "unavailable_estimated_compact_anchor"
+  },
+  "relative_uncertainty_factor": 2.0,
+  "sensitivity_multipliers": [0.5, 1.0, 2.0],
+  "retained_source_inventory": {
+    "status": "rejected_or_unavailable_for_predictive_full_matrix",
+    "paths": [
+      "analyses/nccc_validation/results/final/tables/issue35_transport_inputs.csv",
+      "analyses/nccc_validation/results/final/tables/issue42_transport_inputs.csv",
+      "analyses/reactive_film_evidence/inputs/diffusion_anchor_assumptions.csv"
+    ],
+    "note": "No source-complete nine-species Maxwell-Stefan coefficient matrix was available; values are an explicit non-predictive compact policy, not six copies of Dl_ion."
+  }
+}
