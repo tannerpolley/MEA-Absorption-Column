@@ -63,7 +63,7 @@ PACKAGED_EPCSAFT_DATASETS = resources.files("mea_absorption_column").joinpath(
     "data/epcsaft_datasets"
 )
 DEFAULT_EPCSAFT_DATASET_NAME = os.environ.get(
-    "MEA_EPCSAFT_DATASET_NAME", "MEA_CO2_H2O_ionic_fit"
+    "MEA_EPCSAFT_DATASET_NAME", "MEA_reactive_epcsaft_bundle"
 )
 
 

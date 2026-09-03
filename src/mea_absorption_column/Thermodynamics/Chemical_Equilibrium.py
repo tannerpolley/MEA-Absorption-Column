@@ -20,6 +20,9 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     ensure_epcsaft_importable,
     epcsaft_runtime_user_options,
 )
+from mea_absorption_column.Thermodynamics.reactive_bundle import (
+    solve_homogeneous_reactive_state,
+)
 
 
 SPECIES_6 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-")
@@ -255,7 +258,7 @@ def chemical_equilibrium(Fl, Tl):
             max_nfev=60,
         )
 
-    Cl_true_scaled, solution, success = result.x, result.message, result.success
+    Cl_true_scaled = result.x
 
     Cl_true = np.maximum(Cl_true_scaled*scales, 1.0e-30)
 
@@ -338,19 +341,12 @@ def chemical_equilibrium_with_model(
         )
     if normalized_model in {
         "epcsaft_reactive_nine",
+        "epcsaft_reactive_nine_bundle",
         "epcsaft_reactive_nine_activity",
         "epcsaft_nine_activity",
         "epcsaft_full_species_activity",
     }:
-        return epcsaft_reactive_chemical_equilibrium(
-            Fl,
-            Tl,
-            P=P,
-            standard_state="mole_fraction_activity",
-            species_set="nine",
-            calibrate_activity_to_legacy=False,
-            diagnostics=diagnostics,
-        )
+        return bundle_reactive_chemical_equilibrium(Fl, Tl, P=P, diagnostics=diagnostics)
     if normalized_model in {
         "epcsaft_reactive_nine_activity_rebased",
         "epcsaft_nine_activity_rebased",
@@ -385,6 +381,42 @@ def chemical_equilibrium_with_model(
         "epcsaft_reactive_six_activity, epcsaft_reactive_six_activity_converted, "
         "epcsaft_reactive_six_activity_rebased, or epcsaft_reactive_nine_activity_rebased."
     )
+
+
+@lru_cache(maxsize=512)
+def _cached_bundle_reactive_state(temperature, pressure, apparent):
+    return solve_homogeneous_reactive_state(
+        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), temperature, pressure, apparent
+    )
+
+
+def bundle_reactive_chemical_equilibrium(Fl, Tl, *, P=101325.0, diagnostics=None):
+    apparent = _apparent_liquid_mole_fraction(Fl)
+    temperature = float(np.round(float(Tl), EPCSAFT_CHEMISTRY_CACHE_T_DIGITS))
+    pressure_increment = max(EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA, 1.0e-12)
+    pressure = float(np.round(float(P) / pressure_increment) * pressure_increment)
+    apparent_key = tuple(
+        float(np.round(value, EPCSAFT_CHEMISTRY_CACHE_X_DIGITS)) for value in apparent
+    )
+    before = _cached_bundle_reactive_state.cache_info()
+    started = time.perf_counter()
+    result = _cached_bundle_reactive_state(temperature, pressure, apparent_key)
+    elapsed = time.perf_counter() - started
+    after = _cached_bundle_reactive_state.cache_info()
+    _increment_diagnostic(
+        diagnostics,
+        "epcsaft_chemistry_cache_hits" if after.hits > before.hits else "epcsaft_chemistry_cache_misses",
+    )
+    _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", elapsed)
+    for name in (
+        "balance_inf_norm",
+        "reaction_affinity_inf_norm",
+        "pressure_relative_inf_norm",
+        "kkt_stationarity_inf_norm",
+    ):
+        _set_diagnostic_max(diagnostics, f"epcsaft_chemistry_{name}", result["evidence"][name])
+    composition = np.asarray(result["composition"], dtype=float)
+    return composition * float(result["density_mol_m3"]), composition.copy()
 
 
 @lru_cache(maxsize=4)

@@ -39,6 +39,75 @@ class ReactiveFilmResult:
     solver_message: str
 
 
+def binary_diffusivities_from_species(species_diffusivities_m2_s):
+    """Estimate symmetric pair diffusivities by the harmonic mean."""
+
+    values = np.asarray(species_diffusivities_m2_s, dtype=float)
+    if values.ndim != 1 or values.size < 2 or np.any(~np.isfinite(values)) or np.any(values <= 0.0):
+        raise ReactiveFilmDomainError(
+            "species diffusivity estimates must be a positive finite 1-D array"
+        )
+    pairs = 2.0 * values[:, None] * values[None, :] / (
+        values[:, None] + values[None, :]
+    )
+    np.fill_diagonal(pairs, 0.0)
+    return pairs
+
+
+def constrained_onsager_mobility(
+    composition,
+    total_concentration_mol_m3: float,
+    binary_diffusivities_m2_s,
+    charge_numbers=None,
+):
+    """Return a symmetric Onsager mobility with zero molar flux and current.
+
+    Pair weights ``c*x_i*x_j*D_ij`` recover ordinary binary Fick diffusion for
+    ideal chemical potentials.  Eliminating the electric-potential force by a
+    Schur complement imposes zero current without equal ion diffusivities.
+    """
+
+    x = np.asarray(composition, dtype=float)
+    pairs = np.asarray(binary_diffusivities_m2_s, dtype=float)
+    if (
+        x.ndim != 1
+        or x.size < 2
+        or np.any(~np.isfinite(x))
+        or np.any(x <= 0.0)
+        or abs(float(x.sum()) - 1.0) > 1.0e-12
+    ):
+        raise ReactiveFilmDomainError(
+            "Onsager composition must be positive, finite, and normalized"
+        )
+    if (
+        pairs.shape != (x.size, x.size)
+        or np.any(~np.isfinite(pairs))
+        or not np.allclose(pairs, pairs.T, rtol=1.0e-12, atol=0.0)
+        or np.any(pairs[np.triu_indices(x.size, 1)] <= 0.0)
+    ):
+        raise ReactiveFilmDomainError(
+            "binary diffusivities must be a finite symmetric matrix with positive pairs"
+        )
+    if not np.isfinite(total_concentration_mol_m3) or total_concentration_mol_m3 <= 0.0:
+        raise ReactiveFilmDomainError(
+            "total concentration must be positive and finite"
+        )
+
+    weights = float(total_concentration_mol_m3) * x[:, None] * x[None, :] * pairs
+    mobility = np.diag(weights.sum(axis=1)) - weights
+    if charge_numbers is not None:
+        charges = np.asarray(charge_numbers, dtype=float)
+        if charges.shape != x.shape or np.any(~np.isfinite(charges)):
+            raise ReactiveFilmDomainError(
+                "charge_numbers must have one finite value per species"
+            )
+        electrical_direction = mobility @ charges
+        denominator = float(charges @ electrical_direction)
+        if denominator > np.finfo(float).eps * max(float(np.trace(mobility)), 1.0):
+            mobility -= np.outer(electrical_direction, electrical_direction) / denominator
+    return 0.5 * (mobility + mobility.T)
+
+
 def solve_reactive_film(
     *,
     bulk_concentrations_mol_m3,
