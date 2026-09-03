@@ -1440,8 +1440,6 @@
       "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
     },
     {
-      "c_dielectric": 0.0,
-      "c_shell": 0.0,
       "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
       "choice": "born",
       "family_id": "model/electrolyte",
@@ -1477,13 +1475,13 @@
           "identity": "pair/bicarbonate-anion/carbonate-anion/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=HCO3-:column=CO3^2-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
+            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
+            "source_id": "figiel-2025"
           },
           "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
           "value": {
-            "magnitude": 0.0,
+            "magnitude": 1.0,
             "unit": "dimensionless"
           }
         }
@@ -1521,13 +1519,13 @@
           "identity": "pair/bicarbonate-anion/hydroxide-anion/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=HCO3-:column=OH-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
+            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
+            "source_id": "figiel-2025"
           },
           "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
           "value": {
-            "magnitude": 0.0,
+            "magnitude": 1.0,
             "unit": "dimensionless"
           }
         }
@@ -1543,13 +1541,13 @@
           "identity": "pair/bicarbonate-anion/carbamate-anion/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=MEACOO-:column=HCO3-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
+            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
+            "source_id": "figiel-2025"
           },
           "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
           "value": {
-            "magnitude": 0.0,
+            "magnitude": 1.0,
             "unit": "dimensionless"
           }
         }
@@ -1565,13 +1563,13 @@
           "identity": "pair/carbamate-anion/carbonate-anion/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=MEACOO-:column=CO3^2-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
+            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
+            "source_id": "figiel-2025"
           },
           "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
           "value": {
-            "magnitude": 0.0,
+            "magnitude": 1.0,
             "unit": "dimensionless"
           }
         }
@@ -1609,13 +1607,13 @@
           "identity": "pair/carbamate-anion/hydroxide-anion/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=MEACOO-:column=OH-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
+            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
+            "source_id": "figiel-2025"
           },
           "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
           "value": {
-            "magnitude": 0.0,
+            "magnitude": 1.0,
             "unit": "dimensionless"
           }
         }
@@ -1849,13 +1847,13 @@
           "identity": "pair/carbonate-anion/hydroxide-anion/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=CO3^2-:column=OH-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
+            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
+            "source_id": "figiel-2025"
           },
           "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
           "value": {
-            "magnitude": 0.0,
+            "magnitude": 1.0,
             "unit": "dimensionless"
           }
         }
@@ -2113,13 +2111,13 @@
           "identity": "pair/hydronium-cation/protonated-monoethanolamine/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=MEAH+:column=H3O+:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
+            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
+            "source_id": "figiel-2025"
           },
           "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
           "value": {
-            "magnitude": 0.0,
+            "magnitude": 1.0,
             "unit": "dimensionless"
           }
         }
@@ -2333,7 +2331,7 @@
             "upper": 6000.0
           },
           "value": {
-            "magnitude": 2677.91,
+            "magnitude": 2597.91,
             "unit": "kelvin"
           }
         },
@@ -2367,10 +2365,10 @@
       "reaction_id": "R5",
       "source": {
         "domain_id": "mea-provider-source-qualified-313-15-k",
-        "locator": "Equation 7, p. 349",
-        "source_id": "bates-pinching-1951"
+        "locator": "analyses/mea_parameter_bundle/results/born-permittivity-study/current-fast-common-comparison.csv:variant=A-AUTO-r5am80; initialized from Bates and Pinching (1951), Equation 7, p. 349",
+        "source_id": "mea-born-permittivity-study-2026-09-02"
       },
-      "source_sha256": "sha256:aff8621efd41dbce106bb189fd104840a1513d9d163f4f57dfb1abbf53a30db1"
+      "source_sha256": "sha256:c77851220e730c71defff5d40ea488ae5e191fc30b5d068b39deb8ec484a5cb0"
     }
   ],
   "schema": "epcsaft.parameters",
@@ -2415,6 +2413,16 @@
       "citation": "MEA-Thermodynamics bounded direct Engine campaign, 2026-09-02.",
       "source_id": "mea-best-in-slot-campaign-2026-09-02",
       "use_basis": "Current-best joint pressure/speciation calibration of the R4 correlation and carbon-dioxide dispersion energy; initialized from the retained literature bundle and not an independent validation."
+    },
+    {
+      "citation": "MEA-Thermodynamics Born-permittivity and reaction comparison, 2026-09-02.",
+      "source_id": "mea-born-permittivity-study-2026-09-02",
+      "use_basis": "Selected R5 temperature coefficient for the extended-Born bundle from the common-target pressure and speciation comparison; initialized from Bates and Pinching (1951)."
+    },
+    {
+      "citation": "Figiel et al. (2025), Industrial & Engineering Chemistry Research 64, 9406-9420, doi:10.1021/acs.iecr.5c00475",
+      "source_id": "figiel-2025",
+      "use_basis": "Same-sign ion dispersion exclusion and the coupled SSM+DS diameter, solvation-factor, and dielectric-suppression formulation."
     }
   ],
   "topology": {

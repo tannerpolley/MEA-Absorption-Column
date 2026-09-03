@@ -26,6 +26,7 @@ BENCHMARK_COLUMNS = [
     "method",
     "thermo_model",
     "chemical_equilibrium_model",
+    "co2_mass_transfer_model",
     "success",
     "message",
     "runtime_s",

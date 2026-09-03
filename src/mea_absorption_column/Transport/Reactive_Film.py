@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Callable
 
 import numpy as np
 from scipy.integrate import cumulative_trapezoid, quad, solve_bvp
+from scipy.interpolate import PchipInterpolator
 from scipy.optimize import brentq
 
 
@@ -36,6 +38,41 @@ class ReactiveFilmResult:
     maximum_invariant_source_residual: float
     maximum_electroneutrality_residual: float
     maximum_zero_current_residual: float
+    solver_message: str
+
+
+@dataclass(frozen=True)
+class EquilibriumManifoldState:
+    """One homogeneous state and its exact composition tangent."""
+
+    composition: np.ndarray
+    total_concentration_mol_m3: float
+    fugacities_pa: np.ndarray
+    chemical_potentials_over_rt: np.ndarray
+    log_composition_basis: np.ndarray
+    chemical_potential_derivatives_over_rt: np.ndarray
+
+
+@dataclass(frozen=True)
+class EquilibriumManifoldFilmResult:
+    """Fast-equilibrium film result in one conserved loading coordinate."""
+
+    coordinate_m: np.ndarray
+    log_loading_coordinate: np.ndarray
+    compositions: np.ndarray
+    fluxes_mol_m2_s: np.ndarray
+    co2_component_flux_mol_m2_s: float
+    interface_fugacity_pa: float
+    maximum_interface_residual: float
+    maximum_component_flux_residual: float
+    maximum_zero_total_flux_residual: float
+    maximum_zero_current_residual: float
+    minimum_entropy_production_over_r: float
+    minimum_mobility_eigenvalue: float
+    maximum_tangent_directional_error: float
+    minimum_composition: float
+    quadrature_points: int
+    quadrature_relative_change: float
     solver_message: str
 
 
@@ -106,6 +143,330 @@ def constrained_onsager_mobility(
         if denominator > np.finfo(float).eps * max(float(np.trace(mobility)), 1.0):
             mobility -= np.outer(electrical_direction, electrical_direction) / denominator
     return 0.5 * (mobility + mobility.T)
+
+
+def solve_equilibrium_manifold_film(
+    *,
+    state_at_log_loading: Callable[[float], EquilibriumManifoldState],
+    species_diffusivities_m2_s,
+    co2_component_coefficients,
+    vapor_bulk_fugacity_pa: float,
+    gas_transfer_coefficient_mol_m2_s_pa: float,
+    film_thickness_m: float,
+    co2_index: int,
+    charge_numbers=None,
+    quadrature_points: int = 9,
+    maximum_quadrature_points: int = 65,
+    quadrature_tolerance: float = 1.0e-3,
+    profile_points: int = 21,
+) -> EquilibriumManifoldFilmResult:
+    """Solve the fast-reaction film on a one-dimensional equilibrium manifold.
+
+    The log-loading coordinate is zero in the bulk.  Reactions remain at
+    homogeneous equilibrium, while the supplied component invariant is
+    transported by a symmetric constrained Onsager mobility.  The resulting
+    scalar resistance integral and gas-film closure require no spatial BVP.
+    """
+
+    diffusivities = np.asarray(species_diffusivities_m2_s, dtype=float)
+    component = np.asarray(co2_component_coefficients, dtype=float)
+    charges = None if charge_numbers is None else np.asarray(charge_numbers, dtype=float)
+    if (
+        diffusivities.ndim != 1
+        or diffusivities.size < 2
+        or np.any(~np.isfinite(diffusivities))
+        or np.any(diffusivities <= 0.0)
+        or component.shape != diffusivities.shape
+        or np.any(~np.isfinite(component))
+        or not np.any(component)
+    ):
+        raise ReactiveFilmDomainError(
+            "equilibrium-manifold diffusivities and component coefficients are invalid"
+        )
+    if charges is not None and (
+        charges.shape != diffusivities.shape or np.any(~np.isfinite(charges))
+    ):
+        raise ReactiveFilmDomainError("charge_numbers must have one finite value per species")
+    if not 0 <= int(co2_index) < diffusivities.size:
+        raise ReactiveFilmDomainError("co2_index is outside the species array")
+    positive = (
+        gas_transfer_coefficient_mol_m2_s_pa,
+        film_thickness_m,
+        quadrature_tolerance,
+    )
+    if any(not np.isfinite(value) or value <= 0.0 for value in positive):
+        raise ReactiveFilmDomainError("film, transfer, and quadrature scales must be positive")
+    if quadrature_points < 5 or quadrature_points % 2 == 0:
+        raise ReactiveFilmDomainError("quadrature_points must be odd and at least 5")
+    if maximum_quadrature_points < quadrature_points or profile_points < 3:
+        raise ReactiveFilmDomainError("quadrature and profile limits are inconsistent")
+
+    pairs = binary_diffusivities_from_species(diffusivities)
+
+    @lru_cache(maxsize=512)
+    def state(log_loading: float) -> EquilibriumManifoldState:
+        raw = state_at_log_loading(float(log_loading))
+        composition = np.asarray(raw.composition, dtype=float)
+        fugacities = np.asarray(raw.fugacities_pa, dtype=float)
+        chemical_potentials = np.asarray(raw.chemical_potentials_over_rt, dtype=float)
+        basis = np.asarray(raw.log_composition_basis, dtype=float)
+        derivative = np.asarray(raw.chemical_potential_derivatives_over_rt, dtype=float)
+        if (
+            composition.shape != diffusivities.shape
+            or fugacities.shape != diffusivities.shape
+            or chemical_potentials.shape != diffusivities.shape
+            or basis.shape[0] != diffusivities.size
+            or derivative.shape != basis.shape
+            or basis.shape[1] < 1
+            or np.any(~np.isfinite(composition))
+            or np.any(composition <= 0.0)
+            or abs(float(composition.sum()) - 1.0) > 1.0e-10
+            or np.any(~np.isfinite(fugacities))
+            or np.any(fugacities <= 0.0)
+            or np.any(~np.isfinite(chemical_potentials))
+            or np.any(~np.isfinite(basis))
+            or np.any(~np.isfinite(derivative))
+            or not np.isfinite(raw.total_concentration_mol_m3)
+            or raw.total_concentration_mol_m3 <= 0.0
+        ):
+            raise ReactiveFilmDomainError("invalid equilibrium-manifold state")
+        return EquilibriumManifoldState(
+            composition=composition,
+            total_concentration_mol_m3=float(raw.total_concentration_mol_m3),
+            fugacities_pa=fugacities,
+            chemical_potentials_over_rt=chemical_potentials,
+            log_composition_basis=basis,
+            chemical_potential_derivatives_over_rt=derivative,
+        )
+
+    bulk = state(0.0)
+    bulk_fugacity = float(bulk.fugacities_pa[co2_index])
+    drive = float(vapor_bulk_fugacity_pa) - bulk_fugacity
+    drive_scale = max(abs(float(vapor_bulk_fugacity_pa)), bulk_fugacity, 1.0)
+    if abs(drive) <= 1.0e-13 * drive_scale:
+        coordinate = np.linspace(0.0, float(film_thickness_m), int(profile_points))
+        mobility = constrained_onsager_mobility(
+            bulk.composition,
+            bulk.total_concentration_mol_m3,
+            pairs,
+            charge_numbers=charges,
+        )
+        return EquilibriumManifoldFilmResult(
+            coordinate_m=coordinate,
+            log_loading_coordinate=np.zeros_like(coordinate),
+            compositions=np.repeat(bulk.composition[:, None], coordinate.size, axis=1),
+            fluxes_mol_m2_s=np.zeros((diffusivities.size, coordinate.size)),
+            co2_component_flux_mol_m2_s=0.0,
+            interface_fugacity_pa=bulk_fugacity,
+            maximum_interface_residual=0.0,
+            maximum_component_flux_residual=0.0,
+            maximum_zero_total_flux_residual=0.0,
+            maximum_zero_current_residual=0.0,
+            minimum_entropy_production_over_r=0.0,
+            minimum_mobility_eigenvalue=float(np.linalg.eigvalsh(mobility).min()),
+            maximum_tangent_directional_error=0.0,
+            minimum_composition=float(bulk.composition.min()),
+            quadrature_points=int(quadrature_points),
+            quadrature_relative_change=0.0,
+            solver_message="zero-drive equilibrium-manifold limit",
+        )
+
+    direction = float(np.sign(drive))
+
+    def grid(count: int, endpoint: float):
+        loading = np.linspace(min(0.0, endpoint), max(0.0, endpoint), count)
+        states = [state(float(value)) for value in loading]
+        compositions = np.column_stack([item.composition for item in states])
+        chemical_potentials = np.column_stack(
+            [item.chemical_potentials_over_rt for item in states]
+        )
+        dlogx = np.gradient(np.log(compositions), loading, axis=1, edge_order=2)
+        finite_difference = np.gradient(chemical_potentials, loading, axis=1, edge_order=2)
+        mobilities = []
+        tangents = []
+        conductance = np.empty(count)
+        directional_error = 0.0
+        for index, item in enumerate(states):
+            coordinates, *_ = np.linalg.lstsq(
+                item.log_composition_basis, dlogx[:, index], rcond=None
+            )
+            basis_residual = item.log_composition_basis @ coordinates - dlogx[:, index]
+            basis_scale = max(np.linalg.norm(dlogx[:, index], ord=np.inf), 1.0)
+            basis_error = float(
+                np.linalg.norm(basis_residual, ord=np.inf) / basis_scale
+            )
+            tangent = item.chemical_potential_derivatives_over_rt @ coordinates
+            scale = max(
+                np.linalg.norm(tangent, ord=np.inf),
+                np.linalg.norm(finite_difference[:, index], ord=np.inf),
+                1.0,
+            )
+            directional_error = max(
+                directional_error,
+                basis_error,
+                float(np.linalg.norm(tangent - finite_difference[:, index], ord=np.inf) / scale),
+            )
+            mobility = constrained_onsager_mobility(
+                item.composition,
+                item.total_concentration_mol_m3,
+                pairs,
+                charge_numbers=charges,
+            )
+            value = float(component @ mobility @ tangent)
+            if not np.isfinite(value) or value <= 0.0:
+                raise ReactiveFilmDomainError(
+                    "equilibrium-manifold component conductance is not positive"
+                )
+            mobilities.append(mobility)
+            tangents.append(tangent)
+            conductance[index] = value
+        antiderivative = cumulative_trapezoid(conductance, loading, initial=0.0)
+        return (
+            loading,
+            states,
+            compositions,
+            mobilities,
+            np.column_stack(tangents),
+            conductance,
+            antiderivative,
+            directional_error,
+        )
+
+    interface_bound = None
+    previous_residual = -float(gas_transfer_coefficient_mol_m2_s_pa) * drive
+    for step in range(4, 161):
+        candidate = direction * 0.025 * step
+        try:
+            candidate_data = grid(step + 1, candidate)
+        except Exception as exc:
+            if interface_bound is None:
+                raise ReactiveFilmSolveError(
+                    "two-film interface root was not reached before the EOS domain boundary: "
+                    f"log-loading={candidate:.6g}, residual={previous_residual:.6g} mol m-2 s-1"
+                ) from exc
+            break
+        candidate_loading, candidate_states, *_, candidate_conductance, _, _ = candidate_data
+        candidate_integral = cumulative_trapezoid(
+            candidate_conductance, candidate_loading, initial=0.0
+        )
+        liquid_flux = -float(
+            np.interp(0.0, candidate_loading, candidate_integral)
+            - np.interp(candidate, candidate_loading, candidate_integral)
+        ) / float(film_thickness_m)
+        gas_flux = float(gas_transfer_coefficient_mol_m2_s_pa) * (
+            float(vapor_bulk_fugacity_pa)
+            - float(candidate_states[0 if candidate < 0.0 else -1].fugacities_pa[co2_index])
+        )
+        candidate_residual = liquid_flux - gas_flux
+        if previous_residual * candidate_residual <= 0.0:
+            interface_bound = candidate
+            break
+        previous_residual = candidate_residual
+    if interface_bound is None:
+        raise ReactiveFilmSolveError("could not bracket the two-film interface flux root")
+
+    previous_flux = None
+    relative_change = float("inf")
+    count = int(quadrature_points)
+    while True:
+        data = grid(count, interface_bound)
+        loading, states, compositions, mobilities, tangents, conductance, antiderivative, tangent_error = data
+        integral = PchipInterpolator(loading, antiderivative)
+        fugacity = PchipInterpolator(
+            loading, [item.fugacities_pa[co2_index] for item in states]
+        )
+
+        def interface_residual(value: float) -> float:
+            liquid_flux = -float(integral(0.0) - integral(value)) / float(film_thickness_m)
+            gas_flux = float(gas_transfer_coefficient_mol_m2_s_pa) * (
+                float(vapor_bulk_fugacity_pa) - float(fugacity(value))
+            )
+            return liquid_flux - gas_flux
+
+        interface_loading = float(
+            brentq(interface_residual, min(0.0, interface_bound), max(0.0, interface_bound))
+        )
+        component_flux = -float(integral(0.0) - integral(interface_loading)) / float(
+            film_thickness_m
+        )
+        if previous_flux is not None:
+            relative_change = abs(component_flux - previous_flux) / max(abs(component_flux), 1.0e-30)
+            if relative_change <= float(quadrature_tolerance) and tangent_error <= 0.1:
+                break
+        if count >= int(maximum_quadrature_points):
+            break
+        previous_flux = component_flux
+        count = min(2 * count - 1, int(maximum_quadrature_points))
+    if tangent_error > 0.1:
+        raise ReactiveFilmDomainError(
+            "adaptive equilibrium path is inconsistent with the thermodynamic tangent basis"
+        )
+
+    path_loading = np.asarray(
+        sorted(
+            {interface_loading, 0.0}
+            | {
+                float(value)
+                for value in loading
+                if min(interface_loading, 0.0) < value < max(interface_loading, 0.0)
+            },
+            reverse=interface_loading > 0.0,
+        )
+    )
+    path_distance = -(
+        np.asarray(integral(path_loading), dtype=float) - float(integral(interface_loading))
+    ) / component_flux
+    coordinate = np.linspace(0.0, float(film_thickness_m), int(profile_points))
+    profile_loading = PchipInterpolator(path_distance, path_loading)(coordinate)
+    profile_compositions = np.vstack(
+        [PchipInterpolator(loading, row)(profile_loading) for row in compositions]
+    )
+
+    flux_grid = np.column_stack(
+        [
+            mobilities[index] @ tangents[:, index] * component_flux / conductance[index]
+            for index in range(count)
+        ]
+    )
+    profile_fluxes = np.vstack(
+        [PchipInterpolator(loading, row)(profile_loading) for row in flux_grid]
+    )
+    component_residual = np.max(np.abs(component @ profile_fluxes - component_flux))
+    total_residual = np.max(np.abs(np.sum(profile_fluxes, axis=0)))
+    current_residual = (
+        0.0 if charges is None else float(np.max(np.abs(charges @ profile_fluxes)))
+    )
+    entropy = np.asarray(
+        [
+            component_flux**2
+            * float(tangents[:, index] @ mobilities[index] @ tangents[:, index])
+            / conductance[index] ** 2
+            for index in range(count)
+        ]
+    )
+    interface_fugacity = float(fugacity(interface_loading))
+    interface_scale = max(abs(component_flux), 1.0e-30)
+    return EquilibriumManifoldFilmResult(
+        coordinate_m=coordinate,
+        log_loading_coordinate=np.asarray(profile_loading, dtype=float),
+        compositions=profile_compositions,
+        fluxes_mol_m2_s=profile_fluxes,
+        co2_component_flux_mol_m2_s=float(component_flux),
+        interface_fugacity_pa=interface_fugacity,
+        maximum_interface_residual=abs(interface_residual(interface_loading)) / interface_scale,
+        maximum_component_flux_residual=float(component_residual),
+        maximum_zero_total_flux_residual=float(total_residual),
+        maximum_zero_current_residual=float(current_residual),
+        minimum_entropy_production_over_r=float(entropy.min()),
+        minimum_mobility_eigenvalue=float(
+            min(np.linalg.eigvalsh(mobility).min() for mobility in mobilities)
+        ),
+        maximum_tangent_directional_error=float(tangent_error),
+        minimum_composition=float(profile_compositions.min()),
+        quadrature_points=int(count),
+        quadrature_relative_change=float(relative_change),
+        solver_message="fast-equilibrium manifold resistance solved",
+    )
 
 
 def solve_reactive_film(

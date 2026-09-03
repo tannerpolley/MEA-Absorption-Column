@@ -9,10 +9,12 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     epcsaft_liquid_transport_state,
 )
 from mea_absorption_column.Transport.Reactive_Film import (
+    EquilibriumManifoldState,
     FilmThermodynamicState,
     ReactiveFilmDomainError,
     binary_diffusivities_from_species,
     constrained_onsager_mobility,
+    solve_equilibrium_manifold_film,
     solve_reactive_film,
 )
 
@@ -65,55 +67,53 @@ def _linear_thermodynamics(henry_pa_m3_mol, derivative=1.0):
 
 
 @pytest.mark.parametrize("vapor_fugacity", (1.0e4, 5.0e3, 2.5e3))
-def test_no_reaction_matches_linear_two_film_solution(monkeypatch, vapor_fugacity):
-    bulk = np.array([1.0, 10.0])
-    diffusivities = np.array([1.0e-9, 8.0e-10])
+def test_equilibrium_manifold_matches_linear_two_film_solution(vapor_fugacity):
+    bulk_fraction = 0.2
+    total_concentration = 5.0
+    diffusivity = 1.0e-9
     delta = 1.0e-4
     k_g = 1.0e-7
-    henry = 5.0e3
-    derivative = 1.7
+    henry = 5.0e3 / (total_concentration * bulk_fraction)
     expected_flux = (
         k_g
-        * (vapor_fugacity - henry * bulk[0])
-        / (1.0 + k_g * henry * delta / diffusivities[0])
+        * (vapor_fugacity - henry * total_concentration * bulk_fraction)
+        / (1.0 + k_g * henry * delta / diffusivity)
     )
 
-    bvp_calls = 0
-    scipy_solve_bvp = reactive_film.solve_bvp
-
-    def counted_solve_bvp(*args, **kwargs):
-        nonlocal bvp_calls
-        bvp_calls += 1
-        assert callable(kwargs.get("bc_jac"))
-        interface_jacobian, _ = kwargs["bc_jac"](args[3][:, 0], args[3][:, -1])
-        closure_scale = max(
-            diffusivities[0] * bulk[0] / delta,
-            k_g * abs(vapor_fugacity - henry * bulk[0]),
-            1.0e-30,
+    def state_at_log_loading(log_loading):
+        odds = bulk_fraction / (1.0 - bulk_fraction) * np.exp(log_loading)
+        composition = np.array([odds / (1.0 + odds), 1.0 / (1.0 + odds)])
+        tangent = np.array([[composition[1]], [-composition[0]]])
+        return EquilibriumManifoldState(
+            composition=composition,
+            total_concentration_mol_m3=total_concentration,
+            fugacities_pa=np.array(
+                [henry * total_concentration * composition[0], composition[1]]
+            ),
+            chemical_potentials_over_rt=np.log(composition),
+            log_composition_basis=tangent,
+            chemical_potential_derivatives_over_rt=tangent,
         )
-        assert interface_jacobian[2, 0] == pytest.approx(
-            k_g * henry * bulk[0] * derivative / closure_scale
-        )
-        return scipy_solve_bvp(*args, **kwargs)
 
-    monkeypatch.setattr(reactive_film, "solve_bvp", counted_solve_bvp)
-    result = solve_reactive_film(
-        bulk_concentrations_mol_m3=bulk,
-        diffusivities_m2_s=diffusivities,
-        stoichiometry=np.array([-1.0, -2.0]),
-        liquid_thermodynamic_state=_linear_thermodynamics(henry, derivative),
-        net_rate_mol_m3_s=lambda *_: 0.0,
+    result = solve_equilibrium_manifold_film(
+        state_at_log_loading=state_at_log_loading,
+        species_diffusivities_m2_s=np.full(2, diffusivity),
+        co2_component_coefficients=np.array([1.0, 0.0]),
         vapor_bulk_fugacity_pa=vapor_fugacity,
         gas_transfer_coefficient_mol_m2_s_pa=k_g,
         film_thickness_m=delta,
         co2_index=0,
-        mesh_points=11,
     )
 
-    assert result.fluxes_mol_m2_s[0, 0] == pytest.approx(expected_flux, rel=5.0e-4)
-    assert bvp_calls == 1
-    assert result.maximum_interface_residual <= 1.0e-7
-    assert result.maximum_conservation_residual <= 1.0e-7
+    assert result.co2_component_flux_mol_m2_s == pytest.approx(
+        expected_flux, rel=5.0e-4, abs=1.0e-14
+    )
+    assert result.minimum_composition > 0.0
+    assert result.maximum_interface_residual <= 1.0e-10
+    assert result.maximum_component_flux_residual <= 1.0e-12
+    assert result.maximum_zero_total_flux_residual <= 1.0e-12
+    assert result.minimum_entropy_production_over_r >= -1.0e-12
+    assert result.maximum_tangent_directional_error <= 5.0e-4
 
 
 def test_reactive_film_preserves_stoichiometry_and_direction_under_refinement(
@@ -318,23 +318,12 @@ def test_exact_epcsaft_tangent_closes_through_zero_drive_film():
     assert result.maximum_zero_current_residual <= 1.0e-12
 
 
-def test_issue16_retained_identity_matches_integration_contract():
+def test_issue16_retained_identity_remains_historical():
     identity = json.loads(
         (
             ROOT
             / "analyses/nccc_validation/inputs/issue16_reactive_film_identity.json"
         ).read_text(encoding="utf-8")
-    )
-    contract = json.loads(
-        (ROOT / "integration/epcsaft_contract.json").read_text(encoding="utf-8")
-    )
-
-    assert identity["engine"]["commit"] == contract["final_identity"]["engine_commit"]
-    assert (
-        identity["engine"]["wheel_sha256"] == contract["final_identity"]["wheel_sha256"]
-    )
-    assert (
-        identity["engine"]["core_sha256"] == contract["final_identity"]["core_sha256"]
     )
     assert identity["claim_label"] == "provisional_concept_only"
     assert identity["retained_position_1"]["domain_admitted"] is False

@@ -213,6 +213,10 @@ def run_model(df,
             'chemical_equilibrium_model',
             _default_chemical_equilibrium_model(thermo_model),
         ),
+        'co2_mass_transfer_model': solver_settings_for_run.get(
+            'co2_mass_transfer_model', 'enhancement_factor'
+        ),
+        'reactive_film_linearization': solver_settings_for_run.get('reactive_film_linearization'),
         'solver_diagnostics': solver_diagnostics,
         'guard_invalid_states': guard_rhs,
         'strict_domain_guards': bool(solver_settings_for_run.get('strict_domain_guards', guard_rhs)),
@@ -535,6 +539,7 @@ Run #{run + 1:03d}:
             'method': method,
             'thermo_model': thermo_model,
             'chemical_equilibrium_model': model_options.get('chemical_equilibrium_model', 'legacy'),
+            'co2_mass_transfer_model': model_options['co2_mass_transfer_model'],
             'success': method_success,
             'message': f"{gated_message}{output_message_suffix}",
             'runtime_s': float(total_time),

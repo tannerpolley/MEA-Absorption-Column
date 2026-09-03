@@ -60,7 +60,7 @@ def test_bundle_reactive_nine_species_state_compiles_temperature_dependent_const
     )
 
     assert [entry[0] for entry in constants] == pytest.approx(
-        [-31.17540213354555, -14.505037067112221, -23.53653838436852, -2.7007932503784, -20.889878783626997]
+        [-31.17540213354555, -14.505037067112221, -23.53653838436852, -2.7007932503784, -20.30164053537688]
     )
     assert concentrations.shape == composition.shape == (9,)
     assert composition.sum() == pytest.approx(1.0, abs=1.0e-12)

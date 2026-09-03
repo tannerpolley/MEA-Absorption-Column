@@ -7,6 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
+from scipy.optimize import Bounds, LinearConstraint, minimize
 
 
 _ATOMIC_MASS_KG_PER_MOL = {"C": 0.012011, "H": 0.001008, "N": 0.014007, "O": 0.015999}
@@ -114,7 +115,7 @@ def compile_reaction_constants(dataset_text: str, temperature_k: float) -> tuple
             "mea-reactive-epcsaft-parameter-bundle",
             reactions["source_standard_state"]["id"],
             "products_positive",
-            "source-standard-state-to-provider-neutral-reference",
+            "source-standard-state-to-eos-neutral-reference",
             True,
         ]
         if metadata is not None:
@@ -139,6 +140,26 @@ def _molar_masses(dataset: Path, species_ids: list[str]) -> list[float]:
                 f"Reactive ePC-SAFT molar mass for {species} differs from its formula"
             )
     return masses
+
+
+def _continuation_amounts(amounts, previous_feed, current_feed, balances):
+    shifted = amounts + current_feed - previous_feed
+    floor = 2.0e-12
+    if np.all(shifted > floor):
+        return shifted
+    totals = balances @ current_feed
+    result = minimize(
+        lambda values: 0.5 * float(np.sum((values - shifted) ** 2)),
+        np.maximum(current_feed, floor * 2.0),
+        jac=lambda values: values - shifted,
+        method="SLSQP",
+        bounds=Bounds(np.full_like(shifted, floor), np.full_like(shifted, np.inf)),
+        constraints=LinearConstraint(balances, totals, totals),
+        options={"ftol": 1.0e-12, "maxiter": 200},
+    )
+    if not result.success or np.max(np.abs(balances @ result.x - totals)) > 1.0e-9:
+        raise ValueError(f"Reactive ePC-SAFT continuation projection failed: {result.message}")
+    return result.x
 
 
 def homogeneous_reactive_request(
@@ -180,7 +201,7 @@ def homogeneous_reactive_request(
                 "amount_role": "finite",
                 "support": {"kind": "all_components", "component_ids": []},
                 "model": {
-                    "kind": "provider",
+                    "kind": "eos",
                     "reference_id": "installed-provider-eos",
                     "admissible_packing_fraction_interval": [1.0e-6, 0.74],
                 },
@@ -227,6 +248,7 @@ def solve_homogeneous_reactive_state(
     temperature_k: float,
     pressure_pa: float,
     apparent_amounts,
+    initial_state: dict | None = None,
 ) -> dict:
     import epcsaft
     from epcsaft import equilibrium
@@ -234,6 +256,28 @@ def solve_homogeneous_reactive_state(
     request = homogeneous_reactive_request(
         dataset_text, temperature_k, pressure_pa, apparent_amounts
     )
+    if initial_state is not None:
+        amounts = np.asarray(initial_state["amounts_mol"], dtype=float)
+        previous_feed = np.asarray(initial_state["feed_amounts_mol"], dtype=float)
+        current_feed = np.asarray(request["reaction_system"]["feed_amounts_mol"], dtype=float)
+        density = float(initial_state["density_mol_m3"])
+        if (
+            amounts.shape != current_feed.shape
+            or previous_feed.shape != current_feed.shape
+            or np.any(~np.isfinite(amounts))
+            or np.any(~np.isfinite(previous_feed))
+            or not np.isfinite(density)
+            or density <= 0.0
+        ):
+            raise ValueError("Reactive ePC-SAFT initial state is invalid")
+        balances = np.asarray(request["reaction_system"]["balance_matrix"], dtype=float)
+        amounts = _continuation_amounts(
+            amounts, previous_feed, current_feed, balances
+        )
+        request["phases"][0]["start"] = {
+            "amounts_mol": amounts.tolist(),
+            "molar_volume_m3_per_mol": 1.0 / density,
+        }
     problem = equilibrium.general_reactive_equilibrium_problem_from_mapping(request)
     model = epcsaft.Mixture(epcsaft.Parameters.from_json(Path(dataset_text) / "parameters.json"))
     result = equilibrium.solve(model, problem)
@@ -246,8 +290,16 @@ def solve_homogeneous_reactive_state(
             f"Reactive ePC-SAFT equilibrium failed: {result.solver_status}; {result.failure}"
         )
     phase = result.phases[0]
+    balances = np.asarray(request["reaction_system"]["balance_matrix"], dtype=float)
+    totals = np.asarray(request["reaction_system"]["conserved_totals"], dtype=float)
+    balanced_composition = balances @ np.asarray(phase.mole_fractions, dtype=float)
+    phase_total = float(totals @ balanced_composition / (balanced_composition @ balanced_composition))
     return {
         "composition": np.asarray(phase.mole_fractions, dtype=float),
+        "amounts_mol": phase_total * np.asarray(phase.mole_fractions, dtype=float),
+        "feed_amounts_mol": np.asarray(
+            request["reaction_system"]["feed_amounts_mol"], dtype=float
+        ),
         "density_mol_m3": float(phase.molar_density_mol_m3),
         "chemical_potentials_over_rt": np.asarray(
             phase.chemical_potential_over_rt, dtype=float

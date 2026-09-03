@@ -3,8 +3,10 @@
   "bundle_id": "mea-reactive-epcsaft-parameter-bundle",
   "bundle_date": "2026-09-02",
   "model": "nine-species reactive aqueous MEA ePC-SAFT",
-  "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
-  "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+  "parameter_document_sha256": "00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+  "parameter_source_commit": "bbd50204c428ef9d40fad69550dea298fe276967",
+  "engine_source_commit": "8007a70815efcd277f06eddc4df9fffdd8cdca48",
+  "engine_wheel_sha256": "f6e5b51dad79741c759393688f7daa547c9eb73f5944d5f877b3b32b1e56714a",
   "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
   "files": [
     {
@@ -14,8 +16,8 @@
     },
     {
       "path": "chemistry/reaction-system.json",
-      "bytes": 5374,
-      "sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c"
+      "bytes": 5585,
+      "sha256": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29"
     },
     {
       "path": "documentation/research-notebook.pdf",
@@ -24,8 +26,8 @@
     },
     {
       "path": "engine/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-      "bytes": 4557547,
-      "sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a"
+      "bytes": 4585299,
+      "sha256": "f6e5b51dad79741c759393688f7daa547c9eb73f5944d5f877b3b32b1e56714a"
     },
     {
       "path": "figures/pressure.pdf",
@@ -34,8 +36,8 @@
     },
     {
       "path": "parameters/parameters.json",
-      "bytes": 118731,
-      "sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c"
+      "bytes": 119231,
+      "sha256": "00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e"
     },
     {
       "path": "validation/final-candidate-comparison.csv",

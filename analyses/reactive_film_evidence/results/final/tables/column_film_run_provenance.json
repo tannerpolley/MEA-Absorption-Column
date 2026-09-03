@@ -1,0 +1,20 @@
+{
+  "parameter_document_sha256": "00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+  "reaction_system_sha256": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+  "parameter_source_commit": "bbd50204c428ef9d40fad69550dea298fe276967",
+  "film_nodes": 5,
+  "outer_iterations": 9,
+  "relaxation": 0.75,
+  "engine_source_commit": "8007a70815efcd277f06eddc4df9fffdd8cdca48",
+  "engine_wheel_sha256": "f6e5b51dad79741c759393688f7daa547c9eb73f5944d5f877b3b32b1e56714a",
+  "case_ids": [
+    "K18",
+    "K19",
+    "1C",
+    "2C",
+    "3C",
+    "4C",
+    "5C",
+    "6C"
+  ]
+}

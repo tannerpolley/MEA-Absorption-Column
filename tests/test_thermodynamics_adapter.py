@@ -189,12 +189,14 @@ def test_ionic_epcsaft_document_declares_fixed_born_and_permittivity_models():
     ]
 
     assert families["electrolyte"]["choice"] == "born"
-    assert families["electrolyte"]["c_shell"] == pytest.approx(0.0)
-    assert families["electrolyte"]["c_dielectric"] == pytest.approx(0.0)
     assert families["permittivity"]["choice"] == "solvent-only"
     assert charged
     assert all(
-        any(value["family"] == "born_diameter" for value in record["coefficients"])
+        any(
+            value["family"] == "born_diameter"
+            and value["value"]["magnitude"] > 0.0
+            for value in record["coefficients"]
+        )
         for record in charged
     )
 
@@ -264,7 +266,7 @@ def test_installed_epcsaft_exposes_exact_fixed_pressure_transport_tangent():
     )
     assert state.dependent_component_ids == ("water", "protonated-monoethanolamine")
     assert state.fixed_other_concentrations_log_fugacity_derivative(0) == pytest.approx(
-        0.9445178339213178, rel=1.0e-12
+        0.9485214614293999, rel=1.0e-12
     )
     assert state.artifact_fingerprint.startswith("sha256:")
 
@@ -283,7 +285,7 @@ def test_installed_epcsaft_returns_structured_no_matrix_derivative_failure():
 
     block = state.fixed_pressure_composition_derivatives
     assert block["status"] == "non_evaluable"
-    assert block["failure"].code == "provider_domain_rejection"
+    assert block["failure"].code == "eos_domain_rejection"
     assert "log_composition_basis" not in block
     assert "chemical_potential_derivatives_over_rt" not in block
 
