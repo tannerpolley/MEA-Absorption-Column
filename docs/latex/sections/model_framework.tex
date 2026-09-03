@@ -2,11 +2,12 @@
     \label{sec:model-framework}
         Solvent-based post-combustion carbon capture (PCC) models describe how $\COtwo$ moves from the vapor phase into the liquid solvent inside a packed column. That transfer is driven by thermodynamics and limited by transport, reaction kinetics, hydraulics, and heat release. Local temperature, pressure, composition, and flow rates determine the properties used in those submodels. The governing mass and energy balances then track how the liquid and vapor streams change with packed height.
 
-        \begin{figure}
+        \begin{figure}[p]
             \centering
-            \includegraphics[width=12cm]{figures/model-framework-flowchart.png}
+            \input{figures/tikz/model-framework-flowchart}
             \caption{Absorber calculation sequence. Chemical equilibrium converts apparent component amounts to true species concentrations. The selected phase-equilibrium closure then converts each local $(T,P,\mathbf{x})$ state to CO$_2$ fugacities. Transport, hydraulics, interfacial fluxes, and column balances remain common to both thermodynamic closures.}\label{fig:absorber-calculation-sequence}
         \end{figure}
+        \FloatBarrier
         Figure~\ref{fig:absorber-calculation-sequence}, adapted from Luo \cite{Luo2017}, outlines the calculation sequence used for the MEA absorber benchmark. The calculation begins with flow, composition, pressure, and temperature variables for the vapor and liquid phases. Chemical equilibrium determines the true liquid species state before the phase-equilibrium closure evaluates the CO$_2$ fugacity driving force. Transport and hydraulic properties then define interfacial fluxes and close the governing balances. This ordering allows the numerical method and CO$_2$ fugacity closure to change while the reaction, transport, hydraulic, and balance equations remain fixed.
         
         Thermodynamic modeling includes both chemical equilibrium and vapor--liquid equilibrium (VLE). The chemical-equilibrium calculation determines true species concentrations from apparent component amounts and the retained reaction set. The VLE calculation then supplies the fugacities used in the interfacial driving force. The model switches the CO$_2$ driving-force calculation between the baseline Henry-law expression and an ePC-SAFT fugacity-coefficient calculation. In the routine ePC-SAFT campaign, the equation of state supplies local mixture density, residual-Helmholtz contributions, and vapor- and liquid-side CO$_2$ fugacity coefficients. It does not supply the reaction network or reaction-equilibrium constants. Chemical equilibrium, enhancement factor, transport correlations, hydraulics, and balances remain unchanged. Table~\ref{tab:thermodynamic-responsibility} lists the quantities supplied by each calculation.
@@ -63,7 +64,7 @@
                     && \text{dimensionless}
                 \end{align}
 
-                 where $r$ represents a reaction number. The $K_r$ values use a concentration standard state. Their estimation dataset, objective, weights, parameter bounds, and uncertainty were not recovered for this manuscript, so they are treated as fixed inputs rather than parameters estimated in this study. With $C^\circ=\SI{1}{mol\,L^{-1}}=\SI{1000}{mol\,m^{-3}}$ and unit activity coefficients in the routine campaign, the dimensionless species activities and reaction quotient are
+                 where $r$ represents a reaction number. The $K_r$ values use a concentration standard state. Their estimation dataset, objective, weights, parameter bounds, and uncertainty were not recovered for this manuscript, so they are treated as fixed inputs rather than parameters estimated in this study. With $C^\circ=\qty{1}{mol\,L^{-1}}=\qty{1000}{mol\,m^{-3}}$ and unit activity coefficients in the routine campaign, the dimensionless species activities and reaction quotient are
                  \begin{align}
                      a_i^{(c)} &= \frac{C_i}{C^\circ},
                      & Q_r &= \prod_i \left(a_i^{(c)}\right)^{\nu_{i,r}},
@@ -327,7 +328,7 @@
                 \end{align}
                 The reported temperature profiles are obtained from the same enthalpy state. For phase $j$, with $\dot{H}^{j}=F^{j}H^{j}$,
                 \begin{align}
-                    \frac{dT^j}{dz} &= \frac{\dot{H}^{j}_{flux} - \frac{dF^j}{dz} H^j}{F^j \cdot \frac{dH^j}{dT^j}}
+                    \odv{T^j}{z} &= \frac{\dot{H}^{j}_{flux} - \odv{F^j}{z} H^j}{F^j \cdot \odv{H^j}{T^j}}
                     && \left(\unit{K\,m^{-1}}\right)
                 \end{align}
                 Substituting the phase flow derivatives gives the equivalent temperature-gradient form:
@@ -342,7 +343,7 @@
             \subsubsection{Pressure State}
                 Pressure is retained as a state variable so that pressure-drop extensions can use the same state layout. For the one-bed benchmark calculations reported here,
                 \begin{align}
-                    \frac{dP}{dz} = 0
+                    \odv{P}{z} = 0
                     && \left(\unit{Pa\,m^{-1}}\right).
                 \end{align}
 
@@ -363,7 +364,7 @@
                     2\times\unit{J\,s^{-1}},
                     \unit{Pa}
                     \right)^{\mathsf{T}},\\[1em]
-                    \frac{d\mathbf{y}}{dz} &=
+                    \odv{\mathbf{y}}{z} &=
                     \begin{pmatrix}
                         \frac{d F^{\liq}_{ \COtwo}}{d z} \\[4pt]
                         \frac{d F^{\liq}_{ \HtwoO}}{d z} \\[4pt]
@@ -371,7 +372,7 @@
                         \frac{d F^{\vap}_{ \HtwoO}}{d z} \\[4pt]
                         \frac{d \dot{H}^{\liq}}{d z} \\[4pt]
                         \frac{d \dot{H}^{\vap}}{d z}\\[4pt]
-                        \frac{dP}{dz}
+                        \odv{P}{z}
                     \end{pmatrix}
                     \equiv
                     \mathbf{f}(z, \mathbf{y})

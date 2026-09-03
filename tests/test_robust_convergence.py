@@ -7,7 +7,6 @@ import pytest
 from mea_absorption_column.benchmark import BENCHMARK_COLUMNS
 from mea_absorption_column.Run_Model import (
     _apply_method_success_gates,
-    _fallback_temperature_profile,
 )
 from mea_absorption_column.BVP.ABS_Column import _smooth_absorption_only_vapor_flux
 from mea_absorption_column.BVP.robust_core import (
@@ -18,10 +17,9 @@ from mea_absorption_column.BVP.robust_core import (
     scaled_physical_to_solver,
     solver_to_scaled_physical_derivative,
     solver_to_scaled_physical,
-    sanitize_scaled_state,
+    validate_scaled_state,
     unbounded_to_positive,
 )
-from mea_absorption_column.continuation import ContinuationStep, run_absorber_continuation, run_continuation_ladder
 from mea_absorption_column.calibration import (
     CalibrationSettings,
     build_structured_holdout_split,
@@ -29,16 +27,12 @@ from mea_absorption_column.calibration import (
     nccc_linear_capture_prediction,
     write_calibration_artifacts,
 )
-from mea_absorption_column.uq import UQPlan, estimate_two_tier_throughput
 from mea_absorption_column.Thermodynamics.thermo_models import guarded_compute_fugacity
 from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
-    clear_epcsaft_phi_cache,
     compute_fugacity,
     ensure_epcsaft_importable,
-    epcsaft_cache_stats,
     epcsaft_phi_co2,
-    epcsaft_phi_co2_batch,
 )
 from mea_absorption_column.BVP.Methods import Scipy_BVP_Solve as scipy_bvp_module
 
@@ -131,71 +125,66 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
     assert diagnostics["solver_final_nodes"] == 3
 
 
-def test_sanitize_scaled_state_clips_flows_and_pressure_without_mutating_input():
-    original = np.array([-1.0, -0.5, 0.0, -0.25, 1.0e5, 2.0e5, -10.0])
-    scales = np.array([10.0, 10.0, 2.0, 2.0, 1.0e6, 1.0e6, 1.0e5])
-
-    sanitized, report = sanitize_scaled_state(original, scales, BoundedStateSettings())
-
-    assert np.array_equal(original, np.array([-1.0, -0.5, 0.0, -0.25, 1.0e5, 2.0e5, -10.0]))
-    assert report.invalid is True
-    assert np.all((sanitized * scales)[[0, 1, 2, 3]] > 0.0)
-    assert (sanitized * scales)[6] > 0.0
+@pytest.mark.parametrize("index,value", [(0, -1.0), (4, 1.0e11), (6, 100.0), (1, np.nan)])
+def test_column_guard_rejects_invalid_state_without_mutation(index, value):
+    state = np.array([1., 1., 1., 1., 1., 1., 101325.])
+    state[index] = value
+    original = state.copy()
+    with pytest.raises(ValueError):
+        validate_scaled_state(state, np.ones(7), BoundedStateSettings())
+    np.testing.assert_array_equal(state, original)
 
 
-def test_guard_column_rhs_records_penalty_instead_of_raising():
+def test_column_guard_preserves_rhs_and_original_typed_failure(monkeypatch):
+    from mea_absorption_column.Thermodynamics import thermo_models
+
+    class PhysicalRejection(ValueError):
+        pass
+
+    rejection = PhysicalRejection("injected rejected thermodynamic state")
     diagnostics = make_solver_diagnostics()
-    parameters = (
-        np.ones(7),
-        np.ones(7),
-        (1.0, 1.0, 0.1),
-        1.0,
-        1.0,
-        (250.0, 0.97, 1.0, 1.0, 1.0, 1.0, 1.0),
-        {"solver_diagnostics": diagnostics},
-    )
+    parameters = (np.ones(7), None, None, None, None, None, {"solver_diagnostics": diagnostics})
+    state = np.array([1., 1., 1., 1., 1., 1., 101325.])
+    original = state.copy()
+    expected = np.arange(7, dtype=float)
+    assert guard_column_rhs(0., state, parameters, lambda *a, **k: expected) is expected
 
-    rhs = guard_column_rhs(
-        zi=0.0,
-        y_scaled=np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 100000.0]),
-        parameters=parameters,
-        evaluator=lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("synthetic invalid state")),
-    )
+    def reject(*args, **kwargs):
+        raise rejection
 
-    assert rhs.shape == (7,)
-    assert np.all(np.isfinite(rhs))
+    monkeypatch.setattr(thermo_models, "compute_fugacity", reject)
+
+    def evaluate(*args, **kwargs):
+        return guarded_compute_fugacity(
+            "epcsaft_neutral", [.1, .05, .8, .05], [.02, .24, .74],
+            [900., 9000., 30000.], 313.15, 320., 2.5e6, 101325., 12000.,
+        )
+
+    with pytest.raises(PhysicalRejection) as caught:
+        guard_column_rhs(0., state, parameters, evaluate)
+    assert caught.value is rejection
     assert diagnostics["invalid_state_count"] == 1
-    assert diagnostics["guard_penalty_count"] == 1
-    assert "synthetic invalid state" in diagnostics["last_invalid_state"]
+    assert str(rejection) == diagnostics["last_invalid_state"]
+    np.testing.assert_array_equal(state, original)
+    with pytest.raises(FloatingPointError, match="non-finite column RHS"):
+        guard_column_rhs(0., state, parameters, lambda *a, **k: np.full(7, np.nan))
 
 
-def test_guarded_epcsaft_invalid_state_returns_structured_penalty():
-    diagnostics = make_solver_diagnostics()
-
-    result = guarded_compute_fugacity(
-        "epcsaft_neutral",
-        y=[np.nan, 0.05, 0.8, 0.1],
-        x_true=[0.02, 0.24, 0.62, 0.06, 0.05, 0.01],
-        Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
-        Tl=50.0,
-        Tv=320.0,
-        H_CO2_mix=2.5e6,
-        P=109500.0,
-        P_sat_H2O=12000.0,
-        diagnostics=diagnostics,
-    )
-
-    assert len(result) == 4
-    assert all(math.isfinite(value) for value in result)
-    assert diagnostics["invalid_state_count"] == 1
-    assert diagnostics["guard_penalty_count"] == 1
+@pytest.mark.parametrize("values", [(np.nan, 1., 1., 1.), (-1., 1., 1., 1.)])
+def test_fugacity_guard_rejects_invalid_outputs(monkeypatch, values):
+    from mea_absorption_column.Thermodynamics import thermo_models
+    monkeypatch.setattr(thermo_models, "compute_fugacity", lambda *a, **k: values)
+    with pytest.raises(ValueError, match="finite nonnegative"):
+        guarded_compute_fugacity(
+            "epcsaft_neutral", [.1, .05, .8, .05], [.02, .24, .74],
+            [900., 9000., 30000.], 313.15, 320., 2.5e6, 101325., 12000.,
+        )
 
 
 def test_benchmark_schema_contains_convergence_diagnostic_columns():
     for column in [
         "continuation_stage",
         "invalid_state_count",
-        "guard_penalty_count",
         "jacobian_status",
         "scaling_mode",
         "transform_mode",
@@ -203,11 +192,6 @@ def test_benchmark_schema_contains_convergence_diagnostic_columns():
         "domain_guard_counts",
         "first_failed_domain",
         "continuation_success",
-        "epcsaft_cache_hits",
-        "epcsaft_cache_misses",
-        "epcsaft_direct_density_solve_s",
-        "epcsaft_rho_guess_hits",
-        "epcsaft_rho_guess_misses",
         "profile_png",
     ]:
         assert column in BENCHMARK_COLUMNS
@@ -281,105 +265,12 @@ def test_nccc_linear_capture_prediction_returns_finite_percent():
     assert 0.0 <= prediction <= 100.0
 
 
-def test_two_tier_uq_throughput_estimate_uses_cache_and_surrogate_fractions():
-    plan = UQPlan(reference_runtime_s=10.0, cached_runtime_s=2.0, surrogate_runtime_s=0.05)
-
-    estimate = estimate_two_tier_throughput(plan, samples=100, reference_fraction=0.1, cache_fraction=0.4)
-
-    assert estimate["samples"] == 100
-    assert estimate["estimated_total_runtime_s"] < 100 * plan.reference_runtime_s
-    assert estimate["reference_samples"] == 10
-
-
-def test_epcsaft_phi_cache_records_hit_after_repeated_call():
-    try:
-        ensure_epcsaft_importable()
-    except RuntimeError as exc:
-        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
-    clear_epcsaft_phi_cache()
-    composition = np.array([0.02, 0.24, 0.74])
-
-    first = epcsaft_phi_co2(323.15, 109500.0, composition, phase="liq", cache=True)
-    second = epcsaft_phi_co2(323.15, 109500.0, composition, phase="liq", cache=True)
-    stats = epcsaft_cache_stats()
-
-    assert first == second
-    assert stats["epcsaft_cache_hits"] >= 1
-    assert stats["epcsaft_cache_misses"] == 1
-
-
-def test_epcsaft_phi_cache_uses_coarse_bvp_quantization():
-    try:
-        ensure_epcsaft_importable()
-    except RuntimeError as exc:
-        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
-    clear_epcsaft_phi_cache()
-    first_composition = np.array([0.0200001, 0.2400001, 0.7399998])
-    second_composition = np.array([0.0200002, 0.2400002, 0.7399996])
-
-    first = epcsaft_phi_co2(323.151, 109501.0, first_composition, phase="liq", cache=True)
-    second = epcsaft_phi_co2(323.152, 109504.0, second_composition, phase="liq", cache=True)
-    stats = epcsaft_cache_stats()
-
-    assert first == second
-    assert stats["epcsaft_cache_hits"] >= 1
-    assert stats["epcsaft_cache_misses"] == 1
-
-
-def test_epcsaft_phi_batch_deduplicates_near_duplicate_states():
-    try:
-        ensure_epcsaft_importable()
-    except RuntimeError as exc:
-        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
-    clear_epcsaft_phi_cache()
-    records = [
-        {
-            "T": 323.151,
-            "P": 109501.0,
-            "composition": np.array([0.02, 0.24, 0.74]),
-            "phase": "liq",
-        },
-        {
-            "T": 323.152,
-            "P": 109504.0,
-            "composition": np.array([0.0200001, 0.2400001, 0.7399998]),
-            "phase": "liq",
-        },
-    ]
-
-    values = epcsaft_phi_co2_batch(records)
-    stats = epcsaft_cache_stats()
-
-    assert len(values) == 2
-    assert values[0] == values[1]
-    assert stats["epcsaft_cache_misses"] == 1
-
-
-def test_epcsaft_pressure_state_reuses_density_guess_after_first_miss():
-    try:
-        ensure_epcsaft_importable()
-    except RuntimeError as exc:
-        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
-    clear_epcsaft_phi_cache()
-
-    first = epcsaft_phi_co2(323.15, 109500.0, np.array([0.02, 0.24, 0.74]), phase="liq", cache=True)
-    second = epcsaft_phi_co2(324.35, 109500.0, np.array([0.021, 0.239, 0.74]), phase="liq", cache=True)
-    stats = epcsaft_cache_stats()
-
-    assert math.isfinite(first)
-    assert math.isfinite(second)
-    assert stats["epcsaft_cache_misses"] == 2
-    assert stats["epcsaft_rho_guess_misses"] == 1
-    assert stats["epcsaft_rho_guess_hits"] == 1
-
-
 def test_epcsaft_ionic_fugacity_uses_six_species_liquid_state():
     try:
         ensure_epcsaft_importable()
     except RuntimeError as exc:
         pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
     assert MEA_THERMODYNAMICS_EPCSAFT_DATASET.exists()
-    clear_epcsaft_phi_cache()
     y = np.array([0.10, 0.08])
     x_true = np.array([1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001])
     Cl_true = np.array([1.0e-4, 2400.0, 39000.0, 1200.0, 1180.0, 20.0])
@@ -457,7 +348,7 @@ def test_collocation_low_residual_fallback_cannot_override_strict_boundary_rejec
     assert "Accepted low-residual" not in message
 
 
-def test_collocation_success_gate_accepts_low_residual_final_iterate():
+def test_collocation_failure_stays_failed_at_low_residual():
     success, message = _apply_method_success_gates(
         method="scipy-bvp",
         solver_success=False,
@@ -467,8 +358,8 @@ def test_collocation_success_gate_accepts_low_residual_final_iterate():
         settings={},
     )
 
-    assert success is True
-    assert "Accepted low-residual collocation final iterate" in message
+    assert success is False
+    assert "Accepted" not in message
 
 
 def test_collocation_success_gate_rejects_large_capture_error_even_with_low_boundary_residual():
@@ -483,39 +374,6 @@ def test_collocation_success_gate_rejects_large_capture_error_even_with_low_boun
 
     assert success is False
     assert "Accepted low-residual" not in message
-
-
-def test_collocation_low_residual_acceptance_uses_explicit_capture_gate():
-    success, message = _apply_method_success_gates(
-        method="scipy-bvp",
-        solver_success=False,
-        message="A singular Jacobian encountered when solving the collocation system.",
-        boundary_residual_norm=0.04,
-        capture_error_pct=6.5,
-        settings={"success_capture_error_max_pct": 8.0},
-    )
-
-    assert success is True
-    assert "Accepted low-residual collocation final iterate" in message
-
-
-def test_temperature_profile_fallback_uses_solved_temperature_states():
-    Y = np.zeros((7, 3))
-    Y[4] = [314.0, 318.0, 321.0]
-    Y[5] = [316.0, 319.0, 322.0]
-
-    profiles = _fallback_temperature_profile(
-        Y,
-        np.array([0.0, 1.0, 2.0]),
-        thermal_state_mode="temperature",
-        Fl_MEA=1.0,
-        Fv_N2=1.0,
-        Fv_O2=0.1,
-    )
-
-    assert list(profiles) == ["T"]
-    assert profiles["T"]["Tl"].tolist() == [314.0, 318.0, 321.0]
-    assert profiles["T"]["Tv"].tolist() == [316.0, 319.0, 322.0]
 
 
 def test_collocation_success_gate_can_reject_converged_bad_capture():
@@ -549,190 +407,3 @@ def test_collocation_success_gate_does_not_accept_timeout_final_iterate():
 def test_absorption_only_flux_preserves_absorption_and_smoothly_caps_desorption():
     assert _smooth_absorption_only_vapor_flux(-1.0e-4) < -0.999e-4
     assert -1.0e-9 < _smooth_absorption_only_vapor_flux(1.0e-4) <= 0.0
-
-
-def test_continuation_ladder_stops_after_failed_stage():
-    calls = []
-
-    def runner(step):
-        calls.append(step.name)
-        return {"success": step.name == "one_bed_henry", "message": step.name}
-
-    result = run_continuation_ladder(
-        [
-            ContinuationStep(name="one_bed_henry", thermo_model="ideal_henry", staged_beds=False),
-            ContinuationStep(name="staged_henry", thermo_model="ideal_henry", staged_beds=True),
-            ContinuationStep(name="epcsaft", thermo_model="epcsaft_neutral", staged_beds=True),
-        ],
-        runner=runner,
-    )
-
-    assert calls == ["one_bed_henry", "staged_henry"]
-    assert result.success is False
-    assert result.failed_stage == "staged_henry"
-
-
-def test_continuation_ladder_continues_after_optional_failed_stage():
-    calls = []
-
-    def runner(step):
-        calls.append(step.name)
-        return {"success": step.name != "optional_seed", "message": step.name}
-
-    result = run_continuation_ladder(
-        [
-            ContinuationStep(
-                name="optional_seed",
-                thermo_model="ideal_henry",
-                staged_beds=False,
-                required=False,
-            ),
-            ContinuationStep(name="required_stage", thermo_model="ideal_henry", staged_beds=True),
-        ],
-        runner=runner,
-    )
-
-    assert calls == ["optional_seed", "required_stage"]
-    assert result.success is True
-    assert result.failed_stage == ""
-
-
-def test_run_absorber_continuation_passes_step_settings_to_run_model():
-    calls = []
-
-    def fake_run_model(df, **kwargs):
-        calls.append(kwargs)
-        return {"success": True, "case_id": "synthetic", "message": "ok"}
-
-    result = run_absorber_continuation(
-        df=object(),
-        run=0,
-        method="scipy-bvp",
-        steps=[
-            ContinuationStep(
-                name="one_bed_henry",
-                thermo_model="ideal_henry",
-                staged_beds=False,
-                solver_settings={"transform_mode": "positive_flow_pressure"},
-            )
-        ],
-        run_model_func=fake_run_model,
-    )
-
-    assert result.success is True
-    assert calls[0]["thermo_model"] == "ideal_henry"
-    assert calls[0]["staged_beds"] is False
-    assert calls[0]["solver_settings"]["continuation_stage"] == "one_bed_henry"
-    assert calls[0]["solver_settings"]["transform_mode"] == "positive_flow_pressure"
-
-
-def test_run_absorber_continuation_warm_starts_next_stage():
-    calls = []
-    seed_profile = np.ones((7, 5))
-
-    def fake_run_model(df, **kwargs):
-        calls.append(kwargs)
-        if len(calls) == 1:
-            return {
-                "success": True,
-                "case_id": "synthetic",
-                "message": "ok",
-                "_raw_solution_scaled": seed_profile,
-            }
-        return {"success": True, "case_id": "synthetic", "message": "ok"}
-
-    result = run_absorber_continuation(
-        df=object(),
-        run=0,
-        method="scipy-bvp",
-        steps=[
-            ContinuationStep(name="one_bed_henry", thermo_model="ideal_henry", staged_beds=False),
-            ContinuationStep(name="staged_henry", thermo_model="ideal_henry", staged_beds=True),
-        ],
-        run_model_func=fake_run_model,
-    )
-
-    assert result.success is True
-    assert calls[0]["solver_settings"]["return_internal_profile"] is True
-    assert calls[1]["solver_settings"]["initial_guess_scaled"] is seed_profile
-    assert "_raw_solution_scaled" not in result.rows[0]
-
-
-def test_run_absorber_continuation_can_seed_from_capture_close_failed_stage():
-    calls = []
-    seed_profile = np.ones((7, 5))
-
-    def fake_run_model(df, **kwargs):
-        calls.append(kwargs)
-        if len(calls) == 1:
-            return {
-                "success": False,
-                "case_id": "synthetic",
-                "message": "capture close but boundary failed",
-                "capture_error_pct": 1.0,
-                "_raw_solution_scaled": seed_profile,
-            }
-        return {"success": True, "case_id": "synthetic", "message": "ok"}
-
-    result = run_absorber_continuation(
-        df=object(),
-        run=0,
-        method="scipy-bvp",
-        steps=[
-            ContinuationStep(
-                name="optional_seed",
-                thermo_model="ideal_henry",
-                staged_beds=False,
-                required=False,
-            ),
-            ContinuationStep(name="required_stage", thermo_model="ideal_henry", staged_beds=True),
-        ],
-        run_model_func=fake_run_model,
-    )
-
-    assert result.success is True
-    assert calls[1]["solver_settings"]["initial_guess_scaled"] is seed_profile
-
-
-def test_run_model_accepts_documented_calibration_factor_settings():
-    df = pd.DataFrame(
-        {
-            "L": [3.8],
-            "G": [21.5],
-            "alpha": [0.145],
-            "w_MEA": [0.298],
-            "y_CO2": [0.1155],
-            "Tl": [314.12],
-            "Tv": [315.63],
-            "P": [108820],
-            "Beds": [1],
-            "Intercoolers": [0],
-            "CO2  %": [99.91],
-        },
-        index=["synthetic"],
-    )
-
-    calls = []
-
-    def fake_run_model(df, **kwargs):
-        calls.append(kwargs)
-        return {"success": True, "case_id": "synthetic", "message": "ok"}
-
-    result = run_absorber_continuation(
-        df=df,
-        run=0,
-        method="scipy-bvp",
-        steps=[
-            ContinuationStep(
-                name="calibrated",
-                thermo_model="ideal_henry",
-                staged_beds=False,
-                solver_settings={"mass_transfer_factor": 0.5, "heat_transfer_factor": 0.8},
-            )
-        ],
-        run_model_func=fake_run_model,
-    )
-
-    assert result.success is True
-    assert calls[0]["solver_settings"]["mass_transfer_factor"] == 0.5
-    assert calls[0]["solver_settings"]["heat_transfer_factor"] == 0.8

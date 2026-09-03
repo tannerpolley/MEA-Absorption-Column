@@ -3,9 +3,7 @@ from __future__ import annotations
 import json
 import math
 import os
-import time
 from dataclasses import dataclass
-from functools import lru_cache
 import importlib
 import importlib.metadata
 from importlib import resources
@@ -14,16 +12,13 @@ from pathlib import Path
 import numpy as np
 
 from mea_absorption_column.BVP.robust_core import (
-    record_guard_penalty,
     record_invalid_state,
 )
 from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
     fugacity_coefficients as _v02_fugacity_coefficients,
     mixture as _v02_mixture,
     molar_density_value as _v02_molar_density_value,
-    pressure_value as _v02_pressure_value,
     state as _v02_state,
-    state_at_density as _v02_state_at_density,
 )
 
 
@@ -58,7 +53,6 @@ H2O_INDEX = 2
 COMPOSITION_FLOOR = 1e-12
 TEMPERATURE_MIN_K = 250.0
 TEMPERATURE_MAX_K = 500.0
-FUGACITY_FLOOR_PA = 1.0e-9
 PACKAGED_EPCSAFT_DATASETS = resources.files("mea_absorption_column").joinpath(
     "data/epcsaft_datasets"
 )
@@ -80,21 +74,6 @@ def _resolve_epcsaft_dataset_path() -> Path:
 
 
 MEA_THERMODYNAMICS_EPCSAFT_DATASET = _resolve_epcsaft_dataset_path()
-EPCSAFT_CACHE_T_DIGITS = int(os.environ.get("MEA_EPCSAFT_CACHE_T_DIGITS", "2"))
-EPCSAFT_CACHE_X_DIGITS = int(os.environ.get("MEA_EPCSAFT_CACHE_X_DIGITS", "5"))
-EPCSAFT_CACHE_P_ROUND_PA = float(os.environ.get("MEA_EPCSAFT_CACHE_P_ROUND_PA", "10.0"))
-EPCSAFT_DATASET_T_DIGITS = int(os.environ.get("MEA_EPCSAFT_DATASET_T_DIGITS", "1"))
-_EPCSAFT_PHI_CACHE: dict[tuple, float] = {}
-_EPCSAFT_RHO_GUESS_CACHE: dict[tuple, float] = {}
-_EPCSAFT_CACHE_STATS = {
-    "epcsaft_cache_hits": 0,
-    "epcsaft_cache_misses": 0,
-    "epcsaft_direct_density_solve_s": 0.0,
-    "epcsaft_rho_guess_hits": 0,
-    "epcsaft_rho_guess_misses": 0,
-}
-
-
 class EpcsaftFixedPressureDerivativeError(RuntimeError):
     def __init__(self, code: str, diagnostic: str):
         self.code = str(code)
@@ -152,7 +131,6 @@ def _parameter_resource():
     )
 
 
-@lru_cache(maxsize=1)
 def load_epcsaft_parameter_dataset() -> dict:
     path = _parameter_resource()
     with path.open("r", encoding="utf-8") as handle:
@@ -302,7 +280,6 @@ def ensure_epcsaft_importable():
         ) from exc
 
 
-@lru_cache(maxsize=1)
 def epcsaft_mixture():
     ensure_epcsaft_importable()
     return _v02_mixture(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), tuple(SPECIES))
@@ -331,7 +308,6 @@ def epcsaft_runtime_user_options() -> dict:
     return {}
 
 
-@lru_cache(maxsize=512)
 def epcsaft_dataset_mixture(
     species_key: tuple[str, ...], T_key: float, user_options_json: str = "{}"
 ):
@@ -380,7 +356,7 @@ def epcsaft_liquid_transport_state(T, P, composition) -> EpcsaftLiquidTransportS
             "composition must be electroneutral without projection",
         )
 
-    model = epcsaft_dataset_mixture(species, _epcsaft_dataset_T_key(T))
+    model = epcsaft_dataset_mixture(species, float(T))
     state = _v02_state(
         model,
         temperature_k=float(T),
@@ -455,17 +431,13 @@ def epcsaft_state_contribution_diagnostics(
     if mixture_kind == "neutral":
         mixture = epcsaft_mixture()
     elif mixture_kind in {"ionic", "external_neutral"}:
-        mixture = epcsaft_dataset_mixture(species_key, _epcsaft_dataset_T_key(T))
+        mixture = epcsaft_dataset_mixture(species_key, float(T))
     else:
         raise ValueError(f"Unknown ePC-SAFT mixture kind: {mixture_kind}")
 
-    state = _pressure_state_with_optional_rho_guess(
-        mixture,
-        T,
-        P,
-        composition_arr,
-        phase,
-        f"{mixture_kind}_diagnostic",
+    state = _v02_state(
+        mixture, temperature_k=float(T), pressure_pa=float(P),
+        composition=composition_arr, phase=phase,
     )
     phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
     ares_terms = {
@@ -490,128 +462,8 @@ def epcsaft_state_contribution_diagnostics(
     }
 
 
-def clear_epcsaft_phi_cache():
-    _EPCSAFT_PHI_CACHE.clear()
-    _EPCSAFT_RHO_GUESS_CACHE.clear()
-    _EPCSAFT_CACHE_STATS["epcsaft_cache_hits"] = 0
-    _EPCSAFT_CACHE_STATS["epcsaft_cache_misses"] = 0
-    _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] = 0.0
-    _EPCSAFT_CACHE_STATS["epcsaft_rho_guess_hits"] = 0
-    _EPCSAFT_CACHE_STATS["epcsaft_rho_guess_misses"] = 0
-
-
-def epcsaft_cache_stats() -> dict:
-    return dict(_EPCSAFT_CACHE_STATS)
-
-
-def _round_pressure_for_cache(P):
-    pressure = float(P)
-    increment = max(EPCSAFT_CACHE_P_ROUND_PA, 1.0e-12)
-    return float(np.round(pressure / increment) * increment)
-
-
-def _epcsaft_cache_key(T, P, composition, phase):
-    comp = np.asarray(composition, dtype=float)
-    rounded = tuple(float(np.round(value, EPCSAFT_CACHE_X_DIGITS)) for value in comp)
-    return (
-        str(phase),
-        float(np.round(float(T), EPCSAFT_CACHE_T_DIGITS)),
-        _round_pressure_for_cache(P),
-        rounded,
-    )
-
-
-def _epcsaft_dataset_T_key(T):
-    return float(np.round(float(T), EPCSAFT_DATASET_T_DIGITS))
-
-
-def _rho_guess_key(mixture_kind, phase):
-    return (str(mixture_kind), str(phase))
-
-
-def _rho_guess_from_cache(mixture_kind, phase):
-    key = _rho_guess_key(mixture_kind, phase)
-    value = _EPCSAFT_RHO_GUESS_CACHE.get(key)
-    if value is not None and math.isfinite(float(value)) and float(value) > 0.0:
-        _EPCSAFT_CACHE_STATS["epcsaft_rho_guess_hits"] += 1
-        return float(value)
-    _EPCSAFT_CACHE_STATS["epcsaft_rho_guess_misses"] += 1
-    return None
-
-
-def _store_rho_guess(mixture_kind, phase, state):
-    try:
-        rho = _v02_molar_density_value(state)
-    except Exception:
-        return
-    if math.isfinite(rho) and rho > 0.0:
-        _EPCSAFT_RHO_GUESS_CACHE[_rho_guess_key(mixture_kind, phase)] = rho
-
-
-def _pressure_state_with_optional_rho_guess(
-    mixture, T, P, composition, phase, mixture_kind
-):
-    rho_guess = _rho_guess_from_cache(mixture_kind, phase)
-    if rho_guess is not None:
-        try:
-            state = _state_from_density_newton(
-                mixture,
-                T=float(T),
-                P=float(P),
-                composition=np.asarray(composition, dtype=float),
-                rho_guess=rho_guess,
-            )
-            _store_rho_guess(mixture_kind, phase, state)
-            return state
-        except Exception:
-            pass
-    state = _v02_state(
-        mixture,
-        temperature_k=float(T),
-        pressure_pa=float(P),
-        composition=np.asarray(composition, dtype=float),
-        phase=phase,
-    )
-    _store_rho_guess(mixture_kind, phase, state)
-    return state
-
-
-def _state_from_density_newton(mixture, *, T, P, composition, rho_guess):
-    rho = max(float(rho_guess), 1.0e-9)
-    target = float(P)
-    for _ in range(12):
-        current = _v02_state_at_density(
-            mixture,
-            temperature_k=T,
-            density_mol_m3=rho,
-            composition=composition,
-        )
-        residual = _v02_pressure_value(current) - target
-        if abs(residual) <= max(1.0e-5 * target, 1.0e-2):
-            if current.fugacity is None:
-                raise RuntimeError(
-                    "Density-closed ePC-SAFT state has no stable fugacity value."
-                )
-            return current
-
-        step = max(1.0e-5 * rho, 1.0e-4)
-        plus = _v02_state_at_density(
-            mixture,
-            temperature_k=T,
-            density_mol_m3=rho + step,
-            composition=composition,
-        )
-        derivative = (_v02_pressure_value(plus) - _v02_pressure_value(current)) / step
-        if not math.isfinite(derivative) or abs(derivative) < 1.0e-12:
-            raise RuntimeError("Invalid ePC-SAFT pressure-density slope.")
-        delta = residual / derivative
-        max_delta = 0.2 * rho
-        rho = max(rho - float(np.clip(delta, -max_delta, max_delta)), 1.0e-9)
-    raise RuntimeError("Warm-started ePC-SAFT density closure did not converge.")
-
-
 def epcsaft_phi_co2(
-    T, P, composition, phase, cache=True, mixture_kind="neutral"
+    T, P, composition, phase, mixture_kind="neutral"
 ) -> float:
     composition_arr = np.asarray(composition, dtype=float)
     if mixture_kind == "ionic":
@@ -623,73 +475,23 @@ def epcsaft_phi_co2(
         species_key = tuple(SPECIES)
     else:
         species_key = tuple(SPECIES)
-    key = (str(mixture_kind), *_epcsaft_cache_key(T, P, composition_arr, phase))
-    if cache and key in _EPCSAFT_PHI_CACHE:
-        _EPCSAFT_CACHE_STATS["epcsaft_cache_hits"] += 1
-        return _EPCSAFT_PHI_CACHE[key]
-    _EPCSAFT_CACHE_STATS["epcsaft_cache_misses"] += 1
     if mixture_kind == "neutral":
         mixture = epcsaft_mixture()
     elif mixture_kind == "ionic":
-        mixture = epcsaft_dataset_mixture(species_key, _epcsaft_dataset_T_key(T))
+        mixture = epcsaft_dataset_mixture(species_key, float(T))
     elif mixture_kind == "external_neutral":
-        mixture = epcsaft_dataset_mixture(species_key, _epcsaft_dataset_T_key(T))
+        mixture = epcsaft_dataset_mixture(species_key, float(T))
     else:
         raise ValueError(f"Unknown ePC-SAFT mixture kind: {mixture_kind}")
-    start = time.perf_counter()
-    if cache:
-        state = _pressure_state_with_optional_rho_guess(
-            mixture, T, P, composition_arr, phase, mixture_kind
-        )
-    else:
-        state = _v02_state(
-            mixture,
-            temperature_k=float(T),
-            pressure_pa=float(P),
-            composition=composition_arr,
-            phase=phase,
-        )
-    _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] += (
-        time.perf_counter() - start
+    state = _v02_state(
+        mixture, temperature_k=float(T), pressure_pa=float(P),
+        composition=composition_arr, phase=phase,
     )
     phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
     phi_co2 = float(phi[CO2_INDEX])
     if not math.isfinite(phi_co2) or phi_co2 <= 0.0:
         raise RuntimeError(f"Invalid ePC-SAFT CO2 fugacity coefficient: {phi_co2!r}")
-    if cache:
-        _EPCSAFT_PHI_CACHE[key] = phi_co2
     return phi_co2
-
-
-def epcsaft_phi_co2_batch(records, cache=True) -> list[float]:
-    """Evaluate CO2 fugacity coefficients for many states with cache-aware de-duplication.
-
-    This is intentionally a MEA-side batching seam. The external ePC-SAFT package
-    still performs each state evaluation; this helper prevents repeated Python
-    calls for duplicate or near-duplicate BVP mesh states under the local cache
-    quantization.
-    """
-    resolved: dict[tuple, float] = {}
-    results: list[float] = []
-    for record in records:
-        mixture_kind = record.get("mixture_kind", "neutral")
-        key = (
-            str(mixture_kind),
-            *_epcsaft_cache_key(
-                record["T"], record["P"], record["composition"], record["phase"]
-            ),
-        )
-        if key not in resolved:
-            resolved[key] = epcsaft_phi_co2(
-                record["T"],
-                record["P"],
-                record["composition"],
-                record["phase"],
-                cache=cache,
-                mixture_kind=mixture_kind,
-            )
-        results.append(resolved[key])
-    return results
 
 
 def ideal_henry_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O):
@@ -743,23 +545,12 @@ def compute_fugacity(
     H_CO2_mix,
     P,
     P_sat_H2O,
-    epcsaft_fugacity_blend=1.0,
 ):
     normalized_model = (model or "ideal_henry").lower()
     if normalized_model in {"ideal", "ideal_henry", "henry"}:
         return ideal_henry_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
     if normalized_model in {"epcsaft", "epcsaft_neutral", "epc-saft"}:
-        blend = float(np.clip(epcsaft_fugacity_blend, 0.0, 1.0))
-        epcsaft_values = epcsaft_neutral_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O)
-        if blend >= 1.0:
-            return epcsaft_values
-        henry_values = ideal_henry_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
-        if blend <= 0.0:
-            return henry_values
-        return tuple(
-            (1.0 - blend) * float(henry_value) + blend * float(epcsaft_value)
-            for henry_value, epcsaft_value in zip(henry_values, epcsaft_values)
-        )
+        return epcsaft_neutral_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O)
     if normalized_model in {
         "epcsaft_ionic",
         "epcsaft_electrolyte",
@@ -778,17 +569,7 @@ def compute_fugacity(
         "epcsaft_full_species_activity_converted",
         "epcsaft_full_species_activity_rebased",
     }:
-        blend = float(np.clip(epcsaft_fugacity_blend, 0.0, 1.0))
-        epcsaft_values = epcsaft_ionic_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O)
-        if blend >= 1.0:
-            return epcsaft_values
-        henry_values = ideal_henry_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
-        if blend <= 0.0:
-            return henry_values
-        return tuple(
-            (1.0 - blend) * float(henry_value) + blend * float(epcsaft_value)
-            for henry_value, epcsaft_value in zip(henry_values, epcsaft_values)
-        )
+        return epcsaft_ionic_fugacity(y, x_true, Tl, Tv, P, P_sat_H2O)
     raise ValueError(
         "Choose ideal_henry, epcsaft_neutral, epcsaft_ionic, "
         "or an experimental epcsaft_reactive_* mode."
@@ -805,7 +586,6 @@ def guarded_compute_fugacity(
     H_CO2_mix,
     P,
     P_sat_H2O,
-    epcsaft_fugacity_blend=1.0,
     diagnostics=None,
 ):
     try:
@@ -820,13 +600,14 @@ def guarded_compute_fugacity(
             H_CO2_mix,
             P,
             P_sat_H2O,
-            epcsaft_fugacity_blend=epcsaft_fugacity_blend,
         )
-        return tuple(_positive_finite(value) for value in values)
+        values = np.asarray(values, dtype=float)
+        if values.shape != (4,) or np.any(~np.isfinite(values)) or np.any(values < 0.0):
+            raise ValueError("Fugacities must be four finite nonnegative values")
+        return tuple(values)
     except Exception as exc:
         record_invalid_state(diagnostics, f"fugacity guard: {exc}")
-        record_guard_penalty(diagnostics)
-        return _fallback_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
+        raise
 
 
 def _validate_fugacity_state(y, x_true, Tl, Tv, P):
@@ -845,27 +626,3 @@ def _validate_fugacity_state(y, x_true, Tl, Tv, P):
             raise ValueError(f"non-finite {name} composition")
         if np.sum(arr[:3]) <= 0.0:
             raise ValueError(f"non-positive {name} composition sum")
-
-
-def _positive_finite(value):
-    value = float(value)
-    if not math.isfinite(value) or value <= 0.0:
-        return FUGACITY_FLOOR_PA
-    return value
-
-
-def _fallback_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O):
-    y_arr = np.nan_to_num(np.asarray(y, dtype=float), nan=COMPOSITION_FLOOR)
-    x_arr = np.nan_to_num(np.asarray(x_true, dtype=float), nan=COMPOSITION_FLOOR)
-    cl_arr = np.nan_to_num(np.asarray(Cl_true, dtype=float), nan=COMPOSITION_FLOOR)
-    pressure = max(float(np.nan_to_num(P, nan=101325.0)), 1.0)
-    henry = max(float(np.nan_to_num(H_CO2_mix, nan=1.0)), 1.0)
-    psat = max(
-        float(np.nan_to_num(P_sat_H2O, nan=FUGACITY_FLOOR_PA)), FUGACITY_FLOOR_PA
-    )
-    return (
-        max(float(cl_arr[0]) * henry, FUGACITY_FLOOR_PA),
-        max(float(y_arr[0]) * pressure, FUGACITY_FLOOR_PA),
-        max(float(x_arr[2]) * psat, FUGACITY_FLOOR_PA),
-        max(float(y_arr[1]) * pressure, FUGACITY_FLOOR_PA),
-    )

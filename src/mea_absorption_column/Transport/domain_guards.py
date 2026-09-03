@@ -47,6 +47,4 @@ def _is_finite_positive(value) -> bool:
 
 def _raise(domain: str, reason: str, diagnostics: dict | None):
     record_domain_guard(diagnostics, domain, reason)
-    if diagnostics is not None and not bool(diagnostics.get("_strict_domain_guards", True)):
-        return
     raise DomainGuardError(domain, reason)

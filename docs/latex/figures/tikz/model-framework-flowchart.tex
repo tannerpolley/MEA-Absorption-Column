@@ -1,0 +1,47 @@
+% Presentation redraw of the existing raster: labels and dependencies retained.
+\begin{tikzpicture}[
+  cse stage/.append style={text width=34mm,minimum width=0pt,font=\small\bfseries},
+  cse detail/.append style={text width=35mm,font=\footnotesize},
+  detail values/.style={cse detail,text width=51mm,font=\footnotesize},
+]
+  \node[cse stage] (state) at (0,0) {Flow Variables};
+  \node[cse stage] (properties) at (0,-2.5) {Physical Property Calculations};
+  \node[cse stage] (thermo) at (0,-6.6) {Thermodynamic Modeling};
+  \node[cse stage] (transport) at (0,-12.0) {Transport Modeling};
+  \node[cse stage] (balances) at (0,-17.2) {Governing Differential Equations};
+  \node[cse solver,text width=34mm,minimum width=0pt] (solver) at (0,-19.5)
+    {Solve Differential Equations};
+
+  \node[cse detail] (physical) at (4.9,-1.6) {Thermophysical Properties};
+  \node[detail values] (physical-values) at (10.3,-1.6)
+    {Henry's Law\\Density\\Surface Tension\\Enthalpy\\Heat Capacity};
+  \node[cse detail] (diffusive) at (4.9,-3.8) {Transport Properties};
+  \node[detail values] (diffusive-values) at (10.3,-3.8)
+    {Viscosity\\Diffusivity\\Thermal Conductivity};
+  \node[cse detail] (chemistry) at (4.9,-5.7) {Chemical Equilibrium};
+  \node[detail values] (chemistry-values) at (10.3,-5.7) {True Concentrations};
+  \node[cse detail] (vle) at (4.9,-7.5) {Vapor-Liquid Equilibrium};
+  \node[detail values] (vle-values) at (10.3,-7.5) {Fugacity};
+  \node[cse detail] (hydraulics) at (4.9,-9.5) {Hydraulic Variables};
+  \node[detail values] (hydraulics-values) at (10.3,-9.5)
+    {Velocity\\Hold-Up\\Interfacial-Area\\Flooding Fraction};
+  \node[cse detail] (transfer) at (4.9,-11.8) {Transfer Coefficients};
+  \node[detail values] (transfer-values) at (10.3,-11.8)
+    {Vapor Mass Transfer Coefficient\\Liquid Mass Transfer Coefficient\\Heat Transfer Coefficient};
+  \node[cse detail] (enhancement) at (4.9,-13.8) {Enhancement Factor};
+  \node[detail values] (enhancement-values) at (10.3,-13.8) {Enhancement Factor};
+  \node[cse detail] (flux) at (4.9,-15.6) {Flux};
+  \node[detail values] (flux-values) at (10.3,-15.6) {Molar Flux\\Enthalpy Flux};
+  \node[cse detail] (mass) at (4.9,-17.3) {Mass Balance};
+  \node[cse detail] (energy) at (4.9,-19.0) {Energy Balance};
+
+  \foreach \a/\b in {state/properties,properties/thermo,thermo/transport,transport/balances,balances/solver}
+    \draw[cse arrow] (\a) -- (\b);
+  \foreach \a/\b in {properties/physical,properties/diffusive,thermo/chemistry,thermo/vle,transport/hydraulics,transport/transfer,transport/enhancement,transport/flux,balances/mass,balances/energy}
+    \draw[cse link] (\a.east) -- ++(5mm,0) |- (\b.west);
+  \foreach \a in {physical,diffusive,chemistry,vle,hydraulics,transfer,enhancement,flux}
+    \draw[cse link] (\a.east) -- (\a-values.west);
+  \foreach \a/\b in {chemistry/vle,hydraulics/transfer,transfer/enhancement,enhancement/flux}
+    \draw[cse arrow] (\a.south) -- (\b.north);
+  \draw[cse arrow] (solver.west) -- ++(-7mm,0) |- (state.west);
+\end{tikzpicture}

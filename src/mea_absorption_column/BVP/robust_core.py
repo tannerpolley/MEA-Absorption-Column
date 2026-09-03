@@ -20,19 +20,15 @@ class BoundedStateSettings:
     flow_floor: float = 1.0e-10
     pressure_floor: float = 1.0e3
     enthalpy_abs_limit: float = 1.0e10
-    penalty_gain: float = 25.0
 
 
 def make_solver_diagnostics() -> dict:
     return {
         "invalid_state_count": 0,
-        "guard_penalty_count": 0,
         "last_invalid_state": "",
         "jacobian_status": "",
         "domain_guard_counts": {},
         "first_failed_domain": "",
-        "epcsaft_cache_hits": 0,
-        "epcsaft_cache_misses": 0,
     }
 
 
@@ -112,60 +108,24 @@ def solver_profile_to_scaled_physical(profile, transform_mode="bounded_guarded_r
     )
 
 
-def sanitize_scaled_state(y_scaled, scales, settings: BoundedStateSettings | None = None):
+def validate_scaled_state(y_scaled, scales, settings: BoundedStateSettings | None = None):
     settings = settings or BoundedStateSettings()
-    y_scaled = np.asarray(y_scaled, dtype=float)
+    state = np.asarray(y_scaled, dtype=float)
     scales = np.asarray(scales, dtype=float)
-    y_unscaled = y_scaled * scales
-    sanitized = y_unscaled.copy()
-    reasons = []
-
-    if y_scaled.shape[0] != STATE_SIZE:
-        reasons.append(f"expected {STATE_SIZE} state variables, got {y_scaled.shape[0]}")
-    if np.any(~np.isfinite(y_unscaled)):
-        reasons.append("non-finite state variable")
-        sanitized = np.nan_to_num(
-            sanitized,
-            nan=settings.flow_floor,
-            posinf=settings.enthalpy_abs_limit,
-            neginf=-settings.enthalpy_abs_limit,
-        )
-
-    flow_values = sanitized[FLOW_IDXS]
-    bad_flows = ~np.isfinite(flow_values) | (flow_values <= settings.flow_floor)
-    if np.any(bad_flows):
-        reasons.append("non-positive molar flow")
-        sanitized[FLOW_IDXS] = np.maximum(
-            np.nan_to_num(flow_values, nan=settings.flow_floor),
-            settings.flow_floor,
-        )
-
-    bad_enthalpy = ~np.isfinite(sanitized[ENTHALPY_IDXS]) | (
-        np.abs(sanitized[ENTHALPY_IDXS]) > settings.enthalpy_abs_limit
-    )
-    if np.any(bad_enthalpy):
-        reasons.append("invalid enthalpy flow")
-        sanitized[ENTHALPY_IDXS] = np.clip(
-            np.nan_to_num(sanitized[ENTHALPY_IDXS], nan=0.0),
-            -settings.enthalpy_abs_limit,
-            settings.enthalpy_abs_limit,
-        )
-
-    if not np.isfinite(sanitized[PRESSURE_IDX]) or sanitized[PRESSURE_IDX] <= settings.pressure_floor:
-        reasons.append("non-positive pressure")
-        sanitized[PRESSURE_IDX] = max(
-            float(np.nan_to_num(sanitized[PRESSURE_IDX], nan=settings.pressure_floor)),
-            settings.pressure_floor,
-        )
-
-    scales_safe = np.where(scales == 0.0, 1.0, scales)
-    sanitized_scaled = sanitized / scales_safe
-    report = {
-        "invalid": bool(reasons),
-        "reason": "; ".join(dict.fromkeys(reasons)),
-        "sanitized_unscaled": sanitized,
-    }
-    return sanitized_scaled, type("StateGuardReport", (), report)()
+    if state.shape != (STATE_SIZE,) or scales.shape != (STATE_SIZE,):
+        raise ValueError(f"Expected {STATE_SIZE} state variables and scales")
+    if np.any(~np.isfinite(scales)) or np.any(scales <= 0.0):
+        raise ValueError("State scales must be positive and finite")
+    physical = state * scales
+    if np.any(~np.isfinite(physical)):
+        raise ValueError("Non-finite column state")
+    if np.any(physical[FLOW_IDXS] <= settings.flow_floor):
+        raise ValueError("Molar flow at or below its physical lower bound")
+    if np.any(np.abs(physical[ENTHALPY_IDXS]) > settings.enthalpy_abs_limit):
+        raise ValueError("Enthalpy flow outside its physical bounds")
+    if physical[PRESSURE_IDX] <= settings.pressure_floor:
+        raise ValueError("Pressure at or below its physical lower bound")
+    return state.copy()
 
 
 def record_invalid_state(diagnostics: dict | None, reason: str):
@@ -173,12 +133,6 @@ def record_invalid_state(diagnostics: dict | None, reason: str):
         return
     diagnostics["invalid_state_count"] = int(diagnostics.get("invalid_state_count", 0)) + 1
     diagnostics["last_invalid_state"] = str(reason)
-
-
-def record_guard_penalty(diagnostics: dict | None):
-    if diagnostics is None:
-        return
-    diagnostics["guard_penalty_count"] = int(diagnostics.get("guard_penalty_count", 0)) + 1
 
 
 def record_domain_guard(diagnostics: dict | None, domain: str, reason: str):
@@ -204,25 +158,13 @@ def guard_column_rhs(
     diagnostics = model_options.get("solver_diagnostics") if isinstance(model_options, dict) else None
     settings = model_options.get("bounded_state_settings", BoundedStateSettings()) if isinstance(model_options, dict) else BoundedStateSettings()
 
-    sanitized_scaled, report = sanitize_scaled_state(y_scaled, scales, settings)
     try:
-        if report.invalid:
-            record_invalid_state(diagnostics, report.reason)
-            record_guard_penalty(diagnostics)
-            return _penalty_rhs(y_scaled, sanitized_scaled, settings)
-        rhs = evaluator(zi, sanitized_scaled, parameters, run_type=run_type, column_names=column_names)
+        state = validate_scaled_state(y_scaled, scales, settings)
+        rhs = evaluator(zi, state, parameters, run_type=run_type, column_names=column_names)
         rhs_arr = np.asarray(rhs, dtype=float)
         if np.any(~np.isfinite(rhs_arr)):
             raise FloatingPointError("non-finite column RHS")
         return rhs
     except Exception as exc:
         record_invalid_state(diagnostics, str(exc))
-        record_guard_penalty(diagnostics)
-        fallback_scaled, _ = sanitize_scaled_state(sanitized_scaled, np.ones_like(scales), settings)
-        return _penalty_rhs(y_scaled, fallback_scaled, settings)
-
-
-def _penalty_rhs(y_scaled, target_scaled, settings: BoundedStateSettings):
-    current = np.nan_to_num(np.asarray(y_scaled, dtype=float), nan=0.0, posinf=0.0, neginf=0.0)
-    target = np.asarray(target_scaled, dtype=float)
-    return settings.penalty_gain * (target - current)
+        raise

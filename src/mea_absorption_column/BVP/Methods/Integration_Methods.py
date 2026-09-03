@@ -3,7 +3,6 @@ import pandas as pd
 from scipy.integrate import solve_ivp
 from scipy.linalg import solve
 from scipy.optimize import root
-from ...Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
 
 
 def eulers(fxn, y, t_eval, args=None):
@@ -20,8 +19,6 @@ def eulers(fxn, y, t_eval, args=None):
         y_prev = results[i-1]
         # Compute derivatives using the provided function
         dydt_scaled = np.array(fxn(t, y_prev, args))
-        if hasattr(chemical_equilibrium, "cache"):
-            del chemical_equilibrium.cache
         # Update the dependent variables
         results[i] = y_prev + step_size * dydt_scaled
 

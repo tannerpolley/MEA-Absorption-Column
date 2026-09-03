@@ -25,7 +25,7 @@ from mea_absorption_column.misc.Get_Temperature_Enthalpy import (
     get_liquid_enthalpy, get_vapor_enthalpy, get_liquid_temperature, get_vapor_temperature
 )
 from mea_absorption_column.misc.Scaling import scaling
-from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET, epcsaft_cache_stats
+from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET
 
 np.set_printoptions(suppress=True)
 
@@ -94,38 +94,6 @@ def run_model(df,
         and solver_settings_for_run.get("transform_mode") == "case_bounded_flow_pressure"
     ):
         solver_settings_for_run["transform_mode"] = "positive_flow_pressure"
-    if (
-        method == "scipy-bvp"
-        and not use_staged_beds
-        and solver_settings_for_run.get("seed_from_shooting", False)
-        and "initial_guess_scaled" not in solver_settings_for_run
-    ):
-        shooting_seed_settings = {
-            **solver_settings_for_run,
-            "seed_from_shooting": False,
-            "return_internal_profile": True,
-            "continuation_stage": "shooting_seed",
-            "continuation_path": "shooting->scipy-bvp",
-        }
-        shooting_seed = run_model(
-            df,
-            method="single",
-            data_type=data_type,
-            run=run,
-            show_info=False,
-            save_run_results=False,
-            plot_temperature=False,
-            thermo_model=thermo_model,
-            solver_settings=shooting_seed_settings,
-            return_details=True,
-            staged_beds=False,
-            intercooler_settings=intercooler_settings,
-        )
-        if shooting_seed.get("success") and shooting_seed.get("_raw_solution_scaled") is not None:
-            solver_settings_for_run["initial_guess_scaled"] = shooting_seed["_raw_solution_scaled"]
-            solver_settings_for_run["continuation_stage"] = "shooting_seeded_scipy_bvp"
-            solver_settings_for_run["continuation_path"] = "shooting->scipy-bvp"
-
     if method == 'single':
         solving_function = single_shoot_solve
     elif method == 'scipy-bvp':
@@ -205,30 +173,28 @@ def run_model(df,
     const_flow = Fl_MEA_b, Fv_N2_a, Fv_O2_a
 
     solver_diagnostics = make_solver_diagnostics()
-    epcsaft_cache_start = epcsaft_cache_stats()
-    guard_rhs = bool(solver_settings_for_run.get('guard_rhs', True))
     model_options = {
         'thermo_model': thermo_model,
         'chemical_equilibrium_model': solver_settings_for_run.get(
             'chemical_equilibrium_model',
             _default_chemical_equilibrium_model(thermo_model),
         ),
+        'co2_mass_transfer_model': solver_settings_for_run.get(
+            'co2_mass_transfer_model', 'enhancement_factor'
+        ),
+        'reactive_film_linearization': solver_settings_for_run.get('reactive_film_linearization'),
         'solver_diagnostics': solver_diagnostics,
-        'guard_invalid_states': guard_rhs,
-        'strict_domain_guards': bool(solver_settings_for_run.get('strict_domain_guards', guard_rhs)),
         'mass_transfer_factor': float(solver_settings_for_run.get('mass_transfer_factor', 1.0)),
         'heat_transfer_factor': float(solver_settings_for_run.get('heat_transfer_factor', 1.0)),
         'eta_psi': float(solver_settings_for_run.get('eta_psi', 1.0)),
         'thermal_state_mode': thermal_state_mode,
         'co2_flux_mode': solver_settings_for_run.get('co2_flux_mode', 'bidirectional'),
-        'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
         'vapor_composition_mode': case_metadata.get('vapor_composition_mode', 'legacy_ratio'),
         'gas_flow_basis': case_metadata.get('gas_flow_basis', 'reported_total_wet'),
         'gas_velocity_area_exponent': float(solver_settings_for_run.get('gas_velocity_area_exponent', 0.0) or 0.0),
         'gas_velocity_area_reference_m_s': solver_settings_for_run.get('gas_velocity_area_reference_m_s'),
         'gas_velocity_area_bounds': solver_settings_for_run.get('gas_velocity_area_bounds', (0.1, 3.0)),
     }
-    solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
     parameters = scales, eq_scales, const_flow, H, A, packing, model_options
     stack_spec = build_bed_stack_spec(
         beds=beds_count if use_staged_beds else 1,
@@ -239,69 +205,6 @@ def run_model(df,
         intercooler_strength=float(intercooler_settings.get("strength", solver_settings_for_run.get("intercooler_strength", 1.0))),
         intercooler_model=requested_intercooler_model,
     )
-    if (
-        method == "scipy-bvp"
-        and use_staged_beds
-        and thermo_model == "ideal_henry"
-        and solver_settings_for_run.get("seed_from_collapsed", False)
-        and "initial_guess_scaled" not in solver_settings_for_run
-    ):
-        collapsed_seed_settings = {
-            **solver_settings_for_run,
-            "seed_from_collapsed": False,
-            "return_internal_profile": True,
-            "continuation_stage": "collapsed_henry_seed",
-            "continuation_path": "collapsed_henry",
-        }
-        collapsed_seed = run_model(
-            df,
-            method=method,
-            data_type=data_type,
-            run=run,
-            show_info=False,
-            save_run_results=False,
-            plot_temperature=False,
-            thermo_model="ideal_henry",
-            solver_settings=collapsed_seed_settings,
-            return_details=True,
-            staged_beds=False,
-            intercooler_settings=intercooler_settings,
-        )
-        if collapsed_seed.get("success") and collapsed_seed.get("_raw_solution_scaled") is not None:
-            solver_settings_for_run["initial_guess_scaled"] = collapsed_seed["_raw_solution_scaled"]
-            solver_settings_for_run.setdefault("continuation_stage", "staged_from_collapsed_henry")
-            solver_settings_for_run.setdefault("continuation_path", "collapsed_henry->staged_henry")
-    if (
-        method == "scipy-bvp"
-        and use_staged_beds
-        and thermo_model == "epcsaft_neutral"
-        and solver_settings_for_run.get("seed_from_henry", True)
-        and "initial_guess_scaled" not in solver_settings_for_run
-    ):
-        seed_settings = {
-            **solver_settings_for_run,
-            "seed_from_henry": False,
-            "return_internal_profile": True,
-        }
-        henry_seed = run_model(
-            df,
-            method=method,
-            data_type=data_type,
-            run=run,
-            show_info=False,
-            save_run_results=False,
-            plot_temperature=False,
-            thermo_model="ideal_henry",
-            solver_settings=seed_settings,
-            return_details=True,
-            staged_beds=use_staged_beds,
-            intercooler_settings=intercooler_settings,
-        )
-        if henry_seed.get("success") and henry_seed.get("_raw_solution_scaled") is not None:
-            solver_settings_for_run["initial_guess_scaled"] = henry_seed["_raw_solution_scaled"]
-            solver_settings_for_run["continuation_stage"] = "henry_seeded_epcsaft"
-            solver_settings_for_run["continuation_path"] = "ideal_henry->epcsaft_neutral"
-
     if show_info:
         print(f'''
 Run #{run + 1:03d}:
@@ -448,7 +351,6 @@ Run #{run + 1:03d}:
         or profile_csv_dir
         or _has_temperature_taps(df)
     )
-    output_message_suffix = ""
     if (
         (use_staged_beds and stack_spec.beds > 1 and not save_run_results and not plot_temperature and not return_profiles and not profile_csv_dir)
         or (return_internal_profile and not save_run_results and not plot_temperature and not return_profiles and not profile_csv_dir)
@@ -457,28 +359,13 @@ Run #{run + 1:03d}:
     ):
         dfs_dict = {}
     else:
-        try:
-            dfs_dict = save_run_outputs(Y_scaled_for_outputs, z_outputs, parameters,
-                                  save_run_results=save_run_results,
-                                  plot_temperature=plot_temperature,
-                                  profile_metadata=case_metadata,
-                                  include_coordinate_columns=bool(profile_csv_dir),
-                                  )
-        except Exception as exc:
-            dfs_dict = _fallback_temperature_profile(
-                Y,
-                z_outputs,
-                thermal_state_mode=thermal_state_mode,
-                Fl_MEA=Fl_MEA_a,
-                Fv_N2=Fv_N2_a,
-                Fv_O2=Fv_O2_a,
-            )
-            if dfs_dict:
-                output_message_suffix = (
-                    f"; profile output used temperature-only fallback after: {exc}"
-                )
-            else:
-                output_message_suffix = f"; profile output generation failed: {exc}"
+        dfs_dict = save_run_outputs(
+            Y_scaled_for_outputs, z_outputs, parameters,
+            save_run_results=save_run_results,
+            plot_temperature=plot_temperature,
+            profile_metadata=case_metadata,
+            include_coordinate_columns=bool(profile_csv_dir),
+        )
 
     method_key = {
         'single': 'Shooting',
@@ -523,7 +410,6 @@ Run #{run + 1:03d}:
             capture_error_pct=capture_error_pct,
             settings=solver_settings_for_run,
         )
-        cache_stats = _epcsaft_cache_delta(epcsaft_cache_start, epcsaft_cache_stats())
         co2_conservation_relative_residual = abs(
             (Fl_CO2_b + Fv_CO2_a) - (Fl_CO2_a_sim + Fv_CO2_b_sim)
         ) / max(abs(Fl_CO2_b + Fv_CO2_a), np.finfo(float).tiny)
@@ -535,8 +421,9 @@ Run #{run + 1:03d}:
             'method': method,
             'thermo_model': thermo_model,
             'chemical_equilibrium_model': model_options.get('chemical_equilibrium_model', 'legacy'),
+            'co2_mass_transfer_model': model_options['co2_mass_transfer_model'],
             'success': method_success,
-            'message': f"{gated_message}{output_message_suffix}",
+            'message': gated_message,
             'runtime_s': float(total_time),
             'capture_pct': float(CO2_cap),
             'capture_error_pct': capture_error_pct,
@@ -551,7 +438,6 @@ Run #{run + 1:03d}:
             'max_nodes': settings.get('max_nodes'),
             'co2_capture_guess_pct': CO2_cap_guess,
             'h2o_capture_guess_pct': H2O_cap_guess,
-            'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
             'epcsaft_dataset': str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
             'eta_psi': float(solver_settings_for_run.get('eta_psi', 1.0)),
             'gas_flow_basis': case_metadata.get('gas_flow_basis', 'reported_total_wet'),
@@ -568,7 +454,6 @@ Run #{run + 1:03d}:
             'continuation_stage': solver_settings_for_run.get('continuation_stage', 'direct'),
             'continuation_success': bool(method_success and solver_settings_for_run.get('continuation_stage', 'direct') != 'failed'),
             'invalid_state_count': int(solver_diagnostics.get('invalid_state_count', 0)),
-            'guard_penalty_count': int(solver_diagnostics.get('guard_penalty_count', 0)),
             'domain_guard_counts': _format_domain_guard_counts(solver_diagnostics.get('domain_guard_counts', {})),
             'first_failed_domain': solver_diagnostics.get('first_failed_domain', ''),
             'jacobian_status': solver_diagnostics.get('jacobian_status', ''),
@@ -586,18 +471,10 @@ Run #{run + 1:03d}:
             'scaling_mode': solver_settings_for_run.get('scaling_mode', 'legacy_flow_enthalpy'),
             'transform_mode': solver_settings_for_run.get('transform_mode', 'bounded_guarded_raw_state'),
             'continuation_path': solver_settings_for_run.get('continuation_path', 'none'),
-            'epcsaft_cache_hits': int(cache_stats.get('epcsaft_cache_hits', 0)),
-            'epcsaft_cache_misses': int(cache_stats.get('epcsaft_cache_misses', 0)),
-            'epcsaft_direct_density_solve_s': float(cache_stats.get('epcsaft_direct_density_solve_s', 0.0)),
-            'epcsaft_rho_guess_hits': int(cache_stats.get('epcsaft_rho_guess_hits', 0)),
-            'epcsaft_rho_guess_misses': int(cache_stats.get('epcsaft_rho_guess_misses', 0)),
-            'epcsaft_chemistry_cache_hits': int(solver_diagnostics.get('epcsaft_chemistry_cache_hits', 0)),
-            'epcsaft_chemistry_cache_misses': int(solver_diagnostics.get('epcsaft_chemistry_cache_misses', 0)),
             'epcsaft_chemistry_solve_s': float(solver_diagnostics.get('epcsaft_chemistry_solve_s', 0.0)),
             'epcsaft_chemistry_max_mass_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_mass_residual', 0.0)),
             'epcsaft_chemistry_max_reaction_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_reaction_residual', 0.0)),
             'epcsaft_chemistry_max_charge_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_charge_residual', 0.0)),
-            'epcsaft_chemistry_accepted_best_effort_count': int(solver_diagnostics.get('epcsaft_chemistry_accepted_best_effort_count', 0)),
             'epcsaft_chemistry_failed_count': int(solver_diagnostics.get('epcsaft_chemistry_failed_count', 0)),
             'epcsaft_chemistry_last_iterations': int(solver_diagnostics.get('epcsaft_chemistry_last_iterations', 0)),
             'epcsaft_chemistry_last_native_success': bool(solver_diagnostics.get('epcsaft_chemistry_last_native_success', False)),
@@ -678,40 +555,6 @@ def _has_temperature_taps(df):
     return any(_is_temperature_tap(column) for column in df.columns)
 
 
-def _fallback_temperature_profile(Y, z, thermal_state_mode, Fl_MEA, Fv_N2, Fv_O2):
-    temperatures = []
-    for i in range(Y.shape[1]):
-        if thermal_state_mode == "temperature":
-            Tl = _finite_or_nan(Y[4, i])
-            Tv = _finite_or_nan(Y[5, i])
-        else:
-            Fl = np.asarray([Y[0, i], Fl_MEA, Y[1, i]], dtype=float)
-            Fv = np.asarray([Y[2, i], Y[3, i], Fv_N2, Fv_O2], dtype=float)
-            try:
-                x = Fl / np.sum(Fl)
-                Hl = float(Y[4, i]) / float(np.sum(Fl))
-                Tl = _finite_or_nan(get_liquid_temperature(x, Hl))
-            except Exception:
-                Tl = np.nan
-            try:
-                y = Fv / np.sum(Fv)
-                Hv = float(Y[5, i]) / float(np.sum(Fv))
-                Tv = _finite_or_nan(get_vapor_temperature(y, Hv))
-            except Exception:
-                Tv = np.nan
-        temperatures.append({"Tl": Tl, "Tv": Tv})
-    profile = pd.DataFrame(temperatures, index=np.asarray(z, dtype=float))
-    profile.index.name = "Position"
-    if not np.isfinite(profile[["Tl", "Tv"]].to_numpy(dtype=float)).any():
-        return {}
-    return {"T": profile}
-
-
-def _finite_or_nan(value):
-    value = float(np.asarray(value, dtype=float).reshape(-1)[0])
-    return value if np.isfinite(value) else np.nan
-
-
 def _is_temperature_tap(column):
     try:
         float(column)
@@ -745,19 +588,6 @@ def _format_domain_guard_counts(counts):
     return ";".join(f"{key}={int(value)}" for key, value in sorted(counts.items()))
 
 
-def _epcsaft_cache_delta(start, end):
-    return {
-        key: end.get(key, 0) - start.get(key, 0)
-        for key in {
-            "epcsaft_cache_hits",
-            "epcsaft_cache_misses",
-            "epcsaft_direct_density_solve_s",
-            "epcsaft_rho_guess_hits",
-            "epcsaft_rho_guess_misses",
-        }
-    }
-
-
 def _default_chemical_equilibrium_model(thermo_model):
     normalized = (thermo_model or "").lower()
     if normalized in {
@@ -789,10 +619,8 @@ def _apply_method_success_gates(
 ):
     method_success = bool(solver_success)
     gate_messages = []
-    boundary_rejected = False
     if boundary_residual_norm > float(settings.get("success_boundary_residual_max", 1.0)):
         method_success = False
-        boundary_rejected = True
         gate_messages.append(f"Rejected by strict boundary residual gate: {boundary_residual_norm:.6g}")
     if (
         method in {"single", "finite"}
@@ -809,28 +637,6 @@ def _apply_method_success_gates(
     ):
         method_success = False
         gate_messages.append(f"Rejected by collocation capture gate: {capture_error_pct:.6g} pct")
-    if (
-        method == "scipy-bvp"
-        and not method_success
-        and not boundary_rejected
-        and "max_runtime_s" not in str(message)
-        and settings.get("accept_low_residual_final_iterate", True)
-        and boundary_residual_norm <= float(settings.get("accept_boundary_residual_max", 10.0))
-        and (
-            capture_error_pct is None
-            or abs(float(capture_error_pct))
-            <= float(
-                settings.get(
-                    "accept_capture_error_max_pct",
-                    settings.get("success_capture_error_max_pct", 5.0),
-                )
-            )
-        )
-    ):
-        method_success = True
-        gate_messages.append(
-            "Accepted low-residual collocation final iterate despite solver status"
-        )
     if gate_messages:
         return method_success, f"{message}; {'; '.join(gate_messages)}"
     return method_success, message

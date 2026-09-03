@@ -104,60 +104,6 @@ def test_epcsaft_neutral_fugacity_returns_positive_finite_values():
     assert fv_co2 > 0.0
 
 
-def test_epcsaft_fugacity_blend_interpolates_between_henry_and_epcsaft():
-    try:
-        ensure_epcsaft_importable()
-    except RuntimeError as exc:
-        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
-    kwargs = {
-        "x": [0.07, 0.28, 0.65],
-        "y": [0.08, 0.05, 0.80, 0.07],
-        "x_true": [0.02, 0.24, 0.62, 0.06, 0.05, 0.01],
-        "Cl_true": [900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
-        "Tl": 323.15,
-        "Tv": 319.15,
-        "alpha": 0.25,
-        "H_CO2_mix": 2.5e6,
-        "P": 109500.0,
-        "P_sat_H2O": 12000.0,
-        "thermo_model": "epcsaft_neutral",
-    }
-
-    henry_like = fugacity(**kwargs, epcsaft_fugacity_blend=0.0)[:4]
-    epcsaft = fugacity(**kwargs, epcsaft_fugacity_blend=1.0)[:4]
-    blended = fugacity(**kwargs, epcsaft_fugacity_blend=0.25)[:4]
-
-    assert np.allclose(
-        blended, 0.75 * np.asarray(henry_like) + 0.25 * np.asarray(epcsaft)
-    )
-
-
-def test_epcsaft_fugacity_blend_is_clipped_to_valid_range():
-    try:
-        ensure_epcsaft_importable()
-    except RuntimeError as exc:
-        pytest.skip(f"external ePC-SAFT native extension unavailable: {exc}")
-    kwargs = {
-        "x": [0.07, 0.28, 0.65],
-        "y": [0.08, 0.05, 0.80, 0.07],
-        "x_true": [0.02, 0.24, 0.62, 0.06, 0.05, 0.01],
-        "Cl_true": [900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
-        "Tl": 323.15,
-        "Tv": 319.15,
-        "alpha": 0.25,
-        "H_CO2_mix": 2.5e6,
-        "P": 109500.0,
-        "P_sat_H2O": 12000.0,
-        "thermo_model": "epcsaft_neutral",
-    }
-
-    henry_like = fugacity(**kwargs, epcsaft_fugacity_blend=0.0)[:4]
-    epcsaft = fugacity(**kwargs, epcsaft_fugacity_blend=1.0)[:4]
-
-    assert np.allclose(fugacity(**kwargs, epcsaft_fugacity_blend=-1.0)[:4], henry_like)
-    assert np.allclose(fugacity(**kwargs, epcsaft_fugacity_blend=2.0)[:4], epcsaft)
-
-
 def test_epcsaft_adapter_reports_external_source_without_modifying_it():
     try:
         ensure_epcsaft_importable()
@@ -189,12 +135,14 @@ def test_ionic_epcsaft_document_declares_fixed_born_and_permittivity_models():
     ]
 
     assert families["electrolyte"]["choice"] == "born"
-    assert families["electrolyte"]["c_shell"] == pytest.approx(0.0)
-    assert families["electrolyte"]["c_dielectric"] == pytest.approx(0.0)
     assert families["permittivity"]["choice"] == "solvent-only"
     assert charged
     assert all(
-        any(value["family"] == "born_diameter" for value in record["coefficients"])
+        any(
+            value["family"] == "born_diameter"
+            and value["value"]["magnitude"] > 0.0
+            for value in record["coefficients"]
+        )
         for record in charged
     )
 
@@ -264,7 +212,7 @@ def test_installed_epcsaft_exposes_exact_fixed_pressure_transport_tangent():
     )
     assert state.dependent_component_ids == ("water", "protonated-monoethanolamine")
     assert state.fixed_other_concentrations_log_fugacity_derivative(0) == pytest.approx(
-        0.9445178339213178, rel=1.0e-12
+        0.9485214614293999, rel=1.0e-12
     )
     assert state.artifact_fingerprint.startswith("sha256:")
 
@@ -283,7 +231,7 @@ def test_installed_epcsaft_returns_structured_no_matrix_derivative_failure():
 
     block = state.fixed_pressure_composition_derivatives
     assert block["status"] == "non_evaluable"
-    assert block["failure"].code == "provider_domain_rejection"
+    assert block["failure"].code == "eos_domain_rejection"
     assert "log_composition_basis" not in block
     assert "chemical_potential_derivatives_over_rt" not in block
 
@@ -307,29 +255,27 @@ def test_retained_predictive_parameters_apply_co2_water_temperature_relationship
     assert co2_water_kij(333.15) == pytest.approx(0.006032)
 
 
-def test_uncached_fugacity_uses_canonical_pressure_state(monkeypatch):
-    sentinel_state = object()
+def test_fugacity_evaluations_preserve_exact_inputs_and_order_independence(monkeypatch):
+    calls = []
     monkeypatch.setattr(thermo_models, "epcsaft_mixture", lambda: object())
-    monkeypatch.setattr(
-        thermo_models, "_v02_state", lambda *args, **kwargs: sentinel_state
-    )
-    monkeypatch.setattr(
-        thermo_models,
-        "_pressure_state_with_optional_rho_guess",
-        lambda *args, **kwargs: pytest.fail(
-            "uncached fugacity used the approximate warm-density solve"
-        ),
-    )
-    monkeypatch.setattr(
-        thermo_models,
-        "_v02_fugacity_coefficients",
-        lambda state: (2.0, 1.0, 1.0) if state is sentinel_state else (),
-    )
 
-    assert thermo_models.epcsaft_phi_co2(
-        323.15,
-        109500.0,
-        np.array([0.02, 0.24, 0.74]),
-        phase="liq",
-        cache=False,
-    ) == pytest.approx(2.0)
+    def native_state(model, **kwargs):
+        calls.append(kwargs)
+        return kwargs
+
+    monkeypatch.setattr(thermo_models, "_v02_state", native_state)
+    monkeypatch.setattr(
+        thermo_models, "_v02_fugacity_coefficients",
+        lambda state: (state["temperature_k"] * state["composition"][0], 1., 1.),
+    )
+    inputs = [(323.151, 109501., [.0200001, .24, .7399999]),
+              (323.152, 109504., [.0200002, .24, .7399998])]
+    forward = [thermo_models.epcsaft_phi_co2(t, p, x, "liq") for t, p, x in inputs]
+    reverse = [thermo_models.epcsaft_phi_co2(t, p, x, "liq") for t, p, x in reversed(inputs)]
+    assert forward == reverse[::-1]
+    assert forward[0] != forward[1]
+    assert len(calls) == 4
+    for call, (temperature, pressure, composition) in zip(calls, inputs + inputs[::-1], strict=True):
+        assert call["temperature_k"] == temperature
+        assert call["pressure_pa"] == pressure
+        np.testing.assert_array_equal(call["composition"], composition)

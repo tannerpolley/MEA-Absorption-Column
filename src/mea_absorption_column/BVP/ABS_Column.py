@@ -25,14 +25,13 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         scales, eq_scales, const_flow, H, A, packing, model_options = parameters
     thermo_model = model_options.get('thermo_model', 'ideal_henry')
     solver_diagnostics = model_options.get('solver_diagnostics')
-    guard_invalid_states = model_options.get('guard_invalid_states', True)
     mass_transfer_factor = float(model_options.get('mass_transfer_factor', 1.0))
     heat_transfer_factor = float(model_options.get('heat_transfer_factor', 1.0))
     thermal_state_mode = model_options.get('thermal_state_mode', 'enthalpy')
     co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
     eta_psi = float(model_options.get('eta_psi', 1.0))
-    epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
     chemical_equilibrium_model = model_options.get('chemical_equilibrium_model', 'legacy')
+    co2_mass_transfer_model = model_options.get('co2_mass_transfer_model', 'enhancement_factor')
     gas_velocity_area_exponent = float(model_options.get('gas_velocity_area_exponent', 0.0) or 0.0)
     gas_velocity_area_reference_m_s = model_options.get('gas_velocity_area_reference_m_s')
     gas_velocity_area_bounds = model_options.get('gas_velocity_area_bounds', (0.1, 3.0))
@@ -62,7 +61,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         Tl = get_liquid_temperature(x, Hl)
         Tv = get_vapor_temperature(y, Hv)
     temperature_bounds = model_options.get('temperature_bounds_K', (250.0, 500.0))
-    if guard_invalid_states and not _temperatures_in_bounds(Tl, Tv, temperature_bounds):
+    if not _temperatures_in_bounds(Tl, Tv, temperature_bounds):
         record_domain_guard(
             solver_diagnostics,
             "thermal_state",
@@ -169,9 +168,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         P,
         P_sat_H2O,
         thermo_model=thermo_model,
-        epcsaft_fugacity_blend=epcsaft_fugacity_blend,
         diagnostics=solver_diagnostics,
-        guard_invalid_states=guard_invalid_states,
     )
 
     # endregion
@@ -246,18 +243,31 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # endregion
 
-    # region -- Enhancement Factor
-
-    E, Psi, Psi_H, enhance_factor = enhancement_factor(Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
-                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit',
-                                                       diagnostics=solver_diagnostics, eta_psi=eta_psi)
-
-    # endregion
-
     # region -- Flux
 
     # region --- Molar Flux
-    Nv_CO2, Nv_H2O, Nl_CO2, Nl_H2O = molar_flux(fl_CO2, fv_CO2, fl_H2O, fv_H2O, kv_CO2, kv_H2O, a_eA, Psi_H)
+    if co2_mass_transfer_model == 'enhancement_factor':
+        E, Psi, Psi_H, enhance_factor = enhancement_factor(
+            Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
+            Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit',
+            diagnostics=solver_diagnostics, eta_psi=eta_psi,
+        )
+        Nv_CO2, Nv_H2O, Nl_CO2, Nl_H2O = molar_flux(
+            fl_CO2, fv_CO2, fl_H2O, fv_H2O, kv_CO2, kv_H2O, a_eA, Psi_H,
+        )
+    elif co2_mass_transfer_model == 'reactive_film_linearization':
+        Nv_CO2, Nl_CO2 = _reactive_film_linearized_fluxes(
+            zi, fv_CO2, a_eA, model_options.get('reactive_film_linearization')
+        )
+        Nv_H2O = -kv_H2O * a_eA * (fv_H2O - fl_H2O)
+        Nl_H2O = -Nv_H2O
+        E = Psi = Psi_H = float('nan')
+        enhance_factor = (
+            float('nan'), Cl_true[1], Dl_CO2, kl_CO2,
+            float('nan'), E, Psi_H, Psi, eta_psi,
+        )
+    else:
+        raise ValueError(f"Unknown co2_mass_transfer_model: {co2_mass_transfer_model!r}")
     if co2_flux_mode == 'absorption_only':
         Nv_CO2 = _smooth_absorption_only_vapor_flux(Nv_CO2)
         Nl_CO2 = -Nv_CO2
@@ -281,16 +291,16 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region - Balance Equations
 
     # region -- Mass Balance
-    dFl_CO2_dz = -Nl_CO2 + 1e-10  # mol/(s*m)
-    dFl_H2O_dz = -Nl_H2O + 1e-10  # mol/(s*m)
+    dFl_CO2_dz = -Nl_CO2  # mol/(s*m)
+    dFl_H2O_dz = -Nl_H2O  # mol/(s*m)
 
-    dFv_CO2_dz = Nv_CO2 + 1e-10  # mol/(s*m)
-    dFv_H2O_dz = Nv_H2O + 1e-10  # mol/(s*m)
+    dFv_CO2_dz = Nv_CO2  # mol/(s*m)
+    dFv_H2O_dz = Nv_H2O  # mol/(s*m)
     # endregion
 
     # region -- Energy Balance
-    dHlf_dz = Hl_flux + 1e-10
-    dHvf_dz = Hv_flux + 1e-10
+    dHlf_dz = Hl_flux
+    dHvf_dz = Hv_flux
 
 
     dHl_dT = f_dHl_dT(Tl, x)
@@ -348,7 +358,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         Cpl_CO2, Cpl_MEA, Cpl_H2O = Cpl
         Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2 = Cpv
         V_l, V_CO2, V_MEA, V_H2O = volume
-        Hl_CO2 = Hl_CO2 + 1e-5
+        Hl_CO2 = Hl_CO2
         Clp, Cvp, eps, a_p, A, Lp, d_h = const
         muv_CO2, muv_H2O, muv_N2, muv_O2 = muv
 
@@ -433,6 +443,40 @@ def _smooth_absorption_only_vapor_flux(nv_co2):
     smoothing = 1.0e-10
     x = -float(nv_co2) / smoothing
     return -smoothing * np.logaddexp(0.0, x)
+
+
+def _reactive_film_linearized_fluxes(zi, vapor_fugacity_pa, interfacial_area_m2_per_m, profile):
+    """Apply an outer-iteration film conductance and bulk fugacity profile."""
+    if profile is None:
+        raise ValueError("reactive_film_linearization is required")
+    positions, conductance, bulk_fugacity = (
+        np.asarray(values, dtype=float) for values in profile
+    )
+    if (
+        positions.ndim != 1
+        or conductance.shape != positions.shape
+        or bulk_fugacity.shape != positions.shape
+        or positions.size < 2
+        or np.any(~np.isfinite(positions))
+        or np.any(~np.isfinite(conductance))
+        or np.any(conductance <= 0.0)
+        or np.any(~np.isfinite(bulk_fugacity))
+        or np.any(bulk_fugacity < 0.0)
+        or np.any(np.diff(positions) <= 0.0)
+        or positions[0] != 0.0
+        or positions[-1] != 1.0
+    ):
+        raise ValueError(
+            "reactive_film_linearization must contain valid equal-length arrays on [0, 1]"
+        )
+    local_conductance = float(np.interp(float(zi), positions, conductance))
+    local_bulk_fugacity = float(np.interp(float(zi), positions, bulk_fugacity))
+    liquid_flux_mol_per_s_m = (
+        float(interfacial_area_m2_per_m)
+        * local_conductance
+        * (float(vapor_fugacity_pa) - local_bulk_fugacity)
+    )
+    return -liquid_flux_mol_per_s_m, liquid_flux_mol_per_s_m
 
 
 def _gas_velocity_area_factor(uv, reference_m_s, exponent, bounds):

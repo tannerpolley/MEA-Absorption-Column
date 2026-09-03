@@ -14,6 +14,12 @@
 \usepackage{tabularx}
 \usepackage{makecell}
 \usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\input{figures/tikz/styles}
 \usepackage{adjustbox}
 \renewcommand\cellalign{tl}
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
@@ -35,17 +41,21 @@
 
 \newcommand{\liq}{\ell}
 \newcommand{\vap}{v}
-\newcommand{\FloatBarrier}{\par}
+\usepackage{placeins}
 
 \usepackage{color}
 \usepackage{siunitx}
+\usepackage{derivative}
+\sisetup{detect-all,per-mode=symbol,range-phrase={--},range-units=single}
 \Urlmuskip=0mu plus 2mu\relax
 \AtBeginEnvironment{thebibliography}{\raggedright\sloppy\emergencystretch=3em}
 
 \begin{document}
 
-    \def\floatpagepagefraction{1}
-    \def\textpagefraction{.001}
+    \renewcommand{\floatpagefraction}{0.75}
+    \renewcommand{\textfraction}{0.05}
+    \renewcommand{\topfraction}{0.95}
+    \renewcommand{\bottomfraction}{0.95}
 
     \shorttitle{ePC-SAFT Fugacity Benchmark for MEA Absorption}
     \shortauthors{T. W. Polley and J. D. Hedengren}
@@ -73,7 +83,7 @@
 
     % Here goes the abstract
     \begin{abstract}
-        Post-combustion carbon dioxide (CO$_2$) capture with aqueous monoethanolamine (MEA) is an established rate-based separation, but absorber comparisons often change thermodynamics, solver formulation, and evaluation scope simultaneously. This work uses one steady-state packed-column model to compare boundary-value problem (BVP) solvers and CO$_2$ fugacity closures while holding chemical equilibrium, reaction enhancement, transport correlations, hydraulics, and material and energy balances fixed. The routine thermodynamic campaign replaces the Henry-law CO$_2$ closure with a liquid-side ionic electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) fugacity calculation while retaining concentration-based chemical equilibrium with unit activity coefficients. For nine National Carbon Capture Center (NCCC) cases satisfying solver success, a boundary-residual norm no greater than 1.0, a predicted capture between 0 and 100\%, and a \SI{90}{s} wall-time limit, ePC-SAFT gave a capture mean absolute error of 3.32 percentage points, compared with 3.14 percentage points for Henry-law closure; the corresponding median runtimes were 7.70 and \SI{5.25}{s}. Collocation satisfied these criteria for the reported NCCC rows, whereas shooting had shorter recorded runtimes on smoother high-liquid-to-gas-ratio probes. A separate nine-species activity calculation, rebased to the concentration-based initial composition for each local chemistry call, returned solutions for all seven 2017 C rows under relaxed settings, with chemistry residuals below $10^{-8}$, capture mean absolute error of 6.595 percentage points, and mean runtime of \SI{171.102}{s}. This activity-rebased calculation tests numerical coupling and does not establish independently parameterized activity-basis reaction constants. The comparison reports attempted cases, residuals, runtimes, and capture errors under the stated equations, inputs, solver settings, and inclusion criteria.
+        Post-combustion carbon dioxide (CO$_2$) capture with aqueous monoethanolamine (MEA) is an established rate-based separation, but absorber comparisons often change thermodynamics, solver formulation, and evaluation scope simultaneously. This work uses one steady-state packed-column model to compare boundary-value problem (BVP) solvers and CO$_2$ fugacity closures while holding chemical equilibrium, reaction enhancement, transport correlations, hydraulics, and material and energy balances fixed. The routine thermodynamic campaign replaces the Henry-law CO$_2$ closure with a liquid-side ionic electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) fugacity calculation while retaining concentration-based chemical equilibrium with unit activity coefficients. For nine National Carbon Capture Center (NCCC) cases satisfying solver success, a boundary-residual norm no greater than 1.0, a predicted capture between 0 and 100\%, and a \qty{90}{s} wall-time limit, ePC-SAFT gave a capture mean absolute error of 3.32 percentage points, compared with 3.14 percentage points for Henry-law closure; the corresponding median runtimes were 7.70 and \qty{5.25}{s}. Collocation satisfied these criteria for the reported NCCC rows, whereas shooting had shorter recorded runtimes on smoother high-liquid-to-gas-ratio probes. A separate nine-species activity calculation, rebased to the concentration-based initial composition for each local chemistry call, returned solutions for all seven 2017 C rows under relaxed settings, with chemistry residuals below $10^{-8}$, capture mean absolute error of 6.595 percentage points, and mean runtime of \qty{171.102}{s}. This activity-rebased calculation tests numerical coupling and does not establish independently parameterized activity-basis reaction constants. The comparison reports attempted cases, residuals, runtimes, and capture errors under the stated equations, inputs, solver settings, and inclusion criteria.
     \end{abstract}
 
     \begin{keywords}

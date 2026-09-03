@@ -2,7 +2,7 @@
         The results are organized around one question at a time. The NCCC one-bed cases compare predicted capture and temperature profiles with observations from two no-intercooler pilot-plant campaigns. The thermodynamic comparison then changes only the CO$_2$ fugacity driving force. The solver comparison isolates numerical behavior, and the final timing test records a separate activity-rebased speciation calculation under feasibility settings.
 
     \subsection{NCCC One-Bed Physical Comparison}
-        The model is compared with one-bed, no-intercooler NCCC MEA absorber runs from the 2014 K campaign and the 2017 C campaign \cite{Morgan2020}. The evaluated operating points are listed in Table~\ref{tab:nccc-one-bed-scope}. The 2017 source table leaves the lean inlet temperature blank for 1C--3C; \SI{45.0}{\degreeCelsius} was assumed for those three model-input rows. Sensitivity to this assumed temperature was not evaluated.
+        The model is compared with one-bed, no-intercooler NCCC MEA absorber runs from the 2014 K campaign and the 2017 C campaign \cite{Morgan2020}. The evaluated operating points are listed in Table~\ref{tab:nccc-one-bed-scope}. The 2017 source table leaves the lean inlet temperature blank for 1C--3C; \qty{45.0}{\degreeCelsius} was assumed for those three model-input rows. Sensitivity to this assumed temperature was not evaluated.
 
         \input{tables/nccc_one_bed_case_scope}
 
@@ -10,73 +10,68 @@
 
         \input{tables/nccc_one_bed_attempted_status}
 
-        \begin{center}
+        \begin{figure}[htbp]
             \centering
             \includegraphics[width=0.9\textwidth]{figures/case-3c-temperature-validation.png}
-            \captionof{figure}{Representative comparison of the 2017 Case 3C ePC-SAFT liquid-temperature profile with measured pilot-plant taps. The model input has $\alpha = 0.25$, inlet $y_{\mathrm{CO_2}} = 0.093$, and the \SI{45.0}{\degreeCelsius} lean-inlet assumption used for the blank source temperature row. The normalized coordinate runs from the vapor inlet at 0 to the liquid inlet at 1; the sharp feature near normalized position 1.0 is the imposed lean-liquid inlet boundary response rather than an internal temperature tap.}
+            \caption{Representative comparison of the 2017 Case 3C ePC-SAFT liquid-temperature profile with measured pilot-plant taps. The model input has $\alpha = 0.25$, inlet $y_{\mathrm{CO_2}} = 0.093$, and the \qty{45.0}{\degreeCelsius} lean-inlet assumption used for the blank source temperature row. The normalized coordinate runs from the vapor inlet at 0 to the liquid inlet at 1; the sharp feature near normalized position 1.0 is the imposed lean-liquid inlet boundary response rather than an internal temperature tap.}
             \label{fig:temp_profiles}
-        \end{center}
+        \end{figure}
 
-        Case 3C is used as the representative temperature-profile comparison because it has measured liquid-temperature taps. In the year-split NCCC rerun, the ePC-SAFT calculation predicts $\SI{88.32}{\percent}$ capture against the $\SI{89.50}{\percent}$ pilot-plant value, a difference of $-1.18$ percentage points.
+        Case 3C is used as the representative temperature-profile comparison because it has measured liquid-temperature taps. In the year-split NCCC rerun, the ePC-SAFT calculation predicts $\qty{88.32}{\percent}$ capture against the $\qty{89.50}{\percent}$ pilot-plant value, a difference of $-1.18$ percentage points.
 
-        \begin{center}
+        \begin{figure}[htbp]
             \centering
             \includegraphics[width=0.82\textwidth]{figures/case-c-temperature-overlay.png}
-            \captionof{figure}{Temperature-profile overlays for the included 2017 one-bed NCCC C cases. Markers are measured liquid-temperature taps; curves show the ePC-SAFT liquid-temperature profiles. The normalized coordinate runs from the vapor inlet to the liquid inlet, and the terminal point represents the imposed lean-liquid inlet condition. No temperature-error acceptance criterion is applied.}
+            \caption{Temperature-profile overlays for the included 2017 one-bed NCCC C cases. Markers are measured liquid-temperature taps; curves show the ePC-SAFT liquid-temperature profiles. The normalized coordinate runs from the vapor inlet to the liquid inlet, and the terminal point represents the imposed lean-liquid inlet condition. No temperature-error acceptance criterion is applied.}
             \label{fig:generated-temperature-profiles}
-        \end{center}
+        \end{figure}
 
         Figure~\ref{fig:generated-temperature-profiles} extends the temperature-profile comparison across the included 2017 C cases. The overlays document the coupled mass-transfer and energy-balance response along the bed, but without a temperature-error acceptance criterion they are not treated as standalone model-validation evidence. The thermodynamic comparison is reported separately in Figure~\ref{fig:nccc-one-bed-thermo-benchmark}.
 
-        \FloatBarrier
 
     \subsection{ePC-SAFT Driving-Force Comparison}
         The Henry-law baseline uses a liquid Henry-law CO$_2$ fugacity and an ideal vapor partial-pressure expression. The ePC-SAFT calculation replaces that closure with vapor- and liquid-side fugacity coefficients computed from pressure-specified phase states. The liquid phase uses the ePC-SAFT electrolyte configuration described in Section~\ref{sec:model-framework}. The vapor-side calculation uses the same fugacity-coefficient framework with only neutral species present.
 
-        \begin{center}
+        \begin{figure}[htbp]
             \centering
             \includegraphics[width=0.92\textwidth]{figures/nccc-one-bed-thermo-benchmark.pdf}
-            \captionof{figure}{Thermodynamic driving-force comparison for one-bed, no-intercooler NCCC cases from the 2014 K and 2017 C campaigns that satisfied solver success, boundary-residual norm $\leq 1.0$, predicted capture between 0 and 100\%, and runtime $\leq\SI{90}{s}$. The left panel reports case-wise capture error, and the right panel reports median runtime. K20 is excluded because neither thermodynamic row satisfied all four criteria.}
+            \caption{Thermodynamic driving-force comparison for one-bed, no-intercooler NCCC cases from the 2014 K and 2017 C campaigns that satisfied solver success, boundary-residual norm $\leq 1.0$, predicted capture between 0 and 100\%, and runtime $\leq\qty{90}{s}$. The left panel reports case-wise capture error, and the right panel reports median runtime. K20 is excluded because neither thermodynamic row satisfied all four criteria.}
             \label{fig:nccc-one-bed-thermo-benchmark}
-        \end{center}
+        \end{figure}
 
-        Figure~\ref{fig:nccc-one-bed-thermo-benchmark} is the main thermodynamic comparison. Across the included one-bed rows, ePC-SAFT gives a capture mean absolute error of 3.32 percentage points, compared with 3.14 percentage points for Henry-law closure. Its median runtime is \SI{7.70}{s}, compared with \SI{5.25}{s} for Henry-law closure. The 0.18-percentage-point difference in mean absolute error does not show lower aggregate capture error for ePC-SAFT; the calculation instead quantifies the effect and runtime of replacing the Henry-law driving force with vapor- and liquid-side fugacity coefficients.
+        Figure~\ref{fig:nccc-one-bed-thermo-benchmark} is the main thermodynamic comparison. Across the included one-bed rows, ePC-SAFT gives a capture mean absolute error of 3.32 percentage points, compared with 3.14 percentage points for Henry-law closure. Its median runtime is \qty{7.70}{s}, compared with \qty{5.25}{s} for Henry-law closure. The 0.18-percentage-point difference in mean absolute error does not show lower aggregate capture error for ePC-SAFT; the calculation instead quantifies the effect and runtime of replacing the Henry-law driving force with vapor- and liquid-side fugacity coefficients.
 
-        \FloatBarrier
 
     \subsection{Numerical Solver Behavior}
         The solver comparison answers a different question than the thermodynamic comparison. It tests how shooting, collocation, and finite difference behave when they are applied to the same absorber equations under representative operating conditions. A smooth one-bed operating point is favorable to all three methods. The NCCC 3C case is more demanding because the measured profile contains a sharper temperature feature.
 
         \input{tables/method_case_contrast}
 
-        \begin{center}
+        \begin{figure}[htbp]
             \centering
             \includegraphics[width=0.78\textwidth]{figures/method-case-solver-contrast.pdf}
-            \captionof{figure}{Runtime and method comparison for representative one-bed cases. Shooting required \SI{4.91}{s} for the smooth operating point, whereas the collocation BVP calculation required \SI{9.40}{s} and returned \SI{89.40}{\percent} capture for NCCC Case 3C. The y-axis is linear.}
+            \caption{Runtime and method comparison for representative one-bed cases. Shooting required \qty{4.91}{s} for the smooth operating point, whereas the collocation BVP calculation required \qty{9.40}{s} and returned \qty{89.40}{\percent} capture for NCCC Case 3C. The y-axis is linear.}
             \label{fig:method-case-solver-contrast}
-        \end{center}
+        \end{figure}
 
-        Table~\ref{tab:method-case-contrast} and Figure~\ref{fig:method-case-solver-contrast} show why collocation is used for the routine NCCC rows. Shooting required \SI{4.91}{s} for the smooth comparison point but did not return a solution satisfying the reported criteria for NCCC 3C. In a separate high-liquid-to-gas-ratio probe, shooting returned 20 of 25 explicit-vapor-water rows with a median model runtime of \SI{0.78}{s} and 25 of 25 rows under the older vapor-water-ratio assumption with a median model runtime of \SI{0.85}{s}. These counts and runtimes describe numerical behavior only. The smooth-case finite-difference calculation returned a boundary-residual norm of $9.93\times10^{-13}$ but predicted \SI{107.65}{\percent} capture, demonstrating that a low boundary residual does not establish physical validity. For NCCC 3C, collocation returned \SI{89.40}{\percent} capture in \SI{9.40}{s}. Final mesh size, refinement history, and method-specific evaluation counts were not retained.
+        Table~\ref{tab:method-case-contrast} and Figure~\ref{fig:method-case-solver-contrast} show why collocation is used for the routine NCCC rows. Shooting required \qty{4.91}{s} for the smooth comparison point but did not return a solution satisfying the reported criteria for NCCC 3C. In a separate high-liquid-to-gas-ratio probe, shooting returned 20 of 25 explicit-vapor-water rows with a median model runtime of \qty{0.78}{s} and 25 of 25 rows under the older vapor-water-ratio assumption with a median model runtime of \qty{0.85}{s}. These counts and runtimes describe numerical behavior only. The smooth-case finite-difference calculation returned a boundary-residual norm of $9.93\times10^{-13}$ but predicted \qty{107.65}{\percent} capture, demonstrating that a low boundary residual does not establish physical validity. For NCCC 3C, collocation returned \qty{89.40}{\percent} capture in \qty{9.40}{s}. Final mesh size, refinement history, and method-specific evaluation counts were not retained.
 
-        \FloatBarrier
 
     \subsection{Activity-Rebased Ionic Speciation Timing Test}
         The routine one-bed campaign keeps the concentration-based chemical-equilibrium calculation fixed and uses ePC-SAFT for the CO$_2$ fugacity coefficients. A separate ionic activity-speciation calculation tested numerical coupling between ePC-SAFT activity-related quantities and chemical equilibrium. The calculation used a nine-species ionic state for CO$_2$, MEA, H$_2$O, MEAH$^+$, MEACOO$^-$, HCO$_3^-$, $\mathrm{CO_3^{2-}}$, $\mathrm{H_3O^+}$, and $\mathrm{OH^-}$. For each local chemistry call, it evaluated the ePC-SAFT activity quotient at the concentration-based initial composition and used that quotient as the local reaction constant. It did not use an independent set of standard-state activity-basis $K_r(T)$ values. The solver returned all seven 2017 C-case rows with no invalid states, no domain guards, and chemistry residuals below $10^{-8}$ under the feasibility settings reported below.
 
         \input{tables/full_ionic_speciation_timing}
 
-Table~\ref{tab:full-ionic-speciation-timing} compares this calculation with the routine rows. The activity-rebased calculation uses feasibility settings of 7 starting mesh points, a solver tolerance of 10, a boundary-condition tolerance of 0.5, and a maximum of 80 mesh nodes. The nine-species Case 3C row predicts $\SI{88.736}{\percent}$ capture, $-0.764$ percentage points from the measured value, and requires \SI{139.420}{s}; \SI{102.267}{s} is spent in the ePC-SAFT chemistry solves. Across all seven C rows, the mean runtime is \SI{171.102}{s}, the mean chemistry-solve time is \SI{127.764}{s}, and the capture mean absolute error is 6.595 percentage points. These values establish only that the numerical activity calculation returned solutions under the stated feasibility settings. They do not establish predictive reactive ePC-SAFT chemistry because the reaction constants were not obtained independently of the initial state.
+Table~\ref{tab:full-ionic-speciation-timing} compares this calculation with the routine rows. The activity-rebased calculation uses feasibility settings of 7 starting mesh points, a solver tolerance of 10, a boundary-condition tolerance of 0.5, and a maximum of 80 mesh nodes. The nine-species Case 3C row predicts $\qty{88.736}{\percent}$ capture, $-0.764$ percentage points from the measured value, and requires \qty{139.420}{s}; \qty{102.267}{s} is spent in the ePC-SAFT chemistry solves. Across all seven C rows, the mean runtime is \qty{171.102}{s}, the mean chemistry-solve time is \qty{127.764}{s}, and the capture mean absolute error is 6.595 percentage points. These values establish only that the numerical activity calculation returned solutions under the stated feasibility settings. They do not establish predictive reactive ePC-SAFT chemistry because the reaction constants were not obtained independently of the initial state.
 
-        \FloatBarrier
 
     \subsection{Reactive Thermodynamic Formulation Diagnostic}
-        A separate diagnostic checked the internal thermodynamic and transport structure of the vendored nine-species reactive bundle without treating it as column-validation evidence. At \SI{313.15}{K} and \SI{101325}{Pa}, a fresh homogeneous equilibrium solve satisfied the retained balance and reaction-affinity checks; the reaction-affinity infinity norm was $1.7\times10^{-13}$. The exact composition-tangent construction had a symmetry residual of $4.7\times10^{-17}$ and a positive constrained Hessian in the retained evaluation, but its condition number was approximately $5.3\times10^{10}$ because hydronium is a trace species.
+        A separate diagnostic checked the internal thermodynamic and transport structure of the vendored nine-species reactive bundle without treating it as column-validation evidence. At \qty{313.15}{K} and \qty{101325}{Pa}, a fresh homogeneous equilibrium solve satisfied the retained balance and reaction-affinity checks; the reaction-affinity infinity norm was $1.7\times10^{-13}$. The exact composition-tangent construction had a symmetry residual of $4.7\times10^{-17}$ and a positive constrained Hessian in the retained evaluation, but its condition number was approximately $5.3\times10^{10}$ because hydronium is a trace species.
 
-        The exploratory transport closure forms a symmetric pair-friction mobility from labeled diffusivity anchors, then removes total-molar-flow and electrical-current modes. It recovered the ideal binary Fick limit, produced nonnegative entropy production, and gave zero total-flux and zero-current residuals at approximately $10^{-26}$ in the local check. These are algebraic and limiting-behavior checks on the formulation, not measurements of the nine-species mobility matrix. The inorganic-ion and hydronium diffusivities remain bounded assumptions, and the forward rate prefactors retain the source concentration basis. With a 100-micrometre film thickness, the local CO$_2$ diffusion time was \SI{11.1}{s} while the detailed-balance reaction-time estimate was \SI{1.45e-3}{s}, giving a local Damkoehler estimate of $7.6\times10^{3}$. The scale separation indicates a stiff fast-reaction manifold and motivates reduction or continuation before any column coupling.
+        The exploratory transport closure forms a symmetric pair-friction mobility from labeled diffusivity anchors, then removes total-molar-flow and electrical-current modes. It recovered the ideal binary Fick limit, produced nonnegative entropy production, and gave zero total-flux and zero-current residuals at approximately $10^{-26}$ in the local check. These are algebraic and limiting-behavior checks on the formulation, not measurements of the nine-species mobility matrix. The inorganic-ion and hydronium diffusivities remain bounded assumptions, and the forward rate prefactors retain the source concentration basis. With a 100-micrometre film thickness, the local CO$_2$ diffusion time was \qty{11.1}{s} while the detailed-balance reaction-time estimate was \qty{1.45e-3}{s}, giving a local Damkoehler estimate of $7.6\times10^{3}$. The scale separation indicates a stiff fast-reaction manifold and motivates reduction or continuation before any column coupling.
 
         The diagnostic therefore supports internal thermodynamic consistency and identifies the numerical stiffness expected from the proposed formulation. It does not establish predictive reactive chemistry, a measured mobility law, physical film flux, or packed-column capture; those claims require source-complete transport and kinetics plus held-out film observations.
 
-        \FloatBarrier
 
     \subsection{Limitations and Future Work}
         The absorber model is a simplified one-bed benchmark built from literature submodels for reaction enhancement, transport properties, hydraulics, and heat transfer. The primary physical-comparison set contains one-bed NCCC cases from the 2014 K and 2017 C campaigns. Attempted two-bed 2017 D cases and higher-height cases did not satisfy the stated solver, boundary-residual, physical-capture, and runtime criteria, so they are excluded from the reported aggregate. The thermodynamic conclusions remain conditional on the selected ePC-SAFT parameters and fixed transport correlations; this work includes neither parameter uncertainty propagation nor transport-correlation uncertainty propagation.
@@ -86,3 +81,5 @@ Table~\ref{tab:full-ionic-speciation-timing} compares this calculation with the 
         The governing balances can be applied to another solvent only after replacing the solvent-specific submodels. The present calculation uses an MEA species set, reaction network, equilibrium constants, physical-property and transport correlations, kinetics, and enhancement model. Extension to another amine requires a declared activity standard state and reaction network; pure, binary, association, and electrolyte parameters with documented sources and estimation or transfer procedures; solvent-specific property, transport, and kinetic correlations; and independent thermodynamic and absorber validation. An ePC-SAFT parameter file alone does not establish a second-solvent model.
 
         The routine ePC-SAFT campaign changes the CO$_2$ fugacity driving force while holding the concentration-based chemistry, enhancement factor, transport correlations, and governing balances fixed. Future reactive work should replace the local rebasing procedure with independently sourced or regressed activity-basis $K_r(T)$ values before using the nine-species path for prediction. Direct eNRTL comparisons should likewise be added only when the calibration choices and timing data are reported on the same basis as the present benchmark.
+
+\FloatBarrier

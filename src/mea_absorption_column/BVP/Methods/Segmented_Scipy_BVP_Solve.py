@@ -14,7 +14,6 @@ from mea_absorption_column.BVP.robust_core import (
 )
 from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import DEFAULT_SCIPY_BVP_SETTINGS
 from mea_absorption_column.misc.Polynomial_Fit import polynomial_fit
-from mea_absorption_column.Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
 from mea_absorption_column.intercooling import (
     BedStackSpec,
     liquid_enthalpy_after_intercooler,
@@ -248,8 +247,6 @@ def segmented_scipy_BVP_solve(
                 for i in range(bed_y_solver.shape[1])
             ]
             blocks.append(np.asarray(differentials).T)
-        if hasattr(chemical_equilibrium, "cache"):
-            del chemical_equilibrium.cache
         return np.vstack(blocks)
 
     def boundary(bottom, top):

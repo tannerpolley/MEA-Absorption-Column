@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from mea_absorption_column.Properties.Thermophysical_Properties import CO2_HEAT_OF_ABSORPTION_J_PER_MOL
 from mea_absorption_column.Properties.Thermophysical_Properties import CO2_MOLAR_VOLUME_COEFFS_ML_PER_MOL
@@ -61,15 +62,10 @@ def test_liquid_temperature_inversion_runs_with_numpy_root_inputs():
     assert abs(recovered - 333.0) < 1e-6
 
 
-def test_temperature_inversion_falls_back_to_physical_bounds_for_bad_enthalpy():
-    liquid = get_liquid_temperature([0.05, 0.25, 0.70], -1.0e12)
-    vapor = get_vapor_temperature([0.05, 0.05, 0.80, 0.10], -1.0e12)
-
-    assert 250.0 <= liquid <= 500.0
-    assert 250.0 <= vapor <= 500.0
-
-
-def test_temperature_inversion_returns_bound_for_nonphysical_trial_composition():
-    liquid = get_liquid_temperature([0.5, -0.1, 0.6], 1.0e30)
-
-    assert 250.0 <= liquid <= 500.0
+@pytest.mark.parametrize("invert,composition", [
+    (get_liquid_temperature, [0.05, 0.25, 0.70]),
+    (get_vapor_temperature, [0.05, 0.05, 0.80, 0.10]),
+])
+def test_temperature_inversion_rejects_unattainable_enthalpy(invert, composition):
+    with pytest.raises((ValueError, RuntimeError)):
+        invert(composition, -1.0e12)

@@ -16,7 +16,7 @@ from pathlib import Path
 import pandas as pd
 
 from mea_absorption_column.Run_Model import run_model
-from mea_absorption_column.calibration import nccc_linear_capture_prediction, write_calibration_artifacts
+from mea_absorption_column.calibration import write_calibration_artifacts
 from mea_absorption_column.misc.Save_Run_Outputs import build_profile_coordinate_frame, write_profile_csvs
 
 
@@ -26,13 +26,12 @@ BENCHMARK_COLUMNS = [
     "method",
     "thermo_model",
     "chemical_equilibrium_model",
+    "co2_mass_transfer_model",
     "success",
     "message",
     "runtime_s",
     "capture_pct",
     "capture_error_pct",
-    "raw_capture_pct",
-    "capture_correction_model",
     "temperature_rmse_K",
     "boundary_residual_norm",
     "boundary_residual_components",
@@ -44,7 +43,6 @@ BENCHMARK_COLUMNS = [
     "max_nodes",
     "co2_capture_guess_pct",
     "h2o_capture_guess_pct",
-    "epcsaft_fugacity_blend",
     "epcsaft_dataset",
     "eta_psi",
     "mass_transfer_factor",
@@ -69,7 +67,6 @@ BENCHMARK_COLUMNS = [
     "continuation_stage",
     "continuation_success",
     "invalid_state_count",
-    "guard_penalty_count",
     "domain_guard_counts",
     "first_failed_domain",
     "jacobian_status",
@@ -87,18 +84,10 @@ BENCHMARK_COLUMNS = [
     "scaling_mode",
     "transform_mode",
     "continuation_path",
-    "epcsaft_cache_hits",
-    "epcsaft_cache_misses",
-    "epcsaft_direct_density_solve_s",
-    "epcsaft_rho_guess_hits",
-    "epcsaft_rho_guess_misses",
-    "epcsaft_chemistry_cache_hits",
-    "epcsaft_chemistry_cache_misses",
     "epcsaft_chemistry_solve_s",
     "epcsaft_chemistry_max_mass_residual",
     "epcsaft_chemistry_max_reaction_residual",
     "epcsaft_chemistry_max_charge_residual",
-    "epcsaft_chemistry_accepted_best_effort_count",
     "epcsaft_chemistry_failed_count",
     "epcsaft_chemistry_last_iterations",
     "epcsaft_chemistry_last_native_success",
@@ -212,17 +201,7 @@ def _filter_case_ids(df, case_ids, label):
 
 
 def _run_one_case(df, run, case_source, method, thermo_model, settings):
-    solver_settings = dict(settings.solver_settings or {})
-    has_multistart = any(
-        solver_settings.get(key)
-        for key in (
-            "multistart_capture_guesses",
-            "multistart_mass_transfer_factors",
-            "multistart_intercooler_strengths",
-            "multistart_co2_flux_modes",
-        )
-    )
-    if settings.subprocess_timeout_s is not None and not has_multistart:
+    if settings.subprocess_timeout_s is not None:
         return _run_one_case_subprocess(df, run, case_source, method, thermo_model, settings)
     return _run_one_case_in_process(df, run, case_source, method, thermo_model, settings)
 
@@ -233,25 +212,6 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
         solver_settings = dict(settings.solver_settings or {})
         if "vapor_composition_mode" not in solver_settings and case_source == "NCCC_2017_cases":
             solver_settings["vapor_composition_mode"] = "dry_saturated"
-        capture_guesses = tuple(solver_settings.pop("multistart_capture_guesses", ()) or ())
-        mass_factors = tuple(solver_settings.pop("multistart_mass_transfer_factors", ()) or ())
-        intercooler_strengths = tuple(solver_settings.pop("multistart_intercooler_strengths", ()) or ())
-        flux_modes = tuple(solver_settings.pop("multistart_co2_flux_modes", ()) or ())
-        if capture_guesses or mass_factors or intercooler_strengths or flux_modes:
-            return _run_multistart_case(
-                df=df,
-                run=run,
-                case_source=case_source,
-                method=method,
-                thermo_model=thermo_model,
-                settings=settings,
-                base_solver_settings=solver_settings,
-                capture_guesses=capture_guesses or (solver_settings.get("co2_capture_guess_pct", 95.0),),
-                mass_factors=mass_factors or (solver_settings.get("mass_transfer_factor", 1.0),),
-                intercooler_strengths=intercooler_strengths or (solver_settings.get("intercooler_strength", 1.0),),
-                flux_modes=flux_modes or (solver_settings.get("co2_flux_mode", "bidirectional"),),
-                start=start,
-            )
         if settings.profile_pngs or settings.profile_csvs:
             solver_settings["return_profiles"] = True
         if settings.profile_csvs:
@@ -269,7 +229,6 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
             staged_beds=settings.staged_beds,
             solver_settings=solver_settings or None,
         )
-        result = _apply_capture_correction(df, run, result, solver_settings)
         result = _annotate_solver_settings(result, solver_settings)
         if settings.profile_pngs and result.get("_profiles"):
             result["profile_png"] = _write_profile_png(result, settings.output_dir, case_source)
@@ -292,37 +251,13 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
             "package_versions": _package_versions(),
             **metadata,
         }
-        try:
-            failure = _apply_capture_correction(df, run, failure, dict(settings.solver_settings or {}))
-        except Exception:
-            pass
         return _coerce_row(_annotate_solver_settings(failure, dict(settings.solver_settings or {})))
 
 
 def _run_one_case_subprocess(df, run, case_source, method, thermo_model, settings):
-    return _run_solver_settings_subprocess(
-        df=df,
-        run=run,
-        case_source=case_source,
-        method=method,
-        thermo_model=thermo_model,
-        settings=settings,
-        solver_settings_override=None,
-    )
-
-
-def _run_solver_settings_subprocess(
-    df,
-    run,
-    case_source,
-    method,
-    thermo_model,
-    settings,
-    solver_settings_override=None,
-):
     start = time.time()
     timeout_s = float(settings.subprocess_timeout_s)
-    effective_solver_settings = settings.solver_settings if solver_settings_override is None else solver_settings_override
+    effective_solver_settings = settings.solver_settings
     output_dir = Path(settings.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     worker_root = Path(".tmp_local") / "benchmark_workers"
@@ -337,7 +272,7 @@ def _run_solver_settings_subprocess(
             "run": int(run),
             "method": method,
             "thermo_model": thermo_model,
-            "settings": _settings_to_payload(settings, solver_settings_override=solver_settings_override),
+            "settings": _settings_to_payload(settings),
             "output_path": str(output_path),
         }
         input_path.write_text(json.dumps(input_payload), encoding="utf-8")
@@ -411,7 +346,7 @@ def _run_solver_settings_subprocess(
         shutil.rmtree(tmp_path, ignore_errors=True)
 
 
-def _settings_to_payload(settings: BenchmarkSettings, solver_settings_override=None):
+def _settings_to_payload(settings: BenchmarkSettings):
     return {
         "methods": list(settings.methods),
         "thermo_models": list(settings.thermo_models),
@@ -425,7 +360,7 @@ def _settings_to_payload(settings: BenchmarkSettings, solver_settings_override=N
         "write_artifacts": False,
         "data_type": settings.data_type,
         "staged_beds": settings.staged_beds,
-        "solver_settings": settings.solver_settings if solver_settings_override is None else solver_settings_override,
+        "solver_settings": settings.solver_settings,
         "profile_pngs": settings.profile_pngs,
         "profile_csvs": settings.profile_csvs,
         "subprocess_timeout_s": None,
@@ -478,147 +413,6 @@ def _worker_error_message(returncode, stdout, stderr):
     return f"Benchmark subprocess failed with return code {returncode}: {tail}"
 
 
-def _run_multistart_case(
-    df,
-    run,
-    case_source,
-    method,
-    thermo_model,
-    settings,
-    base_solver_settings,
-    capture_guesses,
-    mass_factors,
-    intercooler_strengths,
-    flux_modes,
-    start,
-):
-    candidates = []
-    for capture_guess in capture_guesses:
-        for mass_factor in mass_factors:
-            for intercooler_strength in intercooler_strengths:
-                for flux_mode in flux_modes:
-                    solver_settings = {
-                        **base_solver_settings,
-                        "co2_capture_guess_pct": float(capture_guess),
-                        "mass_transfer_factor": float(mass_factor),
-                        "intercooler_strength": float(intercooler_strength),
-                        "co2_flux_mode": str(flux_mode),
-                    }
-                    path = (
-                        f"capture_guess={float(capture_guess):g};"
-                        f"mass_transfer_factor={float(mass_factor):g};"
-                        f"intercooler_strength={float(intercooler_strength):g};"
-                        f"co2_flux_mode={flux_mode}"
-                    )
-                    if settings.subprocess_timeout_s is not None:
-                        result = _run_solver_settings_subprocess(
-                            df=df,
-                            run=run,
-                            case_source=case_source,
-                            method=method,
-                            thermo_model=thermo_model,
-                            settings=settings,
-                            solver_settings_override=solver_settings,
-                        )
-                        result = dict(result)
-                        result["continuation_stage"] = "multistart_capture_calibrated"
-                        result["continuation_path"] = path
-                        result = _annotate_solver_settings(result, solver_settings)
-                        candidates.append(result)
-                        continue
-                    try:
-                        if settings.profile_pngs or settings.profile_csvs:
-                            solver_settings["return_profiles"] = True
-                        if settings.profile_csvs:
-                            solver_settings["case_source"] = case_source
-                        result = run_model(
-                            df,
-                            method=method,
-                            data_type=settings.data_type,
-                            run=run,
-                            show_info=False,
-                            save_run_results=False,
-                            plot_temperature=False,
-                            thermo_model=thermo_model,
-                            return_details=True,
-                            staged_beds=settings.staged_beds,
-                            solver_settings=solver_settings or None,
-                        )
-                        result = _apply_capture_correction(df, run, result, solver_settings)
-                        result = _annotate_solver_settings(result, solver_settings)
-                        result["case_source"] = case_source
-                        result["continuation_stage"] = "multistart_capture_calibrated"
-                        result["continuation_path"] = path
-                        candidates.append(result)
-                    except Exception as exc:
-                        row = {
-                            "case_id": str(df.index[run]),
-                            "case_source": case_source,
-                            "method": method,
-                            "thermo_model": thermo_model,
-                            "success": False,
-                            "message": str(exc),
-                            "runtime_s": float(time.time() - start),
-                            "python_version": sys.version.split()[0],
-                            "platform": platform.platform(),
-                            "package_versions": _package_versions(),
-                            **_failure_metadata(df, run, method, settings.staged_beds),
-                        }
-                        candidates.append(row)
-
-    best = min(candidates, key=_multistart_objective)
-    best = dict(best)
-    best["runtime_s"] = float(time.time() - start)
-    best["message"] = f"{best.get('message', '')}; selected from {len(candidates)} multistart candidates"
-    if settings.profile_pngs and best.get("_profiles"):
-        best["profile_png"] = _write_profile_png(best, settings.output_dir, case_source)
-    if settings.profile_csvs:
-        best.update(_write_profile_csvs_for_result(best, settings.output_dir, case_source))
-    return _coerce_row(best)
-
-
-def _multistart_objective(row):
-    capture_error = pd.to_numeric(row.get("capture_error_pct"), errors="coerce")
-    boundary = pd.to_numeric(row.get("boundary_residual_norm"), errors="coerce")
-    capture = pd.to_numeric(row.get("capture_pct"), errors="coerce")
-    if pd.isna(capture_error):
-        capture_error = 1.0e6
-    if pd.isna(boundary):
-        boundary = 1.0e4
-    if pd.isna(capture) or capture < -1.0 or capture > 101.0:
-        capture_penalty = 1.0e5
-    else:
-        capture_penalty = 0.0
-    success_penalty = 0.0 if bool(row.get("success", False)) else 10.0
-    return float(abs(capture_error) + 0.05 * boundary + capture_penalty + success_penalty)
-
-
-def _apply_capture_correction(df, run, result, solver_settings):
-    model = solver_settings.get("capture_correction_model")
-    if not model:
-        result.setdefault("raw_capture_pct", result.get("capture_pct"))
-        result.setdefault("capture_correction_model", "none")
-        return result
-    if model != "nccc_linear":
-        raise ValueError(f"Unknown capture_correction_model: {model}")
-    corrected = nccc_linear_capture_prediction(df, run)
-    target = _target_capture_pct(df, run)
-    result = dict(result)
-    result["raw_capture_pct"] = result.get("capture_pct")
-    result["capture_pct"] = corrected
-    result["capture_error_pct"] = None if target is None else corrected - target
-    result["capture_correction_model"] = model
-    result["message"] = f"{result.get('message', '')}; capture corrected with {model}"
-    return result
-
-
-def _target_capture_pct(df, run):
-    for column in ("CO2  %", "CO2 %"):
-        if column in df.columns:
-            return float(df.iloc[run][column])
-    return None
-
-
 def _annotate_solver_settings(result, solver_settings):
     result = dict(result)
     result.setdefault(
@@ -633,7 +427,6 @@ def _annotate_solver_settings(result, solver_settings):
         "chemical_equilibrium_model",
         "co2_capture_guess_pct",
         "h2o_capture_guess_pct",
-        "epcsaft_fugacity_blend",
         "eta_psi",
         "mass_transfer_factor",
         "heat_transfer_factor",
@@ -704,7 +497,6 @@ def _failure_metadata(df, run, method, staged_beds):
         "h2o_conservation_relative_residual": None,
         "co2_capture_guess_pct": None,
         "h2o_capture_guess_pct": None,
-        "epcsaft_fugacity_blend": None,
         "eta_psi": None,
         "mass_transfer_factor": None,
         "heat_transfer_factor": None,
@@ -722,7 +514,6 @@ def _failure_metadata(df, run, method, staged_beds):
         "continuation_stage": "failed_before_solver",
         "continuation_success": False,
         "invalid_state_count": None,
-        "guard_penalty_count": None,
         "domain_guard_counts": None,
         "first_failed_domain": None,
         "jacobian_status": None,
@@ -740,11 +531,6 @@ def _failure_metadata(df, run, method, staged_beds):
         "scaling_mode": "legacy_flow_enthalpy",
         "transform_mode": "bounded_guarded_raw_state",
         "continuation_path": "none",
-        "epcsaft_cache_hits": None,
-        "epcsaft_cache_misses": None,
-        "epcsaft_direct_density_solve_s": None,
-        "epcsaft_rho_guess_hits": None,
-        "epcsaft_rho_guess_misses": None,
         "profile_png": None,
         "profile_csv_dir": None,
         "profile_csv_status": None,
@@ -839,7 +625,6 @@ def parse_args(argv=None):
     parser.add_argument("--shooting-root-method", default=None)
     parser.add_argument("--co2-capture-guess-pct", type=float, default=None)
     parser.add_argument("--h2o-capture-guess-pct", type=float, default=None)
-    parser.add_argument("--epcsaft-fugacity-blend", type=float, default=None)
     parser.add_argument("--eta-psi", type=float, default=None)
     parser.add_argument("--chemical-equilibrium-model", default=None)
     parser.add_argument("--mass-transfer-factor", type=float, default=None)
@@ -852,18 +637,7 @@ def parse_args(argv=None):
     )
     parser.add_argument("--success-boundary-residual-max", type=float, default=None)
     parser.add_argument("--success-capture-error-max-pct", type=float, default=None)
-    parser.add_argument("--capture-correction-model", default=None)
-    parser.add_argument("--multistart-capture-guesses", nargs="+", type=float, default=None)
-    parser.add_argument("--multistart-mass-transfer-factors", nargs="+", type=float, default=None)
-    parser.add_argument("--multistart-intercooler-strengths", nargs="+", type=float, default=None)
-    parser.add_argument("--multistart-co2-flux-modes", nargs="+", default=None)
     parser.add_argument("--finite-jacobian", action="store_true")
-    parser.add_argument("--seed-from-shooting", action="store_true")
-    parser.add_argument(
-        "--unguarded-rhs",
-        action="store_true",
-        help="Bypass domain guard wrappers for legacy favorable-case timing probes.",
-    )
     parser.add_argument("--profile-pngs", action="store_true")
     parser.add_argument("--profile-csvs", action="store_true")
     parser.add_argument("--subprocess-timeout-s", type=float, default=None)
@@ -945,8 +719,6 @@ def _solver_settings_from_args(args):
         settings["co2_capture_guess_pct"] = args.co2_capture_guess_pct
     if args.h2o_capture_guess_pct is not None:
         settings["h2o_capture_guess_pct"] = args.h2o_capture_guess_pct
-    if args.epcsaft_fugacity_blend is not None:
-        settings["epcsaft_fugacity_blend"] = args.epcsaft_fugacity_blend
     if args.eta_psi is not None:
         settings["eta_psi"] = args.eta_psi
     if args.chemical_equilibrium_model is not None:
@@ -961,23 +733,8 @@ def _solver_settings_from_args(args):
         settings["success_boundary_residual_max"] = args.success_boundary_residual_max
     if args.success_capture_error_max_pct is not None:
         settings["success_capture_error_max_pct"] = args.success_capture_error_max_pct
-    if args.capture_correction_model is not None:
-        settings["capture_correction_model"] = args.capture_correction_model
-    if args.multistart_capture_guesses is not None:
-        settings["multistart_capture_guesses"] = tuple(args.multistart_capture_guesses)
-    if args.multistart_mass_transfer_factors is not None:
-        settings["multistart_mass_transfer_factors"] = tuple(args.multistart_mass_transfer_factors)
-    if args.multistart_intercooler_strengths is not None:
-        settings["multistart_intercooler_strengths"] = tuple(args.multistart_intercooler_strengths)
-    if args.multistart_co2_flux_modes is not None:
-        settings["multistart_co2_flux_modes"] = tuple(args.multistart_co2_flux_modes)
     if args.finite_jacobian:
         settings["use_finite_jacobian"] = True
-    if args.seed_from_shooting:
-        settings["seed_from_shooting"] = True
-    if args.unguarded_rhs:
-        settings["guard_rhs"] = False
-        settings["strict_domain_guards"] = False
     return settings or None
 
 
@@ -1111,7 +868,6 @@ def _write_profile_rerun_files(profile_dir: Path, metadata: dict, output_dir: Pa
         "max_nodes",
         "co2_capture_guess_pct",
         "h2o_capture_guess_pct",
-        "epcsaft_fugacity_blend",
         "eta_psi",
         "mass_transfer_factor",
         "heat_transfer_factor",

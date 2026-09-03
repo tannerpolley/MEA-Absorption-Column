@@ -3,7 +3,6 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -27,7 +26,6 @@ def _json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-@lru_cache(maxsize=4)
 def validate_reactive_bundle(dataset_text: str) -> dict:
     dataset = Path(dataset_text)
     bundle = _json(dataset / "bundle.json")
@@ -114,7 +112,7 @@ def compile_reaction_constants(dataset_text: str, temperature_k: float) -> tuple
             "mea-reactive-epcsaft-parameter-bundle",
             reactions["source_standard_state"]["id"],
             "products_positive",
-            "source-standard-state-to-provider-neutral-reference",
+            "source-standard-state-to-eos-neutral-reference",
             True,
         ]
         if metadata is not None:
@@ -149,7 +147,7 @@ def homogeneous_reactive_request(
 ) -> dict:
     dataset = Path(dataset_text)
     reactions = validate_reactive_bundle(dataset_text)["reactions"]
-    apparent = np.asarray(apparent_amounts, dtype=float)
+    apparent = np.array(apparent_amounts, dtype=float, copy=True)
     if apparent.shape != (3,) or np.any(~np.isfinite(apparent)) or np.any(apparent <= 0.0):
         raise ValueError("Reactive ePC-SAFT requires positive finite CO2/MEA/H2O amounts")
     apparent /= float(apparent.sum())
@@ -180,7 +178,7 @@ def homogeneous_reactive_request(
                 "amount_role": "finite",
                 "support": {"kind": "all_components", "component_ids": []},
                 "model": {
-                    "kind": "provider",
+                    "kind": "eos",
                     "reference_id": "installed-provider-eos",
                     "admissible_packing_fraction_interval": [1.0e-6, 0.74],
                 },
@@ -246,8 +244,16 @@ def solve_homogeneous_reactive_state(
             f"Reactive ePC-SAFT equilibrium failed: {result.solver_status}; {result.failure}"
         )
     phase = result.phases[0]
+    balances = np.asarray(request["reaction_system"]["balance_matrix"], dtype=float)
+    totals = np.asarray(request["reaction_system"]["conserved_totals"], dtype=float)
+    balanced_composition = balances @ np.asarray(phase.mole_fractions, dtype=float)
+    phase_total = float(totals @ balanced_composition / (balanced_composition @ balanced_composition))
     return {
         "composition": np.asarray(phase.mole_fractions, dtype=float),
+        "amounts_mol": phase_total * np.asarray(phase.mole_fractions, dtype=float),
+        "feed_amounts_mol": np.asarray(
+            request["reaction_system"]["feed_amounts_mol"], dtype=float
+        ),
         "density_mol_m3": float(phase.molar_density_mol_m3),
         "chemical_potentials_over_rt": np.asarray(
             phase.chemical_potential_over_rt, dtype=float

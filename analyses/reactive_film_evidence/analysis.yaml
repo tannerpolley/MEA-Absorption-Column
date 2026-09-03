@@ -25,6 +25,28 @@ inputs:
   - path: inputs/ganesan2026_si_model_choices.csv
     kind: exact_supplied_si_model_choices
 outputs:
+  - path: results/final/tables/column_film_capture_comparison.csv
+    kind: eight_case_enhancement_and_reactive_film_capture_comparison
+  - path: results/final/tables/column_film_nodes.csv
+    kind: retained_outer_iteration_film_node_diagnostics
+  - path: results/final/tables/column_film_axial_profiles.csv
+    kind: retained_final_column_profiles
+  - path: results/final/tables/column_film_run_provenance.json
+    kind: reactive_film_campaign_provenance
+  - path: results/final/figures/column_film_capture_comparison.png
+    kind: campaign_capture_comparison_figure
+  - path: results/final/figures/column_film_capture_comparison.pdf
+    kind: campaign_capture_comparison_figure
+  - path: results/final/tables/column_film_temperature_metrics.csv
+    kind: six_case_liquid_temperature_tap_metrics
+  - path: results/final/figures/column_film_temperature_overlay.png
+    kind: six_case_reactive_film_temperature_figure
+  - path: results/final/figures/column_film_temperature_overlay.pdf
+    kind: six_case_reactive_film_temperature_figure
+  - path: results/final/figures/column_film_3c_temperature.png
+    kind: case_3c_reactive_film_temperature_figure
+  - path: results/final/figures/column_film_3c_temperature.pdf
+    kind: case_3c_reactive_film_temperature_figure
   - path: results/final/tables/putta2016_table4_aard_plot.csv
     kind: exact_plot_data
   - path: results/final/tables/chemical_potential_isolation_plot.csv
@@ -53,6 +75,8 @@ commands:
   generate:
     - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/reactive_film_evidence/scripts/build_reactive_film_evidence.py
   render:
+    - uv run python analyses/reactive_film_evidence/scripts/promote_column_film_results.py
+    - uv run python analyses/reactive_film_evidence/scripts/render_column_film_comparison.py
     - uv run python analyses/reactive_film_evidence/scripts/render_reactive_film_evidence.py
     - uv run python analyses/reactive_film_evidence/scripts/render_putta2016_aard.py
-claim_boundary: Source-availability, thermodynamic-force isolation, normalized fixed-chemistry viscosity sensitivity, and dimensional aggregate film evidence only; diagonal mobility is an explicit approximation, self/probe diffusion is not a nine-species Maxwell-Stefan/Onsager matrix, no kinetics fit or packed-column/capture claim is made, and all retained figures are non-predictive/non-validation evidence.
+claim_boundary: The eight-case column campaign reports numerical predictions from the adopted nine-species equilibrium-manifold film formulation and compares them with the former enhancement-factor closure and observations; the diagonal pair-mobility closure uses estimated species diffusivities rather than a measured nine-species Maxwell-Stefan matrix, so the campaign is predictive with respect to fixed documented inputs but is not independently validated transport physics or a fitted capture correlation.

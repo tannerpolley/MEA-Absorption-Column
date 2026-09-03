@@ -12,6 +12,7 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
 )
 from mea_absorption_column.Thermodynamics.reactive_bundle import (
     compile_reaction_constants,
+    homogeneous_reactive_request,
     solve_homogeneous_reactive_state,
     validate_reactive_bundle,
 )
@@ -60,7 +61,7 @@ def test_bundle_reactive_nine_species_state_compiles_temperature_dependent_const
     )
 
     assert [entry[0] for entry in constants] == pytest.approx(
-        [-31.17540213354555, -14.505037067112221, -23.53653838436852, -2.7007932503784, -20.889878783626997]
+        [-31.17540213354555, -14.505037067112221, -23.53653838436852, -2.7007932503784, -20.30164053537688]
     )
     assert concentrations.shape == composition.shape == (9,)
     assert composition.sum() == pytest.approx(1.0, abs=1.0e-12)
@@ -115,3 +116,14 @@ def test_tabulated_reactive_equilibrium_interpolates_certified_amounts(tmp_path,
     assert x_true.shape == (9,)
     assert x_true.sum() == pytest.approx(1.0)
     assert diagnostics["epcsaft_chemistry_table_hits"] == 1
+
+
+def test_reactive_request_preserves_caller_amounts_and_exact_state():
+    amounts = np.array([0.1529, 1.0, 7.911])
+    original = amounts.copy()
+    request = homogeneous_reactive_request(
+        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), 313.15123, 101325.456, amounts
+    )
+    np.testing.assert_array_equal(amounts, original)
+    assert request["temperature"]["value"] == 313.15123
+    assert request["pressure"]["value"] == 101325.456

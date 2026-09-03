@@ -42,12 +42,24 @@ This analysis identifies what can presently support a physical, chemical-potenti
 
 The same calculation evaluates the exact ePC-SAFT tangent at the fresh homogeneous equilibrium. The constrained Hessian is symmetric and positive, while its condition number is about `5.3e10` because H3O+ is a trace species. Putta F1/F2 forward scales combined with provider affinities give a local reaction time orders of magnitude below the 100 micrometre diffusion time. A fully differential nine-species BVP is therefore expected to be stiff; fast-reaction manifold reduction is required before column coupling. **[inference]**
 
+## Eight-case column-film campaign
+
+The adopted calculation replaces the explicit enhancement-factor CO2 flux with a fast-equilibrium nine-species film resistance. It integrates the ePC-SAFT chemical-potential tangent along the local equilibrium manifold, applies a symmetric positive-semidefinite diagonal pair-mobility approximation, and projects out total-molar-flow, electrical-current, nonvolatile-MEA, and water-component modes before closing the CO2 flux against the gas-film resistance. Water transfer remains the column model's separate two-film calculation, so the CO2 film is explicitly a decoupled-component approximation. The packed-column balances remain a mixed-boundary BVP because vapor enters at the bottom and lean liquid enters at the top; the local film calculation is a one-dimensional quadrature/root problem, not a second spatial BVP. **[verified]**
+
+Across K18, K19, and 1C--6C, the film calculation changes predicted capture by -0.031 to +8.526 percentage points relative to the former enhancement-factor model. The observed-capture mean absolute error is 6.677 percentage points for the all-case film aggregate and 4.038 percentage points for the enhancement-factor comparison. This campaign therefore does not show improved aggregate agreement with the pilot data; it shows the consequence of replacing an empirical enhancement closure with the documented thermodynamic-film formulation without fitting to capture. **[verified]**
+
+All eight packed-column solves satisfy their boundary conditions at numerical precision, and their maximum collocation RMS residual is 0.066 under the declared 0.1 tolerance. Five cases (K19, 2C, 3C, 4C, and 6C) also meet the declared outer-film stopping rule: less than 0.05 percentage-point capture change and less than 2% maximum change in both the interpolated conductance and reactive bulk-fugacity fields. K18, 1C, and 5C reach the common 15-update cap first and remain explicitly marked provisional/non-field-converged in the aggregate and figure. **[verified]**
+
+The retained film axial profiles reproduce the six 2017 C-case temperature comparisons without reusing the former enhancement-factor profiles. Their liquid-temperature tap RMSE values range from 3.73 to 8.05 K, with a mean of 5.65 K; Case 3C has a 4.18 K tap RMSE. These are descriptive comparisons rather than acceptance criteria. **[verified]**
+
+The result is predictive only in the conditional engineering sense: case inputs, the selected nine-species ePC-SAFT bundle, gas/liquid transfer correlations, and labeled diffusivity estimates determine the outputs without capture fitting. The selected bundle was evaluated against pressure/speciation data through 393.15 K, but its R5 source correlation is used beyond its 323.15 K source-qualified range and remains an explicit temperature extrapolation. It is not a source-complete transport prediction because the nine-species Maxwell--Stefan/Onsager matrix has not been measured or independently identified, and the campaign does not validate the estimated mobility closure. **[inference]**
+
 ## Best next strategy
 
 1. Acquire the exact Luo2015 supplementary file and retain all 227 rows with apparatus membership, units, state variables, and reported measurement accuracy. **[inference]**
 2. Seek loaded-MEA ionic self-diffusion/conductivity/NMR or validated molecular-dynamics evidence for MEAH+ and MEACOO- first, then the inorganic ions; retain uncertainty and composition basis. **[inference]**
-3. Build the smallest symmetric positive-semidefinite mobility closure consistent with those data and electroneutral zero-current transport, and compare it against the existing effective-Fick reduction at identical thermodynamics and kinetics. **[inference]**
-4. Validate against held-out WWC/SDC/laminar-jet flux rows before coupling to the packed column; only then promote parity/residual and sensitivity figures toward the manuscript. **[inference]**
+3. Replace the present estimated diagonal pair mobility only when species-resolved evidence supports a better identified closure, then repeat the same eight-case comparison. **[inference]**
+4. Validate the local film flux against held-out WWC/SDC/laminar-jet rows before describing the transport closure as independently predictive. **[inference]**
 
 Regenerate the retained tables and both figure formats with:
 
@@ -55,6 +67,9 @@ Regenerate the retained tables and both figure formats with:
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/reactive_film_evidence/scripts/build_reactive_film_evidence.py
 uv run python analyses/reactive_film_evidence/scripts/render_reactive_film_evidence.py
 uv run python analyses/reactive_film_evidence/scripts/render_putta2016_aard.py
+for case in K18 K19 1C 2C 3C 4C 5C 6C; do uv run python analyses/reactive_film_evidence/scripts/run_column_film_comparison.py --case-ids "$case" --film-nodes 5 --outer-iterations 15 --workers 2 --relaxation 0.5 --mesh-points 21 --tol 0.1 --max-nodes 1000 --output-dir "analyses/reactive_film_evidence/results/runs/current_bundle_campaign_$case"; done
+uv run python analyses/reactive_film_evidence/scripts/promote_column_film_results.py
+uv run python analyses/reactive_film_evidence/scripts/render_column_film_comparison.py
 ```
 
-The main outputs are `results/final/figures/reactive_film_evidence_panels.{png,pdf}`, `results/final/tables/chemical_potential_isolation_plot.csv`, `results/final/tables/ramezani_viscosity_sensitivity_plot.csv`, and the exact Dugas/Ganesan retained plot tables. All plotted quantities are explicitly labeled non-predictive or non-validation where a physical scale or complete transport closure is missing.
+The main column outputs are `results/final/tables/column_film_capture_comparison.csv`, `results/final/tables/column_film_nodes.csv`, `results/final/tables/column_film_axial_profiles.csv`, `results/final/tables/column_film_temperature_metrics.csv`, and the `column_film_capture_comparison`, `column_film_temperature_overlay`, and `column_film_3c_temperature` figures in both PNG and PDF formats. The earlier source-evidence panels remain explicitly labeled non-predictive or non-validation where a physical scale or complete transport closure is missing.

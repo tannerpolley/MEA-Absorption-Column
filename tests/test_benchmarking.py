@@ -206,7 +206,6 @@ def test_benchmark_cli_accepts_solver_settings():
         "--max-nodes",
         "200",
         "--finite-jacobian",
-        "--seed-from-shooting",
         "--profile-pngs",
         "--profile-csvs",
         "--subprocess-timeout-s",
@@ -240,8 +239,6 @@ def test_benchmark_cli_accepts_solver_settings():
         "85",
         "--h2o-capture-guess-pct",
         "-90",
-        "--epcsaft-fugacity-blend",
-        "0.5",
         "--eta-psi",
         "1.0",
         "--mass-transfer-factor",
@@ -254,21 +251,6 @@ def test_benchmark_cli_accepts_solver_settings():
         "0.5",
         "--success-capture-error-max-pct",
         "8",
-        "--capture-correction-model",
-        "nccc_linear",
-        "--multistart-capture-guesses",
-        "60",
-        "85",
-        "--multistart-mass-transfer-factors",
-        "0.26",
-        "1.0",
-        "--multistart-intercooler-strengths",
-        "0.25",
-        "1.0",
-        "--multistart-co2-flux-modes",
-        "bidirectional",
-        "absorption_only",
-        "--unguarded-rhs",
     ])
 
     assert args.mesh_points == 21
@@ -276,7 +258,6 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.bc_tol == 0.01
     assert args.max_nodes == 200
     assert args.finite_jacobian is True
-    assert args.seed_from_shooting is True
     assert args.profile_pngs is True
     assert args.profile_csvs is True
     assert args.subprocess_timeout_s == 30
@@ -294,36 +275,25 @@ def test_benchmark_cli_accepts_solver_settings():
     assert args.shooting_root_method == "hybr"
     assert args.co2_capture_guess_pct == 85
     assert args.h2o_capture_guess_pct == -90
-    assert args.epcsaft_fugacity_blend == 0.5
     assert args.eta_psi == 1.0
     assert args.mass_transfer_factor == 0.5
     assert args.heat_transfer_factor == 0.8
     assert args.intercooler_model == "pumparound_temperature_approach"
     assert args.success_boundary_residual_max == 0.5
     assert args.success_capture_error_max_pct == 8
-    assert args.capture_correction_model == "nccc_linear"
-    assert args.multistart_capture_guesses == [60, 85]
-    assert args.multistart_mass_transfer_factors == [0.26, 1.0]
-    assert args.multistart_intercooler_strengths == [0.25, 1.0]
-    assert args.multistart_co2_flux_modes == ["bidirectional", "absorption_only"]
-    assert args.unguarded_rhs is True
 
     solver_settings = _solver_settings_from_args(args)
-    assert solver_settings["seed_from_shooting"] is True
     assert solver_settings["integrator"] == "bdf"
     assert solver_settings["ivp_method"] == "BDF"
     assert solver_settings["root_method"] == "hybr"
     assert solver_settings["co2_capture_guess_pct"] == 85
     assert solver_settings["h2o_capture_guess_pct"] == -90
-    assert solver_settings["epcsaft_fugacity_blend"] == 0.5
     assert solver_settings["eta_psi"] == 1.0
     assert solver_settings["intercooler_model"] == "pumparound_temperature_approach"
     assert solver_settings["vapor_composition_mode"] == "input_o2"
     assert solver_settings["gas_flow_basis"] == "reported_dry_mass"
     assert solver_settings["gas_velocity_area_exponent"] == 1.5
     assert solver_settings["gas_velocity_area_reference_m_s"] == 1.88
-    assert solver_settings["guard_rhs"] is False
-    assert solver_settings["strict_domain_guards"] is False
 
 
 def test_convert_data_defaults_to_legacy_vapor_reconstruction():
@@ -534,106 +504,6 @@ def test_benchmark_writes_profile_csvs_when_requested(tmp_path, monkeypatch):
     assert t_csv.loc[1, "Tl"] == 320.0
 
 
-def test_benchmark_multistart_selects_lowest_capture_error(tmp_path, monkeypatch):
-    def fake_run_model(df, method, thermo_model, run, solver_settings, **kwargs):
-        factor = solver_settings["mass_transfer_factor"]
-        capture = 78.0 if factor == 0.26 else 100.0
-        return {
-            "case_id": "K4",
-            "method": method,
-            "thermo_model": thermo_model,
-            "success": True,
-            "message": "ok",
-            "runtime_s": 1.0,
-            "capture_pct": capture,
-            "capture_error_pct": capture - 78.1,
-            "temperature_rmse_K": None,
-            "boundary_residual_norm": 0.0,
-            "mesh_points": 7,
-            "tol": 2,
-            "bc_tol": 0.05,
-            "beds": 3,
-            "intercoolers": 2,
-            "staged_beds": True,
-            "intercooler_model": "liquid_temperature_reset",
-            "intercooler_assumption": "Tl_feed_target",
-            "python_version": "test",
-            "platform": "test",
-            "package_versions": "test",
-        }
-
-    monkeypatch.setattr("mea_absorption_column.benchmark.run_model", fake_run_model)
-    settings = BenchmarkSettings(
-        methods=("scipy-bvp",),
-        thermo_models=("ideal_henry",),
-        c_case_limit=0,
-        nccc_case_limit=1,
-        output_dir=tmp_path,
-        solver_settings={
-            "multistart_capture_guesses": (85,),
-            "multistart_mass_transfer_factors": (0.26, 1.0),
-            "multistart_intercooler_strengths": (0.25, 1.0),
-            "multistart_co2_flux_modes": ("bidirectional",),
-        },
-    )
-
-    results = run_benchmark(settings)
-
-    assert results.loc[0, "capture_pct"] == 78.0
-    assert results.loc[0, "mass_transfer_factor"] == 0.26
-    assert results.loc[0, "intercooler_strength"] == 0.25
-    assert results.loc[0, "co2_flux_mode"] == "bidirectional"
-    assert "mass_transfer_factor=0.26" in results.loc[0, "continuation_path"]
-    assert "intercooler_strength=0.25" in results.loc[0, "continuation_path"]
-    assert "co2_flux_mode=bidirectional" in results.loc[0, "continuation_path"]
-
-
-def test_benchmark_multistart_uses_candidate_subprocess_timeout(tmp_path, monkeypatch):
-    calls = []
-
-    def fake_candidate_subprocess(**kwargs):
-        calls.append(kwargs["solver_settings_override"])
-        factor = kwargs["solver_settings_override"]["mass_transfer_factor"]
-        return {
-            "case_id": "K4",
-            "case_source": "NCCC_Data",
-            "method": kwargs["method"],
-            "thermo_model": kwargs["thermo_model"],
-            "success": factor == 0.26,
-            "message": "ok",
-            "runtime_s": 1.0,
-            "capture_pct": 78.0 if factor == 0.26 else 100.0,
-            "capture_error_pct": -0.1 if factor == 0.26 else 21.9,
-            "boundary_residual_norm": 0.0,
-            "beds": 3,
-            "intercoolers": 2,
-            "staged_beds": True,
-        }
-
-    monkeypatch.setattr("mea_absorption_column.benchmark._run_solver_settings_subprocess", fake_candidate_subprocess)
-    settings = BenchmarkSettings(
-        methods=("scipy-bvp",),
-        thermo_models=("ideal_henry",),
-        c_case_limit=0,
-        nccc_case_limit=1,
-        output_dir=tmp_path,
-        subprocess_timeout_s=30,
-        solver_settings={
-            "multistart_capture_guesses": (85,),
-            "multistart_mass_transfer_factors": (0.26, 1.0),
-            "multistart_intercooler_strengths": (0.25,),
-            "multistart_co2_flux_modes": ("bidirectional",),
-        },
-    )
-
-    results = run_benchmark(settings)
-
-    assert len(calls) == 2
-    assert results.loc[0, "success"] is True or results.loc[0, "success"] == True
-    assert "mass_transfer_factor=0.26" in results.loc[0, "continuation_path"]
-    assert calls[0]["co2_flux_mode"] == "bidirectional"
-
-
 def test_benchmark_can_select_nccc_case_ids(monkeypatch):
     seen_runs = []
 
@@ -712,12 +582,6 @@ def test_benchmark_worker_preserves_filtered_case_ids(tmp_path, monkeypatch):
     benchmark_worker.main([str(input_path)])
 
     assert seen["case_id"] == "K4"
-
-
-def test_benchmark_schema_includes_capture_correction_columns():
-    assert "raw_capture_pct" in BENCHMARK_COLUMNS
-    assert "capture_correction_model" in BENCHMARK_COLUMNS
-    assert "co2_vapor_upper_factor" in BENCHMARK_COLUMNS
 
 
 def test_benchmark_writes_profile_png_for_failed_last_iterate(monkeypatch):

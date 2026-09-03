@@ -11,7 +11,6 @@ from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
 from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     compute_fugacity,
-    clear_epcsaft_phi_cache,
     ensure_epcsaft_importable,
     epcsaft_phi_co2,
     epcsaft_state_contribution_diagnostics,
@@ -102,9 +101,8 @@ def test_runtime_derivative_backend_override_fails_clearly(monkeypatch):
         epcsaft_phi_co2(323.15, 109500.0, IONIC_X, phase="liq", mixture_kind="ionic")
 
 
-def test_fixed_ionic_fugacity_is_cache_stable():
+def test_fixed_ionic_fugacity_is_repeatable():
     _requires_epcsaft()
-    clear_epcsaft_phi_cache()
     first = epcsaft_phi_co2(323.15, 109500.0, IONIC_X, phase="liq", mixture_kind="ionic")
     second = epcsaft_phi_co2(323.15, 109500.0, IONIC_X, phase="liq", mixture_kind="ionic")
 
