@@ -4,7 +4,6 @@ import csv
 import hashlib
 import json
 import math
-from functools import lru_cache
 from pathlib import Path
 from typing import Iterable
 
@@ -400,7 +399,6 @@ def _pair_records(dataset: Path) -> list[dict[str, object]]:
     return records
 
 
-@lru_cache(maxsize=8)
 def parameter_document(dataset_text: str) -> dict[str, object]:
     dataset = Path(dataset_text)
     parameter_path = dataset if dataset.is_file() else dataset / "parameters.json"
@@ -514,7 +512,6 @@ def _parameters_at_temperature(parameter_path: Path, temperature_k: float | None
     return epcsaft.Parameters.from_mapping(mapping)
 
 
-@lru_cache(maxsize=512)
 def parameters(dataset_text: str, species: tuple[str, ...], temperature_k: float | None = None):
     import epcsaft
 
@@ -528,7 +525,6 @@ def parameters(dataset_text: str, species: tuple[str, ...], temperature_k: float
     )
 
 
-@lru_cache(maxsize=512)
 def mixture(dataset_text: str, species: tuple[str, ...], temperature_k: float | None = None):
     import epcsaft
 

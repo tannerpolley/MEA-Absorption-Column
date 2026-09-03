@@ -1,6 +1,5 @@
 from ..Properties.Thermophysical_Properties import enthalpy
 from scipy.optimize import root
-from scipy.optimize import least_squares
 import numpy as np
 
 TEMPERATURE_BOUNDS_K = (250.0, 500.0)
@@ -25,33 +24,20 @@ def get_vapor_temperature(y, Hv_T_given):
 
 
 def _solve_temperature(residual, initial_guess):
-    lower, upper = TEMPERATURE_BOUNDS_K
-    safe_residual = _safe_temperature_residual(residual)
-    root_result = root(safe_residual, np.array([initial_guess]))
-    candidate = float(np.asarray(root_result.x).ravel()[0])
-    if root_result.success and lower <= candidate <= upper and np.isfinite(candidate):
-        return candidate
-
-    bounded = least_squares(
-        safe_residual,
-        x0=np.array([np.clip(initial_guess, lower, upper)], dtype=float),
-        bounds=(np.array([lower]), np.array([upper])),
-        max_nfev=100,
-    )
-    return float(np.clip(bounded.x[0], lower, upper))
-
-
-def _safe_temperature_residual(residual):
-    def wrapped(T):
-        try:
-            values = np.asarray(residual(T), dtype=float).ravel()
-        except Exception:
-            return np.array([1.0e12], dtype=float)
-        if values.size == 0 or np.any(~np.isfinite(values)):
-            return np.full(max(values.size, 1), 1.0e12, dtype=float)
+    def checked_residual(temperature):
+        values = np.asarray(residual(temperature), dtype=float).ravel()
+        if values.size != 1 or np.any(~np.isfinite(values)):
+            raise ValueError("Temperature inversion returned a non-finite enthalpy residual")
         return values
 
-    return wrapped
+    result = root(checked_residual, np.array([initial_guess]))
+    candidate = float(np.asarray(result.x).ravel()[0])
+    lower, upper = TEMPERATURE_BOUNDS_K
+    if not result.success:
+        raise RuntimeError(f"Temperature inversion failed: {result.message}")
+    if not np.isfinite(candidate) or not lower <= candidate <= upper:
+        raise ValueError(f"Temperature inversion outside [{lower}, {upper}] K: {candidate}")
+    return candidate
 
 
 def get_liquid_enthalpy(Fl, Tl):

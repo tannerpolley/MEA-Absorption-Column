@@ -3,11 +3,9 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-from scipy.optimize import Bounds, LinearConstraint, minimize
 
 
 _ATOMIC_MASS_KG_PER_MOL = {"C": 0.012011, "H": 0.001008, "N": 0.014007, "O": 0.015999}
@@ -28,7 +26,6 @@ def _json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-@lru_cache(maxsize=4)
 def validate_reactive_bundle(dataset_text: str) -> dict:
     dataset = Path(dataset_text)
     bundle = _json(dataset / "bundle.json")
@@ -142,26 +139,6 @@ def _molar_masses(dataset: Path, species_ids: list[str]) -> list[float]:
     return masses
 
 
-def _continuation_amounts(amounts, previous_feed, current_feed, balances):
-    shifted = amounts + current_feed - previous_feed
-    floor = 2.0e-12
-    if np.all(shifted > floor):
-        return shifted
-    totals = balances @ current_feed
-    result = minimize(
-        lambda values: 0.5 * float(np.sum((values - shifted) ** 2)),
-        np.maximum(current_feed, floor * 2.0),
-        jac=lambda values: values - shifted,
-        method="SLSQP",
-        bounds=Bounds(np.full_like(shifted, floor), np.full_like(shifted, np.inf)),
-        constraints=LinearConstraint(balances, totals, totals),
-        options={"ftol": 1.0e-12, "maxiter": 200},
-    )
-    if not result.success or np.max(np.abs(balances @ result.x - totals)) > 1.0e-9:
-        raise ValueError(f"Reactive ePC-SAFT continuation projection failed: {result.message}")
-    return result.x
-
-
 def homogeneous_reactive_request(
     dataset_text: str,
     temperature_k: float,
@@ -170,7 +147,7 @@ def homogeneous_reactive_request(
 ) -> dict:
     dataset = Path(dataset_text)
     reactions = validate_reactive_bundle(dataset_text)["reactions"]
-    apparent = np.asarray(apparent_amounts, dtype=float)
+    apparent = np.array(apparent_amounts, dtype=float, copy=True)
     if apparent.shape != (3,) or np.any(~np.isfinite(apparent)) or np.any(apparent <= 0.0):
         raise ValueError("Reactive ePC-SAFT requires positive finite CO2/MEA/H2O amounts")
     apparent /= float(apparent.sum())
@@ -248,7 +225,6 @@ def solve_homogeneous_reactive_state(
     temperature_k: float,
     pressure_pa: float,
     apparent_amounts,
-    initial_state: dict | None = None,
 ) -> dict:
     import epcsaft
     from epcsaft import equilibrium
@@ -256,28 +232,6 @@ def solve_homogeneous_reactive_state(
     request = homogeneous_reactive_request(
         dataset_text, temperature_k, pressure_pa, apparent_amounts
     )
-    if initial_state is not None:
-        amounts = np.asarray(initial_state["amounts_mol"], dtype=float)
-        previous_feed = np.asarray(initial_state["feed_amounts_mol"], dtype=float)
-        current_feed = np.asarray(request["reaction_system"]["feed_amounts_mol"], dtype=float)
-        density = float(initial_state["density_mol_m3"])
-        if (
-            amounts.shape != current_feed.shape
-            or previous_feed.shape != current_feed.shape
-            or np.any(~np.isfinite(amounts))
-            or np.any(~np.isfinite(previous_feed))
-            or not np.isfinite(density)
-            or density <= 0.0
-        ):
-            raise ValueError("Reactive ePC-SAFT initial state is invalid")
-        balances = np.asarray(request["reaction_system"]["balance_matrix"], dtype=float)
-        amounts = _continuation_amounts(
-            amounts, previous_feed, current_feed, balances
-        )
-        request["phases"][0]["start"] = {
-            "amounts_mol": amounts.tolist(),
-            "molar_volume_m3_per_mol": 1.0 / density,
-        }
     problem = equilibrium.general_reactive_equilibrium_problem_from_mapping(request)
     model = epcsaft.Mixture(epcsaft.Parameters.from_json(Path(dataset_text) / "parameters.json"))
     result = equilibrium.solve(model, problem)

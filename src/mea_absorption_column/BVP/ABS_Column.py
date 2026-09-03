@@ -25,13 +25,11 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         scales, eq_scales, const_flow, H, A, packing, model_options = parameters
     thermo_model = model_options.get('thermo_model', 'ideal_henry')
     solver_diagnostics = model_options.get('solver_diagnostics')
-    guard_invalid_states = model_options.get('guard_invalid_states', True)
     mass_transfer_factor = float(model_options.get('mass_transfer_factor', 1.0))
     heat_transfer_factor = float(model_options.get('heat_transfer_factor', 1.0))
     thermal_state_mode = model_options.get('thermal_state_mode', 'enthalpy')
     co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
     eta_psi = float(model_options.get('eta_psi', 1.0))
-    epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
     chemical_equilibrium_model = model_options.get('chemical_equilibrium_model', 'legacy')
     co2_mass_transfer_model = model_options.get('co2_mass_transfer_model', 'enhancement_factor')
     gas_velocity_area_exponent = float(model_options.get('gas_velocity_area_exponent', 0.0) or 0.0)
@@ -63,7 +61,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         Tl = get_liquid_temperature(x, Hl)
         Tv = get_vapor_temperature(y, Hv)
     temperature_bounds = model_options.get('temperature_bounds_K', (250.0, 500.0))
-    if guard_invalid_states and not _temperatures_in_bounds(Tl, Tv, temperature_bounds):
+    if not _temperatures_in_bounds(Tl, Tv, temperature_bounds):
         record_domain_guard(
             solver_diagnostics,
             "thermal_state",
@@ -170,9 +168,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         P,
         P_sat_H2O,
         thermo_model=thermo_model,
-        epcsaft_fugacity_blend=epcsaft_fugacity_blend,
         diagnostics=solver_diagnostics,
-        guard_invalid_states=guard_invalid_states,
     )
 
     # endregion
@@ -295,16 +291,16 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region - Balance Equations
 
     # region -- Mass Balance
-    dFl_CO2_dz = -Nl_CO2 + 1e-10  # mol/(s*m)
-    dFl_H2O_dz = -Nl_H2O + 1e-10  # mol/(s*m)
+    dFl_CO2_dz = -Nl_CO2  # mol/(s*m)
+    dFl_H2O_dz = -Nl_H2O  # mol/(s*m)
 
-    dFv_CO2_dz = Nv_CO2 + 1e-10  # mol/(s*m)
-    dFv_H2O_dz = Nv_H2O + 1e-10  # mol/(s*m)
+    dFv_CO2_dz = Nv_CO2  # mol/(s*m)
+    dFv_H2O_dz = Nv_H2O  # mol/(s*m)
     # endregion
 
     # region -- Energy Balance
-    dHlf_dz = Hl_flux + 1e-10
-    dHvf_dz = Hv_flux + 1e-10
+    dHlf_dz = Hl_flux
+    dHvf_dz = Hv_flux
 
 
     dHl_dT = f_dHl_dT(Tl, x)
@@ -362,7 +358,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         Cpl_CO2, Cpl_MEA, Cpl_H2O = Cpl
         Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2 = Cpv
         V_l, V_CO2, V_MEA, V_H2O = volume
-        Hl_CO2 = Hl_CO2 + 1e-5
+        Hl_CO2 = Hl_CO2
         Clp, Cvp, eps, a_p, A, Lp, d_h = const
         muv_CO2, muv_H2O, muv_N2, muv_O2 = muv
 

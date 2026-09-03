@@ -1,5 +1,4 @@
-import numpy as np
-from mea_absorption_column.Thermodynamics.thermo_models import compute_fugacity, guarded_compute_fugacity
+from mea_absorption_column.Thermodynamics.thermo_models import guarded_compute_fugacity
 
 
 def fugacity(
@@ -14,12 +13,9 @@ def fugacity(
     P,
     P_sat_H2O,
     thermo_model='ideal_henry',
-    epcsaft_fugacity_blend=1.0,
     diagnostics=None,
-    guard_invalid_states=False,
 ):
 
-    compute = guarded_compute_fugacity if guard_invalid_states else compute_fugacity
     kwargs = {
         "model": thermo_model,
         "y": y,
@@ -30,11 +26,9 @@ def fugacity(
         "H_CO2_mix": H_CO2_mix,
         "P": P,
         "P_sat_H2O": P_sat_H2O,
-        "epcsaft_fugacity_blend": epcsaft_fugacity_blend,
     }
-    if guard_invalid_states:
-        kwargs["diagnostics"] = diagnostics
-    Pl_CO2, Pv_CO2, Pl_H2O, Pv_H2O = compute(
+    kwargs["diagnostics"] = diagnostics
+    Pl_CO2, Pv_CO2, Pl_H2O, Pv_H2O = guarded_compute_fugacity(
         **kwargs,
     )
 

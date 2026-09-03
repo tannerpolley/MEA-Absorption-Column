@@ -29,7 +29,6 @@ CO2_COMPONENT = np.asarray((1, 0, 0, 0, 1, 1, 1, 0, 0), dtype=float)
 MEA_COMPONENT = np.asarray((0, 1, 0, 1, 1, 0, 0, 0, 0), dtype=float)
 WATER_COMPONENT = np.asarray((0, 0, 1, 0, 0, 1, 1, 1, 1), dtype=float)
 STATIONARY_COMPONENTS = np.vstack((MEA_COMPONENT, WATER_COMPONENT))
-_WORKER_STATE_PATHS = {}
 
 
 def _self_check():
@@ -47,103 +46,28 @@ def _central_diffusivities(temperature_k: float) -> np.ndarray:
                        6.8e-10, math.sqrt(3.4e-18), math.sqrt(3.4e-18)))
 
 
-def _reactive_state(candidate, temperature, pressure, amounts, initial_state=None):
-    from mea_absorption_column.Thermodynamics.reactive_bundle import solve_homogeneous_reactive_state
-
-    try:
-        return solve_homogeneous_reactive_state(
-            str(candidate), temperature, pressure, amounts, initial_state=initial_state
-        )
-    except Exception as direct_error:
-        state = None
-        steps = max(1, math.ceil(abs(temperature - 313.15) / 4.0))
-        try:
-            for continuation_temperature in np.linspace(313.15, temperature, steps + 1):
-                state = solve_homogeneous_reactive_state(
-                    str(candidate), continuation_temperature, pressure, amounts,
-                    initial_state=state,
-                )
-            return state
-        except Exception:
-            raise direct_error
-
-
 def _film_node(job):
     candidate, position, values = job
     import mea_absorption_column.Thermodynamics.thermo_models as thermo
     from mea_absorption_column.Transport.Reactive_Film import EquilibriumManifoldState, solve_equilibrium_manifold_film
+    from mea_absorption_column.Thermodynamics.reactive_bundle import solve_homogeneous_reactive_state
 
     candidate = Path(candidate)
     thermo.MEA_THERMODYNAMICS_EPCSAFT_DATASET = candidate
-    thermo.epcsaft_dataset_mixture.cache_clear()
     apparent = np.asarray(values["apparent_composition"], dtype=float)
     temperature = values["temperature_K"]
     pressure = values["pressure_Pa"]
-    previous_path = _WORKER_STATE_PATHS.get(float(position), {})
-    previous_bulk = previous_path.get(0.0)
     target_loading = float(apparent[0] / apparent[1])
-    try:
-        bulk = _reactive_state(candidate, temperature, pressure, apparent, previous_bulk)
-    except Exception as direct_exc:
-        bulk = None
-        anchor = min(0.2, target_loading)
-        steps = max(1, math.ceil(abs(target_loading - anchor) / 0.01))
-        for loading in np.linspace(anchor, target_loading, steps + 1):
-            trial = np.asarray((loading * apparent[1], apparent[1], apparent[2]))
-            trial /= trial.sum()
-            try:
-                bulk = _reactive_state(candidate, temperature, pressure, trial, bulk)
-            except Exception as exc:
-                raise RuntimeError(
-                    f"film bulk state failed at z={position:.6g}, T={temperature:.6g} K, "
-                    f"loading={target_loading:.6g}: {exc}"
-                ) from direct_exc
-    accepted = {0.0: bulk}
-    manifold_states = {}
 
     def state(log_loading):
-        log_loading = float(log_loading)
-        target_key = round(log_loading, 12)
-        if target_key in manifold_states:
-            return manifold_states[target_key]
-        if target_key in previous_path:
-            trial = (apparent[0] * math.exp(log_loading), apparent[1], apparent[2])
-            try:
-                solved = _reactive_state(
-                    candidate, temperature, pressure, trial, previous_path[target_key]
-                )
-                accepted[target_key] = solved
-                tangent = thermo.epcsaft_liquid_transport_state(
-                    temperature, pressure, solved["composition"]
-                )
-                manifold_states[target_key] = EquilibriumManifoldState(
-                    solved["composition"], solved["density_mol_m3"], tangent.fugacities_pa,
-                    solved["chemical_potentials_over_rt"], tangent.log_composition_basis,
-                    tangent.chemical_potential_derivatives_over_rt,
-                )
-                return manifold_states[target_key]
-            except Exception:
-                pass
-        solved = bulk
-        steps = max(1, math.ceil(abs(log_loading) / 0.025))
-        for point in np.linspace(0.0, log_loading, steps + 1)[1:]:
-            key = round(float(point), 12)
-            if key in accepted:
-                solved = accepted[key]
-                continue
-            trial = (apparent[0] * math.exp(point), apparent[1], apparent[2])
-            try:
-                solved = _reactive_state(candidate, temperature, pressure, trial, solved)
-            except Exception:
-                solved = _reactive_state(candidate, temperature, pressure, trial)
-            accepted[key] = solved
+        trial = (apparent[0] * math.exp(log_loading), apparent[1], apparent[2])
+        solved = solve_homogeneous_reactive_state(str(candidate), temperature, pressure, trial)
         tangent = thermo.epcsaft_liquid_transport_state(temperature, pressure, solved["composition"])
-        manifold_states[target_key] = EquilibriumManifoldState(
+        return EquilibriumManifoldState(
             solved["composition"], solved["density_mol_m3"], tangent.fugacities_pa,
             solved["chemical_potentials_over_rt"], tangent.log_composition_basis,
             tangent.chemical_potential_derivatives_over_rt,
         )
-        return manifold_states[target_key]
 
     try:
         result = solve_equilibrium_manifold_film(
@@ -167,7 +91,6 @@ def _film_node(job):
             f"loading={target_loading:.6g}, vapor_fugacity={values['vapor_fugacity_Pa']:.6g} Pa: {exc}"
         ) from exc
     bulk_fugacity = float(state(0.0).fugacities_pa[0])
-    _WORKER_STATE_PATHS[float(position)] = accepted
     drive = values["vapor_fugacity_Pa"] - bulk_fugacity
     return {
         "position": position,
@@ -217,7 +140,6 @@ def _run_case(
         bc_tol=0.001,
         max_nodes=maximum_nodes,
         return_profiles=True,
-        return_internal_profile=True,
     )
     baseline = run_model(dataframe, method="scipy-bvp", thermo_model="epcsaft_ionic",
                          data_type=data_type, run=run,
@@ -230,16 +152,7 @@ def _run_case(
         for iteration in range(1, iterations + 1):
             jobs = _sample_jobs(candidate, current["_profiles"], positions)
             futures = [pools[index % len(pools)].submit(_film_node, job) for index, job in enumerate(jobs)]
-            nodes = []
-            for job, future in zip(jobs, futures, strict=True):
-                try:
-                    node = future.result()
-                    node["fresh_worker_retry"] = False
-                except Exception:
-                    with ProcessPoolExecutor(max_workers=1) as retry_pool:
-                        node = retry_pool.submit(_film_node, job).result()
-                    node["fresh_worker_retry"] = True
-                nodes.append(node)
+            nodes = [future.result() for future in futures]
             conductance = np.asarray([row["film_conductance_mol_m2_s_Pa"] for row in nodes])
             bulk_fugacity = np.asarray([row["reactive_bulk_fugacity_Pa"] for row in nodes])
             conductance_change = 0.0 if used_conductance is None else float(
@@ -256,9 +169,9 @@ def _run_case(
                 "reactive_film_linearization": (
                     positions.tolist(), used_conductance.tolist(), used_bulk_fugacity.tolist()
                 ),
-                "initial_guess_scaled": current["_raw_solution_scaled"],
             }
             previous_capture = current["capture_pct"]
+            # Reconstruct the solver start from the feed on every column solve.
             current = run_model(dataframe, method="scipy-bvp", thermo_model="epcsaft_ionic",
                                 data_type=data_type, run=run,
                                 return_details=True, solver_settings=settings)
@@ -335,7 +248,6 @@ def _run_case(
             and abs(current["capture_pct"] - previous_capture) < 0.05
             and max(final_conductance_change, final_bulk_fugacity_change) < 0.02
         ),
-        "fresh_worker_retries": sum(row["fresh_worker_retry"] for row in rows),
         "maximum_temperature_K": max(row["temperature_K"] for row in rows),
         "final_film_nodes_above_R5_source_domain": sum(
             row["temperature_K"] > 323.15 for row in final_rows

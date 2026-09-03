@@ -12,7 +12,6 @@ from ...BVP.robust_core import (
     solver_to_scaled_physical_derivative,
 )
 from ...misc.Polynomial_Fit import polynomial_fit
-from ...Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
 EPS = np.finfo(float).eps
 
 
@@ -33,7 +32,6 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
 
     scales = parameters[0]
     transform_mode = settings.get('transform_mode', 'bounded_guarded_raw_state')
-    guard_rhs = bool(settings.get('guard_rhs', True))
     diagnostics = parameters[6].get("solver_diagnostics", {}) if len(parameters) > 6 else {}
     rhs_calls = 0
     rhs_nodes = 0
@@ -56,14 +54,11 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
                     w[:, i],
                     parameters,
                     transform_mode=transform_mode,
-                    guard_rhs=guard_rhs,
                 ),
                 transform_mode,
             )
             for i in range(np.shape(w)[1])
         ]
-        if hasattr(chemical_equilibrium, "cache"):
-            del chemical_equilibrium.cache
         return np.array(differentials).T
 
     # Define the boundary conditions
@@ -169,11 +164,9 @@ def _physical_rhs_to_solver_rhs(y_solver, rhs_physical, transform_mode):
     return np.asarray(rhs_physical, dtype=float) / derivative
 
 
-def _column_rhs(zi, y_solver, parameters, transform_mode, guard_rhs):
+def _column_rhs(zi, y_solver, parameters, transform_mode):
     y_scaled = solver_to_scaled_physical(y_solver, transform_mode=transform_mode)
-    if guard_rhs:
-        return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
-    return abs_column(zi, y_scaled, parameters)
+    return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
 
 
 def _initial_guess_profile(settings, z_source, z_target, Y_a_scaled, scales, m):

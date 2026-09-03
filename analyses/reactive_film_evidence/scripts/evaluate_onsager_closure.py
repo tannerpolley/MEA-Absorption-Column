@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import math
-from functools import lru_cache
 
 import numpy as np
 
@@ -139,45 +138,13 @@ def main() -> None:
         equilibrium["density_mol_m3"] * equilibrium["composition"][0]
         / float(np.sum(rates))
     )
-    accepted_manifold_states = {0.0: equilibrium}
-
-    @lru_cache(maxsize=128)
     def manifold_state(log_loading: float) -> EquilibriumManifoldState:
-        inward_coordinates = [
-            coordinate
-            for coordinate in accepted_manifold_states
-            if (
-                0.0 <= coordinate <= log_loading
-                if log_loading >= 0.0
-                else log_loading <= coordinate <= 0.0
-            )
-        ]
-        initial_state = accepted_manifold_states[
-            min(inward_coordinates, key=lambda coordinate: abs(coordinate - log_loading))
-        ]
-        try:
-            resolved = (
-                equilibrium
-                if log_loading == 0.0
-                else solve_homogeneous_reactive_state(
-                    str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
-                    temperature,
-                    pressure,
-                    (0.1529 * math.exp(log_loading), 1.0, 7.911),
-                    initial_state=initial_state,
-                )
-            )
-        except Exception as error:
-            raise RuntimeError(
-                f"equilibrium manifold failed at log-loading {log_loading:.12g}"
-            ) from error
-        accepted_manifold_states[log_loading] = resolved
-        tangent = (
-            state
-            if log_loading == 0.0
-            else epcsaft_liquid_transport_state(
-                temperature, pressure, resolved["composition"]
-            )
+        resolved = solve_homogeneous_reactive_state(
+            str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), temperature, pressure,
+            (0.1529 * math.exp(log_loading), 1.0, 7.911),
+        )
+        tangent = epcsaft_liquid_transport_state(
+            temperature, pressure, resolved["composition"]
         )
         return EquilibriumManifoldState(
             composition=resolved["composition"],
