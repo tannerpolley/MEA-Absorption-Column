@@ -27,21 +27,24 @@ The canonical analysis folder is `analyses/nccc_validation/`.
 | `scripts/probe_reactive_epcsaft_speciation.py` | Archived probe for the superseded reactive interface. | No supported current run. | Retained for provenance; it must be migrated to the typed 0.2 equilibrium API before reuse. |
 | `scripts/validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct ePC-SAFT import. |
 
-## ePC-SAFT Dependency Contract
+## Current scientific and manuscript scope
 
-Henry-only tests and benchmarks should run without the external ePC-SAFT checkout. ePC-SAFT workflows are opt-in thermodynamic lanes:
+Read [the scientific context](scientific/CONTEXT.md) before selecting a CSE
+workflow. The complete nine-species manuscript and its incoming result
+requirements are described in [SOURCE_MAP.md](latex/SOURCE_MAP.md).
+The older fixed-chemistry and six-species commands below remain explicitly
+identified legacy calculations; they are not the current coupled-column
+result source.
 
-- `ideal_henry`: default validation lane; no external ePC-SAFT dependency.
-- `epcsaft_ionic`: selected manuscript ePC-SAFT fugacity lane. It requires the external `epcsaft` package and uses the vendored six-species ePC-SAFT dataset plus the liquid state produced by the concentration-based chemistry model.
-- `epcsaft_reactive_*`: intentionally unavailable after the 0.2 cutover because the archived locally rebased constants do not satisfy the new typed standard-state contract.
+This repository consumes one identified immutable Engine wheel. Generic EOS,
+equilibrium, and caloric implementations belong to ePC-SAFT-project; adopted
+MEA parameters belong to MEA-Thermodynamics. Packaged data remain under
+`src/mea_absorption_column/data/epcsaft_datasets/`. Inspect the selected run's
+parameter and Engine identities before using its results.
 
-The selected vendored dataset may be chosen explicitly:
-
-```bash
-export MEA_EPCSAFT_DATASET_NAME="MEA_CO2_H2O_ionic_fit"
-```
-
-The parameter datasets live in `src/mea_absorption_column/data/epcsaft_datasets/`. `MEA_THERMODYNAMICS_EPCSAFT_DATASET` remains an explicit one-off override. The package dependency is an immutable wheel built by the sibling ePC-SAFT project; the adapter uses `Parameters`, `Mixture`, and `State`, and does not expose a derivative-backend selector because CppAD is the package's sole production authority.
+For manuscript writing and read-only validation, use the commands in
+[docs/scientific/README.md](scientific/README.md). The HTML checklist reads
+current manuscript files without running any scientific calculation.
 
 ## Common Commands
 
@@ -69,13 +72,13 @@ Validate curated NCCC artifacts without rerunning long simulations:
 uv run python analyses/nccc_validation/scripts/validate_results.py
 ```
 
-Run one clean Henry profile export:
+Legacy Henry profile export (executes a model; not needed for manuscript work):
 
 ```bash
 uv run python analyses/nccc_validation/scripts/run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model ideal_henry --output-dir analyses/nccc_validation/results/runs/manual_case_profiles
 ```
 
-Run one ePC-SAFT smoke profile after installing/updating the external package:
+Legacy fixed-chemistry ePC-SAFT profile export (requires its identified wheel and explicit model-run scope):
 
 ```bash
 uv run python analyses/nccc_validation/scripts/run_case_profile.py --case-source C_cases_data --case-id 3C --method scipy-bvp --thermo-model epcsaft_ionic --output-dir analyses/nccc_validation/results/runs/manual_epcsaft_profile

@@ -1,0 +1,65 @@
+% Source: typed MEA_reactive_epcsaft_2026_09_03/parameters.json, SHA-256 a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9; unchanged EOS pure/pair records.
+
+% P:parameters-01
+\Cref{tab:reactive-pure-parameters} summarizes the selected segment and ionic diameter parameters for the reactive liquid.
+These values define the nine-species pressure/speciation parameterization used to specify the reactive liquid.
+The complete typed parameter document also retains association-site topology, pair parameters, correlations, source locators, and qualification ranges in the accompanying computational data.
+The water segment diameter uses the temperature correlation stated above.
+The selected coefficient set assigns a solvation factor of 1.5 to water and 1 to every other species.
+
+\begin{table}[pos=htbp]
+\centering
+\caption{Selected nine-species thermodynamic parameters. Diameters are in \unit{\angstrom}; $\epsilon/k$ is in \unit{K}. Packing and Debye--H\"uckel diameters coincide in this parameter set. Displayed values are rounded; calculations use the retained document precision.}
+\label{tab:reactive-pure-parameters}
+\small
+\begin{tabular}{@{}l S[table-format=1.4] c S[table-format=3.3] c c@{}}
+\toprule
+Species & {$m$} & {$\sigma$} & {$\epsilon/k$} & {$d_{\mathrm{Born}}$} & {$d_{\mathrm{pack}}=d_{\mathrm{DH}}$} \\
+\midrule
+\ce{CO2} & 2.0729 & 2.7852 & 173.440 & -- & -- \\
+\ce{MEA} & 3.0353 & 3.0435 & 277.174 & -- & -- \\
+\ce{H2O} & 1.2047 & $\sigma(T)$ & 353.950 & -- & -- \\
+\ce{MEAH+} & 1.0000 & 3.4851 & 232.687 & 3.5332 & 3.0669 \\
+\ce{MEACOO-} & 1.0000 & 3.5354 & 453.265 & 3.5411 & 3.1112 \\
+\ce{HCO3-} & 1.0000 & 2.9296 & 70.000 & 3.0000 & 2.5780 \\
+\ce{CO3^2-} & 1.0000 & 2.4422 & 249.260 & 3.0000 & 2.1491 \\
+\ce{H3O+} & 1.0000 & 3.4654 & 500.000 & 1.2180 & 3.0496 \\
+\ce{OH-} & 1.0000 & 2.0177 & 650.000 & 3.0811 & 1.7756 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[pos=htbp]
+\centering
+\caption{Species diffusivity estimates used in the film mobility, in \unit{m^2\,s^{-1}}. The CO$_2$ expression uses $T$ in kelvin and $R$ in \unit{J\,mol^{-1}\,K^{-1}}. The values specify the species-diffusivity approximation in the mobility law.}
+\label{tab:film-diffusivities}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Species & $D_i$ \\
+\midrule
+\ce{CO2} & $0.5(6.28\times10^{-7})\exp[-15230/(RT)]$ \\
+\ce{MEA}, \ce{H2O} & $8.8\times10^{-10}$ \\
+\ce{MEAH+} & $8.4\times10^{-10}$ \\
+\ce{MEACOO-}, \ce{HCO3-}, \ce{CO3^2-} & $6.8\times10^{-10}$ \\
+\ce{H3O+}, \ce{OH-} & $\sqrt{3.4\times10^{-18}}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+% CHECKLIST-BEGIN: method-14
+\Cref{tab:film-diffusivities} specifies the central species-diffusivity estimates.
+The CO$_2$ expression applies a factor of 0.5 to an aqueous-MEA Arrhenius correlation to represent the selected loading correction.
+The MEA and carbamate values provide the molecular and carbamate transport anchors; the protonated-MEA value uses the unresolved MEA/MEAH$^+$ diffusion estimate.
+Water is assigned the MEA value, and bicarbonate and carbonate are assigned the carbamate value.
+Hydronium and hydroxide use the geometric midpoint of \qty{3.4e-10}{m^2\,s^{-1}} and \qty{1.0e-8}{m^2\,s^{-1}}.
+These assignments define a species-diffusivity approximation, rather than measured multicomponent pair diffusivities.
+The pair values are formed by the harmonic mean in \cref{eq:film-projection}; the projection then imposes the specified flux constraints.
+The thickness diffusivity $D_C^{\mathrm{column}}$ instead uses the common-property liquid CO$_2$ correlation at the bulk state, so changing a species mobility estimate does not implicitly redefine the film thickness.
+% CHECKLIST-REVIEW: Add the Polat, Melnikov, and Jerng primary citations with their concentration/temperature ranges; verify final species assignments and sources for the water and ionic estimates against the adopted transport record.
+% CHECKLIST-END: method-14
+
+The reaction R5 source correlation spans \qtyrange{273.15}{323.15}{K}; using it above \qty{323.15}{K} is a temperature extrapolation of that relation.
+The temperature range of a combined thermodynamic parameterization and the source range of each individual correlation are distinct.
+The mobility inputs likewise retain their measurement or estimation basis when interpreting sensitivity to species transport.

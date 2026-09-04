@@ -25,6 +25,8 @@ inputs:
   - path: inputs/ganesan2026_si_model_choices.csv
     kind: exact_supplied_si_model_choices
 outputs:
+  - path: results/final/tables/column_film_relaxation_sensitivity.csv
+    kind: retained_two_relaxation_case_5c_sensitivity
   - path: results/final/tables/column_film_capture_comparison.csv
     kind: eight_case_enhancement_and_reactive_film_capture_comparison
   - path: results/final/tables/column_film_nodes.csv
@@ -79,4 +81,4 @@ commands:
     - uv run python analyses/reactive_film_evidence/scripts/render_column_film_comparison.py
     - uv run python analyses/reactive_film_evidence/scripts/render_reactive_film_evidence.py
     - uv run python analyses/reactive_film_evidence/scripts/render_putta2016_aard.py
-claim_boundary: The eight-case column campaign reports numerical predictions from the adopted nine-species equilibrium-manifold film formulation and compares them with the former enhancement-factor closure and observations; the diagonal pair-mobility closure uses estimated species diffusivities rather than a measured nine-species Maxwell-Stefan matrix, so the campaign is predictive with respect to fixed documented inputs but is not independently validated transport physics or a fitted capture correlation.
+claim_boundary: The eight-case column campaign reports numerical predictions from the adopted nine-species equilibrium-manifold film formulation and compares them with the former enhancement-factor closure and observations; reactive bulk fugacity and speciation change together with conductance, so this hybrid six-species-outer/nine-species-film comparison does not isolate transfer alone; the projected pair-mobility closure uses estimated species diffusivities rather than a measured nine-species Maxwell-Stefan matrix, so the campaign is predictive with respect to fixed documented inputs but is not independently validated transport physics or a fitted capture correlation.

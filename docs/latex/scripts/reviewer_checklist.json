@@ -1,0 +1,855 @@
+{
+  "assessed_at": "2026-09-04T04:06:11.141856+00:00",
+  "assessment_basis": "Internal assessment on a 0\u201310 scale against each exact reviewer request. Before is the original individual pre-revision assessment; Now reflects the current manuscript, including restored material from the superseded revision. Discussion-only requests are complete when the requested explanation is present; additional analyses remain tracked separately. Scores are author assessments, not reviewer-assigned grades.",
+  "rubric": {
+    "0": "Not started",
+    "2": "Planned",
+    "4": "Partly completed",
+    "6": "Substantial work; important gaps",
+    "8": "Nearly completed",
+    "10": "Completed"
+  },
+  "items": [
+    {
+      "id": "R1.1",
+      "title": "Theoretical basis",
+      "score": 10,
+      "basis": "Reactive equilibrium, EOS properties, and column balances are explicitly formulated.",
+      "remaining": "Maintain consistency as the final model description is revised.",
+      "checks": [
+        "method-01"
+      ],
+      "evidence": {
+        "docs/latex/sections/model_framework.tex": "3b46b9855bef60c7ef4094e358a292e7872f2f9b796fefc39de463d11b643bb2"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 2.0,
+      "previous_revised_score": 9.0,
+      "original_feedback": "The theoretical justification for applying ePC-SAFT to chemical absorption is insufficient. This is the largest weakness of the manuscript. Throughout the manuscript, the authors present ePC-SAFT as the thermodynamic engine for predicting CO2 fugacity and absorber performance. However, they never explain why a molecular equation of state developed for physical interactions can accurately describe a strongly reactive absorption system.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-07"
+      ]
+    },
+    {
+      "id": "R1.2",
+      "title": "Physical and chemical thermodynamics",
+      "score": 10,
+      "basis": "Reaction equilibrium and EOS property roles are distinguished, including standard-state conversion.",
+      "remaining": "Preserve this distinction in the literature review and final claims.",
+      "checks": [
+        "method-02",
+        "method-11"
+      ],
+      "evidence": {
+        "docs/latex/sections/model_framework.tex": "3b46b9855bef60c7ef4094e358a292e7872f2f9b796fefc39de463d11b643bb2",
+        "docs/latex/appendices/appendix_properties.tex": "4d3872cae4b29be21c0ec76b63e2e96adcbecfa455055e6a917a2f84aeeb3039"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 2.0,
+      "previous_revised_score": 10.0,
+      "original_feedback": "ePC-SAFT is essentially a physical equation of state rather than a reaction model. The manuscript currently blurs the distinction between molecular thermodynamics and chemical thermodynamics. The original PC-SAFT framework accounts for hard-chain repulsion, dispersion interactions, association (hydrogen bonding), dipolar interactions, ionic electrostatics (extended versions). These terms describe physical intermolecular interactions.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-03",
+        "method-12"
+      ]
+    },
+    {
+      "id": "R1.3",
+      "title": "Predicted quantities and workflow",
+      "score": 10,
+      "basis": "Figure 1 and the balances connect feeds, liquid state, interfacial transfer, capture, and temperature.",
+      "remaining": "Keep the workflow synchronized with the selected formulation.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/model_framework.tex": "3b46b9855bef60c7ef4094e358a292e7872f2f9b796fefc39de463d11b643bb2",
+        "docs/latex/figures/tikz/model-framework-flowchart.tex": "4d274a9aec223f9d83331d8361ead5ac602cb139fd52c8b02d0e6cc2156170dd"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 4.0,
+      "previous_revised_score": 9.0,
+      "original_feedback": "The manuscript should explicitly identify which quantities are predicted by ePC-SAFT and which are obtained from reaction equilibrium. The workflow is currently ambiguous. A schematic workflow should be provided illustrating",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-05"
+      ]
+    },
+    {
+      "id": "R1.4",
+      "title": "Thermodynamic contribution and scope",
+      "score": 10,
+      "basis": "The introduction explicitly defines the ePC-SAFT fugacity benchmark and distinguishes the common-property and full-property studies.",
+      "remaining": "Addressed; retain this definition when result-specific conclusions are inserted.",
+      "checks": [
+        "introduction"
+      ],
+      "evidence": {
+        "docs/latex/sections/introduction.tex": "99404fa095db4ba1436e320c5196f62820fca5e9660c28471adb1c49bcb1d619"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 4.0,
+      "previous_revised_score": 10.0,
+      "original_feedback": "The manuscript repeatedly uses the term \"ePC-SAFT fugacity benchmark\", but its meaning is not sufficiently defined. The authors should clearly define this terminology in the Introduction to avoid ambiguity.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-02",
+        "method-06"
+      ]
+    },
+    {
+      "id": "R1.5",
+      "title": "Thermodynamic parameter completeness",
+      "score": 10,
+      "basis": "The appendix reports nine-species pure, pair, association, reaction and caloric coefficients, solvation factors, and the explicit solvent dielectric mixing equation.",
+      "remaining": "Addressed for the requested ePC-SAFT parameter description. The additional eNRTL records remain under R2.3.",
+      "checks": [
+        "method-11",
+        "method-12"
+      ],
+      "evidence": {
+        "docs/latex/appendices/appendix_properties.tex": "4d3872cae4b29be21c0ec76b63e2e96adcbecfa455055e6a917a2f84aeeb3039",
+        "docs/latex/tables/reactive_film_parameters.tex": "00231f8d123f19250a56e9837d0c8f4eafa6d71a5120d771656a06e6d3d75723"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 4.0,
+      "previous_revised_score": 8.0,
+      "original_feedback": "Provide more information on ePC-SAFT parameters, since these parameters determine prediction accuracy, a complete parameter table should be included either in the main text or Supporting Information.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-10"
+      ]
+    },
+    {
+      "id": "R1.6",
+      "title": "Binary interactions",
+      "score": 10,
+      "basis": "The pair table and zero/like-charge rules explicitly specify all 36 distinct binary interactions.",
+      "remaining": "Addressed; match these values to the final calculation inputs.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/appendices/appendix_properties.tex": "4d3872cae4b29be21c0ec76b63e2e96adcbecfa455055e6a917a2f84aeeb3039",
+        "docs/latex/tables/reactive_film_parameters.tex": "00231f8d123f19250a56e9837d0c8f4eafa6d71a5120d771656a06e6d3d75723"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 2.0,
+      "previous_revised_score": 10.0,
+      "original_feedback": "The manuscript does not clearly state which binary interaction parameters (kij) were adopted,",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-10"
+      ]
+    },
+    {
+      "id": "R1.7",
+      "title": "Parameter sources and fitting",
+      "score": 10,
+      "basis": "The pair table distinguishes fitted, fixed, assigned, and historically retained inputs. The appendix describes neutral-VLE fitting, pressure/speciation selection, reaction-temperature fitting, and excluded thermodynamic evaluation data.",
+      "remaining": "Addressed for fitted-versus-adopted disclosure. Complete primary bibliography locators and final data packaging remain reproduction tasks under R2.3.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/appendices/appendix_properties.tex": "4d3872cae4b29be21c0ec76b63e2e96adcbecfa455055e6a917a2f84aeeb3039",
+        "docs/latex/SOURCE_MAP.md": "86ae9759cc0218d9d80cb88f64c1e07e93c4e89fe20cd43735bc8c001722803f",
+        "docs/latex/tables/reactive_film_parameters.tex": "00231f8d123f19250a56e9837d0c8f4eafa6d71a5120d771656a06e6d3d75723",
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 2.0,
+      "previous_revised_score": 6.0,
+      "original_feedback": "whether they were fitted, or whether literature values were directly used. The predictive capability of the model strongly depends on these parameters, and additional clarification is necessary.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-10",
+        "method-17"
+      ]
+    },
+    {
+      "id": "R1.8",
+      "title": "Thermodynamic sensitivity",
+      "score": 5,
+      "basis": "The full nine-calculation thermodynamic design, all five reaction-direction coefficients, pivot-preserving perturbation, and local-versus-coupled response definitions are now written in Methods. The 15-factor LHC ranges and statistical interpretation are also specified.",
+      "remaining": "Insert evaluated thermodynamic sensitivity responses and refinement comparisons; quantify which inputs affect capture and temperatures and by how much.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef",
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 2.0,
+      "previous_revised_score": null,
+      "original_feedback": "The authors should evaluate the sensitivity of the simulation results to key thermodynamic parameters. This analysis would improve confidence in the robustness of the proposed benchmark.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-10",
+        "method-18",
+        "method-19",
+        "figure-thermodynamic-sensitivity"
+      ],
+      "mapping_note": "The thermodynamic input table identifies the parameters. The dedicated nine-run thermodynamic study is scoped and being prepared; its result insertion must remain distinct from Figure 7, which varies transport inputs.",
+      "owners": [
+        {
+          "thread_id": "01a06a14-8146-7d43-9720-b7b5bbd2e668",
+          "title": "R1.8: thermodynamic and operating sensitivity",
+          "role": "Study owner"
+        },
+        {
+          "thread_id": "01a06835-c702-7d72-8e10-792227fee3d7",
+          "title": "Accelerate MEA joint thermodynamic fit",
+          "role": "Parameter/source support"
+        }
+      ],
+      "ownership_note": "Active preparation: nine thermodynamic runs, full-precision perturbation definitions, and range/source checks. Column execution follows the verified coupled implementation.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "R1.9",
+      "title": "Transport-property uncertainty",
+      "score": 10,
+      "basis": "Restored qualitative discussion traces viscosity, diffusivity, transfer coefficients, interfacial area, holdup, and heat transfer to capture and axial temperature.",
+      "remaining": "Addressed at the qualitative level explicitly requested. The separate film sensitivity figure remains additional quantitative work.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/model_framework.tex": "3b46b9855bef60c7ef4094e358a292e7872f2f9b796fefc39de463d11b643bb2",
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 4.0,
+      "previous_revised_score": 9.0,
+      "original_feedback": "The manuscript focuses on thermodynamic uncertainty but provides little discussion regarding transport-property uncertainty. Mass-transfer coefficients, diffusivity, and liquid viscosity may significantly influence absorber performance and should at least be discussed qualitatively.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-13",
+        "method-14",
+        "method-15",
+        "figure-film-sensitivity"
+      ],
+      "mapping_note": "The requested qualitative discussion is completed. The linked transport sensitivity analysis is additional supporting work and does not reopen this feedback point."
+    },
+    {
+      "id": "R1.10",
+      "title": "Numerical accuracy and convergence",
+      "score": 6,
+      "basis": "Refinement, conservation, and matched-accuracy methods are described; final numerical evidence remains to insert.",
+      "remaining": "Fill the numerical settings and accuracy/refinement results.",
+      "checks": [
+        "method-08",
+        "method-09",
+        "figure-solver-accuracy"
+      ],
+      "evidence": {
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893",
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 4.0,
+      "previous_revised_score": null,
+      "original_feedback": "Three numerical methods are compared. However, the manuscript mainly reports convergence time. The comparison would be more convincing if the authors additionally reported iteration numbers, Jacobian evaluations, nonlinear residual histories, mesh refinement histories.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-07"
+      ],
+      "owners": [
+        {
+          "thread_id": "01a069ef-d021-7050-abc7-d38ddb17425a",
+          "title": "Takeover: coupled absorber and A2 integration",
+          "role": "Active numerical implementation and checks"
+        },
+        {
+          "thread_id": "01a0686d-8e35-7e43-a451-fad261638d00",
+          "title": "Explore CasADi absorber coupling",
+          "role": "Coordinates final comparison"
+        }
+      ],
+      "ownership_note": "Local derivative and quadrature/refinement checks are active. The final three-method comparison, settings table, and histories are not yet being produced by a separately identified benchmark task.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "R1.11",
+      "title": "Computational expense",
+      "score": 4,
+      "basis": "Timing methodology is written; the comparison plot and values are missing.",
+      "remaining": "Insert matched-accuracy timings with hardware, repeat count, and timing scope.",
+      "checks": [
+        "method-09",
+        "figure-solver-cost"
+      ],
+      "evidence": {
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893",
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 4.0,
+      "previous_revised_score": null,
+      "original_feedback": "Since one objective is benchmarking numerical methods, the computational expense should be quantified. For example, CPU time, memory usage, mesh size, nonlinear iterations, under identical hardware conditions.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "planned",
+      "related_checks": [
+        "method-08",
+        "method-16"
+      ],
+      "owners": [
+        {
+          "thread_id": "01a0686d-8e35-7e43-a451-fad261638d00",
+          "title": "Explore CasADi absorber coupling",
+          "role": "Coordination owner"
+        },
+        {
+          "thread_id": "01a069ef-d021-7050-abc7-d38ddb17425a",
+          "title": "Takeover: coupled absorber and A2 integration",
+          "role": "Solver dependency"
+        }
+      ],
+      "ownership_note": "No active task explicitly producing the final matched-accuracy timing/memory benchmark was verified. Related solver implementation is active; benchmark execution remains planned.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "R1.12",
+      "title": "Extension to other amines",
+      "score": 10,
+      "basis": "The conclusion describes extension to DEA, MDEA, AMP, PZ and blends with solvent-specific chemistry, properties, thermodynamics, transport, kinetics and validation.",
+      "remaining": "Addressed as the requested discussion; a second-solvent calculation is not required by this comment.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/conclusion.tex": "3471b073c7fe2535734eb05618241e102a136d8a1d3d1f9b7fb2fc60ef456280"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 2.0,
+      "previous_revised_score": 8.0,
+      "original_feedback": "The benchmark is demonstrated only for MEA. The manuscript should briefly discuss whether the proposed framework can be directly extended to DEA, MDEA, AMP, PZ, blended amines, or whether additional parameterization would be required.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": []
+    },
+    {
+      "id": "R1.13",
+      "title": "Applicability and limitations",
+      "score": 10,
+      "basis": "The conclusion states parameter-domain, local-equilibrium/isothermal-film and industrial-gas limits and the required finite-rate and process extensions.",
+      "remaining": "Addressed; retain applicable bounds alongside final conclusions.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/model_framework.tex": "3b46b9855bef60c7ef4094e358a292e7872f2f9b796fefc39de463d11b643bb2",
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef",
+        "docs/latex/sections/conclusion.tex": "3471b073c7fe2535734eb05618241e102a136d8a1d3d1f9b7fb2fc60ef456280"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 4.0,
+      "previous_revised_score": 10.0,
+      "original_feedback": "The Conclusion primarily emphasizes the advantages of the benchmark. It would be beneficial to briefly discuss the current limitations, such as dependence on reliable thermodynamic parameters, applicability to reactive electrolyte systems, extension to multicomponent industrial flue gases, future incorporation of reaction kinetics.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-05"
+      ]
+    },
+    {
+      "id": "R1.14",
+      "title": "Other thermodynamic approaches",
+      "score": 10,
+      "basis": "The restored literature comparison identifies practical uses, input requirements, and limitations of Kent\u2013Eisenberg, eNRTL, CPA and ePC-SAFT.",
+      "remaining": "Addressed without asserting an unsupported accuracy ranking.",
+      "checks": [
+        "introduction"
+      ],
+      "evidence": {
+        "docs/latex/sections/introduction.tex": "99404fa095db4ba1436e320c5196f62820fca5e9660c28471adb1c49bcb1d619"
+      },
+      "group": "Reviewer 1",
+      "previous_score": 4.0,
+      "previous_revised_score": 10.0,
+      "original_feedback": "The manuscript would benefit from adding a concise comparison between electrolyte-NRTL, Kent-Eisenberg, CPA, and ePC-SAFT. Although the focus is on ePC-SAFT, discussing the advantages and limitations relative to other widely used thermodynamic models would better demonstrate the novelty and necessity of the proposed benchmark. Such a comparison would also help readers identify the situations in which ePC-SAFT provides clear advantages over traditional electrolyte models.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": []
+    },
+    {
+      "id": "R2.1",
+      "title": "Reference numbering",
+      "score": 10,
+      "basis": "The current PDF uses numeric references starting at 1; the final build resolves citations.",
+      "remaining": "Preserve this after the literature restoration.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/main.tex": "10fed15180696e85520fed99c4aa1be5cb03c8646b520b1f4e6c3e0fe544bda6",
+        "docs/latex/references.bib": "217b58678d85d584d9d52a10200af93c67f1df369a67fc95e1d2d87b0736e870"
+      },
+      "group": "Reviewer 2",
+      "previous_score": 4.0,
+      "previous_revised_score": 10.0,
+      "original_feedback": "Formats of this paper need rearranged. For example, reference number should start from [1].",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": []
+    },
+    {
+      "id": "R2.2",
+      "title": "Literature gap and positioning",
+      "score": 10,
+      "basis": "The named Literature review and restored synthesis distinguish established MEA modeling from the need for controlled physical/numerical comparisons.",
+      "remaining": "Addressed; maintain the literature synthesis through final editing.",
+      "checks": [
+        "introduction"
+      ],
+      "evidence": {
+        "docs/latex/sections/introduction.tex": "99404fa095db4ba1436e320c5196f62820fca5e9660c28471adb1c49bcb1d619"
+      },
+      "group": "Reviewer 2",
+      "previous_score": 4.0,
+      "previous_revised_score": 9.0,
+      "original_feedback": "Shortages of MEA absorber modeling should be clarified in literature review section.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": []
+    },
+    {
+      "id": "R2.3",
+      "title": "Reproducible parameters",
+      "score": 8,
+      "basis": "The manuscript now explains parameter origins, activity/amount bases, dielectric mixing, caloric reconstruction, feed conversion, and separation of property fitting from column evaluation. Calibrated eNRTL source equilibrium, eight reference states, and an isothermal C3 source-adapter study are now available in the b6f5 analysis notebook; portable parameter records and article insertion remain distinct obligations.",
+      "remaining": "Still supply portable selected eNRTL interaction/reference records and species/reaction mapping, final numerical settings, primary source locators, and final software/data identities.",
+      "checks": [
+        "method-10",
+        "method-09",
+        "method-16",
+        "method-17"
+      ],
+      "evidence": {
+        "docs/latex/appendices/appendix_properties.tex": "4d3872cae4b29be21c0ec76b63e2e96adcbecfa455055e6a917a2f84aeeb3039",
+        "docs/latex/sections/data_availability.tex": "48c7f5954d7af624e72315db14fee2cc27e726dcdc4484707c2e6e7d8b612450",
+        "docs/latex/sections/code_availability.tex": "6e7c9735fc17a172523c9f5f3298fa803499a92416e4dea55674858ee1d0298e",
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893"
+      },
+      "group": "Reviewer 2",
+      "previous_score": 4.0,
+      "previous_revised_score": 7.0,
+      "original_feedback": "Parameters for the modeling should be presented for peer repetition.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-05",
+        "method-06",
+        "method-08",
+        "method-11",
+        "method-12",
+        "method-13",
+        "method-14",
+        "method-18",
+        "method-19"
+      ],
+      "owners": [
+        {
+          "thread_id": "01a06992-3aa7-70b3-8471-6126cba14ef3",
+          "title": "Implement eNRTL column comparison",
+          "role": "eNRTL source and adapter records"
+        },
+        {
+          "thread_id": "01a06835-c702-7d72-8e10-792227fee3d7",
+          "title": "Accelerate MEA joint thermodynamic fit",
+          "role": "Thermodynamic parameter records"
+        },
+        {
+          "thread_id": "01a068b5-01ef-7cf2-b88f-0c2469e02048",
+          "title": "Takeover: manuscript visual integration\u2026",
+          "role": "Input documentation and final identities"
+        }
+      ],
+      "ownership_note": "Source/adapter and parameter work are active. Portable eNRTL packaging, final numerical settings and final reproducibility identifiers remain to be assembled; the existing active tasks cover parts of this row.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "R2.4",
+      "title": "Validation against reported results",
+      "score": 4,
+      "basis": "NCCC observations and comparison designs are present; final prediction comparisons have placeholders.",
+      "remaining": "Identify additional reported cases relative to the March submission and insert the current capture/temperature predictions against those observations; another facility is not an explicit requirement.",
+      "checks": [
+        "figure-thermo-capture",
+        "figure-thermo-profiles",
+        "figure-full-property",
+        "figure-film-capture",
+        "figure-film-profiles"
+      ],
+      "evidence": {
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893",
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef"
+      },
+      "group": "Reviewer 2",
+      "previous_score": 5.0,
+      "previous_revised_score": 6.0,
+      "original_feedback": "There are more reported MEA absorber results. Modeling validations should also be conducted for the other results.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "planned",
+      "related_checks": [
+        "method-05"
+      ],
+      "mapping_note": "These figures are possible sources of validation evidence. Closing this request requires additional reported cases beyond the March submission, not every linked figure individually.",
+      "owners": [
+        {
+          "thread_id": "01a0686d-8e35-7e43-a451-fad261638d00",
+          "title": "Explore CasADi absorber coupling",
+          "role": "Coordination owner"
+        },
+        {
+          "thread_id": "01a069ef-d021-7050-abc7-d38ddb17425a",
+          "title": "Takeover: coupled absorber and A2 integration",
+          "role": "Nonisothermal solver dependency"
+        },
+        {
+          "thread_id": "01a06992-3aa7-70b3-8471-6126cba14ef3",
+          "title": "Implement eNRTL column comparison",
+          "role": "Supporting thermodynamic comparison"
+        }
+      ],
+      "ownership_note": "No active expanded measured-case validation campaign was verified. The eNRTL task has an imposed-isothermal C3 comparison, which does not close validation against measured nonisothermal cases or establish additional cases beyond March.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "R2.5",
+      "title": "Operating-condition testing (LHC design)",
+      "score": 5,
+      "basis": "Methods now defines the 48-point, 15-factor Latin hypercube, exact operating ranges, sampling seed, dependent feeds and additive response analysis. A dedicated Results subsection and figure slot carry the operating comparison.",
+      "remaining": "Insert the evaluated sampled conditions and capture/temperature responses; report supported operating tradeoffs and ranking stability.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef",
+        "docs/latex/sections/conclusion.tex": "3471b073c7fe2535734eb05618241e102a136d8a1d3d1f9b7fb2fc60ef456280",
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893"
+      },
+      "group": "Reviewer 2",
+      "previous_score": 2.0,
+      "previous_revised_score": null,
+      "original_feedback": "Based on the model proposed in this paper, MEA absorber performance under various run conditions should be obtained and discussed for optimal operating.",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-05",
+        "finding-9",
+        "conclusion-1",
+        "method-18",
+        "method-19",
+        "figure-operating-screen"
+      ],
+      "mapping_note": "Operating-condition testing is active manuscript work. Formal process optimization is separately deferred under A9; the LHC study does not itself establish an optimum.",
+      "owners": [
+        {
+          "thread_id": "01a06a14-8146-7d43-9720-b7b5bbd2e668",
+          "title": "R1.8: thermodynamic and operating sensitivity",
+          "role": "LHC design and operating study owner"
+        }
+      ],
+      "ownership_note": "The agreed 48-point, 15-factor LHC design now has explicit operating ranges, derived liquid flow and source/assumption definitions. The matching task prepares and executes the coupled column study.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "R2.6",
+      "title": "Another amine and fitting requirements",
+      "score": 10,
+      "basis": "The conclusion gives a solvent-extension sequence from reaction/reference selection through parameter fitting, transport/kinetic inputs, and independent property/absorber evaluation.",
+      "remaining": "Addressed as a fitting and evaluation procedure; another-amine results are future work.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/conclusion.tex": "3471b073c7fe2535734eb05618241e102a136d8a1d3d1f9b7fb2fc60ef456280"
+      },
+      "group": "Reviewer 2",
+      "previous_score": 2.0,
+      "previous_revised_score": 7.0,
+      "original_feedback": "Besides MEA, other amines for CO2 capture process are more and more used. How to fit new amine to this model?",
+      "previous_score_basis": "Individual Before score in the original assessment, converted from 5 to 10.",
+      "progress": "in_progress",
+      "related_checks": []
+    },
+    {
+      "id": "A1",
+      "group": "Additional revision work",
+      "title": "Nine-species reactive formulation",
+      "score": 10,
+      "basis": "The nine-species formulation, five reactions, conserved quantities, thermodynamic conventions, and selected parameter definitions are written.",
+      "remaining": "Formulation addressed; resulting column comparisons remain in their separate result rows.",
+      "checks": [
+        "method-01",
+        "method-11"
+      ],
+      "evidence": {
+        "docs/latex/sections/model_framework.tex": "3b46b9855bef60c7ef4094e358a292e7872f2f9b796fefc39de463d11b643bb2",
+        "docs/latex/appendices/appendix_properties.tex": "4d3872cae4b29be21c0ec76b63e2e96adcbecfa455055e6a917a2f84aeeb3039",
+        "docs/latex/tables/reactive_film_parameters.tex": "00231f8d123f19250a56e9837d0c8f4eafa6d71a5120d771656a06e6d3d75723"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "No individual pre-revision assessment was recorded for this added item.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-12"
+      ]
+    },
+    {
+      "id": "A2",
+      "group": "Additional revision work",
+      "title": "Equilibrium-manifold reactive film",
+      "score": 6,
+      "basis": "Chemical-potential integration, constrained mobility, and interface continuity are written.",
+      "remaining": "Insert matched transfer-model results and mobility/thickness sensitivity.",
+      "checks": [
+        "figure-film-capture",
+        "figure-film-profiles",
+        "figure-film-sensitivity"
+      ],
+      "evidence": {
+        "docs/latex/sections/model_framework.tex": "3b46b9855bef60c7ef4094e358a292e7872f2f9b796fefc39de463d11b643bb2",
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "No individual pre-revision assessment was recorded for this added item.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-14",
+        "method-15",
+        "method-18",
+        "method-19"
+      ],
+      "owners": [
+        {
+          "thread_id": "01a069ef-d021-7050-abc7-d38ddb17425a",
+          "title": "Takeover: coupled absorber and A2 integration",
+          "role": "Reactive-film implementation"
+        },
+        {
+          "thread_id": "01a06a14-8146-7d43-9720-b7b5bbd2e668",
+          "title": "R1.8: thermodynamic and operating sensitivity",
+          "role": "Transport/operating sensitivity"
+        }
+      ],
+      "ownership_note": "Native film and derivative integration are active. The sensitivity task covers a broader transport screen; the exact matched film-arm comparison and dedicated thickness variation still need to be reconciled with its agreed scope.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "A3",
+      "group": "Additional revision work",
+      "title": "Three-part controlled comparison",
+      "score": 6,
+      "basis": "Thermodynamics, transport, and numerical comparisons are structured around shared column observables.",
+      "remaining": "Fill the three analysis comparisons; the literature narrative is restored.",
+      "checks": [
+        "figure-thermo-capture",
+        "figure-film-capture",
+        "figure-solver-accuracy"
+      ],
+      "evidence": {
+        "docs/latex/sections/introduction.tex": "99404fa095db4ba1436e320c5196f62820fca5e9660c28471adb1c49bcb1d619",
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893",
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "No individual pre-revision assessment was recorded for this added item.",
+      "progress": "in_progress",
+      "related_checks": [
+        "figure-full-property",
+        "figure-solver-cost"
+      ],
+      "owners": [
+        {
+          "thread_id": "01a0686d-8e35-7e43-a451-fad261638d00",
+          "title": "Explore CasADi absorber coupling",
+          "role": "Three-study coordination"
+        },
+        {
+          "thread_id": "01a06992-3aa7-70b3-8471-6126cba14ef3",
+          "title": "Implement eNRTL column comparison",
+          "role": "Thermodynamic comparison"
+        },
+        {
+          "thread_id": "01a069ef-d021-7050-abc7-d38ddb17425a",
+          "title": "Takeover: coupled absorber and A2 integration",
+          "role": "Film and numerical implementation"
+        }
+      ],
+      "ownership_note": "Active implementation streams support the three studies. Final three-arm thermodynamic exports and the full numerical cost comparison still require coordinated execution. The literature narrative is already restored.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "A4",
+      "group": "Additional revision work",
+      "title": "Consistent nine-species caloric tables",
+      "score": 10,
+      "basis": "Nine reference enthalpies and all 72 Cp coefficients were inserted with the matching reaction coefficients; transcription was checked.",
+      "remaining": "Retain the matched input identity when final results are inserted.",
+      "checks": [
+        "method-11",
+        "method-12"
+      ],
+      "evidence": {
+        "docs/latex/appendices/appendix_properties.tex": "4d3872cae4b29be21c0ec76b63e2e96adcbecfa455055e6a917a2f84aeeb3039"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "No individual pre-revision assessment was recorded for this added item.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-03"
+      ]
+    },
+    {
+      "id": "A5",
+      "group": "Additional revision work",
+      "title": "Conservative simultaneous formulation",
+      "score": 8,
+      "basis": "The CasADi/IPOPT balance formulation, derivative composition, and Hessian distinction are described.",
+      "remaining": "Insert the final settings, refinement evidence, and computational comparison.",
+      "checks": [
+        "method-08",
+        "method-09",
+        "figure-solver-cost"
+      ],
+      "evidence": {
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "No individual pre-revision assessment was recorded for this added item.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-07",
+        "figure-solver-accuracy"
+      ],
+      "owners": [
+        {
+          "thread_id": "01a069ef-d021-7050-abc7-d38ddb17425a",
+          "title": "Takeover: coupled absorber and A2 integration",
+          "role": "Conservative formulation owner"
+        }
+      ],
+      "ownership_note": "Active twelve-state coupled formulation and exact derivative integration. Full-column settings, refinement, and comparative cost reporting follow that implementation.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "A6",
+      "group": "Additional revision work",
+      "title": "Integrated column interpretation",
+      "score": 2,
+      "basis": "A synthesis subsection exists as an insertion point and its scientific purpose is agreed.",
+      "remaining": "Explain the combined implications of thermodynamics, transport, and numerical resolution for column prediction.",
+      "checks": [
+        "finding-9"
+      ],
+      "evidence": {
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "No individual pre-revision assessment was recorded for this added item.",
+      "progress": "planned",
+      "related_checks": [
+        "conclusion-1",
+        "abstract-findings",
+        "figure-thermodynamic-sensitivity",
+        "figure-operating-screen"
+      ],
+      "owners": [
+        {
+          "thread_id": "01a068b5-01ef-7cf2-b88f-0c2469e02048",
+          "title": "Takeover: manuscript visual integration\u2026",
+          "role": "Manuscript synthesis owner"
+        },
+        {
+          "thread_id": "01a0686d-8e35-7e43-a451-fad261638d00",
+          "title": "Explore CasADi absorber coupling",
+          "role": "Result delivery coordination"
+        }
+      ],
+      "ownership_note": "Planned manuscript writing from the delivered study results. No separate numerical worker is needed for the synthesis itself; it is not currently being filled with final results.",
+      "ownership_checked_at": "2026-09-04T01:52:55+00:00"
+    },
+    {
+      "id": "A7",
+      "group": "Additional revision work",
+      "title": "Predictive input and evaluation account",
+      "score": 10,
+      "basis": "The introduction defines predictive column evaluation and Methods distinguishes adopted, fitted and assigned inputs. The appendix identifies property fit targets and separate thermodynamic evaluation data.",
+      "remaining": "Input/evaluation account addressed; actual predictive performance remains to be reported in the result comparisons.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/introduction.tex": "99404fa095db4ba1436e320c5196f62820fca5e9660c28471adb1c49bcb1d619",
+        "docs/latex/sections/methods.tex": "c203cce92dc9438197eea8b1423ab9ad5b55259a6ca1b30aa951b1454a84f893",
+        "docs/latex/appendices/appendix_properties.tex": "4d3872cae4b29be21c0ec76b63e2e96adcbecfa455055e6a917a2f84aeeb3039"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "No individual pre-revision assessment was recorded for this added item.",
+      "progress": "in_progress",
+      "related_checks": [
+        "method-05",
+        "method-06",
+        "method-10",
+        "method-17"
+      ]
+    },
+    {
+      "id": "A8",
+      "group": "Additional revision work",
+      "title": "Equation and manuscript presentation",
+      "score": 10,
+      "basis": "Semantic equation references, derivative notation, stable paragraph IDs, portrait tables, and the native workflow diagram are retained.",
+      "remaining": "Preserve readability and resolved references during the content restoration.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/main.tex": "10fed15180696e85520fed99c4aa1be5cb03c8646b520b1f4e6c3e0fe544bda6",
+        "docs/latex/sections/model_framework.tex": "3b46b9855bef60c7ef4094e358a292e7872f2f9b796fefc39de463d11b643bb2",
+        "docs/latex/figures/tikz/model-framework-flowchart.tex": "4d274a9aec223f9d83331d8361ead5ac602cb139fd52c8b02d0e6cc2156170dd"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "No individual pre-revision assessment was recorded for this added item.",
+      "progress": "in_progress",
+      "related_checks": []
+    },
+    {
+      "id": "A9",
+      "group": "Additional revision work",
+      "title": "Formal process optimization",
+      "score": 0,
+      "basis": "Optimization objectives and constraints are discussed as future work. The investigator has deferred executing a formal optimization.",
+      "remaining": "Deferred beyond this revision; define and solve a formal constrained optimization only when this work is resumed.",
+      "checks": [],
+      "evidence": {
+        "docs/latex/sections/results.tex": "8ed08aa0aad78419f580f0566a2ee6d175ace7d18d75ce5df4566e89ed1ebeef",
+        "docs/latex/sections/conclusion.tex": "3471b073c7fe2535734eb05618241e102a136d8a1d3d1f9b7fb2fc60ef456280"
+      },
+      "previous_score": null,
+      "previous_revised_score": null,
+      "original_feedback": null,
+      "previous_score_basis": "Separate future-work scope from R2.5; no pre-revision score.",
+      "progress": "deferred",
+      "related_checks": [],
+      "mapping_note": "R2.5 covers the active LHC operating-condition study. This deferred item is not a remaining result requirement for the current revision."
+    }
+  ],
+  "score_scale": 10,
+  "feedback_source": {
+    "path": "docs/reviewer_comments.txt",
+    "sha256": "dde6c21b58cc4f052153cf9940cb2b71b6a5f78f8ca7fd465abf1e63a5897c5d"
+  },
+  "before_source": {
+    "path": "docs/reviewer_assessment_original.md",
+    "sha256": "9ef7f6adbc41d95964ef54fd645eba27277b2daf8b20e68a2f3b3bfe7b8fe453"
+  }
+}

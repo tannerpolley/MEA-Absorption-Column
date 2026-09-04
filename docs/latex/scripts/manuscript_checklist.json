@@ -1,0 +1,661 @@
+{
+  "instructions": "This is a missing-content checklist. Checked means the scoped writing, table, or figure is present, not that submission review is finished. Keep CHECKLIST-BEGIN/END markers and figure labels. Figures include their linked results paragraphs. Fill bracketed table values from the final input/result records. Review notes remain visible in details but do not block completed writing. Never invent values or erase outstanding work to raise the count.",
+  "items": [
+    {
+      "id": "abstract-findings",
+      "group": "Abstract",
+      "title": "Abstract",
+      "needs": "Complete problem, formulation, three-study design, observables, and methodological contribution without assuming an outcome.",
+      "source": "main.tex",
+      "kind": "text",
+      "review": "When the result tables are inserted, add the principal quantitative findings and align the closing sentence with the supported conclusion."
+    },
+    {
+      "id": "introduction",
+      "group": "1 Introduction",
+      "title": "Introduction and study scope",
+      "needs": "Scientific background, literature positioning, three study questions, and scope.",
+      "source": "sections/introduction.tex",
+      "kind": "text"
+    },
+    {
+      "id": "method-01",
+      "group": "2 Thermodynamic and Column Formulation",
+      "title": "Conserved basis",
+      "needs": "Two material rows, Engine mass row, fixed-zero charge, units, normalized feed mapping, and the native derivative coordinates.",
+      "source": "sections/model_framework.tex",
+      "kind": "text",
+      "subsection": "2.2 Species, conserved components, and reactive equilibrium",
+      "subsubsection": ""
+    },
+    {
+      "id": "method-02",
+      "group": "2 Thermodynamic and Column Formulation",
+      "title": "eNRTL comparison",
+      "needs": "Activity/chemical-potential formulation, solute reference transformation, and common gas fugacity convention. Numerical interaction records belong in the thermodynamic input table.",
+      "source": "sections/model_framework.tex",
+      "kind": "text",
+      "subsection": "2.3 ePC-SAFT and comparison thermodynamics",
+      "subsubsection": "",
+      "review": "Match the model-specific interaction and reference-state records to Table: additional thermodynamic inputs before submission."
+    },
+    {
+      "id": "method-03",
+      "group": "2 Thermodynamic and Column Formulation",
+      "title": "Interfacial energy",
+      "needs": "Define the transferred-material enthalpy and the matching sensible-energy convention; numerical property records belong in the caloric input table.",
+      "source": "sections/model_framework.tex",
+      "kind": "text",
+      "subsection": "2.5 Hydraulics and reference transfer model",
+      "subsubsection": "2.5.2 Mass- and heat-transfer coefficients",
+      "review": "For result insertion, use the corrected countercurrent energy equations documented in SOURCE_MAP.md. The transferred enthalpy convention is written; final results must use the matching phase-balance signs."
+    },
+    {
+      "id": "method-04",
+      "group": "2 Thermodynamic and Column Formulation",
+      "title": "Enhancement reference",
+      "needs": "Enhancement equation, kinetic coefficients, concentration units, and shared ionic diffusivity convention.",
+      "source": "sections/model_framework.tex",
+      "kind": "text",
+      "subsection": "2.5 Hydraulics and reference transfer model",
+      "subsubsection": "2.5.3 Enhancement-factor reference",
+      "review": "Active kinetic pair is Luo-labeled; E is clipped to 1\u201310000. The fixed CO2 divisor has no retained derivation. Absorber owner must document or replace it; source/domain review remains."
+    },
+    {
+      "id": "method-05",
+      "group": "3 Comparison Design and Numerical Methods",
+      "title": "Operating cases and feed definitions",
+      "needs": "Experimental campaign, existing operating table, gas/solvent conversion, and profile-comparison procedure. Each result caption identifies its case subset.",
+      "source": "sections/methods.tex",
+      "kind": "text",
+      "subsection": "3.2 Operating cases and measured quantities",
+      "subsubsection": "",
+      "review": "Case 3C source dry CO2/O2, humidity and wet mass-flow conventions, assumed 318.15 K liquid inlet, capture SD and temperature-coordinate conversion are now explicit. Reconcile final run exports to these definitions; do not treat the assumed inlet temperature as measured."
+    },
+    {
+      "id": "method-06",
+      "group": "3 Comparison Design and Numerical Methods",
+      "title": "Common model inputs",
+      "needs": "Packing height/area/voidage/hydraulic diameter, packing and transfer coefficients, fixed operating/model parameters, and the parameters changed in each study",
+      "source": "sections/methods.tex",
+      "kind": "text",
+      "subsection": "3.2 Operating cases and measured quantities",
+      "subsubsection": ""
+    },
+    {
+      "id": "method-18",
+      "group": "3 Comparison Design and Numerical Methods",
+      "title": "Sensitivity and LHC methods",
+      "needs": "Nine-run thermodynamic perturbations, reaction directions and pivot, local versus coupled comparison, 48-point LHC construction and response-analysis method.",
+      "source": "sections/methods.tex",
+      "kind": "text",
+      "subsection": "3.3 Thermodynamic sensitivity and operating-condition design",
+      "review": "Design prose is complete. Reconcile sample count, seed, scenario identities and evaluated ranges against final execution before submission."
+    },
+    {
+      "id": "method-19",
+      "group": "3 Comparison Design and Numerical Methods",
+      "title": "LHC input ranges",
+      "needs": "All 15 factors, baseline values, exploratory ranges, dependent flow/composition definitions and assumption basis.",
+      "source": "sections/methods.tex",
+      "kind": "table",
+      "label": "tab:operating-sensitivity-inputs",
+      "subsection": "3.3 Thermodynamic sensitivity and operating-condition design",
+      "review": "These are agreed input definitions, not evaluated results or statistical confidence limits."
+    },
+    {
+      "id": "method-15",
+      "group": "3 Comparison Design and Numerical Methods",
+      "title": "Sensitivity input table",
+      "needs": "Exact perturbed input groups, multipliers/ranges and rationale, fixed conditions, and whether the variation affects mobility or the thickness-defining transfer coefficient",
+      "source": "sections/methods.tex",
+      "kind": "table",
+      "subsection": "3.4 Mobility and film-thickness sensitivity design",
+      "subsubsection": "",
+      "label": "tab:sensitivity-inputs",
+      "delivery": {
+        "Question": "What input uncertainty or specified variation was tested?",
+        "Quantities and identities": "Mobility group membership, multipliers/ranges, thickness multiplier, source/estimate basis, fixed case/thermo inputs.",
+        "Owner": "Coupled absorber sensitivity calculation with MEA-Thermodynamics/retained transport sources.",
+        "Input files": "analyses/reactive_film_evidence/inputs/diffusion_anchor_assumptions.csv and tables/reactive_film_parameters.tex; absorber owner to deliver the executed perturbation settings.",
+        "Evidence and use": "Executed perturbations and rationale; central point and changed quantity must be identifiable.",
+        "Cases and evidence type": "Calculated configurations/results, not observations; case, model arm and run identity must accompany each row."
+      }
+    },
+    {
+      "id": "method-07",
+      "group": "3 Comparison Design and Numerical Methods",
+      "title": "Numerical formulations",
+      "needs": "Shooting, spatial finite differences, adaptive collocation, conservative CasADi/IPOPT formulation, scaling, constraint Jacobian and Hessian treatment.",
+      "source": "sections/methods.tex",
+      "kind": "text",
+      "subsection": "3.5 Boundary-value formulations",
+      "subsubsection": "",
+      "review": "Active assembly owner: 6c99, task 01a069ef-d021-7050-abc7-d38ddb17425a. A2 Engine 22b210bb / wheel c71c2bd7 is delivered and installed there; reconcile assembled film derivatives, second total-H actions for vapor Cp/partial enthalpy outer derivatives, and final run settings. See SOURCE_MAP.md."
+    },
+    {
+      "id": "method-08",
+      "group": "3 Comparison Design and Numerical Methods",
+      "title": "Numerical settings table",
+      "needs": "Equilibrium, interface-root, quadrature, integration, boundary and column tolerances; mesh/node limits; repeat count; timing scope, hardware and thread configuration",
+      "source": "sections/methods.tex",
+      "kind": "table",
+      "subsection": "3.6 Local equilibrium and film integration",
+      "subsubsection": "",
+      "label": "tab:numerical-settings",
+      "delivery": {
+        "Question": "Which configuration produced each numerical comparison?",
+        "Quantities and identities": "Algorithm, spatial mesh, derivative order/source, Hessian treatment, scaled tolerances, node limits, timing hardware/threads/repeats.",
+        "Owner": "Coupled absorber task; Engine A1/A2 capability identities are dependencies.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py and Transport/Reactive_Film.py; final run configuration export still to be delivered.",
+        "Evidence and use": "Run-specific settings and implementation identities; no result accuracy inferred from an option name.",
+        "Cases and evidence type": "Calculated configurations/results, not observations; case, model arm and run identity must accompany each row."
+      }
+    },
+    {
+      "id": "figure-thermo-capture",
+      "group": "4 Results and Discussion",
+      "title": "Figure 2: Thermodynamic capture comparison",
+      "needs": "Henry, eNRTL, and ePC-SAFT predicted versus measured capture; signed error by case, on the same case set with common properties Accompanying text: Capture MAE and signed bias for each model, largest/smallest case differences, and supported ordering.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:thermo-capture",
+      "subsection": "4.1 Thermodynamic closure and absorber response",
+      "subsubsection": "4.1.1 Capture across the operating cases",
+      "related": [
+        {
+          "id": "finding-1",
+          "group": "4 Results and Discussion",
+          "title": "Thermodynamic capture comparison",
+          "needs": "Capture MAE and signed bias for each model, largest/smallest case differences, and supported ordering",
+          "source": "sections/results.tex",
+          "kind": "text",
+          "subsection": "4.1 Thermodynamic closure and absorber response",
+          "subsubsection": "4.1.1 Capture across the operating cases"
+        }
+      ],
+      "delivery": {
+        "Question": "Does the liquid thermodynamic description improve capture across matched cases?",
+        "Quantities": "Calculated and observed capture (%); signed errors, MAE and bias (percentage points).",
+        "Cases and series": "Same case IDs and feeds; Henry/eNRTL/ePC-SAFT with common properties; distinguish observations from predictions.",
+        "Numerical evidence": "Use one run identity for capture and profiles; include material, mass, charge and energy residuals, boundary residuals, mesh/film refinement, and the scale of each reported model difference.",
+        "Owner": "Takeover: coupled absorber and A2 integration \u2014 6c99/MEA-Absorption-Column (task 01a069ef-d021-7050-abc7-d38ddb17425a); parameter and caloric records from MEA-Thermodynamics and the Engine.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/requested new matched Henry/eNRTL/ePC-SAFT capture export (filename not delivered); observations: src/mea_absorption_column/data/NCCC_2017_cases.csv and tables/nccc_one_bed_case_scope.tex.",
+        "Interpretation": "Relative capture agreement conditional on the chosen transport and property laws; read with temperature evidence.",
+        "Available supporting study": "b6f5/MEA-Absorption-Column/analyses/enrtl_comparison/notebook.qmd: matched Henry/calibrated-eNRTL C3 at imposed 313.15 K, two meshes. Review is being coordinated. Package sensitivity only; does not fill nonisothermal measured-case validation or the three-arm comparison by itself."
+      }
+    },
+    {
+      "id": "figure-thermo-profiles",
+      "group": "4 Results and Discussion",
+      "title": "Figure 3: Thermodynamic axial profiles",
+      "needs": "Axial apparent loading, molecular CO2, carbamate/bicarbonate distribution, and gas/liquid CO2 fugacities Accompanying text: Species and axial regions explaining the thermodynamic difference, with fugacity/loading changes.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:thermo-profiles",
+      "subsection": "4.1 Thermodynamic closure and absorber response",
+      "subsubsection": "4.1.2 Speciation and fugacity along the column",
+      "related": [
+        {
+          "id": "finding-2",
+          "group": "4 Results and Discussion",
+          "title": "Thermodynamic axial profiles",
+          "needs": "Species and axial regions explaining the thermodynamic difference, with fugacity/loading changes",
+          "source": "sections/results.tex",
+          "kind": "text",
+          "subsection": "4.1 Thermodynamic closure and absorber response",
+          "subsubsection": "4.1.2 Speciation and fugacity along the column"
+        }
+      ],
+      "delivery": {
+        "Question": "Which equilibrium changes explain the column response?",
+        "Quantities": "z (m), apparent loading (mol CO2/mol MEA), true species fractions (mol/mol), gas/liquid CO2 fugacity (Pa), liquid temperature (K).",
+        "Cases and series": "Matched case and thermodynamic arms; profiles are calculated; measurement heights and observed temperatures are separate records.",
+        "Numerical evidence": "Use one run identity for capture and profiles; include material, mass, charge and energy residuals, boundary residuals, mesh/film refinement, and the scale of each reported model difference.",
+        "Owner": "Takeover: coupled absorber and A2 integration \u2014 6c99/MEA-Absorption-Column (task 01a069ef-d021-7050-abc7-d38ddb17425a); parameter and caloric records from MEA-Thermodynamics and the Engine.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/requested new matched thermodynamic axial profiles (filename not delivered), including species/fugacity/loading; exact parameters: /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/selected-current-best-parameters.json.",
+        "Interpretation": "Link speciation and driving force to the location of absorption without attributing an independent additive mechanism.",
+        "Available supporting study": "b6f5/MEA-Absorption-Column/analyses/enrtl_comparison/notebook.qmd: matched Henry/calibrated-eNRTL C3 at imposed 313.15 K, two meshes. Review is being coordinated. Package sensitivity only; does not fill nonisothermal measured-case validation or the three-arm comparison by itself."
+      }
+    },
+    {
+      "id": "figure-isothermal-control",
+      "group": "4 Results and Discussion",
+      "title": "Figure 4: Supporting isothermal Henry/eNRTL profiles",
+      "needs": "Constructed isothermal control capture values and retained axial profiles; separate from the primary three-model experimental comparison.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:isothermal-control",
+      "subsection": "4.1 Thermodynamic closure and absorber response",
+      "subsubsection": "4.1.2 Speciation and fugacity along the column",
+      "related": [
+        {
+          "id": "finding-isothermal-control",
+          "group": "4 Results and Discussion",
+          "title": "Isothermal control capture",
+          "needs": "Matched two-arm capture and mesh-refinement result.",
+          "source": "sections/results.tex",
+          "kind": "text"
+        }
+      ],
+      "review": "Scoped supporting result at imposed 313.15 K and constructed feeds. Does not close the primary model or experimental comparison."
+    },
+    {
+      "id": "figure-full-property",
+      "group": "4 Results and Discussion",
+      "title": "Figure 5: Full-property effects",
+      "needs": "Paired common-property/full-property capture changes; liquid temperature and volumetric flow; enthalpy and absorption distribution Accompanying text: Additional capture change, temperature-maximum change and position, and temperature-tap RMSE.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:full-property",
+      "subsection": "4.1 Thermodynamic closure and absorber response",
+      "subsubsection": "4.1.3 Density and caloric effects",
+      "related": [
+        {
+          "id": "finding-3",
+          "group": "4 Results and Discussion",
+          "title": "Full-property effects",
+          "needs": "Additional capture change, temperature-maximum change and position, and temperature-tap RMSE",
+          "source": "sections/results.tex",
+          "kind": "text",
+          "subsection": "4.1 Thermodynamic closure and absorber response",
+          "subsubsection": "4.1.3 Density and caloric effects"
+        }
+      ],
+      "delivery": {
+        "Question": "What changes when each model supplies consistent density and calorics?",
+        "Quantities": "Capture (%) and paired change (percentage points), T_l (K), peak position (m), temperature RMSE (K), volumetric flow (m3/s), enthalpy flow (W), uptake (mol/s).",
+        "Cases and series": "Paired common/full-property runs at identical feeds and case IDs; observed capture and temperature taps retain source basis.",
+        "Numerical evidence": "Use one run identity for capture and profiles; include material, mass, charge and energy residuals, boundary residuals, mesh/film refinement, and the scale of each reported model difference.",
+        "Owner": "Takeover: coupled absorber and A2 integration \u2014 6c99/MEA-Absorption-Column (task 01a069ef-d021-7050-abc7-d38ddb17425a); parameter and caloric records from MEA-Thermodynamics and the Engine.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/requested paired common/full-property capture and axial exports (filenames not delivered); thermal input: /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/calorimetry/current-selected-reference-thermochemistry.json; temperature source lane must be selected in SOURCE_MAP.md.",
+        "Interpretation": "Conditional full-property effect and whether capture and thermal agreement improve together."
+      }
+    },
+    {
+      "id": "figure-thermodynamic-sensitivity",
+      "group": "4 Results and Discussion",
+      "title": "Figure 6: Thermodynamic sensitivity",
+      "needs": "Nine-run signed capture/temperature responses, local versus coupled fugacity/flux comparison, and numerical refinement scale.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:thermodynamic-sensitivity",
+      "subsection": "4.2 Thermodynamic parameter sensitivity",
+      "subsubsection": "",
+      "related": [
+        {
+          "id": "finding-10",
+          "group": "4 Results and Discussion",
+          "title": "Thermodynamic sensitivity findings",
+          "needs": "Nine-run signed capture/temperature responses, local versus coupled fugacity/flux comparison, and numerical refinement scale.",
+          "source": "sections/results.tex",
+          "kind": "text"
+        }
+      ],
+      "delivery": {
+        "Owner": "R1.8: thermodynamic and operating sensitivity \u2014 task 01a06a14-8146-7d43-9720-b7b5bbd2e668",
+        "Input files": "Agreed design: 1b26/MEA-Absorption-Column/analyses/nccc_validation/inputs/r18_sensitivity; matching evaluated results remain to be delivered.",
+        "Evidence and use": "Keep exploratory parameter ranges distinct from uncertainty distributions. Figures and quantitative interpretation require matching coupled results."
+      }
+    },
+    {
+      "id": "figure-film-capture",
+      "group": "4 Results and Discussion",
+      "title": "Figure 7: Transfer-model capture comparison",
+      "needs": "Enhancement-factor/reactive-film capture, casewise capture change, and gas/liquid resistance Accompanying text: Capture-change range, aggregate errors, and conditions giving the largest transfer-model effect.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:film-capture",
+      "subsection": "4.3 Enhancement-factor and reactive-film transport",
+      "subsubsection": "4.3.1 Capture and local transfer resistance",
+      "related": [
+        {
+          "id": "finding-4",
+          "group": "4 Results and Discussion",
+          "title": "Transfer-model capture comparison",
+          "needs": "Capture-change range, aggregate errors, and conditions giving the largest transfer-model effect",
+          "source": "sections/results.tex",
+          "kind": "text",
+          "subsection": "4.2 Enhancement-factor and reactive-film transport",
+          "subsubsection": "4.2.1 Capture and local transfer resistance"
+        }
+      ],
+      "delivery": {
+        "Question": "When does equilibrium-manifold transport change or improve capture?",
+        "Quantities": "Capture (%), film-minus-enhancement change (percentage points), gas/liquid transfer resistance on one stated fugacity basis.",
+        "Cases and series": "Same thermo/parameters/feeds and water/gas transfer laws; axial states solved separately. Observed capture is independent.",
+        "Numerical evidence": "Use one run identity for capture and profiles; include material, mass, charge and energy residuals, boundary residuals, mesh/film refinement, and the scale of each reported model difference.",
+        "Owner": "Takeover: coupled absorber and A2 integration \u2014 6c99/MEA-Absorption-Column (task 01a069ef-d021-7050-abc7-d38ddb17425a); parameter and caloric records from MEA-Thermodynamics and the Engine.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/ac57/MEA-Absorption-Column/analyses/reactive_film_evidence/results/final/tables/column_film_capture_comparison.csv and column_film_run_provenance.json are historical retrieval anchors; require their corrected coupled replacement and the same-run profiles.",
+        "Interpretation": "Magnitude and operating-condition dependence of transfer-model effects; no assumed winning model."
+      }
+    },
+    {
+      "id": "figure-film-profiles",
+      "group": "4 Results and Discussion",
+      "title": "Figure 8: Reactive-film axial profiles",
+      "needs": "Axial CO2 flux, interfacial fugacity, cumulative uptake, and gas/liquid temperatures Accompanying text: Dominant resistance, location of the largest flux change, and redistribution of absorption.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:film-profiles",
+      "subsection": "4.3 Enhancement-factor and reactive-film transport",
+      "subsubsection": "4.3.2 Interfacial state and axial absorption",
+      "related": [
+        {
+          "id": "finding-5",
+          "group": "4 Results and Discussion",
+          "title": "Reactive-film axial profiles",
+          "needs": "Dominant resistance, location of the largest flux change, and redistribution of absorption",
+          "source": "sections/results.tex",
+          "kind": "text",
+          "subsection": "4.2 Enhancement-factor and reactive-film transport",
+          "subsubsection": "4.2.2 Interfacial state and axial absorption"
+        }
+      ],
+      "delivery": {
+        "Question": "How does the film change the location of absorption and heat release?",
+        "Quantities": "z (m), CO2 flux (mol/m2/s), interfacial fugacity (Pa), cumulative uptake (mol/s), T_l/T_v (K), observed liquid taps (K).",
+        "Cases and series": "One identified representative coupled case can be inserted first; later add its matched enhancement arm. Capture and temperature share the same run and parameters.",
+        "Numerical evidence": "Use one run identity for capture and profiles; include material, mass, charge and energy residuals, boundary residuals, mesh/film refinement, and the scale of each reported model difference.",
+        "Owner": "Takeover: coupled absorber and A2 integration \u2014 6c99/MEA-Absorption-Column (task 01a069ef-d021-7050-abc7-d38ddb17425a); parameter and caloric records from MEA-Thermodynamics and the Engine.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/ac57/MEA-Absorption-Column/analyses/reactive_film_evidence/results/final/tables/column_film_axial_profiles.csv and column_film_temperature_metrics.csv are historical retrieval anchors; require corrected coupled replacement plus matched capture/provenance.",
+        "Interpretation": "Spatial distribution of uptake, thermal response and transfer resistance for the plotted case and arms only."
+      }
+    },
+    {
+      "id": "figure-film-sensitivity",
+      "group": "4 Results and Discussion",
+      "title": "Figure 9: Diffusivity and film-thickness sensitivity",
+      "needs": "Capture response to diffusivity groups; capture/temperature response to film thickness Accompanying text: Perturbation ranges, influential inputs, effect sizes, and persistence of the transfer-model comparison.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:film-sensitivity",
+      "subsection": "4.3 Enhancement-factor and reactive-film transport",
+      "subsubsection": "4.3.3 Mobility and film-thickness sensitivity",
+      "related": [
+        {
+          "id": "finding-6",
+          "group": "4 Results and Discussion",
+          "title": "Diffusivity and film-thickness sensitivity",
+          "needs": "Perturbation ranges, influential inputs, effect sizes, and persistence of the transfer-model comparison",
+          "source": "sections/results.tex",
+          "kind": "text",
+          "subsection": "4.2 Enhancement-factor and reactive-film transport",
+          "subsubsection": "4.2.3 Mobility and film-thickness sensitivity"
+        }
+      ],
+      "delivery": {
+        "Question": "Does the film comparison depend on mobility or thickness assumptions?",
+        "Quantities": "Input multiplier (dimensionless), capture (%), change (percentage points), T_l (K), peak location (m), output sensitivity (dimensionless where defined).",
+        "Cases and series": "Central run and each named perturbation group; fixed feeds/thermo; mobility and thickness are varied separately. Curves are calculated.",
+        "Numerical evidence": "Use one run identity for capture and profiles; include material, mass, charge and energy residuals, boundary residuals, mesh/film refinement, and the scale of each reported model difference.",
+        "Owner": "Takeover: coupled absorber and A2 integration \u2014 6c99/MEA-Absorption-Column (task 01a069ef-d021-7050-abc7-d38ddb17425a); parameter and caloric records from MEA-Thermodynamics and the Engine.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/requested new sensitivity outputs keyed by group/multiplier/case (filename not delivered); input anchors: analyses/reactive_film_evidence/inputs/diffusion_anchor_assumptions.csv.",
+        "Interpretation": "Sensitivity magnitude and persistence of the film comparison over the tested ranges."
+      }
+    },
+    {
+      "id": "numerical-node-verification",
+      "group": "4 Results and Discussion",
+      "title": "Local derivative verification",
+      "needs": "Reported directional check of the conservative node Jacobian, with numerical scope stated.",
+      "source": "sections/results.tex",
+      "kind": "text",
+      "subsection": "4.4 Boundary-value solution methods",
+      "subsubsection": "4.4.1 Solution agreement and refinement",
+      "review": "Local numerical verification only; column accuracy, conservation, refinement and cost comparisons remain separate."
+    },
+    {
+      "id": "method-09",
+      "group": "4 Results and Discussion",
+      "title": "Accuracy and runtime table",
+      "needs": "Final settings alongside refinement changes, conservation/accuracy measures and timings, all on identical equations",
+      "source": "sections/results.tex",
+      "kind": "table",
+      "subsection": "4.4 Boundary-value solution methods",
+      "subsubsection": "4.4.1 Solution agreement and refinement",
+      "label": "tab:numerical-comparison",
+      "delivery": {
+        "Question": "How do methods compare at the same physical accuracy?",
+        "Quantities and identities": "Case/model IDs, nodes, capture/temperature refinement changes, scaled conservation residuals, runtime median/spread.",
+        "Owner": "Coupled absorber task and its explicit SciPy comparison exports.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/requested new refinement/conservation/timing records on identical equations; exact result filenames to be supplied by the column owner.",
+        "Evidence and use": "Paired final numerical results on identical equations; timing and refinement must reference the same configuration.",
+        "Cases and evidence type": "Calculated configurations/results, not observations; case, model arm and run identity must accompany each row."
+      }
+    },
+    {
+      "id": "figure-solver-accuracy",
+      "group": "4 Results and Discussion",
+      "title": "Figure 10: Numerical accuracy and refinement",
+      "needs": "Shooting/finite-difference/collocation profiles, mesh and film-quadrature refinement, integral material/energy balance Accompanying text: Agreement in capture and temperature, refinement changes, and material/energy/charge conservation at the reported settings.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:solver-accuracy",
+      "subsection": "4.4 Boundary-value solution methods",
+      "subsubsection": "4.4.1 Solution agreement and refinement",
+      "related": [
+        {
+          "id": "finding-7",
+          "group": "4 Results and Discussion",
+          "title": "Numerical accuracy and refinement",
+          "needs": "Agreement in capture and temperature, refinement changes, and material/energy/charge conservation at the reported settings",
+          "source": "sections/results.tex",
+          "kind": "text",
+          "subsection": "4.3 Boundary-value solution methods",
+          "subsubsection": "4.3.1 Solution agreement and refinement"
+        }
+      ],
+      "delivery": {
+        "Question": "Are physical differences resolved beyond numerical error?",
+        "Quantities": "z (m), capture (%), temperature (K), axial/film node counts, refinement differences, component/mass/charge/energy residuals with stated scales.",
+        "Cases and series": "Same physical case, model and parameters; identify spatial scheme separately from nonlinear solver and derivative source. All series calculated.",
+        "Numerical evidence": "Use one run identity for capture and profiles; include material, mass, charge and energy residuals, boundary residuals, mesh/film refinement, and the scale of each reported model difference.",
+        "Owner": "Takeover: coupled absorber and A2 integration \u2014 6c99/MEA-Absorption-Column (task 01a069ef-d021-7050-abc7-d38ddb17425a); parameter and caloric records from MEA-Thermodynamics and the Engine.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/requested new column refinement/conservation export (filename not delivered); formulation owner: src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py. Historical comparison: analyses/nccc_validation/results/final/tables/method_case_contrast.csv.",
+        "Interpretation": "Agreement and numerical resolution at specified settings, not experimental validation."
+      }
+    },
+    {
+      "id": "figure-solver-cost",
+      "group": "4 Results and Discussion",
+      "title": "Figure 11: Computational cost",
+      "needs": "Runtime versus achieved accuracy and measured equilibrium/film/column-solve cost contributions Accompanying text: Median runtime and spread, evaluation counts, final mesh sizes, and operating-point dependence.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:solver-cost",
+      "subsection": "4.4 Boundary-value solution methods",
+      "subsubsection": "4.4.2 Computational cost",
+      "related": [
+        {
+          "id": "finding-8",
+          "group": "4 Results and Discussion",
+          "title": "Computational cost",
+          "needs": "Median runtime and spread, evaluation counts, final mesh sizes, and operating-point dependence",
+          "source": "sections/results.tex",
+          "kind": "text",
+          "subsection": "4.3 Boundary-value solution methods",
+          "subsubsection": "4.3.2 Computational cost"
+        }
+      ],
+      "delivery": {
+        "Question": "What numerical cost is needed to resolve each physical comparison?",
+        "Quantities": "Wall time and timing spread (s), achieved capture/temperature error, iteration/evaluation counts, nodes, measured thermo/film/column time (s).",
+        "Cases and series": "Identical physical equations, hardware, threads, initialization rule and timing scope; include coupled and explicit SciPy comparison methods where executed.",
+        "Numerical evidence": "Use one run identity for capture and profiles; include material, mass, charge and energy residuals, boundary residuals, mesh/film refinement, and the scale of each reported model difference.",
+        "Owner": "Takeover: coupled absorber and A2 integration \u2014 6c99/MEA-Absorption-Column (task 01a069ef-d021-7050-abc7-d38ddb17425a); parameter and caloric records from MEA-Thermodynamics and the Engine.",
+        "Input files": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/requested repeated timing/evaluation-count export paired with the refinement configuration (filename not delivered); historical method_case_contrast.csv is not the new coupled benchmark.",
+        "Interpretation": "Cost at matched achieved accuracy; do not infer performance from a local inverse-loading test."
+      }
+    },
+    {
+      "id": "figure-operating-screen",
+      "group": "4 Results and Discussion",
+      "title": "Figure 12: LHC operating-condition comparison",
+      "needs": "Evaluated 48-point design, capture/thermal ranges, supported response directions and rankings, prediction quality and operating tradeoffs.",
+      "source": "sections/results.tex",
+      "kind": "figure",
+      "label": "fig:operating-screen",
+      "subsection": "4.5 Operating-condition response",
+      "subsubsection": "",
+      "related": [
+        {
+          "id": "finding-11",
+          "group": "4 Results and Discussion",
+          "title": "LHC operating-condition comparison findings",
+          "needs": "Evaluated 48-point design, capture/thermal ranges, supported response directions and rankings, prediction quality and operating tradeoffs.",
+          "source": "sections/results.tex",
+          "kind": "text"
+        }
+      ],
+      "delivery": {
+        "Owner": "R1.8: thermodynamic and operating sensitivity \u2014 task 01a06a14-8146-7d43-9720-b7b5bbd2e668",
+        "Input files": "Agreed design: 1b26/MEA-Absorption-Column/analyses/nccc_validation/inputs/r18_sensitivity; matching evaluated results remain to be delivered.",
+        "Evidence and use": "Keep exploratory parameter ranges distinct from uncertainty distributions. Figures and quantitative interpretation require matching coupled results."
+      }
+    },
+    {
+      "id": "finding-9",
+      "group": "4 Results and Discussion",
+      "title": "Combined engineering interpretation",
+      "needs": "Relative thermodynamic, transfer and numerical effects; supported model/method choice and capture/temperature evidence. Draw on the separately reported thermodynamic sensitivity and LHC operating comparison; formal optimization is deferred.",
+      "source": "sections/results.tex",
+      "kind": "text",
+      "subsection": "4.6 Integrated absorber response and engineering interpretation",
+      "subsubsection": "",
+      "review": "Report the actual LHC variables, bounds, sampling design and executed responses. A sampled favorable operating region is not proof of a formal optimum."
+    },
+    {
+      "id": "conclusion-1",
+      "group": "5 Conclusions",
+      "title": "Results-based conclusions",
+      "needs": "Supported thermodynamic/model sensitivity, transfer, numerical-method, and operating conclusions, with effect sizes and the joint capture/temperature implication.",
+      "source": "sections/conclusion.tex",
+      "kind": "text",
+      "subsection": "",
+      "subsubsection": "",
+      "related": [
+        {
+          "id": "conclusion-2",
+          "group": "5 Conclusions",
+          "title": "Transfer and sensitivity conclusion",
+          "needs": "Insert the principal transfer finding, capture effect, and mobility-sensitivity conclusion.",
+          "source": "sections/conclusion.tex",
+          "kind": "text",
+          "subsection": "",
+          "subsubsection": ""
+        },
+        {
+          "id": "conclusion-3",
+          "group": "5 Conclusions",
+          "title": "Method and cost conclusion",
+          "needs": "Insert the method comparison, runtime effect, and refinement-supported accuracy.",
+          "source": "sections/conclusion.tex",
+          "kind": "text",
+          "subsection": "",
+          "subsubsection": ""
+        },
+        {
+          "id": "conclusion-4",
+          "group": "5 Conclusions",
+          "title": "Operating and engineering conclusion",
+          "needs": "Supported local operating tradeoff and combined capture/temperature implication.",
+          "source": "sections/conclusion.tex",
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "id": "method-11",
+      "group": "A Property Definitions and Parameter Reporting",
+      "title": "Reaction constants",
+      "needs": "Five-reaction coefficient table, standard states, conversion offsets, and declared evaluation intervals.",
+      "source": "appendices/appendix_properties.tex",
+      "kind": "text",
+      "subsection": "A.2 Equilibrium and reference properties",
+      "subsubsection": "",
+      "review": "Supply the individual primary-source locators and source-validity intervals for R1--R3; reconcile R4's selected coefficients with its source and final parameter identity."
+    },
+    {
+      "id": "method-10",
+      "group": "A Property Definitions and Parameter Reporting",
+      "title": "Thermodynamic input tables",
+      "needs": "Complete selected ePC-SAFT and eNRTL pure/pair parameters, association topology/interactions, options, sources and applicable ranges; verify the existing nine-species table against final inputs",
+      "source": "appendices/appendix_properties.tex",
+      "kind": "table",
+      "subsection": "A.2 Equilibrium and reference properties",
+      "subsubsection": "",
+      "label": "tab:comparison-thermo-inputs",
+      "delivery": {
+        "Question": "Which thermodynamic definitions are compared?",
+        "Quantities and identities": "Species/pair/site records, eNRTL functional form and electrolyte terms, reference transformations, dielectric law, units, domains and sources.",
+        "Owner": "MEA-Thermodynamics owns adopted parameters; Engine owns equation semantics; coupled absorber owns comparator selection.",
+        "Input files": "Selected ac57 dataset: src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/{parameters,reaction-system}.json, parameter a9186c93... . eNRTL reference states and external parameter hashes: /home/tnnrpolley21/.codex/worktrees/b6f5/MEA-Absorption-Column/data/reference/enrtl/six_species_idaes.json; complete interaction rows and adopted comparator mapping still required. See SOURCE_MAP.md. Calibrated source equilibrium and a two-mesh isothermal C3 comparison now exist: /home/tnnrpolley21/.codex/worktrees/b6f5/MEA-Absorption-Column/analyses/enrtl_comparison/notebook.qmd and notebook.html; input/result records are linked there. Review and portable parameter documentation remain separate from this available calculation.",
+        "Evidence and use": "Exact parameter document and identity for each arm. A neutral NRTL table cannot fill the electrolyte-NRTL row.",
+        "Cases and evidence type": "Parameter inputs, not column observations; one identified record per model arm."
+      }
+    },
+    {
+      "id": "method-13",
+      "group": "A Property Definitions and Parameter Reporting",
+      "title": "Physical-property coefficients",
+      "needs": "Common-property equations and coefficient tables, with units and composition/temperature conventions.",
+      "source": "appendices/appendix_properties.tex",
+      "kind": "text",
+      "subsection": "A.3 Transport and packing correlations",
+      "subsubsection": "",
+      "review": "Complete individual coefficient-source locators and validity domains, and reconcile these common-property definitions with the final comparison settings."
+    },
+    {
+      "id": "method-12",
+      "group": "A Property Definitions and Parameter Reporting",
+      "title": "Nine-species caloric table",
+      "needs": "Three neutral anchors, five reaction relations and ionic reference convention; nine reference enthalpies and Cp coefficients, basis, reference temperature/pressure and domain.",
+      "source": "appendices/appendix_properties.tex",
+      "kind": "table",
+      "subsection": "A.9 Heat-capacity and thermal-conductivity references",
+      "subsubsection": "",
+      "label": "tab:species-reference-calorics",
+      "delivery": {
+        "Question": "How are total enthalpy and equilibrium heat capacity constructed?",
+        "Quantities and identities": "Neutral thermal anchors, reaction-consistent ionic reconstruction, reference temperature/pressure, enthalpy/Cp units, EOS reference correction and domains.",
+        "Owner": "MEA-Thermodynamics thermal inputs and Engine reactive-enthalpy implementation.",
+        "Input files": "Retained ac57 dataset MEA_reactive_epcsaft_2026_09_03/anchored-reference-thermochemistry.json: fingerprint 6919acbc..., parameter a9186c93... . Reaction coefficients and all nine enthalpies / 72 Cp coefficients updated together. Exact paths/hashes: SOURCE_MAP.md.",
+        "Evidence and use": "Reference functions and reconstruction coefficients from one selected model; fixed-composition Cp and equilibrium Cp are distinct.",
+        "Cases and evidence type": "Parameter inputs, not column observations; one identified record per model arm."
+      },
+      "review": "Inserted functions match parameter a9186c93... and caloric fingerprint 6919acbc...; construction Engine 8438ce5f / wheel 40fba7cf. Match the final column execution identity separately. Hilliard/NIST source-domain review remains; SOURCE_MAP.md."
+    },
+    {
+      "id": "method-14",
+      "group": "A Property Definitions and Parameter Reporting",
+      "title": "Mobility inputs",
+      "needs": "Species mobility values, assignments and estimation assumptions, pair construction, and separate thickness diffusivity.",
+      "source": "tables/reactive_film_parameters.tex",
+      "kind": "text",
+      "subsection": "A.10 Nine-species thermodynamic and mobility parameters",
+      "subsubsection": "",
+      "review": "Add the Polat, Melnikov, and Jerng primary citations with their concentration/temperature ranges; verify final species assignments and sources for the water and ionic estimates against the adopted transport record."
+    },
+    {
+      "id": "method-17",
+      "group": "Data Availability",
+      "title": "Data identity",
+      "needs": "Final deposit/revision containing exact plotted values, case inputs, casewise analyses and figure provenance",
+      "source": "sections/data_availability.tex",
+      "kind": "text",
+      "subsection": "",
+      "subsubsection": ""
+    },
+    {
+      "id": "method-16",
+      "group": "Code Availability",
+      "title": "Code identity",
+      "needs": "Archived absorber revision, immutable Engine commit and wheel SHA-256, and exact parameter identities used for the figures",
+      "source": "sections/code_availability.tex",
+      "kind": "text",
+      "subsection": "",
+      "subsubsection": ""
+    }
+  ]
+}

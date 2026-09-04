@@ -1,10 +1,66 @@
-    \section{Conclusion}
-        This work uses a simplified MEA absorber model to compare numerical solution methods and thermodynamic driving-force assumptions under a fixed set of governing equations. The evidence extends beyond a single illustrative case by adding one-bed NCCC capture metrics, attempted-case accounting, solver information, boundary residuals, temperature-profile comparisons, method contrasts, and ePC-SAFT fugacity-coefficient calculations. The ePC-SAFT contribution is an absorber-column comparison in which a liquid-side ionic ePC-SAFT CO$_2$ fugacity calculation is evaluated inside the thermodynamic driving force while concentration-based chemical equilibrium, enhancement, transport, hydraulics, and balances remain fixed. The vapor-side fugacity is evaluated with the same formulation in its neutral limit.
+\section{Conclusions}\label{sec:conclusions}
+% P:conclusion-01
+The absorber formulation connects reactive ePC-SAFT thermodynamics to a constrained equilibrium-manifold film and countercurrent material and energy balances.
+The local film resistance is obtained by quadrature in reactive state space and a scalar interface balance, while the axial column remains a two-point boundary-value problem.
+Consistent species amounts, conserved totals, and enthalpy references connect equilibrium, transport, and the thermal response.
 
-        Both thermodynamic calculations satisfied the solver-success, boundary-residual, physical-capture, and \qty{90}{s} criteria for nine one-bed NCCC cases. ePC-SAFT gave a capture mean absolute error of 3.32 percentage points, compared with 3.14 percentage points for Henry-law closure, while median runtime increased from \qty{5.25}{s} to \qty{7.70}{s}. The nine-species activity-rebased calculation returned all seven 2017 C rows with chemistry residuals below $10^{-8}$, zero invalid states, and zero guard penalties; its capture mean absolute error was 6.595 percentage points, its maximum absolute error was 16.514 percentage points, and its mean runtime was \qty{171.102}{s}. Because each local reaction constant was anchored to the concentration-based initial composition, this calculation demonstrates numerical activity coupling rather than independently predictive reactive thermodynamics. A separate typed-bundle diagnostic verified homogeneous equilibrium residuals, tangent symmetry, positive constrained curvature, and the zero-current/zero-flow limiting structure of an exploratory Onsager closure, while also showing a reaction-to-diffusion time-scale ratio of about $7.6\times10^{3}$. Those checks establish internal consistency and stiffness, not source-complete mobility, predictive reactive chemistry, or column transfer. The routine results quantify the capture error and runtime obtained when an electrolyte equation-of-state fugacity driving force replaces the Henry-law closure. The solver comparison separately quantifies method-dependent runtime, boundary residual, and unsuccessful calculations under the same governing equations.
+% P:conclusion-02
+The comparisons relate thermodynamic model choice, parameter sensitivity, film resistance, and computational effort to the same capture and temperature observables.
+The local operating study places those dependencies within a specified range of feeds and property inputs.
+% INSERT final quantitative conclusions for thermodynamics and parameter sensitivity, transfer, solution cost, and operating response, in that order.
+% INSERT the engineering implication supported jointly by capture and axial-temperature comparisons.
 
-        These conclusions apply to the selected MEA parameter set, fixed transport and enhancement correlations, one-bed NCCC case set, and retained numerical diagnostics. The study does not propagate thermodynamic or transport uncertainty, establish independent cross-facility validation, identify an optimal operating condition, or demonstrate extension to another amine. Predictive nine-species chemistry requires independently sourced activity-basis equilibrium constants and a parameter set with documented source and estimation records. Extension to another solvent requires solvent-specific chemistry, thermodynamic parameters, properties, kinetics, and absorber validation.
+% P:conclusion-03
+The thermodynamic study connects the Henry-law, eNRTL, and ePC-SAFT driving-force descriptions to capture and axial temperature.
+The common-property comparison identifies the response to the selected thermodynamic description, including its specified species and reaction system.
+The full-property comparison identifies the additional density and caloric response under the same transport assumptions.
+The parameter sensitivity then distinguishes the influence of reaction-enthalpy directions, water solvation, and CO$_2$ dispersion within the selected ePC-SAFT description.
+% CHECKLIST-BEGIN: conclusion-1
+% P:conclusion-04
+\textit{[Insert the principal thermodynamic finding, its quantitative effect, and the parameter-sensitivity finding that qualifies it.]}
+% CHECKLIST-END: conclusion-1
 
-\clearpage
-\nolinenumbers
-\raggedbottom
+% P:conclusion-05
+The transfer study compares the enhancement-factor and equilibrium-manifold resistance with the same thermodynamic model and feed conditions.
+The interfacial state, flux distribution, and cumulative uptake explain the resulting column response.
+% CHECKLIST-BEGIN: conclusion-2
+% P:conclusion-06
+\textit{[Insert the principal transfer finding, capture effect, and mobility-sensitivity conclusion.]}
+% CHECKLIST-END: conclusion-2
+
+% P:conclusion-07
+The numerical study compares conservative simultaneous, shooting, finite-difference, and collocation formulations at common physical conditions and solution accuracy.
+% CHECKLIST-BEGIN: conclusion-3
+% P:conclusion-08
+\textit{[Insert the method comparison, runtime effect, and refinement-supported accuracy.]}
+% CHECKLIST-END: conclusion-3
+
+% P:conclusion-synthesis
+Together, the three studies relate absorber performance to the selected thermodynamic model, the local film representation, and the numerical work needed to resolve the coupled balances.
+The operating comparison extends that interpretation to the specified neighborhood around Case 3C.
+% CHECKLIST-BEGIN: conclusion-4
+% P:conclusion-operating-finding
+\textit{[Insert the supported operating tradeoff and the combined capture/temperature implication for model selection.]}
+% CHECKLIST-END: conclusion-4
+
+
+\subsection{Applicability and future work}\label{subsec:applicability}
+% P:conclusion-09
+The formulation applies to a steady, one-bed MEA absorber within the composition, temperature, and pressure domains of its thermodynamic and transport inputs.
+Parameter uncertainty and extrapolation beyond the source ranges can affect speciation, transfer, and heat release together.
+The equilibrium-manifold film assumes rapid local reaction and an isothermal diffusion path; conditions in which reaction or thermal relaxation competes with diffusion require finite-rate species and energy balances in the film.
+Industrial gas mixtures containing additional reactive or volatile components require their species, reactions, properties, and interphase transfer terms.
+
+% P:conclusion-10
+The column balances and numerical formulations can be reused for DEA, MDEA, AMP, PZ, or blended solvents after defining the solvent-specific chemistry and constitutive inputs.
+The extension begins with a reaction network, conserved components, and consistent activity and enthalpy reference states.
+Pure-component, binary, association, ionic, and dielectric parameters are obtained from applicable sources or fitted to independent thermodynamic measurements, including VLE, speciation, and caloric data where available.
+Transport properties and kinetic parameters are then specified for the solvent and packing.
+Thermodynamic measurements excluded from fitting and independent absorber measurements evaluate the parameterization and the coupled column model, respectively.
+A parameter-file substitution alone does not establish transferability to another solvent.
+
+% P:conclusion-11
+The specified input ranges of the Latin hypercube design define the domain of the operating comparison; they do not establish a global operating optimum.
+Formal optimization additionally requires a stated objective and hydraulic, thermal, and process constraints.
+Coupling the absorber to solvent regeneration would permit energy or economic objectives beyond capture alone.
+These extensions should preserve the separation between property fitting, numerical verification, and experimental evaluation.

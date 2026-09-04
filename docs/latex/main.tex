@@ -5,7 +5,6 @@
 \usepackage[numbers]{natbib}
 \usepackage{subfiles}
 \usepackage[version=4]{mhchem}
-\usepackage{cleveref}
 \usepackage{subcaption}
 \captionsetup{hypcap=false}
 \usepackage{longtable}
@@ -46,9 +45,18 @@
 \usepackage{color}
 \usepackage{siunitx}
 \usepackage{derivative}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\newcommand{\differential}{\mathop{}\!\mathrm{d}}
 \sisetup{detect-all,per-mode=symbol,range-phrase={--},range-units=single}
 \Urlmuskip=0mu plus 2mu\relax
 \AtBeginEnvironment{thebibliography}{\raggedright\sloppy\emergencystretch=3em}
+% Keep exported research-note fields out of the article bibliography.
+\makeatletter
+\providecommand{\bibinfo}[2]{#2}
+\AtBeginEnvironment{thebibliography}{%
+  \renewcommand{\bibinfo}[2]{\ifstrequal{#1}{note}{\unskip\@ifnextchar.{\@gobble}{}}{#2}}}
+\makeatother
+
 
 \begin{document}
 
@@ -57,11 +65,11 @@
     \renewcommand{\topfraction}{0.95}
     \renewcommand{\bottomfraction}{0.95}
 
-    \shorttitle{ePC-SAFT Fugacity Benchmark for MEA Absorption}
+    \shorttitle{ePC-SAFT Thermodynamics and Reactive Film Transfer}
     \shortauthors{T. W. Polley and J. D. Hedengren}
 
     % Main title of the paper
-    \title[mode = title]{An MEA Absorber Benchmark for ePC-SAFT \texorpdfstring{CO$_2$}{CO2} Fugacity Driving Forces}
+    \title[mode = title]{ePC-SAFT-Based Modeling of Aqueous MEA Absorption: Thermodynamic Closures, Reactive Film Transfer, and Boundary-Value Solution Methods}
 
     % Article type for Editorial Manager: Original Research Article.
     \author[1]{Tanner W. Polley}[orcid=0009-0008-5957-4152]
@@ -83,12 +91,28 @@
 
     % Here goes the abstract
     \begin{abstract}
-        Post-combustion carbon dioxide (CO$_2$) capture with aqueous monoethanolamine (MEA) is an established rate-based separation, but absorber comparisons often change thermodynamics, solver formulation, and evaluation scope simultaneously. This work uses one steady-state packed-column model to compare boundary-value problem (BVP) solvers and CO$_2$ fugacity closures while holding chemical equilibrium, reaction enhancement, transport correlations, hydraulics, and material and energy balances fixed. The routine thermodynamic campaign replaces the Henry-law CO$_2$ closure with a liquid-side ionic electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) fugacity calculation while retaining concentration-based chemical equilibrium with unit activity coefficients. For nine National Carbon Capture Center (NCCC) cases satisfying solver success, a boundary-residual norm no greater than 1.0, a predicted capture between 0 and 100\%, and a \qty{90}{s} wall-time limit, ePC-SAFT gave a capture mean absolute error of 3.32 percentage points, compared with 3.14 percentage points for Henry-law closure; the corresponding median runtimes were 7.70 and \qty{5.25}{s}. Collocation satisfied these criteria for the reported NCCC rows, whereas shooting had shorter recorded runtimes on smoother high-liquid-to-gas-ratio probes. A separate nine-species activity calculation, rebased to the concentration-based initial composition for each local chemistry call, returned solutions for all seven 2017 C rows under relaxed settings, with chemistry residuals below $10^{-8}$, capture mean absolute error of 6.595 percentage points, and mean runtime of \qty{171.102}{s}. This activity-rebased calculation tests numerical coupling and does not establish independently parameterized activity-basis reaction constants. The comparison reports attempted cases, residuals, runtimes, and capture errors under the stated equations, inputs, solver settings, and inclusion criteria.
-    \end{abstract}
+% CHECKLIST-BEGIN: abstract-findings
+% P:abstract-01
+Post-combustion carbon dioxide (CO$_2$) capture provides a route to reducing emissions from power generation and industrial processes.
+Designing aqueous monoethanolamine (MEA) absorbers for this purpose requires predicting how reactive equilibrium, interfacial mass transfer, and heat release determine capture and temperature.
+This study develops an absorber formulation based on electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT), with nine reactive liquid species and phase material and energy balances.
+A constrained mobility relates chemical-potential gradients to liquid-film transport.
+Integration along the equilibrium manifold and continuity of gas--liquid interfacial flux determine the CO$_2$ transfer rate.
+Three studies compare thermodynamic descriptions, liquid-film models, and boundary-value solution methods.
+The thermodynamic study compares nine-species ePC-SAFT with six-species eNRTL and a Henry-law reference.
+The film study compares enhancement-factor and equilibrium-manifold transport.
+The numerical study compares conservative simultaneous, shooting, finite-difference, and collocation formulations at matched accuracy.
+A local thermodynamic sensitivity study and a Latin hypercube design relate input variations to capture and temperature.
+Common-property comparisons hold density and caloric descriptions fixed while comparing thermodynamic models; full-property comparisons additionally include their density and enthalpy response.
+Each change is conditional on the other model choices.
+Capture and axial liquid-temperature profiles provide the experimental measures, while refinement and conservation quantify numerical accuracy under fixed physical equations.
+Together, these comparisons support model selection for MEA-based post-combustion capture by relating separation and thermal response to the physical detail and numerical effort used in the calculation.
+% CHECKLIST-END: abstract-findings
+\end{abstract}
 
     \begin{keywords}
-        Post-combustion CO$_2$ capture \sep MEA absorption \sep Boundary-value problems \sep Solver benchmarking \sep ePC-SAFT \sep Fugacity driving force
-    \end{keywords}
+ePC-SAFT \sep MEA absorption \sep Reactive equilibrium \sep Chemical-potential gradients \sep Film mass transfer \sep Boundary-value problems
+\end{keywords}
 
     \maketitle
 

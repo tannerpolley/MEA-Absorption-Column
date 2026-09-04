@@ -11,12 +11,17 @@ RUNS = ROOT / "analyses/reactive_film_evidence/results/runs"
 FINAL = ROOT / "analyses/reactive_film_evidence/results/final/tables"
 BUNDLE = ROOT / "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/bundle.json"
 CASES = ("K18", "K19", "1C", "2C", "3C", "4C", "5C", "6C")
+EXTENDED_RUNS = {
+    "K18": "diagnose_K18_iter25_relax050",
+    "1C": "diagnose_1C_iter25_relax050_detached",
+    "5C": "diagnose_5C_iter30_relax050",
+}
 
 
 def main() -> None:
     comparisons, nodes, profiles, provenance = [], [], [], []
     for case_id in CASES:
-        run = RUNS / f"current_bundle_campaign_{case_id}"
+        run = RUNS / EXTENDED_RUNS.get(case_id, f"current_bundle_campaign_{case_id}")
         comparisons.append(pd.read_csv(run / "column_comparison.csv"))
         nodes.append(pd.read_csv(run / "film_nodes.csv"))
         profiles.append(pd.read_csv(run / "axial_profiles.csv"))
@@ -35,14 +40,39 @@ def main() -> None:
     )
     if tuple(comparison["case_id"]) != CASES:
         raise AssertionError("campaign must contain each declared case exactly once and in order")
+    if not (comparison["success"] & comparison["outer_iteration_converged"]).all():
+        raise AssertionError("every retained column and outer film iteration must converge")
+    sensitivity_runs = ("diagnose_5C_iter30_relax050", "diagnose_5C_iter30_relax025")
+    sensitivity_rows = []
+    for name in sensitivity_runs:
+        run = RUNS / name
+        row = pd.read_csv(run / "column_comparison.csv").iloc[0]
+        details = json.loads((run / "run_provenance.json").read_text())
+        if not (row["success"] and row["outer_iteration_converged"]):
+            raise AssertionError("relaxation comparison requires both runs to meet their stopping rule")
+        sensitivity_rows.append({
+            "case_id": row["case_id"],
+            "relaxation": details["relaxation"],
+            "film_capture_pct": row["film_capture_pct"],
+            "outer_iterations": row["outer_iterations"],
+            "final_conductance_change_relative": row["final_conductance_change_relative"],
+            "final_bulk_fugacity_change_relative": row["final_bulk_fugacity_change_relative"],
+            "source_run": name,
+            "command": details["command"],
+            "repository_commit": details["repository_commit"],
+            "parameter_document_sha256": details["parameter_document_sha256"],
+            "engine_wheel_sha256": details["engine_wheel_sha256"],
+        })
     commands = [item["command"] for item in provenance]
-    common = {key: value for key, value in provenance[0].items() if key != "command"}
+    per_run_fields = {"command", "outer_iterations", "repository_commit"}
+    common = {key: value for key, value in provenance[0].items() if key not in per_run_fields}
     if any(
-        {key: value for key, value in item.items() if key != "command"} != common
+        {key: value for key, value in item.items() if key not in per_run_fields} != common
         for item in provenance[1:]
     ):
         raise AssertionError("campaign provenance differs between cases")
     FINAL.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(sensitivity_rows).to_csv(FINAL / "column_film_relaxation_sensitivity.csv", index=False)
     comparison.to_csv(FINAL / "column_film_capture_comparison.csv", index=False)
     node_table.to_csv(FINAL / "column_film_nodes.csv", index=False)
     pd.concat(profiles, ignore_index=True).to_csv(FINAL / "column_film_axial_profiles.csv", index=False)
@@ -55,6 +85,10 @@ def main() -> None:
             "engine_wheel_sha256": bundle["engine_wheel_sha256"],
             "commands": commands,
             "case_ids": list(CASES),
+            "case_runs": [
+                {"case_id": case_id, **item}
+                for case_id, item in zip(CASES, provenance, strict=True)
+            ],
         }, indent=2) + "\n",
         encoding="utf-8",
     )

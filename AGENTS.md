@@ -35,3 +35,7 @@
 - Preserve result-critical datasets under `src/mea_absorption_column/data/epcsaft_datasets`.
 - Keep reusable `epcsaft` interactions behind explicit thermodynamics/runtime modules.
 - Use `epcsaft-cross-repo` for contracts, upstream feedback, and handoffs.
+
+This is a CSE project. Every agent performing scientific or engineering work
+MUST use the installed CSE skills and MUST read `docs/scientific/README.md` and
+`docs/scientific/CONTEXT.md` before selecting the evidence-justified CSE route.

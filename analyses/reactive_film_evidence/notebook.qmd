@@ -11,7 +11,7 @@ jupyter: false
 
 ## Decision
 
-The nine-species fast-equilibrium film model is adopted as the primary CO2 mass-transfer calculation for the eight retained one-bed cases. The former enhancement-factor calculation is retained only as a comparator. The film model is not fitted to the measured capture percentages.
+The nine-species fast-equilibrium film model supplies the primary CO2 mass-transfer calculation for the eight retained one-bed cases through a hybrid coupling to six-species outer property calculations. The enhancement-factor calculation is retained as a comparator. Both use the selected ePC-SAFT parameter document by default, but the film supplies a different reactive bulk fugacity and reaction/speciation closure as well as a different conductance. This is not a transfer-only comparison at fixed reactive chemistry. The film model is not fitted to the measured capture percentages.
 
 ## Formulation
 
@@ -21,26 +21,26 @@ The local film solve is quadrature plus a scalar interface root; it does not imp
 
 ## Retained campaign
 
-| Case | Observed (%) | Enhancement (%) | Film (%) | Film − enhancement (points) | Outer field converged |
-|---|---:|---:|---:|---:|:---:|
-| K18 | 92.85 | 98.969 | 99.884 | +0.914 | No |
-| K19 | 98.21 | 99.968 | 99.938 | −0.031 | Yes |
-| 1C | 97.10 | 99.271 | 99.842 | +0.571 | No |
-| 2C | 92.30 | 91.596 | 98.462 | +6.866 | Yes |
-| 3C | 89.50 | 90.356 | 97.913 | +7.557 | Yes |
-| 4C | 88.90 | 95.306 | 98.916 | +3.611 | Yes |
-| 5C | 86.40 | 79.516 | 87.789 | +8.273 | No |
-| 6C | 60.20 | 67.605 | 76.131 | +8.526 | Yes |
+| Case | Observed (%) | Enhancement (%) | Film (%) | Film − enhancement (points) | Outer updates |
+|---|---:|---:|---:|---:|---:|
+| K18 | 92.85 | 98.969 | 99.884 | +0.914 | 17 |
+| K19 | 98.21 | 99.968 | 99.938 | -0.031 | 7 |
+| 1C | 97.10 | 99.271 | 99.842 | +0.571 | 16 |
+| 2C | 92.30 | 91.596 | 98.462 | +6.866 | 14 |
+| 3C | 89.50 | 90.356 | 97.913 | +7.557 | 13 |
+| 4C | 88.90 | 95.306 | 98.916 | +3.611 | 5 |
+| 5C | 86.40 | 79.516 | 87.973 | +8.457 | 18 |
+| 6C | 60.20 | 67.605 | 76.131 | +8.526 | 10 |
 
 Exact values and diagnostics are retained in `results/final/tables/column_film_capture_comparison.csv`.
 
 ![Observed capture and the enhancement-factor and reactive-film predictions.](results/final/figures/column_film_capture_comparison.png){width=95%}
 
-The reactive-film closure changes predicted capture by -0.031 to +8.526 percentage points relative to the enhancement-factor calculation. Its all-case observed-capture mean absolute error is 6.677 percentage points, compared with 4.038 percentage points for the enhancement-factor comparator. The film formulation therefore changes the physical model but does not improve aggregate agreement with these observations. The three non-field-converged values are retained as visibly provisional rows rather than silently omitted.
+The reactive-film closure changes predicted capture by -0.031 to +8.526 percentage points relative to the enhancement-factor calculation. Its all-case observed-capture mean absolute error is 6.700 percentage points, compared with 4.038 percentage points for the enhancement-factor comparator. The film formulation therefore changes the physical model but does not improve aggregate agreement with these observations. All eight selected runs meet the declared stopping rule after 5–18 outer updates.
 
 ## Temperature-profile comparison
 
-![Reactive-film liquid-temperature profiles against the measured 2017 C-case taps. Legends report film capture and capture error in percentage points; “outer field not converged” identifies runs that reached the 15-update limit.](results/final/figures/column_film_temperature_overlay.png){width=95%}
+![Reactive-film liquid-temperature profiles against the measured 2017 C-case taps. Legends report film capture and capture error in percentage points.](results/final/figures/column_film_temperature_overlay.png){width=95%}
 
 The six C-case liquid-temperature tap RMSE values range from 3.73 K (2C) to 8.05 K (4C), with a mean of 5.65 K. These profiles replace the temperature figures generated with the former enhancement-factor calculation; they do not add a temperature acceptance criterion. The terminal drop near normalized position 1 is the imposed lean-liquid inlet boundary response.
 
@@ -50,8 +50,10 @@ For 3C, the reactive-film result is 97.91% capture against 89.50% observed, whil
 
 ## Numerical status
 
-All eight packed-column solves satisfy their mixed boundary conditions at numerical precision. Their maximum collocation RMS residual is 0.066 under the declared 0.1 solver tolerance, and the maximum retained dense-grid ODE residual is 0.112. K19, 2C, 3C, 4C, and 6C meet the declared outer-film stopping rule. K18, 1C, and 5C reach the common 15-update limit first and remain marked non-field-converged. The maximum stationary-component flux residual is $1.32\times10^{-12}$ mol m$^{-2}$ s$^{-1}$, or $9.57\times10^{-10}$ relative to local CO2 component flux.
+All eight packed-column solves satisfy their mixed boundary conditions at numerical precision. Their maximum collocation RMS residual is 0.066 under the declared 0.1 solver tolerance, and the maximum retained dense-grid ODE residual is 0.112. All eight cases meet the declared outer-film stopping rule. K18, 1C, and 5C require 17, 16, and 18 updates, respectively. The 5C calculation with relaxation 0.25 reaches the same rule at 29 updates but gives 87.788892% capture versus 87.972810% at relaxation 0.5; the 0.183917-percentage-point difference limits claims about a unique fixed point. Both selected values, settings, source commands, and identities are retained in `results/final/tables/column_film_relaxation_sensitivity.csv`. The maximum stationary-component flux residual is $1.32\times10^{-12}$ mol m$^{-2}$ s$^{-1}$, or $9.57\times10^{-10}$ relative to local CO2 component flux.
 
 ## Claim boundary
 
-The campaign is a fixed-input engineering prediction: the case inputs, selected nine-species ePC-SAFT bundle, transfer correlations, and declared diffusivity estimates determine the outputs without fitting capture. It is not an independently validated nine-species transport model. Species diffusivities and the diagonal pair-mobility closure remain estimated, and no measured full Maxwell--Stefan/Onsager matrix or held-out local film-flux validation is available. The bundle was evaluated as a complete pressure/speciation candidate through 393.15 K, but R5 retains a 323.15 K source-qualified ceiling; 345 of 470 film-node evaluations exceed that source domain and are explicitly temperature-extrapolative.
+The campaign is a fixed-input engineering prediction: the case inputs, selected nine-species ePC-SAFT bundle, transfer correlations, and declared diffusivity estimates determine the outputs without fitting capture. It is not an independently validated nine-species transport model. Species diffusivities and the pair-mobility closure remain estimated, and no measured full Maxwell--Stefan/Onsager matrix or held-out local film-flux validation is available. The bundle was evaluated as a complete pressure/speciation candidate through 393.15 K, but R5 retains a 323.15 K source-qualified ceiling; 369 of 500 retained sampled local evaluations across outer iterations exceed that source domain and are explicitly temperature-extrapolative.
+
+The investigator authorized use of the retained notebook evidence at commit `4cd362c83e0a6b439655a18819a862da25e782cf` for the manuscript revision, subject to the stated transport, temperature-domain, and numerical limitations. This revision incorporates the completed extended runs and the newly verified hybrid-coupling qualification; it requires review with the revised manuscript.
