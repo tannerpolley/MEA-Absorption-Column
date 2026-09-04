@@ -1,49 +1,56 @@
-    \section{Introduction}\label{sec:introduction}
-        Aqueous monoethanolamine (MEA) absorption is a common reference process for post-combustion \COtwo{} capture. Packed-column predictions depend on both the physical model and the numerical solution method, so comparisons require common equations, operating inputs, and evaluation criteria.
+\section{Introduction}\label{sec:introduction}
+% I1: engineering question
+Predicting \COtwo{} capture in an aqueous monoethanolamine (MEA) absorber requires the coupled effects of reaction, interphase transfer and heat release to be represented.
+MEA provides an experimentally documented reference solvent for rate-based packed-column models \cite{Freguia2003,Mores2012,Zhang2009}.
+Outlet capture measures the overall removal of \COtwo, whereas axial temperatures describe the accompanying thermal response.
+Their joint interpretation is needed to assess how solvent and gas conditions affect absorber performance.
 
-        This work evaluates a steady-state MEA absorber with coupled nine-species reactive ePC-SAFT, conventional enhancement-factor transport and nonisothermal column balances. Seven NCCC cases compare predicted capture and phase temperatures with observations; Case 3C additionally tests numerical resolution and local thermodynamic and transport sensitivities. A historical nine-case NCCC comparison is retained as a separate experiment: it replaces the Henry-law \COtwo{} driving force with EOS fugacity while keeping a reduced six-species chemical-equilibrium formulation fixed. Shooting, finite-difference and collocation results are distinguished by their physical and numerical configurations.
+% I2: established absorber capabilities
+Rate-based MEA models already couple chemistry, equilibrium, transport and energy balances to pilot-scale observations \cite{Razi2013,Chinen2018,Morgan2018,Morgan2020}.
+The studies in \cref{tab:absorber-literature-comparison} include resolved liquid-film calculations, enhancement approximations and experimental evaluations over multiple operating conditions.
+Their calibration measurements, evaluation cases and numerical settings differ, so agreement reported for one formulation does not directly rank another.
+A comparison must identify which measurements determined its inputs and which assess the coupled prediction.
 
-        \subsection{Literature Review}
+\input{tables/absorber_literature_comparison}
 
-        Rate-based MEA absorber modeling has an established literature. Foundational and subsequent studies have coupled chemical reaction, vapor-liquid equilibrium, transport, hydraulics, and energy balances to predict pilot-scale \COtwo{} absorption behavior \cite{Freguia2003,Mores2012,Zhang2009}. Related process-simulation studies have extended this approach toward load variation, solvent comparison, process control, and design analysis \cite{Moioli2012,Harun2012a,Greer2008,Rodriguez2014}. These studies establish the relevance of mechanistic absorber models and the need to report inputs, physical comparisons, and numerical diagnostics.
+% I3: physical nonideality and reaction equilibrium
+A molecular equation of state supplies physical nonideality, whereas reaction equilibrium determines the distribution among molecular and ionic species.
+Electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) represents molecular and ionic interactions through residual Helmholtz energy \cite{Gross2001,Cameretti2005,Bulow2021a}.
+Coupling its activities to reaction constants gives bulk speciation, and its fugacity coefficients provide a \COtwo{} driving force for interphase transfer.
+This thermodynamic description is distinct from the conventional reaction-enhancement approximation and empirical caloric properties used in the present column model.
 
-        Prior MEA absorber studies have used pilot-scale or campaign data to constrain and evaluate rate-based models, including packed-column validation, hydraulic and mass-transfer modeling, and uncertainty-oriented procedures \cite{Razi2013,Chinen2018,Morgan2018,Morgan2020}. This benchmark reports case-wise capture error, temperature-profile error where measured taps are available, boundary residuals, solver messages, and runtime across the evaluated one-bed NCCC cases.
+% I4: physical parameter reuse and comparative rationale
+Available thermodynamic approaches differ in their physical representation and parameter requirements (\cref{tab:thermodynamic-model-comparison}).
+eNRTL represents liquid excess Gibbs energy, Kent--Eisenberg uses simplified activities with effective reaction constants, and the cubic-plus-association equation of state (CPA) and ePC-SAFT include association contributions.
+An attraction of ePC-SAFT is that component-level segment, association and ionic descriptions enter explicit physical contributions, while combining rules supply cross interactions from reusable component inputs.
+This offers a route to reducing additional mixture-specific binary fitting when extending a thermodynamic description to new solvents.
+Whether this reduces total fitting effort for reactive MEA has not been tested on a common column model; the parameter counts of the present ePC-SAFT set and of a published eNRTL set \cite{Akula2023a} do not by themselves establish an advantage (\cref{sec:selected-reactive-inputs}). A comparison within the same column model would test how much component reuse reduces new data and fitting requirements while retaining capture and temperature accuracy.
 
-        \input{tables/absorber_literature_comparison}
+\begin{table*}
+    \centering
+    \small
+    \caption{Comparison of the structure and parameter requirements of thermodynamic approaches commonly used for reactive amine absorption.}
+    \label{tab:thermodynamic-model-comparison}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.5cm}*{3}{>{\raggedright\arraybackslash}X}}
+        \toprule
+        \textbf{Approach} & \textbf{Thermodynamics and chemistry} & \textbf{Reusable inputs and calibration} & \textbf{Application and extension limits} \\
+        \midrule
+        Kent--Eisenberg & Simplified liquid activities with effective reaction constants; vapor nonideality may be supplied separately & Physical solubility and acid--base inputs can be retained; effective constants require solvent/range-specific calibration \cite{Shahid2019,Zhu2022} & Useful for correlated acid-gas loading; another amine or blend requires appropriate chemistry and recalibration, not an electrolyte-EOS substitution \\
+        eNRTL & Excess Gibbs energy gives liquid activities; reaction equilibrium supplies speciation; temperature derivatives and standard states supply calorics & Component properties, published binary parameters and fixed defaults can be reused; remaining directional interactions and ion standard-state properties are calibrated \cite{Zhang2011,Akula2023a} & Aqueous electrolyte VLE, speciation and calorics; extensions require internally consistent species, interactions, reaction and reference-state data \\
+        CPA & Cubic EOS plus association gives phase fugacities; explicit chemistry or pseudo-chemical association describes reaction & Component cubic/association parameters and combining rules are reusable; cross-association and binary corrections may need fitting \cite{Chen2023} & Physical/associating mixtures and reactive-solubility applications; a pseudo-reaction fit does not by itself define a full ionic reaction network for another solvent \\
+        ePC-SAFT & Residual Helmholtz energy gives density, activities and fugacities; explicit reaction constants determine reactive speciation & Component, association, ionic and dielectric inputs with combining rules; selected binary and reaction coefficients may require calibration \cite{Cameretti2005,Bulow2021a} & Reactive electrolyte states with consistent species and standard states; extension also needs reaction constants and applicable ion/mixture inputs \\
+        \bottomrule
+    \end{tabularx}
+\end{table*}
 
-        \Cref{tab:absorber-literature-comparison} shows that resolved-film calculations, enhancement approximations, experimental comparisons and numerical-resolution checks already exist in the absorber literature. Their thermodynamic descriptions, calibration data, numerical settings and reported inputs differ. The questions addressed here are how a coupled reactive EOS affects the solved absorber state and its input sensitivities, and how selected closures and numerical methods compare within explicitly matched model configurations. This complements, rather than replaces, the broader physical validation in those studies.
+% I5: scientific value of connecting thermodynamics to column response
+Column evaluation connects these thermodynamic choices to the quantities needed for absorber design: capture, axial temperature and response to operating conditions.
+Bulk speciation and fugacity profiles expose how the reactive EOS supplies the driving force, while separate thermodynamic and transport perturbations show how each set of inputs affects the coupled prediction.
+Comparisons with measured capture and packing temperatures then assess that connection at the process scale.
+Together with numerical refinement and measured computational cost, this provides a basis for developing predictive transfer models and testing thermodynamic parameter reuse in process calculations.
 
-        Thermodynamic model choice is another source of ambiguity. Electrolyte activity-coefficient models such as electrolyte nonrandom two-liquid (eNRTL) represent liquid-phase excess Gibbs energy and species activities through fitted interaction parameters and a declared calibration procedure \cite{Zhang2011}. SAFT-family equations of state represent associating systems \cite{Gross2001,Cameretti2005}, and ePC-SAFT includes electrolyte contributions. SAFT-family models have also been applied to \COtwo{} solubility in aqueous MEA with explicit association-scheme choices \cite{Baygi2015,Najafloo2018}, while recent acid-gas absorption studies apply ePC-SAFT to reactive aqueous amine systems \cite{Cleeton2020,Bulow2021a}. This literature motivates the present comparison of Henry-law and electrolyte-EOS fugacity driving forces. In the historical six-species comparison, concentration-based equilibrium is fixed while the fugacity closure changes. The coupled nine-species calculation instead uses EOS activities in the reaction equations and a consistent bulk-fugacity/free-concentration film coefficient.
-
-        \begin{table*}
-            \centering
-            \small
-            \caption{Scope comparison of thermodynamic approaches commonly used for reactive amine absorption. The entries describe model structure, not an accuracy ranking; each approach remains conditional on its reaction constants, parameters, and validation data.}
-            \label{tab:thermodynamic-model-comparison}
-            \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.5cm}*{3}{>{\raggedright\arraybackslash}X}}
-                \toprule
-                \textbf{Approach} & \textbf{Thermodynamics and chemistry} & \textbf{Reusable inputs and calibration} & \textbf{Application and extension limits} \\
-                \midrule
-                Henry-law reference & Molecular \COtwo{} solubility on a declared concentration or mole-fraction basis; separate reaction equilibrium & Temperature/composition solubility correlation and reaction constants & Compact driving-force reference within the solvent and loading range represented by its correlations \\
-                Kent--Eisenberg & Simplified liquid activities with effective reaction constants; vapor nonideality may be supplied separately & Physical solubility and acid--base inputs can be retained; effective constants require solvent/range-specific calibration \cite{Shahid2019,Zhu2022} & Useful for correlated acid-gas loading; another amine or blend requires appropriate chemistry and recalibration, not an electrolyte-EOS substitution \\
-                eNRTL & Excess Gibbs energy gives liquid activities; reaction equilibrium supplies speciation; temperature derivatives and standard states supply calorics & Component properties, published binary parameters and fixed defaults can be reused; remaining directional interactions and ion standard-state properties are calibrated \cite{Zhang2011,Akula2023a} & Aqueous electrolyte VLE, speciation and calorics; extensions require internally consistent species, interactions, reaction and reference-state data \\
-                CPA & Cubic EOS plus association gives phase fugacities; explicit chemistry or pseudo-chemical association describes reaction & Component cubic/association parameters and combining rules are reusable; cross-association and binary corrections may need fitting \cite{Chen2023} & Physical/associating mixtures and reactive-solubility applications; a pseudo-reaction fit does not by itself define a full ionic reaction network for another solvent \\
-                ePC-SAFT & Residual Helmholtz energy gives density, activities and fugacities; explicit reaction constants determine reactive speciation & Component, association, ionic and dielectric inputs with combining rules; selected binary and reaction coefficients may require calibration \cite{Cameretti2005,Bulow2021a} & Reactive electrolyte states with consistent species and standard states; extension also needs reaction constants and applicable ion/mixture inputs \\
-                \bottomrule
-            \end{tabularx}
-        \end{table*}
-
-        Component-based ePC-SAFT inputs and combining rules can reduce additional mixture-specific fitting when applicable component and cross-interaction information is available. CPA also reuses component parameters and association physics, while eNRTL permits parameter reuse and fixed defaults. For example, Akula et al.\ \cite{Akula2023a} fit ten scalars: four interaction, four formation-property and two heat-capacity quantities (Table 6), in addition to inherited inputs including Hessen W2 neutral-mixture parameters. Zhang et al.\ \cite{Zhang2011} report four MEA--water interaction scalars (Table 8) and twelve ternary-fit quantities: six interactions, four formation properties and two heat capacities (Table 10). The selected ePC-SAFT set uses one neutral-binary refit, seven inherited ion-fit quantities (six component values and one pair coefficient), a grid-selected \COtwo{} dispersion value and two fitted reaction-temperature directions. Its remaining inputs are inherited, fixed or derived; these stage-specific counts do not establish universally fewer parameters or easier regression. Analytic or automatically differentiated Jacobians and Hessians are also not exclusive to ePC-SAFT. Accuracy and transferability require matched calibration and held-out comparisons.
-
-        Numerical method comparisons in absorber models must also be interpreted carefully. Shooting, finite-difference, and collocation BVP methods are established numerical methods, but their results depend on scaling, initialization, mesh size, residual definitions, and physical-domain constraints. Applying the same model, data, and inclusion criteria permits comparison of recorded runtime, residuals, and unsuccessful calculations without treating a solver success message as physical validation.
-
-    \subsection{Scope and Contributions}
-        The literature contains many MEA absorber models, but differences in thermodynamic assumptions, solver formulations, inclusion criteria, and physical-comparison subsets can obscure whether a discrepancy arises from the numerical method or model form. The comparisons make four contributions.
-        \begin{itemize}
-            \item It evaluates a coupled nine-species, five-reaction ePC-SAFT model within a nonisothermal MEA absorber using conventional enhancement-factor transport.
-            \item It reports capture and temperature profiles for seven NCCC cases, with Case 3C fugacity and speciation profiles, mesh/tolerance refinement and computational cost.
-            \item It quantifies one-at-a-time sensitivity to selected binary interactions, reaction equilibrium constants, viscosity, diffusivity and liquid-side mass transfer.
-            \item It retains the historical nine-case, six-species fugacity comparison and method-specific outcomes as explicitly separate calculations, including unsuccessful attempts.
-        \end{itemize}
-        The distinct formulations and parameters in each comparison are identified in \cref{tab:thermodynamic-responsibility}; results from different configurations are not pooled as repeated calculations.
-    
+% I6: objective and reading order
+The model is evaluated against seven National Carbon Capture Center (NCCC) one-bed cases, with perturbation studies centered on Case 3C.
+A paired Case 3C refinement precedes thermodynamic and transport sensitivity studies and discrete changes in solvent flow, lean loading and inlet temperature.
+Computational cost is measured for the coarse Case 3C calculation.
+The following sections define the model, describe its evaluation and interpret the resulting profiles and responses.

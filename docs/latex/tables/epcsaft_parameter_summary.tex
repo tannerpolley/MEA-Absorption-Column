@@ -1,52 +1,116 @@
 \begin{table}[pos=htbp]
-  \centering
-  \scriptsize
-  \setlength{\tabcolsep}{2.5pt}
-  \caption{Historical six-species ePC-SAFT parameters for the nine-case fugacity comparison; units are given below the table.}
-  \label{tab:epcsaft-pure-parameters}
-  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll
-    S[table-format=1.4]
-    S[table-format=1.4]
-    S[table-format=3.3]
-    S[table-format=4.1]
-    S[table-format=1.5]
-    S[table-format=1.6]
-    S[table-format=-1.0]
-    S[table-format=1.3]
-    S[table-format=2.4]@{}}
-    \toprule
-    Species & Association & {$m$} & {$\sigma$} & {$\epsilon/k$} & {$\epsilon^{\mathrm{assoc}}/k$} & {$\kappa^{\mathrm{assoc}}$} & {MW} & {$z$} & {$d_{\mathrm{Born}}$} & {$\epsilon_r$} \\
-    \midrule
-    \ce{CO2} & -- & 2.0790 & 2.7852 & 169.21 & 0.0 & 0.00000 & 0.044010 & 0 & 0.000 & 1.4122 \\
-    \ce{MEA} & 2B & 3.0353 & 3.0435 & 277.174 & 2586.3 & 0.03747 & 0.061080 & 0 & 0.000 & 32.00 \\
-    \ce{H2O} & 2B & 1.2047 & {$\sigma(T)$} & 353.95 & 2425.7 & 0.04509 & 0.018015 & 0 & 0.000 & 78.09 \\
-    \ce{MEAH+} & -- & 1.0000 & 3.5630 & 228.71 & 0.0 & 0.00000 & 0.062090 & 1 & 3.563 & 8.00 \\
-    \ce{MEACOO-} & -- & 1.0000 & 3.5605 & 533.11 & 0.0 & 0.00000 & 0.075070 & -1 & 3.561 & 8.00 \\
-    \ce{HCO3-} & -- & 1.0000 & 2.9296 & 70.00 & 0.0 & 0.00000 & 0.061017 & -1 & 3.000 & 8.00 \\
-    \bottomrule
-  \end{tabular*}
-\par\smallskip\footnotesize
-\noindent\emph{Units:} $\sigma$ and $d_{\mathrm{Born}}$ in \unit{\angstrom}; $\epsilon/k$ and $\epsilon^{\mathrm{assoc}}/k$ in \unit{K}; MW in \unit{kg\,mol^{-1}}; $\epsilon_r$ dimensionless. The water segment diameter is evaluated as
-\begin{align}
-  \sigma_{\ce{H2O}}(T) =
-  2.7927 + 10.11\exp(-0.01775T) - 1.417\exp(-0.01146T),
-  && \left(\unit{\angstrom}\right).
-\end{align}
+\centering\small
+\caption{Component coefficients. Segment count $m$ and charge $z_i$ are dimensionless; $\sigma$ is in \unit{\angstrom}, $\epsilon/k_B$ in \unit{K}, and molar mass $M$ in \unit{kg\,mol^{-1}}. Water uses $\sigma(T)$ below. The CO$_2$ energy was chosen by calibration; the other neutral coefficients are from the literature \cite{Nasrifar2010,Najafloo2018,Held2014}. MEAH$^+$/MEACOO$^-$ size and energy values were fitted by the authors to ion and speciation data in work to be reported separately; other ion values are taken from the corresponding ions in \cite{Held2014,Uyan2015}.}
+\label{tab:epcsaft-pure-parameters}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Species & $m$ & $\sigma$ & $\epsilon/k_B$ & $z_i$ & $M$ \\
+\midrule
+\ce{CO2} & 2.0729 & 2.7852 & 173.44025 & 0 & 0.04401 \\
+\ce{MEA} & 3.0353 & 3.0435 & 277.174 & 0 & 0.06108 \\
+\ce{H2O} & 1.2047 & $\sigma(T)$ & 353.95 & 0 & 0.01801528 \\
+\ce{MEAH+} & 1 & 3.48508556586 & 232.687201645 & 1 & 0.06209 \\
+\ce{MEACOO-} & 1 & 3.53543525721 & 453.265244384 & -1 & 0.10408 \\
+\ce{HCO3-} & 1 & 2.9296 & 70 & -1 & 0.0610168 \\
+\ce{CO3^{2-}} & 1 & 2.4422 & 249.26 & -2 & 0.06001 \\
+\ce{H3O+} & 1 & 3.4654 & 500 & 1 & 0.01902 \\
+\ce{OH-} & 1 & 2.0177 & 650 & -1 & 0.01701 \\
+\bottomrule
+\end{tabular}
 \end{table}
-
-\noindent These six species define the parameter set used in the reported fugacity comparison. The retained record does not contain complete source and estimation details for the neutral species. The \ce{MEAH+} and \ce{MEACOO-} values come from an earlier evaluation, and the \ce{HCO3-} value was transferred. These source qualifications apply to the reported benchmark parameter set.
-
 \begin{table}[pos=htbp]
-  \centering
-  \caption{Historical binary interaction parameter for the six-species fugacity comparison, not the selected nine-species model. Unlisted $k_{ij}$ values in the stored matrix are zero.}
-  \label{tab:epcsaft-binary-parameters}
-  \begin{tabular}{@{}ll S[table-format=-1.3]@{}}
-    \toprule
-    Component $i$ & Component $j$ & {$k_{ij}$} \\
-    \midrule
-    \ce{MEA} & \ce{H2O} & -0.052 \\
-    \bottomrule
-  \end{tabular}
+\centering\small
+\caption{Ionic diameters in \unit{\angstrom}. Packing and Debye--Huckel diameters coincide; packing and screening values are derived as $0.88\sigma_i$. The two amine-ion Born diameters come from the same fit as their segment parameters; other Born diameters are taken from the corresponding ions in \cite{Held2014,Uyan2015}. Printed values are rounded from full precision.}
+\label{tab:reactive-ion-diameters}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Ion & $d_{\mathrm{packing}}=d_{\mathrm{DH}}$ & $d_{\mathrm{Born}}$ \\
+\midrule
+\ce{MEAH+} & 3.0668752980 & 3.5332292715 \\
+\ce{MEACOO-} & 3.1111830263 & 3.5410703082 \\
+\ce{HCO3-} & 2.5780480000 & 3.0000000000 \\
+\ce{CO3^{2-}} & 2.1491360000 & 3.0000000000 \\
+\ce{H3O+} & 3.0495520000 & 1.2180000000 \\
+\ce{OH-} & 1.7755760000 & 3.0810768940 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{table}[pos=htbp]
+\centering\scriptsize\setlength{\tabcolsep}{2pt}
+\caption{All 36 independent off-diagonal symmetric pair coefficients $k_{ij}$. Species indices follow the first column; lower-triangle entries equal their transposes. MEA--water was fitted to binary VLE data, MEAH$^+$--MEACOO$^-$ comes from the amine-ion fit, and the remaining nonzero nonunit values are from the literature. Zeros and unit same-sign ion exclusions are fixed; the CO$_2$--MEA reciprocal-temperature slope is zero.}
+\label{tab:epcsaft-binary-parameters}
+\begin{tabular}{@{}lrrrrrrrrr@{}}
+\toprule
+Species & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\
+\midrule
+1 \ce{CO2} & 0 & 0 & 0.01326287918 & 0 & 0 & 0 & 0 & 0 & 0 \\
+2 \ce{MEA} & -- & 0 & -0.07352749875 & 0 & 0 & 0 & 0 & 0 & 0 \\
+3 \ce{H2O} & -- & -- & 0 & 0 & 0 & 0 & -0.25 & 0.25 & -0.25 \\
+4 \ce{MEAH+} & -- & -- & -- & 0 & -0.002018134576 & 0 & 0 & 1 & 0 \\
+5 \ce{MEACOO-} & -- & -- & -- & -- & 0 & 1 & 1 & 0 & 1 \\
+6 \ce{HCO3-} & -- & -- & -- & -- & -- & 0 & 1 & 0 & 1 \\
+7 \ce{CO3^{2-}} & -- & -- & -- & -- & -- & -- & 0 & 0 & 1 \\
+8 \ce{H3O+} & -- & -- & -- & -- & -- & -- & -- & 0 & 0 \\
+9 \ce{OH-} & -- & -- & -- & -- & -- & -- & -- & -- & 0 \\
+\bottomrule
+\end{tabular}
 \end{table}
 
-\noindent The historical six-species parameter set contains one nonzero pair coefficient, $k_{\ce{MEA},\ce{H2O}}=-0.052$. Its original fitting data, procedure, and uncertainty are unavailable, and its earlier MEA--water record used a different neutral association-scheme combination from the 2B/2B combination used here. The coefficient is therefore a retained benchmark input, with incomplete source support for its transfer between association schemes. No $k_{ij}$ value was estimated from the NCCC absorber cases in this study.
+The segment mixing rules are $\sigma_{ij}=(\sigma_i+\sigma_j)/2$ and $\epsilon_{ij}=(1-k_{ij})\sqrt{\epsilon_i\epsilon_j}$.
+The seven unit same-sign ion pair coefficients exclude their dispersion attraction.
+All solvation factors are one except water, whose factor is 1.5.
+The relative permittivity of MEA is 32 and the ionic-region value is 8.
+Water uses the following temperature correlations, with $T$ numerically in kelvin:
+\begin{align}
+ \sigma_{\HtwoO}(T)&=2.7927+10.11e^{-0.01775T}-1.417e^{-0.01146T}\quad(\unit{\angstrom}),\\
+ \varepsilon_{r,\HtwoO}(T)&=78.41043478578715-0.36133766233691506(T-298.15)\notag\\
+ &\quad+0.00076555618295(T-298.15)^2.
+\end{align}
+% B2: selected dielectric and Born equations
+The model uses solvent-only mass-weighted relative permittivity,
+\begin{equation}
+\varepsilon_{r,\mathrm{bulk}}=
+\frac{x_{\MEA}^{\mathrm{true}}M_{\MEA}\varepsilon_{r,\MEA}
++x_{\HtwoO}^{\mathrm{true}}M_{\HtwoO}\varepsilon_{r,\HtwoO}}
+{x_{\MEA}^{\mathrm{true}}M_{\MEA}+x_{\HtwoO}^{\mathrm{true}}M_{\HtwoO}},\label{eq:solvent-permittivity}
+\end{equation}
+excluding ions and CO$_2$ from that solvent average.
+The adopted Born expression includes solvation-shell and dielectric-saturation terms \cite{Figiel2025}.
+With species solvation factors $s_i$ as specified above, the mixture factor and outer ion diameters are
+\begin{align}
+\overline s&=\sum_i x_i^{\mathrm{true}}s_i,&
+d_i^{\mathrm{out}}&=d_i^{\mathrm{Born}}
+\left[1+\frac{\overline s-1}{|z_i|}\right],\qquad z_i\ne0,\label{eq:born-shell}\\
+D_i^{\mathrm{bulk}}&=\frac{1}{d_i^{\mathrm{out}}},&
+D_i^{\mathrm{ion}}&=\frac{1}{d_i^{\mathrm{Born}}}-\frac{1}{d_i^{\mathrm{out}}}.\label{eq:born-diameters}
+\end{align}
+All nine positive solvation factors enter $\overline s$, so here $\overline s=1+0.5x_{\HtwoO}^{\mathrm{true}}$.
+In \cref{eq:epcsaft-born}, the two regions use $D_i^{\mathrm{bulk}}$ with $\varepsilon_{r,\mathrm{bulk}}$ and $D_i^{\mathrm{ion}}$ with $\varepsilon_{r,\mathrm{ion}}=8$; diameters are converted to metres in that equation.
+Both extension coefficients are one for these inputs, and no polar term is active.
+
+% B4: association topology
+Each neutral species has one donor site $a$ and one acceptor site $b$; only the site pairs below are active.
+\begin{table}[pos=htbp]
+\centering\small
+\caption{Active association site pairs. Energy divided by $k_B$ is in \unit{K}; association volume is dimensionless. Self-association values are from the literature. The reciprocal CO$_2$--water pairs are induced-association inputs from \cite{Schick2023}; MEA--water cross pairs follow the stated combining rule.}
+\label{tab:reactive-association}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Site pair & $\epsilon^{\mathrm{assoc}}/k_B$ & $\kappa^{\mathrm{assoc}}$ \\
+\midrule
+MEA:$a$/MEA:$b$ & 2586.3 & 0.03747 \\
+Water:$a$/water:$b$ & 2425.7 & 0.04509 \\
+\COtwo:$a$/water:$b$ & 1212.85 & 0.04509 \\
+\COtwo:$b$/water:$a$ & 1212.85 & 0.04509 \\
+MEA:$a$/water:$b$ & Combining rule & Combining rule \\
+MEA:$b$/water:$a$ & Combining rule & Combining rule \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The MEA--water association energy is the arithmetic mean of the two self-association energies.
+Its volume is $\sqrt{\kappa_i\kappa_j}$.
+The MEA molecular coefficients are from Nasrifar and Tafazzol \cite{Nasrifar2010} and Najafloo and Zarei \cite{Najafloo2018}; water and non-amine ion inputs are from Held et al.\ \cite{Held2014} and Uyan et al.\ \cite{Uyan2015}.
+The reciprocal CO$_2$--water association site pairs follow the induced-association construction reported by Schick et al.\ \cite{Schick2023}.
+The six MEAH$^+$/MEACOO$^-$ size, dispersion and Born values and their mutual pair coefficient were fitted by the authors to ion and speciation data in work to be reported separately and have not been independently validated; the other literature values were not refitted.
+The neutral MEA--water coefficient was refitted to 25 binary VLE rows from Cai et al.\ \cite{caiBinaryIsobaricVaporLiquid1996}, while the \COtwo{} dispersion value was chosen jointly with R4 in a pressure/speciation calibration grid.

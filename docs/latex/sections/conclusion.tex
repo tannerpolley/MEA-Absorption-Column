@@ -1,11 +1,21 @@
-    \section{Conclusion}
-        Across seven NCCC one-bed cases, the coupled nine-species model gives a capture mean absolute error of \num{5.85} percentage points; Cases 6C and 7C retain substantial errors of \num{+11.45} and \num{-11.93} points. The refined Case 3C calculation predicts \qty{91.55}{\percent} capture for Case 3C against \qty{89.50}{\percent} measured, with a peak liquid temperature of \qty{347.86}{K}. Joint mesh/tolerance refinement changes capture by \num{0.00510} percentage points and peak temperature by \qty{0.04493}{K}, providing a numerical reference for the local sensitivity studies.
+\section{Conclusions}
+% C1: coupled formulation and physical evaluation
+The coupled formulation connects five-reaction, nine-species liquid equilibrium and ePC-SAFT fugacity to nonisothermal MEA absorber balances.
+It brings component-level thermodynamic descriptions into the calculation of bulk speciation, interphase driving force, capture and axial temperature.
+Evaluation across seven NCCC one-bed cases gives a capture mean absolute error of \num{5.85} percentage points and jointly characterizes outlet removal and case-dependent packing-temperature profiles.
 
-        In the historical six-species comparison of nine one-bed NCCC cases, the ePC-SAFT fugacity closure gave a capture mean absolute error of \num{3.32} percentage points, compared with \num{3.14} percentage points for Henry-law closure. Median runtime increased from \qty{5.25}{s} to \qty{7.70}{s}. Thus, replacing the fugacity driving force under fixed chemical-equilibrium, enhancement, and transport formulations increased computational cost without reducing aggregate capture error for this case set.
+% C2: numerical behavior and cost
+The refined Case 3C calculation predicts \qty{91.55}{\percent} capture against \qty{89.50}{\percent} observed; mesh refinement has little effect on calculated capture and peak temperature, and one coarse solution requires about \qty{35}{s} of BVP wall time.
 
-        Among the historical method-comparison configurations, shooting had the shorter recorded runtime at the smooth operating point, while collocation returned the accepted NCCC 3C solution. Residuals and physical admissibility must be assessed together when interpreting method performance.
+% C3: thermodynamic, transport and operating insights
+The MEA--water interaction produces the largest capture response among the tested thermodynamic inputs and the liquid-side transfer coefficient the largest among the transport inputs, but neither closes the observed capture gap within the tested ranges.
+Lean loadings of 0.225 and 0.275 mol \COtwo{} per mol MEA change capture by \num{+3.75} and \num{-6.86} points relative to 0.25, identifying solvent loading as the most influential operating variable under the tested conditions.
 
-        For the coupled nine-species Case 3C reference, five-percent interaction and equilibrium-constant perturbations change capture by up to \num{0.82} percentage points. MEA--water gives the largest response among the four tested thermodynamic inputs, while the two reaction constants change capture by approximately \num{0.42} and \num{0.60} points. Ten-percent transport perturbations change capture by up to \num{0.53} points, with the liquid-side transfer coefficient giving the largest response among the three transport inputs. Their peak-temperature changes remain below the reference refinement difference. These findings apply to the tested parameters and one-bed conditions. Joint parameter/correlation uncertainty and controlled variation of liquid-to-gas ratio, lean loading, and inlet temperature remain necessary to assess their generality. Extension to other solvents or multicomponent industrial flue gases requires corresponding chemistry and property descriptions; finite-rate liquid-film reaction and diffusion require an independently evaluated reaction--transport model.
+The temperature comparison is qualitative because the source does not identify the measured phase; conventional enhancement and empirical caloric and transport correlations constrain predictive interpretation.
+
+% C4: contribution and forward program
+The formulation gives a direct connection from component-level molecular and ionic descriptions to column-scale observables and operating response.
+That connection motivates development of a predictive liquid-film formulation, a direct ePC-SAFT/eNRTL comparison, tests with other amines and constrained column optimization, which together can evaluate how thermodynamic parameter reuse and explicit interphase modeling contribute to solvent selection and absorber design.
 
 \clearpage
 \nolinenumbers

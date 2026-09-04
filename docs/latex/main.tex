@@ -64,11 +64,11 @@
     \def\floatpagepagefraction{1}
     \def\textpagefraction{.001}
 
-    \shorttitle{ePC-SAFT Fugacity Benchmark for MEA Absorption}
+    \shorttitle{Reactive ePC-SAFT for MEA Absorption}
     \shortauthors{T. W. Polley and J. D. Hedengren}
 
     % Main title of the paper
-    \title[mode = title]{An MEA Absorber Benchmark for ePC-SAFT \texorpdfstring{\COtwo}{CO2} Fugacity Driving Forces}
+    \title[mode = title]{Reactive ePC-SAFT Modeling of Carbon Dioxide Absorption in Aqueous MEA}
 
     % Article type for Editorial Manager: Original Research Article.
     \author[1]{Tanner W. Polley}[orcid=0009-0008-5957-4152]
@@ -90,11 +90,17 @@
 
     % Here goes the abstract
     \begin{abstract}
-        Post-combustion carbon dioxide (\COtwo) capture with aqueous monoethanolamine (MEA) depends on coupled reaction equilibrium, thermodynamics and transport. This work evaluates a steady-state packed-column model with nine-species reactive electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT), conventional reaction enhancement and empirical column energy balances. Across seven National Carbon Capture Center (NCCC) one-bed cases, capture mean absolute error is \num{5.85} percentage points, with the largest signed errors of \num{+11.45} and \num{-11.93} points in Cases 6C and 7C. For the refined Case 3C reference, the selected model predicts \qty{91.55}{\percent} capture against \qty{89.50}{\percent} measured and a peak liquid temperature of \qty{347.86}{K}. Joint mesh/tolerance refinement changes capture by \num{0.00510} percentage points and peak temperature by \qty{0.04493}{K}. Five-percent thermodynamic-input perturbations change capture by up to \num{0.82} percentage points; ten-percent transport-input perturbations change it by up to \num{0.53} points. A historical nine-case comparison isolates the fugacity closure within a reduced six-species model: ePC-SAFT and Henry-law capture mean absolute errors are \num{3.32} and \num{3.14} percentage points, with median runtimes of \qty{7.70}{s} and \qty{5.25}{s}. Numerical-method comparisons are reported by configuration. The coupled result establishes a resolved reference case for sensitivity analysis; the local perturbations are not statistical uncertainty bounds.
+Electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) provides a molecular thermodynamic description of the reactive liquid that can be coupled directly to absorber performance.
+A steady aqueous monoethanolamine (MEA) column formulation couples five reactions among nine liquid species to ePC-SAFT activities and fugacity, conventional reaction enhancement and empirical caloric properties.
+Evaluation uses seven National Carbon Capture Center (NCCC) cases, a paired Case 3C mesh refinement and thermodynamic, transport and operating perturbations.
+The capture mean absolute error is \num{5.85} percentage points; calculated speciation and fugacity profiles describe the thermodynamic coupling, while packing-temperature comparisons identify case-dependent discrepancies.
+Refined Case 3C capture is \qty{91.55}{\percent} versus \qty{89.50}{\percent} observed, and mesh refinement changes capture by \num{0.005} points and peak liquid temperature by \qty{0.045}{K}; one coarse solution requires about \qty{35}{s} of boundary-value-problem (BVP) wall time.
+The tested \(\pm5\%\) thermodynamic and \(\pm10\%\) transport changes affect capture by about \num{0.8} and \num{0.5} points, respectively; lean loadings of 0.225 and 0.275 mol \COtwo{} per mol MEA change capture by \num{+3.75} and \num{-6.86} points relative to 0.25.
+The formulation links reactive thermodynamics to observable process behavior and motivates future predictive film-model development, thermodynamic-model comparison and constrained absorber optimization.
     \end{abstract}
 
     \begin{keywords}
-        Post-combustion \COtwo{} capture \sep MEA absorption \sep Boundary-value problems \sep Solver benchmarking \sep ePC-SAFT \sep Fugacity driving force
+        Post-combustion \COtwo{} capture \sep MEA absorption \sep Boundary-value problems \sep Sensitivity analysis \sep ePC-SAFT \sep Fugacity driving force
     \end{keywords}
 
     \maketitle
@@ -110,8 +116,11 @@
     \input{sections/conclusion}
 
     \appendix
+    \crefalias{section}{appendix}
 
     \input{appendices/appendix_properties}
+
+    \input{appendices/appendix_reactive_inputs}
 
     \input{sections/declaration_competing_interest}
 

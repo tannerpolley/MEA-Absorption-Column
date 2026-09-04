@@ -1,175 +1,99 @@
-    \section{Methods}
-        For all three numerical methods, the packed-column problem can be written as the boundary value problem in \cref{eq:bvp}.
-        \begin{align}
-            \begin{cases}
-            \displaystyle
-            \odv{\mathbf{y}}{z} = \mathbf{f}\bigl(z, \mathbf{y}(z)\bigr) \\
-            \mathbf{y}_{\vap}(0) = \boldsymbol{\alpha}, \quad \mathbf{y}_{\liq}(H) = \boldsymbol{\beta},
-            \label{eq:bvp}
-            \end{cases}
-            &&
-            \begin{matrix}
-            \left(\text{component units of }\mathbf{y}\,\unit{m^{-1}}\right)\\
-            \left(\text{component units of }\mathbf{y}\right)
-            \end{matrix}
-        \end{align}
-        This benchmark compares shooting, finite difference, and collocation on the same packed-absorption-column BVP. Shooting and finite difference expose different initialization and discretization behavior. Collocation is used as the reference method for the reported NCCC rows because it provides adaptive mesh refinement and residual reporting. Method comparisons use recorded runtime, residuals, capture, and unsuccessful-run counts rather than qualitative rankings.
+\section{Evaluation Methods}\label{sec:methods}
+\subsection{Experimental Cases and Reported Quantities}
+% E1: comparison inputs
+Seven one-bed, no-intercooler cases from the 2017 NCCC C campaign provide the experimental comparison \cite{Morgan2020}.
+The modeled bed has diameter \qty{0.64}{m}, height \qty{6}{m} and MellapakPlus 252Y packing, with specific area \qty{250}{m^{-1}} and void fraction 0.970.
+\Cref{tab:nccc-one-bed-scope} gives the reported operating inputs; the missing lean-inlet temperatures in Cases 1C--3C are set to \qty{318.15}{K}.
+Reported dry gas mass flow and dry \COtwo{} fraction are converted to a wet feed by saturation at the gas-inlet temperature, with the remaining dry gas distributed between nitrogen and oxygen using $y_{\Otwo}/y_{\Ntwo}=0.08485753604$.
+These input assumptions apply to the physical comparison and to the Case 3C reference used below.
 
-        \subsection{Shooting Method}
-            The shooting calculation guesses the unknown inlet-side state values, integrates the absorber balances across the packed height, and adjusts the guess until the outlet-side boundary conditions are met. For a guessed parameter vector $\mathbf{p}$, one integration gives $\mathbf{y}(H;\mathbf{p})$. The boundary mismatch is defined in \cref{eq:shooting-residual}:
-                \begin{align}
-                    \mathbf{F}(\mathbf{p}) = \mathbf{y}_{\liq}\bigl(H; \mathbf{p}\bigr) - \boldsymbol{\beta}
-                    \label{eq:shooting-residual}
-                    && \left(\text{component units of }\mathbf{y}\right).
-                \end{align}
-                The root-finding problem is therefore the zero of the residual in \cref{eq:shooting-root}:
-                \begin{align}
-                    \mathbf{F}(\mathbf{p}) &= \mathbf{0}
-                    \label{eq:shooting-root}
-                    && \left(\text{component units of }\mathbf{y}\right),
-                \end{align}
-                with each nonlinear iteration requiring another packed-column integration. Shooting returned the shorter recorded runtime for the smooth comparison case, but it did not return an included solution for the NCCC 3C thermal-pinch comparison. It is therefore retained as a numerical-method comparison and is not used for the NCCC benchmark cases.
+\input{tables/nccc_one_bed_case_scope}
 
-        \subsection{Finite Difference}
-            The finite-difference calculation replaces the continuous axial derivatives with mesh-based algebraic residuals. The packed height is divided into $N$ intervals with the mesh in \cref{eq:fd-mesh}:
-                \begin{align}
-                    z_k = k\,\Delta z, \quad k = 0, 1, 2, \ldots, N,
-                    \label{eq:fd-mesh}
-                    && \left(\unit{m}\right)
-                \end{align}
-                where $\Delta z=H/N$. The nodal state $\mathbf{y}^k$ approximates the absorber state at $z_k$,
-                \begin{align}
-                    \mathbf{y}^k \;\approx\; \mathbf{y}\bigl(z_k\bigr)
-                    && \left(\text{component units of }\mathbf{y}\right).
-                \end{align}
-                Interior derivatives are represented with the central-difference stencil in \cref{eq:fd-stencil}:
-                \begin{align}
-                    \odv{\mathbf{y}}{z}\biggr\rvert_{z=z_k}
-                    \approx
-                    \frac{\mathbf{y}^{k+1} - \mathbf{y}^{k-1}}{2\,\Delta z},
-                    \quad 
-                    k = 1, 2, \ldots, N-1
-                    \label{eq:fd-stencil}
-                    && \left(\text{component units of }\mathbf{y}\,\unit{m^{-1}}\right).
-                \end{align}
-                The boundary nodes enforce the inlet and outlet conditions,
-                \begin{align}
-                    \mathbf{y}_{\vap}^0 = \boldsymbol{\alpha},
-                    \quad 
-                    \mathbf{y}_{\liq}^N = \boldsymbol{\beta},
-                    \label{eq:fd-boundary}
-                    && \left(\text{component units of }\mathbf{y}\right)
-                \end{align}
-                for the components fixed by the mixed column boundary specification. For endpoint components without a prescribed boundary value, the differential equation is retained with the one-sided derivative $(\mathbf{y}^{1}-\mathbf{y}^{0})/\Delta z$ at $z=0$ or $(\mathbf{y}^{N}-\mathbf{y}^{N-1})/\Delta z$ at $z=H$. Boundary equations replace only the specified components. Collecting the finite-difference equations and boundary equations gives the algebraic residual system in \cref{eq:fd-system}:
-                \begin{align}
-                    \mathcal{R}\Bigl(\mathbf{y}^0,\, \mathbf{y}^1,\, \dots,\, \mathbf{y}^N\Bigr) 
-                    = \mathbf{0},
-                    \label{eq:fd-system}
-                    && \left(\text{component residual units}\right)
-                \end{align}
-                over all nodal unknowns. Finite difference gives a direct algebraic discretization check against shooting and collocation. In this absorber problem, however, an algebraic solve can return a low boundary residual on a branch whose predicted capture lies outside the physical range or far from the measured value. The finite-difference rows are therefore interpreted through capture, temperature, and residual evidence rather than by the solver report alone.
-
-        \subsection{Collocation BVP Method}
-            The collocation calculation uses an adaptive residual-controlled BVP routine. Each retained row reports the starting mesh size, maximum node count, solver tolerance, boundary-condition tolerance, initialization profile, scaling, final residual norm, and solver message.
-
-            \subsubsection*{Solver Configuration and Initialization}
-                The method starts with an axial mesh over the packed height and an initial profile for every state variable on that mesh. For the coupled reactive calculation, the profile includes four variable apparent molar flows, liquid and vapor temperatures, and pressure. Historical enthalpy-state configurations replace the two temperatures by phase enthalpy flows. The starting profile may be constant, linearly interpolated between boundary values, or reused from a nearby operating point. This choice matters because chemical equilibrium, fugacity, enhancement-factor, and transport calculations are all nonlinear functions of the local state. A poor starting profile can push some mesh intervals outside the physical domain; a profile that respects inlet flows, temperatures, and pressure gives the nonlinear solve a better starting point.
-
-            \subsubsection*{Collocation Formulation}
-                Instead of integrating from one end of the column to the other, collocation represents each state variable with piecewise polynomial functions over the mesh intervals. Within each interval, the polynomial derivative is forced to match the governing-equation residual at selected internal points. The boundary conditions are enforced at the same time. This turns the two-point BVP into one coupled nonlinear algebraic problem over the whole column. The key difference from shooting is that both column ends influence the solution at once, so the method does not depend on guessing one boundary and propagating that guess through the full packed height.
-
-                Let the mesh be $0=z_0<z_1<\cdots<z_N=H$. On interval $[z_j,z_{j+1}]$, the state is approximated by a local polynomial $\mathbf{p}_j(z)$ as shown in \cref{eq:collocation-profile}:
-                \begin{align}
-                    \mathbf{y}(z) &\approx \mathbf{p}_j(z),
-                    \qquad z_j \le z \le z_{j+1}
-                    \label{eq:collocation-profile}
-                    && \left(\text{component units of }\mathbf{y}\right).
-                \end{align}
-                At each collocation point $z_{j,q}$ inside the interval, the polynomial derivative is constrained to match the absorber model in \cref{eq:collocation-residual}:
-                \begin{align}
-                    \mathbf{p}'_j(z_{j,q})
-                    -\mathbf{f}\left(z_{j,q},\mathbf{p}_j(z_{j,q})\right)
-                    &= \mathbf{0},
-                    \qquad q=1,\ldots,s
-                    \label{eq:collocation-residual}
-                    && \left(\text{component units of }\mathbf{y}\,\unit{m^{-1}}\right).
-                \end{align}
-                Neighboring interval polynomials must also meet at the mesh nodes according to \cref{eq:collocation-continuity},
-                \begin{align}
-                    \mathbf{p}_{j-1}(z_j)-\mathbf{p}_{j}(z_j)
-                    &=\mathbf{0},
-                    \qquad j=1,\ldots,N-1
-                    \label{eq:collocation-continuity}
-                    && \left(\text{component units of }\mathbf{y}\right),
-                \end{align}
-                while the boundary conditions close the system in \cref{eq:collocation-boundary}:
-                \begin{align}
-                    \mathbf{B}\left(\mathbf{p}_0(0),\mathbf{p}_{N-1}(H)\right)
-                    &= \mathbf{0}
-                    \label{eq:collocation-boundary}
-                    && \left(\text{boundary residual units}\right).
-                \end{align}
-                Collecting the polynomial coefficients and mesh-state values into $\mathbf{U}$ gives the nonlinear algebraic problem solved by the collocation routine in \cref{eq:collocation-system}:
-                \begin{align}
-                    \mathbf{R}(\mathbf{U}) &= \mathbf{0}
-                    \label{eq:collocation-system}
-                    && \left(\text{scaled residual units}\right).
-                \end{align}
-
-            \subsubsection*{Nonlinear Solve and Mesh Refinement}
-                The coupled algebraic system is solved iteratively. At each iteration, the model evaluates governing-equation residuals, boundary residuals, and the scaling used to put variables on comparable magnitudes. The solver then updates the mesh-state values until the polynomial profile better satisfies both the differential equations and the boundary conditions. Each residual evaluation includes chemical-equilibrium, thermodynamic driving-force, transport-property, enhancement-factor, and flux calculations at every axial point. The retained records therefore include residual norm, boundary residual, runtime, mesh size, and solver message.
-
-                After a candidate solution is found on the current mesh, the method estimates where the collocation residual is largest. Intervals with larger residuals receive more mesh nodes, and the nonlinear solve is repeated on the refined mesh. This is useful for packed-column absorption because temperature and concentration profiles can be smooth through most of the bed but sharper near a thermal bulge or thermodynamic pinch. A fixed coarse mesh can miss those regions, while a very fine uniform mesh makes every solve larger. Adaptive refinement puts nodes where the solution needs them, within the maximum-node limit reported for the benchmark.
-
-            \subsubsection*{Benchmark Role and Reported Diagnostics}
-                It is the primary method for the NCCC one-bed comparisons because it enforces mixed boundary conditions while refining localized profile changes. Its numerical results depend on scaling, initialization, mesh limits, residual tolerances, and the validity domains of the property correlations. The retained result rows record the configured starting mesh and maximum-node limit, solver message, boundary-residual norm, runtime, and physical-comparison error. The records for the smooth-point and six-species method comparisons do not retain final adaptive node counts, refinement histories, or method-specific iteration and evaluation counts. For coupled reactive calculations, the recorded diagnostics include the collocation iteration count, final mesh size, maximum RMS collocation residual and maximum scaled boundary residual when the solver returns them. The numerical comparison is limited to the recorded diagnostics.
-
-        \subsection{Recorded Numerical Settings}
-            The historical benchmark calculations were run in Python 3.13 with fixed package versions. Each result row records the case, method setting, convergence message, residual information, capture error, temperature error where measured taps are available, runtime, mesh settings, solver tolerances, initialization notes, and thermodynamic model. The full benchmark data record also retains Python version, platform, and package-version information. These common fields support a descriptive comparison across methods. The archived rows do not identify the processor, memory, BLAS thread settings, or system load, so the runtime values should not be interpreted as a controlled hardware benchmark. A stricter computational-cost comparison would require one documented machine and method-specific iteration, evaluation, final-mesh, CPU-time, and memory records.
-
-            The one-bed NCCC rows included in the aggregate use the collocation BVP calculation with 21 starting mesh points, a solver tolerance of 0.5, a boundary-condition tolerance of 0.001, and a maximum of 1000 mesh nodes. The calculation scales flow and enthalpy states, checks trial molar flows, pressure, and enthalpy magnitudes before evaluating properties, and applies the ePC-SAFT \COtwo{} fugacity correction in the ePC-SAFT rows. These settings apply to K18, K19, and 1C--7C. Flow and pressure floors and finite enthalpy bounds constrain the state checks; the optional positive-variable transformation acts only on the four variable molar flows and pressure. Neither mechanism enforces every temperature, composition, or hydraulics correlation domain. In the legacy aggregate formulation, inadmissible trial states and property-evaluation failures are counted and replaced by a finite penalty residual during iteration. The coupled nine-species calculation instead propagates such failures, uses untransformed scaled coordinates, and recorded no invalid-state penalties in the accepted runs. Final inclusion is determined separately by the criteria below.
-
-            The historical six-species thermodynamic comparison includes the Henry-law reference closure and the ePC-SAFT driving-force calculation. In the ePC-SAFT calculation, the equation of state supplies the \COtwo{} fugacity coefficients while the same concentration-based chemical-equilibrium calculation remains active for the one-bed NCCC benchmark. Only the \COtwo{} fugacity driving force changes in the included rows. The chemical-equilibrium formulation, enhancement-factor equations, transport-property correlations, and governing balances are held fixed. Pressure is specified for each ePC-SAFT phase state. The retained benchmark rows use the explicitly recorded \texttt{MEA\_CO2\_H2O\_ionic\_fit} dataset; its parameter summary is given in \cref{sec:appendix-properties}. The liquid phase uses the ionic terms directly, whereas the vapor phase contains only neutral species.
-
-            For the six-species comparison, CppAD differentiates the thermodynamic model but does not supply an assembled column Jacobian; collocation uses the solver's numerical Jacobian approximation. The smooth-case collocation profile is initialized from shooting; the retained timing does not separately identify the cost of generating that initial profile, so it does not establish an end-to-end initialization-plus-solve comparison.
-
-            The coupled nine-species numerical verification uses Case 3C with the selected parameters in \cref{sec:selected-reactive-inputs}, temperature-state energy balances and the conventional enhancement formulation. It uses an immutable ePC-SAFT 0.2 parameter document and native reactive equilibrium; Helmholtz-energy derivatives are evaluated by CppAD automatic differentiation. Native thermodynamic derivatives are combined with automatic differentiation of the transport and energy expressions to assemble the column Jacobian. The derivatives include the nonisothermal energy balance and the bulk-fugacity/free-concentration film coefficient. Directional comparisons with centered finite differences at lean and rich liquid states, using nonunit state scales, agree within relative tolerance \num{2e-5} and absolute tolerance \num{2e-8} for the scaled directional derivatives. Finite differences are used for this check, not for the coupled column Jacobian. Identical thermodynamic states reuse their evaluated values and derivatives, while nearby states use conservative initial amounts subject to the same equilibrium and liquid-root checks. The first calculation starts from a converged same-case Henry profile; its converged reactive profile initializes the refined calculation. Initial meshes of 21 and 41 nodes use collocation tolerances of 0.5 and 0.05, respectively, with boundary tolerance 0.001 and a 1000-node limit. The reported RMS differential residual is normalized componentwise by $1+|f_i|$ in the scaled equations and summarized by its maximum over mesh intervals. Residuals and mesh sizes are recorded after each outer mesh iteration; Jacobian counts distinguish node and midpoint evaluations. These diagnostics are separate from the postprocessed boundary-error norm.
-
-            Local thermodynamic sensitivity is evaluated separately for the coupled nine-species Case 3C model. Each MEA--water or \COtwo--water binary interaction coefficient is multiplied individually by 0.95 and 1.05 in both EOS phases. The selected coefficients are \num{-0.07352750} and \num{0.01326288}, respectively. Thus, a multiplier above one makes the negative MEA--water coefficient more negative. Separate calculations vary the equilibrium constants for carbamate hydrolysis (R4) and protonated-MEA dissociation (R5), using $\ln K_j^*(T)=\ln K_j(T)+\ln s$ with $s=0.95$ or $1.05$. This shifts the equilibrium-constant level while preserving its logarithmic temperature derivative. Each calculation varies only the named input; other thermodynamic parameters, kinetic inputs, transport correlations and operating conditions remain fixed. The refined reference profile initializes each calculation with 41 nodes, collocation tolerance 0.05 and boundary tolerance 0.001. Capture and the maximum liquid temperature over 101 equally spaced axial positions are compared with the unperturbed reference.
-
-            A complementary transport sensitivity comparison uses separate multipliers of 0.9 and 1.1 on liquid-mixture viscosity, free molecular \COtwo{} diffusivity in the liquid, and the liquid-side \COtwo{} mass-transfer coefficient. The thermodynamic parameters, operating conditions and correlation forms remain fixed, with the same refined numerical settings and sampled-temperature definition. Each multiplier is applied before evaluating dependent quantities in both the column equations and their Jacobian. Viscosity changes propagate through ionic diffusivity, holdup and transfer correlations; the separate molecular \COtwo{} and MEA diffusivity correlations are not directly viscosity-dependent. The \COtwo{} diffusivity and liquid-transfer-coefficient changes propagate through the Hatta number, enhancement factor and combined film resistance. Enhancement is therefore recalculated, not held constant. Vapor properties are not directly scaled. Directional checks at one seven-state liquid operating point for each of the six multipliers satisfy the same derivative tolerances specified above. Because these inputs share dependencies, their responses are not combined as independent statistical uncertainties.
-
-            The seven-case coupled comparison uses 21 initial nodes, collocation tolerance 0.5, boundary tolerance 0.001 and a 1000-node limit. Reported packing temperatures from Morgan et al.\ \cite{Morgan2020}, Table C2, are converted from Celsius to kelvin and from the top-to-bottom coordinate $x$ to $z=1-x$. They are compared with both predicted phase temperatures because the source does not identify a phase-specific sensor.
-
-            Computational cost is measured with three sequential fresh-Henry-start Case 3C calculations on a shared Linux machine with an AMD Ryzen 5 5500 processor, six physical cores and approximately 32 GB RAM, using CPython 3.13, NumPy 2.4.4 and SciPy 1.17.1. BLAS, OpenMP and MKL thread settings are fixed to one. BVP CPU and wall times cover the solve; total wall time also includes fresh initialization, phase-profile calculation and CSV export, but excludes imports, environment preparation, input loading and diagnostic serialization. Peak resident memory includes imported libraries. Pressure-root iterations evaluate pressure and its exact density derivative, while accepted states receive full properties; exact Hessian actions, shared association Jacobians, primal-point reuse and demand-driven temperature derivatives avoid repeated work without changing physical equations or acceptance tolerances. The separate temperature-state Henry method checks are single-run measurements whose wall times include subprocess startup and output. Their timings and the historical six-species aggregate's \qty{90}{s} inclusion limit are not applied to the coupled campaign.
-
-        \subsection{Row-Inclusion Criteria and Reported Metrics}
-\COtwo{} capture is the percentage reduction in vapor-phase \COtwo{} molar flow between the vapor inlet and outlet.
-For included case $k$, the signed error and mean absolute error are
+% E2: observables
+Capture errors and axial temperature comparisons describe different aspects of absorber performance.
+For case $k$, capture is the percentage reduction in vapor \COtwo{} flow; signed error is prediction minus observation:
 \begin{align}
-    \eta_k &= 100\left(1-\frac{F_{\COtwo,k}^{\vap}(H)}{F_{\COtwo,k}^{\vap}(0)}\right),\\
-    e_{\eta,k} &= \eta_k-\eta_k^{\mathrm{obs}},
-    &\mathrm{MAE}_{\eta} &= \frac{1}{N_c}\sum_{k=1}^{N_c}|e_{\eta,k}|.
+ \eta_k&=100\left(1-\frac{F_{\COtwo,k}^{\vap}(H)}{F_{\COtwo,k}^{\vap}(0)}\right),\label{eq:capture}\\
+ e_{\eta,k}&=\eta_k-\eta_k^{\mathrm{obs}},&
+ \mathrm{MAE}_{\eta}&=\frac{1}{N_c}\sum_{k=1}^{N_c}|e_{\eta,k}|.\label{eq:capture-error}
 \end{align}
-Here $N_c$ is the number of included cases, capture is in percent, and capture error is in percentage points.
-Each included case has equal weight in the mean absolute error.
-For $N_T$ liquid-temperature observations at matched axial positions $z_m$, the temperature error is
+Capture is in percent, errors are in percentage points, and the mean absolute error weights the $N_c=7$ cases equally.
+Packing temperatures from Morgan et al.\ \cite{Morgan2020}, Table C2, are converted from Celsius to kelvin and from their top-to-bottom coordinate $x$ to normalized height $\zeta=1-x=z/H$.
+Both predicted phase temperatures are compared with the taps because the source does not designate a measured phase; the sampled model peak is the maximum liquid temperature at 101 equally spaced exported positions.
+
+\subsection{Numerical Solution and Verification}
+% E3: collocation method
+Adaptive residual-controlled collocation in SciPy solves the mixed-boundary-value problem (BVP) in \cref{eq:state-derivative,eq:boundary-residual}.
+The piecewise cubic approximation satisfies collocation conditions, with differential residuals assessed over each interval; it does not satisfy the differential equations exactly everywhere.
+Both inlet boundaries are enforced simultaneously, and intervals with excessive residuals receive additional nodes.
+The state and equation scales are obtained from the initial profile estimates, with temperature scales of \qty{400}{K}.
+
+% E4a: derivatives
+The assembled Jacobian includes the thermodynamic, transport and nonisothermal dependencies of the column equations.
+CppAD supplies automatic derivatives of the thermodynamic calculation, which are combined with differentiated transport and energy expressions, including the bulk-fugacity/free-concentration film relation.
+Repeated identical thermodynamic states reuse their values and derivatives.
+Scaled directional comparisons with centered finite differences at lean and rich states satisfy relative and absolute tolerances of \num{2e-5} and \num{2e-8}; finite differences are used only to verify the derivatives.
+
+% E4b: distinct initial guesses
+An initial axial column profile and an initial chemical composition at each position serve different numerical purposes.
+The coarse Case 3C calculation starts from a converged same-case Henry-law profile; its reactive profile initializes the refined calculation.
+The equilibrium solve is initialized from conservative species amounts generated with a reaction-extent fraction of 0.001 (0.0001 for Case 1C); this affects only the initial guess.
+Nearby thermodynamic states may use previously calculated conservative amounts, subject to the same equilibrium and liquid-root checks.
+
+% E5: paired settings
+Case 3C is solved at two jointly varied mesh and tolerance settings with unchanged physical equations, parameters and inlet conditions.
+The calculations use 21 and 41 initial nodes with collocation tolerances 0.5 and 0.05, respectively, boundary tolerance 0.001 and a 1000-node limit.
+Root-mean-square (RMS) differential residuals are normalized componentwise by $1+|f_i|$ in the scaled equations and summarized by the maximum over mesh intervals.
+Outer mesh iterations, residuals at each iteration, Jacobian evaluations and equilibrium solves are reported as measures of numerical effort; mesh iterations do not count inner Newton steps.
+
+% E6a: boundary inclusion criterion
+Reported solutions must satisfy the solver stopping tests, positive species concentrations, capture between zero and 100 percent, and the postprocessed boundary-error criterion
 \begin{align}
-    \mathrm{RMSE}_T &= \left[\frac{1}{N_T}\sum_{m=1}^{N_T}
-    \left(T^{\liq}(z_m)-T_m^{\liq,\mathrm{obs}}\right)^2\right]^{1/2}.
+ \epsilon_{\mathrm{BC}}&=\left[\sum_{j=1}^{6}
+ \left(100\frac{|q_j^{\mathrm{calc}}-q_j^{\mathrm{spec}}|}{q_j^{\mathrm{spec}}}\right)^2\right]^{1/2}\leq1.0,\label{eq:postprocessed-bc}\\
+ \mathbf q&=\left(F_{\COtwo}^{\liq}(H),F_{\HtwoO}^{\liq}(H),T^{\liq}(H),
+ F_{\COtwo}^{\vap}(0),F_{\HtwoO}^{\vap}(0),T^{\vap}(0)\right).
 \end{align}
-Temperature differences have the same numerical value in kelvin and degrees Celsius.
-Experimental comparisons are interpreted alongside measurement uncertainty, input assumptions, and numerical accuracy.
+The norm uses six percentage-relative errors with positive specified values and temperatures in kelvin.
+It differs from the solver's scaled boundary residual and RMS differential residual; pressure is enforced by the boundary equations but excluded from this postprocessed norm.
+A calculation in which the reactive equilibrium cannot be solved is reported as unconverged; no substitute value is assigned.
+Every calculation reported in \cref{sec:results} satisfies these criteria; grouped convergence diagnostics are listed in \cref{tab:run-diagnostics}, and \cref{tab:reactive-numerical-verification} presents the paired Case 3C refinement.
 
-            The reported boundary-error metric is the Euclidean norm of six absolute percentage-relative errors:
-            \begin{align}
-                \epsilon_{\mathrm{BC}}&=\left[\sum_{j=1}^{6}
-                \left(100\frac{|q_j^{calc}-q_j^{spec}|}{q_j^{spec}}\right)^2\right]^{1/2},\\
-                \mathbf{q}&=\left(F_{\COtwo}^{\liq}(H),F_{\HtwoO}^{\liq}(H),T^{\liq}(H),
-                F_{\COtwo}^{\vap}(0),F_{\HtwoO}^{\vap}(0),T^{\vap}(0)\right).
-            \end{align}
-            The specified boundary values are positive and temperatures are expressed in kelvin. Pressure is enforced by the BVP boundary equations but is not included in this six-component postprocessed metric. The threshold $\epsilon_{\mathrm{BC}}\leq1.0$ applies to percentage-relative errors, not to the solver's internally scaled boundary residual or its RMS differential-equation residual.
+% E6b: balance diagnostics
+Component and charge discrepancies quantify departures from the conservation and electroneutrality equations at each position, while axial ranges of $F_i^\vap-F_i^\liq$ test column component conservation.
+The analogous energy diagnostic is
+\begin{equation}
+ \Delta\dot H_{\mathrm{net}}=
+ \max_{\zeta}\left(\dot H^\vap-\dot H^\liq\right)
+ -\min_{\zeta}\left(\dot H^\vap-\dot H^\liq\right),\label{eq:energy-range}
+\end{equation}
+evaluated over the 101 exported positions in watts; the additional Case 3C refinements also use 10,001 positions.
+The continuous equations predict zero variation; the nonzero numerical range is reported as a diagnostic, separately from caloric-model accuracy.
 
-            A row is included in the historical six-species aggregate only when the selected solver reports success, the boundary-residual norm is at most \num{1.0}, the predicted capture is between \qty{0}{\percent} and \qty{100}{\percent}, and the run finishes within \qty{90}{s}. Temperature root-mean-square error (RMSE), guard count, and invalid-state count are reported but are not row-inclusion criteria. Runs that do not satisfy all four criteria are retained in the attempted-case accounting but are not included in aggregate capture-error or runtime statistics.
+\subsection{Thermodynamic, Transport and Operating Perturbations}
+% E7: thermodynamic design
+One-at-a-time thermodynamic perturbations test two binary interactions and two reaction constants around refined Case 3C.
+The MEA--water and \COtwo--water binary coefficients, \num{-0.07352750} and \num{0.01326288}, are separately multiplied by 0.95 and 1.05 in both EOS phases; scaling the negative coefficient above one makes it more negative.
+For carbamate hydrolysis (R4) and protonated-MEA dissociation (R5), $\ln K_r^*(T)=\ln K_r(T)+\ln s$ with the same multipliers, preserving $d\ln K_r/dT$.
+Each calculation uses 41 initial nodes, tolerance 0.05, boundary tolerance 0.001 and the refined reference profile as its initial guess.
+Other thermodynamic, kinetic, transport and operating inputs remain fixed, including the empirical enthalpy formulas.
 
-            Capture error is reported in percentage points relative to the measured pilot-plant capture. Temperature-profile error is reported only for cases with measured axial temperature taps. Runtime is the wall-clock duration recorded for the model calculation, not an external manual timing. Domain-guard and invalid-state counts identify solver iterations that left the physically valid property domain during an attempted solve. Case-specific counts are given in \cref{tab:method-case-contrast}.
+% E8: transport design
+Separate multipliers of 0.9 and 1.1 test liquid viscosity, free molecular \COtwo{} diffusivity and the liquid-side \COtwo{} transfer coefficient on the same refined reference.
+Viscosity changes propagate through ionic diffusivity, holdup and transfer correlations; the molecular \COtwo{} and MEA diffusivity formulas are not directly viscosity-dependent.
+The diffusivity and transfer-coefficient changes also propagate through Hatta number, enhancement and combined film resistance in both the column equations and Jacobian.
+Vapor properties are not directly scaled, and all remaining model inputs are unchanged.
+A factor-one calculation checks equivalence with the reference, and the lower-diffusivity case uses conservative species amounts obtained by continuation from a nearby temperature.
+
+% E9: operating design
+Discrete Case 3C perturbations vary solvent circulation, lean loading and inlet temperature separately.
+The liquid-to-reported-dry-gas mass ratio $L/G$ changes by $\pm10\%$ through liquid flow at fixed dry gas flow; loading changes from 0.25 to 0.225 or 0.275 mol \COtwo{} per mol MEA, and liquid-inlet temperature from \qty{318.15}{K} to \qty{313.15}{K} or \qty{323.15}{K}.
+These calculations use the coarse campaign settings of 21 initial nodes, tolerance 0.5 and boundary tolerance 0.001, with a 1000-node limit.
+Each condition is initialized from a Henry-law profile; where that initialization did not converge (the two flow perturbations and the colder inlet), the calculation was restarted from the reactive Case 3C profile with unchanged equations and tolerances.
+
+\paragraph{Computational-cost measurement.}
+% E10: timing protocol
+Three sequential fresh-initialization Case 3C runs characterize cost at the coarse mesh and tolerance settings.
+The shared Linux machine has an AMD Ryzen 5 5500 processor, six physical cores and approximately 32 GB RAM; the runs use CPython 3.13, NumPy 2.4.4 and SciPy 1.17.1, with BLAS, OpenMP and MKL thread settings fixed to one.
+BVP wall and process CPU times include the solver call and conversion of its returned solution; total wall time also includes Henry initialization, phase-profile evaluation and CSV export, but excludes program start-up, input loading and output writing.
+Peak resident memory includes imported libraries.

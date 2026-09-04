@@ -25,7 +25,7 @@ def test_sync_figures_copies_required_outputs_and_validates_references(tmp_path:
         _write(repo / source, str(source))
     _write(
         latex / "main.tex",
-        r"\includegraphics{figures/nccc-one-bed-thermo-benchmark.pdf}",
+        r"\includegraphics{figures/reactive-seven-case-capture.pdf}",
     )
 
     copied = latex_workflows.sync_figures(repo, latex)
@@ -42,8 +42,16 @@ def test_sync_projection_replaces_mirror_and_preserves_git(tmp_path: Path) -> No
     _write(source / "sections" / "body.tex", "body")
     _write(source / "scripts" / "ignored.py", "ignored")
     _write(source / "builds" / "ignored.pdf", "ignored")
-    _write(mirror / ".git" / "HEAD", "ref: refs/heads/main")
+    _write(source / "QA_REPORT.md", "private QA")
+    _write(source / "main.log", "build log")
     _write(mirror / "stale.txt", "stale")
+    for command in (
+        ["git", "init"],
+        ["git", "add", "stale.txt"],
+        ["git", "-c", "user.name=Codex Test", "-c", "user.email=codex-test@example.invalid",
+         "commit", "-m", "baseline"],
+    ):
+        latex_workflows.subprocess.run(command, cwd=mirror, check=True, capture_output=True)
 
     latex_workflows.sync_projection(source, mirror)
 
@@ -53,7 +61,22 @@ def test_sync_projection_replaces_mirror_and_preserves_git(tmp_path: Path) -> No
     assert not (mirror / "stale.txt").exists()
     assert not (mirror / "scripts").exists()
     assert not (mirror / "builds").exists()
+    assert not (mirror / "QA_REPORT.md").exists()
+    assert not (mirror / "main.log").exists()
     latex_workflows.audit_projection(source, mirror)
+
+
+def test_sync_projection_preserves_uncommitted_mirror_files(tmp_path: Path) -> None:
+    source = tmp_path / "latex"
+    mirror = tmp_path / "mirror"
+    _write(source / "main.tex", "replacement")
+    _write(mirror / "main.tex", "author edit")
+    latex_workflows.subprocess.run(["git", "init"], cwd=mirror, check=True, capture_output=True)
+
+    with pytest.raises(RuntimeError, match="dirty Overleaf mirror"):
+        latex_workflows.sync_projection(source, mirror)
+
+    assert (mirror / "main.tex").read_text() == "author edit"
 
 
 def test_audit_projection_rejects_changed_content(tmp_path: Path) -> None:

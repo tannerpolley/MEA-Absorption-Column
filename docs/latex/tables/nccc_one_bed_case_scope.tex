@@ -1,7 +1,7 @@
 \begin{table}[pos=htbp]
   \centering
   \footnotesize
-  \caption{NCCC one-bed no-intercooler MEA physical-comparison scope.}
+  \caption{Reported and assumed inputs and reported capture for the seven NCCC one-bed, no-intercooler cases \cite{Morgan2020}.}
   \label{tab:nccc-one-bed-scope}
   \begin{threeparttable}
   \setlength{\tabcolsep}{2.5pt}
@@ -18,18 +18,15 @@
     \toprule
     Year & Case &
     \multicolumn{1}{c}{\shortstack{Lean\\flow\\(\unit{kg\,h^{-1}})}} &
-    \multicolumn{1}{c}{\shortstack{Gas\\flow\\(\unit{kg\,h^{-1}})}} &
+    \multicolumn{1}{c}{\shortstack{Dry gas\\flow\\(\unit{kg\,h^{-1}})}} &
     \multicolumn{1}{c}{\shortstack{Lean\\temp.\\(\unit{\degreeCelsius})}} &
     \multicolumn{1}{c}{\shortstack{Gas\\temp.\\(\unit{\degreeCelsius})}} &
     \multicolumn{1}{c}{\shortstack{Pressure\\(\unit{kPa})}} &
-    \multicolumn{1}{c}{\shortstack{Lean\\loading}} &
-    \multicolumn{1}{c}{\shortstack{MEA\\mass frac.}} &
-    \multicolumn{1}{c}{\shortstack{Reported inlet\\$y_{\ce{CO2}}$}} &
-    \multicolumn{1}{c}{\shortstack{Capture\\(\unit{\percent})}} \\
+    \multicolumn{1}{c}{\shortstack{Lean loading\\(mol CO$_2$/\\mol MEA)}} &
+    \multicolumn{1}{c}{\shortstack{MEA mass\\fraction$^{\mathrm{b}}$}} &
+    \multicolumn{1}{c}{\shortstack{Dry inlet\\$y_{\ce{CO2}}$}} &
+    \multicolumn{1}{c}{\shortstack{Reported\\capture\\(\unit{\percent})}} \\
     \midrule
-    2014 & K18 & 6804  & 2271 & 42.2 & 46.1 & 109.2 & 0.14 & 0.30 & 0.102 & 92.8 \\
-    2014 & K19 & 11793 & 1440 & 40.9 & 46.2 & 108.0 & 0.18 & 0.28 & 0.110 & 98.2 \\
-    2014 & K20 & 3175  & 1324 & 45.3 & 46.1 & 108.1 & 0.07 & 0.28 & 0.110 & 95.5 \\
     2017 & 1C & 6185 & 1997 & 45.0\tnote{a} & 43.3 & 109.1 & 0.15 & 0.30 & 0.077 & 97.1 \\
     2017 & 2C & 7765 & 2499 & 45.0\tnote{a} & 43.1 & 109.6 & 0.20 & 0.30 & 0.077 & 92.3 \\
     2017 & 3C & 7517 & 2013 & 45.0\tnote{a} & 43.6 & 109.5 & 0.25 & 0.30 & 0.093 & 89.5 \\
@@ -41,8 +38,9 @@
   \end{tabular*}
   \begin{tablenotes}[flushleft]
     \footnotesize
-    \item[] The coupled Case 3C calculation uses reported dry gas mass and dry \(\COtwo\) fraction. Saturation at the gas-inlet temperature reconstructs the wet feed, giving \(y_{\COtwo}=0.085394\) from the reported dry value 0.093.
+    \item[] All seven calculations use reported dry gas mass and dry \(\COtwo\) fraction. Saturation at the gas-inlet temperature reconstructs the wet feed, giving \(y_{\COtwo}=0.085394\) from the reported dry value 0.093 for Case 3C.
     \item[a] Lean solvent inlet temperature was blank in the source table and was set to \qty{45.0}{\degreeCelsius} for the model input.
+    \item[b] MEA mass fraction is on the CO$_2$-free solvent basis. Pressure is the reported value used throughout the bed.
   \end{tablenotes}
   \end{threeparttable}
 \end{table}

@@ -1,6 +1,6 @@
-    \section*{Code Availability}
-The Python absorber model is maintained in the \href{https://github.com/tannerpolley/MEA-Absorption-Column}{project repository}.
-The \href{https://github.com/tannerpolley/MEA-Absorption-Column/tree/0d4e552e15fdf9ee17edc64908c3a04a6525f98b}{revision dated 2026-08-25} identifies only the historical six-species comparison, using \texttt{MEA\_CO2\_H2O\_ionic\_fit}.
-The coupled nine-species calculations use the parameterization in \cref{sec:selected-reactive-inputs}, an immutable \texttt{epcsaft} wheel, native thermodynamic derivatives and differentiated column equations~\cite{Polley2026epcsaft}.
-Their exact software and parameter identities, evaluated source files and reproduction commands are recorded in \texttt{REPRODUCE.md} and the retained run records.
-The August revision is not a release of the coupled calculation files; no public archival identifier for those files is supplied here.
+\section*{Code Availability}
+The Python absorber model, parameter files, numerical records and reproduction instructions are available in the \href{https://github.com/tannerpolley/MEA-Absorption-Column}{project repository} at tag \texttt{nce-revision-v3}.
+The calculations use the nine-species parameterization in \cref{sec:selected-reactive-inputs}, automatic thermodynamic derivatives and differentiated column equations~\cite{Polley2026epcsaft}.
+The ePC-SAFT package used for these calculations is not yet publicly released; the repository records the exact build identity of every reported calculation, and the package is available from the authors on request and will be released publicly when ready.
+Full-precision parameters, software versions and the commands for every reported calculation are documented with the code.
+An archival identifier will be assigned on acceptance.

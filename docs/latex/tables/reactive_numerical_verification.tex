@@ -1,6 +1,6 @@
 \begin{table}[pos=htbp]
   \centering
-  \caption{Numerical verification for the coupled nine-species Case 3C calculation. Both calculations use the same nonisothermal equations and selected parameter set. Residual histories show the printed maximum normalized RMS residual after each mesh iteration; final residuals below retain additional precision.}
+  \caption{Observed joint mesh/tolerance refinement response for the coupled nine-species Case 3C calculation. Both calculations use the same equations and parameters. The iteration rows show the printed maximum normalized RMS residual after each mesh iteration; final residuals below retain additional precision.}
   \label{tab:reactive-numerical-verification}
   \small
   \renewcommand{\arraystretch}{1.12}
@@ -16,15 +16,15 @@
     Maximum scaled boundary residual & 0 & 0 \\
     Column RHS evaluation batches & 19 & 17 \\
     Jacobian evaluation batches & 4 & 4 \\
-    Local state Jacobian evaluations & 84 & 164 \\
+    State Jacobian evaluations & 84 & 164 \\
     Liquid equilibrium solves, including profile output & 335 & 499 \\
     \COtwo{} capture (\unit{\percent}) & 91.54329 & 91.54839 \\
     Peak liquid temperature (\unit{K}) & 347.9065 & 347.8615 \\
-    Axial net-enthalpy-flow range (\unit{W}) & 293.219 & 273.006 \\
+    Net-enthalpy-flow range, 101 positions (\unit{W}) & 293.219 & 273.006 \\
     \bottomrule
   \end{tabularx}
   \par\smallskip
   \begin{minipage}{\textwidth}\footnotesize
-    A batch evaluates all nodes or interval midpoints, not a single axial state. Four Jacobian batches correspond to two node/midpoint pairs. Mesh iterations are not counts of inner Newton steps. Both calculations use boundary tolerance \num{0.001} and a 1000-node limit; no invalid-state penalties were recorded. Memory and inner-Newton residual histories were not measured.
+    The continuous equations predict zero net-enthalpy-flow range; the nonzero numerical values are diagnostics, with no asserted energy-error threshold. RHS denotes the right-hand side of the column equations. A batch evaluates all nodes or interval midpoints, not a single axial state. Four Jacobian batches correspond to two node/midpoint pairs. Mesh iterations count outer refinement cycles, not inner Newton steps. Both calculations use boundary tolerance \num{0.001} and a 1000-node limit. Peak memory is reported with the timing study.
   \end{minipage}
 \end{table}

@@ -1,48 +1,28 @@
-\begin{tikzpicture}[node distance=7mm and 12mm]
-  \node[cse stage] (state) {Local phase state};
-  \node[cse stage,below=of state] (properties) {Physical properties};
-  \node[cse stage,below=of properties] (thermo) {Thermodynamic closure};
-  \node[cse stage,below=of thermo] (transport) {Transport and hydraulics};
-  \node[cse stage,below=of transport] (balances) {Packed-column balances};
-  \node[cse solver,below=of balances] (solver) {BVP solver update};
-
+\begin{tikzpicture}[node distance=6mm and 9mm]
+  \node[cse stage] (state) {Phase state};
   \node[cse detail,right=of state] (state-detail)
-    {Flow, composition, pressure, and temperature};
-  \node[cse detail,right=of properties] (properties-detail)
-    {Thermophysical and transport properties};
+    {Flows, apparent composition, temperatures and pressure};
+  \node[cse stage,below=12mm of state] (thermo) {Reactive liquid state};
   \node[cse detail,right=of thermo] (thermo-detail)
-    {Coupled nine-species reactive EOS; reduced six-species chemistry only for the historical comparison};
+    {Five reactions and EOS activities give nine species, density and liquid CO$_2$ fugacity};
+  \node[cse stage,below=12mm of thermo] (vapor) {Vapor driving force};
+  \node[cse detail,right=of vapor] (vapor-detail)
+    {Normalize CO$_2$/trace-MEA/water for EOS $\phi^v$; use wet-gas $y_{\mathrm{CO_2}}$ in $f^v=y_{\mathrm{CO_2}}\phi^vP$};
+  \node[cse stage,below=12mm of vapor] (properties) {Auxiliary properties};
+  \node[cse detail,right=of properties] (properties-detail)
+    {Empirical hydraulic density, transport and enthalpy; water vapor-pressure approximation};
+  \node[cse stage,below=12mm of properties] (transport) {Interphase sources};
   \node[cse detail,right=of transport] (transport-detail)
-    {Fixed transport and enhancement formulas; thermodynamic inputs determine values};
+    {Conventional enhancement, fixed-bulk-activity film resistance, mass and heat transfer};
+  \node[cse stage,below=12mm of transport] (balances) {Column balances};
   \node[cse detail,right=of balances] (balances-detail)
-    {Material and energy balances over the packed height};
+    {Component-flow and temperature derivatives with mixed inlet boundaries};
+  \node[cse solver,below=12mm of balances] (solver) {Collocation update};
   \node[cse detail,right=of solver] (solver-detail)
-    {Residual-controlled state update under the selected numerical method};
-
-  \begin{scope}[on background layer]
-    \node[cse region,fit=(state)(properties)(thermo)(transport)(balances)(solver)]
-      (sequence-region) {};
-    \node[cse region,fit=(state-detail)(properties-detail)(thermo-detail)
-      (transport-detail)(balances-detail)(solver-detail)] (responsibility-region) {};
-  \end{scope}
-
-  \draw[cse arrow] (state) -- (properties);
-  \draw[cse arrow] (properties) -- (thermo);
-  \draw[cse arrow] (thermo) -- (transport);
-  \draw[cse arrow] (transport) -- (balances);
-  \draw[cse arrow] (balances) -- (solver);
-
-  \draw[cse link] (state.east) -- (state-detail.west);
-  \draw[cse link] (properties.east) -- (properties-detail.west);
-  \draw[cse link] (thermo.east) -- (thermo-detail.west);
-  \draw[cse link] (transport.east) -- (transport-detail.west);
-  \draw[cse link] (balances.east) -- (balances-detail.west);
-  \draw[cse link] (solver.east) -- (solver-detail.west);
-
-  \coordinate (feedback-west) at ([xshift=-10mm]solver.west);
-  \coordinate (feedback-top) at ([xshift=-10mm]state.west);
-  \draw[cse arrow]
-    (solver.west) -- (feedback-west) -- (feedback-top) -- (state.west);
-
-  \path ([yshift=-4mm]current bounding box.south) node[inner sep=0] {};
+    {Update axial states and mesh using differential and boundary residuals};
+  \foreach \from/\to in {state/thermo,thermo/vapor,vapor/properties,properties/transport,transport/balances,balances/solver}
+    \draw[cse arrow] (\from) -- (\to);
+  \foreach \name in {state,thermo,vapor,properties,transport,balances,solver}
+    \draw[cse link] (\name.east) -- (\name-detail.west);
+  \draw[cse arrow] (solver.west) -- ++(-9mm,0) |- (state.west);
 \end{tikzpicture}

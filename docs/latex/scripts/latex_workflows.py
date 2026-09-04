@@ -26,14 +26,6 @@ FIGURE_COPIES = (
         Path("transport-sensitivity.pdf"),
     ),
     (
-        Path("analyses/nccc_validation/results/final/figures/nccc_one_bed_thermo_benchmark.pdf"),
-        Path("nccc-one-bed-thermo-benchmark.pdf"),
-    ),
-    (
-        Path("analyses/nccc_validation/figures/reactive_parallel/output/case_3c_temperature.pdf"),
-        Path("reactive-case3c-temperature.pdf"),
-    ),
-    (
         Path("analyses/nccc_validation/figures/reactive_parallel/output/temperature_profiles.pdf"),
         Path("reactive-seven-case-temperatures.pdf"),
     ),
@@ -42,8 +34,8 @@ FIGURE_COPIES = (
         Path("reactive-seven-case-capture.pdf"),
     ),
     (
-        Path("analyses/nccc_validation/results/final/figures/method_case_solver_contrast.pdf"),
-        Path("method-case-solver-contrast.pdf"),
+        Path("analyses/nccc_validation/figures/reactive_operating/output/operating_response.pdf"),
+        Path("reactive-operating-response.pdf"),
     ),
 )
 
@@ -51,7 +43,7 @@ DEFAULT_MIRROR = Path(
     "/home/tnnrpolley21/Workspaces/Engineering/Publications/MEA-Absorption-Column-LaTeX"
 )
 DEFAULT_BIBLIOGRAPHY_SOURCE = Path.home() / "Documents" / "Papers" / "references.bib"
-PROJECTION_EXCLUDES = frozenset({"scripts", "builds"})
+PROJECTION_EXCLUDES = frozenset({"scripts", "builds", "QA_REPORT.md", "main.log"})
 BUILD_SUFFIXES = {
     ".abs",
     ".aux",
@@ -122,6 +114,14 @@ def sync_projection(source_root: Path, mirror_root: Path, *, dry_run: bool = Fal
     mirror_root = mirror_root.resolve()
     if not (mirror_root / ".git").exists():
         raise RuntimeError(f"mirror root is not a Git checkout: {mirror_root}")
+    status = subprocess.run(
+        ["git", "-C", str(mirror_root), "status", "--porcelain", "--untracked-files=all"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    if status:
+        raise RuntimeError("refusing to replace a dirty Overleaf mirror")
     if dry_run:
         return
     for entry in mirror_root.iterdir():
