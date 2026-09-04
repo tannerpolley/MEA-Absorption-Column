@@ -1,0 +1,286 @@
+{
+  "schema_version": 1,
+  "temperature_unit": "kelvin",
+  "species_ids": [
+    "carbon-dioxide",
+    "monoethanolamine",
+    "water",
+    "protonated-monoethanolamine",
+    "carbamate-anion",
+    "bicarbonate-anion",
+    "carbonate-anion",
+    "hydronium-cation",
+    "hydroxide-anion"
+  ],
+  "charges": [
+    0,
+    0,
+    0,
+    1,
+    -1,
+    -1,
+    -2,
+    1,
+    -1
+  ],
+  "reaction_sign_convention": "products_positive",
+  "reactions": [
+    {
+      "reaction_id": "R1",
+      "stoichiometry": [
+        0.0,
+        0.0,
+        -2.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "ln_k_form": "a + b_k / T + c * ln(T) + d_per_k * T + standard_state_offset",
+      "coefficients": {
+        "a": 132.899,
+        "b_k": -13445.9,
+        "c": -22.4773,
+        "d_per_k": 0.0
+      },
+      "standard_state_offset": 8.0330699846,
+      "temperature_domain_k": [
+        273.15,
+        498.15
+      ]
+    },
+    {
+      "reaction_id": "R2",
+      "stoichiometry": [
+        -1.0,
+        0.0,
+        -2.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "ln_k_form": "a + b_k / T + c * ln(T) + d_per_k * T + standard_state_offset",
+      "coefficients": {
+        "a": 231.465,
+        "b_k": -12092.1,
+        "c": -36.7816,
+        "d_per_k": 0.0
+      },
+      "standard_state_offset": 4.0165349923,
+      "temperature_domain_k": [
+        273.15,
+        498.15
+      ]
+    },
+    {
+      "reaction_id": "R3",
+      "stoichiometry": [
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        -1.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "ln_k_form": "a + b_k / T + c * ln(T) + d_per_k * T + standard_state_offset",
+      "coefficients": {
+        "a": 216.049,
+        "b_k": -12431.7,
+        "c": -35.4819,
+        "d_per_k": 0.0
+      },
+      "standard_state_offset": 4.0165349923,
+      "temperature_domain_k": [
+        273.15,
+        498.15
+      ]
+    },
+    {
+      "reaction_id": "R4",
+      "stoichiometry": [
+        0.0,
+        1.0,
+        -1.0,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "ln_k_form": "a + b_k / T",
+      "coefficients": {
+        "a": 3.3515778177997895,
+        "b_k": -1895.3
+      },
+      "temperature_domain_k": [
+        293.15,
+        393.15
+      ],
+      "qualification": "fitted jointly to the retained pressure and speciation data; evaluated over 293.15--393.15 K"
+    },
+    {
+      "reaction_id": "R5",
+      "stoichiometry": [
+        0.0,
+        1.0,
+        -1.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "ln_k_form": "-ln(10) * (a_k / T + b + c_per_k * T)",
+      "coefficients": {
+        "a_k": 2597.91,
+        "b": 0.3869,
+        "c_per_k": 0.0004277
+      },
+      "source_temperature_domain_k": [
+        273.15,
+        323.15
+      ],
+      "temperature_domain_k": [
+        293.15,
+        393.15
+      ],
+      "qualification": "selected against the complete nine-species pressure/speciation comparison evaluated over 293.15--393.15 K"
+    }
+  ],
+  "balance_matrix": [
+    [
+      1.0,
+      2.0,
+      0.0,
+      2.0,
+      3.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "source_standard_state": {
+    "activity_convention_id": "molality-infinite-dilution-v1",
+    "activity_scale_id": "aqueous-molality-infinite-dilution-water-v1",
+    "component_ids": [
+      "carbon-dioxide",
+      "monoethanolamine",
+      "water",
+      "protonated-monoethanolamine",
+      "carbamate-anion",
+      "bicarbonate-anion",
+      "carbonate-anion",
+      "hydronium-cation",
+      "hydroxide-anion"
+    ],
+    "id": "aqueous-molality-infinite-dilution-water-v1",
+    "ion_pairs": [
+      [
+        [
+          "protonated-monoethanolamine",
+          "carbamate-anion"
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          "protonated-monoethanolamine",
+          "bicarbonate-anion"
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          "protonated-monoethanolamine",
+          "carbonate-anion"
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          "protonated-monoethanolamine",
+          "hydroxide-anion"
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          "hydronium-cation",
+          "carbamate-anion"
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    ],
+    "log_activity_scale_factors": [
+      -4.016534992299479,
+      -4.016534992299479,
+      0.0,
+      -4.016534992299479,
+      -4.016534992299479,
+      -4.016534992299479,
+      -4.016534992299479,
+      -4.016534992299479,
+      -4.016534992299479
+    ],
+    "phase": "liquid",
+    "pure_components": [],
+    "reference_convention": "molality-infinite-dilution",
+    "reference_pressure_pa": 100000.0,
+    "solvent_composition": [
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "standard_molality_mol_per_kg": 1.0
+  },
+  "model_choices": {
+    "base": "pc-saft",
+    "association": "general-site with reciprocal induced carbon-dioxide--water association",
+    "electrolyte": "Debye--Huckel plus original Born",
+    "relative_permittivity": "Uyan solvent-only MEA--water mixing",
+    "vapor": "neutral incipient vapor evaluated by the pinned ePC-SAFT Engine"
+  }
+}

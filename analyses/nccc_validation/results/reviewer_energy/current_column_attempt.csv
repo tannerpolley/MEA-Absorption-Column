@@ -1,0 +1,2 @@
+case_id,model,method,initial_mesh,tolerance,boundary_tolerance,max_nodes,timeout_s,wall_s,outcome,capture_pct,solver_iterations,final_mesh_nodes,max_rms_residual
+3C,epcsaft_reactive_nine,scipy-bvp,21,0.5,0.001,1000,300,300.1182162761688,execution_timeout,,,,

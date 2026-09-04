@@ -163,6 +163,14 @@ analyses/**/results/runs/
 analyses/**/.cache/
 analyses/**/tmp/
 
+# Retained current-column figure data and provenance (not exploratory runs).
+!analyses/nccc_validation/figures/reactive_column/output/
+!analyses/nccc_validation/figures/reactive_column/output/*
+
+# Retained transport-sensitivity calculations and provenance.
+!analyses/transport_sensitivity/figures/response/output/
+!analyses/transport_sensitivity/figures/response/output/**
+
 # LaTeX manuscript build outputs
 docs/latex/builds/
 

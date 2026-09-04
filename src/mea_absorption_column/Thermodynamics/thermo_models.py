@@ -11,6 +11,7 @@ from importlib import resources
 from pathlib import Path
 
 import numpy as np
+from mea_absorption_column.Thermodynamics.reactive_bundle import MODEL as REACTIVE_MODEL, reactive_fugacity
 
 from mea_absorption_column.BVP.robust_core import record_guard_penalty, record_invalid_state
 from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
@@ -565,6 +566,10 @@ def compute_fugacity(
     epcsaft_fugacity_blend=1.0,
 ):
     normalized_model = (model or "ideal_henry").lower()
+    if normalized_model == REACTIVE_MODEL:
+        if epcsaft_fugacity_blend != 1.0:
+            raise ValueError("Coupled nine-species mode requires unblended ePC-SAFT fugacity")
+        return reactive_fugacity(y, x_true, Cl_true, Tl, Tv, P, P_sat_H2O)
     if normalized_model in {"ideal", "ideal_henry", "henry"}:
         return ideal_henry_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
     if normalized_model in {"epcsaft", "epcsaft_neutral", "epc-saft"}:
@@ -640,10 +645,16 @@ def guarded_compute_fugacity(
             P_sat_H2O,
             epcsaft_fugacity_blend=epcsaft_fugacity_blend,
         )
+        if (model or "").lower() == REACTIVE_MODEL:
+            if any(not math.isfinite(value) or value <= 0 for value in values):
+                raise ValueError("Nonpositive or nonfinite coupled reactive fugacity")
+            return values
         return tuple(_positive_finite(value) for value in values)
     except Exception as exc:
         record_invalid_state(diagnostics, f"fugacity guard: {exc}")
         record_guard_penalty(diagnostics)
+        if (model or "").lower() == REACTIVE_MODEL:
+            raise
         return _fallback_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
 
 

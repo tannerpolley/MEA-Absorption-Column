@@ -31,7 +31,8 @@ def test_sync_figures_copies_required_outputs_and_validates_references(tmp_path:
     copied = latex_workflows.sync_figures(repo, latex)
 
     assert len(copied) == len(latex_workflows.FIGURE_COPIES)
-    assert (latex / "figures" / "nccc-one-bed-thermo-benchmark.pdf").exists()
+    for source, destination in latex_workflows.FIGURE_COPIES:
+        assert (latex / "figures" / destination).read_bytes() == (repo / source).read_bytes()
 
 
 def test_sync_projection_replaces_mirror_and_preserves_git(tmp_path: Path) -> None:

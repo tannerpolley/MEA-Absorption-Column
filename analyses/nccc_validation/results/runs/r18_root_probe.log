@@ -1,0 +1,87 @@
+accepted initialization available after 0.003s
+column rhs_batches=1 nodes=41 elapsed=0.00s thermodynamics={'queries': 0, 'cache_hits': 0, 'native_solves': 0, 'native_seconds': 0.0, 'warm_starts': 0}
+   Iteration    Max residual  Max BC residual  Total nodes    Nodes added  
+column rhs_batches=2 nodes=41 elapsed=101.04s thermodynamics={'queries': 41, 'cache_hits': 0, 'native_solves': 47, 'native_seconds': 89.1601104479978, 'warm_starts': 40}
+column rhs_batches=3 nodes=40 elapsed=101.12s thermodynamics={'queries': 82, 'cache_hits': 41, 'native_solves': 47, 'native_seconds': 89.1601104479978, 'warm_starts': 40}
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/analyses/nccc_validation/results/runs/probe_r18_root.py", line 16, in <module>
+    runpy.run_path('analyses/nccc_validation/scripts/run_reactive_column.py', run_name='__main__')
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "analyses/nccc_validation/scripts/run_reactive_column.py", line 83, in <module>
+    main()
+    ~~~~^^
+  File "analyses/nccc_validation/scripts/run_reactive_column.py", line 68, in main
+    result = run_model(data, method='scipy-bvp', data_type='mass', run=data.index.get_loc('3C'),
+                       thermo_model='epcsaft_reactive_nine', solver_settings=settings,
+                       return_details=True, staged_beds=False)
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/Run_Model.py", line 333, in run_model
+    Y_scaled, z_new, solving_type, success, message = solving_function(
+                                                      ~~~~~~~~~~~~~~~~^
+        Y_a_scaled, Y_b_scaled, z, parameters, settings=solver_settings_for_run
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 137, in scipy_BVP_solve
+    sol = solve_bvp(column_odes, boundary_conditions, z_2, w_guess_solver,
+                    max_nodes=int(settings['max_nodes']),
+    ...<3 lines>...
+                    **jacobian_kwargs,
+                    )
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 1090, in solve_bvp
+    y, p, singular = solve_newton(n, m, h, col_fun, bc_wrapped, jac_sys,
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  y, p, B, tol, bc_tol)
+                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 441, in solve_newton
+    col_res, y_middle, f, f_middle = col_fun(y, p)
+                                     ~~~~~~~^^^^^^
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 324, in col_fun
+    return collocation_fun(fun, y, p, x, h)
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 311, in collocation_fun
+    f_middle = fun(x[:-1] + 0.5 * h, y_middle, p)
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 649, in fun_p
+    return np.asarray(fun(x, y), dtype)
+                      ~~~^^^^^^
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 60, in column_odes
+    _column_rhs(
+    ~~~~~~~~~~~^
+        z[i],
+        ^^^^^
+    ...<3 lines>...
+        guard_rhs=guard_rhs,
+        ^^^^^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 169, in _column_rhs
+    return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/BVP/robust_core.py", line 220, in guard_column_rhs
+    rhs = evaluator(zi, sanitized_scaled, parameters, run_type=run_type, column_names=column_names)
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/BVP/ABS_Column.py", line 154, in abs_column
+    native_state = liquid.solve(Tl, P, Fl, state_input_derivatives=True)
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 138, in solve
+    result = solve_homogeneous_reactive_state(
+        self.dataset, temperature_k, pressure_pa, apparent_amounts,
+    ...<7 lines>...
+        _phase_start=start, _diagnostics=self.stats,
+    )
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 686, in solve_homogeneous_reactive_state
+    result, request = _solve_homogeneous_reactive_result(
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dataset_text, temperature_k, pressure_pa, apparent_amounts,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _diagnostics=_diagnostics,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 643, in _solve_homogeneous_reactive_result
+    _require_liquid_pressure_root(model, result, temperature_k, pressure_pa)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 673, in _require_liquid_pressure_root
+    raise RuntimeError("Reactive equilibrium does not match the certified native liquid pressure root: "
+                       f"GREPE density={phase.molar_density_mol_m3}, liquid root={density}")
+RuntimeError: Reactive equilibrium does not match the certified native liquid pressure root: GREPE density=42.03224233689397, liquid root=54657.66675112165
+FRESH_LOADING_PATH_PASSED 50951.5005892302

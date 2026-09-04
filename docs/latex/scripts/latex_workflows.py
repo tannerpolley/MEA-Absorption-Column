@@ -14,16 +14,32 @@ from pathlib import Path
 
 FIGURE_COPIES = (
     (
+        Path("analyses/nccc_validation/figures/reactive_column/output/comparison.pdf"),
+        Path("reactive-case3c-profiles.pdf"),
+    ),
+    (
+        Path("analyses/nccc_validation/figures/reactive_column/output/sensitivity/comparison.pdf"),
+        Path("reactive-parameter-sensitivity.pdf"),
+    ),
+    (
+        Path("analyses/transport_sensitivity/figures/response/output/transport_sensitivity.pdf"),
+        Path("transport-sensitivity.pdf"),
+    ),
+    (
         Path("analyses/nccc_validation/results/final/figures/nccc_one_bed_thermo_benchmark.pdf"),
         Path("nccc-one-bed-thermo-benchmark.pdf"),
     ),
     (
-        Path("analyses/nccc_validation/results/final/figures/nccc_2017_epcsaft_temperature_overlays/3C_temperature_overlay.png"),
-        Path("case-3c-temperature-validation.png"),
+        Path("analyses/nccc_validation/figures/reactive_parallel/output/case_3c_temperature.pdf"),
+        Path("reactive-case3c-temperature.pdf"),
     ),
     (
-        Path("analyses/nccc_validation/results/final/figures/nccc_2017_epcsaft_temperature_overlays/nccc_2017_epcsaft_temperature_overlay_contact_sheet.png"),
-        Path("case-c-temperature-overlay.png"),
+        Path("analyses/nccc_validation/figures/reactive_parallel/output/temperature_profiles.pdf"),
+        Path("reactive-seven-case-temperatures.pdf"),
+    ),
+    (
+        Path("analyses/nccc_validation/figures/reactive_parallel/output/capture_comparison.pdf"),
+        Path("reactive-seven-case-capture.pdf"),
     ),
     (
         Path("analyses/nccc_validation/results/final/figures/method_case_solver_contrast.pdf"),
@@ -32,7 +48,7 @@ FIGURE_COPIES = (
 )
 
 DEFAULT_MIRROR = Path(
-    "/home/tnnrpolley21/Workspaces/Engineering/LaTeX-Projects/MEA-Absorption-Column-LaTeX"
+    "/home/tnnrpolley21/Workspaces/Engineering/Publications/MEA-Absorption-Column-LaTeX"
 )
 DEFAULT_BIBLIOGRAPHY_SOURCE = Path.home() / "Documents" / "Papers" / "references.bib"
 PROJECTION_EXCLUDES = frozenset({"scripts", "builds"})

@@ -5,14 +5,17 @@ from scipy.optimize import least_squares
 from mea_absorption_column.BVP.robust_core import record_domain_guard
 from .domain_guards import DomainGuardError, require_positive
 
+CO2_CONCENTRATION_DIVISOR = 1.04542981654115
 
 def enhancement_factor(Tl, Cl_true, y_CO2, P,
                        H_CO2_mix, kl_CO2, kv_CO2,
-                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None, eta_psi=1.0):
+                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None, eta_psi=1.0,
+                       co2_concentration_divisor=CO2_CONCENTRATION_DIVISOR):
     enable_enhancement_factor = True
 
     Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true = Cl_true[:6]
-    Cl_CO2_true = Cl_CO2_true / 1.04542981654115
+    require_positive("enhancement_factor", diagnostics, co2_concentration_divisor=co2_concentration_divisor)
+    Cl_CO2_true = Cl_CO2_true / co2_concentration_divisor
     Dl_MEAH = Dl_ion
     Dl_MEACOO = Dl_ion
     require_positive(
@@ -33,17 +36,7 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
         Cl_MEACOO_true=Cl_MEACOO_true,
     )
 
-    # Based On Putta from IDAES
-    k_MEA = 3.1732e3 * exp(-4936.6 / Tl) # m^6/(mol^2*s)
-    k_H2O = 1.0882e2 * exp(-3900 / Tl) # m^6/(mol^2*s)
-    k2a = (k_MEA * Cl_MEA_true + k_H2O * Cl_H2O_true)  # m^3/(mol*s)
-
-    # Based On Luo from IDAES
-    k_MEA = 2.003e4 * exp(-4742.0 / Tl) # m^6/(mol^2*s)
-    k_H2O = 4.147 * exp(-3110 / Tl) # m^6/(mol^2*s)
-    k2 = (k_MEA * Cl_MEA_true + k_H2O * Cl_H2O_true)  # m^3/(mol*s)
-
-    Ha = (k2 * Cl_MEA_true * Dl_CO2) ** .5 / kl_CO2
+    k2, Ha = hatta_expression(Tl, Cl_MEA_true, Cl_H2O_true, Dl_CO2, kl_CO2)
 
     if enable_enhancement_factor:
 
@@ -114,8 +107,7 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
         E = Ha
 
     eta_psi = float(eta_psi)
-    Psi = E * kl_CO2 / kv_CO2
-    Psi_H = Psi / (Psi + H_CO2_mix) * eta_psi
+    Psi, Psi_H = film_resistance_expression(E, kl_CO2, kv_CO2, H_CO2_mix, eta_psi)
     require_positive("enhancement_factor", diagnostics, Ha=Ha, E=E, Psi=Psi, Psi_H=Psi_H, eta_psi=eta_psi)
 
     enhance_factor = [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi_H, Psi, eta_psi]
@@ -123,7 +115,29 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
     return E, Psi, Psi_H, enhance_factor
 
 
-def _explicit_enhancement_factor(
+def hatta_expression(Tl, Cl_MEA_true, Cl_H2O_true, Dl_CO2, kl_CO2):
+    # Luo kinetics used by the conventional film, m³/(mol s).
+    k2 = 2.003e4 * exp(-4742.0 / Tl) * Cl_MEA_true + 4.147 * exp(-3110 / Tl) * Cl_H2O_true
+    return k2, (k2 * Cl_MEA_true * Dl_CO2) ** .5 / kl_CO2
+
+
+def _explicit_enhancement_factor(*args, **kwargs):
+    E = explicit_enhancement_expression(*args, **kwargs)
+    if not np.isfinite(E):
+        E = 1.0
+    return float(bounded_enhancement_expression(E))
+
+
+def bounded_enhancement_expression(E, minimum=min, maximum=max):
+    return minimum(maximum(E, 1.0), 1.0e4)
+
+
+def film_resistance_expression(E, kl_CO2, kv_CO2, H_CO2_mix, eta_psi):
+    psi = E * kl_CO2 / kv_CO2
+    return psi, psi / (psi + H_CO2_mix) * eta_psi
+
+
+def explicit_enhancement_expression(
     Ha,
     Dl_MEA,
     Cl_MEA_true,
@@ -133,13 +147,11 @@ def _explicit_enhancement_factor(
     Cl_MEACOO_true,
     Dl_CO2,
     Cl_CO2_true,
+    maximum=max,
 ):
     floor = 1.0e-30
-    R_plus = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_MEAH * Cl_MEAH_true, floor))
-    R_minus = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_MEACOO * Cl_MEACOO_true, floor))
-    E_hat = (Dl_MEA * Cl_MEA_true) / (2 * max(Dl_CO2 * Cl_CO2_true, floor))
-    denominator = Ha * (R_plus + R_minus + 2) / max(E_hat, floor) + 1
-    E = 1 + (Ha - 1) / denominator
-    if not np.isfinite(E):
-        E = 1.0
-    return float(np.clip(E, 1.0, 1.0e4))
+    R_plus = (Dl_MEA * Cl_MEA_true) / (2 * maximum(Dl_MEAH * Cl_MEAH_true, floor))
+    R_minus = (Dl_MEA * Cl_MEA_true) / (2 * maximum(Dl_MEACOO * Cl_MEACOO_true, floor))
+    E_hat = (Dl_MEA * Cl_MEA_true) / (2 * maximum(Dl_CO2 * Cl_CO2_true, floor))
+    denominator = Ha * (R_plus + R_minus + 2) / maximum(E_hat, floor) + 1
+    return 1 + (Ha - 1) / denominator

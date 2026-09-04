@@ -12,6 +12,7 @@ from scipy.optimize import least_squares, root
 
 from mea_absorption_column.BVP.robust_core import record_domain_guard
 from mea_absorption_column.Properties.Thermophysical_Properties import density
+from mea_absorption_column.Thermodynamics.reactive_bundle import MODEL, reactive_liquid
 from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
@@ -274,6 +275,12 @@ def chemical_equilibrium_with_model(
     normalized_model = (model or "legacy").lower()
     if normalized_model in {"legacy", "legacy_concentration", "local"}:
         return chemical_equilibrium(Fl, Tl)
+    if normalized_model == MODEL:
+        started = time.perf_counter()
+        result = reactive_liquid().solve(float(Tl), float(P), Fl)
+        record_coupled_result(diagnostics, result, time.perf_counter() - started)
+        composition = result["composition"]
+        return composition * result["density_mol_m3"], composition.copy()
     if normalized_model in {
         "epcsaft_reactive_six",
         "epcsaft_reactive_six_concentration",
@@ -373,6 +380,18 @@ def chemical_equilibrium_with_model(
         "epcsaft_reactive_six_activity, epcsaft_reactive_six_activity_converted, "
         "epcsaft_reactive_six_activity_rebased, or epcsaft_reactive_nine_activity_rebased."
     )
+
+
+def record_coupled_result(diagnostics, result, elapsed):
+    if diagnostics is not None:
+        _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", elapsed)
+        diagnostics['epcsaft_chemistry_last_native_success'] = True
+        diagnostics['epcsaft_chemistry_last_iterations'] = result['evidence']['optimizer_iterations']
+        diagnostics['epcsaft_chemistry_last_evidence'] = {
+            'parameter_fingerprint': result['parameter_fingerprint'], **result['evidence']}
+        for name, value in result['evidence'].items():
+            if name.endswith('inf_norm') and isinstance(value, (int, float)):
+                _set_diagnostic_max(diagnostics, f'epcsaft_chemistry_{name}', value)
 
 
 def epcsaft_reactive_chemical_equilibrium(

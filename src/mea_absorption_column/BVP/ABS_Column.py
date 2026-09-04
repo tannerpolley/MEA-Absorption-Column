@@ -1,11 +1,15 @@
 import numpy as np
+import time
 
 from ..config.Constants import MWs_l
 from ..Properties.Thermophysical_Properties import (density, surface_tension, heat_capacity,
                                                       thermal_conductivity, henrys_law, enthalpy, vapor_pressure)
 from ..Properties.Transport_Properties import viscosity, diffusivity
 from ..Thermodynamics.Fugacity import fugacity
-from ..Thermodynamics.Chemical_Equilibrium import chemical_equilibrium_with_model
+from ..Thermodynamics.Chemical_Equilibrium import chemical_equilibrium_with_model, record_coupled_result
+from ..Thermodynamics.reactive_bundle import (MODEL as REACTIVE_MODEL, reactive_liquid,
+                                              neutral_vapor_state)
+from ..Thermodynamics.thermo_models import neutral_vapor_composition
 from ..Transport.Hydraulic_Variables_Correlations import velocity, holdup, interfacial_area, flooding_fraction
 from ..Transport.Transfer_Coefficients import mass_transfer_coeff, heat_transfer_coeff
 from ..Transport.Pressure_Drop import pressure_drop
@@ -16,7 +20,7 @@ from ..misc.special_functions import f_dHl_dT
 from .robust_core import record_domain_guard
 
 
-def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False):
+def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=False, jacobian=None):
     # region - Unpack System Parameters
     if len(parameters) == 6:
         scales, eq_scales, const_flow, H, A, packing = parameters
@@ -33,6 +37,9 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     eta_psi = float(model_options.get('eta_psi', 1.0))
     epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
     chemical_equilibrium_model = model_options.get('chemical_equilibrium_model', 'legacy')
+    reactive = str(thermo_model).lower() == REACTIVE_MODEL
+    if reactive != (str(chemical_equilibrium_model).lower() == REACTIVE_MODEL):
+        raise ValueError("Coupled nine-species chemistry and fugacity must be selected together")
     gas_velocity_area_exponent = float(model_options.get('gas_velocity_area_exponent', 0.0) or 0.0)
     gas_velocity_area_reference_m_s = model_options.get('gas_velocity_area_reference_m_s')
     gas_velocity_area_bounds = model_options.get('gas_velocity_area_bounds', (0.1, 3.0))
@@ -140,24 +147,43 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region - Thermodynamics
 
     # region -- Chemical Equilibrium
-    Cl_true, x_true = chemical_equilibrium_with_model(
-        Fl.copy(),
-        Tl,
-        model=chemical_equilibrium_model,
-        P=P,
-        diagnostics=solver_diagnostics,
-    )
+    native_state = None
+    if reactive:
+        liquid = model_options.get('reactive_liquid') or reactive_liquid()
+        started = time.perf_counter()
+        native_state = liquid.solve(Tl, P, Fl, state_input_derivatives=True)
+        record_coupled_result(solver_diagnostics, native_state, time.perf_counter()-started)
+        x_true = native_state['composition']
+        Cl_true = x_true * native_state['density_mol_m3']
+        if solver_diagnostics is not None:
+            solver_diagnostics['reactive_evaluations'] = dict(liquid.stats)
+    else:
+        Cl_true, x_true = chemical_equilibrium_with_model(
+            Fl.copy(), Tl, model=chemical_equilibrium_model, P=P, diagnostics=solver_diagnostics)
 
     Cl = [x[i] * rho_mol_l for i in range(len(x))]
     Cv = [y[i] * rho_mol_v for i in range(len(y))]
 
-    Cl_true = [x_true[i] * rho_mol_l for i in range(len(x_true))]
+    if not reactive:
+        Cl_true = [x_true[i] * rho_mol_l for i in range(len(x_true))]
 
     # endregion
 
     # region -- Vapor-Liquid Equilibrium
 
-    fl_CO2, fv_CO2, fl_H2O, fv_H2O, CO2, H2O = fugacity(
+    if reactive:
+        vapor_x = neutral_vapor_composition(y)
+        vapor_fugacity, vapor_derivatives = neutral_vapor_state(
+            float(Tv), float(P), tuple(vapor_x), liquid.dataset, liquid.kij_scale)
+        fl_CO2 = float(native_state['fugacities_pa'][0])
+        fv_CO2 = vapor_fugacity * y[0] / vapor_x[0]
+        fl_H2O, fv_H2O = float(x_true[2])*P_sat_H2O, y[1]*P
+        # Frozen bulk activity coefficient: f_i = H_bulk*C_i, not df/dC.
+        # Use free molecular CO2, not total absorbed carbon or the E-only divisor.
+        H_CO2_mix = fl_CO2 / Cl_true[0]
+        CO2, H2O = [fv_CO2-fl_CO2, H_CO2_mix], [fv_H2O-fl_H2O, P_sat_H2O]
+    else:
+      fl_CO2, fv_CO2, fl_H2O, fv_H2O, CO2, H2O = fugacity(
         x,
         y,
         x_true,
@@ -289,15 +315,18 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region -- Energy Balance
-    dHlf_dz = Hl_flux + 1e-10
-    dHvf_dz = Hv_flux + 1e-10
+    # Positive liquid-flow magnitude travels opposite the axial coordinate.
+    dHlf_dz = -Hl_flux
+    dHvf_dz = Hv_flux
 
 
     dHl_dT = f_dHl_dT(Tl, x)
     dHv_dT = Cpv_T
 
-    dTl_dz = H*(Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
-    dTv_dz = H*(Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dT)
+    # Differentiate sum(F_i*h_i(T)), including each actual flow derivative.
+    dTl_dz, dTv_dz = temperature_gradients(
+        H, dHlf_dz, dHvf_dz, Hl_CO2, Hl_H2O, Hv_CO2, Hv_H2O,
+        dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, Fl_T, Fv_T, dHl_dT, dHv_dT)
 
     # endregion
 
@@ -325,10 +354,16 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
             diffeqs = np.array([dFl_CO2_dz, dFl_H2O_dz, dFv_CO2_dz, dFv_H2O_dz, dHlf_dz, dHvf_dz, dP_dz])
             # eq_scales = np.array([1, 1, 50, 50, 200000, 200000, P])
             diffeqs_scaled = diffeqs / scales * H
+        if jacobian is not None:
+            return jacobian(Y_scaled, diffeqs_scaled, native_state, vapor_fugacity, vapor_derivatives)
         return diffeqs_scaled
 
     elif run_type == 'saving':
         Fl_true = [Cl_true[i] * ul * A for i in range(len(Cl_true))]
+        if reactive:
+            # One N per MEA-bearing species; empirical hydraulic density is a
+            # different basis from the EOS true-species molar density.
+            Fl_true = x_true * (Fl_MEA / sum(x_true[[1, 3, 4]]))
         Fl_true_report = list(Fl_true[:6])
         Cl_true_report = list(Cl_true[:6])
         x_true_report = list(x_true[:6])
@@ -376,6 +411,10 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
             'Prop_v': [rho_mol_v, rho_mass_v, muv_CO2, muv_H2O, muv_N2, muv_O2, muv_mix, Dv_CO2, Dv_H2O,
                        Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2, kt_vap],
         }
+        if reactive:
+            for key, values in [('Fl', Fl_true), ('Cl', Cl_true), ('x', x_true)]:
+                output_dict[key].extend(values[6:])
+            output_dict['reactive_density'] = [float(sum(Cl_true))]
 
         if zi == 0 and column_names:
             locals_dict = locals().items()
@@ -390,6 +429,13 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                                 continue
                 keys_dict[k] = key_list
             keys_dict['enhance_factor'] = ['k2', 'Cl_MEA_true', 'Dl_CO2', 'kl_CO2', 'Ha', 'E', 'Psi', 'Psi_H', 'eta_psi']
+            # Equal conservative fluxes must not alias names through value matching.
+            keys_dict['Hl'] = ['Tl', 'Hl_CO2', 'Hl_MEA', 'Hl_H2O', 'Hl_T', 'Fl_T', 'Hlf',
+                               'Hl_CO2_trn', 'Hl_H2O_trn', 'Hl_trn', 'ql', 'Hl_flux',
+                               'dHlf_dz', 'dTl_dz', 'dHl_dT']
+            keys_dict['Hv'] = ['Tv', 'Hv_CO2', 'Hv_H2O', 'Hv_N2', 'Hv_O2', 'Hv_T', 'Fv_T', 'Hvf',
+                               'Hv_CO2_trn', 'Hv_H2O_trn', 'Hv_trn', 'qv', 'Hv_flux',
+                               'dHvf_dz', 'dTv_dz', 'dHv_dT']
             keys_dict['transport'] = [
                 'kl_CO2',
                 'kv_CO2',
@@ -409,6 +455,14 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                 'Lp',
                 'd_h',
             ]
+            if reactive:
+                species = ['CO2', 'MEA', 'H2O', 'MEAH', 'MEACOO', 'HCO3', 'CO3', 'H3O', 'OH']
+                for key in ['Fl', 'Cl', 'x']:
+                    keys_dict[key] = [f'{key}_{s}' for s in species[:3]]
+                    if key == 'Fl':
+                        keys_dict[key].append('Fl_T')
+                    keys_dict[key].extend(f'{key}_{s}_true' for s in species)
+                keys_dict['reactive_density'] = ['rho_true_mol_m3']
         else:
             keys_dict = None
         return output_dict, keys_dict
@@ -425,6 +479,14 @@ def _temperatures_in_bounds(Tl, Tv, bounds):
         and low <= float(Tl) <= high
         and low <= float(Tv) <= high
     )
+
+
+def temperature_gradients(height, liquid_energy, vapor_energy, hl_co2, hl_water,
+                          hv_co2, hv_water, dl_co2, dl_water, dv_co2, dv_water,
+                          liquid_flow, vapor_flow, liquid_dhdt, vapor_dhdt):
+    """Full empirical-enthalpy chain rule in the normalized axial coordinate."""
+    return (height*(liquid_energy-hl_co2*dl_co2-hl_water*dl_water)/(liquid_flow*liquid_dhdt),
+            height*(vapor_energy-hv_co2*dv_co2-hv_water*dv_water)/(vapor_flow*vapor_dhdt))
 
 
 def _smooth_absorption_only_vapor_flux(nv_co2):

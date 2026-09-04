@@ -1,21 +1,35 @@
-\begin{center}
-    \centering
-    \small
-    \captionof{table}{Representative one-bed solver-method comparison. Solver success and boundary residual are numerical criteria; capture is compared separately with its physical range or measured value.}
-    \label{tab:method-case-contrast}
-    \renewcommand{\arraystretch}{1.2}
-    \begin{adjustbox}{max width=\textwidth}
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.11\textwidth}>{\raggedleft\arraybackslash}p{0.08\textwidth}>{\raggedleft\arraybackslash}p{0.08\textwidth}>{\raggedright\arraybackslash}X@{}}
-        \toprule
-        \textbf{Scenario} & \textbf{Method} & \textbf{Solver report} & \textbf{Capture comparison} & \textbf{Runtime (s)} & \textbf{Capture (\%)} & \textbf{Interpretation} \\
-        \midrule
-        Smooth one-bed & Shooting & Success; boundary residual 0.0437 & Within 0--100\% & 4.91 & 90.17 & Shortest runtime among the three smooth-case calculations. \\
-        Smooth one-bed & Collocation BVP & Success; boundary residual $4.11\times10^{-11}$ & Within 0--100\% & 7.61 & 89.95 & Shooting-seeded collocation calculation. \\
-        Smooth one-bed & Finite difference & Success; boundary residual $9.93\times10^{-13}$ & Exceeds 100\% & 15.62 & 107.65 & Low boundary residual but capture outside the physical range. \\
-        NCCC 3C thermal pinch & Shooting & Unsuccessful run; no retained residual & No capture reported & 62.73 & -- & Did not return a row satisfying the reported numerical criteria. \\
-        NCCC 3C thermal pinch & Collocation BVP & Solver reported success & $-0.10$ percentage points from measured capture & 9.40 & 89.40 & Temperature RMSE \SI{3.94}{K}; no temperature-error criterion was applied. \\
-        NCCC 3C thermal pinch & Finite difference & Alternative branch; no retained residual & $-89.50$ percentage points from measured capture & 16.61 & 0.00 & Boundary-satisfying zero-capture branch. \\
-        \bottomrule
-    \end{tabularx}
-    \end{adjustbox}
-\end{center}
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Numerical outcomes by configuration: historical six-species method/aggregate calculations and separate temperature-state Henry checks. The historical NCCC aggregate requires solver success, boundary-residual norm $\leq\num{1.0}$, capture within \qtyrange{0}{100}{\percent}, and runtime $\leq\qty{90}{s}$. Dashes denote unavailable or case-dependent values. Guard events count inadmissible trial evaluations, not failed final solutions.}
+  \label{tab:method-case-contrast}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.08}
+  \setlength{\tabcolsep}{2pt}
+  \begin{tabularx}{\textwidth}{@{}p{0.15\textwidth} p{0.14\textwidth}
+    S[table-format=2.2] S[table-format=3.2] X@{}}
+    \toprule
+    Case & Method & {Time (\unit{s})} & {Capture (\unit{\percent})} & Numerical outcome \\
+    \midrule
+    Smooth one-bed & Shooting & 4.91 & 90.17 & Success; boundary residual \num{0.0437}. Shortest runtime for this case. \\
+    Smooth one-bed & Collocation & 7.61 & 89.95 & Success; boundary residual \num{4.11e-11}; initialized from shooting. \\
+    Smooth one-bed & Finite difference & 15.62 & 107.65 & Boundary residual \num{9.93e-13}, but capture exceeds its physical range. \\
+    NCCC 3C & Shooting & 62.73 & {--} & Unsuccessful; no retained residual or capture. \\
+    NCCC 3C & Collocation & 9.40 & 89.40 & Success; capture error \num{-0.10} percentage points; temperature RMSE \qty{3.94}{K}. \\
+    NCCC 3C & Finite difference & 16.61 & 0.00 & Boundary-satisfying zero-capture branch; error \num{-89.50} percentage points; no retained residual. \\
+    \midrule
+    3C Henry, temperature state & Shooting & 17.79 & {--} & CPU \qty{16.413}{s}; rejected with boundary-error norm \num{78.0327}. \\
+    3C Henry, temperature state & Collocation & 9.56 & 89.53 & CPU \qty{8.377}{s}; 41 initial / 72 final nodes, 2 mesh iterations; maximum RMS residual \num{0.009276}. \\
+    3C Henry, temperature state & Finite difference & 6.47 & 0.00 & CPU \qty{5.287}{s}; rejected zero-capture solution despite zero boundary error. \\
+    \midrule
+    K18, 1C--6C & Collocation & {--} & {--} & Henry and ePC-SAFT calculations included; no guard events. \\
+    K19 & Collocation & {--} & {--} & Both included; 166 ePC-SAFT and 183 Henry guard events. \\
+    K20 & Collocation & {--} & {--} & Both excluded: mesh-node limit exceeded, with hydraulics or pressure-drop domain violations. \\
+    7C & Collocation & {--} & {--} & Both included: ePC-SAFT \qty{13.79}{s}, 3 guard events; Henry \qty{19.71}{s}, 116 guard events. \\
+    Two-bed D and higher-height cases & Attempted methods & {--} & {--} & Excluded: the combined solver, residual, capture, and runtime criteria were not met. \\
+    \bottomrule
+  \end{tabularx}
+  \par\smallskip
+  \begin{minipage}{\textwidth}\footnotesize
+    The first six rows are historical method-comparison configurations; the later campaign rows likewise belong to the historical six-species aggregate. The temperature-state Henry checks are separate calculations. Their wall times include subprocess startup and profile output; CPU times cover the solver segment only. Collocation uses tolerance 0.05; the rejected shooting and finite-difference attempts use 0.5. Iteration and Jacobian counts are unavailable for those two rejected attempts. Their times are unsuccessful-attempt costs, not evidence of faster accepted solutions.
+  \end{minipage}
+\end{table}

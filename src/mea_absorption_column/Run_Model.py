@@ -26,6 +26,7 @@ from mea_absorption_column.misc.Get_Temperature_Enthalpy import (
 )
 from mea_absorption_column.misc.Scaling import scaling
 from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET, epcsaft_cache_stats
+from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET as REACTIVE_DATASET, MODEL as REACTIVE_MODEL, ReactiveLiquid
 
 np.set_printoptions(suppress=True)
 
@@ -44,6 +45,7 @@ def run_model(df,
               intercooler_settings=None,
               ):
 
+    thermo_model = (thermo_model or 'ideal_henry').lower()
     solver_settings_for_run = dict(solver_settings or {})
     inputs, X, case_metadata = convert_data(
         df,
@@ -229,6 +231,13 @@ def run_model(df,
         'gas_velocity_area_bounds': solver_settings_for_run.get('gas_velocity_area_bounds', (0.1, 3.0)),
     }
     solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
+    if thermo_model == REACTIVE_MODEL:
+        model_options['reactive_liquid'] = ReactiveLiquid(
+            REACTIVE_DATASET, loading_anchor=.25,
+            water_per_mea_anchor=Fl_H2O_b/Fl_MEA_b,
+            reuse_states=bool(solver_settings_for_run.get('reactive_reuse_states', False)),
+            kij_scale=solver_settings_for_run.get('reactive_kij_scale'),
+            reaction_scale=solver_settings_for_run.get('reactive_reaction_scale'))
     parameters = scales, eq_scales, const_flow, H, A, packing, model_options
     stack_spec = build_bed_stack_spec(
         beds=beds_count if use_staged_beds else 1,
@@ -310,6 +319,7 @@ Run #{run + 1:03d}:
 
     # Starts the time tracker for the total computation time for one simulation run
     start = time.time()
+    cpu_start = time.process_time()
 
     if method == "scipy-bvp" and use_staged_beds:
         Y_scaled, z_new, solving_type, success, message = segmented_scipy_BVP_solve(
@@ -340,6 +350,7 @@ Run #{run + 1:03d}:
     # Ends the time tracker for the total computation time for one simulation run
     end = time.time()
     total_time = end - start
+    solver_cpu_time = time.process_time() - cpu_start
 
     # Collects data from the final integration output
 
@@ -465,6 +476,8 @@ Run #{run + 1:03d}:
                                   include_coordinate_columns=bool(profile_csv_dir),
                                   )
         except Exception as exc:
+            if thermo_model == "epcsaft_reactive_nine":
+                raise
             dfs_dict = _fallback_temperature_profile(
                 Y,
                 z_outputs,
@@ -521,7 +534,8 @@ Run #{run + 1:03d}:
             message=str(message),
             boundary_residual_norm=boundary_residual_norm,
             capture_error_pct=capture_error_pct,
-            settings=solver_settings_for_run,
+            settings={**solver_settings_for_run, "accept_low_residual_final_iterate": False}
+            if thermo_model == "epcsaft_reactive_nine" else solver_settings_for_run,
         )
         cache_stats = _epcsaft_cache_delta(epcsaft_cache_start, epcsaft_cache_stats())
         result = {
@@ -532,6 +546,11 @@ Run #{run + 1:03d}:
             'success': method_success,
             'message': f"{gated_message}{output_message_suffix}",
             'runtime_s': float(total_time),
+            'solver_cpu_time_s': float(solver_cpu_time),
+            'solver_iterations': solver_diagnostics.get('solver_iterations'),
+            'final_mesh_nodes': solver_diagnostics.get('final_mesh_nodes'),
+            'max_rms_residual': solver_diagnostics.get('max_rms_residual'),
+            'max_scaled_boundary_residual': solver_diagnostics.get('max_scaled_boundary_residual'),
             'capture_pct': float(CO2_cap),
             'capture_error_pct': capture_error_pct,
             'temperature_rmse_K': temperature_rmse,
@@ -544,7 +563,7 @@ Run #{run + 1:03d}:
             'co2_capture_guess_pct': CO2_cap_guess,
             'h2o_capture_guess_pct': H2O_cap_guess,
             'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
-            'epcsaft_dataset': str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
+            'epcsaft_dataset': str(REACTIVE_DATASET if thermo_model == REACTIVE_MODEL else MEA_THERMODYNAMICS_EPCSAFT_DATASET),
             'eta_psi': float(solver_settings_for_run.get('eta_psi', 1.0)),
             'gas_flow_basis': case_metadata.get('gas_flow_basis', 'reported_total_wet'),
             'beds': beds_count,
@@ -575,9 +594,13 @@ Run #{run + 1:03d}:
             'epcsaft_chemistry_cache_hits': int(solver_diagnostics.get('epcsaft_chemistry_cache_hits', 0)),
             'epcsaft_chemistry_cache_misses': int(solver_diagnostics.get('epcsaft_chemistry_cache_misses', 0)),
             'epcsaft_chemistry_solve_s': float(solver_diagnostics.get('epcsaft_chemistry_solve_s', 0.0)),
-            'epcsaft_chemistry_max_mass_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_mass_residual', 0.0)),
-            'epcsaft_chemistry_max_reaction_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_reaction_residual', 0.0)),
-            'epcsaft_chemistry_max_charge_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_charge_residual', 0.0)),
+            'epcsaft_chemistry_max_mass_residual': None if thermo_model == REACTIVE_MODEL else float(solver_diagnostics.get('epcsaft_chemistry_max_mass_residual', 0.0)),
+            'epcsaft_chemistry_max_reaction_residual': None if thermo_model == REACTIVE_MODEL else float(solver_diagnostics.get('epcsaft_chemistry_max_reaction_residual', 0.0)),
+            'epcsaft_chemistry_max_charge_residual': None if thermo_model == REACTIVE_MODEL else float(solver_diagnostics.get('epcsaft_chemistry_max_charge_residual', 0.0)),
+            'epcsaft_chemistry_last_evidence': json.dumps(solver_diagnostics.get('epcsaft_chemistry_last_evidence', {}), sort_keys=True),
+            'reactive_evaluations': solver_diagnostics.get('reactive_evaluations'),
+            'reactive_kij_scale': solver_settings_for_run.get('reactive_kij_scale'),
+            'reactive_reaction_scale': solver_settings_for_run.get('reactive_reaction_scale'),
             'epcsaft_chemistry_accepted_best_effort_count': int(solver_diagnostics.get('epcsaft_chemistry_accepted_best_effort_count', 0)),
             'epcsaft_chemistry_failed_count': int(solver_diagnostics.get('epcsaft_chemistry_failed_count', 0)),
             'epcsaft_chemistry_last_iterations': int(solver_diagnostics.get('epcsaft_chemistry_last_iterations', 0)),

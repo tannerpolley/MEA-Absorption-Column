@@ -19,9 +19,16 @@
     }
   },
   "final_identity": {
-    "engine_commit": "b64f6df906489cb132792641c5be2ee8f404b114",
+    "engine_commit": "9e1bef97fbea5c6f465612ae27b054192f91f19c",
     "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-    "wheel_sha256": "a505d20ac9019e9b4edbad16df80166b6e082170ef2a2f002d897269e756d0d9"
+    "wheel_sha256": "b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b",
+    "reactive_inputs_sha256": {
+      "parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+      "reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+      "anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185",
+      "adoption-receipt.json": "bf178ed7b043e90dcca297ba9b80f1b262ef41bcdfe5e53af9211a1fe8b237e6",
+      "bundle.json": "19fe755463307b0df314f8a9e77b30a00e5b2f01adcc90a13b578f247f14fb05"
+    }
   },
   "required_public_symbols": [
     "Parameters",
@@ -35,6 +42,7 @@
   "allowed_direct_import_paths": [
     "src/mea_absorption_column/Thermodynamics/thermo_models.py",
     "src/mea_absorption_column/Thermodynamics/epcsaft_v02.py",
+    "src/mea_absorption_column/Thermodynamics/reactive_bundle.py",
     "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py",
     "analyses/nccc_validation/scripts/probe_reactive_epcsaft_speciation.py"
   ],

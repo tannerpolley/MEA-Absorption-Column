@@ -3,19 +3,18 @@
 \linenumbers
 
 \usepackage[numbers]{natbib}
-\usepackage{subfiles}
 \usepackage[version=4]{mhchem}
-\usepackage{cleveref}
-\usepackage{subcaption}
-\captionsetup{hypcap=false}
-\usepackage{longtable}
 \usepackage{array}
 \usepackage{mathtools} 
 \usepackage{tabularx}
-\usepackage{makecell}
 \usepackage{booktabs}
-\usepackage{adjustbox}
-\renewcommand\cellalign{tl}
+\usepackage{threeparttable}
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds}
+\input{tex/figure-styles.tex}
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 \newcommand{\Ha}{\text{Ha}}
 \newcommand{\COtwo}{{\ce{CO2}}}
@@ -35,12 +34,30 @@
 
 \newcommand{\liq}{\ell}
 \newcommand{\vap}{v}
-\newcommand{\FloatBarrier}{\par}
+\usepackage{placeins}
 
-\usepackage{color}
 \usepackage{siunitx}
+\usepackage{derivative}
+\usepackage[nameinlink,noabbrev]{cleveref}
+% Semantic notation used by the governing-equation layer.  The aliases keep
+% the CAS manuscript's symbols while making phase and state roles explicit.
+\newcommand{\differential}{\mathop{}\!\mathrm{d}}
+\newcommand{\pressure}{P}
+\newcommand{\temperature}{T}
+\newcommand{\molarflow}{F}
+\newcommand{\enthalpyflow}{\dot{H}}
+\newcommand{\molarflux}{N}
+\sisetup{detect-all,per-mode=symbol,range-phrase={--},range-units=single}
+% CAS uses T1 fonts under XeLaTeX; select the degree glyph explicitly.
+\DeclareSIUnit{\degreeCelsius}{\TextOrMath{\textdegree}{{}^{\circ}}C}
 \Urlmuskip=0mu plus 2mu\relax
 \AtBeginEnvironment{thebibliography}{\raggedright\sloppy\emergencystretch=3em}
+% Suppress private exported notes without changing the Zotero bibliography.
+\makeatletter
+\providecommand{\bibinfo}[2]{#2}
+\AtBeginEnvironment{thebibliography}{%
+  \renewcommand{\bibinfo}[2]{\ifstrequal{#1}{note}{\unskip\@ifnextchar.{\@gobble}{}}{#2}}}
+\makeatother
 
 \begin{document}
 
@@ -51,7 +68,7 @@
     \shortauthors{T. W. Polley and J. D. Hedengren}
 
     % Main title of the paper
-    \title[mode = title]{An MEA Absorber Benchmark for ePC-SAFT \texorpdfstring{CO$_2$}{CO2} Fugacity Driving Forces}
+    \title[mode = title]{An MEA Absorber Benchmark for ePC-SAFT \texorpdfstring{\COtwo}{CO2} Fugacity Driving Forces}
 
     % Article type for Editorial Manager: Original Research Article.
     \author[1]{Tanner W. Polley}[orcid=0009-0008-5957-4152]
@@ -73,11 +90,11 @@
 
     % Here goes the abstract
     \begin{abstract}
-        Post-combustion carbon dioxide (CO$_2$) capture with aqueous monoethanolamine (MEA) is an established rate-based separation, but absorber comparisons often change thermodynamics, solver formulation, and evaluation scope simultaneously. This work uses one steady-state packed-column model to compare boundary-value problem (BVP) solvers and CO$_2$ fugacity closures while holding chemical equilibrium, reaction enhancement, transport correlations, hydraulics, and material and energy balances fixed. The routine thermodynamic campaign replaces the Henry-law CO$_2$ closure with a liquid-side ionic electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) fugacity calculation while retaining concentration-based chemical equilibrium with unit activity coefficients. For nine National Carbon Capture Center (NCCC) cases satisfying solver success, a boundary-residual norm no greater than 1.0, a predicted capture between 0 and 100\%, and a \SI{90}{s} wall-time limit, ePC-SAFT gave a capture mean absolute error of 3.32 percentage points, compared with 3.14 percentage points for Henry-law closure; the corresponding median runtimes were 7.70 and \SI{5.25}{s}. Collocation satisfied these criteria for the reported NCCC rows, whereas shooting had shorter recorded runtimes on smoother high-liquid-to-gas-ratio probes. A separate nine-species activity calculation, rebased to the concentration-based initial composition for each local chemistry call, returned solutions for all seven 2017 C rows under relaxed settings, with chemistry residuals below $10^{-8}$, capture mean absolute error of 6.595 percentage points, and mean runtime of \SI{171.102}{s}. This activity-rebased calculation tests numerical coupling and does not establish independently parameterized activity-basis reaction constants. The comparison reports attempted cases, residuals, runtimes, and capture errors under the stated equations, inputs, solver settings, and inclusion criteria.
+        Post-combustion carbon dioxide (\COtwo) capture with aqueous monoethanolamine (MEA) depends on coupled reaction equilibrium, thermodynamics and transport. This work evaluates a steady-state packed-column model with nine-species reactive electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT), conventional reaction enhancement and empirical column energy balances. Across seven National Carbon Capture Center (NCCC) one-bed cases, capture mean absolute error is \num{5.85} percentage points, with the largest signed errors of \num{+11.45} and \num{-11.93} points in Cases 6C and 7C. For the refined Case 3C reference, the selected model predicts \qty{91.55}{\percent} capture against \qty{89.50}{\percent} measured and a peak liquid temperature of \qty{347.86}{K}. Joint mesh/tolerance refinement changes capture by \num{0.00510} percentage points and peak temperature by \qty{0.04493}{K}. Five-percent thermodynamic-input perturbations change capture by up to \num{0.82} percentage points; ten-percent transport-input perturbations change it by up to \num{0.53} points. A historical nine-case comparison isolates the fugacity closure within a reduced six-species model: ePC-SAFT and Henry-law capture mean absolute errors are \num{3.32} and \num{3.14} percentage points, with median runtimes of \qty{7.70}{s} and \qty{5.25}{s}. Numerical-method comparisons are reported by configuration. The coupled result establishes a resolved reference case for sensitivity analysis; the local perturbations are not statistical uncertainty bounds.
     \end{abstract}
 
     \begin{keywords}
-        Post-combustion CO$_2$ capture \sep MEA absorption \sep Boundary-value problems \sep Solver benchmarking \sep ePC-SAFT \sep Fugacity driving force
+        Post-combustion \COtwo{} capture \sep MEA absorption \sep Boundary-value problems \sep Solver benchmarking \sep ePC-SAFT \sep Fugacity driving force
     \end{keywords}
 
     \maketitle

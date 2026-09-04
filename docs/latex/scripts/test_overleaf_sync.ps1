@@ -14,7 +14,7 @@ Git tree.
 [CmdletBinding()]
 param(
     [string]$SourceRoot = '',
-    [string]$MirrorRoot = 'C:\Users\Tanner\Documents\git\LaTeX-Projects\MEA-Absorption-Column-LaTeX',
+    [string]$MirrorRoot = 'C:\Users\Tanner\Documents\git\Publications\MEA-Absorption-Column-LaTeX',
     [string[]]$ExcludedSourceEntries = @('scripts', 'builds'),
     [switch]$RequireCleanMirrorGit,
     [switch]$VerifyRemote,

@@ -1,0 +1,30 @@
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Numerical verification for the coupled nine-species Case 3C calculation. Both calculations use the same nonisothermal equations and selected parameter set. Residual histories show the printed maximum normalized RMS residual after each mesh iteration; final residuals below retain additional precision.}
+  \label{tab:reactive-numerical-verification}
+  \small
+  \renewcommand{\arraystretch}{1.12}
+  \begin{tabularx}{\textwidth}{@{}Xrr@{}}
+    \toprule
+    Quantity & Coarser calculation & Refined calculation \\
+    \midrule
+    Initial / final mesh nodes & 21 / 22 & 41 / 42 \\
+    Collocation tolerance & 0.5 & 0.05 \\
+    Mesh iterations & 2 & 2 \\
+    Maximum RMS residual, iterations 1 $\to$ 2 & $1.86\to0.125$ & $0.0566\to0.0431$ \\
+    Final maximum RMS residual & 0.125340 & 0.043138 \\
+    Maximum scaled boundary residual & 0 & 0 \\
+    Column RHS evaluation batches & 19 & 17 \\
+    Jacobian evaluation batches & 4 & 4 \\
+    Local state Jacobian evaluations & 84 & 164 \\
+    Liquid equilibrium solves, including profile output & 335 & 499 \\
+    \COtwo{} capture (\unit{\percent}) & 91.54329 & 91.54839 \\
+    Peak liquid temperature (\unit{K}) & 347.9065 & 347.8615 \\
+    Axial net-enthalpy-flow range (\unit{W}) & 293.219 & 273.006 \\
+    \bottomrule
+  \end{tabularx}
+  \par\smallskip
+  \begin{minipage}{\textwidth}\footnotesize
+    A batch evaluates all nodes or interval midpoints, not a single axial state. Four Jacobian batches correspond to two node/midpoint pairs. Mesh iterations are not counts of inner Newton steps. Both calculations use boundary tolerance \num{0.001} and a 1000-node limit; no invalid-state penalties were recorded. Memory and inner-Newton residual histories were not measured.
+  \end{minipage}
+\end{table}

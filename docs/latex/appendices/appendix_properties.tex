@@ -1,37 +1,35 @@
-    \vspace{1cm}
     \section{Properties}\label{sec:properties}
-        \vspace{1cm}
         \subsection{Thermophysical Properties}
-            \vspace{1cm}
+            Apparent liquid mass fractions are \(w_i=x_i\mathrm{MW}_i/\sum_jx_j\mathrm{MW}_j\), where \(x_i\) are apparent mole fractions and \(\mathrm{MW}_i\) are component molar masses.
             \subsubsection{Henry's Law} 
-                Henry's Law for the liquid solvent mixture is formulated with the N$_2$O analogy. The expressions used for $\COtwo$ solubility in $\MEA$ follow Jiru et al. \cite{Jiru2012}:
+                Henry's Law for the liquid solvent mixture is formulated with the \NtwoO{} analogy. The expressions used for $\COtwo$ solubility in $\MEA$ follow Jiru et al. \cite{Jiru2012}:
                 \begin{align}
-                    H_{\NtwoO,\MEA} &= \left(A_{\NtwoO,\MEA} \times 10^5\right) e^{\frac{-B_{\NtwoO,\MEA}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)\\
-                    H_{\NtwoO,\HtwoO} &= \left(A_{\NtwoO,\HtwoO} \times 10^6\right) e^{\frac{-B_{\NtwoO,\HtwoO}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)\\
-                    H_{\COtwo,\MEA} &= H_{\NtwoO,\MEA} \frac{H_{\COtwo, \HtwoO}}{H_{\NtwoO,\HtwoO}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)
+                    H_{\NtwoO,\MEA} &= \left(A_{\NtwoO,\MEA} \times 10^5\right) e^{\frac{-B_{\NtwoO,\MEA}}{T^{\liq}}} && \left(\unit{Pa\,m^3\,mol^{-1}}\right)\\
+                    H_{\NtwoO,\HtwoO} &= \left(A_{\NtwoO,\HtwoO} \times 10^6\right) e^{\frac{-B_{\NtwoO,\HtwoO}}{T^{\liq}}} && \left(\unit{Pa\,m^3\,mol^{-1}}\right)\\
+                    H_{\COtwo,\MEA} &= H_{\NtwoO,\MEA} \frac{H_{\COtwo, \HtwoO}}{H_{\NtwoO,\HtwoO}} && \left(\unit{Pa\,m^3\,mol^{-1}}\right)
                 \end{align}
                 The corresponding expression for $\COtwo$ solubility in $\HtwoO$ is
                 \begin{align}
-                    H_{\COtwo, \HtwoO} &= \left(A_{\COtwo, \HtwoO} \times 10^6\right) e^{\frac{-B_{\COtwo, \HtwoO}}{T_l}} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)
+                    H_{\COtwo, \HtwoO} &= \left(A_{\COtwo, \HtwoO} \times 10^6\right) e^{\frac{-B_{\COtwo, \HtwoO}}{T^{\liq}}} && \left(\unit{Pa\,m^3\,mol^{-1}}\right)
                 \end{align}
                 A deviation term is then added because the solution is not ideal. The $R_a$ term accounts for nonideal solubility using the fitted $a_1$, $a_2$, $a_3$, and $b$ coefficients.
                 \begin{align}
-                    R_{a} &= \left(a_1+a_2 \left(T_l-273.15\right)+a_3 \left(T_l-273.15\right)^2+b w_{\HtwoO}\right) w_{\MEA} w_{\HtwoO}
+                    R_{a} &= \left(a_1+a_2 \left(T^{\liq}-273.15\right)+a_3 \left(T^{\liq}-273.15\right)^2+b w_{\HtwoO}\right) w_{\MEA} w_{\HtwoO}
                     && \text{dimensionless}\\
                     \sigma &= w_{\MEA} \ln\left(H_{\COtwo,\MEA}\right)+w_{\HtwoO} \ln\left(H_{\COtwo,\HtwoO}\right)
                     && \text{dimensionless}\\
-                    H_{\COtwo,\text{mix}} &= e^{R_{a} + \sigma} && \left(\frac{\unit{Pa} \cdot \unit{m}^3}{\unit{mol}} \right)
+                    H_{\COtwo,\text{mix}} &= e^{R_{a} + \sigma} && \left(\unit{Pa\,m^3\,mol^{-1}}\right)
                 \end{align}
 
             \subsubsection{Density}
-                The density correlations are taken from Morgan et al. \cite{Morgan2015}.
+                The phase-mean molar masses are \(\mathrm{MW}_T^\liq=\sum_i x_i\mathrm{MW}_i\) and \(\mathrm{MW}_T^\vap=\sum_i y_i\mathrm{MW}_i\), using apparent phase compositions. The density correlations are taken from Morgan et al. \cite{Morgan2015}. Apparent liquid mole fractions are used. Component-volume correlations return \unit{mL\,mol^{-1}} before the factor $10^{-6}$ converts them to \unit{m^3\,mol^{-1}}; temperatures are in kelvin and molar masses in \unit{kg\,mol^{-1}}.
                 \begin{align}
                     \shortintertext{\quad\; Liquid Density}
-                    V^{\liq}_{\COtwo} &=  a_{\COtwo} + x_{\MEA} x_{\HtwoO} + (b_{\COtwo} + c_{\COtwo} x_{\MEA}) x_{\MEA} x_{\COtwo}
+                    V^{\liq}_{\COtwo} &=  10^{-6}\left[a_{\COtwo}+(b_{\COtwo}+c_{\COtwo}x_{\MEA})x_{\MEA}\right]
                     && \left(\unit{m^{3}\,mol^{-1}}\right)\\
-                    V^{\liq}_{\MEA} &=  \frac{\text{MW}_{\MEA}}{a_{\MEA} T_l^2 + b_{\MEA} T^{\liq} + c_{\MEA}} + x_{\HtwoO}\left(d_{\MEA} + e_{\MEA}x_{\MEA} \right)
+                    V^{\liq}_{\MEA} &=  10^{-6}\left[\frac{1000\,\text{MW}_{\MEA}}{a_{\MEA} (T^{\liq})^2 + b_{\MEA} T^{\liq} + c_{\MEA}} + x_{\HtwoO}(d_{\MEA}+e_{\MEA}x_{\MEA})\right]
                     && \left(\unit{m^{3}\,mol^{-1}}\right)\\
-                    V^{\liq}_{\HtwoO} &=  \frac{\text{MW}_{\HtwoO}}{a_{\HtwoO} T_l^2 + b_{\HtwoO} T_l + c_{\HtwoO}}
+                    V^{\liq}_{\HtwoO} &=  10^{-6}\frac{1000\,\text{MW}_{\HtwoO}}{a_{\HtwoO} (T^{\liq})^2 + b_{\HtwoO} T^{\liq} + c_{\HtwoO}}
                     && \left(\unit{m^{3}\,mol^{-1}}\right)\\
                     V^{\liq} &= V^{\liq}_{\COtwo}x_{\COtwo} + V^{\liq}_{\MEA}x_{\MEA} + V^{\liq}_{\HtwoO}x_{\HtwoO}
                     && \left(\unit{m^{3}\,mol^{-1}}\right)\\
@@ -40,26 +38,26 @@
                     \rho ^{\liq}_{mass} &= \rho ^{\liq}_{mol}\text{MW}^{\liq}_{T}
                     && \left(\unit{kg\,m^{-3}}\right)\\
                     \shortintertext{\quad\; Vapor Density}
-                    \rho ^{\vap}_{mol} &= \frac{P}{RT_v}
+                    \rho ^{\vap}_{mol} &= \frac{P}{RT^{\vap}}
                     && \left(\unit{mol\,m^{-3}}\right)\\
                     \rho ^{\vap}_{mass} &= \rho ^{\vap}_{mol}\text{MW}^{\vap}_{T}
                     && \left(\unit{kg\,m^{-3}}\right)
                 \end{align}
 
             \subsubsection{Surface Tension} 
-            The surface-tension correlation is taken from Morgan et al. \cite{Morgan2015}.
+            The surface-tension correlation is taken from Morgan et al. \cite{Morgan2015}. Here $r=w_{\MEA}/(w_{\MEA}+w_{\HtwoO})$ is the solvent-basis MEA mass fraction, and $\alpha=x_{\COtwo}/x_{\MEA}$ uses apparent liquid mole fractions.
                 \begin{align}
                     \shortintertext{\quad\; First the pure species surface tension expressions are evaluated}
-                    \sigma _{\COtwo} &= S_1 r^2+S_2 r+S_3+T_l \left(S_4 r^2+S_5 r+S_6\right)
+                    \sigma _{\COtwo} &= S_1 r^2+S_2 r+S_3+T^{\liq} \left(S_4 r^2+S_5 r+S_6\right)
                     && \left(\unit{N\,m^{-1}}\right)\\
-                    \sigma _{\MEA} &= c_{1,\MEA} \left(1-\frac{T_l}{T_{c,\MEA}}\right)^{c_{2,\MEA}+c_{3,\MEA} \frac{T_l}{T_{c,\MEA}}+c_{4,\MEA} \left(\frac{T_l}{T_{c,\MEA}}\right)^2}
+                    \sigma _{\MEA} &= c_{1,\MEA} \left(1-\frac{T^{\liq}}{T_{c,\MEA}}\right)^{c_{2,\MEA}+c_{3,\MEA} \frac{T^{\liq}}{T_{c,\MEA}}+c_{4,\MEA} \left(\frac{T^{\liq}}{T_{c,\MEA}}\right)^2}
                     && \left(\unit{N\,m^{-1}}\right)\\
-                    \sigma _{\HtwoO} &= c_{1,\HtwoO} \left(1-\frac{T_l}{T_{c,\HtwoO}}\right)^{c_{2,\HtwoO}+c_{3,\HtwoO} \frac{T_l}{T_{c,\HtwoO}}+c_{4,\HtwoO} \left(\frac{T_l}{T_{c,\HtwoO}}\right)^2}
+                    \sigma _{\HtwoO} &= c_{1,\HtwoO} \left(1-\frac{T^{\liq}}{T_{c,\HtwoO}}\right)^{c_{2,\HtwoO}+c_{3,\HtwoO} \frac{T^{\liq}}{T_{c,\HtwoO}}+c_{4,\HtwoO} \left(\frac{T^{\liq}}{T_{c,\HtwoO}}\right)^2}
                     && \left(\unit{N\,m^{-1}}\right)\\
                     \shortintertext{\quad\; Additional terms provide continuous values over the fitted range of $r$}
-                    A &= a+b \alpha+c {\alpha}^2+d w_{\MEA}+e {w_{\MEA}}^2
+                    A &= a+b \alpha+c {\alpha}^2+d r+e r^2
                     && \text{dimensionless}\\
-                    B &= f+g \alpha+h {\alpha}^2+i w_{\MEA}+j {w_{\MEA}}^2
+                    B &= f+g \alpha+h {\alpha}^2+i r+j r^2
                     && \text{dimensionless}\\
                     \shortintertext{\quad\; The final expression}
                     \sigma _{\text{mix}} &= \sigma_{\HtwoO}+\left(\sigma_{\COtwo}-\sigma_{\HtwoO}\right) A x_{\COtwo}+\left(\sigma_{\MEA}-\sigma_{\HtwoO}\right) B x_{\MEA}
@@ -67,48 +65,49 @@
                 \end{align}
 
             \subsubsection{Heat Capacity} 
-                The solvent heat-capacity method follows Hilliard \cite{Hilliard2008}.
+                The solvent heat-capacity method follows Hilliard \cite{Hilliard2008}. The polynomial argument is Celsius temperature $T_C=T^{\liq}-273.15$, with $T^{\liq}$ in kelvin and molar masses in \unit{kg\,mol^{-1}}.
                 \begin{align}
-                    C^{\liq}_{p,\MEA} &= 1000 \times \text{\text{MW}}_{\MEA} \sum_{i=0}^{5} {c_{i, \MEA}}^{i}
+                    C^{\liq}_{p,\MEA} &= 1000 \times \text{MW}_{\MEA} \sum_{i=0}^{4} c_{i,\MEA}(T^{\liq}-273.15)^i
                     && \left(\unit{J\,mol^{-1}\,K^{-1}}\right)\\
-                    C^{\liq}_{p,\HtwoO} &= 1000 \times \text{\text{MW}}_{\HtwoO} \sum_{i=0}^{5} {c_{i, \HtwoO}}^{i}
+                    C^{\liq}_{p,\HtwoO} &= 1000 \times \text{MW}_{\HtwoO} \sum_{i=0}^{4} c_{i,\HtwoO}(T^{\liq}-273.15)^i
                     && \left(\unit{J\,mol^{-1}\,K^{-1}}\right)\\
                     C^{\liq}_{p,\COtwo} &= \frac{x_{\MEA} C^{\liq}_{p,\MEA} + x_{\HtwoO} C^{\liq}_{p,\HtwoO}}{x_{\COtwo}} \left( \frac{1}{1 - w_{\COtwo}} - 1\right)
                     && \left(\unit{J\,mol^{-1}\,K^{-1}}\right)
                 \end{align}
 
-            \subsubsection{Heat of Vaporization}
-                The heat-of-vaporization contribution is represented with a standard reduced-temperature correlation, with an explicit derivative used for evaluating the temperature derivative of liquid enthalpy:
-                \begin{align}
-                    \Delta H_{vap} &= A (1 - T_r)^{B + C T_r + D T_r^2}, \quad \text{where } T_r = \frac{T_l}{T_c}
-                    && \left(\unit{J\,mol^{-1}}\right)\\
-                    \frac{d\Delta H_{vap}}{dT}
-                    &= \frac{A}{T_c^2(T - T_c)}
-                    \left( \frac{T_c - T}{T_c} \right)^{\frac{BT_c^2 + CTT_c + DT^2}{T_c^2}} \notag\\
-                    &\quad\times \left[ BT_c^2 + CTT_c + DT^2
-                    + (T - T_c)(CT_c + 2DT) \ln\left( \frac{T_c - T}{T_c} \right) \right]
-                    && \left(\unit{J\,mol^{-1}\,K^{-1}}\right)
-                \end{align}
-
             \subsubsection{Enthalpy}
-                The correlations are adapted from Akula \cite{Akula2023} for the present absorber model
+                The implemented empirical caloric model retains solvent heat-capacity correlations adapted from Akula \cite{Akula2023}, constant reference offsets, and a fixed \COtwo{} absorption enthalpy. It is separate from the EOS activity calculation; $T_{ref}=\qty{298.15}{K}$. The derivative below follows this implemented correlation, including composition weights.
                 \begin{align}
                     \shortintertext{\quad\; Pure Species Enthalpies}
-                    H^{\liq}_{\COtwo} &= H_{\text{CO}_2}^V - RT^2 \left( \frac{\partial \ln H_{\text{CO}_2, \text{H}_2\text{O}}}{\partial T} \right) + \Delta H_{abs}
+                    H^{\liq}_{\COtwo} &= -84000
                     && \left(\unit{J\,mol^{-1}}\right)\\
-                    H^{\liq}_{\COtwo} &= H_{\text{CO}_2}^V - R \left( -b_{\text{CO}_2, \text{H}_2\text{O}} + c_{\text{CO}_2, \text{H}_2\text{O}} T + d_{\text{CO}_2, \text{H}_2\text{O}} T^2 \right) + \Delta H_{abs}
+                    H^{\liq}_{\MEA} &= \int_{T_{ref}}^{T^{\liq}} C_{p,\MEA} \,\differential T^{\liq} - 58000
                     && \left(\unit{J\,mol^{-1}}\right)\\
-                    H^{\liq}_{\MEA} &= \int_{T_{ref}}^{T} C_{p,\MEA} dT - \Delta H_{vap, \MEA}
-                    && \left(\unit{J\,mol^{-1}}\right)\\
-                    H^{\liq}_{\HtwoO} &= \int_{T_{ref}}^{T} C_{p,\HtwoO} dT - \Delta H_{vap, \HtwoO}
+                    H^{\liq}_{\HtwoO} &= \int_{T_{ref}}^{T^{\liq}} C_{p,\HtwoO} \,\differential T^{\liq} - 49990
                     && \left(\unit{J\,mol^{-1}}\right)\\
                     \shortintertext{\quad\; Total enthalpy for liquid phase}
                     H^{\liq}_{T} &= \sum_{i} x_iH^{\liq}_{i}
                     && \left(\unit{J\,mol^{-1}}\right)\\
                     \shortintertext{\quad\; Liquid enthalpy differential with respect to temperature for temperature based energy-balance derivation}
-                    \frac{dH^{\liq}_{T}}{dT} &= -R\left(c_{\text{CO}_2, \text{H}_2\text{O}}  + 2d_{\text{CO}_2, \text{H}_2\text{O}} T \right) + C^{\liq}_{p, \MEA} + \frac{d\Delta H_{vap, \MEA}}{dT} +  C^{\liq}_{p, \HtwoO}+ \frac{d\Delta H_{vap, \HtwoO}}{dT}
+                    \left(\pdv{H^{\liq}_{T}}{T^{\liq}}\right)_{\boldsymbol{x}} &= x_{\MEA} C^{\liq}_{p,\MEA} + x_{\HtwoO} C^{\liq}_{p,\HtwoO}
                     && \left(\unit{J\,mol^{-1}\,K^{-1}}\right)
                 \end{align}
+
+
+                Vapor enthalpies use the same ideal-gas heat-capacity coefficients as the vapor heat-capacity model:
+                \begin{align}
+                    H_i^\vap &= R\biggl[A_i(T^\vap-T_{ref})+\frac{B_i}{2}\bigl((T^\vap)^2-T_{ref}^2\bigr)\notag\\
+                    &\qquad-C_i\left(\frac{1}{T^\vap}-\frac{1}{T_{ref}}\right)\biggr],\\
+                    H_T^\vap&=\sum_i y_iH_i^\vap,\\
+                    C_{p,T}^\vap&=R\sum_i y_i\left(A_i+B_iT^\vap+\frac{C_i}{(T^\vap)^2}\right).
+                \end{align}
+                Enthalpies are in \unit{J\,mol^{-1}} and heat capacities in \unit{J\,mol^{-1}\,K^{-1}}. The coefficient triples \((A_i,B_i,C_i)\), with \(B_i\) in \unit{K^{-1}} and \(C_i\) in \unit{K^2}, are
+                \begin{align*}
+                    \COtwo &: (5.457,1.045\times10^{-3},-1.157\times10^5),\\
+                    \HtwoO &: (3.47,1.45\times10^{-3},0.121\times10^5),\\
+                    \Ntwo &: (3.28,0.593\times10^{-3},0.04\times10^5),\\
+                    \Otwo &: (3.639,0.506\times10^{-3},-0.227\times10^5).
+                \end{align*}
 
             \subsubsection{Thermal Conductivity}
                 \begin{align}
@@ -116,31 +115,48 @@
                     \qquad \left(\unit{J\,s^{-1}\,m^{-1}\,K^{-1}}\right)
                 \end{align}
 
-        \newpage
+                The vapor mixture uses
+                \begin{equation}
+                    k_t^\vap=\sum_i\frac{y_i k_i^t}{\sum_j y_j\theta_{ij}},
+                \end{equation}
+                where \(\theta_{ij}\) is the viscosity-based Wilke factor defined in the vapor-viscosity equations below, not a conductivity ratio. The pure-component coefficients \((A_i,B_i,C_i,D_i)\), in the displayed SI correlation, are
+                \begin{align*}
+                    \COtwo &: (3.69,-0.3838,964,1.86\times10^6),\\
+                    \HtwoO &: (6.204\times10^{-6},1.3973,0,0),\\
+                    \Ntwo &: (0.000331,0.7722,16.323,373.72),\\
+                    \Otwo &: (0.00045,0.7456,56.699,0).
+                \end{align*}
+
         \subsection{Transport Properties}
-            \subsubsection{Viscosity} \cite{Morgan2015}
+            \subsubsection{Viscosity} \cite{Morgan2015a}
                 \textbf{Liquid Viscosity}
+                The water-reference coefficients are $A=\qty{1.002e-3}{Pa\,s}$, $B=1.3272$, $C=\qty{0.001053}{K^{-1}}$ and $D=\qty{168.15}{K}$.
+                Here \(r=w_{\MEA}/(w_{\MEA}+w_{\HtwoO})\) and $r_\mu=100r$ is the MEA mass percentage on the CO$_2$-free solvent basis, and $\alpha=x_{\COtwo}/x_{\MEA}$ is the apparent loading. For temperature in kelvin, the correlation coefficients are
+                \begin{align*}
+                    a=g&=-0.0854041877181552,& b&=2.72913373574306,\\
+                    c&=35.1158892542595,& d&=1805.52759876533,\\
+                    e&=0.00716025669867574,& f&=0.0106488402285381.
+                \end{align*}
                 \begin{align}
-                    \mu ^{\liq}_{\HtwoO} &= A \times 10^\frac{B\left(293.15 - T_l - C\left(T_l - 293.15\right)^2\right)}{T_l - D}
+                    \mu ^{\liq}_{\HtwoO} &= A \times 10^\frac{B\left(293.15 - T^{\liq} - C\left(T^{\liq} - 293.15\right)^2\right)}{T^{\liq} - D}
                     && \left(\unit{Pa\,s}\right)\\
-                    R &= \ln\left(\mu^{\vap}_{\COtwo}\right) y_{\COtwo}+\ln\left(\mu^{\vap}_{\HtwoO}\right) y_{\HtwoO}+\ln\left(\mu^{\vap}_{N_2}\right) y_{N_2}+\ln\left(\mu^{\vap}_{O_2}\right) y_{O_2}
-                    && \text{dimensionless correlation term}\\
-                    \mu ^{\liq}_{\text{mix}} &= \mu ^{\liq}_{\HtwoO} \times e^{R}
+                    \Delta_\mu &= \frac{r_\mu\left[T^{\liq}(a r_\mu+b)+c r_\mu+d\right]
+                    \left[\alpha(e r_\mu+f T^{\liq}+g)+1\right]}{(T^{\liq})^2}
+                    && \text{dimensionless}\\
+                    \mu ^{\liq}_{\text{mix}} &= \mu ^{\liq}_{\HtwoO} \exp(\Delta_\mu)
                     && \left(\unit{Pa\,s}\right)
                 \end{align}
                 \vspace{.5cm}
                 \textbf{Vapor Viscosity}
                 \begin{align}
-                    \mu ^{\vap}_{\COtwo} &= \frac{2.148 \times 10^{-6} \ T_v^{0.46}}{1+\frac{290}{T_v}}
+                    \mu ^{\vap}_{\COtwo} &= \frac{2.148 \times 10^{-6} \ (T^{\vap})^{0.46}}{1+\frac{290}{T^{\vap}}}
                     && \left(\unit{Pa\,s}\right)\\
-                    \mu ^{\vap}_{\HtwoO} &= 1.7096\times 10^{-8} \ T_v^{1.1146}
+                    \mu ^{\vap}_{\HtwoO} &= 1.7096\times 10^{-8} \ (T^{\vap})^{1.1146}
                     && \left(\unit{Pa\,s}\right)\\
-                    \mu ^{\vap}_{N_2} &= \frac{6.5592\times 10^{-7} \ T_v^{0.6081}}{1+\frac{54.714}{T_v}}
+                    \mu ^{\vap}_{\Ntwo} &= 1.781\times10^{-5}\frac{300.55+111}{T^{\vap}+111}\left(\frac{T^{\vap}}{300.55}\right)^{3/2}
                     && \left(\unit{Pa\,s}\right)\\
-                    \mu ^{\vap}_{O_2} &= \frac{5.5462\times 10^{-8} \ T_v^{0.8825}}{1+\frac{73.316}{T_v}}
+                    \mu ^{\vap}_{\Otwo} &= 2.018\times10^{-5}\frac{292.25+127}{T^{\vap}+127}\left(\frac{T^{\vap}}{292.25}\right)^{3/2}
                     && \left(\unit{Pa\,s}\right)\\
-                    R &= \ln\left(\mu^{\vap}_{\COtwo}\right) y_{\COtwo}+\ln\left(\mu^{\vap}_{\HtwoO}\right) y_{\HtwoO}+\ln\left(\mu^{\vap}_{N_2}\right) y_{N_2}+\ln\left(\mu^{\vap}_{O_2}\right) y_{O_2}
-                    && \text{dimensionless correlation term}\\
                     \theta_{ij} &= \frac{1 + 2\,\sqrt{\frac{\mu^{\vap}_{i}}{\mu^{\vap}_{j}}}\left(\frac{\text{MW}^{\vap}_{j}}{\text{MW}^{\vap}_{i}}\right)^{0.25} + \frac{\mu^{\vap}_{i}}{\mu^{\vap}_{j}}\left(\frac{\text{MW}^{\vap}_{j}}{\text{MW}^{\vap}_{i}}\right)^{0.5}}{\sqrt{8 + 8\,\frac{\text{MW}^{\vap}_{i}}{\text{MW}^{\vap}_{j}}}}
                     && \text{dimensionless}\\
                     \theta_{ji} &= \frac{\mu ^{\vap}_{j}}{\mu ^{\vap}_{i}}\frac{\text{MW}^{\vap}_{i}}{\text{MW}^{\vap}_{j}}\theta_{ij}
@@ -154,30 +170,120 @@
             \subsubsection{Diffusivity}
                 \textbf{Liquid Diffusivity}
                 \begin{align}
-                    C^{\liq}_{\MEA,\text{true}} &= C^{\liq}_{\MEA} \times 10^{-3}
+                    C_{\MEA}^{\mathrm{app}} &= \rho_{\mathrm{mol}}^{\liq}x_{\MEA} && \left(\unit{mol\,m^{-3}}\right)\\
+                    c_{\MEA,L}^{\mathrm{app}} &= C_{\MEA}^{\mathrm{app}}\times10^{-3}
                     && \left(\unit{mol\,L^{-1}}\right)\\
-                    D^{\liq}_{ \COtwo} &= \left(a + b C^{\liq}_{\MEA,\text{true}} + c {C^{\liq}_{\MEA,\text{true}}}^2\right) e^{\frac{d + e C^{\liq}_{\MEA,\text{true}}}{T_l}}
+                    D^{\liq}_{ \COtwo} &= \left(a + b c_{\MEA,L}^{\mathrm{app}} + c {c_{\MEA,L}^{\mathrm{app}}}^2\right) e^{\frac{d + e c_{\MEA,L}^{\mathrm{app}}}{T^{\liq}}}
                     && \left(\unit{m^{2}\,s^{-1}}\right)\\
-                    D^{\liq}_{ \MEA} &= e^{a + \frac{b}{T_l} + c C^{\liq}_{\MEA}}
+                    D^{\liq}_{ \MEA} &= e^{a + \frac{b}{T^{\liq}} + c C_{\MEA}^{\mathrm{app}}}
                     && \left(\unit{m^{2}\,s^{-1}}\right)\\
-                    D^{\liq}_{ \text{ion}} &= e^{a + \frac{b}{T_l} + c \log{\mu ^{\liq}_{ \text{mix}}}}
+                    D^{\liq}_{ \text{ion}} &= e^{a + \frac{b}{T^{\liq}} + c \ln{\mu ^{\liq}_{ \text{mix}}}}
                     && \left(\unit{m^{2}\,s^{-1}}\right)
                 \end{align}
                 \vspace{.5cm}
                 \textbf{Vapor Diffusivity}
+                In the binary expression below, $T^{\vap}$ is in kelvin, $P$ in pascals, and $\text{MW}_i^{\vap}$ in \unit{kg\,mol^{-1}}. The factor $10^{-3}$ inside the square root converts reciprocal molar masses to the gram-per-mole convention of the correlation; $V_{Di}$ are the tabulated diffusion-volume numbers.
                 \begin{align}
-                    D_{i j} &= 1.013 \times 10^{-2} T_V^{1.75} \frac{\sqrt{\left(\text{MW}^{\vap}_{i}+\text{MW}^{\vap}_{j}\right) / \text{MW}^{\vap}_{i} \text{MW}^{\vap}_{j}}}{P\left(\sqrt[3]{V_{D i}}+\sqrt[3]{V_{D j}}\right)^2}
+                    D_{i j} &= 1.013 \times 10^{-2} (T^{\vap})^{1.75} \frac{\sqrt{10^{-3}\left(1/\text{MW}^{\vap}_{i}+1/\text{MW}^{\vap}_{j}\right)}}{P\left(\sqrt[3]{V_{D i}}+\sqrt[3]{V_{D j}}\right)^2}
                     && \left(\unit{m^{2}\,s^{-1}}\right)\\
                     D^{\vap}_{ i} &= \frac{1-y_i}{\sum_{\substack{j=1 \\ j \neq i}}^n \frac{y_j}{D_{i j}}}
                     && \left(\unit{m^{2}\,s^{-1}}\right)
                 \end{align}
 
-        \newpage
         \subsection{Constants and Parameter Reporting}\label{sec:appendix-properties}
-            Table~\ref{tab:appendix-parameter-scope} summarizes the parameter groups used by the absorber model. The absorber constants and case-specific operating rows are maintained in the repository input data so that the manuscript and executable benchmark stay aligned. The ePC-SAFT parameter record used in the thermodynamic runs is reported separately in Tables~\ref{tab:epcsaft-pure-parameters} and~\ref{tab:epcsaft-binary-parameters}.
+            \Cref{tab:appendix-parameter-scope} summarizes the parameter groups used by the absorber model. The absorber constants and case-specific operating rows are maintained in the repository input data so that the manuscript and executable benchmark stay aligned. The coupled nine-species calculation uses the selected inputs in \cref{sec:selected-reactive-inputs}. The reduced six-species chemistry and its historical inputs are retained below solely for the nine-case fugacity comparison, including \cref{tab:epcsaft-pure-parameters,tab:epcsaft-binary-parameters}.
+
+            \input{tables/transport_applicability}
+
+            \Cref{tab:transport-applicability} distinguishes source calibration ranges from the adopted coefficients and approximations. A source range does not establish the same fit error after changing a coefficient or correlation form. The source ranges listed for liquid properties also do not establish the applicability range of the vapor-property correlations. Holding these transport formulas fixed controls the six-species thermodynamic comparison but does not remove transport-model uncertainty. The coupled Case 3C sensitivity study recalculates dependent properties and enhancement; correlated input effects are not treated as independent uncertainties.
 
             \input{tables/appendix_parameter_scope}
+            \par\medskip\noindent\textbf{Reduced chemistry for the historical six-species comparison.}\label{sec:historical-chemistry}
+                The historical six-species fugacity comparison converts apparent component concentrations into true species concentrations. These true species supply the enhancement and fugacity calculations; the diffusivity correlations use the apparent MEA concentration described in the property appendix. The calculation begins with the apparent species concentrations and equilibrium constants for the two retained reactions in \cref{eq:reaction-set}:
+                \begin{align}
+                    & 2 \MEA+\COtwo{} \leftrightarrow \MEAH{} +\MEACOO
+                    && \text{stoichiometric reaction} \label{eq:reaction-set}\\
+                    & \MEA+\COtwo+\HtwoO{} \leftrightarrow \MEAH{} +\HCOthree
+                    && \text{stoichiometric reaction}
+                \end{align}
+                This reaction set follows the simplified solution chemistry used by Hilliard \cite{Hilliard2008} and omits \ce{H3O+}, \ce{OH-}, and \ce{CO3^{2-}}. The omission is an assumption of the six-species calculation and limits its applicability when those species contribute materially to charge or component balances.
+
+                This reaction set gives the following stoichiometric matrix $\mathbf{\nu}_{i,r}$ in \cref{eq:stoich-matrix}:
+                \begin{align}
+                    \mathbf{\nu}_{i, r} =
+                    \begin{bmatrix}
+                    -1 & -1 \\
+                    -2 & -1 \\
+                     0 & -1 \\
+                     1 &  1 \\
+                     1 &  0 \\
+                    0 &  1
+                    \end{bmatrix}
+                    && \text{dimensionless}\label{eq:stoich-matrix}
+                \end{align}
+                The retained temperature-dependent equilibrium-constant record has the form in \cref{eq:equilibrium-constant}:
+
+                \begin{align}
+                    \ln K_r = a_r + \frac{b_r}{T^{\liq}} + c_r \ln(T^{\liq}) + d_r T^{\liq}
+                    && \text{dimensionless}\label{eq:equilibrium-constant}
+                \end{align}
+
+                 where $r$ represents a reaction number. The $K_r$ values use a concentration standard state. Their estimation dataset, objective, weights, parameter bounds, and uncertainty were not recovered for this manuscript, so they are treated as fixed inputs rather than parameters estimated in this study. With $C^\circ=\qty{1}{mol\,L^{-1}}=\qty{1000}{mol\,m^{-3}}$ and unit activity coefficients in the benchmark, the dimensionless species activities and reaction quotient are given in \cref{eq:activity-quotient}:
+                 \begin{align}
+                     a_i^{(c)} &= \frac{C_i}{C^\circ},
+                     & Q_r &= \prod_i \left(a_i^{(c)}\right)^{\nu_{i,r}},
+                     & \ln Q_r-\ln K_r(T^{\liq}) &= 0 .\label{eq:activity-quotient}
+                 \end{align}
+                The algebraic implementation evaluates the equivalent quotient directly with concentrations in \(\unit{mol\,m^{-3}}\). It therefore converts the retained constant according to \cref{eq:concentration-standard-state}:
+                \begin{align}
+                    \ln K_{r,C} &= \ln K_r + \left(\sum_i\nu_{i,r}\right)\ln C^\circ .\label{eq:concentration-standard-state}
+                \end{align}
+                where the numerical value of $C^\circ$ is expressed in \(\unit{mol\,m^{-3}}\). For both retained reactions, $\sum_i\nu_{i,r}=-1$, so the implementation subtracts $\ln(1000)$ before solving the concentration-form residuals. The equilibrium equations are solved alongside the material and charge balances derived from Akula \cite{Akula2023}.
+
+                \begin{align}
+                    C^{\liq}_{\COtwo,0} &= C^{\liq}_{\COtwo} + C^{\liq}_{\MEAH}
+                    && \left(\unit{mol\,m^{-3}}\right)\\
+                    C^{\liq}_{\MEA,0} &= C^{\liq}_{\MEA} + C^{\liq}_{\MEAH} + C^{\liq}_{\MEACOO}
+                    && \left(\unit{mol\,m^{-3}}\right)\\
+                    C^{\liq}_{\HtwoO,0} &= C^{\liq}_{\HtwoO} + C^{\liq}_{\MEAH} - C^{\liq}_{\MEACOO}
+                    && \left(\unit{mol\,m^{-3}}\right)\\
+                    C^{\liq}_{\MEAH} &= C^{\liq}_{\MEACOO} + C^{\liq}_{\HCOthree}
+                    && \left(\unit{mol\,m^{-3}}\right)\\
+                    \mathbf{C} &= \left[
+                         C^{\liq}_{\COtwo}, C^{\liq}_{\MEA}, C^{\liq}_{\HtwoO}, C^{\liq}_{\MEAH}, C^{\liq}_{\MEACOO}, C^{\liq}_{\HCOthree}\right]
+                    && \left(\unit{mol\,m^{-3}}\right)
+                \end{align}
+                where $\mathbf{C}$ is the array of unknown true-species concentrations.
+                Each equation is set to zero and the true species concentrations are obtained as the roots of the nonlinear algebraic system. Concentrations are the unknowns because the chemical-equilibrium calculation uses a concentration standard state and unit activity coefficients. The unknowns and equations are scaled before the nonlinear solve. The calculation reuses the preceding axial-point solution as the initial guess for the next local chemical-equilibrium calculation.
+
+                The historical nine-case comparison uses this concentration-based equilibrium calculation. It assumes unit activity coefficients in the equilibrium equations but still produces true ionic species concentrations for $\COtwo$, MEA, \HtwoO, \MEAH, \MEACOO, and \HCOthree. Those true species states are passed to the transport-property and ePC-SAFT fugacity calculations. The ePC-SAFT benchmark therefore changes the \COtwo{} fugacity closure, not the chemical-equilibrium model. Once true species concentrations are known, VLE behavior can be evaluated.
+
             \input{tables/epcsaft_parameter_summary}
 
-            The fixed constants used in the simulations include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, and measured capture values are read from the NCCC benchmark data. This separation prevents inconsistencies between a manuscript appendix and the executable model while still documenting the physical and numerical scope of the simulations.
+            The fixed constants used in the simulations include the gas constant, gravitational acceleration, column diameter, nominal packed height, specific packing area, and packing void fraction. Case-specific flow rates, lean loading, inlet compositions, temperatures, and measured capture values are read from the NCCC benchmark data. The case specification, thermodynamic formulation and numerical settings jointly identify each reported calculation.
+\subsection{Selected Replacement Reactive Inputs}\label{sec:selected-reactive-inputs}
+The tables in \cref{tab:epcsaft-pure-parameters,tab:epcsaft-binary-parameters} describe only the historical six-species fugacity comparison.
+For fully coupled reactive equilibrium, a separate nine-species parameterization is documented in \path{docs/selected-reactive-parameters.md}, including component and pair coefficients, association choices, reaction correlations, standard states, validity domains, and sources.
+The corresponding machine-readable parameters are provided in \path{src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json}; \texttt{REPRODUCE.md} specifies the parameter, reaction and software versions.
+This parameterization is used for the coupled Case 3C verification and sensitivity studies, separately from the six-species fugacity comparison.
+
+The selected formulation couples the five reactions in \cref{eq:reactive-r1,eq:reactive-r2,eq:reactive-r3,eq:reactive-r4,eq:reactive-r5} to the liquid EOS, conserved quantities and electroneutrality.
+The EOS supplies activities and fugacity coefficients; the temperature-dependent reaction constants specify chemical equilibrium on the declared pure-water, infinite-dilution molality reference with standard molality \qty{1}{mol\,kg^{-1}}.
+The standard-state conversion is explicit and does not infer reaction constants from the initial composition.
+The conventional enhancement approach uses the matched bulk-fugacity/free-concentration coefficient stated in the main model; the empirical column enthalpies remain separate from the EOS equilibrium calculation.
+
+The supporting record distinguishes literature coefficients, transferred ion values, and fitted coefficients.
+The selected MEA--water interaction coefficient is $k_{ij}=-0.07352749875$; the \COtwo{} dispersion energy is $\epsilon/k=\qty{173.44025}{K}$.
+The former comes from the neutral-mixture fit; the latter was selected jointly with R4 in a pressure/speciation calibration grid.
+The selected R2, R4, and R5 temperature correlations incorporate fitted reaction-enthalpy shifts, with pressure, speciation, and \qty{40}{\degreeCelsius}/\qty{80}{\degreeCelsius} calorimetry used in the final reaction-temperature objective. Xu 2011 pressure data and \qty{120}{\degreeCelsius} calorimetry were excluded from that objective; Xu data had earlier model-selection use and are not an untouched holdout for the entire parameterization.
+The typed R2, R4 and R5 records in \texttt{parameters.json} supersede the corresponding source correlations in \texttt{reaction-system.json}; the effective selected correlations are
+\begin{align}
+    \ln K_2(T)&=232.33141533884407-\frac{11105.640030520277}{T}-36.7816\ln T,\\
+    \ln K_4(T)&=1.505015374192114-\frac{1317.0489707842564}{T},\\
+    \ln K_5(T)&=-\ln(10)\left(\frac{3037.6399534696106}{T}-1.0173150837285996+0.0004277T\right).
+\end{align}
+Here \(T\) is numerically in kelvin and each \(K_r\) is dimensionless on the EOS convention. No additional source conversion offset is added to these three expressions. R1 and R3 retain their source coefficients and conversion offsets as listed in the supporting parameter record. The common selected calculation range is \qtyrange{293.15}{393.15}{K}; calibration is distinct from independent absorber validation.
+
+Peer repetition uses the retained parameter and reaction JSON files together, preserving species order, units, association topology, reaction standard states, and temperature domains.
+\texttt{REPRODUCE.md} specifies the immutable wheel hash, Engine revision, locked environment commands, and runtime selection \texttt{epcsaft\_reactive\_nine}.
     \clearpage

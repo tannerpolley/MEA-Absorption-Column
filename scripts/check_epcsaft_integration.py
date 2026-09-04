@@ -181,10 +181,20 @@ def run_smoke(contract: dict[str, Any]) -> dict[str, Any]:
     )
     if diagnostics["phi_co2"] <= 0.0:
         raise RuntimeError("The ionic ePC-SAFT smoke state returned a nonpositive CO2 fugacity coefficient.")
+    reactive = importlib.import_module("mea_absorption_column.Thermodynamics.reactive_bundle")
+    # Pin the accepted input/export combination to this runtime, without rewriting its provenance.
+    for name, expected in contract["final_identity"]["reactive_inputs_sha256"].items():
+        if hashlib.sha256((reactive.DATASET / name).read_bytes()).hexdigest() != expected:
+            raise RuntimeError(f"Selected reactive input differs from the integration pin: {name}")
+    reactive_result = reactive.reactive_liquid().solve(
+        313.15, 109500.0, [0.03, 0.11, 0.86]
+    )
     return {
         "dataset": str(dataset_path),
         "parameter_fingerprint": diagnostics["parameter_fingerprint"],
         "phi_co2": diagnostics["phi_co2"],
+        "reactive_parameter_fingerprint": reactive_result["parameter_fingerprint"],
+        "reactive_density_mol_m3": reactive_result["density_mol_m3"],
     }
 
 
@@ -198,7 +208,7 @@ def _version_triplet(value: str) -> tuple[int, int, int]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Check MEA-Absorption-Column ePC-SAFT integration contract.")
     parser.add_argument("--mode", choices=("stable", "dev", "final"), default=None, help="Select the package source lane.")
-    parser.add_argument("--self-only", action="store_true", help="Skip the repo-specific smoke step.")
+    parser.add_argument("--self-only", action="store_true", help="Skip the repo-specific smoke step outside final mode.")
     args = parser.parse_args(argv)
 
     contract = load_contract()
@@ -244,7 +254,7 @@ def main(argv: list[str] | None = None) -> int:
     errors.extend(scan_direct_imports(contract))
 
     smoke_payload = None
-    if not args.self_only:
+    if mode == "final" or not args.self_only:
         try:
             smoke_payload = run_smoke(contract)
         except Exception as exc:
@@ -263,6 +273,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"dataset path: {smoke_payload['dataset']}")
         print(f"parameter fingerprint: {smoke_payload['parameter_fingerprint']}")
         print(f"CO2 fugacity coefficient: {smoke_payload['phi_co2']}")
+        print(f"Nine-species parameter fingerprint: {smoke_payload['reactive_parameter_fingerprint']}")
+        print(f"Nine-species liquid density [mol/m3]: {smoke_payload['reactive_density_mol_m3']}")
 
     if errors:
         for error in errors:

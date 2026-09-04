@@ -1,51 +1,52 @@
-{\scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\begin{longtable}{llrrrrrrrrr}
-    \caption{Pure-component ePC-SAFT parameter record used for the thermodynamic runs. Segment diameter $\sigma$ and Born diameter $d_{\mathrm{Born}}$ are in \AA; $\epsilon/k$ and $\epsilon^{\mathrm{assoc}}/k$ are in \si{K}; molecular weight is in \si{kg\,mol^{-1}}; relative permittivity $\epsilon_r$ is dimensionless.}
-    \label{tab:epcsaft-pure-parameters}\\
+\begin{table}[pos=htbp]
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{2.5pt}
+  \caption{Historical six-species ePC-SAFT parameters for the nine-case fugacity comparison; units are given below the table.}
+  \label{tab:epcsaft-pure-parameters}
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}ll
+    S[table-format=1.4]
+    S[table-format=1.4]
+    S[table-format=3.3]
+    S[table-format=4.1]
+    S[table-format=1.5]
+    S[table-format=1.6]
+    S[table-format=-1.0]
+    S[table-format=1.3]
+    S[table-format=2.4]@{}}
     \toprule
-    \textbf{Species} & \textbf{Association} & \textbf{$m$} & \textbf{$\sigma$} & \textbf{$\epsilon/k$} & \textbf{$\epsilon^{\mathrm{assoc}}/k$} & \textbf{$\kappa^{\mathrm{assoc}}$} & \textbf{MW} & \textbf{$z$} & \textbf{$d_{\mathrm{Born}}$} & \textbf{$\epsilon_r$} \\
+    Species & Association & {$m$} & {$\sigma$} & {$\epsilon/k$} & {$\epsilon^{\mathrm{assoc}}/k$} & {$\kappa^{\mathrm{assoc}}$} & {MW} & {$z$} & {$d_{\mathrm{Born}}$} & {$\epsilon_r$} \\
     \midrule
-    \endfirsthead
-    \toprule
-    \textbf{Species} & \textbf{Association} & \textbf{$m$} & \textbf{$\sigma$} & \textbf{$\epsilon/k$} & \textbf{$\epsilon^{\mathrm{assoc}}/k$} & \textbf{$\kappa^{\mathrm{assoc}}$} & \textbf{MW} & \textbf{$z$} & \textbf{$d_{\mathrm{Born}}$} & \textbf{$\epsilon_r$} \\
-    \midrule
-    \endhead
     \ce{CO2} & -- & 2.0790 & 2.7852 & 169.21 & 0.0 & 0.00000 & 0.044010 & 0 & 0.000 & 1.4122 \\
     \ce{MEA} & 2B & 3.0353 & 3.0435 & 277.174 & 2586.3 & 0.03747 & 0.061080 & 0 & 0.000 & 32.00 \\
-    \ce{H2O} & 2B & 1.2047 & $\sigma(T)$ & 353.95 & 2425.7 & 0.04509 & 0.018015 & 0 & 0.000 & 78.09 \\
+    \ce{H2O} & 2B & 1.2047 & {$\sigma(T)$} & 353.95 & 2425.7 & 0.04509 & 0.018015 & 0 & 0.000 & 78.09 \\
     \ce{MEAH+} & -- & 1.0000 & 3.5630 & 228.71 & 0.0 & 0.00000 & 0.062090 & 1 & 3.563 & 8.00 \\
     \ce{MEACOO-} & -- & 1.0000 & 3.5605 & 533.11 & 0.0 & 0.00000 & 0.075070 & -1 & 3.561 & 8.00 \\
     \ce{HCO3-} & -- & 1.0000 & 2.9296 & 70.00 & 0.0 & 0.00000 & 0.061017 & -1 & 3.000 & 8.00 \\
-    \ce{CO3^2-} & -- & 1.0000 & 3.0000 & 300.00 & 0.0 & 0.00000 & 0.060010 & -2 & 3.000 & 8.00 \\
-    \ce{H3O+} & -- & 1.0000 & 3.0000 & 300.00 & 0.0 & 0.00000 & 0.019020 & 1 & 3.000 & 8.00 \\
-    \ce{OH-} & -- & 1.0000 & 3.0000 & 300.00 & 0.0 & 0.00000 & 0.017010 & -1 & 3.000 & 8.00 \\
     \bottomrule
-\end{longtable}
-}
-
-\noindent The water segment diameter is evaluated as
+  \end{tabular*}
+\par\smallskip\footnotesize
+\noindent\emph{Units:} $\sigma$ and $d_{\mathrm{Born}}$ in \unit{\angstrom}; $\epsilon/k$ and $\epsilon^{\mathrm{assoc}}/k$ in \unit{K}; MW in \unit{kg\,mol^{-1}}; $\epsilon_r$ dimensionless. The water segment diameter is evaluated as
 \begin{align}
-    \sigma_{\ce{H2O}}(T) =
-    2.7927 + 10.11\exp(-0.01775T) - 1.417\exp(-0.01146T),
-    && \left(\text{\AA}\right).
+  \sigma_{\ce{H2O}}(T) =
+  2.7927 + 10.11\exp(-0.01775T) - 1.417\exp(-0.01146T),
+  && \left(\unit{\angstrom}\right).
 \end{align}
+\end{table}
 
-\noindent The routine fugacity campaign uses the first six species. The final three species occur only in the nine-species feasibility calculation. The retained parameter record does not contain complete source and estimation details for the neutral species. The \ce{MEAH+} and \ce{MEACOO-} values were retained from an earlier evaluation, the \ce{HCO3-} value was transferred for the numerical test, and the \ce{CO3^2-}, \ce{H3O+}, and \ce{OH-} values are assumptions used only in that test. The nine-species set is therefore used for a conditional numerical-coupling calculation and is not presented as a predictive parameterization.
+\noindent These six species define the parameter set used in the reported fugacity comparison. The retained record does not contain complete source and estimation details for the neutral species. The \ce{MEAH+} and \ce{MEACOO-} values come from an earlier evaluation, and the \ce{HCO3-} value was transferred. These source qualifications apply to the reported benchmark parameter set.
 
-\begin{longtable}{llr}
-    \caption{Binary interaction parameter record used for the ePC-SAFT mixture calculation. Unlisted $k_{ij}$ values in the stored matrix are zero.}
-    \label{tab:epcsaft-binary-parameters}\\
+\begin{table}[pos=htbp]
+  \centering
+  \caption{Historical binary interaction parameter for the six-species fugacity comparison, not the selected nine-species model. Unlisted $k_{ij}$ values in the stored matrix are zero.}
+  \label{tab:epcsaft-binary-parameters}
+  \begin{tabular}{@{}ll S[table-format=-1.3]@{}}
     \toprule
-    \textbf{Component $i$} & \textbf{Component $j$} & \textbf{$k_{ij}$} \\
+    Component $i$ & Component $j$ & {$k_{ij}$} \\
     \midrule
-    \endfirsthead
-    \toprule
-    \textbf{Component $i$} & \textbf{Component $j$} & \textbf{$k_{ij}$} \\
-    \midrule
-    \endhead
     \ce{MEA} & \ce{H2O} & -0.052 \\
     \bottomrule
-\end{longtable}
+  \end{tabular}
+\end{table}
 
-\noindent The selected parameter set contains one nonzero pair coefficient, $k_{\ce{MEA},\ce{H2O}}=-0.052$. This value was retained from an earlier MEA--water record, but its source dataset, fitting procedure, and uncertainty were not recovered. The earlier record also used a different neutral association-scheme combination from the selected 2B/2B record. This inconsistency must be resolved and the calculations repeated before the parameter set can be presented as source-complete. No $k_{ij}$ value was estimated from the NCCC absorber rows in this study.
+\noindent The historical six-species parameter set contains one nonzero pair coefficient, $k_{\ce{MEA},\ce{H2O}}=-0.052$. Its original fitting data, procedure, and uncertainty are unavailable, and its earlier MEA--water record used a different neutral association-scheme combination from the 2B/2B combination used here. The coefficient is therefore a retained benchmark input, with incomplete source support for its transfer between association schemes. No $k_{ij}$ value was estimated from the NCCC absorber cases in this study.
