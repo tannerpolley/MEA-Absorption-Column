@@ -1,9 +1,7 @@
 import csv
-import json
 import math
 import os
 import time
-from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -18,125 +16,20 @@ from mea_absorption_column.Properties.Thermophysical_Properties import density
 from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
-    epcsaft_runtime_user_options,
 )
 from mea_absorption_column.Thermodynamics.reactive_bundle import (
     solve_homogeneous_reactive_state,
 )
 
 
-SPECIES_6 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-")
 SPECIES_9 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-")
-REACTIONS_6 = (
-    {"CO2": -1.0, "MEA": -2.0, "MEAH+": 1.0, "MEACOO-": 1.0},
-    {"CO2": -1.0, "MEA": -1.0, "H2O": -1.0, "MEAH+": 1.0, "HCO3-": 1.0},
-)
-REACTION_NAMES_6 = ("carbamate", "bicarbonate")
-REACTION_CONSTANTS_9 = {
-    "R1_water_autoionization": (132.899, -13445.9, -22.4773, 0.0),
-    "R2_CO2_to_HCO3": (231.465, -12092.1, -36.7816, 0.0),
-    "R3_HCO3_to_CO3": (216.049, -12431.0, -35.4891, 0.0),
-    "R4_MEACOO_hydrolysis": (-1.8652, -1543.3, 0.0, 0.0),
-    "R5_MEAH_dissociation": (2.1211, -8189.38, 0.0, -0.007484),
-}
-REACTIONS_9 = (
-    {"H2O": -2.0, "H3O+": 1.0, "OH-": 1.0},
-    {"CO2": -1.0, "H2O": -2.0, "HCO3-": 1.0, "H3O+": 1.0},
-    {"H2O": -1.0, "HCO3-": -1.0, "CO3^2-": 1.0, "H3O+": 1.0},
-    {"MEA": 1.0, "H2O": -1.0, "MEACOO-": -1.0, "HCO3-": 1.0},
-    {"MEA": 1.0, "H2O": -1.0, "MEAH+": -1.0, "H3O+": 1.0},
-)
-REACTION_NAMES_9 = tuple(REACTION_CONSTANTS_9)
-EPCSAFT_CHEMISTRY_CACHE_T_DIGITS = int(os.environ.get("MEA_EPCSAFT_CHEMISTRY_CACHE_T_DIGITS", "2"))
-EPCSAFT_CHEMISTRY_CACHE_X_DIGITS = int(os.environ.get("MEA_EPCSAFT_CHEMISTRY_CACHE_X_DIGITS", "6"))
-EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA = float(os.environ.get("MEA_EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA", "10.0"))
-EPCSAFT_REACTIVE_OPTION_ENV_KEYS = (
-    "MEA_EPCSAFT_REACTIVE_MAX_ITERATIONS",
-    "MEA_EPCSAFT_REACTIVE_TOLERANCE",
-    "MEA_EPCSAFT_REACTIVE_MASS_TOLERANCE",
-    "MEA_EPCSAFT_REACTIVE_CHARGE_TOLERANCE",
-    "MEA_EPCSAFT_REACTIVE_REACTION_TOLERANCE",
-    "MEA_EPCSAFT_REACTIVE_DAMPING",
-    "MEA_EPCSAFT_REACTIVE_ACCEPT_BEST_EFFORT",
-    "MEA_EPCSAFT_REACTIVE_BEST_EFFORT_MASS_MAX",
-    "MEA_EPCSAFT_REACTIVE_BEST_EFFORT_CHARGE_MAX",
-    "MEA_EPCSAFT_REACTIVE_BEST_EFFORT_REACTION_MAX",
-)
-
-
-def _env_int(name, default):
-    value = os.environ.get(name)
-    if value is None or value == "":
-        return int(default)
-    return int(value)
-
-
-def _env_float(name, default):
-    value = os.environ.get(name)
-    if value is None or value == "":
-        return float(default)
-    return float(value)
-
-
-def _env_bool(name, default=False):
-    value = os.environ.get(name)
-    if value is None or value == "":
-        return bool(default)
-    return str(value).strip().lower() in {"1", "true", "yes", "on"}
-
-
-def _reactive_speciation_options(epcsaft):
-    return epcsaft.ReactiveSpeciationOptions(
-        max_iterations=_env_int("MEA_EPCSAFT_REACTIVE_MAX_ITERATIONS", 120),
-        tolerance=_env_float("MEA_EPCSAFT_REACTIVE_TOLERANCE", 1.0e-8),
-        mass_tolerance=_env_float("MEA_EPCSAFT_REACTIVE_MASS_TOLERANCE", 1.0e-7),
-        charge_tolerance=_env_float("MEA_EPCSAFT_REACTIVE_CHARGE_TOLERANCE", 1.0e-7),
-        reaction_tolerance=_env_float("MEA_EPCSAFT_REACTIVE_REACTION_TOLERANCE", 1.0e-7),
-        damping=_env_float("MEA_EPCSAFT_REACTIVE_DAMPING", 0.7),
-        return_best_effort=True,
-    )
-
-
-def _max_abs(values):
-    values = list(values)
-    if not values:
-        return 0.0
-    return float(max(abs(float(value)) for value in values))
-
-
-def _accept_reactive_best_effort(result):
-    if not _env_bool("MEA_EPCSAFT_REACTIVE_ACCEPT_BEST_EFFORT", False):
-        return False
-    max_mass = _max_abs(getattr(result, "mass_balance_residuals", {}).values())
-    max_reaction = _max_abs(getattr(result, "reaction_residuals", []))
-    max_charge = abs(float(getattr(result, "charge_residual", 0.0)))
-    return (
-        max_mass <= _env_float("MEA_EPCSAFT_REACTIVE_BEST_EFFORT_MASS_MAX", 1.0e-6)
-        and max_charge <= _env_float("MEA_EPCSAFT_REACTIVE_BEST_EFFORT_CHARGE_MAX", 1.0e-6)
-        and max_reaction <= _env_float("MEA_EPCSAFT_REACTIVE_BEST_EFFORT_REACTION_MAX", 1.0e-6)
-    )
-
-
-def _record_epcsaft_reactive_result(diagnostics, result):
-    if diagnostics is None:
-        return
-    max_mass = _max_abs(getattr(result, "mass_balance_residuals", {}).values())
-    max_reaction = _max_abs(getattr(result, "reaction_residuals", []))
-    max_charge = abs(float(getattr(result, "charge_residual", 0.0)))
-    _set_diagnostic_max(diagnostics, "epcsaft_chemistry_max_mass_residual", max_mass)
-    _set_diagnostic_max(diagnostics, "epcsaft_chemistry_max_reaction_residual", max_reaction)
-    _set_diagnostic_max(diagnostics, "epcsaft_chemistry_max_charge_residual", max_charge)
-    result_diagnostics = getattr(result, "diagnostics", {}) or {}
-    diagnostics["epcsaft_chemistry_last_message"] = str(getattr(result, "message", ""))
-    diagnostics["epcsaft_chemistry_last_iterations"] = int(result_diagnostics.get("iterations", 0) or 0)
-    diagnostics["epcsaft_chemistry_last_native_success"] = bool(
-        result_diagnostics.get("native_success", getattr(result, "success", False))
-    )
 
 
 def _set_diagnostic_max(diagnostics, key, value):
-    if not np.isfinite(value):
+    if diagnostics is None:
         return
+    if not np.isfinite(value):
+        raise ValueError(f"Non-finite reactive equilibrium diagnostic: {key}")
     diagnostics[key] = max(float(diagnostics.get(key, 0.0)), float(value))
 
 
@@ -149,38 +42,23 @@ def chemical_equilibrium(Fl, Tl):
 
     # Stoichiometric coefficients
 
-    if not hasattr(chemical_equilibrium, "cache"):
-        chemical_equilibrium.cache = {}
+    if alpha > .55:
+        guesses = np.array([np.float64(0.2898922682406258), np.float64(49.55833510066053), np.float64(37034.44479911041),
+                            np.float64(2977.227954765714), np.float64(2281.7371099910897), np.float64(670.8767135873576)])
+    elif .55 > alpha > .5:
+        guesses = np.array([0.000475252, 1256.753612, 39538.22586,
+                            2024.631764, 1871.027883, 153.6038808
+                            ])
 
-    use_previous = True
+    elif .5 > alpha > .35:
+        guesses = np.array([0.000475252, 1256.753612, 39538.22586,
+                            2024.631764, 1871.027883, 153.6038808
+                            ])
+    elif .35 > alpha > .20:
+        guesses = np.array([1.44138E-05, 2582.680049, 39385.02661, 1137.300895, 1079.024729, 58.27616665])
 
-    if (
-        "prev_value" in chemical_equilibrium.cache
-        and use_previous
-        and np.all(np.isfinite(chemical_equilibrium.cache["prev_value"]))
-        and np.all(np.asarray(chemical_equilibrium.cache["prev_value"]) > 0.0)
-    ):
-        guesses = chemical_equilibrium.cache["prev_value"]
-        # print(zi, guesses)
-        # use old_val in your calculation...
     else:
-        if alpha > .55:
-            guesses = np.array([np.float64(0.2898922682406258), np.float64(49.55833510066053), np.float64(37034.44479911041),
-                                np.float64(2977.227954765714), np.float64(2281.7371099910897), np.float64(670.8767135873576)])
-        elif .55 > alpha > .5:
-            guesses = np.array([0.000475252, 1256.753612, 39538.22586,
-                                2024.631764, 1871.027883, 153.6038808
-                                ])
-        
-        elif .5 > alpha > .35:
-            guesses = np.array([0.000475252, 1256.753612, 39538.22586,
-                                2024.631764, 1871.027883, 153.6038808
-                                ])
-        elif .35 > alpha > .20:
-            guesses = np.array([1.44138E-05, 2582.680049, 39385.02661, 1137.300895, 1079.024729, 58.27616665])
-
-        else:
-            guesses = np.array([2.19063E-06, 3541.63341, 39325.97789, 742.3266307, 730.0176094, 12.30902129])
+        guesses = np.array([2.19063E-06, 3541.63341, 39325.97789, 742.3266307, 730.0176094, 12.30902129])
 
     # print(Fl, Tl)
     rho_mol_l, _, _ = density(Tl, x_0[:3], 0, phase='liquid')
@@ -189,7 +67,7 @@ def chemical_equilibrium(Fl, Tl):
     # Constants and initial guesses provided
     # a1, b1, c1, d1 = 164.039636, -707.0056712, -26.40136817, 0
     # a2, b2, c2, d2 = 366.061867998774, -13326.25411, -55.68643292, 0
-    
+
     a1, b1, c1, d1 = 233.4, -3410, -36.8, 0
     a2, b2, c2, d2 = 176.72, -2909, -28.46, 0.0
 
@@ -218,7 +96,7 @@ def chemical_equilibrium(Fl, Tl):
         Cl_MEAH = guesses[3]
         Cl_MEACOO = guesses[4]
         Cl_HCO3 = guesses[5]
-        
+
         Cl = guesses
         #
         Kee1 = float(np.exp(np.sum(v_ij[0] * np.log(Cl))))
@@ -262,7 +140,6 @@ def chemical_equilibrium(Fl, Tl):
 
     Cl_true = np.maximum(Cl_true_scaled*scales, 1.0e-30)
 
-    chemical_equilibrium.cache["prev_value"] = Cl_true
 
     x_true = [Cl_true[i]/sum(Cl_true) for i in range(len(Cl_true))]
 
@@ -383,31 +260,12 @@ def chemical_equilibrium_with_model(
     )
 
 
-@lru_cache(maxsize=512)
-def _cached_bundle_reactive_state(temperature, pressure, apparent):
-    return solve_homogeneous_reactive_state(
-        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), temperature, pressure, apparent
-    )
-
-
 def bundle_reactive_chemical_equilibrium(Fl, Tl, *, P=101325.0, diagnostics=None):
-    apparent = _apparent_liquid_mole_fraction(Fl)
-    temperature = float(np.round(float(Tl), EPCSAFT_CHEMISTRY_CACHE_T_DIGITS))
-    pressure_increment = max(EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA, 1.0e-12)
-    pressure = float(np.round(float(P) / pressure_increment) * pressure_increment)
-    apparent_key = tuple(
-        float(np.round(value, EPCSAFT_CHEMISTRY_CACHE_X_DIGITS)) for value in apparent
-    )
-    before = _cached_bundle_reactive_state.cache_info()
     started = time.perf_counter()
-    result = _cached_bundle_reactive_state(temperature, pressure, apparent_key)
-    elapsed = time.perf_counter() - started
-    after = _cached_bundle_reactive_state.cache_info()
-    _increment_diagnostic(
-        diagnostics,
-        "epcsaft_chemistry_cache_hits" if after.hits > before.hits else "epcsaft_chemistry_cache_misses",
+    result = solve_homogeneous_reactive_state(
+        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), float(Tl), float(P), Fl
     )
-    _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", elapsed)
+    _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", time.perf_counter() - started)
     for name in (
         "balance_inf_norm",
         "reaction_affinity_inf_norm",
@@ -419,7 +277,6 @@ def bundle_reactive_chemical_equilibrium(Fl, Tl, *, P=101325.0, diagnostics=None
     return composition * float(result["density_mol_m3"]), composition.copy()
 
 
-@lru_cache(maxsize=4)
 def _reactive_speciation_table(path_text):
     path = Path(path_text)
     with path.open(newline="", encoding="utf-8") as handle:
@@ -505,180 +362,6 @@ def epcsaft_reactive_chemical_equilibrium(
         "that admission contract. Use epcsaft_ionic for the supported fugacity-only lane."
     )
 
-    species_set = str(species_set).lower()
-    species, reaction_names, reaction_rows = _reactive_species_contract(species_set)
-    apparent_x = _apparent_liquid_mole_fraction(Fl)
-    pressure = float(P)
-    temperature = float(Tl)
-    cache_key = _epcsaft_chemistry_cache_key(
-        apparent_x,
-        temperature,
-        pressure,
-        standard_state,
-        log_k_basis,
-        calibrate_activity_to_legacy,
-        species_set,
-    )
-    cache = getattr(epcsaft_reactive_chemical_equilibrium, "cache", {})
-    cached = cache.get(cache_key)
-    if cached is not None:
-        _increment_diagnostic(diagnostics, "epcsaft_chemistry_cache_hits")
-        return cached[0].copy(), cached[1].copy()
-    _increment_diagnostic(diagnostics, "epcsaft_chemistry_cache_misses")
-
-    epcsaft = _epcsaft_module()
-    initial_x = _initial_epcsaft_chemistry_guess(apparent_x, temperature, species_set=species_set)
-    mixture = _epcsaft_reactive_mixture(epcsaft, temperature, initial_x, species)
-    if calibrate_activity_to_legacy:
-        log_k = _log_k_from_activity_state(mixture, temperature, pressure, initial_x, species, reaction_rows)
-    else:
-        log_k = _epcsaft_reaction_log_constants(
-            apparent_x,
-            temperature,
-            pressure,
-            standard_state=standard_state,
-            log_k_basis=log_k_basis,
-            species_set=species_set,
-        )
-    reactions = [
-        epcsaft.ReactionDefinition(
-            reaction,
-            value,
-            name=name,
-            standard_state=standard_state,
-        )
-        for reaction, value, name in zip(reaction_rows, log_k, reaction_names)
-    ]
-    options = _reactive_speciation_options(epcsaft)
-    started = time.perf_counter()
-    result = epcsaft.solve_reactive_speciation(
-        species=list(species),
-        mixture_factory=lambda x, T, P: mixture,
-        T=temperature,
-        P=pressure,
-        balances=_reactive_balances(species_set),
-        totals=_reactive_totals(apparent_x, species_set),
-        reactions=reactions,
-        initial_x=initial_x,
-        options=options,
-    )
-    _increment_diagnostic(
-        diagnostics,
-        "epcsaft_chemistry_solve_s",
-        time.perf_counter() - started,
-    )
-    _record_epcsaft_reactive_result(diagnostics, result)
-    if not result.success:
-        if _accept_reactive_best_effort(result):
-            _increment_diagnostic(diagnostics, "epcsaft_chemistry_accepted_best_effort_count")
-        else:
-            _increment_diagnostic(diagnostics, "epcsaft_chemistry_failed_count")
-            record_domain_guard(
-                diagnostics,
-                "chemical_equilibrium",
-                f"ePC-SAFT reactive speciation did not converge: {result.message}",
-            )
-            raise RuntimeError(f"ePC-SAFT reactive speciation failed: {result.message}")
-    x_true = np.asarray([float(result.x[name]) for name in species], dtype=float)
-    x_true = np.maximum(x_true, 1.0e-30)
-    x_true = x_true / float(np.sum(x_true))
-    rho_mol_l, _, _ = density(temperature, apparent_x[:3], pressure, phase="liquid")
-    Cl_true = x_true * float(rho_mol_l)
-    cache[cache_key] = (Cl_true.copy(), x_true.copy())
-    epcsaft_reactive_chemical_equilibrium.cache = cache
-    return Cl_true, x_true
-
-
-def _reactive_species_contract(species_set):
-    if species_set == "six":
-        return SPECIES_6, REACTION_NAMES_6, REACTIONS_6
-    if species_set == "nine":
-        return SPECIES_9, REACTION_NAMES_9, REACTIONS_9
-    raise ValueError(f"Unknown ePC-SAFT reactive species set: {species_set!r}")
-
-
-def _reactive_balances(species_set):
-    if species_set == "six":
-        return {
-            "amine_total": {"MEA": 1.0, "MEAH+": 1.0, "MEACOO-": 1.0},
-            "carbon_total": {"CO2": 1.0, "MEACOO-": 1.0, "HCO3-": 1.0},
-            "water_total": {"H2O": 1.0},
-        }
-    if species_set == "nine":
-        return {
-            "carbon_total": {"CO2": 1.0, "MEACOO-": 1.0, "HCO3-": 1.0, "CO3^2-": 1.0},
-            "amine_total": {"MEA": 1.0, "MEAH+": 1.0, "MEACOO-": 1.0},
-            "water_total": {"H2O": 1.0, "HCO3-": 1.0, "CO3^2-": 1.0, "H3O+": 1.0, "OH-": 1.0},
-        }
-    raise ValueError(f"Unknown ePC-SAFT reactive species set: {species_set!r}")
-
-
-def _reactive_totals(apparent_x, species_set):
-    if species_set == "six":
-        return {
-            "amine_total": float(apparent_x[1]),
-            "carbon_total": float(apparent_x[0]),
-            "water_total": float(apparent_x[2]),
-        }
-    if species_set == "nine":
-        return {
-            "carbon_total": float(apparent_x[0]),
-            "amine_total": float(apparent_x[1]),
-            "water_total": float(apparent_x[2]),
-        }
-    raise ValueError(f"Unknown ePC-SAFT reactive species set: {species_set!r}")
-
-
-def legacy_log_constants(temperature_K):
-    T = float(temperature_K)
-    a1, b1, c1, d1 = 233.4, -3410.0, -36.8, 0.0
-    a2, b2, c2, d2 = 176.72, -2909.0, -28.46, 0.0
-    return (
-        float(a1 + b1 / T + c1 * np.log(T) + d1 * T),
-        float(a2 + b2 / T + c2 * np.log(T) + d2 * T),
-    )
-
-
-def full_species_log_constants(temperature_K):
-    T = float(temperature_K)
-    values = []
-    for a, b, c, d in REACTION_CONSTANTS_9.values():
-        values.append(float(a + b / T + c * np.log(T) + d * T))
-    return tuple(values)
-
-
-def _epcsaft_reaction_log_constants(
-    apparent_x,
-    temperature,
-    pressure,
-    *,
-    standard_state,
-    log_k_basis,
-    species_set="six",
-):
-    species, _, reactions = _reactive_species_contract(species_set)
-    if species_set == "six":
-        log_k = np.asarray(legacy_log_constants(temperature), dtype=float)
-    elif species_set == "nine":
-        log_k = np.asarray(full_species_log_constants(temperature), dtype=float)
-    else:
-        raise ValueError(f"Unknown ePC-SAFT reactive species set: {species_set!r}")
-    if str(log_k_basis).lower() in {"native", "concentration"}:
-        return tuple(float(value) for value in log_k)
-    if str(log_k_basis).lower() != "concentration_to_mole_fraction":
-        raise ValueError(f"Unknown ePC-SAFT reaction log-K basis: {log_k_basis!r}")
-    if str(standard_state).lower() not in {"mole_fraction_activity", "ideal_mole_fraction"}:
-        return tuple(float(value) for value in log_k)
-
-    rho_mol_l, _, _ = density(float(temperature), np.asarray(apparent_x[:3], dtype=float), float(pressure), phase="liquid")
-    rho_mol_l = max(float(rho_mol_l), 1.0e-30)
-    converted = []
-    for reaction, value in zip(reactions, log_k):
-        stoich_sum = float(sum(reaction.values()))
-        converted.append(float(value - stoich_sum * math.log(rho_mol_l)))
-    return tuple(converted)
-
-
 def _apparent_liquid_mole_fraction(Fl):
     flows = np.asarray(Fl[:3], dtype=float)
     flows = np.maximum(flows, 1.0e-30)
@@ -686,105 +369,6 @@ def _apparent_liquid_mole_fraction(Fl):
     if not math.isfinite(total) or total <= 0.0:
         raise ValueError("Liquid apparent flows must have a positive finite sum.")
     return flows / total
-
-
-def _initial_epcsaft_chemistry_guess(apparent_x, temperature, *, species_set="six"):
-    try:
-        if not hasattr(epcsaft_reactive_chemical_equilibrium, "legacy_guess_cache"):
-            epcsaft_reactive_chemical_equilibrium.legacy_guess_cache = {}
-        legacy_Cl, legacy_x = chemical_equilibrium(list(apparent_x[:3]), float(temperature))
-        legacy_x = np.asarray(legacy_x, dtype=float)
-        if species_set == "six":
-            return legacy_x
-        if species_set == "nine":
-            seed = np.zeros(len(SPECIES_9), dtype=float)
-            seed[: len(SPECIES_6)] = legacy_x
-            seed[SPECIES_9.index("CO3^2-")] = 1.0e-12
-            seed[SPECIES_9.index("OH-")] = 1.0e-12
-            seed[SPECIES_9.index("H3O+")] = 3.0e-12
-            seed = np.maximum(seed, 1.0e-14)
-            return seed / float(np.sum(seed))
-        raise ValueError(f"Unknown ePC-SAFT reactive species set: {species_set!r}")
-    except Exception:
-        if species_set == "six":
-            seed = np.asarray([apparent_x[0], apparent_x[1], apparent_x[2], 1.0e-8, 1.0e-8, 1.0e-8], dtype=float)
-        elif species_set == "nine":
-            seed = np.asarray(
-                [apparent_x[0], apparent_x[1], apparent_x[2], 1.0e-8, 1.0e-8, 1.0e-8, 1.0e-12, 3.0e-12, 1.0e-12],
-                dtype=float,
-            )
-        else:
-            raise ValueError(f"Unknown ePC-SAFT reactive species set: {species_set!r}")
-        seed = np.maximum(seed, 1.0e-14)
-        return seed / float(np.sum(seed))
-
-
-def _epcsaft_module():
-    ensure_epcsaft_importable()
-    import epcsaft
-
-    return epcsaft
-
-
-def _epcsaft_reactive_mixture(epcsaft, temperature, x, species):
-    dataset = Path(MEA_THERMODYNAMICS_EPCSAFT_DATASET)
-    user_options = epcsaft_runtime_user_options() or None
-    return epcsaft.ePCSAFTMixture.from_dataset(
-        str(dataset),
-        list(species),
-        np.asarray(x, dtype=float),
-        float(temperature),
-        user_options=user_options,
-    )
-
-
-def _log_k_from_activity_state(mixture, temperature, pressure, x, species, reactions):
-    state = mixture.state(T=float(temperature), P=float(pressure), x=np.asarray(x, dtype=float), phase="liq")
-    gamma = state.activity_coefficient(species=list(species))
-    index = {name: idx for idx, name in enumerate(species)}
-    values = []
-    for reaction in reactions:
-        total = 0.0
-        for species_name, coefficient in reaction.items():
-            idx = index[species_name]
-            activity = max(float(x[idx]) * float(gamma[species_name]), 1.0e-300)
-            total += float(coefficient) * math.log(activity)
-        values.append(float(total))
-    return tuple(values)
-
-
-def _epcsaft_chemistry_cache_key(
-    apparent_x,
-    temperature,
-    pressure,
-    standard_state,
-    log_k_basis,
-    calibrate_activity_to_legacy,
-    species_set,
-):
-    pressure_increment = max(EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA, 1.0e-12)
-    return (
-        str(species_set),
-        str(standard_state),
-        str(log_k_basis),
-        bool(calibrate_activity_to_legacy),
-        _reactive_options_cache_token(),
-        _epcsaft_user_options_cache_token(),
-        float(np.round(float(temperature), EPCSAFT_CHEMISTRY_CACHE_T_DIGITS)),
-        float(np.round(float(pressure) / pressure_increment) * pressure_increment),
-        tuple(float(np.round(value, EPCSAFT_CHEMISTRY_CACHE_X_DIGITS)) for value in apparent_x),
-    )
-
-
-def _reactive_options_cache_token():
-    return tuple((key, os.environ.get(key, "")) for key in EPCSAFT_REACTIVE_OPTION_ENV_KEYS)
-
-
-def _epcsaft_user_options_cache_token():
-    options = epcsaft_runtime_user_options()
-    if not options:
-        return "{}"
-    return json.dumps(options, sort_keys=True, separators=(",", ":"))
 
 
 def _increment_diagnostic(diagnostics, key, amount=1):

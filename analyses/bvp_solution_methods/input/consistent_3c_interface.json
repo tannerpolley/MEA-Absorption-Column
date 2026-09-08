@@ -1,0 +1,61 @@
+{
+  "engine_identity": {
+    "engine_commit": "a86ac6bb9507e771d27317622bbd62c0bc7c7f25",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "ee6c34b587edc117247c675666228d0b395f35dc9ba0f880f1efb4ab4219f4ae",
+    "core_sha256": "620020eadf7e2d209abbebab2fe941f4c408bce29a02d7b41ce7e539df6307e5"
+  },
+  "height_m": 6.0,
+  "area_m2": 0.3216990877275948,
+  "packing": [
+    250.0,
+    0.97,
+    0.203,
+    0.35,
+    0.017,
+    0.292,
+    0.119
+  ],
+  "liquid_flows_mol_s": [
+    2.4323205276203805,
+    9.729282110481522,
+    76.97519250729157
+  ],
+  "vapor_flows_mol_s": [
+    1.6540435157308098,
+    1.5624169375299577,
+    14.530683358624426,
+    1.6006872732878803
+  ],
+  "initialization": {
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.052715134432693156,
+      0.01831591442799182,
+      0.01496214401416971,
+      -10940.409344546371,
+      0.7745668932575522
+    ],
+    "root_iterations": 11,
+    "original_algebraic_residuals": [
+      0.0,
+      0.0,
+      1.599415044850616e-14,
+      0.0,
+      0.0
+    ],
+    "accepted": true
+  },
+  "quadrature_points": 3,
+  "source_record": {
+    "path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_liquid_path_baseline.json",
+    "sha256": "fdcb27a03af5b991dbafba70074a002f6752b3c7579fd65ef4bd00379e28c1ba"
+  },
+  "scope": "Owner consistent fixed-bulk full-film interface; not a solved column"
+}

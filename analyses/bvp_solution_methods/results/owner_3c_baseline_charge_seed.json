@@ -1,0 +1,307 @@
+{
+  "case": "corrected source3C",
+  "source": "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv",
+  "source_sha256": "5cfb1ab670adcfbdb90a003c5e163262470d85e1467aa250ff6e50ab7a79785f",
+  "reported_top_pressure_pa": 109500.0,
+  "inlet_pressure_pa": 110900.0,
+  "metadata": {
+    "case_id": "3C",
+    "beds": 1,
+    "intercoolers": 0,
+    "single_bed_height_m": 6.0,
+    "total_packed_height_m": 6.0,
+    "diameter_m": 0.64,
+    "vapor_composition_mode": "dry_saturated",
+    "gas_flow_basis": "reported_total_wet"
+  },
+  "height_m": 6.0,
+  "area_m2": 0.3216990877275948,
+  "packing": [
+    250.0,
+    0.97,
+    0.203,
+    0.35,
+    0.017,
+    0.292,
+    0.119
+  ],
+  "liquid_flows_mol_s": [
+    2.4323205276203805,
+    9.729282110481522,
+    76.97519250729157
+  ],
+  "vapor_flows_mol_s": [
+    1.6540435157308098,
+    1.5624169375299577,
+    14.530683358624426,
+    1.6006872732878803
+  ],
+  "liquid_molar_masses_kg_mol": [
+    0.044009,
+    0.061084,
+    0.018015
+  ],
+  "vapor_molar_masses_kg_mol": [
+    0.04401,
+    0.01801528,
+    0.02801,
+    0.031999
+  ],
+  "wet_vapor_mole_fractions": [
+    0.08548986749209124,
+    0.08075411298826632,
+    0.7510238896885865,
+    0.08273212983105603
+  ],
+  "bulk_state": [
+    2.4323205276203805,
+    76.97519250729157,
+    1.6540435157308098,
+    1.5624169375299577,
+    318.15,
+    316.75,
+    110900.0,
+    0.052715134432693156
+  ],
+  "assumptions": [
+    "Tl318.15K is user-approved imputation, not measurement",
+    "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+    "Reported gasmass interpreted as totalwet mass; source moisture basis unspecified",
+    "Loaded liquid mass and unloaded wMEA basis; molar conversion uses current native molar masses",
+    "Pressure boundary is bottom/inlet110900Pa; measured top109500Pa reserved for comparison"
+  ],
+  "model_input_row": {
+    "L": 2.088055555555556,
+    "G": 0.5591666666666667,
+    "alpha": 0.25,
+    "w_MEA": 0.3,
+    "y_CO2": 0.093,
+    "Tl": 318.15,
+    "Tv": 316.75,
+    "P": 110900.0,
+    "Beds": 1,
+    "Intercoolers": 0,
+    "CO2  %": 89.5,
+    "lean_solvent_temp_imputed": true,
+    "lean_solvent_temp_imputed_C": 45.0,
+    "y_O2": 0.09
+  },
+  "source_row_pressure_pa": 109500.0,
+  "engine_identity": {
+    "engine_commit": "a86ac6bb9507e771d27317622bbd62c0bc7c7f25",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "ee6c34b587edc117247c675666228d0b395f35dc9ba0f880f1efb4ab4219f4ae",
+    "core_sha256": "620020eadf7e2d209abbebab2fe941f4c408bce29a02d7b41ce7e539df6307e5"
+  },
+  "execution_status": "wall_timeout",
+  "accepted": false,
+  "quadrature_points": 3,
+  "liquid_loading_path": {
+    "anchor": 0.25,
+    "max_log_step": 0.1,
+    "max_steps": 32
+  },
+  "historical_failed_attempt": "casadi_3c_baseline.json",
+  "verification_source": "import json\nimport time\nfrom pathlib import Path\n\nimport casadi as ca\nimport numpy as np\nfrom scipy.optimize import brentq\n\nfrom mea_absorption_column.BVP.Coupled_Column import build_column_balance_functions, build_coupled_column_functions\nfrom mea_absorption_column.BVP.Methods.Casadi_Collocation import solve_conservative_collocation\nfrom mea_absorption_column.Thermodynamics.casadi_reactive import ReactiveLiquidCallback, FixedCompositionVaporCallback\nfrom mea_absorption_column.Thermodynamics.reactive_bundle import ReactiveLiquid, load_reference_thermochemistry\nfrom mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET, ensure_epcsaft_importable\n\npath = Path('docs/coordination/casadi_3c_coupled_attempt.json')\nrecord = json.loads(path.read_text())\nrecord.update(verification_source=Path(__file__).read_text(), root_evaluations=[], iteration_observations=[], native_calls={}, wall_limit_seconds=900, known_derivative_limitation='Native trace-species A1/A2 discrepancies remain under Engine review. The assembled consistent-node directional check passed the original 1e-5 budget (maximum 5.3032789484893756e-08); full-column acceptance requires independent original-equation checks and refinement, not an error-free derivative claim.')\ndef clean(value):\n    if isinstance(value, dict):\n        return {k: clean(v) for k, v in value.items()}\n    if isinstance(value, np.ndarray):\n        return clean(value.tolist())\n    if isinstance(value, (tuple, list)):\n        return [clean(v) for v in value]\n    if isinstance(value, (float, np.floating)):\n        return float(value) if np.isfinite(value) else str(value)\n    if isinstance(value, np.integer):\n        return int(value)\n    return value\ndef save():\n    temporary = path.with_suffix('.tmp')\n    temporary.write_text(json.dumps(clean(record), indent=2, allow_nan=False) + '\\n')\n    temporary.replace(path)\ndef instrument(owner, method, label):\n    function = getattr(owner, method)\n    counter = record['native_calls'][label] = dict(started=0, completed=0, wall_seconds=0., failures=[])\n    def measured(*args, **kwargs):\n        start = time.monotonic()\n        counter['started'] += 1\n        save()\n        try:\n            return function(*args, **kwargs)\n        except (ValueError, RuntimeError) as error:\n            inputs = np.asarray(args[0]).ravel() if method == '_state' else np.r_[args[0], args[1], args[2]]\n            counter['failures'].append(dict(inputs=inputs.tolist(), failure=str(error)))\n            raise\n        finally:\n            counter['completed'] += 1\n            counter['wall_seconds'] += time.monotonic() - start\n            save()\n    setattr(owner, method, measured)\n\nengine = ensure_epcsaft_importable()\ndataset = MEA_THERMODYNAMICS_EPCSAFT_DATASET\nreference = load_reference_thermochemistry(dataset / 'anchored-reference-thermochemistry.json')\nliquid = ReactiveLiquidCallback('case3c_liquid', ReactiveLiquid(dataset, thermochemistry=reference, loading_anchor=.25, max_log_loading_step=.1, max_loading_steps=32))\nvapor_data = dataset.parent / 'MEA_neutral_vapor'\nvapor = FixedCompositionVaporCallback('case3c_vapor', engine.Parameters.from_json(vapor_data / 'parameters.json'),\n    load_reference_thermochemistry(vapor_data / 'reference-thermochemistry.json', liquid_reference=reference),\n    packing_interval=(1e-6, .1))\ninstrument(liquid.liquid, 'solve', 'liquid_query_A1')\ninstrument(liquid.liquid, 'solve_actions', 'liquid_query_A2')\ninstrument(vapor, '_state', 'vapor_value_A1_H2')\n\nfrom epcsaft import equilibrium\nnative_solve = equilibrium.solve\nrecord['native_equilibrium'] = dict(calls=0, wall_seconds=0., failures=[])\ndef measured_native(model, problem):\n    counter = record['native_equilibrium']\n    counter['calls'] += 1\n    start = time.monotonic()\n    try:\n        result = native_solve(model, problem)\n        if result.status != 'evaluated' or result.numerical_status != 'passed' or result.physical_status != 'passed':\n            counter['failures'].append(dict(temperature=str(problem.temperature), pressure=str(problem.pressure),\n                feed=problem.reaction_system.feed_amounts_mol, status=result.solver_status, failure=str(result.failure)))\n        return result\n    finally:\n        counter['wall_seconds'] += time.monotonic() - start\n        save()\nequilibrium.solve = measured_native\n\nfl, fv, bulk = (np.asarray(record[key]) for key in ('liquid_flows_mol_s', 'vapor_flows_mol_s', 'bulk_state'))\nparameters = dict(liquid_feed_mol_s=fl, vapor_feed_mol_s=fv, liquid_temperature_k=bulk[4],\n    vapor_temperature_k=bulk[5], bottom_pressure_pa=bulk[6], area_m2=record['area_m2'], packing=record['packing'])\ndef species_diffusivities(temperature):\n    co2 = .5 * 6.28e-7 * ca.exp(-15230. / (8.314462618 * temperature))\n    return ca.vertcat(co2, 8.8e-10, 8.8e-10, 8.4e-10, 6.8e-10, 6.8e-10, 6.8e-10, np.sqrt(3.4e-18), np.sqrt(3.4e-18))\nbalance, _ = build_column_balance_functions(liquid, vapor, **parameters)\nnode, boundary, diagnostics = build_coupled_column_functions(liquid, vapor,\n    species_diffusivities=species_diffusivities, quadrature_points=3, **parameters)\nnative = balance(bulk, [0., 0., 0.])\ngas = native[4]\ndef root_residual(loading):\n    d = diagnostics(np.r_[bulk, 0., 0., 0., loading])\n    value = float(d[1] / d[2] - d[3][0] * (gas[0] - d[7]))\n    record['root_evaluations'].append(dict(loading=float(loading), original_CO2_residual=value))\n    save()\n    return value\nrecord['execution_status'] = 'initializing'\nsave()\nstarted = time.monotonic()\ntry:\n    if record['engine_identity'] != json.loads(Path('integration/epcsaft_contract.json').read_text())['final_identity']:\n        raise RuntimeError('Initial-guess Engine identity must be explicitly reconciled')\n    if not record['initialization']['accepted']:\n        raise RuntimeError('Retained initialization is not accepted')\n    point = np.asarray(record['initialization']['state'])\n    d = diagnostics(point)\n    height = record['height_m']\n    grid = np.array([0., height])\n    span = 393.15 - 293.15\n    capacity = np.array([fl.sum() * liquid.input_jacobian(np.r_[bulk[4], bulk[6], fl])[-1, 0],\n                         fv.sum() * vapor.input_jacobian(np.r_[bulk[5], bulk[6], fv])[-1, 0]])\n    if np.any(capacity <= 0.) or np.any(~np.isfinite(capacity)):\n        raise RuntimeError('Native heat-capacity scale must be finite positive')\n    flux_scale = np.asarray(d[3]).ravel() * np.asarray(gas[:2]).ravel()\n    heat_scale = float(d[4]) * span + np.abs(np.asarray(d[6]).ravel()) @ flux_scale\n    state_scale = np.r_[bulk[:4], 300., 300., bulk[6], .97, flux_scale, heat_scale, 1.]\n    balance_scale = np.r_[bulk[:4] / height, capacity * span / height, bulk[6] / height]\n    algebraic_scale = np.r_[.97, flux_scale[0] * float(d[2]), flux_scale, heat_scale]\n    boundary_scale = np.r_[bulk[:4], span, span, bulk[6]]\n    margin = .97 * np.finfo(float).eps\n    lower = [0., 0., 0., 0., 293.15, 293.15, 1., margin, -np.inf, -np.inf, -np.inf, -np.inf]\n    upper = [np.inf, np.inf, np.inf, np.inf, 393.15, 393.15, 1e7, .97-margin, np.inf, np.inf, np.inf, np.inf]\n    record.update(grid_m=grid, initial=np.tile(point, (2, 1)).T, lower=lower, upper=upper,\n        state_scale=state_scale, balance_scale=balance_scale, algebraic_scale=algebraic_scale,\n        boundary_scale=boundary_scale, capacity_rates_w_k=capacity, tolerance=1e-7, max_iterations=20,\n        scaling_basis='Feed molar flows; native inlet capacity times admitted100K interval perheight; inlet pressure perheight; gas-film fV*kG flux scales and matching original film/energy units. Fixed before solving; no altered physical bounds or reference shifts.')\n\n    class Iterations(ca.Callback):\n        def __init__(self):\n            super().__init__()\n            self.construct('case3c_iterations', {'enable_fd': False})\n        def get_n_in(self):\n            return ca.nlpsol_n_out()\n        def get_n_out(self):\n            return 1\n        def get_name_in(self, index):\n            return ca.nlpsol_out(index)\n        def get_sparsity_in(self, index):\n            name = self.get_name_in(index)\n            return ca.Sparsity.dense(0 if name == 'lam_p' else 1 if name == 'f' else 24, 1)\n        def get_sparsity_out(self, index):\n            return ca.Sparsity.dense(1, 1)\n        def eval(self, args):\n            g = np.asarray(args[2]).ravel()\n            profile = np.asarray(args[0]).reshape((12, 2), order='F') * state_scale[:, None]\n            record['iteration_observations'].append(dict(elapsed_seconds=time.monotonic()-started,\n                profile=profile, scaled_residual_inf=float(np.max(np.abs(g))),\n                balance_defects=g[:7] * balance_scale * height,\n                algebraic=g[7:17].reshape((5, 2), order='F') * algebraic_scale[:, None],\n                boundary=g[17:] * boundary_scale))\n            save()\n            return [0]\n    observer = Iterations()\n    record['execution_status'] = 'solving'\n    save()\n    result = solve_conservative_collocation(node, boundary, grid, np.tile(point, (2, 1)).T, lower, upper,\n        state_scale=state_scale, balance_scale=balance_scale, algebraic_scale=algebraic_scale,\n        boundary_scale=boundary_scale, tolerance=1e-7, max_iterations=20, iteration_callback=observer)\n    record.update(execution_status='returned', result=result, elapsed_seconds=time.monotonic()-started)\nexcept (ValueError, RuntimeError) as error:\n    record.update(execution_status='returned_error', accepted=False, failure=str(error), elapsed_seconds=time.monotonic()-started)\nsave()\nprint(json.dumps(clean({k: record.get(k) for k in ('execution_status', 'failure', 'result', 'elapsed_seconds')}), indent=2), flush=True)\n",
+  "root_evaluations": [],
+  "iteration_observations": [],
+  "native_calls": {
+    "liquid_query_A1": {
+      "started": 108,
+      "completed": 107,
+      "wall_seconds": 825.7400091599966,
+      "failures": []
+    },
+    "liquid_query_A2": {
+      "started": 7,
+      "completed": 7,
+      "wall_seconds": 49.1356158399999,
+      "failures": []
+    },
+    "vapor_value_A1_H2": {
+      "started": 46,
+      "completed": 46,
+      "wall_seconds": 6.0008629439994365,
+      "failures": []
+    }
+  },
+  "native_equilibrium": {
+    "calls": 534,
+    "wall_seconds": 828.6742760709967,
+    "failures": []
+  },
+  "initialization": {
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.052715134432693156,
+      0.01831591442799182,
+      0.01496214401416971,
+      -10940.409344546371,
+      0.7745668932575522
+    ],
+    "root_iterations": 11,
+    "original_algebraic_residuals": [
+      0.0,
+      0.0,
+      1.599415044850616e-14,
+      0.0,
+      0.0
+    ],
+    "accepted": true
+  },
+  "elapsed_seconds": 900.0,
+  "initialization_source": {
+    "path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_liquid_path_baseline.json",
+    "sha256": "fdcb27a03af5b991dbafba70074a002f6752b3c7579fd65ef4bd00379e28c1ba",
+    "scope": "Explicit retained initial guess for the outer column only; no thermodynamic result reuse"
+  },
+  "known_derivative_limitation": "Native trace-species A1/A2 discrepancies remain under Engine review. The assembled consistent-node directional check passed the original 1e-5 budget (maximum 5.3032789484893756e-08); full-column acceptance requires independent original-equation checks and refinement, not an error-free derivative claim.",
+  "wall_limit_seconds": 900,
+  "grid_m": [
+    0.0,
+    6.0
+  ],
+  "initial": [
+    [
+      2.4323205276203805,
+      2.4323205276203805
+    ],
+    [
+      76.97519250729157,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.6540435157308098
+    ],
+    [
+      1.5624169375299577,
+      1.5624169375299577
+    ],
+    [
+      318.15,
+      318.15
+    ],
+    [
+      316.75,
+      316.75
+    ],
+    [
+      110900.0,
+      110900.0
+    ],
+    [
+      0.052715134432693156,
+      0.052715134432693156
+    ],
+    [
+      0.01831591442799182,
+      0.01831591442799182
+    ],
+    [
+      0.01496214401416971,
+      0.01496214401416971
+    ],
+    [
+      -10940.409344546371,
+      -10940.409344546371
+    ],
+    [
+      0.7745668932575522,
+      0.7745668932575522
+    ]
+  ],
+  "lower": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    293.15,
+    293.15,
+    1.0,
+    2.1538326677728036e-16,
+    "-inf",
+    "-inf",
+    "-inf",
+    "-inf"
+  ],
+  "upper": [
+    "inf",
+    "inf",
+    "inf",
+    "inf",
+    393.15,
+    393.15,
+    10000000.0,
+    0.9699999999999998,
+    "inf",
+    "inf",
+    "inf",
+    "inf"
+  ],
+  "state_scale": [
+    2.4323205276203805,
+    76.97519250729157,
+    1.6540435157308098,
+    1.5624169375299577,
+    300.0,
+    300.0,
+    110900.0,
+    0.97,
+    0.23489075578691063,
+    0.29100727339695176,
+    171964.03779691568,
+    1.0
+  ],
+  "balance_scale": [
+    0.40538675460339674,
+    12.82919875121526,
+    0.2756739192884683,
+    0.2604028229216596,
+    123497.9362810935,
+    10133.416784188732,
+    18483.333333333332
+  ],
+  "algebraic_scale": [
+    0.97,
+    1.844731083719738e-05,
+    0.23489075578691063,
+    0.29100727339695176,
+    171964.03779691568
+  ],
+  "boundary_scale": [
+    2.4323205276203805,
+    76.97519250729157,
+    1.6540435157308098,
+    1.5624169375299577,
+    100.0,
+    100.0,
+    110900.0
+  ],
+  "capacity_rates_w_k": [
+    7409.8761768656095,
+    608.0050070513239
+  ],
+  "tolerance": 1e-07,
+  "max_iterations": 20,
+  "scaling_basis": "Feed molar flows; native inlet capacity times admitted100K interval perheight; inlet pressure perheight; gas-film fV*kG flux scales and matching original film/energy units. Fixed before solving; no altered physical bounds or reference shifts.",
+  "process_exit_code": 124,
+  "failure": "The declared 900-second wall limit expired before any reported IPOPT iteration or returned candidate. No native equilibrium failure was recorded; this does not establish infeasibility.",
+  "loaded_source_identity": {
+    "scope": "Source modules loaded by the active first bounded source3C trial before subsequent graph or comparator edits",
+    "files": {
+      "src/mea_absorption_column/BVP/Coupled_Column.py": "52a657362dee514dfffacc5a844e2527c1cca93c588682b5b1486c99f5d8bbac",
+      "src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py": "c81df13c42036e9694c976ba6167a12c790e37c9dfd6d6f092ab733b6a12f73b",
+      "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "b32fcb9edcf2d30b13d39254d1ea8e7a49239e322992b57543a16b30314e4a08",
+      "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "f6a3e75646cf30702271af62fe1c4c57fa0932a37243ca1a78ff97e30284379e"
+    }
+  },
+  "solver_log": "",
+  "execution_cost_assessment": "Read-only graph tracing found expected repeated stateless native value/tangent/caloric queries, not a collocation duplication defect. Outer CSE does not remove native calls across existing function boundaries."
+}

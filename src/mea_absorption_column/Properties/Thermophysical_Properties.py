@@ -90,7 +90,7 @@ def surface_tension(T, z, w_MEA, w_H2O):
     Tl = T
     x = z
 
-    x_CO2, x_MEA, x_H2O = x
+    x_CO2, x_MEA, x_H2O = (x[i] for i in range(3))
 
     alpha = x_CO2/x_MEA
 
@@ -177,6 +177,18 @@ def heat_of_vaporization(Tl, species):
     return (A * (1 - Tr) ** (B + C * Tr + D * Tr ** 2)) / 1000
 
 
+def enthalpy_temperature_derivative(T, z, phase='liquid'):
+    """Exact fixed-composition derivative of this comparison model's enthalpy.
+
+    Its liquid CO2 enthalpy is a constant, so its derivative is zero; the
+    empirical mixture heat capacity is not interchangeable with dh/dT.
+    """
+    component_cp, mixture_cp = heat_capacity(T, z, phase=phase)
+    if phase == 'liquid':
+        return float(np.dot(np.asarray(z)[1:], component_cp[1:]))
+    return mixture_cp
+
+
 def enthalpy(T, z, phase='liquid'):
 
     if phase == 'liquid':
@@ -228,7 +240,6 @@ def enthalpy(T, z, phase='liquid'):
 
 
 def thermal_conductivity(T, z, muv):
-    T = float(np.asarray(T, dtype=float).reshape(-1)[0])
     coefficients = {'CO2': np.array([3.69, -0.3838, 964., 1.86e6]),
                     'H2O': np.array([6.204e-6, 1.3973, 0, 0,]),
                     'N2': np.array([.000331, .7722, 16.323, 373.72,]),
@@ -242,9 +253,9 @@ def thermal_conductivity(T, z, muv):
         kt_i.append((A * T ** B) / (1 + C / T + D / (T ** 2)))
 
     k_vap = 0
-    for i in range(len(z)):
+    for i in range(4):
         sum_ij = 0
-        for j in range(len(z)):
+        for j in range(4):
             Aij = (1 + (muv[i] / muv[j]) ** .5 * (MWs_v[j] / MWs_v[i]) ** .25) ** 2 * (
                     8 * (1 + MWs_v[i] / MWs_v[j])) ** -.5
             sum_ij += Aij * z[j]

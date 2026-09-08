@@ -2,7 +2,8 @@ import numpy as np
 
 from ..config.Constants import MWs_l
 from ..Properties.Thermophysical_Properties import (density, surface_tension, heat_capacity,
-                                                      thermal_conductivity, henrys_law, enthalpy, vapor_pressure)
+                                                      thermal_conductivity, henrys_law, enthalpy, vapor_pressure,
+                                                      enthalpy_temperature_derivative)
 from ..Properties.Transport_Properties import viscosity, diffusivity
 from ..Thermodynamics.Fugacity import fugacity
 from ..Thermodynamics.Chemical_Equilibrium import chemical_equilibrium_with_model
@@ -12,7 +13,6 @@ from ..Transport.Pressure_Drop import pressure_drop
 from ..Transport.Enhancement_Factor import enhancement_factor
 from ..Transport.Flux import molar_flux, enthalpy_flux
 from ..misc.Get_Temperature_Enthalpy import get_liquid_temperature, get_vapor_temperature
-from ..misc.special_functions import f_dHl_dT
 from .robust_core import record_domain_guard
 
 
@@ -25,14 +25,13 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         scales, eq_scales, const_flow, H, A, packing, model_options = parameters
     thermo_model = model_options.get('thermo_model', 'ideal_henry')
     solver_diagnostics = model_options.get('solver_diagnostics')
-    guard_invalid_states = model_options.get('guard_invalid_states', True)
     mass_transfer_factor = float(model_options.get('mass_transfer_factor', 1.0))
     heat_transfer_factor = float(model_options.get('heat_transfer_factor', 1.0))
     thermal_state_mode = model_options.get('thermal_state_mode', 'enthalpy')
     co2_flux_mode = model_options.get('co2_flux_mode', 'bidirectional')
     eta_psi = float(model_options.get('eta_psi', 1.0))
-    epcsaft_fugacity_blend = float(model_options.get('epcsaft_fugacity_blend', 1.0))
     chemical_equilibrium_model = model_options.get('chemical_equilibrium_model', 'legacy')
+    co2_mass_transfer_model = model_options.get('co2_mass_transfer_model', 'enhancement_factor')
     gas_velocity_area_exponent = float(model_options.get('gas_velocity_area_exponent', 0.0) or 0.0)
     gas_velocity_area_reference_m_s = model_options.get('gas_velocity_area_reference_m_s')
     gas_velocity_area_bounds = model_options.get('gas_velocity_area_bounds', (0.1, 3.0))
@@ -62,7 +61,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         Tl = get_liquid_temperature(x, Hl)
         Tv = get_vapor_temperature(y, Hv)
     temperature_bounds = model_options.get('temperature_bounds_K', (250.0, 500.0))
-    if guard_invalid_states and not _temperatures_in_bounds(Tl, Tv, temperature_bounds):
+    if not _temperatures_in_bounds(Tl, Tv, temperature_bounds):
         record_domain_guard(
             solver_diagnostics,
             "thermal_state",
@@ -151,8 +150,6 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     Cl = [x[i] * rho_mol_l for i in range(len(x))]
     Cv = [y[i] * rho_mol_v for i in range(len(y))]
 
-    Cl_true = [x_true[i] * rho_mol_l for i in range(len(x_true))]
-
     # endregion
 
     # region -- Vapor-Liquid Equilibrium
@@ -169,9 +166,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         P,
         P_sat_H2O,
         thermo_model=thermo_model,
-        epcsaft_fugacity_blend=epcsaft_fugacity_blend,
         diagnostics=solver_diagnostics,
-        guard_invalid_states=guard_invalid_states,
     )
 
     # endregion
@@ -246,18 +241,31 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # endregion
 
-    # region -- Enhancement Factor
-
-    E, Psi, Psi_H, enhance_factor = enhancement_factor(Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
-                                                       Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit',
-                                                       diagnostics=solver_diagnostics, eta_psi=eta_psi)
-
-    # endregion
-
     # region -- Flux
 
     # region --- Molar Flux
-    Nv_CO2, Nv_H2O, Nl_CO2, Nl_H2O = molar_flux(fl_CO2, fv_CO2, fl_H2O, fv_H2O, kv_CO2, kv_H2O, a_eA, Psi_H)
+    if co2_mass_transfer_model == 'enhancement_factor':
+        E, Psi, Psi_H, enhance_factor = enhancement_factor(
+            Tl, Cl_true, y[0], P, H_CO2_mix, kl_CO2, kv_CO2,
+            Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit',
+            diagnostics=solver_diagnostics, eta_psi=eta_psi,
+        )
+        Nv_CO2, Nv_H2O, Nl_CO2, Nl_H2O = molar_flux(
+            fl_CO2, fv_CO2, fl_H2O, fv_H2O, kv_CO2, kv_H2O, a_eA, Psi_H,
+        )
+    elif co2_mass_transfer_model == 'reactive_film_linearization':
+        Nv_CO2, Nl_CO2 = _reactive_film_linearized_fluxes(
+            zi, fv_CO2, a_eA, model_options.get('reactive_film_linearization')
+        )
+        Nv_H2O = -kv_H2O * a_eA * (fv_H2O - fl_H2O)
+        Nl_H2O = -Nv_H2O
+        E = Psi = Psi_H = float('nan')
+        enhance_factor = (
+            float('nan'), Cl_true[1], Dl_CO2, kl_CO2,
+            float('nan'), E, Psi_H, Psi, eta_psi,
+        )
+    else:
+        raise ValueError(f"Unknown co2_mass_transfer_model: {co2_mass_transfer_model!r}")
     if co2_flux_mode == 'absorption_only':
         Nv_CO2 = _smooth_absorption_only_vapor_flux(Nv_CO2)
         Nl_CO2 = -Nv_CO2
@@ -281,23 +289,27 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region - Balance Equations
 
     # region -- Mass Balance
-    dFl_CO2_dz = -Nl_CO2 + 1e-10  # mol/(s*m)
-    dFl_H2O_dz = -Nl_H2O + 1e-10  # mol/(s*m)
+    dFl_CO2_dz = -Nl_CO2  # mol/(s*m)
+    dFl_H2O_dz = -Nl_H2O  # mol/(s*m)
 
-    dFv_CO2_dz = Nv_CO2 + 1e-10  # mol/(s*m)
-    dFv_H2O_dz = Nv_H2O + 1e-10  # mol/(s*m)
+    dFv_CO2_dz = Nv_CO2  # mol/(s*m)
+    dFv_H2O_dz = Nv_H2O  # mol/(s*m)
     # endregion
 
     # region -- Energy Balance
-    dHlf_dz = Hl_flux + 1e-10
-    dHvf_dz = Hv_flux + 1e-10
+    # Liquid flow is positive downward, opposite the common upward z axis.
+    # Interphase sources are opposite, so d(Hvf-Hlf)/dz must vanish.
+    dHlf_dz = -Hl_flux
+    dHvf_dz = Hv_flux
 
 
-    dHl_dT = f_dHl_dT(Tl, x)
+    dHl_dT = enthalpy_temperature_derivative(Tl, x, phase='liquid')
     dHv_dT = Cpv_T
 
-    dTl_dz = H*(Hl_flux + Hl_T*(Nl_CO2 + Nl_H2O))/(Fl_T*dHl_dT) # K/m
-    dTv_dz = H*(Hv_flux - Hv_T*(Nv_CO2 + Nv_H2O))/(Fv_T*dHv_dT)
+    # Differentiate H_flow=sum_i(F_i*h_i(T)), including the changing
+    # composition. A mean mixture enthalpy is not a partial molar enthalpy.
+    dTl_dz = H*(dHlf_dz + Hl_CO2*Nl_CO2 + Hl_H2O*Nl_H2O)/(Fl_T*dHl_dT)
+    dTv_dz = H*(Hv_flux - Hv_CO2*Nv_CO2 - Hv_H2O*Nv_H2O)/(Fv_T*dHv_dT)
 
     # endregion
 
@@ -348,69 +360,97 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         Cpl_CO2, Cpl_MEA, Cpl_H2O = Cpl
         Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2 = Cpv
         V_l, V_CO2, V_MEA, V_H2O = volume
-        Hl_CO2 = Hl_CO2 + 1e-5
+        Hl_CO2 = Hl_CO2
         Clp, Cvp, eps, a_p, A, Lp, d_h = const
         muv_CO2, muv_H2O, muv_N2, muv_O2 = muv
 
-        output_dict = {
-            'Fl': [Fl_CO2, Fl_MEA, Fl_H2O, Fl_T,
-                   Fl_CO2_true, Fl_MEA_true, Fl_H2O_true, Fl_MEAH_true, Fl_MEACOO_true, Fl_HCO3_true],
-            'Fv': [Fv_CO2, Fv_H2O, Fv_N2, Fv_O2, Fv_T],
-            'Cl': [Cl_CO2, Cl_MEA, Cl_H2O,
-                   Cl_CO2_true, Cl_MEA_true, Cl_H2O_true, Cl_MEAH_true, Cl_MEACOO_true, Cl_HCO3_true],
-            'Cv': [Cv_CO2, Cv_H2O, Cv_N2, Cv_O2],
-            'x': [x_CO2, x_MEA, x_H2O,
-                  x_CO2_true, x_MEA_true, x_H2O_true, x_MEAH_true, x_MEACOO_true, x_HCO3_true],
-            'y': [y_CO2, y_H2O, y_N2, y_O2],
-            'T': [Tl, Tv],
-            'Hl': [Tl, Hl_CO2, Hl_MEA, Hl_H2O, Hl_T, Fl_T, Hlf, Hl_CO2_trn, Hl_H2O_trn, Hl_trn, ql, Hl_flux, dHlf_dz, dTl_dz, dHl_dT],
-            'Hv': [Tv, Hv_CO2, Hv_H2O, Hv_N2, Hv_O2, Hv_T, Fv_T, Hvf, Hv_CO2_trn, Hv_H2O_trn, Hv_trn, qv, Hv_flux, dHvf_dz, dTv_dz, dHv_dT],
-            'CO2': [Nl_CO2, Nv_CO2, kv_CO2, a_eA, DF_CO2, fv_CO2, fl_CO2, Psi, H_CO2_mix],
-            'H2O': [Nl_H2O, Nv_H2O, kv_H2O, a_eA, DF_H2O, fv_H2O, fl_H2O, Psat_H2O],
-            'enhance_factor': [k2, Cl_MEA_true, Dl_CO2, kl_CO2, Ha, E, Psi, Psi_H, eta_psi],
-            'transport': [kl_CO2, kv_CO2, kv_H2O, ul, uv, h_L, h_V, a_e, UT, P,
-                          Clp, Cvp, eps, a_p, A, Lp, d_h],
-            'Prop_l': [rho_mol_l, rho_mass_l, V_l, V_CO2, V_MEA, V_H2O, mul_mix, sigma, Dl_CO2, Dl_MEA,
-                       Dl_ion, Cpl_CO2,
-                       Cpl_MEA, Cpl_H2O],
-            'Prop_v': [rho_mol_v, rho_mass_v, muv_CO2, muv_H2O, muv_N2, muv_O2, muv_mix, Dv_CO2, Dv_H2O,
-                       Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2, kt_vap],
+        fields = {
+            'Fl': {
+                'Fl_CO2': Fl_CO2, 'Fl_MEA': Fl_MEA, 'Fl_H2O': Fl_H2O,
+                'Fl_T': Fl_T, 'Fl_CO2_true': Fl_CO2_true, 'Fl_MEA_true': Fl_MEA_true,
+                'Fl_H2O_true': Fl_H2O_true, 'Fl_MEAH_true': Fl_MEAH_true, 'Fl_MEACOO_true': Fl_MEACOO_true,
+                'Fl_HCO3_true': Fl_HCO3_true,
+            },
+            'Fv': {
+                'Fv_CO2': Fv_CO2, 'Fv_H2O': Fv_H2O, 'Fv_N2': Fv_N2,
+                'Fv_O2': Fv_O2, 'Fv_T': Fv_T,
+            },
+            'Cl': {
+                'Cl_CO2': Cl_CO2, 'Cl_MEA': Cl_MEA, 'Cl_H2O': Cl_H2O,
+                'Cl_CO2_true': Cl_CO2_true, 'Cl_MEA_true': Cl_MEA_true, 'Cl_H2O_true': Cl_H2O_true,
+                'Cl_MEAH_true': Cl_MEAH_true, 'Cl_MEACOO_true': Cl_MEACOO_true, 'Cl_HCO3_true': Cl_HCO3_true,
+            },
+            'Cv': {
+                'Cv_CO2': Cv_CO2, 'Cv_H2O': Cv_H2O, 'Cv_N2': Cv_N2,
+                'Cv_O2': Cv_O2,
+            },
+            'x': {
+                'x_CO2': x_CO2, 'x_MEA': x_MEA, 'x_H2O': x_H2O,
+                'x_CO2_true': x_CO2_true, 'x_MEA_true': x_MEA_true, 'x_H2O_true': x_H2O_true,
+                'x_MEAH_true': x_MEAH_true, 'x_MEACOO_true': x_MEACOO_true, 'x_HCO3_true': x_HCO3_true,
+            },
+            'y': {
+                'y_CO2': y_CO2, 'y_H2O': y_H2O, 'y_N2': y_N2,
+                'y_O2': y_O2,
+            },
+            'T': {
+                'Tl': Tl, 'Tv': Tv,
+            },
+            'Hl': {
+                'Tl': Tl, 'Hl_CO2': Hl_CO2, 'Hl_MEA': Hl_MEA,
+                'Hl_H2O': Hl_H2O, 'Hl_T': Hl_T, 'Fl_T': Fl_T,
+                'Hlf': Hlf, 'Hl_CO2_trn': Hl_CO2_trn, 'Hl_H2O_trn': Hl_H2O_trn,
+                'Hl_trn': Hl_trn, 'ql': ql, 'Hl_flux': Hl_flux,
+                'dHlf_dz': dHlf_dz, 'dTl_dz': dTl_dz, 'dHl_dT': dHl_dT,
+            },
+            'Hv': {
+                'Tv': Tv, 'Hv_CO2': Hv_CO2, 'Hv_H2O': Hv_H2O,
+                'Hv_N2': Hv_N2, 'Hv_O2': Hv_O2, 'Hv_T': Hv_T,
+                'Fv_T': Fv_T, 'Hvf': Hvf, 'Hv_CO2_trn': Hv_CO2_trn,
+                'Hv_H2O_trn': Hv_H2O_trn, 'Hv_trn': Hv_trn, 'qv': qv,
+                'Hv_flux': Hv_flux, 'dHvf_dz': dHvf_dz, 'dTv_dz': dTv_dz,
+                'dHv_dT': dHv_dT,
+            },
+            'CO2': {
+                'Nl_CO2': Nl_CO2, 'Nv_CO2': Nv_CO2, 'kv_CO2': kv_CO2,
+                'a_eA': a_eA, 'DF_CO2': DF_CO2, 'fv_CO2': fv_CO2,
+                'fl_CO2': fl_CO2, 'Psi': Psi, 'H_CO2_mix': H_CO2_mix,
+            },
+            'H2O': {
+                'Nl_H2O': Nl_H2O, 'Nv_H2O': Nv_H2O, 'kv_H2O': kv_H2O,
+                'a_eA': a_eA, 'DF_H2O': DF_H2O, 'fv_H2O': fv_H2O,
+                'fl_H2O': fl_H2O, 'Psat_H2O': Psat_H2O,
+            },
+            'enhance_factor': {
+                'k2': k2, 'Cl_MEA_true': Cl_MEA_true, 'Dl_CO2': Dl_CO2,
+                'kl_CO2': kl_CO2, 'Ha': Ha, 'E': E,
+                'Psi': Psi, 'Psi_H': Psi_H, 'eta_psi': eta_psi,
+            },
+            'transport': {
+                'kl_CO2': kl_CO2, 'kv_CO2': kv_CO2, 'kv_H2O': kv_H2O,
+                'ul': ul, 'uv': uv, 'h_L': h_L,
+                'h_V': h_V, 'a_e': a_e, 'UT': UT,
+                'P': P, 'Clp': Clp, 'Cvp': Cvp,
+                'eps': eps, 'a_p': a_p, 'A': A,
+                'Lp': Lp, 'd_h': d_h,
+            },
+            'Prop_l': {
+                'rho_mol_l': rho_mol_l, 'rho_mass_l': rho_mass_l, 'V_l': V_l,
+                'V_CO2': V_CO2, 'V_MEA': V_MEA, 'V_H2O': V_H2O,
+                'mul_mix': mul_mix, 'sigma': sigma, 'Dl_CO2': Dl_CO2,
+                'Dl_MEA': Dl_MEA, 'Dl_ion': Dl_ion, 'Cpl_CO2': Cpl_CO2,
+                'Cpl_MEA': Cpl_MEA, 'Cpl_H2O': Cpl_H2O,
+            },
+            'Prop_v': {
+                'rho_mol_v': rho_mol_v, 'rho_mass_v': rho_mass_v, 'muv_CO2': muv_CO2,
+                'muv_H2O': muv_H2O, 'muv_N2': muv_N2, 'muv_O2': muv_O2,
+                'muv_mix': muv_mix, 'Dv_CO2': Dv_CO2, 'Dv_H2O': Dv_H2O,
+                'Cpv_CO2': Cpv_CO2, 'Cpv_H2O': Cpv_H2O, 'Cpv_N2': Cpv_N2,
+                'Cpv_O2': Cpv_O2, 'kt_vap': kt_vap,
+            },
         }
-
-        if zi == 0 and column_names:
-            locals_dict = locals().items()
-            keys_dict = {}
-            for k, v in output_dict.items():
-                key_list = []
-                for vi in v:
-                    for k2, v2 in locals_dict:
-                        if isinstance(v2, float):
-                            if vi == v2:
-                                key_list.append(k2)
-                                continue
-                keys_dict[k] = key_list
-            keys_dict['enhance_factor'] = ['k2', 'Cl_MEA_true', 'Dl_CO2', 'kl_CO2', 'Ha', 'E', 'Psi', 'Psi_H', 'eta_psi']
-            keys_dict['transport'] = [
-                'kl_CO2',
-                'kv_CO2',
-                'kv_H2O',
-                'ul',
-                'uv',
-                'h_L',
-                'h_V',
-                'a_e',
-                'UT',
-                'P',
-                'Clp',
-                'Cvp',
-                'eps',
-                'a_p',
-                'A',
-                'Lp',
-                'd_h',
-            ]
-        else:
-            keys_dict = None
+        output_dict = {group: list(values.values()) for group, values in fields.items()}
+        keys_dict = {group: list(values) for group, values in fields.items()} if column_names else None
         return output_dict, keys_dict
     else:
         raise ValueError('Choose correct run type')
@@ -433,6 +473,40 @@ def _smooth_absorption_only_vapor_flux(nv_co2):
     smoothing = 1.0e-10
     x = -float(nv_co2) / smoothing
     return -smoothing * np.logaddexp(0.0, x)
+
+
+def _reactive_film_linearized_fluxes(zi, vapor_fugacity_pa, interfacial_area_m2_per_m, profile):
+    """Apply an outer-iteration film conductance and bulk fugacity profile."""
+    if profile is None:
+        raise ValueError("reactive_film_linearization is required")
+    positions, conductance, bulk_fugacity = (
+        np.asarray(values, dtype=float) for values in profile
+    )
+    if (
+        positions.ndim != 1
+        or conductance.shape != positions.shape
+        or bulk_fugacity.shape != positions.shape
+        or positions.size < 2
+        or np.any(~np.isfinite(positions))
+        or np.any(~np.isfinite(conductance))
+        or np.any(conductance <= 0.0)
+        or np.any(~np.isfinite(bulk_fugacity))
+        or np.any(bulk_fugacity < 0.0)
+        or np.any(np.diff(positions) <= 0.0)
+        or positions[0] != 0.0
+        or positions[-1] != 1.0
+    ):
+        raise ValueError(
+            "reactive_film_linearization must contain valid equal-length arrays on [0, 1]"
+        )
+    local_conductance = float(np.interp(float(zi), positions, conductance))
+    local_bulk_fugacity = float(np.interp(float(zi), positions, bulk_fugacity))
+    liquid_flux_mol_per_s_m = (
+        float(interfacial_area_m2_per_m)
+        * local_conductance
+        * (float(vapor_fugacity_pa) - local_bulk_fugacity)
+    )
+    return -liquid_flux_mol_per_s_m, liquid_flux_mol_per_s_m
 
 
 def _gas_velocity_area_factor(uv, reference_m_s, exponent, bounds):

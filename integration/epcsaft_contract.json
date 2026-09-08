@@ -19,22 +19,28 @@
     }
   },
   "final_identity": {
-    "engine_commit": "38e91823b6d4f26c1d549f07aaef24a089d8e16d",
+    "engine_commit": "9e1bef97fbea5c6f465612ae27b054192f91f19c",
     "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-    "wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
-    "core_sha256": "39c8f4aa0bc0455f3b192258a05329ad47547919ba420d16ab830fa84e4dee6e"
+    "wheel_sha256": "b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b",
+    "core_sha256": "b5f97d49eb9439da84312dbeacb8ac0bae26ce6939562339a3c73d842fccce34"
   },
   "required_public_symbols": [
     "Parameters",
     "Mixture",
     "NonEvaluableTrial",
     "State",
+    "ReferenceThermochemistry",
+    "ComponentReferenceThermochemistry",
+    "IdealHeatCapacityPolynomial",
     "unit_registry"
   ],
   "required_public_module_symbols": {
     "epcsaft.equilibrium": [
       "ChemicalEquilibriumProblem",
       "PhaseEquilibriumProblem",
+      "EquilibriumStateInputDerivatives",
+      "EquilibriumStateInputAction",
+      "EquilibriumStateInputActionResult",
       "solve"
     ]
   },
@@ -45,6 +51,8 @@
     "src/mea_absorption_column/Thermodynamics/thermo_models.py",
     "src/mea_absorption_column/Thermodynamics/epcsaft_v02.py",
     "src/mea_absorption_column/Thermodynamics/reactive_bundle.py",
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py",
+    "tests/test_casadi_reactive.py",
     "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py",
     "analyses/nccc_validation/scripts/probe_reactive_epcsaft_speciation.py",
     "analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py"

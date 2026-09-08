@@ -14,7 +14,7 @@ from mea_absorption_column.BVP.robust_core import (
 )
 from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import DEFAULT_SCIPY_BVP_SETTINGS
 from mea_absorption_column.misc.Polynomial_Fit import polynomial_fit
-from mea_absorption_column.Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
+from mea_absorption_column.Properties.Thermophysical_Properties import enthalpy
 from mea_absorption_column.intercooling import (
     BedStackSpec,
     liquid_enthalpy_after_intercooler,
@@ -26,7 +26,6 @@ LIQUID_IDXS = np.array([0, 1, 4])
 VAPOR_IDXS = np.array([2, 3, 5, 6])
 BOUNDED_CASE_IDXS = np.array([0, 1, 2, 3, 6])
 BOUNDED_CASE_WITH_TEMPERATURE_IDXS = np.array([0, 1, 2, 3, 4, 5, 6])
-EPS = np.finfo(float).eps
 
 
 def _slice_bed(vector: np.ndarray, bed_index: int) -> np.ndarray:
@@ -95,6 +94,34 @@ def stacked_boundary_conditions(
     return np.asarray(residuals, dtype=float)
 
 
+def stacked_boundary_jacobian(bottom_scaled, scales, fl_mea, stack_spec, thermal_state_mode="enthalpy"):
+    """Exact derivatives of the existing stream/cooler boundary equations."""
+    scales = np.asarray(scales, dtype=float)
+    left = np.zeros((STATE_SIZE * stack_spec.beds,) * 2)
+    right = np.zeros_like(left)
+    left[np.arange(4), VAPOR_IDXS] = 1.0
+    right[np.arange(4, 7), (stack_spec.beds - 1) * STATE_SIZE + LIQUID_IDXS] = 1.0
+    for lower_bed in range(stack_spec.beds - 1):
+        lower = lower_bed * STATE_SIZE
+        upper = lower + STATE_SIZE
+        rows = STATE_SIZE + lower
+        right[rows + np.arange(4), lower + VAPOR_IDXS] = 1.0
+        left[rows + np.arange(4), upper + VAPOR_IDXS] = -1.0
+        right[rows + np.arange(4, 7), lower + LIQUID_IDXS] = 1.0
+        left[rows + np.arange(4, 7), upper + LIQUID_IDXS] = -1.0
+        cooler = _intercooler_for_upper_bed(stack_spec, lower_bed + 1)
+        if cooler is not None:
+            left[rows + 6, upper + 4] = -(1.0 - cooler.strength)
+            if thermal_state_mode != "temperature":
+                state = _slice_bed(bottom_scaled, lower_bed + 1) * scales
+                flows = np.array([state[0], fl_mea, state[1]])
+                partial_h, _ = enthalpy(cooler.target_temperature_K, flows / flows.sum(), phase="liquid")
+                left[rows + 6, upper + np.array([0, 1])] = (
+                    -cooler.strength * partial_h[[0, 2]] * scales[[0, 1]] / scales[4]
+                )
+    return left, right
+
+
 def _stack_initial_guess(
     Y_a_scaled,
     Y_b_scaled,
@@ -103,14 +130,23 @@ def _stack_initial_guess(
     explicit_initial_guess=None,
     scales=None,
     thermal_state_mode="enthalpy",
+    initial_guess_z=None,
 ):
     expected_shape = (STATE_SIZE * int(beds), int(mesh_points))
     if explicit_initial_guess is not None:
         guess = np.asarray(explicit_initial_guess, dtype=float)
-        if guess.shape == expected_shape:
+        if guess.ndim != 2 or guess.shape[1] < 2 or not np.all(np.isfinite(guess)):
+            raise ValueError("explicit_initial_guess must be a finite state profile")
+        old_grid = np.asarray(
+            np.linspace(0.0, 1.0, guess.shape[1]) if initial_guess_z is None else initial_guess_z,
+            dtype=float,
+        )
+        if (old_grid.shape != (guess.shape[1],) or not np.all(np.isfinite(old_grid))
+                or np.any(np.diff(old_grid) <= 0.0) or old_grid[0] > 0.0 or old_grid[-1] < 1.0):
+            raise ValueError("initial_guess_z must strictly increase and cover [0, 1]")
+        if guess.shape == expected_shape and initial_guess_z is None:
             return guess
         if guess.shape[0] == STATE_SIZE and guess.shape[1] > 1:
-            old_grid = np.linspace(0.0, 1.0, guess.shape[1])
             blocks = []
             for bed_index in range(int(beds)):
                 new_grid = np.linspace(
@@ -121,7 +157,6 @@ def _stack_initial_guess(
                 blocks.append(np.vstack([np.interp(new_grid, old_grid, row) for row in guess]))
             return np.vstack(blocks)
         if guess.shape[0] == expected_shape[0] and guess.shape[1] > 1:
-            old_grid = np.linspace(0.0, 1.0, guess.shape[1])
             new_grid = np.linspace(0.0, 1.0, expected_shape[1])
             return np.vstack([np.interp(new_grid, old_grid, row) for row in guess])
         raise ValueError("explicit_initial_guess has the wrong shape.")
@@ -144,10 +179,7 @@ def _stack_initial_guess(
             (bed_index + 1) / int(beds),
             int(mesh_points),
         )
-        if scales is None:
-            block = _linear_profile(Y_a_scaled, Y_b_scaled, global_z)
-        else:
-            block = _linear_profile(Y_a_scaled, Y_b_scaled, global_z)
+        block = _linear_profile(Y_a_scaled, Y_b_scaled, global_z)
         blocks.append(block)
     return np.vstack(blocks)
 
@@ -220,6 +252,7 @@ def segmented_scipy_BVP_solve(
         explicit_initial_guess=settings.get("initial_guess_scaled"),
         scales=scales,
         thermal_state_mode=thermal_state_mode,
+        initial_guess_z=settings.get("initial_guess_z"),
     )
     y_guess_solver = _stacked_profile_to_solver(y_guess, stack_spec.beds, transform_mode, bounds=case_bounds)
 
@@ -248,8 +281,6 @@ def segmented_scipy_BVP_solve(
                 for i in range(bed_y_solver.shape[1])
             ]
             blocks.append(np.asarray(differentials).T)
-        if hasattr(chemical_equilibrium, "cache"):
-            del chemical_equilibrium.cache
         return np.vstack(blocks)
 
     def boundary(bottom, top):
@@ -265,23 +296,21 @@ def segmented_scipy_BVP_solve(
             thermal_state_mode=thermal_state_mode,
         )
 
-    def fun_jac(x, y):
-        n, m = y.shape
-        dtype = y.dtype
-        df_dy = np.empty((n, n, m), dtype=dtype)
-        h = EPS ** 0.5 * (1 + np.abs(y))
-        for i in range(n):
-            y_new = y.copy()
-            y_new2 = y.copy()
-            y_new[i] += h[i]
-            y_new2[i] -= h[i]
-            hi = y_new[i] - y[i]
-            f_new = column_odes(x, y_new)
-            f_new2 = column_odes(x, y_new2)
-            df_dy[:, i, :] = (f_new - f_new2) / (2 * hi)
-        return df_dy
+    def boundary_jacobian(bottom, top):
+        physical_bottom = _stacked_vector_to_physical(bottom, stack_spec.beds, transform_mode, bounds=case_bounds)
+        left, right = stacked_boundary_jacobian(
+            physical_bottom, scales, fl_mea, stack_spec, thermal_state_mode,
+        )
+        for matrix, state in ((left, bottom), (right, top)):
+            derivative = np.concatenate([
+                _vector_derivative(_slice_bed(state, bed), transform_mode, bounds=case_bounds)
+                for bed in range(stack_spec.beds)
+            ])
+            matrix *= derivative[np.newaxis, :]
+        return left, right
 
-    jacobian_kwargs = {'fun_jac': fun_jac} if settings.get('use_finite_jacobian', False) else {}
+    if 'use_finite_jacobian' in settings:
+        raise ValueError("use_finite_jacobian was removed; SciPy owns numerical Jacobian estimation")
     try:
         sol = solve_bvp(
             column_odes,
@@ -292,7 +321,7 @@ def segmented_scipy_BVP_solve(
             tol=float(settings["tol"]),
             bc_tol=float(settings["bc_tol"]),
             verbose=int(settings["verbose"]),
-            **jacobian_kwargs,
+            bc_jac=boundary_jacobian,
         )
     except TimeoutError as exc:
         if isinstance(model_options, dict):
@@ -306,7 +335,13 @@ def segmented_scipy_BVP_solve(
 
 def _physical_rhs_to_solver_rhs(y_solver, rhs_physical, transform_mode, bounds=None):
     derivative = _vector_derivative(y_solver, transform_mode=transform_mode, bounds=bounds)
-    return np.asarray(rhs_physical, dtype=float) / derivative
+    if np.any(~np.isfinite(derivative)) or np.any(derivative <= 0.0):
+        raise FloatingPointError("singular state transform: trial reached a coordinate bound")
+    with np.errstate(over="raise", invalid="raise", divide="raise"):
+        rhs = np.asarray(rhs_physical, dtype=float) / derivative
+    if np.any(~np.isfinite(rhs)):
+        raise FloatingPointError("non-finite transformed column RHS")
+    return rhs
 
 
 def _stacked_vector_to_physical(vector, beds, transform_mode, bounds=None):
@@ -436,10 +471,7 @@ def _bounded_solver_derivative(y_solver, bounds):
     lower, upper, bounded_idxs = _bounds_parts(bounds)
     derivative = np.ones_like(np.asarray(y_solver, dtype=float))
     sigmoid = _stable_sigmoid(np.asarray(y_solver, dtype=float)[bounded_idxs])
-    derivative[bounded_idxs] = np.maximum(
-        (upper[bounded_idxs] - lower[bounded_idxs]) * sigmoid * (1.0 - sigmoid),
-        1.0e-12,
-    )
+    derivative[bounded_idxs] = (upper[bounded_idxs] - lower[bounded_idxs]) * sigmoid * (1.0 - sigmoid)
     return derivative
 
 

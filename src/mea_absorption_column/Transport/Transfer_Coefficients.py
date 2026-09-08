@@ -1,7 +1,30 @@
-import numpy as np
 from numpy import log, exp
 from ..config.Constants import R, g
 from .domain_guards import require_positive
+
+
+def liquid_mass_transfer_expression(diffusivity, viscosity, density, velocity, packing):
+    """Liquid coefficient [m/s]; positive physical inputs, numeric or CasADi."""
+    a_p, eps, Clp, *_ = packing
+    return (Clp * (g * density / viscosity) ** (1 / 6)
+            * (a_p / (4 * eps)) ** .5 * (velocity / a_p) ** (1 / 3)
+            * diffusivity ** .5)
+
+
+def gas_mass_transfer_expression(diffusivity, viscosity, density, velocity, holdup, temperature, packing):
+    """Gas coefficient [mol/(m² s Pa)]; positive numeric or CasADi inputs."""
+    a_p, eps, _, Cvp, *_ = packing
+    return (Cvp / (R * temperature) * (a_p ** 2 / (4 * eps * holdup)) ** .5
+            * diffusivity ** (2 / 3) * (viscosity / density) ** (1 / 3)
+            * (velocity * density / (a_p * viscosity)) ** .75)
+
+
+def heat_transfer_expression(pressure, gas_coefficient, conductivity, heat_capacity, molar_density, diffusivity):
+    """Heat coefficient [W/(m² K)]; positive numeric or CasADi inputs."""
+    return exp(log(gas_coefficient) + log(pressure) + (
+        2 * log(conductivity) + log(heat_capacity)
+        - 2 * log(molar_density) - 2 * log(diffusivity)
+    ) / 3)
 
 
 def mass_transfer_coeff(
@@ -50,22 +73,10 @@ def mass_transfer_coeff(
     d_h = 4 * ϵ / a_p
     Lp = A * a_p / ϵ
 
-    def f_kl(Dl):
-        kl = (
-            Clp
-            * (g * rho_mass_l / mul_mix) ** (1 / 6)
-            * (1 / d_h) ** 0.5
-            * (ul / a_p) ** (1 / 3)
-            * Dl ** 0.5
-        )  # m/s
-        return kl
-
     def f_kv(Dv):
-        kv = Cvp / R / Tv * np.sqrt(a_p / d_h / h_V) * Dv ** (2 / 3) * (muv_mix / rho_mass_v) ** (1 / 3) * (
-                uv * rho_mass_v / a_p / muv_mix) ** (3 / 4)  # mol/(m2 s Pa)
-        return kv
+        return gas_mass_transfer_expression(Dv, muv_mix, rho_mass_v, uv, h_V, Tv, packing)
 
-    kl_CO2 = f_kl(Dl_CO2)
+    kl_CO2 = liquid_mass_transfer_expression(Dl_CO2, mul_mix, rho_mass_l, ul, packing)
     kv_CO2 = f_kv(Dv_CO2)
     kv_H2O = f_kv(Dv_H2O)
     kv_T = f_kv(Dv_T) * (R * Tv)
@@ -87,13 +98,6 @@ def heat_transfer_coeff(P, kv_CO2, kt_vap, Cpv_T, rho_mol_v, Dv_CO2, a_eA, diagn
         a_eA=a_eA,
     )
 
-    # Compute Heat Transfer Coefficient
-    # Ackmann_factor = Cpv[0]*N_CO2 + Cpv[1]*N_H2O
-    UT = ((kv_CO2*P)**3*kt_vap**2*Cpv_T/(rho_mol_v*Dv_CO2)**2)**(1/3) # J/(s*K*m^2)
-    # UT = UT * a_eA # J/(s*K*m)
-    log_UT = (3*(log(kv_CO2) + log(P)) + 2*log(kt_vap) + log(Cpv_T) - 2*(log(rho_mol_v) + log(Dv_CO2)))/3
-    UT = exp(log_UT)
+    UT = heat_transfer_expression(P, kv_CO2, kt_vap, Cpv_T, rho_mol_v, Dv_CO2)
     require_positive("heat_transfer", diagnostics, UT=UT)
-    # UT = Ackmann_factor/(1 - exp(-Ackmann_factor/(UT*a_e*A)))/(a_e*A)
-    # UT = 7740.18346803192
     return UT

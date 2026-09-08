@@ -12,8 +12,6 @@ from ...BVP.robust_core import (
     solver_to_scaled_physical_derivative,
 )
 from ...misc.Polynomial_Fit import polynomial_fit
-from ...Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
-EPS = np.finfo(float).eps
 
 
 DEFAULT_SCIPY_BVP_SETTINGS = {
@@ -22,25 +20,24 @@ DEFAULT_SCIPY_BVP_SETTINGS = {
     'tol': 5e-1,
     'bc_tol': 1e-3,
     'verbose': 0,
-    'use_finite_jacobian': False,
 }
 
 
 def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     settings = {**DEFAULT_SCIPY_BVP_SETTINGS, **(settings or {})}
+    if 'use_finite_jacobian' in settings:
+        raise ValueError("use_finite_jacobian was removed; SciPy owns numerical Jacobian estimation")
     Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a, Hlf_a_guess, Hvf_a, P_a = Y_a_scaled
     Fl_CO2_b, Fl_H2O_b, Fv_CO2_b_guess, Fv_H2O_b_guess, Hlf_b, Hvf_b_guess, P_b = Y_b_scaled
 
     scales = parameters[0]
     transform_mode = settings.get('transform_mode', 'bounded_guarded_raw_state')
-    guard_rhs = bool(settings.get('guard_rhs', True))
     diagnostics = parameters[6].get("solver_diagnostics", {}) if len(parameters) > 6 else {}
     rhs_calls = 0
     rhs_nodes = 0
     boundary_calls = 0
-    jacobian_calls = 0
 
-    bcs_1 = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_a, Fv_H2O_a, Hlf_b, Hvf_a, P_a]) / scales
+    bcs_1 = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_a, Fv_H2O_a, Hlf_b, Hvf_a, P_a])
 
     # Define the system of differential equations for the absorption column
     def column_odes(z, w):
@@ -56,14 +53,11 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
                     w[:, i],
                     parameters,
                     transform_mode=transform_mode,
-                    guard_rhs=guard_rhs,
                 ),
                 transform_mode,
             )
             for i in range(np.shape(w)[1])
         ]
-        if hasattr(chemical_equilibrium, "cache"):
-            del chemical_equilibrium.cache
         return np.array(differentials).T
 
     # Define the boundary conditions
@@ -76,42 +70,31 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
         Fl_CO2_a_bc, Fl_H2O_a_bc, Fv_CO2_a_bc, Fv_H2O_a_bc, Hlf_a_bc, Hvf_a_bc, P_a_bc = bottom
         Fl_CO2_b_bc, Fl_H2O_b_bc, Fv_CO2_b_bc, Fv_H2O_b_bc, Hlf_b_bc, Hvf_b_bc, P_b_bc = top
 
-        bcs_2 = np.array([Fl_CO2_b_bc, Fl_H2O_b_bc, Fv_CO2_a_bc, Fv_H2O_a_bc, Hlf_b_bc, Hvf_a_bc, P_a_bc]) / scales
+        bcs_2 = np.array([Fl_CO2_b_bc, Fl_H2O_b_bc, Fv_CO2_a_bc, Fv_H2O_a_bc, Hlf_b_bc, Hvf_a_bc, P_a_bc])
 
         # Boundary conditions at the bottom for vapor and at the top for liquid
         return bcs_1 - bcs_2
 
-    def fun_jac(x, y):
-        nonlocal jacobian_calls
-        jacobian_calls += 1
-
-        fun = column_odes
-        n, m = y.shape
-
-        dtype = y.dtype
-
-        df_dy = np.empty((n, n, m), dtype=dtype)
-        h = EPS ** 0.5 * (1 + np.abs(y))
-        for i in range(n):
-            y_new = y.copy()
-            y_new2 = y.copy()
-            y_new[i] += h[i]
-            y_new2[i] -= h[i]
-            hi = y_new[i] - y[i]
-            f_new = fun(x, y_new)
-            f_new2 = fun(x, y_new2)
-
-            df_dy[:, i, :] = (f_new - f_new2) / (2*hi)
-
-        return df_dy
+    def boundary_jacobian(bottom, top):
+        left = np.zeros((7, 7))
+        right = np.zeros((7, 7))
+        bottom_derivative = solver_to_scaled_physical_derivative(bottom, transform_mode)
+        top_derivative = solver_to_scaled_physical_derivative(top, transform_mode)
+        for index in (2, 3, 5, 6):
+            left[index, index] = -bottom_derivative[index]
+        for index in (0, 1, 4):
+            right[index, index] = -top_derivative[index]
+        return left, right
 
 
     # Initial guess for the solution (constant profiles as initial guess)
 
-    m = len(Y_a_scaled)
     n = int(settings['mesh_points'])
     z_2 = np.linspace(z[0], z[-1], n)
-    w_guess_scaled = _initial_guess_profile(settings, z, z_2, Y_a_scaled, scales, m)
+    w_guess_scaled = _initial_guess_profile(
+        settings, z, z_2, Y_a_scaled, Y_b_scaled, scales,
+        parameters[6].get("thermal_state_mode", "enthalpy") if len(parameters) > 6 else "enthalpy",
+    )
     if transform_mode == "positive_flow_pressure":
         w_guess_scaled[POSITIVE_SOLVER_IDXS, :] = np.clip(
             w_guess_scaled[POSITIVE_SOLVER_IDXS, :],
@@ -125,13 +108,12 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
 
     # Solve the BVP
 
-    jacobian_kwargs = {'fun_jac': fun_jac} if settings.get('use_finite_jacobian', False) else {}
     sol = solve_bvp(column_odes, boundary_conditions, z_2, w_guess_solver,
                     max_nodes=int(settings['max_nodes']),
                     tol=float(settings['tol']),
                     bc_tol=float(settings['bc_tol']),
                     verbose=int(settings['verbose']),
-                    **jacobian_kwargs,
+                    bc_jac=boundary_jacobian,
                     )
     solver_rhs_calls = rhs_calls
     solver_rhs_nodes = rhs_nodes
@@ -145,7 +127,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
         "solver_rhs_calls": solver_rhs_calls,
         "solver_rhs_node_evaluations": solver_rhs_nodes,
         "solver_boundary_calls": boundary_calls - 1,
-        "solver_jacobian_calls": jacobian_calls,
+        "solver_jacobian_calls": None,
         "solver_iterations": int(sol.niter),
         "solver_final_nodes": int(sol.x.size),
         "solver_mesh_nodes_added": int(sol.x.size - z_2.size),
@@ -166,25 +148,39 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
 
 def _physical_rhs_to_solver_rhs(y_solver, rhs_physical, transform_mode):
     derivative = solver_to_scaled_physical_derivative(y_solver, transform_mode=transform_mode)
-    return np.asarray(rhs_physical, dtype=float) / derivative
+    if np.any(~np.isfinite(derivative)) or np.any(derivative <= 0.0):
+        raise FloatingPointError("singular state transform: trial reached a coordinate bound")
+    with np.errstate(over="raise", invalid="raise", divide="raise"):
+        rhs = np.asarray(rhs_physical, dtype=float) / derivative
+    if np.any(~np.isfinite(rhs)):
+        raise FloatingPointError("non-finite transformed column RHS")
+    return rhs
 
 
-def _column_rhs(zi, y_solver, parameters, transform_mode, guard_rhs):
+def _column_rhs(zi, y_solver, parameters, transform_mode):
     y_scaled = solver_to_scaled_physical(y_solver, transform_mode=transform_mode)
-    if guard_rhs:
-        return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
-    return abs_column(zi, y_scaled, parameters)
+    return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
 
 
-def _initial_guess_profile(settings, z_source, z_target, Y_a_scaled, scales, m):
+def _initial_guess_profile(settings, z_source, z_target, Y_a_scaled, Y_b_scaled, scales, thermal_state_mode):
+    m = len(Y_a_scaled)
     explicit = settings.get("initial_guess_scaled")
     if explicit is not None:
         profile = np.asarray(explicit, dtype=float)
         if profile.ndim == 2 and profile.shape[0] == m and profile.shape[1] >= 2:
             source_grid = np.asarray(settings.get("initial_guess_z", np.linspace(z_source[0], z_source[-1], profile.shape[1])), dtype=float)
-            if source_grid.shape[0] == profile.shape[1] and np.all(np.isfinite(profile)):
+            if (source_grid.shape == (profile.shape[1],)
+                    and np.all(np.isfinite(profile)) and np.all(np.isfinite(source_grid))
+                    and np.all(np.diff(source_grid) > 0.0)
+                    and source_grid[0] <= z_target[0] and source_grid[-1] >= z_target[-1]):
                 return np.vstack([
                     np.interp(z_target, source_grid, profile[i])
                     for i in range(m)
                 ])
+        raise ValueError("initial_guess_scaled requires a finite state profile and a strictly increasing covering initial_guess_z")
+    if thermal_state_mode == "temperature":
+        return np.vstack([
+            np.interp(z_target, [z_source[0], z_source[-1]], [a, b])
+            for a, b in zip(Y_a_scaled, Y_b_scaled, strict=True)
+        ])
     return np.array([polynomial_fit(z_target, Y_a_scaled[i] * scales[i], i) / scales[i] for i in range(m)])

@@ -1,0 +1,204 @@
+{
+  "physical_inputs": {
+    "case_id": "corrected published 2017 3C",
+    "height_m": 6.0,
+    "area_m2": 0.3216990877275948,
+    "packing": [
+      250.0,
+      0.97,
+      0.203,
+      0.35,
+      0.017,
+      0.292,
+      0.119
+    ],
+    "liquid_feed_mol_s": [
+      2.4323205276203805,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "vapor_feed_mol_s": [
+      1.6540435157308098,
+      1.5624169375299577,
+      14.530683358624426,
+      1.6006872732878803
+    ],
+    "liquid_temperature_k": 318.15,
+    "vapor_temperature_k": 316.75,
+    "bottom_pressure_pa": 110900.0,
+    "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+    "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+    "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+    "reported_top_pressure_pa": 109500.0,
+    "liquid_branch_policy": {
+      "loading_anchor": 0.25,
+      "max_log_loading_step": 0.1,
+      "max_loading_steps": 32
+    },
+    "species_diffusivity_model": {
+      "co2_prefactor_m2_s": 3.14e-07,
+      "co2_activation_j_mol": 15230.0,
+      "gas_constant_j_mol_k": 8.314462618,
+      "other_species_m2_s": [
+        8.8e-10,
+        8.8e-10,
+        8.4e-10,
+        6.8e-10,
+        6.8e-10,
+        6.8e-10,
+        1.8439088914585774e-09,
+        1.8439088914585774e-09
+      ],
+      "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+    }
+  },
+  "engine_identity": {
+    "engine_commit": "9e1bef97fbea5c6f465612ae27b054192f91f19c",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b",
+    "core_sha256": "b5f97d49eb9439da84312dbeacb8ac0bae26ce6939562339a3c73d842fccce34"
+  },
+  "grid": [
+    0.0,
+    6.0
+  ],
+  "profile": [
+    [
+      3.5638781621240825,
+      2.4323205276203805
+    ],
+    [
+      76.45648153953171,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308084,
+      0.5224858812271054
+    ],
+    [
+      1.5624169375299577,
+      2.0811279052898204
+    ],
+    [
+      326.55925989160994,
+      318.15
+    ],
+    [
+      316.75,
+      326.11859288079256
+    ],
+    [
+      110900.0,
+      110536.77529141812
+    ],
+    [
+      0.05195063885079905,
+      0.05271513929926694
+    ],
+    [
+      0.00737867679237281,
+      0.016125692009876437
+    ],
+    [
+      -0.10688953487715941,
+      0.11947304377474169
+    ],
+    [
+      21993.566458208916,
+      -34423.84415972688
+    ],
+    [
+      0.23633545057439753,
+      0.6914852054450097
+    ]
+  ],
+  "initial_guess_only": true,
+  "physical_certification": {
+    "accepted": null
+  },
+  "scope": "A bounded outer Newton predictor, not a solved column; no native evaluation at the predicted states has been performed",
+  "damping_fraction": 0.5,
+  "scaled_condition": 128887.64262371283,
+  "linear_residual_inf": 4.440892098500626e-15,
+  "initial_scaled_residual": [
+    3.2844428514710486,
+    0.08478069175064168,
+    4.829871580433803,
+    4.176868486029107,
+    -6.439861539968851,
+    -78.4838546622366,
+    0.00702952028741911,
+    0.0,
+    0.0,
+    6.809186847274576e-14,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    6.809186847274576e-14,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "full_undamped_profile": [
+    [
+      4.695435796627784,
+      2.4323205276203805
+    ],
+    [
+      75.93777057177186,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308069,
+      -0.609071753276599
+    ],
+    [
+      1.5624169375299577,
+      2.5998388730496833
+    ],
+    [
+      334.96851978321996,
+      318.15
+    ],
+    [
+      316.75,
+      335.4871857615851
+    ],
+    [
+      110900.0,
+      110173.55058283624
+    ],
+    [
+      0.051186143268904936,
+      0.05271514416584072
+    ],
+    [
+      -0.003558560843246201,
+      0.013935469591761052
+    ],
+    [
+      -0.22874121376848855,
+      0.22398394353531365
+    ],
+    [
+      54927.542260964205,
+      -57907.2789749074
+    ],
+    [
+      -0.30189599210875717,
+      0.6084035176324671
+    ]
+  ],
+  "source_sha256": {
+    "analyses/bvp_solution_methods/results/owner_shared_evaluation_verification.json": "3e969039a6855ea4472ad6eeb6dd56f341811d2ef14b2a55b97b07b17ce8aada",
+    "analyses/bvp_solution_methods/results/consistent_3c_reduction_balanced_actions/run.json": "230d9b143a88113bee5b24c8ec06c925b996f79c9534a8eab3b99a2e24011027",
+    "/home/tnnrpolley21/.codex/worktrees/cdc9/MEA-Absorption-Column/analyses/bvp_solution_methods/scripts/make_initial_predictor.py": "68996dab725c19661414a63164de57608da9a71205a7f5411fbbad740200d037"
+  }
+}

@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 # Put outputs into dictionary and dataframe
 
 def make_dfs_dict(output_dict, keys_dict, stages, coordinate_frame=None):
+    if output_dict.keys() != keys_dict.keys():
+        raise ValueError("Profile values and names must describe the same groups")
     sheetnames = list(keys_dict.keys())
     dfs_dict = {}
     coordinate_frame = coordinate_frame.reset_index(drop=True) if coordinate_frame is not None else None
@@ -19,7 +21,9 @@ def make_dfs_dict(output_dict, keys_dict, stages, coordinate_frame=None):
         d = {}
         keys = keys_dict[k1]
         array = output_dict[k1]
-        for k2, v in zip(keys, array.T):
+        if len(keys) != len(set(keys)) or array.shape != (len(stages), len(keys)):
+            raise ValueError(f"Profile {k1} has duplicate names or mismatched values")
+        for k2, v in zip(keys, array.T, strict=True):
             d[k2] = v
         df = pd.DataFrame(d, index=stages)
         df.index.name = 'Position'
@@ -71,7 +75,9 @@ def save_run_outputs(
     output_dict = {k: np.zeros((n, len(outputs_0[k]))) for k in sheetnames}
 
     # Populate output arrays
-    for i in range(n):
+    for k in sheetnames:
+        output_dict[k][0] = outputs_0[k]
+    for i in range(1, n):
         outputs, _ = abs_column(z[i], Y_scaled.T[i], parameters, run_type='saving')
         for k in sheetnames:
             output_dict[k][i] = outputs[k]

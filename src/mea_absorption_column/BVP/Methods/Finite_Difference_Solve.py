@@ -26,7 +26,6 @@ def _initial_profile(Y_a_scaled, Y_b_scaled, n_points):
 def finite_difference_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     settings = {**DEFAULT_FINITE_DIFFERENCE_SETTINGS, **(settings or {})}
     start_time = time.monotonic()
-    guard_rhs = bool(settings.get("guard_rhs", True))
     Y_a_scaled = np.asarray(Y_a_scaled, dtype=float)
     Y_b_scaled = np.asarray(Y_b_scaled, dtype=float)
     z = np.asarray(z, dtype=float)
@@ -55,10 +54,7 @@ def finite_difference_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None
                 derivative = (w[:, -1] - w[:, -2]) / (z_work[-1] - z_work[-2])
             else:
                 derivative = (w[:, i + 1] - w[:, i - 1]) / (z_work[i + 1] - z_work[i - 1])
-            if guard_rhs:
-                rhs = guard_column_rhs(z_work[i], w[:, i], parameters, evaluator=abs_column)
-            else:
-                rhs = abs_column(z_work[i], w[:, i], parameters)
+            rhs = guard_column_rhs(z_work[i], w[:, i], parameters, evaluator=abs_column)
             eqs[:, i] = derivative - rhs
 
         eqs[2, 0] = w[2, 0] - Y_a_scaled[2]

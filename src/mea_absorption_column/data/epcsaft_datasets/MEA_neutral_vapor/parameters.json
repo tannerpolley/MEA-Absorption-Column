@@ -1,0 +1,851 @@
+{
+  "schema": "epcsaft.parameters",
+  "schema_version": 1,
+  "document_version": 1,
+  "purpose": "user-provided",
+  "document_id": "mea-neutral-vapor-candidate-2026-09-03",
+  "sources": [
+    {
+      "citation": "MEA-Thermodynamics retained Phase 2 parameter artifact",
+      "source_id": "mea-retained-phase-two-artifact",
+      "use_basis": "authority-neutral regression starts and fixed model inputs; row-level literature lineage, transfer limits, and provisional statuses are audited in docs/ePC-SAFT/full-component-parameter-source-audit.md"
+    },
+    {
+      "citation": "Schick et al. (2023) using Pabsch et al. (2020)",
+      "source_id": "schick-2023-pabsch-2020-induced-association",
+      "use_basis": "CO2 2B sites and reciprocal CO2-water cross-association with the source combining rule"
+    },
+    {
+      "citation": "MEA-Thermodynamics bounded direct Engine campaign, 2026-09-02.",
+      "source_id": "mea-best-in-slot-campaign-2026-09-02",
+      "use_basis": "Current-best joint pressure/speciation calibration of the R4 correlation and carbon-dioxide dispersion energy; initialized from the retained literature bundle and not an independent validation."
+    },
+    {
+      "source_id": "gross-sadowski-2001",
+      "citation": "Gross, J.; Sadowski, G. PC-SAFT: An Equation of State Based on a Perturbation Theory for Chain Molecules. Industrial & Engineering Chemistry Research 2001, 40, 1244-1260.",
+      "doi": "10.1021/ie0003887",
+      "use_basis": "source-complete installed parameter catalog"
+    },
+    {
+      "source_id": "thermopack-oxygen-d68c794",
+      "citation": "Thermopack fluids/Oxygen.json at d68c794c7342bfc6938eb424a1fbb88b7780b738; https://github.com/thermotools/thermopack/blob/d68c794c7342bfc6938eb424a1fbb88b7780b738/fluids/Oxygen.json",
+      "use_basis": "PC-SAFT-1 and mol_weight transcribed from maintainer data, not independently refitted. Bibliography points to Kontogeorgis & Folas 2010. Original fit range not provided."
+    },
+    {
+      "source_id": "absorber-neutral-vapor-candidate",
+      "citation": "Absorber experimental neutral vapor, 2026-09-03",
+      "use_basis": "CO2/water records and association copied unchanged from reactive parameters sha256:00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e. Solvation/permittivity/electrolyte/reactions removed. N2 source packet SHA256 21933a45b9ce7c4178d9061cf2e5e79ccd7886631c6f56e1ce408b67b7125db8. Five other k_ij explicitly zero as unfit predictive combining-rule corrections, not zero dispersion and not verified fitted values. Application uses candidate extrapolation, not an extension of published fit evidence."
+    }
+  ],
+  "domains": [
+    {
+      "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+      "kind": "fit-range",
+      "pressure_max": {
+        "magnitude": 300000,
+        "unit": "pascal"
+      },
+      "pressure_min": {
+        "magnitude": 10,
+        "unit": "pascal"
+      },
+      "temperature_max": {
+        "magnitude": 393.15,
+        "unit": "kelvin"
+      },
+      "temperature_min": {
+        "magnitude": 293.15,
+        "unit": "kelvin"
+      }
+    },
+    {
+      "domain_id": "mea-provider-source-qualified-313-15-k",
+      "kind": "reported-conditions",
+      "pressure_max": {
+        "magnitude": 100000,
+        "unit": "pascal"
+      },
+      "pressure_min": {
+        "magnitude": 100000,
+        "unit": "pascal"
+      },
+      "temperature_max": {
+        "magnitude": 313.15,
+        "unit": "kelvin"
+      },
+      "temperature_min": {
+        "magnitude": 313.15,
+        "unit": "kelvin"
+      }
+    },
+    {
+      "domain_id": "mea-candidate-293-15-to-393-15-k",
+      "kind": "fit-range",
+      "pressure_max": {
+        "magnitude": 10000000,
+        "unit": "pascal"
+      },
+      "pressure_min": {
+        "magnitude": 1,
+        "unit": "pascal"
+      },
+      "temperature_max": {
+        "magnitude": 393.15,
+        "unit": "kelvin"
+      },
+      "temperature_min": {
+        "magnitude": 293.15,
+        "unit": "kelvin"
+      }
+    },
+    {
+      "domain_id": "nitrogen-fit-range",
+      "kind": "fit-range",
+      "temperature_min": {
+        "magnitude": 63,
+        "unit": "kelvin"
+      },
+      "temperature_max": {
+        "magnitude": 126,
+        "unit": "kelvin"
+      }
+    },
+    {
+      "domain_id": "oxygen-fit-range-unreported",
+      "kind": "unknown"
+    }
+  ],
+  "model_families": [
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "choice": "pc-saft",
+      "family_id": "model/base",
+      "kind": "base",
+      "provenance": {
+        "domain_id": "mea-provider-source-qualified-313-15-k",
+        "locator": "data/reference/MEA/manifests/reactive_vle_model_configurations.json:diagnostic-explicit-model-switches",
+        "source_id": "mea-retained-phase-two-artifact"
+      },
+      "qualification": "candidate_extrapolation",
+      "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
+    },
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "choice": "general-site",
+      "family_id": "model/association",
+      "kind": "association",
+      "provenance": {
+        "domain_id": "mea-provider-source-qualified-313-15-k",
+        "locator": "data/reference/MEA/manifests/reactive_vle_model_configurations.json:diagnostic-explicit-model-switches",
+        "source_id": "mea-retained-phase-two-artifact"
+      },
+      "qualification": "candidate_extrapolation",
+      "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
+    },
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "choice": "none",
+      "family_id": "model/electrolyte",
+      "kind": "electrolyte",
+      "provenance": {
+        "domain_id": "mea-candidate-293-15-to-393-15-k",
+        "source_id": "absorber-neutral-vapor-candidate",
+        "locator": "Neutral vapor selection: no ions, electrolyte or permittivity model"
+      },
+      "qualification": "candidate_extrapolation",
+      "source_sha256": "sha256:00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e"
+    },
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "choice": "none",
+      "family_id": "model/relative_permittivity",
+      "kind": "permittivity",
+      "provenance": {
+        "domain_id": "mea-candidate-293-15-to-393-15-k",
+        "source_id": "absorber-neutral-vapor-candidate",
+        "locator": "Neutral vapor selection: no ions, electrolyte or permittivity model"
+      },
+      "qualification": "candidate_extrapolation",
+      "source_sha256": "sha256:00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e"
+    }
+  ],
+  "model_coefficients": [],
+  "reaction_correlations": [],
+  "components": [
+    {
+      "aliases": [
+        "CO2"
+      ],
+      "coefficients": [
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "dispersion_energy_over_k",
+          "identity": "component/carbon-dioxide/dispersion_energy_over_k",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "analyses/mea_parameter_bundle/results/best-in-slot-campaign/final-full-validation-evaluations.csv:scenario=local-p0.15-db-350-eps+0.025",
+            "source_id": "mea-best-in-slot-campaign-2026-09-02"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:ea1c1f8d6ade0a6e94bbc71d8289f1bc1f0924abefad0ed3cadf6f79a432fa4a",
+          "value": {
+            "magnitude": 173.44025,
+            "unit": "kelvin"
+          }
+        },
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "segment_count",
+          "identity": "component/carbon-dioxide/segment_count",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=CO2:family=segment_count:status=retained-literature-lineage",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 2.0729,
+            "unit": "dimensionless"
+          }
+        },
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "segment_diameter",
+          "identity": "component/carbon-dioxide/segment_diameter",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=CO2:family=segment_diameter:status=retained-literature-lineage",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 2.7852,
+            "unit": "angstrom"
+          }
+        }
+      ],
+      "component_id": "carbon-dioxide",
+      "fixed": {
+        "charge_number": {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=CO2:family=charge_number:status=retained-literature-lineage",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 0,
+            "unit": "elementary-charge"
+          }
+        },
+        "molar_mass": {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=CO2:family=molar_mass:status=retained-literature-lineage",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 0.04401,
+            "unit": "kilogram / mole"
+          }
+        }
+      },
+      "name": "CO2"
+    },
+    {
+      "aliases": [
+        "H2O"
+      ],
+      "coefficients": [
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "dispersion_energy_over_k",
+          "identity": "component/water/dispersion_energy_over_k",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=dispersion_energy_over_k:status=retained-literature-lineage",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 353.95,
+            "unit": "kelvin"
+          }
+        },
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "segment_count",
+          "identity": "component/water/segment_count",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=segment_count:status=retained-literature-lineage",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 1.2047,
+            "unit": "dimensionless"
+          }
+        }
+      ],
+      "component_id": "water",
+      "fixed": {
+        "charge_number": {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=charge_number:status=retained-literature-lineage",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 0,
+            "unit": "elementary-charge"
+          }
+        },
+        "molar_mass": {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=molar_mass:status=retained-literature-lineage",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 0.01801528,
+            "unit": "kilogram / mole"
+          }
+        }
+      },
+      "name": "H2O"
+    },
+    {
+      "component_id": "nitrogen",
+      "aliases": [],
+      "fixed": {
+        "molar_mass": {
+          "value": {
+            "magnitude": 0.02801,
+            "unit": "kg / mol"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, nitrogen row, M_i and T range columns",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:21933a45b9ce7c4178d9061cf2e5e79ccd7886631c6f56e1ce408b67b7125db8"
+        }
+      },
+      "coefficients": [
+        {
+          "identity": "component/nitrogen/dispersion_energy_over_k",
+          "family": "dispersion_energy_over_k",
+          "value": {
+            "magnitude": 90.96,
+            "unit": "kelvin"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, nitrogen row, epsilon_i/k and T range columns",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:21933a45b9ce7c4178d9061cf2e5e79ccd7886631c6f56e1ce408b67b7125db8"
+        },
+        {
+          "identity": "component/nitrogen/segment_count",
+          "family": "segment_count",
+          "value": {
+            "magnitude": 1.2053,
+            "unit": "dimensionless"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, nitrogen row, m_i^seg and T range columns",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:21933a45b9ce7c4178d9061cf2e5e79ccd7886631c6f56e1ce408b67b7125db8"
+        },
+        {
+          "identity": "component/nitrogen/segment_diameter",
+          "family": "segment_diameter",
+          "value": {
+            "magnitude": 3.313,
+            "unit": "angstrom"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, nitrogen row, sigma_i and T range columns",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:21933a45b9ce7c4178d9061cf2e5e79ccd7886631c6f56e1ce408b67b7125db8"
+        }
+      ],
+      "name": "nitrogen"
+    },
+    {
+      "component_id": "oxygen",
+      "aliases": [
+        "O2"
+      ],
+      "name": "oxygen",
+      "fixed": {
+        "molar_mass": {
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:ee757893099745d92732aaca3738181890222cd452b8d920950474c8d43a59c7",
+          "provenance": {
+            "source_id": "thermopack-oxygen-d68c794",
+            "domain_id": "oxygen-fit-range-unreported",
+            "locator": "mol_weight = 31.999 g/mol"
+          },
+          "value": {
+            "magnitude": 0.031999,
+            "unit": "kilogram / mole"
+          }
+        }
+      },
+      "coefficients": [
+        {
+          "identity": "component/oxygen/segment_count",
+          "family": "segment_count",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:ee757893099745d92732aaca3738181890222cd452b8d920950474c8d43a59c7",
+          "provenance": {
+            "source_id": "thermopack-oxygen-d68c794",
+            "domain_id": "oxygen-fit-range-unreported",
+            "locator": "PC-SAFT-1.m"
+          },
+          "value": {
+            "magnitude": 1.1217,
+            "unit": "dimensionless"
+          }
+        },
+        {
+          "identity": "component/oxygen/segment_diameter",
+          "family": "segment_diameter",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:ee757893099745d92732aaca3738181890222cd452b8d920950474c8d43a59c7",
+          "provenance": {
+            "source_id": "thermopack-oxygen-d68c794",
+            "domain_id": "oxygen-fit-range-unreported",
+            "locator": "PC-SAFT-1.sigma = 3.2098e-10 m"
+          },
+          "value": {
+            "magnitude": 3.2098,
+            "unit": "angstrom"
+          }
+        },
+        {
+          "identity": "component/oxygen/dispersion_energy_over_k",
+          "family": "dispersion_energy_over_k",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:ee757893099745d92732aaca3738181890222cd452b8d920950474c8d43a59c7",
+          "provenance": {
+            "source_id": "thermopack-oxygen-d68c794",
+            "domain_id": "oxygen-fit-range-unreported",
+            "locator": "PC-SAFT-1.eps_depth_divk"
+          },
+          "value": {
+            "magnitude": 114.96,
+            "unit": "kelvin"
+          }
+        }
+      ]
+    }
+  ],
+  "correlations": [
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "component_id": "water",
+      "constant": {
+        "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/constant",
+        "value": {
+          "magnitude": 2.7927,
+          "unit": "angstrom"
+        }
+      },
+      "correlation_id": "component/water/segment_diameter/constant-plus-sum-of-exponentials",
+      "family": "segment_diameter",
+      "form": "constant-plus-sum-of-exponentials",
+      "independent_variables": [
+        "temperature"
+      ],
+      "provenance": {
+        "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+        "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=segment_diameter:status=retained-literature-lineage",
+        "source_id": "mea-retained-phase-two-artifact"
+      },
+      "qualification": "candidate_extrapolation",
+      "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+      "terms": [
+        {
+          "amplitude": {
+            "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/term-0/amplitude",
+            "value": {
+              "magnitude": 10.11,
+              "unit": "angstrom"
+            }
+          },
+          "exponent_coefficient": {
+            "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/term-0/exponent_coefficient",
+            "value": {
+              "magnitude": -0.01775,
+              "unit": "1 / kelvin"
+            }
+          }
+        },
+        {
+          "amplitude": {
+            "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/term-1/amplitude",
+            "value": {
+              "magnitude": -1.417,
+              "unit": "angstrom"
+            }
+          },
+          "exponent_coefficient": {
+            "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/term-1/exponent_coefficient",
+            "value": {
+              "magnitude": -0.01146,
+              "unit": "1 / kelvin"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "pairs": [
+    {
+      "coefficients": [
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "k_ij",
+          "identity": "pair/carbon-dioxide/water/k_ij",
+          "provenance": {
+            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=CO2:column=H2O:status=explicit-diagnostic",
+            "source_id": "mea-retained-phase-two-artifact"
+          },
+          "qualification": "candidate_extrapolation",
+          "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+          "value": {
+            "magnitude": 0.013262879176919628,
+            "unit": "dimensionless"
+          }
+        }
+      ],
+      "component_id_a": "carbon-dioxide",
+      "component_id_b": "water"
+    },
+    {
+      "component_id_a": "carbon-dioxide",
+      "component_id_b": "nitrogen",
+      "coefficients": [
+        {
+          "identity": "pair/carbon-dioxide/nitrogen/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+          "provenance": {
+            "source_id": "absorber-neutral-vapor-candidate",
+            "domain_id": "mea-candidate-293-15-to-393-15-k",
+            "locator": "Explicit unfit predictive k_ij=0; geometric-mean cross dispersion retained"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    },
+    {
+      "component_id_a": "carbon-dioxide",
+      "component_id_b": "oxygen",
+      "coefficients": [
+        {
+          "identity": "pair/carbon-dioxide/oxygen/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+          "provenance": {
+            "source_id": "absorber-neutral-vapor-candidate",
+            "domain_id": "mea-candidate-293-15-to-393-15-k",
+            "locator": "Explicit unfit predictive k_ij=0; geometric-mean cross dispersion retained"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    },
+    {
+      "component_id_a": "nitrogen",
+      "component_id_b": "water",
+      "coefficients": [
+        {
+          "identity": "pair/nitrogen/water/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+          "provenance": {
+            "source_id": "absorber-neutral-vapor-candidate",
+            "domain_id": "mea-candidate-293-15-to-393-15-k",
+            "locator": "Explicit unfit predictive k_ij=0; geometric-mean cross dispersion retained"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    },
+    {
+      "component_id_a": "oxygen",
+      "component_id_b": "water",
+      "coefficients": [
+        {
+          "identity": "pair/oxygen/water/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+          "provenance": {
+            "source_id": "absorber-neutral-vapor-candidate",
+            "domain_id": "mea-candidate-293-15-to-393-15-k",
+            "locator": "Explicit unfit predictive k_ij=0; geometric-mean cross dispersion retained"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    },
+    {
+      "component_id_a": "nitrogen",
+      "component_id_b": "oxygen",
+      "coefficients": [
+        {
+          "identity": "pair/nitrogen/oxygen/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+          "provenance": {
+            "source_id": "absorber-neutral-vapor-candidate",
+            "domain_id": "mea-candidate-293-15-to-393-15-k",
+            "locator": "Explicit unfit predictive k_ij=0; geometric-mean cross dispersion retained"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    }
+  ],
+  "topology": {
+    "presets": [],
+    "sites": [
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "component_id": "water",
+        "multiplicity": 1,
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=association_site_a:status=retained-literature-lineage",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "site_id": "a",
+        "site_role": "donor",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
+      },
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "component_id": "water",
+        "multiplicity": 1,
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=association_site_b:status=retained-literature-lineage",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "site_id": "b",
+        "site_role": "acceptor",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
+      },
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "component_id": "carbon-dioxide",
+        "multiplicity": 1,
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "Schick et al. (2023), Table 1 and Section 2.4.2; Pabsch et al. (2020) CO2-water parameterization",
+          "source_id": "schick-2023-pabsch-2020-induced-association"
+        },
+        "qualification": "candidate_extrapolation",
+        "site_id": "a",
+        "site_role": "donor",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
+      },
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "component_id": "carbon-dioxide",
+        "multiplicity": 1,
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "Schick et al. (2023), Table 1 and Section 2.4.2; Pabsch et al. (2020) CO2-water parameterization",
+          "source_id": "schick-2023-pabsch-2020-induced-association"
+        },
+        "qualification": "candidate_extrapolation",
+        "site_id": "b",
+        "site_role": "acceptor",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
+      }
+    ],
+    "edges": [
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "endpoint_a": {
+          "component_id": "water",
+          "site_id": "a"
+        },
+        "endpoint_b": {
+          "component_id": "water",
+          "site_id": "b"
+        },
+        "energy_over_k": {
+          "identity": "association/water/a/water/b/energy_over_k",
+          "value": {
+            "magnitude": 2425.7,
+            "unit": "kelvin"
+          }
+        },
+        "qualification": "candidate_extrapolation",
+        "source": {
+          "kind": "explicit",
+          "provenance": [
+            {
+              "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+              "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=association_energy_over_k:status=retained-literature-lineage",
+              "source_id": "mea-retained-phase-two-artifact"
+            },
+            {
+              "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+              "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=association_volume:status=retained-literature-lineage",
+              "source_id": "mea-retained-phase-two-artifact"
+            }
+          ]
+        },
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "volume": {
+          "identity": "association/water/a/water/b/volume",
+          "value": {
+            "magnitude": 0.04509,
+            "unit": "dimensionless"
+          }
+        }
+      },
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "endpoint_a": {
+          "component_id": "carbon-dioxide",
+          "site_id": "a"
+        },
+        "endpoint_b": {
+          "component_id": "water",
+          "site_id": "b"
+        },
+        "energy_over_k": {
+          "identity": "association/carbon-dioxide/a/water/b/energy_over_k",
+          "value": {
+            "magnitude": 1212.85,
+            "unit": "kelvin"
+          }
+        },
+        "qualification": "candidate_extrapolation",
+        "source": {
+          "kind": "explicit",
+          "provenance": [
+            {
+              "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+              "locator": "Schick et al. (2023), Table 1 and Section 2.4.2; Pabsch et al. (2020) CO2-water parameterization",
+              "source_id": "schick-2023-pabsch-2020-induced-association"
+            }
+          ]
+        },
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "volume": {
+          "identity": "association/carbon-dioxide/a/water/b/volume",
+          "value": {
+            "magnitude": 0.04509,
+            "unit": "dimensionless"
+          }
+        }
+      },
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "endpoint_a": {
+          "component_id": "carbon-dioxide",
+          "site_id": "b"
+        },
+        "endpoint_b": {
+          "component_id": "water",
+          "site_id": "a"
+        },
+        "energy_over_k": {
+          "identity": "association/carbon-dioxide/b/water/a/energy_over_k",
+          "value": {
+            "magnitude": 1212.85,
+            "unit": "kelvin"
+          }
+        },
+        "qualification": "candidate_extrapolation",
+        "source": {
+          "kind": "explicit",
+          "provenance": [
+            {
+              "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+              "locator": "Schick et al. (2023), Table 1 and Section 2.4.2; Pabsch et al. (2020) CO2-water parameterization",
+              "source_id": "schick-2023-pabsch-2020-induced-association"
+            }
+          ]
+        },
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "volume": {
+          "identity": "association/carbon-dioxide/b/water/a/volume",
+          "value": {
+            "magnitude": 0.04509,
+            "unit": "dimensionless"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "schema": "absorber-neutral-reference-thermochemistry-v1",
+  "identity": "absorber-neutral-vapor-reference-2026-09-03",
+  "reference_temperature_k": 353.15,
+  "temperature_domain_k": [
+    293.15,
+    393.15
+  ],
+  "component_ids": [
+    "carbon-dioxide",
+    "water",
+    "nitrogen",
+    "oxygen"
+  ],
+  "inherited_liquid_reference_fingerprint": "sha256:6919acbc3f1125b89363dd6997fcfd936036854768cd4c47d845d0133c8b0648",
+  "method": "CO2/water component thermochemistry copied unchanged from the investigator-selected provisional liquid-anchored reference; N2/O2 ideal-gas Cp from NIST Shomate coefficients (Chase1998). Degree8 polynomial fitted on81 temperatures and checked on1001 temperatures over293.15–393.15K. Integrate fitted Cp and set h(298.15K)=0 for elemental N2/O2. Cp is in J/mol/K, h in J/mol, polynomial coordinate T-353.15K.",
+  "qualification": "experimental; inherits provisional solvent calibration and short CO2 low-temperature extrapolation; not cross-phase caloric validation",
+  "components": [
+    {
+      "component_id": "carbon-dioxide",
+      "reference_enthalpy_j_per_mol": -391399.85172229767,
+      "cp_coefficients_j_per_mol_k": [
+        39.53927707323952,
+        0.0405693353422067,
+        -0.000051624979229653275,
+        1.0745893116873632e-7,
+        -3.522484990314921e-10,
+        1.1856807469992604e-12,
+        -3.991930274604399e-15,
+        1.746136888887694e-17
+      ],
+      "max_fit_residual_j_per_mol": 7.60774128139019e-8,
+      "role": "neutral_anchor",
+      "reference_state_id": "mea-anchored-reaction-consistent-reference-v2"
+    },
+    {
+      "component_id": "water",
+      "reference_enthalpy_j_per_mol": -239696.85534691147,
+      "cp_coefficients_j_per_mol_k": [
+        43.30046433882317,
+        -0.024122642655064187,
+        0.000048980132639790714,
+        -4.5074249606534703e-7,
+        5.992989983110052e-9,
+        -2.043858471077461e-11,
+        6.478839850256515e-14,
+        -2.436112848016069e-16
+      ],
+      "max_fit_residual_j_per_mol": 1.1175870895385742e-7,
+      "role": "neutral_anchor",
+      "reference_state_id": "mea-anchored-reaction-consistent-reference-v2"
+    },
+    {
+      "component_id": "nitrogen",
+      "reference_state_id": "nist-ideal-gas-formation-298.15-k",
+      "reference_enthalpy_j_per_mol": 1602.938442078372,
+      "cp_coefficients_j_per_mol_k": [
+        29.17157121531477,
+        0.001258701368610938,
+        0.000007999450545908694,
+        1.655016834681377e-8,
+        3.016253798126008e-13,
+        -1.0250480813567277e-15,
+        3.3398942193191097e-18,
+        -1.1069208493576569e-20,
+        4.956235080531108e-23
+      ],
+      "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Mask=1",
+      "source_shomate_A_B_C_D_E": [
+        28.98641,
+        1.853978,
+        -9.647459,
+        16.63537,
+        0.000117
+      ],
+      "source_temperature_domain_k": [
+        100,
+        500
+      ],
+      "cp_fit_max_abs_error_j_per_mol_k": 2.277289468111121e-12
+    },
+    {
+      "component_id": "oxygen",
+      "reference_state_id": "nist-ideal-gas-formation-298.15-k",
+      "reference_enthalpy_j_per_mol": 1624.9290597183483,
+      "cp_coefficients_j_per_mol_k": [
+        29.72607494559032,
+        0.0073119919039300605,
+        0.000017767617032414347,
+        -3.113635111882221e-8,
+        -1.9010131455301133e-11,
+        6.460421025594901e-14,
+        -2.1050074837199891e-16,
+        6.976789187029829e-19,
+        -3.1231055715641716e-21
+      ],
+      "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Mask=1",
+      "source_shomate_A_B_C_D_E": [
+        31.32234,
+        -20.23531,
+        57.86644,
+        -36.50624,
+        -0.007374
+      ],
+      "source_temperature_domain_k": [
+        100,
+        700
+      ],
+      "cp_fit_max_abs_error_j_per_mol_k": 1.4168222151056398e-10
+    }
+  ],
+  "scientific_fingerprint": "sha256:097ade6e265d6ed7ffcc55079e31a8ffc916763298d5cca92f112ae7f3f18658"
+}
