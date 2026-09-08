@@ -1,114 +1,92 @@
 # Scientific context
 
-Status: official ePC-SAFT downstream application under Governance D-038.
-
-Current program: `FALLBACK_ACTIVE` fixed-chemistry submission with a gated
-predictive-transfer path. This is the sole current integration/manuscript
-program. The August 27 plan and reactive-VLE upstream handoff are retained as
-dated history, not live plans. Native GitHub issues are the only work queue.
+Updated 2026-09-03. Official ePC-SAFT downstream application under Governance
+D-038. The current foreground work is the complete living manuscript in
+`docs/latex/main.tex`, with result insertions tracked by its existing checklist.
 
 ## Question and intended use
 
-Evaluate and use MEA thermodynamic models inside absorber-column calculations,
-validate column predictions against retained campaign evidence, and maintain the
-column manuscript. This repository does not own generic ePC-SAFT equations or
-adopt MEA thermodynamic parameters.
+When does additional thermodynamic and film detail materially change or improve
+predicted capture and axial temperature, and what numerical effort is required
+to resolve that difference?
 
-## Repository boundary
+The article retains three controlled studies: Henry/eNRTL/ePC-SAFT
+thermodynamics; enhancement-factor/equilibrium-manifold transport; and
+boundary-value accuracy and computational cost. Common-property comparisons
+precede full-property comparisons. Their changes are conditional on the other
+model choices, not a unique additive separation of interacting effects.
+Capture and temperature together assess the engineering response.
 
-- `ePC-SAFT-project` owns the generic Engine, GREPE, exact derivatives, and
-  regression mechanics.
-- `MEA-Thermodynamics` owns MEA chemistry hypotheses, parameter fitting, model
-  selection, and thermodynamic parameter adoption.
-- This repository owns absorber integration, column validation, process
-  analyses, and its manuscript.
+The abstract and value-independent formulation/methods can be complete before
+all figures arrive. Placeholders identify only missing numerical inputs,
+figures, or result-specific findings. Source questions and development notes
+belong in SOURCE_MAP.md or checklist details, not in the article.
 
-The repositories remain separate siblings. This application consumes a
-non-editable Engine wheel identified by Engine commit and wheel SHA-256. A
-predictive MEA parameter document enters only after MEA-Thermodynamics freezes
-and identifies it; no runtime sibling-source import or nested Git repository is
-permitted.
+## Scientific and repository boundaries
 
-## Current decision
+- ePC-SAFT-project owns generic EOS equations, reactive equilibrium, exact
+  derivatives, and caloric implementation.
+- MEA-Thermodynamics owns MEA parameter fitting, model selection, adopted
+  thermodynamic inputs, and their thermal reconstruction.
+- This repository owns absorber integration, film/column comparisons,
+  numerical verification, experimental comparison, and the manuscript.
 
-The August 27 submission is the fixed-chemistry manuscript and reviewer
-response. Closed MEA-Thermodynamics issue #70 reached a supported-negative
-decision: no predictive MEA parameter set was adopted or authorized for column
-transfer.
-The immutable refusal is recorded at upstream commit
-`0ce38270150fbb5d8dcbafc34988d18f04a59f7c` by decision record SHA-256
-`47da30a7cd75c95c53677766738e338f5af31069f6ad81fd855853bcd2083779`
-and transfer-refusal SHA-256
-`6a14cfa988660596fcbeb7516b7123c45da558ef00311b72306fdcb1b859e835`.
+Use a non-editable Engine wheel identified by commit and SHA-256. Do not import
+sibling source trees, copy Engine equations into the absorber, or mix parameter
+identities. Manuscript-only edits do not authorize wheel installation or model
+execution. Final result use requires the repository's immutable integration
+check and the evidence appropriate to the claim.
 
-Engine issues #30, #31, #44, #48, and #79, local issue #3, and
-MEA-Thermodynamics issues #61--#67, #13, and #14 are closed historical
-prerequisites. MEA-Thermodynamics #68 remains open for its upstream manuscript
-work, not as a column transfer. Closing these prerequisites did not create an
-accepted predictive parameter set.
+## Current formulation and evidence
 
-The current predictive critical path is Engine #80, followed by
-MEA-Thermodynamics #72 Work Package B and local issue #16. Work Package A of
-MEA-Thermodynamics #72 may establish source-complete chemistry and transport
-records without an active parameter set, but its packet-bound activity closure
-and downstream scientific adoption remain blocked by Engine #80. Local issues
-#18--#22 own equation-preserving numerical-method comparisons; their
-manufactured, fixed-chemistry, and packed-column checks do not authorize a
-physical reactive-film or predictive-column claim.
+The ePC-SAFT formulation uses nine aqueous species with complete material, mass,
+and charge constraints. Thermodynamic comparators retain their specified species
+and reaction systems on common analytical feed bases; an isolated closure-effect
+claim additionally requires common species and reaction thermodynamics. Its CO2 film is a local-equilibrium, isothermal mobility
+approximation. The conservative CasADi/IPOPT formulation distinguishes physical
+balance quantities, numerical coordinates, constraint derivatives, and the
+outer Hessian approximation. It retains explicit SciPy comparisons.
 
-## Evidence and claim ladder
+The latest inspected implementation and result owners, exact task/worktree
+locations, parameter/Engine identities, caloric inputs, source questions, and
+incoming figure requirements are maintained in
+[the manuscript source record](../latex/SOURCE_MAP.md).
+Read that record and the actual producer files before making a time-sensitive
+readiness claim. A file's existence does not establish completed column
+results. Keep capture, temperature profiles, parameters, and numerical checks
+from one identified run together.
 
-1. **Numerical feasibility:** the archived activity-rebased nine-species sweep
-   shows that the calculation returned under its stated settings; it is not
-   predictive chemistry.
-2. **Fixed-chemistry comparison:** the Henry-law and `epcsaft_ionic` NCCC lanes
-   compare driving-force closures while retaining concentration-based
-   chemistry. This is the current manuscript claim.
-3. **Predictive thermodynamics:** this lane may exist only after the transfer
-   gate below accepts one immutable MEA parameter/result identity and Engine
-   wheel receipt. No such lane is currently accepted.
-4. **Absorber validation:** column convergence, NCCC comparison, sensitivity,
-   and independent validation follow transfer; they are not MEA calibration or
-   reserved thermodynamic validation.
+The selected caloric reconstruction supplies nine reference functions from
+three neutral anchors, five transformed reaction constraints, and one ionic
+reference convention. Its insertion is parameter reporting, not column
+validation. Compare its parameter and Engine identities with the final run's
+identity; the selected upstream reaction and caloric coefficients have been
+inserted together. SOURCE_MAP.md distinguishes their identities from earlier
+figures and the later column execution identity.
+Six-species electrolyte-NRTL reference states are available, while complete
+portable parameter records and the comparison species/reaction mapping,
+temperature-tap coordinate provenance,
+and the enhancement concentration-factor rationale remain specific source
+questions in SOURCE_MAP.md.
 
-Existing NCCC evidence validates only its recorded fixed-chemistry lanes. It
-must not be reclassified as validation of a future thermodynamic candidate or
-used to fit thermodynamic parameters.
+## Historical evidence
 
-## Predictive-transfer gate
+The August fixed-chemistry submission and supported-negative predictive-transfer
+decision remain historical evidence for their exact parameter/run identities.
+They do not define the September manuscript's structure or make newer candidate
+results valid. The prior finite-rate film formulation is historical, distinct
+from the current equilibrium-manifold approximation.
+Historical energy-sign-affected column results must not be relabeled as corrected
+results. Keep observation, numerical verification, physical validation, and
+parameter fitting distinct. Do not infer a better thermal model from capture
+agreement alone.
 
-A future predictive lane requires all of the following through GitHub issues:
+## Repository terminology
 
-- an adopted, immutable MEA parameter document plus hash-identified
-  data/result and promotion decision from MEA-Thermodynamics;
-- a non-editable Engine wheel receipt naming the Engine commit, wheel filename,
-  wheel SHA-256, and admitted capability identity;
-- downstream mapping, integration, convergence, and column-validation evidence
-  generated without sibling-source imports or case-specific fitting; and
-- CSE Review Pass for the stated predictive and absorber-validation claims.
+| Avoid | Prefer | Meaning | Scope | Exceptions | Evidence |
+|---|---|---|---|---|---|
+| same bulk thermodynamic state | same thermodynamic model and feed conditions | Full-column paired runs solve their own axial bulk states; a fixed-state local flux comparison is a separate calculation. | docs/latex/sections/introduction.tex; docs/latex/sections/results.tex; docs/latex/sections/conclusion.tex | | Investigator manuscript correction, 2026-09-03; methods comparison-design subsection |
 
-Until every item passes, the supported-negative refusal remains the current
-downstream decision and the fixed-chemistry manuscript boundary is unchanged.
-
-## Locked Stage A runtime
-
-The retained Stage A results use Engine commit
-`d88f703974fa8d6e7be54ca3cbd51b6f0f78a372` and wheel SHA-256
-`81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80`.
-That lock reproduces Stage A only. A newer upstream wheel, including one used
-for diagnostic fitting, is neither this locked runtime nor evidence that a
-predictive parameter set was accepted.
-
-The issue 16 derivative-integration lane separately uses Engine commit
-`41e7dc1984d00f82785900b314a0135beebe56cd`, wheel SHA-256
-`2d089d5bdeda5b1655c5e6cf5df7308507233381175745889f8430c22ffe1edb`, and
-native-core SHA-256
-`fc1f1a78b2fe5c68a54b8678ce6bc844a2eba11edec91d49e6f9a51c62e1132f`.
-Its retained results are labeled `provisional_concept_only`; the Stage A and
-predictive-transfer claim boundaries remain unchanged.
-
-## Manuscript boundary
-
-Existing fixed-chemistry column evidence remains distinct from a future
-predictive MEA lane. A candidate Engine wheel or parameter document does not
-become a manuscript result until the applicable column validation is complete.
+Other scientific terms retain their ordinary definitions. In particular,
+fixed-composition Cp excludes equilibrium redistribution, while equilibrium Cp
+includes the change in species amounts at fixed pressure and conserved totals.

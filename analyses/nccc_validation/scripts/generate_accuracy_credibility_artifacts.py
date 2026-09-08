@@ -398,7 +398,7 @@ def _write_method_contrast_plot(data: pd.DataFrame) -> None:
             else:
                 vals.append(float(row["runtime_s"].iloc[0]))
                 labels.append("ok" if bool(row["success"].iloc[0]) else "failed")
-        bars = ax.bar(x + (i - 1) * width, vals, width, label=method, color=colors.get(method, "#555555"))
+        bars = ax.bar(x + (i - 1) * width, vals, width, label=method, color=colors.get(method, "#555555"), hatch=("///", "", "xxx")[i], edgecolor="black", linewidth=0.5)
         for bar, status in zip(bars, labels):
             if status != "ok" and np.isfinite(bar.get_height()):
                 ax.text(
