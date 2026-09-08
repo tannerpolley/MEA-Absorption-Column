@@ -5,7 +5,7 @@
 `output/temperature_profiles.pdf` is the seven-case replacement for the old
 `docs/latex/figures/case-c-temperature-overlay.png`. It contains actual coupled
 nine-species ePC-SAFT column results, conventional enhancement-factor transport,
-empirical energy closure, and the reported NCCC packing temperatures. It is not
+empirical caloric properties, and the reported NCCC packing temperatures. It is not
 a resolved reactive-film calculation or an eNRTL comparison.
 
 `output/case_3c_temperature.pdf` provides the matching representative 3C view.
@@ -14,8 +14,8 @@ PNG companions are available for preview. The CSV files in `output/` retain ever
 plotted profile, observation, capture, result directory, parameter identity,
 wheel identity, and numerical check. `output/provenance.json` hashes the inputs.
 
-Run `scripts/render.py` with the installed analysis environment to refresh these
-figures without rerunning the column. The renderer prefers the completed
+Run `scripts/render.py --render-only` with the installed analysis environment to refresh these
+figures from retained tables without rerunning the column. The renderer prefers the completed
 unchanged-source confirmation runs, uses the controlled Case 3C calculation,
 and retains the successful native-initialized 7C calculation. Historical runs
 and their source-change warnings remain untouched. Do not archive a figure
@@ -41,7 +41,7 @@ This is not a claim that every possible equilibrium initial guess is reliable.
 
 verified: Morgan et al. (2020), DOI 10.1016/j.apenergy.2020.114533,
 Appendix C p.22 defines the source coordinate from top to bottom. The absorber
-coordinate is bottom to top, so **z = 1 - x**; no fitted shift is used.
+coordinate is bottom to top, so **ζ = z/H = 1 - x**; no fitted shift is used.
 Table C2 p.27 contains all 35 temperatures for 1C-7C. They were transcribed into
 `inputs/morgan2020_table_c2.csv` and visually checked against the retained PDF.
 The existing year-specific temperature CSV agrees for 1C-6C but omits 7C.
@@ -58,7 +58,7 @@ The source labels these measurements absorber temperatures, without a
 phase-specific sensor designation in the checked table/figure. The legend
 therefore says NCCC packing temperature and distinguishes both predicted
 phase temperatures. Source temperatures are converted from Celsius to kelvin.
-No temperature at z=1 is fabricated: that end of the curves is the imposed
+No temperature at ζ=1 is fabricated: that end of the curves is the imposed
 lean-liquid boundary, not a measurement. No uncertainty bars are invented.
 
 ## Suggested caption and interpretation

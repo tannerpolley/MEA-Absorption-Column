@@ -153,7 +153,7 @@ def main():
         ['capture_change_pp', 'peak_temperature_change_K'],
         ['Capture change (percentage points)', 'Peak liquid-temperature change (K)'],
         [capture_refinement, temperature_refinement]):
-        ax.axhspan(-resolution, resolution, color='.9', label='Prior mesh/tolerance change')
+        ax.axhspan(-resolution, resolution, color='.9', label='Mesh/tolerance refinement change')
         ax.axhline(0, color='.4', lw=.7)
         for quantity, title, marker, color in [('viscosity', 'Liquid viscosity', 'o', '#0072B2'),
                  ('diffusivity', 'Liquid CO₂ diffusivity', 's', '#D55E00'),

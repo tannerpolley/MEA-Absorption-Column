@@ -1,6 +1,22 @@
 # Fallback manuscript review
 
-Reviewed 2026-09-03 in the isolated `codex/fallback-manuscript` worktree.
+Reviewed 2026-09-04 in the attached `codex/fallback-manuscript` canonical checkout.
+
+## Current reconciliation — 2026-09-04
+
+The complete manuscript now follows the revised story plan and author-selected title, “Reactive ePC-SAFT Modeling of Carbon Dioxide Absorption in Aqueous MEA.” The opening and conclusion foreground the coupled formulation, seven-case/profile evaluation, numerical behavior, measured computational cost, and thermodynamic, transport and operating findings. Four prospective directions cover predictive film development without empirical enhancement, constrained optimization, other amines and blends, and a matched ePC-SAFT/eNRTL column comparison. The parameter-reuse motivation distinguishes additional binary fitting from total inputs and does not claim a demonstrated universal fitting advantage.
+
+The authorized operating rerun supplies six accepted conditions including baseline and one unavailable lower-flow condition. The figure-owned summary, profiles, notebook, HTML and provenance are complete; all 83 input and five output hashes verify. Figure 7 is copied byte-for-byte into the article. All six conditions share source, selected inputs and the immutable b011 wheel, with passing residual, positivity and normalized chemistry checks. Lower flow fails both initializations; no zero response or physical-infeasibility claim replaces it. Numerical net-enthalpy-flow ranges of 160.21–390.32 W remain explicit.
+
+Three independent Sol reviews covered scientific correctness, coverage and narrative; each returned ship after the supported corrections. Section-level audits examined opening/methods, model equations, results/conclusion and appendices/tables. Corrections include the source-to-EOS reaction convention, source citations, fugacity units, observation coordinate ζ=1−x, postprocessed boundary norm, symbol definitions, pressure-dependent EOS equilibrium constants, molality/segment notation, bulk dielectric and the stale material-balance cross-reference. The final focused equation recheck found no remaining substantive issue.
+
+A bounded current-source refinement confirmation reproduces the original Case 3C profiles to the printed precision. The same-build pair gives capture change 0.005099654883 percentage points and peak-temperature change −0.044926038863 K. Scaled profile differences from the original coarse/refined runs are at most 3.83e-10/6.03e-10; the nonzero enthalpy-flow diagnostic also reproduces. The figure-owned `refinement_confirmation.json` retains comparisons and 102 input hashes, including a 17-profile byte-identical coarse Case 3C cross-build check. This does not establish all-case implementation equivalence. Exact campaign and timing identities remain in REPRODUCE at the author's direction, outside manuscript prose; original results and timing counts were preserved.
+
+The final 32-page PDF builds and passes freshness. All pages were visually inspected across the final revisions; the final title, notation, revised headings and figure labels were rechecked at 1600-pixel scale. Figures, tables, equations and references are legible without clipping. The seven mapped result PDFs match their producers. No undefined references/citations, duplicate labels or new overfull boxes remain; the pre-existing CAS front-matter warning is visually benign. Both manuscript TeX and extracted PDF text have zero matches for local/history/historical/histories and no software-build, wheel or first-pass discussion. Section 3.3 names thermodynamic, transport and operating perturbations; Section 4.3 is Operating Response. The explicit wording bans are recorded in the project preferences.
+
+Validation includes 10 passing energy/workflow tests, the passing immutable-wheel final integration gate, figure and numerical provenance checks, PDF freshness and the reviewer-checklist test. Reviewer assessment remains 19/20 complete, with R2.5 partial for missing lower-flow coverage and absence of optimization; the current article integration is complete. Source changes remain uncommitted. No commit, push, publication or public archive was performed.
+
+## Historical review entries
 
 ## Decision
 

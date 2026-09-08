@@ -220,6 +220,14 @@ def ensure_epcsaft_importable():
         ) from exc
 
 
+def epcsaft_diagnostic_modules():
+    """Load the selected wheel and its process-local instrumentation handles."""
+    module = ensure_epcsaft_importable()
+    from epcsaft import equilibrium, _core
+
+    return module, equilibrium, _core
+
+
 @lru_cache(maxsize=1)
 def epcsaft_mixture():
     ensure_epcsaft_importable()

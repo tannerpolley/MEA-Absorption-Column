@@ -1,4 +1,5 @@
 """Read the parallel campaign; retain audited tables and multi-case figures."""
+import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -106,6 +107,24 @@ def main():
         raise RuntimeError('No profiles available to plot')
     pd.concat(profiles, ignore_index=True).to_csv(output/'profiles.csv', index=False)
     pd.DataFrame(taps).to_csv(output/'temperature_observations.csv', index=False)
+    render_figures(output)
+    write = {'input_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
+             'scope':'Nine-species conventional enhancement, empirical energy; coarse campaign. '
+                     'Run directories and wheel identities are in summary.csv. No seven-case mesh-convergence claim.',
+             'observations':{'doi':'10.1016/j.apenergy.2020.114533', 'attachment_key':'HX2358GV',
+                'table':'C2, page 27, all seven one-bed cases, Celsius',
+                'coordinate_definition':'Appendix C, page 22: source x=0 top, x=1 bottom; model z=1-x',
+                'phase':'Source labels absorber temperature; no phase-specific sensor claim.',
+                'verification':'All 35 entries and coordinate definition visually checked against PDF; 1C-6C match repository NCCC_2017_absorber_temperature_profiles.csv.',
+                'uncertainty':'Not supplied in Table C2; no invented error bars.'}}
+    write['source_review_required'] = bool(accepted.source_review_required.any())
+    write['source_note'] = ('Historical runs and warnings are retained unchanged. Figure inputs prefer confirmed unchanged-source '
+        'reruns where available; the source_review_required flag describes only the selected runs.')
+    (output/'provenance.json').write_text(json.dumps(write,indent=2)+'\n')
+    print(summary.to_string(index=False))
+
+
+def render_figures(output):
     # Figures consume the exact retained tables, not a rerun or an opaque live object.
     summary = pd.read_csv(output/'summary.csv')
     profiles = pd.read_csv(output/'profiles.csv')
@@ -145,7 +164,7 @@ def main():
         ax.grid(alpha=.2)
     axes.flat[-1].axis('off')
     axes.flat[-1].legend(*axes[0,0].get_legend_handles_labels(),loc='upper left',frameon=False,fontsize=9)
-    axes.flat[-1].text(0,.56,'Measurements: Morgan et al. (2020), Table C2.\nSource coordinate transformed: z = 1 − x.\n\nBottom: vapor inlet (0)\nTop: liquid inlet (1)\n\nNine-species reactive ePC-SAFT;\nconventional enhancement-factor transport.',va='top',linespacing=1.5,fontsize=9,transform=axes.flat[-1].transAxes)
+    axes.flat[-1].text(0,.56,'Measurements: Morgan et al. (2020), Table C2.\nSource coordinate transformed: ζ = 1 − x.\n\nBottom: vapor inlet (0)\nTop: liquid inlet (1)\n\nNine-species reactive ePC-SAFT;\nconventional enhancement-factor transport.',va='top',linespacing=1.5,fontsize=9,transform=axes.flat[-1].transAxes)
     axes[3,0].set_xlabel('Normalized packed height')
     axes[2,1].set_xlabel('Normalized packed height')
     axes[2,1].tick_params(labelbottom=True)
@@ -164,20 +183,6 @@ def main():
     ax.legend(frameon=False,fontsize=9,loc='lower center')
     ax.grid(alpha=.2)
     save(fig, output/'case_3c_temperature')
-    write = {'input_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
-             'scope':'Nine-species conventional enhancement, empirical energy; coarse campaign. '
-                     'Run directories and wheel identities are in summary.csv. No seven-case mesh-convergence claim.',
-             'observations':{'doi':'10.1016/j.apenergy.2020.114533', 'attachment_key':'HX2358GV',
-                'table':'C2, page 27, all seven one-bed cases, Celsius',
-                'coordinate_definition':'Appendix C, page 22: source x=0 top, x=1 bottom; model z=1-x',
-                'phase':'Source labels absorber temperature; no phase-specific sensor claim.',
-                'verification':'All 35 entries and coordinate definition visually checked against PDF; 1C-6C match repository NCCC_2017_absorber_temperature_profiles.csv.',
-                'uncertainty':'Not supplied in Table C2; no invented error bars.'}}
-    write['source_review_required'] = bool(accepted.source_review_required.any())
-    write['source_note'] = ('Historical runs and warnings are retained unchanged. Figure inputs prefer confirmed unchanged-source '
-        'reruns where available; the source_review_required flag describes only the selected runs.')
-    (output/'provenance.json').write_text(json.dumps(write,indent=2)+'\n')
-    print(summary.to_string(index=False))
 
 
 def save(fig, stem):
@@ -187,4 +192,23 @@ def save(fig, stem):
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--render-only', action='store_true', help='Read retained CSVs without rebuilding numerical tables')
+    args = parser.parse_args()
+    if args.render_only:
+        output = FIGURE/'output'
+        render_figures(output)
+        provenance_path = output/'provenance.json'
+        provenance = json.loads(provenance_path.read_text())
+        provenance['rendering'] = {
+            'source': str(Path(__file__).resolve()),
+            'source_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            'input_sha256': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                             for p in (output/name for name in ('summary.csv', 'profiles.csv', 'temperature_observations.csv'))},
+            'output_sha256': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                              for stem in ('capture_comparison', 'temperature_profiles', 'case_3c_temperature')
+                              for suffix in ('.pdf', '.png', '.svg') for p in [output/(stem+suffix)]},
+            'coordinate_definition': 'Normalized height ζ = z/H = 1 − x; dimensional height z increases from bottom to top.'}
+        provenance_path.write_text(json.dumps(provenance, indent=2)+'\n')
+    else:
+        main()

@@ -223,18 +223,17 @@ def main(argv: list[str] | None = None) -> int:
             f"is not allowed for {mode} mode."
         )
 
-    if mode == "final":
-        identity = contract["final_identity"]
-        if Path(resolved.get("wheel_path", "")).name != identity["wheel_filename"]:
-            errors.append(
-                f"Resolved ePC-SAFT wheel filename {Path(resolved.get('wheel_path', '')).name!r} "
-                f"does not match frozen identity {identity['wheel_filename']!r}."
-            )
-        if resolved.get("wheel_sha256") != identity["wheel_sha256"]:
-            errors.append(
-                f"Resolved ePC-SAFT wheel SHA-256 {resolved.get('wheel_sha256')!r} "
-                f"does not match frozen identity {identity['wheel_sha256']!r}."
-            )
+    identity = contract["final_identity"]
+    if Path(resolved.get("wheel_path", "")).name != identity["wheel_filename"]:
+        errors.append(
+            f"Resolved ePC-SAFT wheel filename {Path(resolved.get('wheel_path', '')).name!r} "
+            f"does not match frozen identity {identity['wheel_filename']!r}."
+        )
+    if resolved.get("wheel_sha256") != identity["wheel_sha256"]:
+        errors.append(
+            f"Resolved ePC-SAFT wheel SHA-256 {resolved.get('wheel_sha256')!r} "
+            f"does not match frozen identity {identity['wheel_sha256']!r}. Run uv sync --frozen."
+        )
 
     try:
         version = _version_triplet(str(resolved["version"]))
@@ -267,8 +266,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"epcsaft source detail: {resolved['source_detail']}")
     if resolved.get("wheel_sha256"):
         print(f"epcsaft wheel SHA-256: {resolved['wheel_sha256']}")
-    if mode == "final":
-        print(f"Engine commit: {contract['final_identity']['engine_commit']}")
+    print(f"Engine commit: {identity['engine_commit']}")
     if smoke_payload is not None:
         print(f"dataset path: {smoke_payload['dataset']}")
         print(f"parameter fingerprint: {smoke_payload['parameter_fingerprint']}")

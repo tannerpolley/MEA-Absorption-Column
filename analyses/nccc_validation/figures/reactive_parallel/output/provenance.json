@@ -86,5 +86,26 @@
     "uncertainty": "Not supplied in Table C2; no invented error bars."
   },
   "source_review_required": false,
-  "source_note": "Historical runs and warnings are retained unchanged. Figure inputs prefer confirmed unchanged-source reruns where available; the source_review_required flag describes only the selected runs."
+  "source_note": "Historical runs and warnings are retained unchanged. Figure inputs prefer confirmed unchanged-source reruns where available; the source_review_required flag describes only the selected runs.",
+  "rendering": {
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/nccc_validation/figures/reactive_parallel/scripts/render.py",
+    "source_sha256": "48d66ee2f2566a41f15c5e25edafb451c6c16164f6ba659219c298d1016fffe7",
+    "input_sha256": {
+      "summary.csv": "de4d4a1e581ff3d1697ae420fcc82fd150d9abe11b571f2467f34673b78d8acb",
+      "profiles.csv": "696448d9087ac3e2fcc11deb177c482eadf9466f627232464b4ac77b2581912d",
+      "temperature_observations.csv": "14dc8c613e13d6bdd96f08bb89616e5aa3648b61d4269c2befd996e83ad3d354"
+    },
+    "output_sha256": {
+      "capture_comparison.pdf": "1c098e07e7fda15094a6b0b36dda31d8d92d7b5efbd5be637b0feb5e4fffad62",
+      "capture_comparison.png": "c2b6572b539e8fdc18797c1391f0197bc68f5c952fed553e513b7264b42cbd80",
+      "capture_comparison.svg": "53ad2b36d645af6ea9b1091ee6c73fe1db2cc72ff62f9d7f18cb53b0db007047",
+      "temperature_profiles.pdf": "59d58450b72de11f6e34c4679dbbacee6703362cded9f6c9076f6bb61f8c52ed",
+      "temperature_profiles.png": "f60d8e202671f94833d49133050c58fd6d0d6a18011321b19533f1b53d545302",
+      "temperature_profiles.svg": "1beb6cbd55818f6dae881558e79fbce75a23d352e484a20006e8bd8cfbfdbdf8",
+      "case_3c_temperature.pdf": "b9d281598d110f0367ff8adb7d0ba17243280ad9e31f50a5bd4d3064f34d70cd",
+      "case_3c_temperature.png": "1433d916daf542999cf0ce4b24c90ede5059b7dca7c245f3fed0e81fd0217568",
+      "case_3c_temperature.svg": "3f6b98e44536bfe0e5210076e4806c682dba6b6124124083d5216a34575738ad"
+    },
+    "coordinate_definition": "Normalized height \u03b6 = z/H = 1 \u2212 x; dimensional height z increases from bottom to top."
+  }
 }

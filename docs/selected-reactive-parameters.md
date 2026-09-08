@@ -17,7 +17,7 @@ The model selections in the parameter document are:
 | electrolyte | born |
 | permittivity | solvent-only |
 
-No polar parameter family is selected. The matching source reaction export describes Debye-Huckel plus original Born and Uyan solvent mixing; executable model selection and fitted coefficients come from the selected parameter document rather than free-text export descriptions.
+No polar parameter family is selected. The active ionic model includes Debye–Hückel and shell-modified Born with dielectric suppression (SSM+DS). The nonunit water solvation factor and explicit Born diameters activate both extensions in the pinned Engine, with shell and dielectric factors equal to one and ionic-region relative permittivity 8. Bulk relative permittivity is a mass-weighted MEA/water solvent average, excluding CO2 and ions. The source reaction export’s “original Born” text is stale; executable selection follows the selected parameter document and Engine resolver. Appendix B prints the active auxiliary equations.
 
 ## Component and fixed coefficients
 
@@ -185,7 +185,7 @@ Species order: CO2, MEA, H2O, MEAH+, MEACOO-, HCO3-, CO3^2-, H3O+, OH-. Products
 | R4 | [0,1,-1,0,-1,1,0,0,0] | a + b_k / T | {"a":1.505015374192114,"b_k":-1317.0489707842564} | 0 | [293.15,393.15] |
 | R5 | [0,1,-1,-1,0,0,0,1,0] | -ln(10) * (a_k / T + b + c_per_k * T) | {"a_k":3037.6399534696106,"b":-1.0173150837285996,"c_per_k":0.0004277} | 0 | [293.15,393.15] |
 
-These are effective runtime coefficients: R2/R4/R5 typed fitted records in the selected parameter document supersede the source correlations in the matching reaction export completely. R2's offset is already folded into its fitted `a`; it is not added again. R1/R3 retain source correlations and offsets. The common selected range is 293.15–393.15 K; wider R1/R2/R3 source ranges do not extend the coupled model's domain. Effective ln K values agree with the previous export at four checked temperatures. This is a selected calculation range, not proof of uniform predictive accuracy.
+These are adopted input-correlation coefficients, before the Engine solvent-reference transformation: R2/R4/R5 typed fitted records in the selected parameter document supersede the source correlations in the matching reaction export completely. R2's offset is already folded into its fitted `a`; it is not added again. R1/R3 retain the Austgen et al. (1991), Table V, water and bicarbonate-dissociation correlations and the adopted molality-conversion offsets. Their source audit is retained upstream in `docs/ePC-SAFT/mea-reaction-and-sentinel-primary-source-audit.md`. The common selected range is 293.15–393.15 K; wider R1/R2/R3 source ranges do not extend the coupled model's domain. Effective ln K values agree with the previous export at four checked temperatures. This is a selected calculation range, not proof of uniform predictive accuracy.
 
 | Standard-state field | Value |
 | --- | --- |
@@ -196,7 +196,7 @@ These are effective runtime coefficients: R2/R4/R5 typed fitted records in the s
 | solvent_composition | [0,0,1,0,0,0,0,0,0] |
 | standard_molality_mol_per_kg | 1 |
 
-The pure-water solvent reference and 1 mol/kg standard molality are converted by the Engine to its EOS neutral reference. The offsets and logarithmic activity scale factors must not be applied a second time. The implementation is `Thermodynamics/reactive_bundle.py::compile_reaction_constants`.
+The adapter passes these input constants and the declared pure-water, 1 mol/kg source standard state together. The Engine evaluates the pure-water EOS reference at the current temperature and 100000 Pa, then adds the reference-transfer and pressure/density offsets to obtain the EOS-coordinate constants. Historical correlation offsets must not be added again; this subsequent reference transformation is still required. The adapter is `Thermodynamics/reactive_bundle.py::_compile_reaction_constants`; the Engine implements `evaluate_source_values` and `transform_source_standard_state`.
 
 ## Sources, fitting and applicability
 
@@ -242,4 +242,4 @@ The upstream full-replay summaries include nonzero R1/R3 shifts absent from this
 | mea-candidate-293-15-to-393-15-k | fit-range | 293.15 to 393.15 | 1 to 10000000 |
 | cai-1996-neutral-refit | unknown | not specified | not specified |
 
-The selected rows carry `candidate_extrapolation` qualifications. Candidate calculation bounds are broader than some source-qualified conditions; they are not a replacement for the source domains. The historical manuscript parameter tables and figures remain unchanged and must be replaced together after accepted matching column runs.
+The selected rows carry `candidate_extrapolation` qualifications. Candidate calculation bounds are broader than some source-qualified conditions; they are not a replacement for the source domains. The manuscript appendix prints the selected coefficients used by all seven campaign cases and the current local studies; the JSON remains the full-precision executable authority.

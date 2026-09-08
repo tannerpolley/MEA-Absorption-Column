@@ -1,6 +1,6 @@
 {
-  "assessed_at": "2026-09-04 08:39:01 UTC",
-  "assessment_basis": "Reassessed 2026-09-04 after integrating seven-case reactive NCCC capture/temperature evidence and three optimized Case 3C runtime repeats. R2.4 is complete for additional reported NCCC comparisons; R2.5 remains open. Chemistry, transport and sensitivity evidence retain their prior scope. Titles, headings, AI disclosure and bibliography are unchanged. File hashes establish freshness, not scientific validity.",
+  "assessed_at": "2026-09-04T11:28:40+00:00",
+  "assessment_basis": "Reassessed against the complete revised manuscript, author-selected title and retained evidence. Three independent Sol reviews and final equation, numerical, figure and PDF checks are recorded in QA_REPORT.md. Six operating conditions converge; lower flow remains unavailable and no optimum is claimed. Hashes detect later edits, not scientific validity.",
   "rubric": {
     "0": "Not started",
     "2": "Planned",
@@ -19,18 +19,19 @@
       "previous_revised_score": 9,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Section 2.1.1 leads with the five reactions and nine species, explicit carbon/nitrogen and mass conservation, charge, standard state and EOS concentrations. Typed R2/R4/R5 precedence and effective coefficients are stated in the appendix. The selected model has a converged nonisothermal Case 3C reference.",
+      "basis": "Section 2.2 leads with the five reactions and nine species, explicit carbon/nitrogen and mass conservation, charge, standard state and EOS concentrations. Appendix B states R2/R4/R5 precedence, input correlations and the subsequent solvent-reference-to-EOS transformation. The selected Case 3C reference satisfies the reported collocation and boundary stopping tests; its enthalpy-flow discrepancy remains separately disclosed.",
       "remaining": "Complete — The theoretical explanation is addressed; extending current numerical comparisons is tracked separately.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/introduction.tex": "74e2d244f579de8180015f01889ba5559814352c4b0ca89418836c2d9d278733",
-        "docs/latex/sections/model_framework.tex": "f5f42879dbb1fc22d3166f10a23b37c2a67c34b5511cac80df038e92f8ccd9d4",
+        "docs/latex/sections/introduction.tex": "87c49c66d50891341970ea7efe19e4cbdccebdc92301d9170136acf5043d6ca2",
+        "docs/latex/sections/model_framework.tex": "5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e",
         "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "c1489a856d6dd792dee7861928346cbe6bfe7dd52caaddb4ad135ed135e87419",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a",
-        "docs/latex/appendices/appendix_properties.tex": "1acf9efcf50531d15ba41ca90a867ea2483fbdc5e85feb9e5ea9792d13d0913f"
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc",
+        "docs/latex/appendices/appendix_properties.tex": "1c450d81c0c0f72ad0d0e374e22196a635db3c147bdfb839e16b1a984f46eb4b",
+        "docs/latex/appendices/appendix_reactive_inputs.tex": "3f03e44a497ddf3f47b21042425d5b3f0b5962f7931344a5b85c87ccd4df1771"
       }
     },
     {
@@ -42,16 +43,16 @@
       "previous_revised_score": 10,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "The comparison-definition table distinguishes molecular nonideality, reaction equilibrium and the fixed or changing transport/caloric descriptions for the six-species comparison, nine-species verification and sensitivities.",
-      "remaining": "Complete — Keep each result associated with its stated chemistry and parameter set.",
+      "basis": "The responsibility table distinguishes EOS nonideality, five-reaction equilibrium, enhancement-factor transfer and empirical calorics for the current nine-species studies.",
+      "remaining": "Complete — All reported studies use the disclosed model; the energy limitation is explicit.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/model_framework.tex": "f5f42879dbb1fc22d3166f10a23b37c2a67c34b5511cac80df038e92f8ccd9d4",
+        "docs/latex/sections/model_framework.tex": "5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e",
         "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "c1489a856d6dd792dee7861928346cbe6bfe7dd52caaddb4ad135ed135e87419",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a"
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc"
       }
     },
     {
@@ -63,14 +64,14 @@
       "previous_revised_score": 9,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "The native TikZ workflow and responsibility table explicitly show the six-species reference or coupled nine-species thermodynamic step. Fixed transport formulas are distinguished from state-dependent inputs and values.",
-      "remaining": "Complete — The diagram does not require another thermodynamic-step replacement. Keep it aligned with the calculation actually reported.",
+      "basis": "The native TikZ diagram follows the nine-species bulk equilibrium, physical properties, conventional enhancement, fluxes and column balances.",
+      "remaining": "Complete — The diagram matches the model reported in this edition.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/model_framework.tex": "f5f42879dbb1fc22d3166f10a23b37c2a67c34b5511cac80df038e92f8ccd9d4",
-        "docs/latex/figures/tikz/model-framework-flowchart.tex": "9f7faaa398a3ad83f17f93cd1ea9e2ea8e9db253e894bc787f07fa67607798bd",
+        "docs/latex/sections/model_framework.tex": "5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e",
+        "docs/latex/figures/tikz/model-framework-flowchart.tex": "4b8142097e5533328f129663bd907baa6b3c6cb415b73bfdacc4ca1efb98168c",
         "docs/latex/tex/figure-styles.tex": "517590a17c86c13ca7de5dc41d0236873e2b65eacf054948e134106b571f7296",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a"
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc"
       }
     },
     {
@@ -82,12 +83,12 @@
       "previous_revised_score": 10,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Introduction and the comparison-definition table state what changes in the six-species fugacity comparison, numerical-method comparisons, nine-species verification and local sensitivities. The current reactive result is not attributed solely to a fugacity change.",
-      "remaining": "Complete — The scope is explicit without changing the manuscript title.",
+      "basis": "The title identifies reactive ePC-SAFT modeling of carbon dioxide absorption in aqueous MEA. The Introduction describes the seven-case comparison and the thermodynamic, transport and operating studies. Obsolete isolated-fugacity and three-method benchmark claims have been removed.",
+      "remaining": "Complete — The scope is defined by the current calculation and its limitations.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/introduction.tex": "74e2d244f579de8180015f01889ba5559814352c4b0ca89418836c2d9d278733",
-        "docs/latex/sections/model_framework.tex": "f5f42879dbb1fc22d3166f10a23b37c2a67c34b5511cac80df038e92f8ccd9d4"
+        "docs/latex/sections/introduction.tex": "87c49c66d50891341970ea7efe19e4cbdccebdc92301d9170136acf5043d6ca2",
+        "docs/latex/sections/model_framework.tex": "5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e"
       }
     },
     {
@@ -99,17 +100,18 @@
       "previous_revised_score": 8,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "The current selected-input record and effective reaction constants are separated from the historical six-species derivation and parameter tables. Species, units, association topology, parameter sources and domains are documented without adding a full new parameter inventory.",
-      "remaining": "Complete — Keep each result with its stated parameter generation; retained JSON is executable authority.",
+      "basis": "The appendix prints selected nine-species component, ionic diameter, all 36 symmetric pair, association and effective reaction coefficients. The supporting parameter record provides full precision, model choices, source distinctions, standard states and domains.",
+      "remaining": "Complete — The selected tables apply to every current study; JSON remains executable authority.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/tables/epcsaft_parameter_summary.tex": "991f4cfbf193353f8cd11a835a7058bb271a8bb76defcb42a6042954644fff4d",
+        "docs/latex/tables/epcsaft_parameter_summary.tex": "ba8868500e49f287b07d90212eda9870c9874995bd8f1ad86703b1a3ff33099c",
         "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "c1489a856d6dd792dee7861928346cbe6bfe7dd52caaddb4ad135ed135e87419",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a",
-        "docs/latex/appendices/appendix_properties.tex": "1acf9efcf50531d15ba41ca90a867ea2483fbdc5e85feb9e5ea9792d13d0913f"
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc",
+        "docs/latex/appendices/appendix_properties.tex": "1c450d81c0c0f72ad0d0e374e22196a635db3c147bdfb839e16b1a984f46eb4b",
+        "docs/latex/appendices/appendix_reactive_inputs.tex": "3f03e44a497ddf3f47b21042425d5b3f0b5962f7931344a5b85c87ccd4df1771"
       }
     },
     {
@@ -121,17 +123,18 @@
       "previous_revised_score": 10,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Both the historical binary coefficient and every selected pair coefficient, including zeros, are disclosed. The selected coefficients are tied to the seven-case reactive results through retained parameter hashes; association sites, explicit edges and combining rules are documented.",
-      "remaining": "Complete — Selected coefficients and current seven-case results are associated explicitly; historical multi-case figures and parameters remain a distinct comparison.",
+      "basis": "All 36 selected pair constants, including explicit zeros and same-charge exclusions, are printed as a symmetric matrix. The zero reciprocal-temperature slope and association choices are disclosed.",
+      "remaining": "Complete — Selected coefficients are tied to all seven cases and studies.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/tables/epcsaft_parameter_summary.tex": "991f4cfbf193353f8cd11a835a7058bb271a8bb76defcb42a6042954644fff4d",
+        "docs/latex/tables/epcsaft_parameter_summary.tex": "ba8868500e49f287b07d90212eda9870c9874995bd8f1ad86703b1a3ff33099c",
         "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "c1489a856d6dd792dee7861928346cbe6bfe7dd52caaddb4ad135ed135e87419",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a",
-        "docs/latex/appendices/appendix_properties.tex": "1acf9efcf50531d15ba41ca90a867ea2483fbdc5e85feb9e5ea9792d13d0913f"
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc",
+        "docs/latex/appendices/appendix_properties.tex": "1c450d81c0c0f72ad0d0e374e22196a635db3c147bdfb839e16b1a984f46eb4b",
+        "docs/latex/appendices/appendix_reactive_inputs.tex": "3f03e44a497ddf3f47b21042425d5b3f0b5962f7931344a5b85c87ccd4df1771"
       }
     },
     {
@@ -147,13 +150,14 @@
       "remaining": "Complete — Source and fitting disclosure is addressed. Preserve the recorded source/domain qualifications; no additional fit is required to close this comment.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/tables/epcsaft_parameter_summary.tex": "991f4cfbf193353f8cd11a835a7058bb271a8bb76defcb42a6042954644fff4d",
+        "docs/latex/tables/epcsaft_parameter_summary.tex": "ba8868500e49f287b07d90212eda9870c9874995bd8f1ad86703b1a3ff33099c",
         "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "c1489a856d6dd792dee7861928346cbe6bfe7dd52caaddb4ad135ed135e87419",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a",
-        "docs/latex/appendices/appendix_properties.tex": "1acf9efcf50531d15ba41ca90a867ea2483fbdc5e85feb9e5ea9792d13d0913f"
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc",
+        "docs/latex/appendices/appendix_properties.tex": "1c450d81c0c0f72ad0d0e374e22196a635db3c147bdfb839e16b1a984f46eb4b",
+        "docs/latex/appendices/appendix_reactive_inputs.tex": "3f03e44a497ddf3f47b21042425d5b3f0b5962f7931344a5b85c87ccd4df1771"
       }
     },
     {
@@ -165,28 +169,28 @@
       "previous_revised_score": null,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Methods defines individual ±5% binary-interaction multipliers and R4/R5 equilibrium-constant multipliers that preserve logarithmic temperature derivatives. The thermodynamic-sensitivity figure and its discussion report capture and temperature changes for the selected nine-species Case 3C model. MEA–water changes capture by −0.822437/+0.758185 percentage points; CO2–water by +0.162723/−0.165758; R4 by +0.424773/−0.417079; R5 by +0.589370/−0.598872. MEA–water gives the largest response among these four inputs. All eight columns converge with 42 nodes, two mesh iterations, RMS residuals below 0.044 and zero maximum scaled boundary residual. All capture changes exceed the reference refinement difference; small temperature responses are interpreted cautiously. Conclusion includes the finding, while broader/correlated uncertainty and operating-condition analysis remain in Future Work. The investigator authorized manuscript use. Abstract and Introduction now also identify this local study, separately from the ±10% transport comparison in the transport-sensitivity figure.",
-      "remaining": "Complete — Interaction and R4/R5 equilibrium-constant sensitivity is calculated and included in the manuscript. The chosen ±5% range is a local comparison, not fitted uncertainty or a general parameter ranking.",
+      "basis": "Methods defines individual ±5% binary-interaction multipliers and R4/R5 equilibrium-constant multipliers that preserve logarithmic temperature derivatives. The thermodynamic-sensitivity figure and its discussion report capture and temperature changes for the selected nine-species Case 3C model. MEA–water changes capture by −0.822437/+0.758185 percentage points; CO2–water by +0.162723/−0.165758; R4 by +0.424773/−0.417079; R5 by +0.589370/−0.598872. MEA–water gives the largest response among these four inputs. All eight columns converge with 42 nodes, two mesh iterations, RMS residuals below 0.044 and zero maximum scaled boundary residual. All capture changes exceed the reference refinement difference; small temperature responses are interpreted cautiously. Conclusion includes the finding, while broader/correlated uncertainty remains in Section 4.4 (Interpretation and Future Work); partial operating response is reported separately. The investigator authorized manuscript use. Abstract and Introduction now also identify this study, separately from the ±10% transport comparison in the transport-sensitivity figure.",
+      "remaining": "Complete — Interaction and R4/R5 equilibrium-constant sensitivity is calculated and included in the manuscript. The chosen ±5% range is a comparison, not fitted uncertainty or a general parameter ranking.",
       "progress": "in_progress",
       "evidence": {
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72",
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7",
         "analyses/nccc_validation/results/reviewer_energy/README.md": "5b6d4658fab5c6865641cbe1c808abddc18a60533cdd1d1aafc4a19aa0c63802",
         "analyses/nccc_validation/figures/reactive_column/output/sensitivity/summary.csv": "af75939bc24179ae49745fd6202ad593c049f38b4c09e2bbf28f22d233c1db7e",
         "analyses/nccc_validation/figures/reactive_column/output/sensitivity/provenance.json": "82b3fe63abc540db681ff0f364199a39eac990883b6152f12b87f8dcd6a0f648",
         "analyses/nccc_validation/figures/reactive_column/scripts/render_sensitivity.py": "1b12bd0600608a01b19614248192fdcd748c537c17f9c4a2723cf6e8cd8dcf49",
         "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "c1489a856d6dd792dee7861928346cbe6bfe7dd52caaddb4ad135ed135e87419",
         "tests/test_reactive_column_jacobian.py": "86802f23ad467ea51037e7d73ebf84ee3135f06437a43c3f1176775093c1441d",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
-        "docs/latex/sections/methods.tex": "ae51de38b101dcc0b8a4ee50a3f249423748ebcf70edc5410d2f977f6eb3d687",
-        "docs/latex/sections/conclusion.tex": "6288aba93560eef9ce2a58e50216b5d39db5f4aeba83d235b4554b650a196652",
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
+        "docs/latex/sections/methods.tex": "153e898c8980c064246ef81996b030ced7e548d0a23da4724963090084f93389",
+        "docs/latex/sections/conclusion.tex": "be612db3153e5c0070ce4e6b64c789e64f822595d6cb0e83133dbbf4861042cc",
         "docs/latex/figures/reactive-parameter-sensitivity.pdf": "b5f7f0ff69cbad50ba97f000e3ea29b7aa16bdd91f447edbe2d0ed6359027343",
-        "analyses/nccc_validation/scripts/run_reactive_column.py": "654dbf916455a354cf11ffb791673e36f79f4dea5f3431b002f7dacc3a38b6ec",
+        "analyses/nccc_validation/scripts/run_reactive_column.py": "2bedbc0ceb1c685276bfd557622aa84509cb0d9f53f12f5f3115d427f0ddeec7",
         "analyses/nccc_validation/figures/reactive_column/output/sensitivity/r18_r4_095-reactions.json": "002d44454d4b406aa0b9f09302b25deb5caf1ab09d3995e6685fb3a928cf8b00",
         "analyses/nccc_validation/figures/reactive_column/output/sensitivity/r18_r4_105-reactions.json": "36d5b433e475d6d1ac02ead7c320247621e1f473a69c2680555765830200c319",
         "analyses/nccc_validation/figures/reactive_column/output/sensitivity/r18_r5_095-reactions.json": "cbf54d37721e6ae3a7ccbf31fd69a055098656c0fa8673e729108dc3cb198b5b",
         "analyses/nccc_validation/figures/reactive_column/output/sensitivity/r18_r5_105-reactions.json": "64beb581a22b1779c0f7ef165db5414964fb955173c411c7779b35c6e043dc7a",
-        "docs/latex/main.tex": "115078c95ef6d109fefbf3d016f22fcb42d97d13c85fca325e49b9c2df154a5f",
-        "docs/latex/sections/introduction.tex": "74e2d244f579de8180015f01889ba5559814352c4b0ca89418836c2d9d278733"
+        "docs/latex/main.tex": "3a472827cd629156a00ebb500bc9f5a5e04069a75ec81f179177a185165bfd5e",
+        "docs/latex/sections/introduction.tex": "87c49c66d50891341970ea7efe19e4cbdccebdc92301d9170136acf5043d6ca2"
       }
     },
     {
@@ -202,12 +206,12 @@
       "remaining": "Complete for the bounded transport sensitivity and applicability reporting. Modified correlation provenance remains qualified; do not treat published source errors as uncertainty bounds for the adopted column.",
       "progress": "in_progress",
       "evidence": {
-        "docs/latex/sections/model_framework.tex": "f5f42879dbb1fc22d3166f10a23b37c2a67c34b5511cac80df038e92f8ccd9d4",
-        "docs/latex/main.tex": "115078c95ef6d109fefbf3d016f22fcb42d97d13c85fca325e49b9c2df154a5f",
-        "docs/latex/sections/introduction.tex": "74e2d244f579de8180015f01889ba5559814352c4b0ca89418836c2d9d278733",
-        "docs/latex/sections/methods.tex": "ae51de38b101dcc0b8a4ee50a3f249423748ebcf70edc5410d2f977f6eb3d687",
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72",
-        "docs/latex/sections/conclusion.tex": "6288aba93560eef9ce2a58e50216b5d39db5f4aeba83d235b4554b650a196652",
+        "docs/latex/sections/model_framework.tex": "5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e",
+        "docs/latex/main.tex": "3a472827cd629156a00ebb500bc9f5a5e04069a75ec81f179177a185165bfd5e",
+        "docs/latex/sections/introduction.tex": "87c49c66d50891341970ea7efe19e4cbdccebdc92301d9170136acf5043d6ca2",
+        "docs/latex/sections/methods.tex": "153e898c8980c064246ef81996b030ced7e548d0a23da4724963090084f93389",
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7",
+        "docs/latex/sections/conclusion.tex": "be612db3153e5c0070ce4e6b64c789e64f822595d6cb0e83133dbbf4861042cc",
         "docs/latex/figures/transport-sensitivity.pdf": "9c1ed0c7c67be8825cc30aefe840c1a18ac58967a90f6e6c7c38989ddd24bd1c",
         "analyses/transport_sensitivity/notebook.qmd": "2985e983a931c327f2968a8455b9196cbda0c9d3e15fdea3f2dff5fbda3f9446",
         "analyses/transport_sensitivity/figures/response/output/summary.csv": "f114cfec689403d27ab1a00c136ba17b375abdfbb8012053f7fa585dfe8d55d7",
@@ -216,9 +220,9 @@
         "analyses/transport_sensitivity/figures/response/output/derivative_checks.json": "8260d523e91ee811cc9a20e191ad26ca0587a7c250f2973f2a7080764921bacb",
         "analyses/transport_sensitivity/figures/response/output/initialization_control.csv": "aebc4ac9224236c32a2f1d168e38c356ff2e4721bee4abb5c24f59d211d0ab13",
         "analyses/nccc_validation/results/reviewer_energy/README.md": "5b6d4658fab5c6865641cbe1c808abddc18a60533cdd1d1aafc4a19aa0c63802",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
-        "docs/latex/tables/transport_applicability.tex": "f3fec0c916ecbbd5ee0b9cce70cd360983e111ada5bb5210fa1535e4fbf58360",
-        "docs/latex/appendices/appendix_properties.tex": "1acf9efcf50531d15ba41ca90a867ea2483fbdc5e85feb9e5ea9792d13d0913f"
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
+        "docs/latex/tables/transport_applicability.tex": "32708c2c74a911a63f21d8d2e9f82c6936fe966646665505c7ff0e9601e144e5",
+        "docs/latex/appendices/appendix_properties.tex": "1c450d81c0c0f72ad0d0e374e22196a635db3c147bdfb839e16b1a984f46eb4b"
       }
     },
     {
@@ -230,11 +234,11 @@
       "previous_revised_score": null,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Methods and the numerical-verification table now report two mesh iterations, 21→22 and 41→42 nodes, outer RMS residual histories 1.86→0.125 and 0.0566→0.0431, exact final residuals, zero scaled boundary error, 19/17 RHS batches and four Jacobian batches covering 84/164 local state Jacobians. Native thermodynamic derivatives, automatic transport/nonisothermal energy derivatives, lean/rich directional checks, and the refinement changes in capture and temperature are described. Mesh iterations, local evaluations and inner Newton steps are distinguished.",
-      "remaining": "Complete — The requested numerical-diagnostics reporting is included in the manuscript. Inner-Newton residual traces and counts for rejected competing-method attempts were not retained and are explicitly unavailable; no general method ranking is claimed.",
+      "basis": "The revised article focuses on the reactive absorption model and no longer claims a comparison of numerical methods. Shooting and finite-difference solution descriptions have been removed; Section 3 describes the collocation method used, and Section 4.1 places numerical verification beside the Case 3C reference. Methods and the numerical-verification table now report two mesh iterations, 21→22 and 41→42 nodes, outer RMS residual histories 1.86→0.125 and 0.0566→0.0431, exact final residuals, zero scaled boundary error, 19/17 RHS batches and four Jacobian batches covering 84/164 state Jacobians. Native thermodynamic derivatives, automatic transport/nonisothermal energy derivatives, lean/rich directional checks, and the refinement changes in capture and temperature are described. Mesh iterations, evaluations and inner Newton steps are distinguished.",
+      "remaining": "Complete for the reported collocation calculation — Mesh, residual and Jacobian diagnostics are included; inner-Newton histories are not claimed.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/methods.tex": "ae51de38b101dcc0b8a4ee50a3f249423748ebcf70edc5410d2f977f6eb3d687",
+        "docs/latex/sections/methods.tex": "153e898c8980c064246ef81996b030ced7e548d0a23da4724963090084f93389",
         "analyses/nccc_validation/results/reviewer_energy/README.md": "5b6d4658fab5c6865641cbe1c808abddc18a60533cdd1d1aafc4a19aa0c63802",
         "analyses/nccc_validation/results/reviewer_energy/summary.csv": "c4819ad2f4105121cad6e57d498692b1c855f68155bbf7f0622f45d4ab6e8506",
         "analyses/nccc_validation/results/reviewer_energy/provenance.json": "120e631c8765ee536ddb670f757ff19e944b662a94a68ed482d04d83810dd916",
@@ -255,12 +259,12 @@
         "analyses/nccc_validation/figures/reactive_column/output/profiles.csv": "fc6f17b79107c91d8e2f7651de9ce2a425aa25fcffee9848a33cadbce725f10d",
         "analyses/nccc_validation/figures/reactive_column/output/provenance.json": "915291a40cb825cb632acb4b474b465f7abc154c441436825ea2e1f1a892e822",
         "tests/test_reactive_column_jacobian.py": "86802f23ad467ea51037e7d73ebf84ee3135f06437a43c3f1176775093c1441d",
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72",
-        "docs/latex/tables/reactive_numerical_verification.tex": "b64c4a50886f25bf85a953f4ad90635acff394050e51aab3da7e5fb788ceb608",
-        "docs/latex/tables/method_case_contrast.tex": "6cb6718752b9e0ee594d00f147ca6baac4e09227cd24237470c8d3dfd6a8996a",
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7",
+        "docs/latex/tables/reactive_numerical_verification.tex": "ed08df5e4f9623ff50239cf9b3c0e55b95430560197fcb67dda1cf4faf609391",
         "analyses/nccc_validation/figures/reactive_column/output/iteration_history.csv": "a7f7b1051fc3c6c0acf7ec695a76d87b80bd28e79808534d3935e43c8aa07894",
         "docs/latex/figures/reactive-case3c-profiles.pdf": "833770d769759da4a920811ddafc2b79ca7f06ca379eceae6a698f9627f803f5",
-        "docs/latex/sections/model_framework.tex": "f5f42879dbb1fc22d3166f10a23b37c2a67c34b5511cac80df038e92f8ccd9d4"
+        "docs/latex/sections/model_framework.tex": "5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e",
+        "analyses/nccc_validation/figures/reactive_column/output/refinement_confirmation.json": "422621d4ed1ded59347766744e42070b13fd5a9dfc795bf991462580ad73e93e"
       }
     },
     {
@@ -272,11 +276,11 @@
       "previous_revised_score": null,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Three fresh-start Case 3C repeats on an AMD Ryzen 5 5500 with single-thread libraries give median BVP wall time 34.66 s (34.41–34.89 s). The fastest BVP run takes 34.41 s wall, 34.23 s CPU and 51.45 s including initialization and profile export, with peak RSS 203.51 MiB. It uses 21→22 nodes, two mesh cycles, tolerance 0.5 and boundary tolerance 0.001. Methods describes exact derivative-work reductions and timing boundaries. Original refinement counts remain separately identified.",
+      "basis": "Numerical-method benchmarking is no longer an objective of the revised article. Computational expense is retained in Section 4.1 to document the cost of the reported model. Three fresh-start Case 3C repeats on an AMD Ryzen 5 5500 with single-thread libraries give median BVP wall time 34.66 s (34.41–34.89 s). The fastest BVP run takes 34.41 s wall, 34.23 s CPU and 51.45 s including initialization and profile export, with peak RSS 203.51 MiB. It uses 21→22 nodes, two mesh cycles, tolerance 0.5 and boundary tolerance 0.001. Methods specifies derivative reuse, hardware and timing boundaries. Original refinement counts remain separately identified.",
       "remaining": "Complete — CPU/wall time, repeated measurements, memory, hardware, mesh and iterations are reported. These coarse single-case timings are not an accuracy-matched ranking against historical methods or a refined-mesh timing result.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/methods.tex": "ae51de38b101dcc0b8a4ee50a3f249423748ebcf70edc5410d2f977f6eb3d687",
+        "docs/latex/sections/methods.tex": "153e898c8980c064246ef81996b030ced7e548d0a23da4724963090084f93389",
         "analyses/nccc_validation/results/reviewer_energy/README.md": "5b6d4658fab5c6865641cbe1c808abddc18a60533cdd1d1aafc4a19aa0c63802",
         "analyses/nccc_validation/results/reviewer_energy/summary.csv": "c4819ad2f4105121cad6e57d498692b1c855f68155bbf7f0622f45d4ab6e8506",
         "analyses/nccc_validation/results/reviewer_energy/provenance.json": "120e631c8765ee536ddb670f757ff19e944b662a94a68ed482d04d83810dd916",
@@ -297,9 +301,8 @@
         "analyses/nccc_validation/figures/reactive_column/output/profiles.csv": "fc6f17b79107c91d8e2f7651de9ce2a425aa25fcffee9848a33cadbce725f10d",
         "analyses/nccc_validation/figures/reactive_column/output/provenance.json": "915291a40cb825cb632acb4b474b465f7abc154c441436825ea2e1f1a892e822",
         "tests/test_reactive_column_jacobian.py": "86802f23ad467ea51037e7d73ebf84ee3135f06437a43c3f1176775093c1441d",
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72",
-        "docs/latex/tables/reactive_numerical_verification.tex": "b64c4a50886f25bf85a953f4ad90635acff394050e51aab3da7e5fb788ceb608",
-        "docs/latex/tables/method_case_contrast.tex": "6cb6718752b9e0ee594d00f147ca6baac4e09227cd24237470c8d3dfd6a8996a",
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7",
+        "docs/latex/tables/reactive_numerical_verification.tex": "ed08df5e4f9623ff50239cf9b3c0e55b95430560197fcb67dda1cf4faf609391",
         "analyses/nccc_validation/figures/reactive_column/output/iteration_history.csv": "a7f7b1051fc3c6c0acf7ec695a76d87b80bd28e79808534d3935e43c8aa07894",
         "analyses/nccc_validation/results/runs/runtime_diagnostics_20260904/summary.csv": "4188877a3f6e07b70c4a5ce446af282470d3d81e7c4da1e160e0ead2835ef396",
         "analyses/nccc_validation/results/runs/runtime_diagnostics_20260904/profile_comparisons.csv": "1b636ad4f284e234a8aaf9735597135e7347d12d94310813b8cb3cb723372333",
@@ -324,11 +327,11 @@
       "previous_revised_score": 8,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Future Work sequences complete published eNRTL verification, matched conventional-enhancement column comparisons and controlled calibration/held-out transferability tests; other-solvent chemistry and parameters remain necessary.",
-      "remaining": "Complete — Further operating-condition and resolved-film studies remain proposed extensions.",
+      "basis": "Section 4.4 proposes comparative tests of DEA, MDEA, AMP, PZ and blends using applicable component parameters, solvent-specific reaction and transport inputs, and thermodynamic/column observations. The four-part program also covers the predictive film implementation already underway, constrained optimization and a direct ePC-SAFT/eNRTL comparison in this column.",
+      "remaining": "Complete — No other-solvent performance is claimed.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72"
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7"
       }
     },
     {
@@ -340,12 +343,12 @@
       "previous_revised_score": 10,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Results and Conclusion group parameter/transport sensitivity, operating trends and solvent extensions near the end. Development experiments and their detailed numerical records are outside the article. Numerical failures and exclusions are consolidated in one results table; the manuscript title is unchanged.",
-      "remaining": "Complete — Reader-facing scientific discussion is retained; titles are unchanged and development records remain outside the article. Historical results are explicitly distinguished, not relabeled as current.",
+      "basis": "The relevant Methods and Results retain 6C/7C discrepancies, coarse campaign meshes, persistent numerical enthalpy-flow variation, separate empirical caloric uncertainty, sensitivity limits and one missing operating condition. The Conclusion foregrounds the formulation, seven-case/profile evaluation, numerical behavior, measured cost and scientific insights. It ends with the linked program of predictive-film development, matched ePC-SAFT/eNRTL comparison, other-solvent tests and constrained optimization.",
+      "remaining": "Complete — Limitations of the current results are explicit; obsolete comparisons are excluded.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/conclusion.tex": "6288aba93560eef9ce2a58e50216b5d39db5f4aeba83d235b4554b650a196652",
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72"
+        "docs/latex/sections/conclusion.tex": "be612db3153e5c0070ce4e6b64c789e64f822595d6cb0e83133dbbf4861042cc",
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7"
       }
     },
     {
@@ -357,12 +360,12 @@
       "previous_revised_score": 10,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "The expanded model-family table compares Kent–Eisenberg, eNRTL, CPA and ePC-SAFT chemistry, reusable and fitted inputs, applications and extension limits. One cited paragraph compares Akula's ten fitted quantities, Zhang's four neutral plus twelve ternary quantities, and the selected ePC-SAFT fitting groups, without claiming universal superiority or exclusive derivatives.",
-      "remaining": "Complete — No new full parameter tables or local eNRTL fit discussion. A controlled fitting-effort comparison remains future work.",
+      "basis": "The model-family table compares Kent–Eisenberg, eNRTL, CPA and ePC-SAFT chemistry, reusable inputs, calibration and limits. The Introduction explains component reuse and gives a one-scalar neutral ePC-SAFT refit beside the named Akula eNRTL fitting scope, distinguishing additional binary fitting from total inputs. Section 4.4 proposes a matched column comparison of process accuracy, data requirements and fitting effort; Appendix B identifies inherited and fitted inputs.",
+      "remaining": "Complete — A matched fitting-effort or accuracy comparison is outside this article.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/introduction.tex": "74e2d244f579de8180015f01889ba5559814352c4b0ca89418836c2d9d278733",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a"
+        "docs/latex/sections/introduction.tex": "87c49c66d50891341970ea7efe19e4cbdccebdc92301d9170136acf5043d6ca2",
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc"
       }
     },
     {
@@ -378,7 +381,7 @@
       "remaining": "Complete — Final build, references, captions, equations and figure/table placement checked after reconciliation.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/main.tex": "115078c95ef6d109fefbf3d016f22fcb42d97d13c85fca325e49b9c2df154a5f"
+        "docs/latex/main.tex": "3a472827cd629156a00ebb500bc9f5a5e04069a75ec81f179177a185165bfd5e"
       }
     },
     {
@@ -390,12 +393,12 @@
       "previous_revised_score": 9,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "A five-study table compares Tobiesen, Zhang, Chinen, Akula and Shahid absorber thermodynamics, reaction/film treatment, experimental coverage and numerical/input reporting. The Introduction states the matched-model comparison gap while acknowledging prior physical validation and numerical studies.",
-      "remaining": "Complete — The table distinguishes reporting omissions from work not performed.",
+      "basis": "The five-study literature table compares thermodynamics, film treatment, experimental coverage and numerical/input reporting. The Introduction motivates the current reactive EOS column and bounded studies while acknowledging prior validation and refinement.",
+      "remaining": "Complete — Reporting omissions are distinguished from unperformed work.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/introduction.tex": "74e2d244f579de8180015f01889ba5559814352c4b0ca89418836c2d9d278733",
-        "docs/latex/tables/absorber_literature_comparison.tex": "d274378deb43ed0ac4fa20b57d99880bedfa2eaa5418904def76f084474b9f68"
+        "docs/latex/sections/introduction.tex": "87c49c66d50891341970ea7efe19e4cbdccebdc92301d9170136acf5043d6ca2",
+        "docs/latex/tables/absorber_literature_comparison.tex": "e776c522a2ac50d9034e391ab322227db4b8c9627c11c3e021b830d505cb60c4"
       }
     },
     {
@@ -407,22 +410,23 @@
       "previous_revised_score": 7,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Peer-repetition documentation identifies current inputs, reaction precedence, standard states, immutable wheel identity, environment and exact figure sources. Availability sections explicitly limit the August revision to historical calculations and do not attribute the current worktree results to that release.",
-      "remaining": "Complete for parameter and reproduction documentation — Public archiving of the working revision remains a separate authorized release action.",
+      "basis": "The appendix and reproduction guide identify current parameters, reaction precedence, standard states, non-editable wheel identities and retained result/figure sources. Availability sections disclose the absence of a public identifier for this numerical package.",
+      "remaining": "Complete for documentation — Public archiving requires a separate authorized release.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/tables/epcsaft_parameter_summary.tex": "991f4cfbf193353f8cd11a835a7058bb271a8bb76defcb42a6042954644fff4d",
-        "docs/latex/sections/methods.tex": "ae51de38b101dcc0b8a4ee50a3f249423748ebcf70edc5410d2f977f6eb3d687",
+        "docs/latex/tables/epcsaft_parameter_summary.tex": "ba8868500e49f287b07d90212eda9870c9874995bd8f1ad86703b1a3ff33099c",
+        "docs/latex/sections/methods.tex": "153e898c8980c064246ef81996b030ced7e548d0a23da4724963090084f93389",
         "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "c1489a856d6dd792dee7861928346cbe6bfe7dd52caaddb4ad135ed135e87419",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a",
-        "docs/latex/sections/data_availability.tex": "1e99115fff198473727b58285fe850a2c5879c0c8640897fbe7ccc8e894e5317",
-        "docs/latex/appendices/appendix_properties.tex": "1acf9efcf50531d15ba41ca90a867ea2483fbdc5e85feb9e5ea9792d13d0913f",
-        "docs/code_to_paper_traceability.md": "89efdd22c44692137d3178be9e22dafdcb9584c746c707d2085fd7cfab371ad2",
-        "docs/latex/sections/code_availability.tex": "f10e12fc2b9068dead2aeaab918046d4c2f4f0135ecd0adcec818c2a1efbd770",
-        "docs/latex/scripts/latex_workflows.py": "0591d3c3cda9d0d99a39f19185865a835d6a9aa7c0ecd0634170c4417a854232"
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc",
+        "docs/latex/sections/data_availability.tex": "df25983acc5bfeac607e6c1cfac5eb66a4b408e1db0e53d0417a208bfa380e46",
+        "docs/latex/appendices/appendix_properties.tex": "1c450d81c0c0f72ad0d0e374e22196a635db3c147bdfb839e16b1a984f46eb4b",
+        "docs/code_to_paper_traceability.md": "b98f288f8ba42400f66ea4b2a7f0fe040d8b523cc06eff240e9521cab2a66ffc",
+        "docs/latex/sections/code_availability.tex": "664f3cf4882121452757ece5c4fcb683f8c75f031d7b88333a6caa04efe49048",
+        "docs/latex/scripts/latex_workflows.py": "7c659770f9633403a0fe7dbb3b84efd3afb2ad940980ab3439af418ab8c55bbd",
+        "docs/latex/appendices/appendix_reactive_inputs.tex": "3f03e44a497ddf3f47b21042425d5b3f0b5962f7931344a5b85c87ccd4df1771"
       }
     },
     {
@@ -434,11 +438,11 @@
       "previous_revised_score": 6,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "Seven coupled nine-species NCCC cases (1C–7C) are included in Results with capture and temperature figures. Capture MAE is 5.85483 percentage points; 6C/7C errors are +11.44669/−11.93263 points. All runs converge with positive species, component/charge checks and no source-change warnings. Morgan Table C2 supplies all 35 packing-temperature observations; z=1−x and Celsius-to-kelvin conversion are explicit, without assuming a phase-specific sensor. Coarse campaign settings remain separate from the refined Case 3C sensitivity reference.",
-      "remaining": "Complete — Additional reported NCCC cases are compared in the manuscript. The remaining prediction discrepancies are visible; seven successful solves do not establish uniform accuracy or seven-case mesh convergence. SRP would extend facility coverage.",
+      "basis": "Seven coupled nine-species NCCC cases (1C–7C) are included in Results with capture and temperature figures. Capture MAE is 5.85483 percentage points; 6C/7C errors are +11.44669/−11.93263 points. All runs converge with positive species, component/charge checks and no source-change warnings. Morgan Table C2 supplies all 35 packing-temperature observations; ζ=1−x and Celsius-to-kelvin conversion are explicit, without assuming a phase-specific sensor. Coarse campaign settings remain separate from the refined Case 3C sensitivity reference.",
+      "remaining": "Complete — Additional reported NCCC cases are compared in the manuscript. The remaining prediction discrepancies are visible; seven successful solves do not establish uniform accuracy or seven-case mesh convergence. SRP is excluded because essential original operating inputs are unavailable.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72",
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7",
         "analyses/nccc_validation/results/reviewer_energy/README.md": "5b6d4658fab5c6865641cbe1c808abddc18a60533cdd1d1aafc4a19aa0c63802",
         "analyses/nccc_validation/results/reviewer_energy/summary.csv": "c4819ad2f4105121cad6e57d498692b1c855f68155bbf7f0622f45d4ab6e8506",
         "analyses/nccc_validation/results/reviewer_energy/provenance.json": "120e631c8765ee536ddb670f757ff19e944b662a94a68ed482d04d83810dd916",
@@ -460,11 +464,11 @@
         "analyses/nccc_validation/figures/reactive_column/output/provenance.json": "915291a40cb825cb632acb4b474b465f7abc154c441436825ea2e1f1a892e822",
         "tests/test_reactive_column_jacobian.py": "86802f23ad467ea51037e7d73ebf84ee3135f06437a43c3f1176775093c1441d",
         "docs/latex/figures/reactive-case3c-profiles.pdf": "833770d769759da4a920811ddafc2b79ca7f06ca379eceae6a698f9627f803f5",
-        "docs/latex/sections/model_framework.tex": "f5f42879dbb1fc22d3166f10a23b37c2a67c34b5511cac80df038e92f8ccd9d4",
+        "docs/latex/sections/model_framework.tex": "5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e",
         "analyses/nccc_validation/figures/reactive_parallel/output/summary.csv": "de4d4a1e581ff3d1697ae420fcc82fd150d9abe11b571f2467f34673b78d8acb",
         "analyses/nccc_validation/figures/reactive_parallel/output/profiles.csv": "696448d9087ac3e2fcc11deb177c482eadf9466f627232464b4ac77b2581912d",
         "analyses/nccc_validation/figures/reactive_parallel/output/temperature_observations.csv": "14dc8c613e13d6bdd96f08bb89616e5aa3648b61d4269c2befd996e83ad3d354",
-        "analyses/nccc_validation/figures/reactive_parallel/output/provenance.json": "aac5b686728b051fb77d02a048e0b61cb49a1259314e78f2d87980cf58f15a2d",
+        "analyses/nccc_validation/figures/reactive_parallel/output/provenance.json": "9c22faa5c678cac4c9c7526652fb3e64e3dcfcdc56bb0638f4ea2964770e7f9a",
         "analyses/nccc_validation/figures/reactive_parallel/inputs/morgan2020_table_c2.csv": "42097684c0ac53e4ee094ee90dd5009cf3136b63e452ce6d53d1d12626fe8812"
       }
     },
@@ -476,12 +480,16 @@
       "previous_score": 2,
       "previous_revised_score": null,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
-      "score": 2,
-      "basis": "The seven-case validation observations vary several inputs together and are not a controlled operating sweep. A separate operating-response package is identified by the source README but is not part of this integrated seven-case analysis; no operating optimum is claimed.",
-      "remaining": "Next scientific addition — Sweep liquid/gas ratio, lean loading and inlet temperature within the selected domain. Report capture and temperature trends; define an energy/cost objective and hydraulic constraints before claiming an optimum.",
-      "progress": "deferred",
+      "score": 8,
+      "basis": "Fresh seven-condition operating calculations retain six accepted results with exact input, wheel, parameter and source identities. The figure and manuscript report capture changes of +0.310487 pp for higher liquid flow, +3.754430/−6.860233 pp for loading 0.225/0.275 and +0.107302/−0.084819 pp for inlet 313.15/323.15 K. Higher flow and colder inlet converge from a retained reactive initial profile after initial failures. Lower flow fails from both starts. Residual, positive-species and normalized component/charge checks pass for accepted points; persistent numerical enthalpy-flow variation and coarse numerical limits remain explicit.",
+      "remaining": "Partial response — The fresh figure and provenance are integrated; the lower-flow condition remains unavailable. No optimum is established without hydraulic constraints, energy/cost objectives and broader uncertainty; that analysis remains outside scope.",
+      "progress": "in_progress",
       "evidence": {
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72"
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7",
+        "analyses/nccc_validation/figures/reactive_operating/output/summary.csv": "028ac5e3ad01380edcbed57a5d172c6cfc9f75ed1493ec950a1a428282fa2ba2",
+        "analyses/nccc_validation/figures/reactive_operating/output/provenance.json": "c39a025684c47f3b5c911c02e60af7b5608ae0cfb54f60660e0d9a5ae91438a5",
+        "analyses/nccc_validation/figures/reactive_operating/output/operating_response.pdf": "a6ae0054ae5ef0db81758d95344daa192f9b3f1f8e02dbb17913d105889051bd",
+        "analyses/nccc_validation/figures/reactive_operating/notebook.qmd": "fd4a847b69cc51ae4e4622182cb68bde3952c01429f5acd8d8ce124a2765b868"
       }
     },
     {
@@ -493,12 +501,12 @@
       "previous_revised_score": 7,
       "previous_score_basis": "Historical individual Before score, converted from 5 to 10; not a verified assessment of the exact March-submission PDF.",
       "score": 10,
-      "basis": "The model-family comparison and Future Work identify the species, reaction, standard-state and mixture inputs needed for other amines or blends, with published eNRTL verification and controlled calibration/transferability comparisons.",
+      "basis": "The Introduction explains the potential component-reuse benefit, and Section 4.4 proposes other-amine tests and a matched ePC-SAFT/eNRTL column comparison measuring process accuracy, new data requirements and independently fitted quantities. Applicable component, ionic, reaction and transport parameterizations remain distinct from completed second-solvent validation.",
       "remaining": "Complete — Other-solvent performance and fitting efficiency are proposals, not established results.",
       "progress": "planned",
       "evidence": {
-        "docs/latex/sections/results.tex": "011ca2e835a0b3073b0b6e816af310902afce6d2aac2a6dcfedd3e0eda2d9e72",
-        "docs/selected-reactive-parameters.md": "23ce1ed84933a251c33865cf735bb6098afb558c3288ea80e342854c2c763e5a"
+        "docs/latex/sections/results.tex": "82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7",
+        "docs/selected-reactive-parameters.md": "f64e168d2c1628263c97af19bf5865b45fb3ab625be639b30904c3592678ccbc"
       }
     },
     {
@@ -508,16 +516,16 @@
       "original_feedback": "",
       "previous_score": null,
       "previous_score_basis": "Fallback evidence audit; not an original reviewer point.",
-      "score": 6,
-      "basis": "The energy sign, full composition chain rule, caloric derivative and initialization are repaired. The current nine-species nonisothermal Case 3C and tighter mesh both converge; 87 focused checks and immutable-wheel integration pass. Conventional enhancement is retained with a documented bulk-fugacity/free-concentration film correction. Historical manuscript aggregate results remain unreplaced. All eight R1.8 interaction/equilibrium-constant perturbations converge; large composition jumps use the declared liquid-loading path with root checks preserved.",
-      "remaining": "Selected Case 3C reference, refinement, sensitivities and seven-case capture/temperature evidence are integrated. Matched numerical-method comparisons and wider physical validation remain separate extensions; historical populations retain their own inputs.",
+      "score": 10,
+      "basis": "The current nine-species article integrates seven-case comparison, refinement, thermodynamic and transport sensitivity, scoped runtime and the fresh operating-response figure. Selected component, pair, association and reaction inputs are printed in the appendix. Superseded comparisons are removed from the article. Six operating conditions have retained results; the missing lower-flow result is identified in the operating-figure caption.",
+      "remaining": "Complete for the current article scope. R2.5 separately records the unresolved lower-flow prediction and absence of an optimization objective.",
       "progress": "in_progress",
       "evidence": {
-        "docs/latex/sections/model_framework.tex": "f5f42879dbb1fc22d3166f10a23b37c2a67c34b5511cac80df038e92f8ccd9d4",
+        "docs/latex/sections/model_framework.tex": "5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e",
         "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "c1489a856d6dd792dee7861928346cbe6bfe7dd52caaddb4ad135ed135e87419",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
         "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
-        "REPRODUCE.md": "9abda67398054589b4906a553d33202dc1dfd6b9e4ef029720c6f2a979d27a1b",
+        "REPRODUCE.md": "9a3f0bd765cf285766e235a6b9fd08a402225fb81674d3e5c88d76a3ec2d5408",
         "analyses/nccc_validation/results/reviewer_energy/README.md": "5b6d4658fab5c6865641cbe1c808abddc18a60533cdd1d1aafc4a19aa0c63802",
         "analyses/nccc_validation/results/reviewer_energy/summary.csv": "c4819ad2f4105121cad6e57d498692b1c855f68155bbf7f0622f45d4ab6e8506",
         "analyses/nccc_validation/results/reviewer_energy/provenance.json": "120e631c8765ee536ddb670f757ff19e944b662a94a68ed482d04d83810dd916",
@@ -537,7 +545,13 @@
         "analyses/nccc_validation/figures/reactive_column/output/summary.csv": "305ab1f8d91ee4594eadd2292c276c5b957957479ede45b13a72c7b19bfc8583",
         "analyses/nccc_validation/figures/reactive_column/output/profiles.csv": "fc6f17b79107c91d8e2f7651de9ce2a425aa25fcffee9848a33cadbce725f10d",
         "analyses/nccc_validation/figures/reactive_column/output/provenance.json": "915291a40cb825cb632acb4b474b465f7abc154c441436825ea2e1f1a892e822",
-        "tests/test_reactive_column_jacobian.py": "86802f23ad467ea51037e7d73ebf84ee3135f06437a43c3f1176775093c1441d"
+        "tests/test_reactive_column_jacobian.py": "86802f23ad467ea51037e7d73ebf84ee3135f06437a43c3f1176775093c1441d",
+        "analyses/nccc_validation/figures/reactive_operating/output/summary.csv": "028ac5e3ad01380edcbed57a5d172c6cfc9f75ed1493ec950a1a428282fa2ba2",
+        "analyses/nccc_validation/figures/reactive_operating/output/provenance.json": "c39a025684c47f3b5c911c02e60af7b5608ae0cfb54f60660e0d9a5ae91438a5",
+        "analyses/nccc_validation/figures/reactive_operating/output/operating_response.pdf": "a6ae0054ae5ef0db81758d95344daa192f9b3f1f8e02dbb17913d105889051bd",
+        "analyses/nccc_validation/figures/reactive_operating/notebook.qmd": "fd4a847b69cc51ae4e4622182cb68bde3952c01429f5acd8d8ce124a2765b868",
+        "docs/latex/appendices/appendix_reactive_inputs.tex": "3f03e44a497ddf3f47b21042425d5b3f0b5962f7931344a5b85c87ccd4df1771",
+        "analyses/nccc_validation/figures/reactive_column/output/refinement_confirmation.json": "422621d4ed1ded59347766744e42070b13fd5a9dfc795bf991462580ad73e93e"
       }
     }
   ]

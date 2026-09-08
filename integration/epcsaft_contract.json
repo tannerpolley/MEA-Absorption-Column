@@ -5,23 +5,20 @@
     "default_mode": "stable",
     "allowed_sources": {
       "stable": [
-        "local_file",
-        "release"
+        "local_file"
       ],
       "dev": [
-        "local_file",
-        "release"
+        "local_file"
       ],
       "final": [
-        "local_file",
-        "release"
+        "local_file"
       ]
     }
   },
   "final_identity": {
-    "engine_commit": "9e1bef97fbea5c6f465612ae27b054192f91f19c",
+    "engine_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
     "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-    "wheel_sha256": "b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b",
+    "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
     "reactive_inputs_sha256": {
       "parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
       "reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",

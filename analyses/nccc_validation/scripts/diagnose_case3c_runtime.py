@@ -14,11 +14,13 @@ import resource
 import time
 from zipfile import ZipFile
 
-import epcsaft
-from epcsaft import equilibrium, _core
+from mea_absorption_column.Thermodynamics.thermo_models import epcsaft_diagnostic_modules
 import pandas as pd
 import numpy as np
 import scipy.integrate._bvp as bvp
+
+# Use the existing validated wheel loader; private counters are diagnostic-only.
+epcsaft, equilibrium, _core = epcsaft_diagnostic_modules()
 
 run_module = importlib.import_module('mea_absorption_column.Run_Model')
 solver_module = importlib.import_module('mea_absorption_column.BVP.Methods.Scipy_BVP_Solve')

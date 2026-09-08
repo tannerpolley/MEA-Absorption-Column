@@ -89,7 +89,7 @@ def main():
             subset = data[data.parameter==parameter].sort_values('perturbation_pct')
             if not subset.empty:
                 ax.scatter(subset.perturbation_pct,subset[column],marker=marker,color=color,label=parameter,s=42)
-        ax.plot(0,0,'kx',label='Selected-parameter reference')
+        ax.plot(0,0,'kx',label='Reference (unperturbed)')
         ax.axhline(0,color='#777777',lw=.7)
         ax.set(xlabel='Multiplicative change in coefficient or K(T) (%)',ylabel=label,xticks=[-5,0,5],xlim=(-6,6))
         ax.grid(alpha=.18)

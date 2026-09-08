@@ -20,6 +20,7 @@ from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET, parame
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--inputs', type=Path, default=Path('src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv'))
     parser.add_argument('--initial-profile', type=Path)
     parser.add_argument('--mesh', type=int, default=21)
     parser.add_argument('--tol', type=float, default=.5)
@@ -31,7 +32,7 @@ def main():
     if (args.kij is None and args.reaction is None) != (args.factor is None):
         parser.error('--kij or --reaction requires --factor, and vice versa')
     args.output.mkdir(parents=True, exist_ok=False)
-    inputs = Path('src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv')
+    inputs = args.inputs
     data = pd.read_csv(inputs, index_col=0)
     settings = dict(mesh_points=args.mesh, tol=args.tol, bc_tol=.001, max_nodes=1000,
                     thermal_state_mode='temperature', transform_mode='raw',
@@ -79,9 +80,11 @@ def main():
     pd.DataFrame(result['_raw_solution_scaled'].T).to_csv(args.output/'solution_scaled.csv', index=False)
     result = {k:v for k,v in result.items() if not k.startswith('_')}
     result['total_wall_including_seed_and_outputs_s'] = time.perf_counter()-started
+    result['runtime_files_changed'] = [str(p) for p in paths
+        if hashlib.sha256(p.read_bytes()).hexdigest() != identity['input_sha256'][str(p)]]
     (args.output/'result.json').write_text(json.dumps(result, indent=2, default=str)+'\n')
     print(json.dumps(result, indent=2, default=str), flush=True)
-    if not result['success']:
+    if not result['success'] or result['runtime_files_changed']:
         raise SystemExit(1)
 
 

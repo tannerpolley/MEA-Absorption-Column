@@ -1,0 +1,22 @@
+{
+  "scope": "Two bounded diagnostic attempts for retained Case 3C; no manuscript or model changes.",
+  "attempt1": {
+    "method": "Same model, saved refined seed, 41 starting nodes, tolerance 0.005; capture native solver polynomial.",
+    "status": "timeout",
+    "timeout_s": 240,
+    "exit_code": 124,
+    "converged_solution_returned": false,
+    "log": "attempt1.log"
+  },
+  "attempt2": {
+    "method": "Reconstruct piecewise cubic profile from saved state values and derivatives at shared mesh nodes; test every possible single inserted midpoint.",
+    "coarse": "Unique reconstruction; maximum scaled fitting error 5.33e-14; energy varies 104.63 W at mesh nodes and 320.95 W on 10001 points.",
+    "refined": "Not uniquely identifiable from retained exports; two candidate meshes satisfy constraints. Candidate-derived results discarded.",
+    "conclusion": "Export interpolation alone does not explain or remove the coarse energy discrepancy."
+  },
+  "decision": "Stop after two attempts. No verified correction; retain a qualified numerical energy-balance statement. Timeout is not evidence of model nonconvergence.",
+  "source_runs": [
+    "../reactive_native_21",
+    "../reactive_native_41"
+  ]
+}

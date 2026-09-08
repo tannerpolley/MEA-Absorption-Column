@@ -167,6 +167,10 @@ analyses/**/tmp/
 !analyses/nccc_validation/figures/reactive_column/output/
 !analyses/nccc_validation/figures/reactive_column/output/*
 
+# Retained operating-response figure, plotted values and provenance.
+!analyses/nccc_validation/figures/reactive_operating/output/
+!analyses/nccc_validation/figures/reactive_operating/output/*
+
 # Retained transport-sensitivity calculations and provenance.
 !analyses/transport_sensitivity/figures/response/output/
 !analyses/transport_sensitivity/figures/response/output/**
