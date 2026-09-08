@@ -57,3 +57,5 @@ adapter; old run/source hashes remain unchanged and do not identify that edit.
 The full-column twelve-state comparison, eNRTL implementation, MDEA validation and
 exact numerical replay with every earlier Engine wheel remain separate work.
 No new physical accuracy or timing claim follows from consolidation.
+
+The prior implicit 10-point observed-capture gate for shooting/finite differences is now opt-in. Failed collocation final-iterate acceptance also requires explicit selection. Numerical completion and experimental agreement remain distinct.

@@ -548,5 +548,3 @@ def _reactive_film_linearized_fluxes(zi, vapor_fugacity_pa, interfacial_area_m2_
         * (float(vapor_fugacity_pa) - local_bulk_fugacity)
     )
     return -liquid_flux_mol_per_s_m, liquid_flux_mol_per_s_m
-
-

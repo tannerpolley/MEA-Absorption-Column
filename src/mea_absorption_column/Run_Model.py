@@ -797,6 +797,7 @@ def _apply_method_success_gates(
     settings,
 ):
     method_success = bool(solver_success)
+    capture_threshold = settings.get("accept_capture_error_max_pct", settings.get("success_capture_error_max_pct"))
     gate_messages = []
     boundary_rejected = False
     if boundary_residual_norm > float(settings.get("success_boundary_residual_max", 1.0)):
@@ -805,8 +806,9 @@ def _apply_method_success_gates(
         gate_messages.append(f"Rejected by strict boundary residual gate: {boundary_residual_norm:.6g}")
     if (
         method in {"single", "finite"}
+        and "success_capture_error_max_pct" in settings
         and capture_error_pct is not None
-        and abs(float(capture_error_pct)) > float(settings.get("success_capture_error_max_pct", 10.0))
+        and abs(float(capture_error_pct)) > float(settings["success_capture_error_max_pct"])
     ):
         method_success = False
         gate_messages.append(f"Rejected by strict capture gate: {capture_error_pct:.6g} pct")
@@ -823,17 +825,12 @@ def _apply_method_success_gates(
         and not method_success
         and not boundary_rejected
         and "max_runtime_s" not in str(message)
-        and settings.get("accept_low_residual_final_iterate", True)
+        and settings.get("accept_low_residual_final_iterate", False)
         and boundary_residual_norm <= float(settings.get("accept_boundary_residual_max", 10.0))
         and (
             capture_error_pct is None
-            or abs(float(capture_error_pct))
-            <= float(
-                settings.get(
-                    "accept_capture_error_max_pct",
-                    settings.get("success_capture_error_max_pct", 5.0),
-                )
-            )
+            or capture_threshold is None
+            or abs(float(capture_error_pct)) <= float(capture_threshold)
         )
     ):
         method_success = True

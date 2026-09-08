@@ -61,3 +61,5 @@ The twelve-state MEA builder remains a separate experiment at
 checks. It has a different derivative/caloric interface and is not silently
 substituted into the seven-state model. Built-in eNRTL/MDEA columns remain future
 implementation, with MDEA groundwork preserved on `codex/mdea-support`.
+
+Observed-capture agreement is diagnostic unless `success_capture_error_max_pct` is explicitly supplied. Failed solver termination is not accepted by default; the older `accept_low_residual_final_iterate` option requires an explicit request and is not a physical validation claim.
