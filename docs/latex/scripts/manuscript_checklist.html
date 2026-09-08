@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MEA manuscript · completion checklist</title>
+<style>
+:root{color-scheme:light;--ink:#263b42;--muted:#65767c;--line:#e2e8ea;--teal:#087a76}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 system-ui,sans-serif}main{max-width:1160px;margin:auto;padding:36px 28px 60px}header,.actions,.overview,.filters{display:flex;align-items:center;gap:16px}header{justify-content:space-between}h1{font-size:29px;letter-spacing:-.03em;margin:0}h2{font-size:17px;font-weight:650;margin:32px 0 12px}h3{font-size:15px;font-weight:600;margin:23px 6px 9px}h4{font-size:13px;font-weight:550;color:var(--muted);margin:18px 6px 8px}.muted,.note{color:var(--muted)}.note{font-size:12px}.actions{gap:8px}a{color:var(--teal);text-underline-offset:3px}button,.button,input,select{font:inherit}button,.button{padding:7px 11px;background:#fff;border:1px solid var(--line);border-radius:4px;text-decoration:none;color:var(--ink);cursor:pointer;white-space:nowrap}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--teal);outline-offset:3px}.overview{margin:18px 0 8px;flex-wrap:wrap;gap:8px 22px;font-size:13px}.overview strong{font-weight:650}.connection{color:var(--teal);font-size:12px;margin-left:auto}.connection.error,.issue{color:#a53632}.progress{width:100%;height:5px;accent-color:var(--teal);display:block}.filters{margin:25px 0 8px;gap:10px}.filters input,.filters select{background:#fff;border:1px solid var(--line);border-radius:4px;padding:9px 11px;color:var(--ink);min-width:0}.filters input{flex:1}.filters select{max-width:32%}.rows{border-top:1px solid var(--line)}.item{border-bottom:1px solid var(--line)}.item>summary{display:flex;align-items:center;gap:15px;padding:15px 6px;cursor:pointer;list-style:none}.item>summary::-webkit-details-marker{display:none}.item>summary:hover{background:#f8faf9}.check{appearance:none;-webkit-appearance:none;flex:0 0 21px;width:21px;height:21px;border:1.5px solid #a7b6ba;border-radius:0;background:white;opacity:1;margin:0;position:relative;pointer-events:none}.check:checked{background:var(--teal);border-color:var(--teal)}.check:checked::after{content:'';position:absolute;left:6px;top:2px;width:6px;height:11px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg)}.title{flex:1;font-weight:500}.expand{color:var(--muted);font-size:12px;white-space:nowrap}.expand::after{content:' +';margin-left:6px}.item[open] .expand::after{content:' −'}.item-body{padding:0 42px 18px;max-width:930px;font-size:14px}.item-body p{margin:0 0 12px}.source{font-size:12px;overflow-wrap:anywhere}.meta{display:flex;flex-wrap:wrap;gap:14px;align-items:center}.id{font:11px ui-monospace,monospace;color:var(--muted)}.empty{padding:24px 0;color:var(--muted)}.guide{border-top:1px solid var(--line);margin-top:32px;padding-top:18px;font-size:13px;color:var(--muted)}.guide summary{cursor:pointer;color:var(--ink)}.guide li{margin:9px 0}code{font:12px ui-monospace,monospace;overflow-wrap:anywhere}.pdf-state{font-size:11px;text-align:right;margin-top:5px}footer{margin-top:20px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}@media(max-width:650px){main{padding:23px 16px}header{align-items:start;gap:12px}h1{font-size:24px}.actions{flex-wrap:wrap;justify-content:end}.actions button{display:none}.filters{flex-wrap:wrap}.filters input{flex-basis:100%}.filters select{max-width:50%;flex:1}.connection{margin-left:0}.item>summary{gap:11px}.item-body{padding-left:32px;padding-right:5px}.expand{font-size:0}.expand::after{font-size:17px}.pdf-state{display:none}}@media print{.filters,.actions,.connection,.guide{display:none}main{padding:0}.item{break-inside:avoid}}
+</style>
+</head>
+<body><main>
+<header><h1>Manuscript checklist</h1><div><div class="actions"><a class="button" id="pdf" href="/file?path=builds%2Fmain.pdf" target="_blank">Open paper ↗</a><button id="refresh" type="button">Refresh</button></div><div class="pdf-state muted" id="pdf-state"></div></div></header>
+<nav class="overview" aria-label="Checklists"><a class="button" id="manuscript-tab" href="/" aria-current="page">Manuscript</a><a class="button" id="reviewers-tab" href="/reviewers">Reviewer feedback</a></nav>
+<div class="overview"><span><strong id="inserted">—</strong> completed</span><span><strong id="missing">—</strong> remaining</span><span id="asset-count"></span><span id="issue-count"><strong id="issues">—</strong> source issues</span><span id="connection" class="connection" role="status">Connecting…</span></div>
+<progress id="progress" class="progress" value="0" max="38" aria-label="Remaining manuscript insertions completed"></progress>
+<p class="note">Checked = content written or inserted. Figures include their results text. Final review notes are inside each row.</p>
+<div class="filters"><input id="search" type="search" aria-label="Find an item" placeholder="Search checklist…"><select id="group" aria-label="Section"><option value="">All sections</option></select><select id="kind" aria-label="Content"><option value="">All content</option><option value="assets">Figures &amp; tables</option><option value="text">Writing</option></select><select id="state" aria-label="Show"><option value="">All items</option><option value="missing">Remaining</option><option value="inserted">Completed</option><option value="issue">Source issues</option></select></div>
+<div id="items"></div>
+<details class="guide"><summary>Instructions for agents</summary><ul><li>Keep the CHECKLIST-BEGIN/END comments. Insert text or tables between them. Use CHECKLIST-REMAINING only for missing content. Keep source and final-run checks in the review notes; those do not block completed writing.</li><li>Keep figure labels. Replace framed panels with actual figure includes.</li><li>A figure and its linked results paragraph share one box. Fill table values from retained records. Checked means the scoped content is present; final review is separate.</li></ul><p>Read status: <code>python3 docs/latex/scripts/manuscript_checklist.py --json</code></p><p>Restart: <code>python3 docs/latex/scripts/manuscript_checklist.py --serve</code> · Offline copy: <code>--html</code></p><p>Requirements: <code>docs/latex/scripts/manuscript_checklist.json</code></p></details>
+<footer id="location"></footer>
+</main>
+<script>
+const boot=/*CHECKLIST_BOOT*/null;
+let data=boot.data, revision='', busy=false;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reviewerUrl=id=>(boot.live?'/reviewers':'reviewer-checklist.html')+'#review-'+encodeURIComponent(id);
+const fileUrl=path=>boot.live?'/file?path='+encodeURIComponent(path):'../'+path;
+if(!boot.live){$('manuscript-tab').href='manuscript-checklist.html';$('reviewers-tab').href='reviewer-checklist.html';}
+function render(){
+ const groups=[...new Set(data.items.map(i=>i.group))];
+ const group=$('group').value;
+ $('group').innerHTML='<option value="">All sections</option>'+groups.map(g=>'<option>'+esc(g)+'</option>').join('');
+ $('group').value=group;
+ const q=$('search').value.trim().toLowerCase(), state=$('state').value, kind=$('kind').value;
+ const items=data.items.filter(i=>(!kind||(kind==='assets'?i.kind!=='text':i.kind==='text'))&&(!group||i.group===group)&&(!state||i.state===state||(state==='missing'&&i.state==='partial'))&&(!q||[i.id,i.title,i.needs,i.source,i.group,i.subsection||'',i.subsubsection||'',...Object.values(i.delivery||{}),...(i.reviewers||[]).map(r=>r.id+' '+r.title)].join(' ').toLowerCase().includes(q)));
+ $('inserted').textContent=(data.counts.inserted||0)+' / '+data.total;$('missing').textContent=(data.counts.missing||0)+(data.counts.partial||0);$('issues').textContent=data.counts.issue||0;
+ $('issue-count').hidden=!data.counts.issue;
+ $('asset-count').textContent=['figure','table'].map(k=>data.items.filter(i=>i.kind===k&&i.state!=='inserted').length+' '+k+'s '+(k==='figure'?'to insert':'to fill')).join(' · ');
+ $('progress').max=data.total;$('progress').value=data.counts.inserted||0;
+ $('pdf').href=fileUrl('builds/main.pdf');$('pdf').hidden=!data.pdf_exists;
+ $('pdf-state').textContent=data.pdf_exists?(data.pdf_current?'PDF up to date':'PDF needs rebuild'):'PDF not built';
+ $('location').textContent='Source: '+data.manuscript;
+ const opened=new Set([...document.querySelectorAll('.item[open]')].map(el=>el.dataset.item));
+ $('items').innerHTML=groups.map(g=>{
+  const selected=items.filter(i=>i.group===g);if(!selected.length)return '';
+  let subsection='', subsubsection='';
+  return '<section><h2>'+esc(g)+'</h2><div class="rows">'+selected.map(i=>{
+   let headings='';
+   if((i.subsection||'')!==subsection){subsection=i.subsection||'';subsubsection='';if(subsection)headings+='<h3>'+esc(subsection)+'</h3>';}
+   if((i.subsubsection||'')!==subsubsection){subsubsection=i.subsubsection||'';if(subsubsection)headings+='<h4>'+esc(subsubsection)+'</h4>';}
+   return headings+'<details class="item" id="item-'+esc(i.id)+'" data-item="'+esc(i.id)+'"'+(opened.has(i.id)?' open':'')+'><summary><input class="check" type="checkbox" disabled '+(i.state==='inserted'?'checked ':'')+'aria-label="'+esc(i.title)+': '+esc(i.state)+'"><span class="title">'+esc(i.title)+'</span>'+(i.state==='issue'?'<span class="issue note">Check source</span>':i.state==='partial'?'<span class="note">Part filled</span>':'')+'<span class="expand">Details</span></summary><div class="item-body">'+(i.reviewers?.length?'<p class="note">Feedback: '+i.reviewers.map(r=>'<a href="'+reviewerUrl(r.id)+'" title="'+esc(r.title)+'">'+esc(r.id)+'</a>').join(' · ')+'</p>':'')+'<p>'+esc(i.needs)+'</p>'+(i.state==='issue'?'<p class="issue">'+esc(i.detail)+'</p>':i.state==='partial'?'<p class="muted"><b>Still needed:</b> '+esc(i.detail)+'</p>':'')+(i.review?'<p class="muted"><b>Final review:</b> '+esc(i.review)+'</p>':'')+Object.entries(i.delivery||{}).map(([key,value])=>'<p><b>'+esc(key)+':</b> '+esc(value)+'</p>').join('')+(i.related||[]).map(r=>'<p class="muted">'+esc(r.title)+': '+(r.state==='inserted'?'written':'to fill')+' · <a href="'+esc(fileUrl(r.source))+'" target="_blank">'+esc(r.source)+':'+r.line+'</a></p>').join('')+'<div class="meta"><a class="source" href="'+esc(fileUrl(i.source))+'" target="_blank">'+esc(i.source)+':'+i.line+' ↗</a><span class="id">'+esc(i.id)+'</span>'+i.assets.map(a=>'<a class="source" target="_blank" href="'+esc(fileUrl(a))+'">View figure ↗</a>').join(' ')+'</div></div></details>';}).join('')+'</div></section>';
+ }).join('')||'<p class="empty">No matching items.</p>';
+}
+function connected(){
+ $('connection').className='connection';
+ $('connection').textContent=(boot.live?'Live · ':'Offline snapshot · ')+new Date(data.checked_at).toLocaleTimeString()+ (data.problems.length?' · '+data.problems.join('; '):'');
+ if(data.problems.length)$('connection').classList.add('error');
+}
+async function refresh(){
+ if(!boot.live||busy)return;busy=true;
+ try{const response=await fetch('/api/checklist',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);data=await response.json();if(data.revision!==revision){revision=data.revision;render()}connected()}
+ catch(error){$('connection').className='connection error';$('connection').textContent='Disconnected · last scan shown'}
+ finally{busy=false}
+}
+function openLinkedRow(){const target=document.getElementById(location.hash.slice(1));if(target?.matches('details.item')){target.open=true;target.scrollIntoView({block:'center'});}}
+window.addEventListener('hashchange',()=>{['search','group','state','kind'].forEach(id=>$(id).value='');render();openLinkedRow()});
+['search','group','state','kind'].forEach(id=>$(id).addEventListener('input',render));
+$('refresh').addEventListener('click',refresh);$('refresh').hidden=!boot.live;
+render();connected();openLinkedRow();if(boot.live){refresh();setInterval(refresh,3000)}
+</script></body></html>

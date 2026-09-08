@@ -37,11 +37,11 @@ def viscosity(T, z, w_MEA, w_H2O, phase='liquid'):
         # muv = [0.0000161853801328463, 0.000010739452610202,
         #        0.0000188550342242103, 0.0000218920854587055]
         # print(muv)
-        theta_ij = np.zeros((4, 4))
+        theta_ij = [[0 for _ in muv] for _ in muv]
 
         for i in range(len(muv)):
             for j in range(i + 1, len(muv)):
-                theta_ij[i, j] = (
+                theta_ij[i][j] = (
                                          1
                                          + 2
                                          * np.sqrt(muv[i] / muv[j])
@@ -51,19 +51,19 @@ def viscosity(T, z, w_MEA, w_H2O, phase='liquid'):
                                          * (MWs_v[j] / MWs_v[i]) ** 0.5
                                  ) / (8 + 8 * MWs_v[i] / MWs_v[j]) ** 0.5
 
-                theta_ij[j, i] = (
+                theta_ij[j][i] = (
                         muv[j]
                         / muv[i]
                         * MWs_v[i]
                         / MWs_v[j]
-                        * theta_ij[i, j]
+                        * theta_ij[i][j]
                 )
         for i in range(len(muv)):
             for j in range(len(muv)):
                 if i == j:
-                    theta_ij[i, j] = 1
+                    theta_ij[i][j] = 1
 
-        muv_mix = sum([y[i] * muv[i] / sum([y[j] * theta_ij[i, j] for j in range(len(muv))]) for i in range(len(muv))])
+        muv_mix = sum([y[i] * muv[i] / sum([y[j] * theta_ij[i][j] for j in range(len(muv))]) for i in range(len(muv))])
         return muv_mix, muv
     return None
 
@@ -126,5 +126,3 @@ def diffusivity(T, z, P, mul_mix, rho_mol_l, phase='liquid'):
 
         return Dv_CO2, Dv_H2O, Dv_N2, Dv_O2, Dv_T
     return None
-
-

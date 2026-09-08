@@ -1,0 +1,45 @@
+\section{Reactive Thermodynamic Inputs and Parameter Provenance}\label{sec:selected-reactive-inputs}
+The inputs in the following tables define the baseline parameterization for all seven cases and the Case 3C verification; the perturbation studies vary them around this baseline.
+The tables give component, pair, association and reaction coefficients; full precision and sources are provided with the code.
+
+\input{tables/epcsaft_parameter_summary}
+
+The formulation couples the five reactions in \cref{eq:reactive-r1,eq:reactive-r2,eq:reactive-r3,eq:reactive-r4,eq:reactive-r5} to the liquid EOS, conserved quantities and electroneutrality.
+The EOS supplies activities and fugacity coefficients; the temperature-dependent reaction constants specify chemical equilibrium on the pure-water, infinite-dilution molality reference with standard molality \qty{1}{mol\,kg^{-1}}.
+The standard-state conversion is explicit and does not infer reaction constants from the initial composition.
+The conventional enhancement approach uses the matched bulk-fugacity/free-concentration coefficient stated in the main model; the empirical column enthalpies remain separate from the EOS equilibrium calculation.
+
+Literature coefficients, values taken from other ions and fitted coefficients are distinguished below and in the parameter files.
+The MEA--water interaction coefficient is $k_{ij}=-0.07352749875$; the \COtwo{} dispersion energy is $\epsilon/k=\qty{173.44025}{K}$.
+The former was fitted to binary MEA--water VLE data; the latter was chosen jointly with R4 from a pressure/speciation calibration grid.
+The enhancement concentration divisor is $s_{\COtwo}=1.04542981654115$.
+The R2, R4 and R5 temperature correlations incorporate reaction-enthalpy shifts fitted to pressure, speciation and \qty{40}{\degreeCelsius}/\qty{80}{\degreeCelsius} calorimetry used in the final reaction-temperature objective.
+Pressure data from Xu et al.\ \cite{Xu2011} and \qty{120}{\degreeCelsius} calorimetry were excluded from that objective; the Xu data also informed model selection and are therefore not independent validation data for the entire parameterization.
+% B5: adopted reaction inputs and EOS reference conversion
+The R2, R4 and R5 input correlations, which already include the standard-state offsets, are
+\begin{align}
+\ln K^{\mathrm{in}}_2(T)&=232.33141533884407-\frac{11105.640030520277}{T}-36.7816\ln T,\\
+\ln K^{\mathrm{in}}_4(T)&=1.505015374192114-\frac{1317.0489707842564}{T},\\
+\ln K^{\mathrm{in}}_5(T)&=-\ln(10)\left(\frac{3037.6399534696106}{T}-1.0173150837285996+0.0004277T\right).
+\end{align}
+Here \(T\) is numerically in kelvin and \(K_r^{\mathrm{in}}\) is the dimensionless input to the solvent-reference conversion, before transformation to \(K_r^{\mathrm{EOS}}\).
+Only the EOS reference transformation described below is applied to these constants.
+R1 and R3 retain the water and bicarbonate-dissociation correlations reproduced by Nasrifar and Tafazzol \cite{Nasrifar2010}, with the molality-conversion offsets:
+\begin{align}
+\ln K^{\mathrm{in}}_1(T)&=132.899-13445.9/T-22.4773\ln T+8.0330699846,\\
+\ln K^{\mathrm{in}}_3(T)&=216.049-12431.7/T-35.4819\ln T+4.0165349923.
+\end{align}
+The subsequent source-to-EOS conversion uses a log-activity scale of $-4.016534992299479$ to each solute and zero to water, with pure-water solvent composition and reference pressure \qty{100000}{Pa}; the per-species factors are combined stoichiometrically.
+The thermodynamic calculation evaluates the pure-water solvent reference at the current temperature and reference pressure, and adds its reference-transfer and pressure/density offsets to the input logarithmic constants.
+The effective constants therefore depend on the equation of state and reference state as well as on these correlations.
+The common calculation range is \qtyrange{293.15}{393.15}{K}.
+R1 and R3 retain wider source domains of \qtyrange{273.15}{498.15}{K}, which do not extend the domain of the combined model.
+
+\clearpage
+\begingroup
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+\input{tables/run_diagnostics}
+\clearpage
+\endgroup

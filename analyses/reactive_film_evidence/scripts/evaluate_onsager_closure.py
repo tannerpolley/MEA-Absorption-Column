@@ -14,14 +14,20 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
     epcsaft_liquid_transport_state,
 )
 from mea_absorption_column.Transport.Reactive_Film import (
+    EquilibriumManifoldState,
     binary_diffusivities_from_species,
     constrained_onsager_mobility,
+    solve_equilibrium_manifold_film,
 )
 
 
 SPECIES = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-")
 CHARGES = np.asarray((0, 0, 0, 1, -1, -1, -2, 1, -1), dtype=float)
 FILM_THICKNESS_M = 1.0e-4
+CO2_COMPONENT = np.asarray((1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0))
+MEA_COMPONENT = np.asarray((0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0))
+WATER_COMPONENT = np.asarray((0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0))
+STATIONARY_COMPONENTS = np.vstack((MEA_COMPONENT, WATER_COMPONENT))
 
 
 def _diffusivity_bounds(temperature_k: float) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[str]]:
@@ -132,6 +138,78 @@ def main() -> None:
         equilibrium["density_mol_m3"] * equilibrium["composition"][0]
         / float(np.sum(rates))
     )
+    def manifold_state(log_loading: float) -> EquilibriumManifoldState:
+        resolved = solve_homogeneous_reactive_state(
+            str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), temperature, pressure,
+            (0.1529 * math.exp(log_loading), 1.0, 7.911),
+        )
+        tangent = epcsaft_liquid_transport_state(
+            temperature, pressure, resolved["composition"]
+        )
+        return EquilibriumManifoldState(
+            composition=resolved["composition"],
+            total_concentration_mol_m3=resolved["density_mol_m3"],
+            fugacities_pa=tangent.fugacities_pa,
+            chemical_potentials_over_rt=resolved["chemical_potentials_over_rt"],
+            log_composition_basis=tangent.log_composition_basis,
+            chemical_potential_derivatives_over_rt=(
+                tangent.chemical_potential_derivatives_over_rt
+            ),
+        )
+
+    vapor_fugacity = 1.01 * float(state.fugacities_pa[0])
+    ionic_low = central.copy()
+    ionic_low[3:] = low[3:]
+    ionic_high = central.copy()
+    ionic_high[3:] = high[3:]
+    transport_cases = (
+        ("all_low", low),
+        ("ionic_low", ionic_low),
+        ("central", central),
+        ("ionic_high", ionic_high),
+        ("all_high", high),
+    )
+    gas_transfer_cases = (
+        ("retained_column_minimum", 2.4857315908489803e-5),
+        ("retained_column_representative", 3.0e-5),
+        ("retained_column_maximum", 3.198106096322139e-5),
+        ("liquid_control_probe", 1.0e-3),
+    )
+    manifolds = {
+        gas_name: {
+            transport_name: solve_equilibrium_manifold_film(
+                state_at_log_loading=manifold_state,
+                species_diffusivities_m2_s=diffusivities,
+                co2_component_coefficients=CO2_COMPONENT,
+                vapor_bulk_fugacity_pa=vapor_fugacity,
+                gas_transfer_coefficient_mol_m2_s_pa=gas_transfer_coefficient,
+                film_thickness_m=FILM_THICKNESS_M,
+                co2_index=0,
+                charge_numbers=CHARGES,
+                stationary_component_coefficients=STATIONARY_COMPONENTS,
+                quadrature_points=5,
+                maximum_quadrature_points=17,
+                quadrature_tolerance=2.0e-3,
+                profile_points=9,
+            )
+            for transport_name, diffusivities in transport_cases
+        }
+        for gas_name, gas_transfer_coefficient in gas_transfer_cases
+    }
+    total_fugacity_drive = vapor_fugacity - float(state.fugacities_pa[0])
+
+    def flux_sensitivity(names, results):
+        fluxes = [results[name].co2_component_flux_mol_m2_s for name in names]
+        central_value = results["central"].co2_component_flux_mol_m2_s
+        return {
+            "minimum_flux_mol_m2_s": min(fluxes),
+            "central_flux_mol_m2_s": central_value,
+            "maximum_flux_mol_m2_s": max(fluxes),
+            "maximum_to_minimum_flux_ratio": max(fluxes) / min(fluxes),
+            "full_range_relative_to_central_percent": 100.0
+            * (max(fluxes) - min(fluxes))
+            / central_value,
+        }
     payload = {
         "state": {
             "temperature_K": temperature,
@@ -169,6 +247,62 @@ def main() -> None:
             "local_damkohler_estimate": float(diffusion_time_s / reaction_time_s),
             "source_rate_basis": "Putta2016 concentration forward scale; provider affinity supplies detailed-balance reverse factor",
             "standard_state_limit": "forward prefactor retains Putta concentration basis and is not independently validated",
+        },
+        "fast_equilibrium_manifold_film": {
+            "drive": "bulk CO2 fugacity increased by 1% on the vapor side",
+            "cases": {
+                gas_name: {
+                    "gas_transfer_coefficient_mol_m2_s_pa": gas_transfer_coefficient,
+                    "transport_cases": {
+                        name: {
+                            "co2_component_flux_mol_m2_s": result.co2_component_flux_mol_m2_s,
+                            "interface_fugacity_pa": result.interface_fugacity_pa,
+                            "gas_side_resistance_fraction": (
+                                vapor_fugacity - result.interface_fugacity_pa
+                            )
+                            / total_fugacity_drive,
+                            "liquid_side_resistance_fraction": (
+                                result.interface_fugacity_pa - float(state.fugacities_pa[0])
+                            )
+                            / total_fugacity_drive,
+                            "maximum_interface_residual": result.maximum_interface_residual,
+                            "maximum_component_flux_residual": (
+                                result.maximum_component_flux_residual
+                            ),
+                            "maximum_stationary_component_flux_residual": (
+                                result.maximum_stationary_component_flux_residual
+                            ),
+                            "maximum_zero_total_flux_residual": (
+                                result.maximum_zero_total_flux_residual
+                            ),
+                            "maximum_zero_current_residual": result.maximum_zero_current_residual,
+                            "minimum_entropy_production_over_r": (
+                                result.minimum_entropy_production_over_r
+                            ),
+                            "minimum_mobility_eigenvalue": result.minimum_mobility_eigenvalue,
+                            "maximum_tangent_directional_error": (
+                                result.maximum_tangent_directional_error
+                            ),
+                            "minimum_composition": result.minimum_composition,
+                            "quadrature_points": result.quadrature_points,
+                            "quadrature_relative_change": result.quadrature_relative_change,
+                            "solver_message": result.solver_message,
+                        }
+                        for name, result in gas_results.items()
+                    },
+                    "sensitivity": {
+                        "all_transport_bounds": flux_sensitivity(
+                            ("all_low", "central", "all_high"), gas_results
+                        ),
+                        "ionic_only_bounds": flux_sensitivity(
+                            ("ionic_low", "central", "ionic_high"), gas_results
+                        ),
+                    },
+                }
+                for (gas_name, gas_transfer_coefficient), gas_results in zip(
+                    gas_transfer_cases, manifolds.values(), strict=True
+                )
+            },
         },
     }
     print(json.dumps(payload, indent=2))

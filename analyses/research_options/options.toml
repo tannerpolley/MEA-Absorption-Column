@@ -1,0 +1,33 @@
+# Editable research example; preview never runs a column.
+formulation = "seven_state"
+thermo_model = "epcsaft_reactive_nine"
+film_model = "enhancement_factor"
+method = "scipy-bvp"
+output_dir = "analyses/research_options/results/runs/nine_species_3c"
+
+[cases]
+c_case_limit = 0
+nccc_dataset = "2017"
+nccc_case_ids = ["3C"]
+srp_case_limit = 0
+
+[settings]
+data_type = "mass"
+staged_beds = false
+profile_csvs = true
+profile_pngs = false
+subprocess_timeout_s = 1200.0
+
+[solver_settings]
+mesh_points = 21
+tol = 0.5
+bc_tol = 0.001
+max_nodes = 1000
+thermal_state_mode = "temperature"
+transform_mode = "raw"
+vapor_composition_mode = "dry_saturated"
+gas_flow_basis = "reported_dry_mass"
+jacobian_mode = "native"
+enhancement_type = "explicit"
+reactive_reuse_states = true
+reactive_loading_anchor = 0.25

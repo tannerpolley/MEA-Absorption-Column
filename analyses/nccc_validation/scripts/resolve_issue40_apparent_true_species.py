@@ -266,8 +266,11 @@ def main() -> int:
     bundle_meta = config["bundle"]
     archive, members, manifest = read_bundle(args.bundle.resolve(), bundle_meta)
     try:
-        import epcsaft
-        from epcsaft.equilibrium import general_reactive_equilibrium_problem_from_mapping, solve
+        from mea_absorption_column.Thermodynamics.thermo_models import epcsaft_diagnostic_modules
+
+        epcsaft, equilibrium, _ = epcsaft_diagnostic_modules()
+        general_reactive_equilibrium_problem_from_mapping = equilibrium.general_reactive_equilibrium_problem_from_mapping
+        solve = equilibrium.solve
 
         wheel_path = Path(json.loads(metadata.distribution("epcsaft").read_text("direct_url.json"))["url"].removeprefix("file://"))
         if sha256_path(wheel_path) != bundle_meta["engine_wheel_sha256"]:

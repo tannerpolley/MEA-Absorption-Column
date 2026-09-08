@@ -1,0 +1,222 @@
+{
+  "schema": "mea-anchored-reaction-consistent-reference-thermochemistry-v2",
+  "method": "continuous solve of 5 typed reaction enthalpies (source correlation + Engine source-reference transfer) + 3 neutral thermal anchors + 1 charge gauge at every grid temperature; degree-8 polynomial per component on the Engine form",
+  "engine_source_commit": "8438ce5f94a547189c91c4ec180a7782d60879d6",
+  "engine_wheel_sha256": "40fba7cfb9c8414152f3e49636c49ae2e3f7099e30040d54d464ccb38355f805",
+  "reference_temperature_k": 353.15,
+  "temperature_domain_k": [
+    293.15,
+    393.15
+  ],
+  "grid_step_k": 2.5,
+  "polynomial_degree": 8,
+  "anchor_pressure_pa": 101325.0,
+  "anchors": {
+    "carbon-dioxide": {
+      "cp": "NIST WebBook Shomate, Chase 1998, gas, 298-1200 K",
+      "cp_kind": "ideal_gas_shomate",
+      "shomate": [
+        24.99735,
+        55.18696,
+        -33.69137,
+        7.948387,
+        -0.136638
+      ],
+      "formation_enthalpy_j_per_mol": -393510.0,
+      "formation_source": "CODATA (Cox, Wagman et al. 1984), gas, 298.15 K",
+      "basis": "ideal gas; residual enthalpy zero"
+    },
+    "water": {
+      "cp": "Hilliard 2008 liquid cp polynomial as retained in MEA-Absorption-Column appendix_properties.tex; kJ/kg/K, t in C",
+      "cp_kind": "liquid_correlation_minus_eos_residual",
+      "liquid_cp_kj_kg_k": [
+        4.2107,
+        -0.001696,
+        2.568e-05,
+        -1.095e-07,
+        3.038e-10
+      ],
+      "molar_mass_kg_per_mol": 0.018015,
+      "formation_enthalpy_j_per_mol": -285830.0,
+      "formation_source": "CODATA H2O(l), 298.15 K, 1 atm",
+      "basis": "pure liquid at 101325 Pa; correlation range per Hilliard 2008 not re-verified here"
+    },
+    "monoethanolamine": {
+      "cp": "Hilliard 2008 liquid cp polynomial as retained in MEA-Absorption-Column appendix_properties.tex; kJ/kg/K, t in C",
+      "cp_kind": "liquid_correlation_minus_eos_residual",
+      "liquid_cp_kj_kg_k": [
+        2.6161,
+        0.003706,
+        3.787e-06,
+        0.0,
+        0.0
+      ],
+      "molar_mass_kg_per_mol": 0.061084,
+      "formation_enthalpy_j_per_mol": -507500.0,
+      "formation_source": "NIST WebBook, Baroody and Carpenter 1972, MEA(l), 298.15 K",
+      "basis": "pure liquid at 101325 Pa; correlation range per Hilliard 2008 not re-verified here"
+    }
+  },
+  "charge_gauge": "hydronium reference enthalpy equals water reference enthalpy at every temperature (zero-enthalpy proton)",
+  "component_ids": [
+    "carbon-dioxide",
+    "monoethanolamine",
+    "water",
+    "protonated-monoethanolamine",
+    "carbamate-anion",
+    "bicarbonate-anion",
+    "carbonate-anion",
+    "hydronium-cation",
+    "hydroxide-anion"
+  ],
+  "components": [
+    {
+      "component_id": "carbon-dioxide",
+      "reference_enthalpy_j_per_mol": -391399.85172229767,
+      "cp_coefficients_j_per_mol_k": [
+        39.53927707323952,
+        0.0405693353422067,
+        -5.1624979229653275e-05,
+        1.0745893116873632e-07,
+        -3.522484990314921e-10,
+        1.1856807469992604e-12,
+        -3.991930274604399e-15,
+        1.746136888887694e-17
+      ],
+      "max_fit_residual_j_per_mol": 7.60774128139019e-08,
+      "role": "neutral_anchor"
+    },
+    {
+      "component_id": "monoethanolamine",
+      "reference_enthalpy_j_per_mol": -439845.54719216353,
+      "cp_coefficients_j_per_mol_k": [
+        108.88907327362695,
+        0.17481134652450347,
+        0.00012615927796120753,
+        5.537017911950531e-07,
+        -4.751047880790044e-09,
+        -5.894155554016902e-12,
+        2.85678364319779e-14,
+        -2.0120040034664638e-16
+      ],
+      "max_fit_residual_j_per_mol": 3.247987478971481e-08,
+      "role": "neutral_anchor"
+    },
+    {
+      "component_id": "water",
+      "reference_enthalpy_j_per_mol": -239696.85534691147,
+      "cp_coefficients_j_per_mol_k": [
+        43.30046433882317,
+        -0.024122642655064187,
+        4.8980132639790714e-05,
+        -4.5074249606534703e-07,
+        5.992989983110052e-09,
+        -2.043858471077461e-11,
+        6.478839850256515e-14,
+        -2.436112848016069e-16
+      ],
+      "max_fit_residual_j_per_mol": 1.1175870895385742e-07,
+      "role": "neutral_anchor"
+    },
+    {
+      "component_id": "protonated-monoethanolamine",
+      "reference_enthalpy_j_per_mol": -1241508.879099005,
+      "cp_coefficients_j_per_mol_k": [
+        111.1890615509778,
+        0.3627211948956149,
+        0.008728712855174998,
+        5.0317955745036776e-05,
+        1.448693025394891e-07,
+        -5.251074899306188e-10,
+        -8.712952500248072e-12,
+        -1.4690566272437617e-14
+      ],
+      "max_fit_residual_j_per_mol": 9.665451943874359e-05,
+      "role": "reaction_and_gauge_determined"
+    },
+    {
+      "component_id": "carbamate-anion",
+      "reference_enthalpy_j_per_mol": 576475.883656861,
+      "cp_coefficients_j_per_mol_k": [
+        66.59602043597457,
+        -0.7064142068689444,
+        -0.008616627911184444,
+        -0.00014638892312855586,
+        -1.975368579891928e-07,
+        1.480605134016577e-09,
+        1.1893111092934108e-11,
+        8.070278622685576e-14
+      ],
+      "max_fit_residual_j_per_mol": 2.2536027245223522e-05,
+      "role": "reaction_and_gauge_determined"
+    },
+    {
+      "component_id": "bicarbonate-anion",
+      "reference_enthalpy_j_per_mol": 836014.5160793375,
+      "cp_coefficients_j_per_mol_k": [
+        -65.79747123418153,
+        -0.6199156528339074,
+        -0.01504499839781841,
+        -0.0001305877330407804,
+        -2.6592030616799637e-07,
+        1.301069295461964e-09,
+        1.5145741811533232e-11,
+        6.145372064035591e-14
+      ],
+      "max_fit_residual_j_per_mol": 8.024938870221376e-05,
+      "role": "reaction_and_gauge_determined"
+    },
+    {
+      "component_id": "carbonate-anion",
+      "reference_enthalpy_j_per_mol": 3315335.0329534053,
+      "cp_coefficients_j_per_mol_k": [
+        -149.47415246498946,
+        -1.6713606496677735,
+        -0.04192059568301146,
+        -0.0003604901256559373,
+        -7.645951446547427e-07,
+        3.7568800305291395e-09,
+        4.295955568168267e-11,
+        1.6847110159380482e-13
+      ],
+      "max_fit_residual_j_per_mol": 0.0002534063532948494,
+      "role": "reaction_and_gauge_determined"
+    },
+    {
+      "component_id": "hydronium-cation",
+      "reference_enthalpy_j_per_mol": -239696.85534691147,
+      "cp_coefficients_j_per_mol_k": [
+        43.30046433882187,
+        -0.0241226426546118,
+        4.898013264454172e-05,
+        -4.507424976483692e-07,
+        5.992989978921495e-09,
+        -2.0438583533631634e-11,
+        6.478839954621196e-14,
+        -2.4361151105656884e-16
+      ],
+      "max_fit_residual_j_per_mol": 1.1178781278431416e-07,
+      "role": "reaction_and_gauge_determined"
+    },
+    {
+      "component_id": "hydroxide-anion",
+      "reference_enthalpy_j_per_mol": 1320557.9297240945,
+      "cp_coefficients_j_per_mol_k": [
+        -8.087655158519167,
+        -0.7025916896937536,
+        -0.013865151250945095,
+        -0.00013397449057161615,
+        -2.435598626810672e-07,
+        1.262437166051534e-09,
+        1.5248756520857387e-11,
+        5.945741743361063e-14
+      ],
+      "max_fit_residual_j_per_mol": 8.922792039811611e-05,
+      "role": "reaction_and_gauge_determined"
+    }
+  ],
+  "max_vant_hoff_residual_between_grid_points_j_per_mol": 0.00012996233999729156,
+  "vant_hoff_check_tolerance_j_per_mol": 0.001,
+  "gauge": "conserved-component enthalpy constants are formation-enthalpy pinned; their temperature dependence is anchored by thermal data",
+  "scientific_fingerprint": "sha256:6919acbc3f1125b89363dd6997fcfd936036854768cd4c47d845d0133c8b0648"
+}

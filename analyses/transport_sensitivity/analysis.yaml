@@ -1,0 +1,13 @@
+id: transport_sensitivity
+title: Case 3C transport correlation sensitivity
+status: active
+summary: One-at-a-time liquid viscosity, free-CO2 diffusivity and liquid-side transfer coefficient effects on capture and peak temperature.
+inputs:
+  - path: figures/response/input
+    kind: manuscript model, thermodynamic bundle and reference column snapshots
+outputs:
+  - path: figures/response/output
+    kind: retained runs, numerical checks, comparison table and figure
+commands:
+  reproduce: See README.md for the explicit manuscript checkout and Engine interpreter.
+  render-notebook: bash render.sh notebook.qmd

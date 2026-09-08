@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import csv
-import hashlib
-import json
 import math
 from functools import lru_cache
 from pathlib import Path
@@ -210,12 +208,6 @@ def _model_families(dataset: Path) -> list[dict[str, object]]:
                 f"{base}/user_options.json:empirical relative-permittivity rule"
             ),
         },
-        {
-            "family_id": "model/polar",
-            "kind": "polar",
-            "choice": "none",
-            "provenance": _model_provenance(f"{base}/pure/any_solvent.csv:no polar model"),
-        },
     ]
 
 
@@ -403,9 +395,6 @@ def _pair_records(dataset: Path) -> list[dict[str, object]]:
 @lru_cache(maxsize=8)
 def parameter_document(dataset_text: str) -> dict[str, object]:
     dataset = Path(dataset_text)
-    parameter_path = dataset if dataset.is_file() else dataset / "parameters.json"
-    if parameter_path.exists():
-        return json.loads(parameter_path.read_text(encoding="utf-8"))
     rows = _load_pure_rows(dataset)
     return {
         "schema": "epcsaft.parameters",
@@ -435,41 +424,6 @@ def parameter_document(dataset_text: str) -> dict[str, object]:
     }
 
 
-def dataset_content_sha256(dataset_text: str) -> str:
-    """Return a relocation-invariant SHA-256 for one parameter file or dataset tree."""
-    dataset = Path(dataset_text)
-    if dataset.is_file():
-        return hashlib.sha256(dataset.read_bytes()).hexdigest()
-    manifest = [
-        (path.relative_to(dataset).as_posix(), hashlib.sha256(path.read_bytes()).hexdigest())
-        for path in sorted(path for path in dataset.rglob("*") if path.is_file())
-    ]
-    return hashlib.sha256(
-        json.dumps(manifest, separators=(",", ":")).encode("utf-8")
-    ).hexdigest()
-
-
-def parameter_document_content_sha256(dataset_text: str) -> str:
-    """Hash the generated parameter document without checkout-path provenance."""
-    dataset_path = Path(dataset_text).as_posix()
-
-    def normalize(value):
-        if isinstance(value, dict):
-            return {key: normalize(item) for key, item in value.items()}
-        if isinstance(value, list):
-            return [normalize(item) for item in value]
-        if isinstance(value, str):
-            return value.replace(dataset_path, "<dataset>")
-        return value
-
-    canonical = json.dumps(
-        normalize(parameter_document(dataset_text)),
-        sort_keys=True,
-        separators=(",", ":"),
-    )
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-
-
 def component_ids(species: Iterable[str]) -> tuple[str, ...]:
     try:
         return tuple(LEGACY_TO_COMPONENT_ID[item] for item in species)
@@ -477,62 +431,21 @@ def component_ids(species: Iterable[str]) -> tuple[str, ...]:
         raise ValueError(f"Unknown MEA ePC-SAFT species: {exc.args[0]}") from exc
 
 
-def _parameters_at_temperature(parameter_path: Path, temperature_k: float | None):
+@lru_cache(maxsize=32)
+def parameters(dataset_text: str, species: tuple[str, ...]):
     import epcsaft
 
-    adjustment_path = parameter_path.with_name("temperature_adjustments.json")
-    if not adjustment_path.exists():
-        return epcsaft.Parameters.from_json(parameter_path)
-    if temperature_k is None:
-        raise ValueError(f"Temperature is required by {adjustment_path}")
-
-    adjustments = json.loads(adjustment_path.read_text(encoding="utf-8"))
-    expected_hash = adjustments["parameter_document_sha256"]
-    actual_hash = hashlib.sha256(parameter_path.read_bytes()).hexdigest()
-    if actual_hash != expected_hash:
-        raise RuntimeError(
-            f"ePC-SAFT parameter document hash mismatch: expected {expected_hash}, got {actual_hash}"
-        )
-    mapping = json.loads(parameter_path.read_text(encoding="utf-8"))
-    for relationship in adjustments["relationships"]:
-        if relationship["form"] != "linear_anchor":
-            raise ValueError(f"Unsupported ePC-SAFT temperature relationship: {relationship['form']}")
-        value = float(relationship["anchor_value"]) + float(relationship["slope_per_k"]) * (
-            float(temperature_k) - float(relationship["anchor_temperature_k"])
-        )
-        matches = [
-            coefficient
-            for pair in mapping["pairs"]
-            for coefficient in pair["coefficients"]
-            if coefficient["identity"] == relationship["identity"]
-        ]
-        if len(matches) != 1:
-            raise RuntimeError(
-                f"Expected one ePC-SAFT parameter {relationship['identity']}, found {len(matches)}"
-            )
-        matches[0]["value"]["magnitude"] = value
-    return epcsaft.Parameters.from_mapping(mapping)
-
-
-@lru_cache(maxsize=512)
-def parameters(dataset_text: str, species: tuple[str, ...], temperature_k: float | None = None):
-    import epcsaft
-
-    dataset = Path(dataset_text)
-    parameter_path = dataset if dataset.is_file() else dataset / "parameters.json"
-    if parameter_path.exists():
-        return _parameters_at_temperature(parameter_path, temperature_k).select(component_ids(species))
     return epcsaft.Parameters.from_mapping(
         parameter_document(dataset_text),
         components=component_ids(species),
     )
 
 
-@lru_cache(maxsize=512)
-def mixture(dataset_text: str, species: tuple[str, ...], temperature_k: float | None = None):
+@lru_cache(maxsize=32)
+def mixture(dataset_text: str, species: tuple[str, ...]):
     import epcsaft
 
-    return epcsaft.Mixture(parameters(dataset_text, species, temperature_k))
+    return epcsaft.Mixture(parameters(dataset_text, species))
 
 
 def state(mixture_model, *, temperature_k: float, pressure_pa: float, composition, phase: str):
@@ -577,54 +490,3 @@ def fugacity_coefficients(state_value) -> tuple[float, ...]:
     if any(not math.isfinite(value) or value <= 0.0 for value in coefficients):
         raise RuntimeError("ePC-SAFT returned a nonpositive or nonfinite fugacity coefficient")
     return coefficients
-
-
-def certify_homogeneous_reactive_liquid_state(
-    request_mapping,
-    dataset_text: str,
-    species: tuple[str, ...],
-) -> dict[str, object]:
-    import epcsaft
-    from epcsaft import equilibrium
-
-    problem = equilibrium.general_reactive_equilibrium_problem_from_mapping(request_mapping)
-    if len(problem.phases) != 1:
-        raise ValueError("Expected one homogeneous liquid phase")
-    temperature_k = float(problem.temperature.value.to("kelvin").magnitude)
-    pressure_pa = float(problem.pressure.value.to("pascal").magnitude)
-    parameter_set = parameters(dataset_text, species, temperature_k)
-    model = epcsaft.Mixture(parameter_set)
-    phase = problem.phases[0]
-    owner = equilibrium.HomogeneousReactiveObservationProblem(
-        problem.identity,
-        phase.identity,
-        phase.fluid_role,
-        equilibrium.ProviderPhase(model, phase.model.admissible_packing_fraction_interval),
-        problem.reaction_system,
-        phase.continuation_identity,
-        phase.branch_policy,
-    )
-    reference = equilibrium.certify_homogeneous_continuation_reference(
-        owner,
-        temperature_k * epcsaft.unit_registry.kelvin,
-        pressure_pa * epcsaft.unit_registry.pascal,
-        maximum_log_composition_distance=2.0,
-        maximum_log_volume_distance=2.0,
-    )
-    composition = tuple(float(value) for value in reference.mole_fractions)
-    density_mol_m3 = 1.0 / float(reference.molar_volume_m3_per_mol)
-    state_value = state_at_density(
-        model,
-        temperature_k=temperature_k,
-        density_mol_m3=density_mol_m3,
-        composition=composition,
-    )
-    return {
-        "temperature_k": temperature_k,
-        "pressure_pa": pressure_pa,
-        "composition": composition,
-        "density_mol_m3": density_mol_m3,
-        "fugacity_coefficients": fugacity_coefficients(state_value),
-        "parameter_fingerprint": str(parameter_set.fingerprint),
-        "certificate_fingerprint": reference.anchor_phase_role_receipt_fingerprint,
-    }

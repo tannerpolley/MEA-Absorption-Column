@@ -1,0 +1,68 @@
+{
+  "reference_check": "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/tests/test_reactive_column_jacobian.py",
+  "reference_sha256": "86802f23ad467ea51037e7d73ebf84ee3135f06437a43c3f1176775093c1441d",
+  "scope": "Complete seven-state RHS directional derivative, exact-state reuse and failed-input isolation; existing check step 1e-3, rtol 2e-5, atol 2e-8 above native root noise. Lean Case 3C state.",
+  "profile_shape_finiteness_checks_passed": true,
+  "results": [
+    {
+      "quantity": "viscosity",
+      "factor": 0.9,
+      "passed": true,
+      "seconds": 4.400242777999665,
+      "calls": {
+        "numeric": 5,
+        "symbolic": 1
+      }
+    },
+    {
+      "quantity": "viscosity",
+      "factor": 1.1,
+      "passed": true,
+      "seconds": 3.8313357539991557,
+      "calls": {
+        "numeric": 5,
+        "symbolic": 1
+      }
+    },
+    {
+      "quantity": "diffusivity",
+      "factor": 0.9,
+      "passed": true,
+      "seconds": 3.705946068999765,
+      "calls": {
+        "numeric": 5,
+        "symbolic": 1
+      }
+    },
+    {
+      "quantity": "diffusivity",
+      "factor": 1.1,
+      "passed": true,
+      "seconds": 4.09407192099934,
+      "calls": {
+        "numeric": 5,
+        "symbolic": 1
+      }
+    },
+    {
+      "quantity": "kl",
+      "factor": 0.9,
+      "passed": true,
+      "seconds": 3.603363739000997,
+      "calls": {
+        "numeric": 5,
+        "symbolic": 1
+      }
+    },
+    {
+      "quantity": "kl",
+      "factor": 1.1,
+      "passed": true,
+      "seconds": 3.667890149001323,
+      "calls": {
+        "numeric": 5,
+        "symbolic": 1
+      }
+    }
+  ]
+}

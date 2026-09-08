@@ -1,0 +1,65 @@
+{
+  "scope": "Static physical callback leaves and scalar analytic startup; no thermodynamic evaluation or column solve. No measured native speedup claim.",
+  "source_sha256": {
+    "analyses/bvp_solution_methods/scripts/inspect_solver_graph.py": "d78896d9f878dff2c0d6dd10f21874bc59e0db3651a59dc8449dd64f731c68df",
+    "analyses/bvp_solution_methods/input/case_3c.json": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+    "src/mea_absorption_column/BVP/Coupled_Column.py": "72ba7324aa5291cf0c6a16ad5e97fb421072f2034d3f41fa55d25a3078315964",
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "26941095b1a30dd50e11b170a785ffc7e6ae43a74c88821dcbbc47b74400f172"
+  },
+  "graphs": {
+    "default": {
+      "nlp_g": {
+        "inspect_liquid": 2,
+        "inspect_vapor": 4,
+        "inspect_liquid_loading_tangent": 6,
+        "inspect_vapor_caloric": 2
+      },
+      "nlp_jac_g": {
+        "inspect_liquid": 6,
+        "inspect_vapor": 12,
+        "inspect_liquid_loading_tangent": 18,
+        "inspect_vapor_caloric": 6,
+        "jac_inspect_liquid": 2,
+        "jac_inspect_vapor": 4,
+        "jac_inspect_liquid_loading_tangent": 6,
+        "jac_inspect_vapor_caloric": 2
+      }
+    },
+    "inline_cse_jacobian": {
+      "nlp_g": {
+        "inspect_liquid": 2,
+        "inspect_vapor": 4,
+        "inspect_liquid_loading_tangent": 6,
+        "inspect_vapor_caloric": 2
+      },
+      "nlp_jac_g": {
+        "inspect_liquid": 4,
+        "inspect_vapor": 8,
+        "inspect_liquid_loading_tangent": 12,
+        "inspect_vapor_caloric": 4,
+        "jac_inspect_liquid": 2,
+        "jac_inspect_vapor": 4,
+        "jac_inspect_liquid_loading_tangent": 6,
+        "jac_inspect_vapor_caloric": 2
+      }
+    }
+  },
+  "startup_problem": "x^2-1=0, x0=.5, bounds [0,10], constant zero objective, max_iter=0",
+  "startup": [
+    {
+      "scaling": "gradient-based",
+      "jacobian_calls": 2,
+      "constraint_calls": 1,
+      "iterations": 0,
+      "status": "Maximum_Iterations_Exceeded"
+    },
+    {
+      "scaling": "none",
+      "jacobian_calls": 1,
+      "constraint_calls": 1,
+      "iterations": 0,
+      "status": "Maximum_Iterations_Exceeded"
+    }
+  ],
+  "ipopt_option_source": "https://coin-or.github.io/Ipopt/OPTIONS.html#OPT_nlp_scaling_method"
+}

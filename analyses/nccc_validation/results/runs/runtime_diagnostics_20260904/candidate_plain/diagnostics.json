@@ -1,0 +1,51 @@
+{
+  "events": [
+    {
+      "name": "initialization",
+      "stage": "henry_initialization",
+      "parent": null,
+      "depth": 0,
+      "wall_s": 7.172735223000927,
+      "cpu_s": 7.168815672000001,
+      "exclusive_s": 7.172735223000927
+    },
+    {
+      "name": "reactive_run_model",
+      "stage": "reactive_column",
+      "parent": null,
+      "depth": 0,
+      "wall_s": 268.2953467009993,
+      "cpu_s": 267.57131719999995,
+      "exclusive_s": 268.2953467009993
+    },
+    {
+      "name": "serialization",
+      "stage": "serialization",
+      "parent": null,
+      "depth": 0,
+      "wall_s": 0.023588115000166,
+      "cpu_s": 0.023589815999969233,
+      "exclusive_s": 0.023588115000166
+    }
+  ],
+  "native": {
+    "recordings": 454364,
+    "recording_ns": 17437968371,
+    "tape_ops": 792164239,
+    "jacobian_calls": 454364,
+    "hessian_calls": 454364,
+    "forward_calls": 454364,
+    "sweep_ns": 238316366540,
+    "association_solves": 438647,
+    "association_iterations": 2859300
+  },
+  "proc_stat_before": "cpu  8881182 154166 818121 9095758 21008 0 9178 0 0 0",
+  "proc_stat_after": "cpu  8940585 154169 826854 9355517 21239 0 9303 0 0 0",
+  "usage": {
+    "ru_utime": 273.463263,
+    "ru_stime": 1.305372,
+    "ru_nvcsw": 0,
+    "ru_nivcsw": 13306
+  },
+  "max_rss_kb": 210624
+}

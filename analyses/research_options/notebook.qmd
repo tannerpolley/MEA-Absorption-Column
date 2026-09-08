@@ -1,0 +1,88 @@
+---
+title: "Absorber research: formulations, methods and next comparisons"
+date: 2026-09-08
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  enabled: false
+---
+
+# Research question
+
+When do thermodynamic and interphase-model choices change predicted capture and
+axial temperature, and which numerical methods resolve those changes efficiently?
+The submitted revision is preserved separately. This notebook organizes retained
+findings and possible next studies; no new column calculation was performed during
+branch consolidation.
+
+# Select the calculation explicitly
+
+A study TOML file selects a formulation, thermodynamic model, film closure,
+method, cases and numerical settings. Preview prints the selection without
+importing the model. Execution requires `--run` and a new output directory.
+
+```bash
+python3 src/mea_absorption_column/research.py --list-options
+python3 src/mea_absorption_column/research.py analyses/research_options/options.toml
+```
+
+| Formulation | Implemented selections | Meaning |
+|---|---|---|
+| Seven-state column | Henry, neutral/ionic ePC-SAFT or nine-species reactive ePC-SAFT; explicit/implicit enhancement or supplied film linearization; shooting, SciPy BVP or finite differences | Existing column balances and empirical calorics, with explicitly selected closures |
+| Conserved balances supplied by a study | Trapezoidal, centered, shooting or adaptive collocation | The builder supplies compatible thermodynamics, film, balances and boundaries; a method change need not change those equations |
+| Twelve-state coupled-column experiment | Preserved source and numerical evidence at `archive/coupled-solver-2026-09-08` | Not yet integrated with the shared seven-state derivative/caloric interface |
+
+A linearized film profile is a frozen input to an outer iteration. It is not a
+solved film at every new column state. Native derivatives currently cover the
+explicit-enhancement seven-state path; unsupported derivative combinations fail
+rather than masquerade as an exact Jacobian. Estimated parameters and preliminary
+methods remain usable research topics without being labelled validated.
+
+# Retained findings and potential promotions
+
+| Study | Retained finding | Next discriminating work |
+|---|---|---|
+| Submitted nine-species column | Seven-case evaluation, Case 3C refinement and sensitivity studies are retained on `codex/fallback-manuscript` | Use as a stated reference when relevant; it does not define every research case |
+| Equilibrium-manifold film campaign | Film capture MAE 6.700 percentage points versus 4.038 for its enhancement comparator; estimated mobility and mixed bulk/film changes limit interpretation | Separate bulk-thermodynamic changes from film changes on common inputs before attributing improvement |
+| Film numerical reachability | One provisional state completed after 592.179 s, six iterations and 355 points; kinetics/diffusivities were unresolved | Resolve physical inputs before interpreting the computed flux as an experimental prediction |
+| CasADi RHS comparison | A value-only callback did not supply the required total derivative; disposable finite-difference trials did not establish the target speedup | Use an explicitly differentiable formulation; compare cost at matched numerical accuracy |
+| Conservative-method development | Analytic checks and consistent single-node recovery are retained; a full-column method ranking is absent | Establish a coherent coupled builder and converged trajectory before a physical timing/refinement comparison |
+| MDEA and eNRTL | MDEA interface groundwork is retained, but neither is an integrated selectable column model here | Supply equations, parameter/reaction bases and mapped observations before claiming a comparable model |
+
+Source records: `analyses/reactive_film_evidence/notebook.qmd`,
+`analyses/issue16_reactive_film_runtime/notebook.qmd`,
+`analyses/bvp_derivative_trials/results/final/reports/issue22_casadi_comparison.md`,
+and `analyses/bvp_solution_methods/README.md`. Earlier numerical values retain
+their original source/wheel identities. A newer source tree does not rewrite them.
+
+# Comparison design
+
+Change one specified closure at a time when interpreting its effect. Compare
+common feed bases, geometry, transport assumptions and reaction definitions;
+then investigate their interactions explicitly. Keep numerical residuals,
+conservation, profile refinement, observed agreement and runtime scope separate.
+A model may converge and still disagree with observations. A timeout is a measured
+budget outcome, not evidence that the physical equations have no solution.
+
+# Evidence preservation
+
+The submitted ZIP is byte-identical to the retained 4 September package, and its
+33 revised-source files match the archive. The archive includes checksum and
+reproduction instructions and selected raw results, including failed attempts.
+Exact Engine wheels remain separately required for numerical reproduction.
+No manuscript equations, text or figures were edited during research integration.
+
+The clean archive branch is `codex/fallback-manuscript` at `eef9dce`.
+The coupled-workspace preservation commit is
+`79f8b6cae8b65a4f0bf3d9f05aaba7d476dda5f4`.
+These records support retrieval and inspection without rerunning calculations.
+
+# Working practice
+
+Create a study configuration, run it separately into a new directory, inspect its
+results and failures, then update an analysis notebook. Render with execution
+disabled. Candidate promotions should state the scientific question, exact inputs,
+method, checks, uncertainty and what remains unexplained. Manuscript editing is
+outside this research phase.

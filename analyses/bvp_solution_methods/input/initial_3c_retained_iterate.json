@@ -1,0 +1,125 @@
+{
+  "physical_inputs": {
+    "case_id": "corrected published 2017 3C",
+    "height_m": 6.0,
+    "area_m2": 0.3216990877275948,
+    "packing": [
+      250.0,
+      0.97,
+      0.203,
+      0.35,
+      0.017,
+      0.292,
+      0.119
+    ],
+    "liquid_feed_mol_s": [
+      2.4323205276203805,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "vapor_feed_mol_s": [
+      1.6540435157308098,
+      1.5624169375299577,
+      14.530683358624426,
+      1.6006872732878803
+    ],
+    "liquid_temperature_k": 318.15,
+    "vapor_temperature_k": 316.75,
+    "bottom_pressure_pa": 110900.0,
+    "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+    "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+    "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+    "reported_top_pressure_pa": 109500.0,
+    "liquid_branch_policy": {
+      "loading_anchor": 0.25,
+      "max_log_loading_step": 0.1,
+      "max_loading_steps": 32
+    },
+    "species_diffusivity_model": {
+      "co2_prefactor_m2_s": 3.14e-07,
+      "co2_activation_j_mol": 15230.0,
+      "gas_constant_j_mol_k": 8.314462618,
+      "other_species_m2_s": [
+        8.8e-10,
+        8.8e-10,
+        8.4e-10,
+        6.8e-10,
+        6.8e-10,
+        6.8e-10,
+        1.8439088914585774e-09,
+        1.8439088914585774e-09
+      ],
+      "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+    }
+  },
+  "engine_identity": {
+    "engine_commit": "9e1bef97fbea5c6f465612ae27b054192f91f19c",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b",
+    "core_sha256": "b5f97d49eb9439da84312dbeacb8ac0bae26ce6939562339a3c73d842fccce34"
+  },
+  "grid": [
+    0.0,
+    6.0
+  ],
+  "profile": [
+    [
+      4.069823608193883,
+      2.4323205276203805
+    ],
+    [
+      76.22455393464247,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      0.016540435157308297
+    ],
+    [
+      1.5624169375299577,
+      2.313055510179058
+    ],
+    [
+      330.31923341593136,
+      318.15
+    ],
+    [
+      316.75,
+      330.30750625081123
+    ],
+    [
+      110900.0,
+      110374.36916944658
+    ],
+    [
+      0.051608815291480745,
+      0.05271514147522401
+    ],
+    [
+      0.0024883862710670048,
+      0.015146393188025898
+    ],
+    [
+      -0.1613722232981249,
+      0.16620227097995838
+    ],
+    [
+      36719.10457513023,
+      -44923.82802314646
+    ],
+    [
+      -0.004320207656002273,
+      0.6543374718088129
+    ]
+  ],
+  "initial_guess_only": true,
+  "physical_certification": {
+    "accepted": false
+  },
+  "scope": "Actual rejected IPOPT iterate retained only as an outer initial guess; original physical equations must be rechecked",
+  "source_record": "analyses/bvp_solution_methods/results/owner_3c_baseline_shared_evaluation.json",
+  "source_sha256": "f1575c34af590598628e1e1cdbe0d5a4af18be519722578a429748bf1734c093",
+  "source_pointer": "/iteration_observations/1/profile",
+  "source_scaled_residual_inf": 21.888647279617214,
+  "source_execution_status": "wall_timeout"
+}

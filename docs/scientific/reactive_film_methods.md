@@ -1,7 +1,9 @@
 # Reactive-film formulation and numerical method
 
-Status: issue 16 architecture and gate evidence. Placeholder-dependent results
-are `provisional_concept_only` and are not manuscript evidence.
+Historical scope: issue 16 finite-rate formulation and its supporting checks.
+The current manuscript uses the equilibrium-manifold formulation identified in
+CONTEXT.md. The results below retain their original `provisional_concept_only`
+meaning and are not current manuscript evidence.
 
 ## Species and reactions
 

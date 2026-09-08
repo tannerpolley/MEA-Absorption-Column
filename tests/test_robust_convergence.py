@@ -90,19 +90,13 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
     class FakeSolution:
         success = True
         message = "ok"
-        status = 0
-        niter = 1
-        rms_residuals = np.zeros(2)
 
         def __init__(self, x, y):
             self.x = x
-            self.y = y
             self._y = y
 
-        def sol(self, z, derivative=0):
-            if derivative:
-                return np.zeros((self._y.shape[0], len(z)))
-            return np.repeat(self._y[:, :1], len(z), axis=1)
+        def sol(self, _z):
+            return self._y
 
     def fake_solve_bvp(_fun, _bc, z, y, **_kwargs):
         captured["initial_guess"] = y
@@ -111,12 +105,10 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
 
     monkeypatch.setattr(scipy_bvp_module, "polynomial_fit", fake_polynomial_fit)
     monkeypatch.setattr(scipy_bvp_module, "solve_bvp", fake_solve_bvp)
-    monkeypatch.setattr(scipy_bvp_module, "_column_rhs", lambda *_args, **_kwargs: np.zeros(7))
 
     y_a_scaled = np.ones(7)
     y_b_scaled = np.ones(7)
-    diagnostics = {}
-    parameters = (np.ones(7), None, None, None, None, None, {"solver_diagnostics": diagnostics})
+    parameters = (np.ones(7),)
 
     scipy_bvp_module.scipy_BVP_solve(
         y_a_scaled,
@@ -127,8 +119,6 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
     )
 
     assert "initial_guess" in captured
-    assert diagnostics["dense_grid_points"] == 12
-    assert diagnostics["solver_final_nodes"] == 3
 
 
 def test_sanitize_scaled_state_clips_flows_and_pressure_without_mutating_input():
@@ -464,7 +454,7 @@ def test_collocation_success_gate_accepts_low_residual_final_iterate():
         message="A singular Jacobian encountered when solving the collocation system.",
         boundary_residual_norm=0.04,
         capture_error_pct=0.1,
-        settings={},
+        settings={"accept_low_residual_final_iterate": True},
     )
 
     assert success is True
@@ -478,7 +468,7 @@ def test_collocation_success_gate_rejects_large_capture_error_even_with_low_boun
         message="A singular Jacobian encountered when solving the collocation system.",
         boundary_residual_norm=0.04,
         capture_error_pct=7.0,
-        settings={},
+        settings={"accept_low_residual_final_iterate": True, "accept_capture_error_max_pct": 5.0},
     )
 
     assert success is False
@@ -492,7 +482,7 @@ def test_collocation_low_residual_acceptance_uses_explicit_capture_gate():
         message="A singular Jacobian encountered when solving the collocation system.",
         boundary_residual_norm=0.04,
         capture_error_pct=6.5,
-        settings={"success_capture_error_max_pct": 8.0},
+        settings={"accept_low_residual_final_iterate": True, "success_capture_error_max_pct": 8.0},
     )
 
     assert success is True
@@ -736,3 +726,13 @@ def test_run_model_accepts_documented_calibration_factor_settings():
     assert result.success is True
     assert calls[0]["solver_settings"]["mass_transfer_factor"] == 0.5
     assert calls[0]["solver_settings"]["heat_transfer_factor"] == 0.8
+
+
+@pytest.mark.parametrize("method", ["single", "finite", "scipy-bvp"])
+def test_research_capture_agreement_is_opt_in(method):
+    args = dict(method=method, solver_success=True, message="converged",
+                boundary_residual_norm=0.0, capture_error_pct=50.0)
+    assert _apply_method_success_gates(**args, settings={})[0]
+    assert not _apply_method_success_gates(**args, settings={"success_capture_error_max_pct": 10.0})[0]
+    args.update(solver_success=False)
+    assert not _apply_method_success_gates(**args, settings={})[0]

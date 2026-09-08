@@ -1,0 +1,85 @@
+{
+  "decision": "adopted_as_exploratory_incumbent",
+  "candidate_shifts_kj_mol": {
+    "R1": -0.000679939316315813,
+    "R2": -8.201884540543741,
+    "R3": -0.21602074127857132,
+    "R4": -4.807846566322937,
+    "R5": 8.418523404172149
+  },
+  "comparison": {
+    "pressure_calibration": {
+      "count": 143,
+      "baseline_rmse": 0.3343557397910572,
+      "candidate_rmse": 0.2365562443181109,
+      "baseline_bias": -0.12080948223119838,
+      "candidate_bias": 0.056783150538454
+    },
+    "pressure_holdout_xu2011": {
+      "count": 18,
+      "baseline_rmse": 0.3096495883420793,
+      "candidate_rmse": 0.19014147351899996,
+      "baseline_bias": -0.28825684231348386,
+      "candidate_bias": 0.1374207002583239
+    },
+    "speciation": {
+      "count": 125,
+      "baseline_rmse": 0.37018444745264484,
+      "candidate_rmse": 0.36695237746727793,
+      "baseline_bias": -0.08614580240168325,
+      "candidate_bias": -0.08647867137806538
+    },
+    "heat_calibration_40_80": {
+      "count": 66,
+      "baseline_rmse": 20.011133955556144,
+      "candidate_rmse": 11.844651609942947,
+      "baseline_bias": -17.009272918502724,
+      "candidate_bias": -2.3408202969469825
+    },
+    "heat_holdout_120": {
+      "count": 20,
+      "baseline_rmse": 39.30286299660907,
+      "candidate_rmse": 31.151272034566915,
+      "baseline_bias": -28.77054118595122,
+      "candidate_bias": -18.776197957574528
+    },
+    "heat_model_selection_kim2014": {
+      "count": 27,
+      "baseline_rmse": 16.837914604673845,
+      "candidate_rmse": 10.70966102913145,
+      "baseline_bias": -14.849461612684767,
+      "candidate_bias": -1.520429439797894
+    }
+  },
+  "evaluability": {
+    "pressure": {
+      "baseline": 161,
+      "candidate": 161
+    },
+    "speciation": {
+      "baseline": 125,
+      "candidate": 129
+    },
+    "heat": {
+      "baseline": 113,
+      "candidate": 113
+    }
+  },
+  "rules": {
+    "evaluability_not_below_incumbent": true,
+    "held_out_blocks_improved": [
+      "pressure_holdout_xu2011",
+      "heat_holdout_120"
+    ],
+    "no_cohort_degraded": true,
+    "degraded_cohorts": [],
+    "interior_solution": true
+  },
+  "incumbent_parameter_sha256": "00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+  "parameter_sha256": "00049473d53c7e8088ef3e2dbbc6a1bab058f6dc4de963ee98936b4cd9bda25e",
+  "engine_wheel_sha256": "40fba7cfb9c8414152f3e49636c49ae2e3f7099e30040d54d464ccb38355f805",
+  "driver_sha256": "7af02417e88b7514ee49d8fca7b81f12985a031e3711786f3c976bc4188b1725",
+  "policy": "baseline-replay-recovery-v1",
+  "thermochemistry": null,
+  "adopted_parameter_sha256": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9"
+}

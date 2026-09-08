@@ -1,0 +1,222 @@
+---
+title: "Case 3C: measured Engine acceleration"
+subtitle: "Nine-species reactive ePC-SAFT with enhancement-factor transport"
+execute:
+  enabled: false
+---
+
+Updated 4 September 2026. The user accepts the faster Engine implementation
+for this experimental revision, including the separate regression documented
+below. This is not a claim that every Engine test passes or that performance
+is optimal. No manuscript source or environment was modified.
+
+## Manuscript results first
+
+The completed seven-case temperature and capture figures, source observations,
+numerical checks, captions, and integration guidance are in
+[the figure handoff](../../../figures/reactive_parallel/README.md).
+All seven cases converged; capture mean absolute error is 5.85483 percentage
+points. The substantial 6C/7C discrepancies remain visible.
+These results use reactive nine-species bulk equilibrium, conventional
+enhancement-factor transport, and empirical energy closure—not a resolved
+reactive film, eNRTL comparison, or exact axial energy-conservation demonstration.
+The cases do not need repeating solely to obtain a runtime example.
+
+## Measured runtime
+
+Three sequential fresh-start runs used the normal optimized wheel with no
+call observers or temporary native tracing.
+
+| Run | BVP wall (s) | BVP CPU (s) | Initialization, calculation and profiles (s) |
+|---|---:|---:|---:|
+| optimized_plain_1 | 34.8856 | 34.6506 | 51.7262 |
+| optimized_plain_2 | 34.6569 | 34.5428 | 51.2601 |
+| optimized_plain_3 | 34.4052 | 34.2316 | 51.4535 |
+
+Median BVP time is **34.66 s**, range **34.41–34.89 s**. Median whole calculation
+time is **51.45 s**, range **51.26–51.73 s**. Relative to the first-pass normal
+wheel's measured 208.756 s BVP, this is approximately **6.02 times faster**
+(83.4% less elapsed time). This is a comparison of measured configurations on
+a shared desktop, not a theoretical optimum or an isolated hardware benchmark.
+Peak process RSS across these runs is 203.51–207.86 MiB.
+
+All three predict **91.54328696744% capture**. Against the first-pass result,
+the maximum temperature-profile difference is 5.24e-11 K and the largest
+difference across all 18 exported numerical tables, scaled by
+max(1, |reference value|), is 6.39e-10, below the retained 1e-8 criterion.
+The same 21-to-22-node mesh and two adaptive cycles are retained, with
+maximum RMS residual 0.125340382574, zero scaled boundary residual,
+physical boundary norm approximately 1.83e-14, and no domain guards or invalid
+states. These checks establish numerical agreement, not independent physical
+validity or mesh convergence.
+
+A subsequent rebuild restoring the accepted experimental implementation has
+a different wheel identity. Its fresh-start confirmation is retained separately
+under `accepted_experimental_plain/`: **35.7818 s BVP**, **52.8563 s whole
+calculation**, with the same capture, residuals, and mesh and no source changes.
+The three timings above belong to the
+identified measured wheel and are not silently relabeled as rebuild timings.
+
+## Conditions and timing definition
+
+Case 3C uses the adopted manuscript parameter set, neutral-vapor ePC-SAFT,
+conventional enhancement-factor transport, and empirical energy relations.
+The supplied column RHS Jacobian combines native thermodynamic derivatives
+with derivatives of column algebra. Each process starts with a fresh
+ideal-Henry initialization, not a previously solved reactive profile.
+
+Settings: 21 initial nodes, tolerance 0.5, boundary tolerance 0.001, maximum
+1000 nodes, explicit temperature states, raw state coordinates, reported dry
+gas mass flow, and exact state reuse. These are deliberately coarse column
+settings and must accompany any runtime claim.
+
+Hardware: AMD Ryzen 5 5500, six physical cores/twelve logical CPUs, approximately
+32 GB RAM, Linux; Python 3.13, NumPy 2.4.4, SciPy 1.17.1, pandas 3.0.2.
+BLAS/OpenMP/MKL each use one thread. The existing CPU governor and other users'
+processes were not changed. Runs were sequential on a shared desktop.
+
+Installed package files are verified against the wheel ZIP. Source, input,
+parameter, and wheel identities are recorded before each run and source files
+checked again afterward. Imports, environment preparation, input-file loading,
+and diagnostic-trace serialization are outside the timer. Fresh initialization,
+column execution, both phases' profile calculation, and profile CSV serialization
+are inside the whole-calculation timer. Peak RSS includes imported libraries.
+
+## What was actually accelerated
+
+The Engine now avoids unnecessary derivative calculations while retaining
+the governing equations and consumed derivative outputs:
+
+1. Exact primal-point phase reuse avoids repeated multiplier-independent EOS
+   evaluations inside IPOPT; multiplier changes recombine the required Hessian
+   algebra. Final certification remains fresh.
+2. Ordinary finite-phase source-reference conversion requests the first
+   temperature derivatives it consumes; explicitly requested higher-order
+   calculations retain their own complete derivatives.
+3. General-property evaluation computes the required exact temperature/density
+   Hessian actions instead of an unused full reduced Hessian.
+4. Pressure-root search and polishing use pressure and its density slope,
+   including implicit association. The accepted root still receives complete
+   properties and certification.
+5. Density linearization reuses the association owner's exact site Jacobian.
+   Phase blocks use exact Lagrangian Hessian actions along physical directions
+   instead of unnecessary independent association-site columns.
+
+No thermodynamic parameters, root bounds, polishing stencil, stability
+criteria, or numerical acceptance tolerances were relaxed. Finite differences
+in the new pressure-closure test are independent validation, not runtime
+derivative approximations. The retained 18-request thermodynamic replay has
+522 values and 2,610 Jacobian entries; maximum scaled differences from baseline
+are 3.23e-12 and 3.35e-9 respectively, with unchanged optimizer iteration counts
+and acceptable equilibrium certificates.
+
+## Complete measured time accounting
+
+The separately instrumented fast implementation recorded **8,097,579 nested
+native spans**. Exclusive native regions plus exclusive Python/remaining
+regions partition the measured experiment exactly in integer nanoseconds.
+Inclusive nested times must not be added together.
+
+| Stage | Total (s) | Native (s) | Python and remaining work (s) |
+|---|---:|---:|---:|
+| Initialization | 7.026249 | 0 | 7.026249 |
+| BVP | 35.576482 | 32.979377 | 2.597105 |
+| Profile calculation | 9.638970 | 8.963653 | 0.675317 |
+| Other setup/serialization | 0.115591 | 0 | 0.115591 |
+| Whole experiment | 52.357292 | 41.943030 | 10.414262 |
+
+The largest exclusive native BVP costs were phase Hessian actions (4.822 s),
+IPOPT algorithm/internal linear algebra outside callbacks (4.020 s),
+density Jacobian assembly (3.843 s), density recording/other work (3.670 s),
+density Hessian actions (2.762 s), dispersion (2.643 s), and phase Jacobian
+assembly (2.002 s). The BVP made 300,019 pressure/density evaluations,
+8,659 complete state evaluations, and 561 equilibrium calculations.
+The remaining costs and exact counts are retained in
+[the native cost table](contracted_full_trace/native_stage_costs.csv),
+[the Python cost table](contracted_full_trace/python_stage_costs.csv), and
+[the accounting checks](contracted_full_trace/time_accounting.json).
+Raw spans are retained as `contracted_full_trace/native_trace.npz`.
+No runtime plot is needed.
+
+This is an unsampled trace of named regions, not every machine instruction.
+Internal IPOPT library functions remain aggregated; the region named
+`equilibrium.kkt_sensitivities` specifically surrounds `populate_kkt_partials`,
+not the complete sensitivity calculation. Instrumented times identify costs;
+the normal-wheel timings above are the runtime result. There is no unexplained
+multi-second file-writing sink, but further optimization remains possible.
+
+## Accepted experimental regression and next work
+
+The fastest implementation passed the affected **114-test gate**, plus native
+architecture, lint, and typing checks. Running the four additional slow tests
+produced **three passes and one failure**, specifically
+`test_solved_temperature_boundaries_certify_bubble_dew_and_total_derivatives`.
+The failing vapor-reference center reaches the fixed-pressure temperature
+iteration limit. The liquid center and both parameter perturbations on each
+side pass. This is separate from the demonstrated Case 3C calculation.
+
+Controlled wheel comparisons isolate this regression to the phase-Hessian
+action variant: retaining the other optimizations but reverting that contraction
+passes all 118 tests. The fastest contraction was subsequently restored at the
+user's explicit direction. The failure is retained and disclosed, not waived
+as a passing test or hidden by changing tolerances.
+
+The temperature-boundary probe stagnates at 296.7724020931804 K, with a pressure
+residual of -6.03e-7 Pa against the 1.2e-7 Pa outer target; none of the sixteen
+tested neighboring representable temperatures meets that target. The nested
+fixed-temperature solver's pressure accuracy guarantee is looser than the
+outer temperature solver demands. This provides a concrete next diagnostic
+target: make nested accuracy consistent with the outer solve and verify its
+derivatives and termination, rather than merely increasing iteration limits.
+It does not prove that every failure of this type has the same cause.
+
+Further performance work should use the retained exclusive-cost evidence.
+Arbitrary cross-state tape reuse is not yet justified because the electrolyte
+finite-size expression changes its series branch with reference density.
+Any reuse must preserve those branches, derivative demands, and certification.
+No statement that all performance problems have been eliminated is supported.
+
+## Reviewer-ready runtime statement
+
+For the nine-species reactive ePC-SAFT Case 3C column with conventional
+enhancement-factor transport, three sequential runs of the optimized Engine
+required a median 34.66 s BVP wall time (34.41–34.89 s) on an AMD Ryzen 5 5500
+using single-thread numerical libraries. Including fresh Henry initialization
+and profile generation increased the median calculation time to 51.45 s.
+The mesh increased from 21 to 22 nodes at tolerance 0.5 and boundary tolerance
+0.001. These are scoped, coarse-mesh single-case measurements, not a general
+accuracy-matched ranking of numerical methods.
+
+## Identity and reproduction
+
+- Three-repeat measured normal wheel SHA-256:
+  `9b538f4defd5af661cd736af03760a55adb59b231d674f96c1e0f7d67350689d`.
+- Restored experimental wheel SHA-256:
+  `91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4`.
+- Full-trace wheel SHA-256:
+  `fb52495880ac8e04c38d5464cb72aa2c9b184997900e9c9b54c964ee034bb350`.
+- First-pass normal wheel SHA-256:
+  `3a739112575d4383d97bdc70227b75f8aa96a76c69ef233392a835a956844119`.
+- Parameter-file SHA-256:
+  `a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9`.
+- Evaluated model fingerprint:
+  `sha256:07e3f93b209d8e117af4b69e2d0ab3b5bc0b2e94568643c28629e4799d8aa062`.
+- Engine base `4563c6a89f8837ebb1bc24408b7177fa8d209e9d`, branch
+  `codex/reactive-evaluation-reuse`, uncommitted local changes.
+- Engine analysis:
+  `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project/analyses/reactive-evaluation-cost/`.
+  Its `scripts/full_trace_candidate.patch` retains the instrumented snapshot
+  against the base, not an incremental patch for the current checkout.
+  Temporary tracing has been removed from production source.
+- Aggregate files: `summary.csv`, `stages.csv`, `equilibrium_calls.csv`,
+  `newton_trials.csv`, `profile_comparisons.csv`; per-run directories retain
+  exact identities, settings, initialization, and full numerical outputs.
+
+Reproduce with `../../../scripts/diagnose_case3c_runtime.py NEW_LABEL --plain
+--wheel PATH` from the manuscript runtime checkout, its `src` on `PYTHONPATH`,
+using `uv run --isolated --no-project --python 3.13` and the identified wheel.
+Pin NumPy 2.4.4, SciPy 1.17.1, pandas 3.0.2, Matplotlib 3.10.9, openpyxl 3.1.5,
+and CasADi 3.7.2; set OPENBLAS_NUM_THREADS, OMP_NUM_THREADS, MKL_NUM_THREADS to 1
+and PYTHONDONTWRITEBYTECODE to 1. Use a new output label each time.
+Aggregate with `../../../scripts/summarize_case3c_runtime.py`.
+Rendering uses the existing analysis render script with code execution disabled.

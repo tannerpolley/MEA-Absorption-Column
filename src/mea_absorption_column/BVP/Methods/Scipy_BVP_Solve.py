@@ -1,4 +1,5 @@
 import numpy as np
+import time
 from scipy.integrate import solve_bvp
 from ...BVP.ABS_Column import abs_column
 from ...BVP.robust_core import (
@@ -34,20 +35,25 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     scales = parameters[0]
     transform_mode = settings.get('transform_mode', 'bounded_guarded_raw_state')
     guard_rhs = bool(settings.get('guard_rhs', True))
-    diagnostics = parameters[6].get("solver_diagnostics", {}) if len(parameters) > 6 else {}
-    rhs_calls = 0
-    rhs_nodes = 0
-    boundary_calls = 0
-    jacobian_calls = 0
+    native_jacobian = None
+    if settings.get('jacobian_mode') == 'native':
+        from ..reactive_jacobian import ReactiveColumnJacobian
+        native_jacobian = ReactiveColumnJacobian(parameters, transform_mode)
+    started = time.perf_counter()
+    evaluations = {'rhs_batches': 0, 'jacobian_batches': 0}
+
+    def progress(kind, nodes):
+        evaluations[kind] += 1
+        if settings.get('verbose', 0):
+            liquid = parameters[6].get('reactive_liquid')
+            print(f"column {kind}={evaluations[kind]} nodes={nodes} elapsed={time.perf_counter()-started:.2f}s "
+                  f"thermodynamics={liquid.stats if liquid is not None else {}}", flush=True)
 
     bcs_1 = np.array([Fl_CO2_b, Fl_H2O_b, Fv_CO2_a, Fv_H2O_a, Hlf_b, Hvf_a, P_a]) / scales
 
     # Define the system of differential equations for the absorption column
     def column_odes(z, w):
-        nonlocal rhs_calls, rhs_nodes
-        rhs_calls += 1
-        rhs_nodes += int(np.shape(w)[1])
-
+        progress('rhs_batches', w.shape[1])
         differentials = [
             _physical_rhs_to_solver_rhs(
                 w[:, i],
@@ -68,8 +74,6 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
 
     # Define the boundary conditions
     def boundary_conditions(bottom, top):
-        nonlocal boundary_calls
-        boundary_calls += 1
         # Enforce the boundary conditions at the bottom (vapor) and top (liquid)
         bottom = solver_to_scaled_physical(bottom, transform_mode=transform_mode)
         top = solver_to_scaled_physical(top, transform_mode=transform_mode)
@@ -82,9 +86,9 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
         return bcs_1 - bcs_2
 
     def fun_jac(x, y):
-        nonlocal jacobian_calls
-        jacobian_calls += 1
-
+        progress('jacobian_batches', y.shape[1])
+        if native_jacobian is not None:
+            return np.stack([native_jacobian(x[i], y[:, i]) for i in range(y.shape[1])], axis=2)
         fun = column_odes
         n, m = y.shape
 
@@ -112,6 +116,10 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     n = int(settings['mesh_points'])
     z_2 = np.linspace(z[0], z[-1], n)
     w_guess_scaled = _initial_guess_profile(settings, z, z_2, Y_a_scaled, scales, m)
+    if settings.get('thermal_state_mode') == 'temperature' and 'initial_guess_scaled' not in settings:
+        # The retained polynomial coefficients describe enthalpy, not kelvin.
+        for i in (4, 5):
+            w_guess_scaled[i] = np.linspace(Y_a_scaled[i], Y_b_scaled[i], n)
     if transform_mode == "positive_flow_pressure":
         w_guess_scaled[POSITIVE_SOLVER_IDXS, :] = np.clip(
             w_guess_scaled[POSITIVE_SOLVER_IDXS, :],
@@ -125,7 +133,7 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
 
     # Solve the BVP
 
-    jacobian_kwargs = {'fun_jac': fun_jac} if settings.get('use_finite_jacobian', False) else {}
+    jacobian_kwargs = {'fun_jac': fun_jac} if native_jacobian is not None or settings.get('use_finite_jacobian', False) else {}
     sol = solve_bvp(column_odes, boundary_conditions, z_2, w_guess_solver,
                     max_nodes=int(settings['max_nodes']),
                     tol=float(settings['tol']),
@@ -133,33 +141,19 @@ def scipy_BVP_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
                     verbose=int(settings['verbose']),
                     **jacobian_kwargs,
                     )
-    solver_rhs_calls = rhs_calls
-    solver_rhs_nodes = rhs_nodes
-    dense_z = np.linspace(float(sol.x[0]), float(sol.x[-1]), max(4 * int(sol.x.size), 2))
-    dense_y = sol.sol(dense_z)
-    dense_rhs = column_odes(dense_z, dense_y)
-    dense_derivative = sol.sol(dense_z, 1)
-    dense_residual = np.abs(dense_derivative - dense_rhs) / (1.0 + np.abs(dense_rhs))
-    dense_boundary = boundary_conditions(sol.y[:, 0], sol.y[:, -1])
-    diagnostics.update({
-        "solver_rhs_calls": solver_rhs_calls,
-        "solver_rhs_node_evaluations": solver_rhs_nodes,
-        "solver_boundary_calls": boundary_calls - 1,
-        "solver_jacobian_calls": jacobian_calls,
-        "solver_iterations": int(sol.niter),
-        "solver_final_nodes": int(sol.x.size),
-        "solver_mesh_nodes_added": int(sol.x.size - z_2.size),
-        "solver_max_rms_residual": float(np.max(sol.rms_residuals)),
-        "dense_grid_points": int(dense_z.size),
-        "dense_ode_residual_max": float(np.max(dense_residual)),
-        "dense_boundary_residual_max": float(np.max(np.abs(dense_boundary))),
-    })
     Y_scaled = solver_profile_to_scaled_physical(sol.sol(z), transform_mode=transform_mode)
     z = sol.x
 
     success = sol.success
     message = sol.message
-    diagnostics["jacobian_status"] = str(sol.status)
+    if len(parameters) > 6 and isinstance(parameters[6], dict):
+        parameters[6].get("solver_diagnostics", {}).update(
+            jacobian_status=str(sol.status),
+            solver_iterations=int(sol.niter),
+            final_mesh_nodes=int(sol.x.size),
+            max_rms_residual=float(np.max(sol.rms_residuals)),
+            max_scaled_boundary_residual=float(np.max(np.abs(boundary_conditions(sol.y[:, 0], sol.y[:, -1])))),
+        )
 
     return Y_scaled, z, 'SciPy collocation-style BVP', success, message
 

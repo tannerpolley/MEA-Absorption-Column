@@ -5,39 +5,34 @@
     "default_mode": "stable",
     "allowed_sources": {
       "stable": [
-        "local_file",
-        "release"
+        "local_file"
       ],
       "dev": [
-        "local_file",
-        "release"
+        "local_file"
       ],
       "final": [
-        "local_file",
-        "release"
+        "local_file"
       ]
     }
   },
   "final_identity": {
-    "engine_commit": "38e91823b6d4f26c1d549f07aaef24a089d8e16d",
+    "engine_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
     "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-    "wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
-    "core_sha256": "39c8f4aa0bc0455f3b192258a05329ad47547919ba420d16ab830fa84e4dee6e"
+    "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "reactive_inputs_sha256": {
+      "parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+      "reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+      "anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185",
+      "adoption-receipt.json": "bf178ed7b043e90dcca297ba9b80f1b262ef41bcdfe5e53af9211a1fe8b237e6",
+      "bundle.json": "19fe755463307b0df314f8a9e77b30a00e5b2f01adcc90a13b578f247f14fb05"
+    }
   },
   "required_public_symbols": [
     "Parameters",
     "Mixture",
-    "NonEvaluableTrial",
     "State",
     "unit_registry"
   ],
-  "required_public_module_symbols": {
-    "epcsaft.equilibrium": [
-      "ChemicalEquilibriumProblem",
-      "PhaseEquilibriumProblem",
-      "solve"
-    ]
-  },
   "forbidden_import_prefixes": [
     "epcsaft._"
   ],
@@ -46,8 +41,7 @@
     "src/mea_absorption_column/Thermodynamics/epcsaft_v02.py",
     "src/mea_absorption_column/Thermodynamics/reactive_bundle.py",
     "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py",
-    "analyses/nccc_validation/scripts/probe_reactive_epcsaft_speciation.py",
-    "analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py"
+    "analyses/nccc_validation/scripts/probe_reactive_epcsaft_speciation.py"
   ],
   "private_import_exception_paths": [
     "src/mea_absorption_column/Thermodynamics/thermo_models.py"
@@ -59,7 +53,7 @@
     "analyses"
   ],
   "smoke": {
-    "kind": "ionic_fixed_pressure_derivative_state",
+    "kind": "ionic_fugacity_state",
     "module": "mea_absorption_column.Thermodynamics.thermo_models"
   }
 }

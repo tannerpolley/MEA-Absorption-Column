@@ -1,0 +1,58 @@
+{
+  "events": [
+    {
+      "name": "initialization",
+      "stage": "henry_initialization",
+      "parent": null,
+      "depth": 0,
+      "begin_ns": 19007987902195,
+      "end_ns": 19015043133418,
+      "wall_s": 7.055231884998648,
+      "cpu_s": 7.030404159,
+      "exclusive_s": 7.055231884998648
+    },
+    {
+      "name": "reactive_run_model",
+      "stage": "reactive_column",
+      "parent": null,
+      "depth": 0,
+      "begin_ns": 19015046654521,
+      "end_ns": 19059417301785,
+      "wall_s": 44.37064854699929,
+      "cpu_s": 44.11226642,
+      "exclusive_s": 44.37064854699929
+    },
+    {
+      "name": "serialization",
+      "stage": "serialization",
+      "parent": null,
+      "depth": 0,
+      "begin_ns": 19059417334957,
+      "end_ns": 19059441245174,
+      "wall_s": 0.023910738000267884,
+      "cpu_s": 0.023900927999996213,
+      "exclusive_s": 0.023910738000267884
+    }
+  ],
+  "native": {
+    "recordings": 452190,
+    "recording_ns": 10877827715,
+    "tape_ops": 321397245,
+    "jacobian_calls": 452190,
+    "hessian_calls": 15585,
+    "forward_calls": 452190,
+    "hessian_vector_calls": 668639,
+    "sweep_ns": 21349905409,
+    "association_solves": 436605,
+    "association_iterations": 2838325
+  },
+  "proc_stat_before": "cpu  9815038 160060 981074 11649170 34087 0 11430 0 0 0",
+  "proc_stat_after": "cpu  9828207 160060 984068 11694043 34134 0 11473 0 0 0",
+  "usage": {
+    "ru_utime": 49.963167999999996,
+    "ru_stime": 1.208383,
+    "ru_nvcsw": 8,
+    "ru_nivcsw": 4236
+  },
+  "max_rss_kb": 208396
+}

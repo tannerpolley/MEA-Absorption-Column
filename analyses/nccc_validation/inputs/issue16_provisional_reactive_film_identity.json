@@ -1,0 +1,82 @@
+{
+  "claim_label": "provisional_concept_only",
+  "repository": {
+    "base_commit": "700f6212fb20ab4b2b9045c1b9da9d23a5acb88a",
+    "branch": "codex/issue16-execution-reachability"
+  },
+  "engine": {
+    "commit": "9d7bebe5760bb425a08a9211d5dfd353e8693832",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "7c4be78427cd9d5f70fd60dc63f40d93b7e37945ae7a124dd8d698d94190c9f7",
+    "core_sha256": "edbac80c39a17db588adccedd4c45e578daccba583bf18f0917d2bc00911b899",
+    "capability_issue": "https://github.com/tannerpolley/ePC-SAFT/issues/159",
+    "capability_status": "closed"
+  },
+  "derivative_check": {
+    "temperature_K": 318.15000000000015,
+    "pressure_Pa": 109500.0,
+    "co2_fugacity_Pa": 35.75741547579932,
+    "co2_log_fugacity_derivative_fixed_other_concentrations": 0.9999970079124699,
+    "condition_measure": 1.0,
+    "coordinate_component_ids": [
+      "carbon-dioxide",
+      "monoethanolamine",
+      "carbamate-anion",
+      "bicarbonate-anion",
+      "carbonate-anion",
+      "hydronium-cation",
+      "hydroxide-anion"
+    ],
+    "dependent_component_ids": ["water", "protonated-monoethanolamine"]
+  },
+  "work_package_a": {
+    "repository": "tannerpolley/MEA-Thermodynamics",
+    "merge_commit": "d3ee9d12398c770e6c41871153f55a59fcc806ff",
+    "path": "data/reference/MEA/film_chemistry_inputs/1/input.json",
+    "sha256": "f62df1eec0176fb9196d84c6523371beab576f7154c07498f16a0d977626abe5",
+    "schema_sha256": "d6cd1f51275b9c12681d9a901300dd8ab89d585e48f8de15302d8ff8b352eed9",
+    "receipt_sha256": "6b8a6fda622d1711d392834bddb121f518db77d7f9017158c29d65cc41dabdd3",
+    "status": "source_validated_deferred_inputs",
+    "finite_rate_status": "F1/F2 rejected_source_unit_inconsistency; F3 rejected_primary_coefficient_source_unavailable",
+    "f1_f2_coefficient_status": "rejected_source_unit_inconsistency",
+    "f3_coefficient_status": "rejected_primary_coefficient_source_unavailable",
+    "transport_status": "all numeric diffusion candidates rejected",
+    "domain": {
+      "temperature_K": [293.15, 323.15],
+      "mea_molarity_mol_L_exact": [1.0, 5.0],
+      "loading_min_inclusive": 0.0,
+      "loading_max_exclusive": 0.5
+    }
+  },
+  "provisional_parameter_input": {
+    "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive/parameters.json",
+    "sha256": "66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b",
+    "temperature_adjustments_path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive/temperature_adjustments.json",
+    "temperature_adjustments_sha256": "502033bb303bd80aaddcbba817058e20572f675ed5dbc478de9e022c11fe6da8",
+    "lineage_commit": "65fdd6f4ed739d8ac39f9efdda7450d90d14df7a",
+    "domain": "retained Case 3C method development only; not an accepted predictive parameter packet"
+  },
+  "retained_inputs": {
+    "source_profile_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/film_states.csv",
+    "source_profile_sha256": "2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a",
+    "speciation_table_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv",
+    "speciation_table_sha256": "36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4",
+    "speciation_table_summary_sha256": "fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a"
+  },
+  "retained_position_1": {
+    "temperature_K": 318.15000000000015,
+    "pressure_Pa": 109500.0,
+    "loading_mol_CO2_per_mol_MEA": 0.2499962761596755,
+    "mea_molarity_mol_L": 4.889309897097635,
+    "scientifically_admissible": false,
+    "reason": "Calculated analytical MEA does not equal the Work Package A discrete 5 M source label; the label basis remains unadjudicated."
+  },
+  "reproduction_commands": [
+    "uv run --locked python scripts/check_epcsaft_integration.py --mode final",
+    "MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run --locked python analyses/nccc_validation/scripts/analyze_reactive_film.py --case-timeout-s 600",
+    "MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run --locked python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 600",
+    "MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run --locked python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 600",
+    "MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run --locked python analyses/nccc_validation/scripts/generate_issue16_evidence.py"
+  ],
+  "decision": "Evaluate the governing film calculation for provisional method development while retaining all source and domain limitations. Scientific adoption and manuscript use remain blocked."
+}

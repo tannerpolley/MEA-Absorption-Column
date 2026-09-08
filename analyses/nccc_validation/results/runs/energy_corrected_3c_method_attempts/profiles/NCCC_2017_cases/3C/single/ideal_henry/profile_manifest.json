@@ -1,0 +1,26 @@
+{
+  "beds": 1,
+  "case_id": "3C",
+  "case_source": "NCCC_2017_cases",
+  "diameter_m": 0.64,
+  "gas_flow_basis": "reported_dry_mass",
+  "intercooler_assumption": "none",
+  "intercooler_model": "none",
+  "intercoolers": 0,
+  "message": "Yay; Rejected by strict boundary residual gate: 78.0327; Rejected by strict capture gate: -61.5499 pct; profile output used temperature-only fallback after: thermal_state: temperature outside absorber correlation bounds",
+  "method": "single",
+  "position_orientation": "global_normalized_bottom_to_top",
+  "profile_csv_dir": "analyses/nccc_validation/results/runs/energy_corrected_3c_method_attempts/profiles/NCCC_2017_cases/3C/single/ideal_henry",
+  "profile_csv_files": [
+    "T.csv"
+  ],
+  "profile_csv_status": "written",
+  "profile_status": "diagnostic",
+  "runtime_label": "16.46 s",
+  "runtime_s": 16.460163116455078,
+  "single_bed_height_m": 6.0,
+  "success": false,
+  "thermo_model": "ideal_henry",
+  "total_packed_height_m": 6.0,
+  "vapor_composition_mode": "dry_saturated"
+}

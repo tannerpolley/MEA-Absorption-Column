@@ -1,0 +1,43 @@
+\definecolor{cseBlue}{HTML}{0072B2}
+\definecolor{cseOrange}{HTML}{D55E00}
+\definecolor{cseSky}{HTML}{56B4E9}
+\definecolor{cseInk}{HTML}{1F2933}
+
+\tikzset{
+  cse stage/.style={
+    draw=cseBlue,
+    fill=cseBlue!9,
+    text=cseInk,
+    rounded corners=2pt,
+    align=center,
+    minimum width=43mm,
+    minimum height=10mm,
+    inner sep=3pt,
+    font=\small\bfseries,
+  },
+  cse detail/.style={
+    draw=cseSky!75!black,
+    fill=cseSky!7,
+    text=cseInk,
+    rounded corners=2pt,
+    align=left,
+    text width=67mm,
+    minimum height=10mm,
+    inner sep=4pt,
+    font=\small,
+  },
+  cse solver/.style={
+    draw=cseOrange,
+    fill=cseOrange!8,
+    text=cseInk,
+    rounded corners=2pt,
+    align=center,
+    minimum width=43mm,
+    minimum height=10mm,
+    inner sep=3pt,
+    font=\small\bfseries,
+  },
+  cse arrow/.style={-{Latex[length=2.2mm,width=1.5mm]},semithick,cseInk},
+  cse link/.style={-{Latex[length=2mm,width=1.4mm]},semithick,cseBlue!80!black},
+  cse region/.style={draw=cseBlue!40,fill=cseBlue!2,rounded corners=3pt,inner sep=4mm},
+}

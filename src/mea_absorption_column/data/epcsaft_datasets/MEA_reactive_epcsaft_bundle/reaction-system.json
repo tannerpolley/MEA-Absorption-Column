@@ -142,14 +142,19 @@
       ],
       "ln_k_form": "-ln(10) * (a_k / T + b + c_per_k * T)",
       "coefficients": {
-        "a_k": 2677.91,
+        "a_k": 2597.91,
         "b": 0.3869,
         "c_per_k": 0.0004277
       },
-      "temperature_domain_k": [
+      "source_temperature_domain_k": [
         273.15,
         323.15
-      ]
+      ],
+      "temperature_domain_k": [
+        293.15,
+        393.15
+      ],
+      "qualification": "selected against the complete nine-species pressure/speciation comparison evaluated over 293.15--393.15 K"
     }
   ],
   "balance_matrix": [

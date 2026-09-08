@@ -1,0 +1,10 @@
+accepted initialization available after 0.004s
+column rhs_batches=1 nodes=41 elapsed=0.00s thermodynamics={'queries': 0, 'cache_hits': 0, 'native_solves': 0, 'native_seconds': 0.0, 'warm_starts': 0}
+   Iteration    Max residual  Max BC residual  Total nodes    Nodes added  
+column rhs_batches=2 nodes=41 elapsed=54.60s thermodynamics={'queries': 41, 'cache_hits': 0, 'native_solves': 47, 'native_seconds': 48.174346658001014, 'warm_starts': 40}
+column rhs_batches=3 nodes=40 elapsed=54.65s thermodynamics={'queries': 82, 'cache_hits': 41, 'native_solves': 47, 'native_seconds': 48.174346658001014, 'warm_starts': 40}
+column jacobian_batches=1 nodes=41 elapsed=107.32s thermodynamics={'queries': 122, 'cache_hits': 41, 'native_solves': 92, 'native_seconds': 94.63471153000864, 'warm_starts': 79}
+column jacobian_batches=2 nodes=40 elapsed=107.39s thermodynamics={'queries': 163, 'cache_hits': 82, 'native_solves': 92, 'native_seconds': 94.63471153000864, 'warm_starts': 79}
+column rhs_batches=4 nodes=41 elapsed=107.46s thermodynamics={'queries': 203, 'cache_hits': 122, 'native_solves': 92, 'native_seconds': 94.63471153000864, 'warm_starts': 79}
+column rhs_batches=5 nodes=40 elapsed=162.76s thermodynamics={'queries': 244, 'cache_hits': 122, 'native_solves': 139, 'native_seconds': 143.35716350801704, 'warm_starts': 119}
+column rhs_batches=6 nodes=41 elapsed=216.17s thermodynamics={'queries': 284, 'cache_hits': 122, 'native_solves': 184, 'native_seconds': 190.40828328101816, 'warm_starts': 158}

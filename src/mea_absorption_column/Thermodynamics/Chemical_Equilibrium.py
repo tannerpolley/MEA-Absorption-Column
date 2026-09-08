@@ -1,13 +1,10 @@
-import csv
 import json
 import math
 import os
 import time
-from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from scipy.optimize import least_squares, root
 
 # From Akula Appendix of Model Development, Validation, and Part-Load Optimization of a
@@ -15,13 +12,11 @@ from scipy.optimize import least_squares, root
 
 from mea_absorption_column.BVP.robust_core import record_domain_guard
 from mea_absorption_column.Properties.Thermophysical_Properties import density
+from mea_absorption_column.Thermodynamics.reactive_bundle import MODEL, reactive_liquid
 from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
     epcsaft_runtime_user_options,
-)
-from mea_absorption_column.Thermodynamics.reactive_bundle import (
-    solve_homogeneous_reactive_state,
 )
 
 
@@ -258,7 +253,7 @@ def chemical_equilibrium(Fl, Tl):
             max_nfev=60,
         )
 
-    Cl_true_scaled = result.x
+    Cl_true_scaled, solution, success = result.x, result.message, result.success
 
     Cl_true = np.maximum(Cl_true_scaled*scales, 1.0e-30)
 
@@ -280,6 +275,12 @@ def chemical_equilibrium_with_model(
     normalized_model = (model or "legacy").lower()
     if normalized_model in {"legacy", "legacy_concentration", "local"}:
         return chemical_equilibrium(Fl, Tl)
+    if normalized_model == MODEL:
+        started = time.perf_counter()
+        result = reactive_liquid().solve(float(Tl), float(P), Fl)
+        record_coupled_result(diagnostics, result, time.perf_counter() - started)
+        composition = result["composition"]
+        return composition * result["density_mol_m3"], composition.copy()
     if normalized_model in {
         "epcsaft_reactive_six",
         "epcsaft_reactive_six_concentration",
@@ -331,22 +332,20 @@ def chemical_equilibrium_with_model(
             diagnostics=diagnostics,
         )
     if normalized_model in {
-        "epcsaft_reactive_nine_tabulated",
-        "epcsaft_nine_tabulated",
-    }:
-        return tabulated_epcsaft_reactive_chemical_equilibrium(
-            Fl,
-            Tl,
-            diagnostics=diagnostics,
-        )
-    if normalized_model in {
         "epcsaft_reactive_nine",
-        "epcsaft_reactive_nine_bundle",
         "epcsaft_reactive_nine_activity",
         "epcsaft_nine_activity",
         "epcsaft_full_species_activity",
     }:
-        return bundle_reactive_chemical_equilibrium(Fl, Tl, P=P, diagnostics=diagnostics)
+        return epcsaft_reactive_chemical_equilibrium(
+            Fl,
+            Tl,
+            P=P,
+            standard_state="mole_fraction_activity",
+            species_set="nine",
+            calibrate_activity_to_legacy=False,
+            diagnostics=diagnostics,
+        )
     if normalized_model in {
         "epcsaft_reactive_nine_activity_rebased",
         "epcsaft_nine_activity_rebased",
@@ -383,106 +382,16 @@ def chemical_equilibrium_with_model(
     )
 
 
-@lru_cache(maxsize=512)
-def _cached_bundle_reactive_state(temperature, pressure, apparent):
-    return solve_homogeneous_reactive_state(
-        str(MEA_THERMODYNAMICS_EPCSAFT_DATASET), temperature, pressure, apparent
-    )
-
-
-def bundle_reactive_chemical_equilibrium(Fl, Tl, *, P=101325.0, diagnostics=None):
-    apparent = _apparent_liquid_mole_fraction(Fl)
-    temperature = float(np.round(float(Tl), EPCSAFT_CHEMISTRY_CACHE_T_DIGITS))
-    pressure_increment = max(EPCSAFT_CHEMISTRY_CACHE_P_ROUND_PA, 1.0e-12)
-    pressure = float(np.round(float(P) / pressure_increment) * pressure_increment)
-    apparent_key = tuple(
-        float(np.round(value, EPCSAFT_CHEMISTRY_CACHE_X_DIGITS)) for value in apparent
-    )
-    before = _cached_bundle_reactive_state.cache_info()
-    started = time.perf_counter()
-    result = _cached_bundle_reactive_state(temperature, pressure, apparent_key)
-    elapsed = time.perf_counter() - started
-    after = _cached_bundle_reactive_state.cache_info()
-    _increment_diagnostic(
-        diagnostics,
-        "epcsaft_chemistry_cache_hits" if after.hits > before.hits else "epcsaft_chemistry_cache_misses",
-    )
-    _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", elapsed)
-    for name in (
-        "balance_inf_norm",
-        "reaction_affinity_inf_norm",
-        "pressure_relative_inf_norm",
-        "kkt_stationarity_inf_norm",
-    ):
-        _set_diagnostic_max(diagnostics, f"epcsaft_chemistry_{name}", result["evidence"][name])
-    composition = np.asarray(result["composition"], dtype=float)
-    return composition * float(result["density_mol_m3"]), composition.copy()
-
-
-@lru_cache(maxsize=4)
-def _reactive_speciation_table(path_text):
-    path = Path(path_text)
-    with path.open(newline="", encoding="utf-8") as handle:
-        rows = [row for row in csv.DictReader(handle) if row["status"] == "evaluated"]
-    if len(rows) < 3:
-        raise ValueError(f"Reactive ePC-SAFT table needs at least three evaluated states: {path}")
-    species_columns = tuple(f"x_{name}" for name in (
-        "carbon-dioxide",
-        "monoethanolamine",
-        "water",
-        "protonated-monoethanolamine",
-        "carbamate-anion",
-        "bicarbonate-anion",
-        "carbonate-anion",
-        "hydronium-cation",
-        "hydroxide-anion",
-    ))
-    points = np.asarray(
-        [(float(row["temperature_k"]), float(row["loading"])) for row in rows],
-        dtype=float,
-    )
-    mole_fractions = np.asarray(
-        [[float(row[column]) for column in species_columns] for row in rows],
-        dtype=float,
-    )
-    nitrogen_fraction = mole_fractions[:, 1] + mole_fractions[:, 3] + mole_fractions[:, 4]
-    amounts_per_mol_mea = mole_fractions / nitrogen_fraction[:, None]
-    return (
-        LinearNDInterpolator(points, amounts_per_mol_mea),
-        NearestNDInterpolator(points, amounts_per_mol_mea),
-        LinearNDInterpolator(points, np.log(amounts_per_mol_mea[:, 0])),
-    )
-
-
-def tabulated_epcsaft_reactive_chemical_equilibrium(Fl, Tl, *, diagnostics=None):
-    table_path = os.environ.get("MEA_EPCSAFT_REACTIVE_TABLE")
-    if not table_path:
-        raise RuntimeError(
-            "MEA_EPCSAFT_REACTIVE_TABLE must name the certified reactive ePC-SAFT table."
-        )
-    apparent = _apparent_liquid_mole_fraction(Fl)
-    loading = float(apparent[0] / apparent[1])
-    linear, nearest, log_co2 = _reactive_speciation_table(table_path)
-    amounts = np.asarray(linear(float(Tl), loading), dtype=float)
-    if not np.all(np.isfinite(amounts)):
-        amounts = np.asarray(nearest(float(Tl), loading), dtype=float)
-        _increment_diagnostic(diagnostics, "epcsaft_chemistry_interpolation_fallback_count")
-    else:
-        amounts[0] = math.exp(float(log_co2(float(Tl), loading)))
-        _increment_diagnostic(diagnostics, "epcsaft_chemistry_table_hits")
-    x_true = np.maximum(amounts, 1.0e-30)
-    x_true /= float(np.sum(x_true))
-    mea_mass_fraction = (
-        float(Fl[1]) * 0.061080535833333255
-        / (float(Fl[1]) * 0.061080535833333255 + float(Fl[2]) * 0.018015221250000022)
-    )
-    _set_diagnostic_max(
-        diagnostics,
-        "epcsaft_chemistry_max_mea_mass_fraction_deviation",
-        abs(mea_mass_fraction - 0.3),
-    )
-    rho_mol_l, _, _ = density(float(Tl), apparent[:3], 0.0, phase="liquid")
-    return x_true * float(rho_mol_l), x_true
+def record_coupled_result(diagnostics, result, elapsed):
+    if diagnostics is not None:
+        _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", elapsed)
+        diagnostics['epcsaft_chemistry_last_native_success'] = True
+        diagnostics['epcsaft_chemistry_last_iterations'] = result['evidence']['optimizer_iterations']
+        diagnostics['epcsaft_chemistry_last_evidence'] = {
+            'parameter_fingerprint': result['parameter_fingerprint'], **result['evidence']}
+        for name, value in result['evidence'].items():
+            if name.endswith('inf_norm') and isinstance(value, (int, float)):
+                _set_diagnostic_max(diagnostics, f'epcsaft_chemistry_{name}', value)
 
 
 def epcsaft_reactive_chemical_equilibrium(

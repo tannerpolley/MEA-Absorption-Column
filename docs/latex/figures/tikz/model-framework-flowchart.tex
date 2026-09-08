@@ -1,0 +1,28 @@
+\begin{tikzpicture}[node distance=6mm and 9mm]
+  \node[cse stage] (state) {Phase state};
+  \node[cse detail,right=of state] (state-detail)
+    {Flows, apparent composition, temperatures and pressure};
+  \node[cse stage,below=12mm of state] (thermo) {Reactive liquid state};
+  \node[cse detail,right=of thermo] (thermo-detail)
+    {Five reactions and EOS activities give nine species, density and liquid CO$_2$ fugacity};
+  \node[cse stage,below=12mm of thermo] (vapor) {Vapor driving force};
+  \node[cse detail,right=of vapor] (vapor-detail)
+    {Normalize CO$_2$/trace-MEA/water for EOS $\phi^v$; use wet-gas $y_{\mathrm{CO_2}}$ in $f^v=y_{\mathrm{CO_2}}\phi^vP$};
+  \node[cse stage,below=12mm of vapor] (properties) {Auxiliary properties};
+  \node[cse detail,right=of properties] (properties-detail)
+    {Empirical hydraulic density, transport and enthalpy; water vapor-pressure approximation};
+  \node[cse stage,below=12mm of properties] (transport) {Interphase sources};
+  \node[cse detail,right=of transport] (transport-detail)
+    {Conventional enhancement, fixed-bulk-activity film resistance, mass and heat transfer};
+  \node[cse stage,below=12mm of transport] (balances) {Column balances};
+  \node[cse detail,right=of balances] (balances-detail)
+    {Component-flow and temperature derivatives with mixed inlet boundaries};
+  \node[cse solver,below=12mm of balances] (solver) {Collocation update};
+  \node[cse detail,right=of solver] (solver-detail)
+    {Update axial states and mesh using differential and boundary residuals};
+  \foreach \from/\to in {state/thermo,thermo/vapor,vapor/properties,properties/transport,transport/balances,balances/solver}
+    \draw[cse arrow] (\from) -- (\to);
+  \foreach \name in {state,thermo,vapor,properties,transport,balances,solver}
+    \draw[cse link] (\name.east) -- (\name-detail.west);
+  \draw[cse arrow] (solver.west) -- ++(-9mm,0) |- (state.west);
+\end{tikzpicture}

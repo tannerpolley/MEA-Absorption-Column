@@ -41,14 +41,12 @@ def main() -> int:
     case_table = _build_case_table()
     case_table.to_csv(TABLES / "nccc_one_bed_case_scope.csv", index=False)
     _write_latex_case_table(case_table)
-    _write_latex_attempted_status_table(attempted)
     _plot_accepted_results(accepted, summary)
 
     print(f"Read {ATTEMPTED_RESULTS}")
     print(f"Wrote {ACCEPTED_RESULTS}")
     print(f"Wrote {ACCEPTED_SUMMARY}")
     print(f"Wrote {TABLES / 'nccc_one_bed_case_scope.csv'}")
-    print(f"Wrote {LATEX_TABLES / 'nccc_one_bed_attempted_status.tex'}")
     print(f"Wrote {FIGURES / 'nccc_one_bed_thermo_benchmark.pdf'}")
     print(f"Wrote {LATEX_FIGURES / 'nccc-one-bed-thermo-benchmark.pdf'}")
     return 0
@@ -187,7 +185,7 @@ def _write_latex_case_table(data: pd.DataFrame) -> None:
         r"    \begin{adjustbox}{max width=\textwidth}",
         r"    \begin{tabularx}{1.16\textwidth}{|c|c| *{9}{>{\centering\arraybackslash}X|}}",
         r"    \hline",
-        r"    \textbf{Year} & \textbf{Case} & \makecell{\textbf{Lean}\\\textbf{flow}\\(kg/h)} & \makecell{\textbf{Gas}\\\textbf{flow}\\(kg/h)} & \makecell{\textbf{Lean}\\\textbf{temp.}\\(\si{\degreeCelsius})} & \makecell{\textbf{Gas}\\\textbf{temp.}\\(\si{\degreeCelsius})} & \makecell{\textbf{Pressure}\\(kPa)} & \makecell{\textbf{Lean}\\\textbf{loading}} & \makecell{\textbf{MEA}\\\textbf{mass frac.}} & \makecell{\textbf{Inlet}\\\textbf{$y_{\mathrm{CO_2}}$}} & \makecell{\textbf{Capture}\\(\%)} \\",
+        r"    \textbf{Year} & \textbf{Case} & \makecell{\textbf{Lean}\\\textbf{flow}\\(kg/h)} & \makecell{\textbf{Gas}\\\textbf{flow}\\(kg/h)} & \makecell{\textbf{Lean}\\\textbf{temp.}\\(\si{\degreeCelsius})} & \makecell{\textbf{Gas}\\\textbf{temp.}\\(\si{\degreeCelsius})} & \makecell{\textbf{Pressure}\\(kPa)} & \makecell{\textbf{Lean}\\\textbf{loading}} & \makecell{\textbf{MEA}\\\textbf{mass frac.}} & \makecell{\textbf{Reported inlet}\\\textbf{$y_{\mathrm{CO_2}}$}} & \makecell{\textbf{Capture}\\(\%)} \\",
         r"    \hline",
     ]
     for _, row in data.iterrows():
@@ -219,99 +217,12 @@ def _write_latex_case_table(data: pd.DataFrame) -> None:
             r"    \end{tabularx}",
             r"    \end{adjustbox}",
             r"    \parbox{0.95\textwidth}{\footnotesize $^{\dagger}$Lean solvent inlet temperature was blank in the source table and was set to \SI{45.0}{\degreeCelsius} for the model input.}",
+            r"    \parbox{0.95\textwidth}{\footnotesize Case 3C uses reported dry gas mass and dry CO2 fraction; saturation at the gas-inlet temperature reconstructs the wet feed.}",
             r"\end{table}",
             "",
         ]
     )
     (LATEX_TABLES / "nccc_one_bed_case_scope.tex").write_text(
-        "\n".join(lines), encoding="utf-8"
-    )
-
-
-def _write_latex_attempted_status_table(attempted: pd.DataFrame) -> None:
-    by_case = {
-        case_id: group.set_index("thermo_label")
-        for case_id, group in attempted.groupby("case_id")
-    }
-
-    def accepted(case_id: str) -> bool:
-        return bool(by_case[case_id]["accepted_gate"].all())
-
-    if not all(accepted(case_id) for case_id in EXPECTED_CASES - {"K20"}) or accepted(
-        "K20"
-    ):
-        raise ValueError(
-            "The generated status-table grouping no longer matches the row-level acceptance gate."
-        )
-
-    k19 = by_case["K19"]
-    c7 = by_case["7C"]
-    rows = [
-        (
-            "2014",
-            "K18",
-            "Included",
-            "Henry and ePC-SAFT",
-            "Both rows satisfied all four criteria and recorded no domain-guard events.",
-        ),
-        (
-            "2014",
-            "K19",
-            "Included",
-            "Henry and ePC-SAFT",
-            "Both rows satisfied all four criteria; the ePC-SAFT and Henry calculations recorded "
-            f"{int(k19.loc['ePC-SAFT', 'guard_penalty_count'])} and "
-            f"{int(k19.loc['Henry', 'guard_penalty_count'])} guard events, respectively.",
-        ),
-        (
-            "2014",
-            "K20",
-            "Excluded",
-            "Henry and ePC-SAFT",
-            "Both solvers exceeded the maximum mesh-node limit and encountered hydraulics or "
-            "pressure-drop domain violations.",
-        ),
-        (
-            "2017",
-            "1C--6C",
-            "Included",
-            "Henry and ePC-SAFT",
-            "All twelve rows satisfied all four criteria and recorded no domain-guard events.",
-        ),
-        (
-            "2017",
-            "7C",
-            "Included",
-            "Henry and ePC-SAFT",
-            f"Both rows satisfied all four criteria: ePC-SAFT ran in "
-            f"{c7.loc['ePC-SAFT', 'runtime_s']:.2f} s with "
-            f"{int(c7.loc['ePC-SAFT', 'guard_penalty_count'])} guard events; Henry ran in "
-            f"{c7.loc['Henry', 'runtime_s']:.2f} s with "
-            f"{int(c7.loc['Henry', 'guard_penalty_count'])} guard events.",
-        ),
-    ]
-    lines = [
-        r"\begin{center}",
-        r"    \centering",
-        r"    \small",
-        rf"    \captionof{{table}}{{Attempted one-bed NCCC cases. Included rows require solver success, boundary-residual norm $\leq {BOUNDARY_RESIDUAL_LIMIT:.1f}$, predicted capture between 0 and 100\%, and runtime $\leq\SI{{{RUNTIME_LIMIT_S:.0f}}}{{s}}$.}}",
-        r"    \label{tab:nccc-attempted-status}",
-        r"    \renewcommand{\arraystretch}{1.15}",
-        r"    \begin{tabularx}{\textwidth}{@{}ll>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}X@{}}",
-        r"        \toprule",
-        r"        \textbf{Year} & \textbf{Case} & \textbf{Aggregate status} & \textbf{Thermodynamic calculations} & \textbf{Evidence} \\",
-        r"        \midrule",
-    ]
-    lines.extend("        " + " & ".join(row) + r" \\" for row in rows)
-    lines.extend(
-        [
-            r"        \bottomrule",
-            r"    \end{tabularx}",
-            r"\end{center}",
-            "",
-        ]
-    )
-    (LATEX_TABLES / "nccc_one_bed_attempted_status.tex").write_text(
         "\n".join(lines), encoding="utf-8"
     )
 

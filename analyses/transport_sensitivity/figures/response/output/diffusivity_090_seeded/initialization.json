@@ -1,0 +1,125 @@
+{
+  "command": [
+    "analyses/transport_sensitivity/figures/response/scripts/capture_failure.py",
+    "--model-root",
+    "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column",
+    "--reference",
+    "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/analyses/nccc_validation/results/runs/reactive_native_41",
+    "--initial-profile",
+    "analyses/transport_sensitivity/figures/response/output/baseline/solution_scaled.csv",
+    "--anchor-start",
+    "analyses/transport_sensitivity/figures/response/output/diffusivity_090_diagnostic/state_probe.json",
+    "--output",
+    "analyses/transport_sensitivity/figures/response/output/diffusivity_090_seeded",
+    "--quantity",
+    "diffusivity",
+    "--factor",
+    "0.9"
+  ],
+  "initial_profile": "/home/tnnrpolley21/.codex/worktrees/ac57/MEA-Absorption-Column/analyses/transport_sensitivity/figures/response/output/baseline/solution_scaled.csv",
+  "sha256": "8a1f677e23cc4c18f1c3da886c44b02d58b28dd61e282abb858344c7dc3821e8",
+  "anchor_start": "/home/tnnrpolley21/.codex/worktrees/ac57/MEA-Absorption-Column/analyses/transport_sensitivity/figures/response/output/diffusivity_090_diagnostic/state_probe.json",
+  "anchor_start_sha256": "b5f86e4f91d9fd05a65c8e8d90699f41b677c8bc98cfec4e01052949a913b0b6",
+  "seeded_native_solves": [
+    {
+      "temperature_K": 323.83607974181075,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 326.2713035226541,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 323.8714530381447,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 326.3366998590836,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 327.62796600535404,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 324.80258582144626,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 323.8714274963353,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 326.3366900551152,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 327.627959642873,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 324.80255522719244,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    },
+    {
+      "temperature_K": 325.89703017598714,
+      "pressure_Pa": 109500.0,
+      "apparent_amounts_mol": [
+        2.4324688150831837,
+        9.729875260332735,
+        76.95348624320872
+      ]
+    }
+  ],
+  "purpose": "Only initial guesses change after the diagnosed cold-anchor failure; physical inputs, transport multiplier, equations and tolerances are unchanged."
+}
