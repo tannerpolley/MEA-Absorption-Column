@@ -1,0 +1,266 @@
+{
+  "schema_version": "issue41_source_rate_evidence_v1",
+  "issue": 41,
+  "claim_label": "supported_negative_source_rate_evidence_packet_consistent_kinetics",
+  "owner": "MEA-Absorption-Column/analyses/nccc_validation",
+  "scope": "Retain source-faithful reversible MEA rate relationships, raw-observation availability, estimation/validation declarations, provider equilibrium relationships, and typed packet-bound blockers without adopting a physical reactive film.",
+  "species_order": [
+    "CO2",
+    "MEA",
+    "H2O",
+    "MEAH+",
+    "MEACOO-",
+    "HCO3-",
+    "CO3^2-",
+    "H3O+",
+    "OH-"
+  ],
+  "source_reaction_order": ["R1", "R2", "R3", "R4", "R5"],
+  "fixed_reaction_projections": {
+    "F1": {
+      "source_reaction_coefficients": {"R2": 1, "R4": -1, "R5": -1},
+      "expected_stoichiometry": [-1, -2, 0, 1, 1, 0, 0, 0, 0],
+      "equation": "CO2 + 2 MEA <=> MEACOO- + MEAH+",
+      "source_locator": "Putta2016 printed p. 342, Eq. 16 and printed pp. 345--346, Eq. I"
+    },
+    "F2": {
+      "source_reaction_coefficients": {"R2": 1, "R4": -1},
+      "expected_stoichiometry": [-1, -1, -1, 0, 1, 0, 0, 1, 0],
+      "equation": "CO2 + MEA + H2O <=> MEACOO- + H3O+",
+      "source_locator": "Putta2016 printed p. 342, Eq. 17 and printed pp. 345--346, Eq. II"
+    },
+    "F3": {
+      "source_reaction_coefficients": {"R2": 1, "R1": -1},
+      "expected_stoichiometry": [-1, 0, 0, 0, 0, 1, 0, 0, -1],
+      "equation": "CO2 + OH- <=> HCO3-",
+      "source_locator": "Putta2016 printed p. 341, Eq. 15; source coefficient cited to Gondal2015"
+    }
+  },
+  "source_documents": [
+    {
+      "id": "Putta2016",
+      "citation": "Putta et al. (2016), CO2 absorption into loaded aqueous MEA solutions: Kinetics assessment using penetration theory",
+      "doi": "10.1016/j.ijggc.2016.08.009",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/BSUB8BSF/Putta et al. - 2016 - CO2 absorption into loaded aqueous MEA solutions Kinetics assessment using penetration theory.pdf",
+      "source_pdf_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "hash_role": "local Zotero PDF content; source-evidence receipt",
+      "locators": [
+        "printed p. 340, Table 1: literature rate-data ranges and apparatus",
+        "printed pp. 341-342, Eqs. 1-5 and 9-22: reaction basis and concentration/activity rate laws",
+        "printed pp. 345-346, Eqs. I-II: fitted F1/F2 temperature correlations",
+        "printed p. 349, Table 4: aggregate AARD comparison only"
+      ]
+    },
+    {
+      "id": "Luo2015",
+      "citation": "Luo et al. (2015), Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutions",
+      "doi": "10.1016/j.ces.2014.10.013",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/MFRDNYCS/Luo et al. - 2015 - Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutio.pdf",
+      "source_pdf_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "hash_role": "local Zotero PDF content; source-evidence receipt",
+      "locators": [
+        "printed pp. 58-59, Eqs. 1-14: mechanism and apparent-rate reconstruction",
+        "printed pp. 59-60: WWC/SDC apparatus and measurement procedure",
+        "printed p. 60: 227 new points, 298-343 K, and 0-0.4 loading domain",
+        "printed p. 61, Eqs. 15-24: density, viscosity, and diffusivity relationships",
+        "printed pp. 63-64, Tables 1-2: aggregate fitted kinetic constants and standard deviations"
+      ]
+    },
+    {
+      "id": "Gaspar2015",
+      "citation": "Gaspar and Fosbol (2015), A general enhancement factor model for absorption and desorption systems",
+      "doi": "10.1016/j.ces.2015.08.023",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/PW5C8YSL/Gaspar and Fosbøl - 2015 - A general enhancement factor model for absorption and desorption systems A CO2 capture case-study.pdf",
+      "source_pdf_sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "hash_role": "local Zotero PDF content; comparison-source receipt",
+      "locators": ["printed p. 209, equal-diffusivity comparison case"]
+    },
+    {
+      "id": "Gondal2015",
+      "citation": "Gondal et al. (2015), Kinetics of the absorption of carbon dioxide into aqueous hydroxides of lithium, sodium and potassium and blends of hydroxides and carbonates",
+      "doi": "10.1016/j.ces.2014.10.038",
+      "local_pdf_path": null,
+      "source_pdf_sha256": null,
+      "hash_role": "no local Zotero attachment",
+      "locators": ["Putta2016 printed p. 353, reference 29; cited source for F3 coefficient"]
+    },
+    {
+      "id": "PachecoRochelle1998",
+      "citation": "Pacheco and Rochelle (1998), Rate-based modeling of reactive absorption of CO2 into aqueous MEA",
+      "doi": "10.1021/ie980123g",
+      "local_pdf_path": null,
+      "source_pdf_sha256": null,
+      "hash_role": "requested comparison source; no local attachment",
+      "locators": []
+    }
+  ],
+  "source_rate_domain": {
+    "temperature_K": [293.15, 343.15],
+    "mea_concentration_labels_mol_L": [1.0, 5.0],
+    "loading_mol_CO2_per_mol_MEA": [0.0, 0.4],
+    "log_mean_pressure_difference_kPa": [0.58, 14.7],
+    "source_label_status": "labels and source-domain bounds only; no exact absorber-state admission"
+  },
+  "common_application_domain": {
+    "temperature_K": [293.15, 323.15],
+    "loading_mol_CO2_per_mol_MEA": [0.0, 0.5],
+    "loading_upper_bound": "exclusive",
+    "mea_basis_status": "basis_unresolved_from_issue40",
+    "reason": "R5/provider and retained source overlap ends at 323.15 K; Issue 40 supplies no scientifically admitted true-species row."
+  },
+  "provider_anchor_temperatures_K": [293.15, 313.15, 323.15],
+  "detailed_balance": {
+    "orientation": "products_positive",
+    "acceptance_abs_lnQ_minus_lnK": 1.0e-7,
+    "quotient_requirement": "Q must be formed from dimensionless activities on the bundle source standard state.",
+    "unavailable_state_policy": "Do not evaluate lnQ, residual, or pass/fail when no scientifically admitted true-species state exists."
+  },
+  "source_observation_records": [
+    {
+      "observation_id": "Putta2016_fit_corpus_summary",
+      "source_id": "Putta2016",
+      "observation_kind": "kinetic_fit_corpus_count",
+      "apparatus_or_dataset": "Putta2016 source corpus; WWC and literature apparatus groups",
+      "reported_count": 198,
+      "reported_count_unit": "rate points",
+      "temperature_domain_K": [293.15, 343.15],
+      "loading_domain_mol_CO2_per_mol_MEA": [0.0, 0.4],
+      "mea_concentration_labels_mol_L": [1.0, 5.0],
+      "pressure_domain_kPa": [0.58, 14.7],
+      "rate_value_status": "not_reported_row_level",
+      "uncertainty_status": "not reported at retained aggregate locator",
+      "weighting": "source AARD objective; equal 1/N relative-error contributions",
+      "raw_row_status": "not_retained",
+      "source_locator": "Putta2016 printed pp. 345-346, Eqs. I-II and fitting-domain text",
+      "partition_role": "source_summary_only"
+    },
+    {
+      "observation_id": "Luo2015_new_experiments_summary",
+      "source_id": "Luo2015",
+      "observation_kind": "new_experimental_count",
+      "apparatus_or_dataset": "WWC and SDC combined",
+      "reported_count": 227,
+      "reported_count_unit": "absorption-rate points",
+      "temperature_domain_K": [298.0, 343.0],
+      "loading_domain_mol_CO2_per_mol_MEA": [0.0, 0.4],
+      "mea_concentration_labels_mol_L": [1.0, 5.0],
+      "pressure_domain_kPa": null,
+      "rate_value_status": "not_reported_row_level",
+      "uncertainty_status": "apparatus accuracy reported; row-level rate covariance not retained",
+      "measurement_uncertainty": {
+        "temperature": {"value": 0.1, "unit": "degC", "type": "reported_accuracy"},
+        "pressure": {"value": 0.25, "unit": "percent", "type": "reported_accuracy"},
+        "loading": {"value": 0.01, "unit": "mol CO2 per mol amine", "type": "reported_accuracy"},
+        "gas_analyzer": {"value": 0.01, "unit": "percent", "type": "reported_accuracy"},
+        "absorption_rate": {"value": 0.01, "unit": "percent", "type": "reported_accuracy"}
+      },
+      "weighting": "source interpretation uses pseudo-first-order rate extraction; no row weights supplied",
+      "raw_row_status": "not_retained",
+      "source_locator": "Luo2015 printed pp. 59-60 and printed p. 68, conclusion",
+      "partition_role": "estimation_and_validation_candidates_by_apparatus"
+    },
+    {
+      "observation_id": "Putta2016_external_AARD_table",
+      "source_id": "Putta2016",
+      "observation_kind": "model_comparison_summary",
+      "apparatus_or_dataset": "SDC Luo, WWC Luo, WWC Puxty, laminar-jet Aboudheir",
+      "reported_count": 20,
+      "reported_count_unit": "aggregate AARD cells",
+      "temperature_domain_K": null,
+      "loading_domain_mol_CO2_per_mol_MEA": null,
+      "mea_concentration_labels_mol_L": null,
+      "pressure_domain_kPa": null,
+      "rate_value_status": "aggregate_metric_only",
+      "uncertainty_status": "not reported",
+      "weighting": "not applicable to aggregate summary",
+      "raw_row_status": "not_retained",
+      "source_locator": "Putta2016 printed p. 349, Table 4",
+      "partition_role": "validation_summary_only"
+    }
+  ],
+  "estimation_validation_partition": [
+    {
+      "dataset_id": "Luo2012_WWC_unloaded",
+      "source_id": "Luo2015",
+      "apparatus": "WWC",
+      "declared_role": "estimation",
+      "source_locator": "Putta2016 printed p. 340, Section 2; Luo2015 printed p. 68",
+      "status": "predeclared_only_no_row_ids",
+      "reason": "Putta identifies the Luo WWC source family as part of rate-correlation reconstruction, but the row-level observations and exact membership are not retained."
+    },
+    {
+      "dataset_id": "Luo2015_WWC_loaded",
+      "source_id": "Luo2015",
+      "apparatus": "WWC",
+      "declared_role": "estimation",
+      "source_locator": "Putta2016 printed p. 340, Section 2",
+      "status": "predeclared_only_no_row_ids",
+      "reason": "The source describes loaded Luo WWC data as a fitted source group, but does not provide row-level identifiers or the WWC/SDC count split."
+    },
+    {
+      "dataset_id": "Luo2015_SDC_loaded",
+      "source_id": "Luo2015",
+      "apparatus": "SDC",
+      "declared_role": "validation",
+      "source_locator": "Putta2016 printed p. 349, Table 4; Luo2015 printed pp. 59-60",
+      "status": "predeclared_only_no_row_ids",
+      "reason": "SDC is an independent apparatus family in the source comparison, but no row-level rate values or uncertainty records are retained."
+    },
+    {
+      "dataset_id": "Puxty2010_WWC",
+      "source_id": "Putta2016",
+      "apparatus": "WWC",
+      "declared_role": "validation",
+      "source_locator": "Putta2016 printed p. 340, Table 1 and printed p. 349, Table 4",
+      "status": "predeclared_only_no_row_ids",
+      "reason": "The source retains an aggregate AARD cell only; raw absorption-rate rows and measurement intervals are unavailable."
+    },
+    {
+      "dataset_id": "Aboudheir2002_laminar_jet",
+      "source_id": "Putta2016",
+      "apparatus": "laminar jet absorber",
+      "declared_role": "validation",
+      "source_locator": "Putta2016 printed p. 340, Table 1 and printed p. 349, Table 4",
+      "status": "predeclared_only_no_row_ids",
+      "reason": "The source retains an aggregate AARD cell only; raw absorption-rate rows and measurement intervals are unavailable."
+    }
+  ],
+  "bundle": {
+    "path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+    "outer_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+    "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+    "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+    "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
+    "chemistry_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c",
+    "parameter_fingerprint": "sha256:c1fc2665e94d136eb85f27c793b7defbd16d1d82cb3173cb50a9aaf6513c8940",
+    "engine_wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "dependencies": {
+    "issue34_input": {
+      "path": "analyses/nccc_validation/inputs/issue34_kinetics.json",
+      "sha256": "da2a2933d0f4d6711e2116b6238c9aed96bf5cee91ffe5051725799dccb8c6eb"
+    },
+    "issue34_summary": {
+      "path": "analyses/nccc_validation/results/final/tables/issue34_kinetics_summary.json",
+      "sha256": "37097fccbf841d71c37f867efd6c5a78d02e5e3a5378537ec7d5c80cd5be44ce"
+    },
+    "issue40_input": {
+      "path": "analyses/nccc_validation/inputs/issue40_apparent_true_species.json",
+      "sha256": "4cdc29a5ae5f95624f70010c016c8d6637fe93cbc90f87247975f04710c5303d"
+    },
+    "issue40_summary": {
+      "path": "analyses/nccc_validation/results/final/tables/issue40_apparent_true_species_summary.json",
+      "sha256": "1b1f678c495de625971820dbc77cbfe7797aafe5c1bcaad5fc5ecf79e84b7118"
+    },
+    "issue40_table": {
+      "path": "analyses/nccc_validation/results/final/tables/issue40_apparent_true_species.csv",
+      "sha256": "231e103ad50994041f8cb7752841b56740701409ecf3eeafdf8ce65b56165848"
+    }
+  },
+  "reproduction": {
+    "command": "uv run python analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+    "runtime": "Python 3.13; source-law compilation uses the standard library and reads the immutable bundle archive",
+    "workers": 1,
+    "source_revision_protocol": "Run from a clean source commit; generated result artifacts are committed separately."
+  }
+}

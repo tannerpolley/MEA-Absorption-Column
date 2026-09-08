@@ -1,0 +1,102 @@
+{
+  "schema_version": "issue30_film_validation_gate_v1",
+  "issue": 30,
+  "claim_label": "supported_negative_film_validation_no_run",
+  "owner": "MEA-Absorption-Column/analyses/nccc_validation",
+  "scope": "Retain the Issue 30 validation decision boundary without launching a physical reactive-film campaign.",
+  "repository": {
+    "name": "tannerpolley/MEA-Absorption-Column",
+    "base_revision": "fc6fd8369ec4567694eca389c5937ce1159577b9"
+  },
+  "issue36": {
+    "input_path": "analyses/nccc_validation/inputs/issue36_film_input_release.json",
+    "input_sha256": "8f54dbf2285e6316a9343f8b438feec3d4f6f1f6035e7ddbdc31b0e0d3104a18",
+    "source_revision": "925acf52b77f31131dbb98533b80a14f2ca4768b",
+    "accepted_result_commit": "94503f71ab41a8841fd2aebb37ece3dec9a07cb1",
+    "outputs": [
+      {
+        "id": "table",
+        "path": "analyses/nccc_validation/results/final/tables/issue36_film_input_release.csv",
+        "sha256": "4e3e53d986c54fed603f141a35578ec0c7fd084eb516848be2b36603b6724531"
+      },
+      {
+        "id": "summary",
+        "path": "analyses/nccc_validation/results/final/tables/issue36_film_input_release_summary.json",
+        "sha256": "adc7385e70498f3feffa43ddedc4ffb2e8cd60ad6828308d2b5451632ff832ec"
+      },
+      {
+        "id": "report",
+        "path": "analyses/nccc_validation/results/final/reports/issue36_film_input_release.md",
+        "sha256": "8809ccd086d6da0075f961a069a3031530d00192b2e64e71340266c3a0d6bb36"
+      }
+    ]
+  },
+  "case_classes": [
+    {
+      "id": "zero_drive",
+      "role": "limiting_case",
+      "required_evidence": "Packet-bound equilibrium liquid and gas-film zero-fugacity-drive closure with zero signed CO2 flux.",
+      "non_execution_reason_type": "dependency_blocked",
+      "non_execution_reason": "Issue 36 admits zero physical film-input states; the zero-drive calculation cannot be evaluated without an admitted packet-bound state."
+    },
+    {
+      "id": "no_reaction",
+      "role": "limiting_case",
+      "required_evidence": "Admitted film inputs and analytic two-film signed-flux comparison with finite reaction sources disabled.",
+      "non_execution_reason_type": "dependency_blocked",
+      "non_execution_reason": "Issue 36 admits zero physical film-input states; the no-reaction comparison cannot be evaluated."
+    },
+    {
+      "id": "linear_limit",
+      "role": "limiting_case",
+      "required_evidence": "Retained linear fugacity-composition reference compared with complete signed flux.",
+      "non_execution_reason_type": "dependency_blocked",
+      "non_execution_reason": "Issue 36 admits zero physical film-input states; the linear-limit comparison cannot be evaluated."
+    },
+    {
+      "id": "desorption",
+      "role": "limiting_case",
+      "required_evidence": "Admitted reverse-driving state with physically correct negative CO2 transfer direction.",
+      "non_execution_reason_type": "dependency_blocked",
+      "non_execution_reason": "Issue 36 admits zero physical film-input states; no reverse-driving physical state may be invented."
+    },
+    {
+      "id": "source_rate_states",
+      "role": "source_comparison",
+      "required_evidence": "Source rate states used by the accepted kinetics and transport leaves.",
+      "non_execution_reason_type": "incomplete_evidence",
+      "non_execution_reason": "The accepted Issue 36 result has no admitted concentration, kinetic, or transport intersection for a film-rate evaluation."
+    },
+    {
+      "id": "independent_rate_observations",
+      "role": "independent_physical_validation",
+      "required_evidence": "At least one independent rate observation in each available lean, middle, and rich admitted class, compared on its source area and driving-force basis.",
+      "non_execution_reason_type": "incomplete_evidence",
+      "non_execution_reason": "Zero admitted Issue 36 film-input states means no independent observed-versus-calculated film rate can be compared."
+    },
+    {
+      "id": "case3c_application_stress_states",
+      "role": "application_stress",
+      "required_evidence": "All 21 retained Case 3C axial stress states that lie inside the admitted temperature, concentration, and loading domain.",
+      "non_execution_reason_type": "dependency_blocked",
+      "non_execution_reason": "Issue 36 admits zero physical film-input states; the 21-state application stress set cannot be launched."
+    }
+  ],
+  "reproduction": {
+    "command": "uv run python analyses/nccc_validation/scripts/resolve_issue30_film_validation_gate.py",
+    "workers": 1,
+    "machine": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+    "run_id_prefix": "issue30_gate_",
+    "execution_mode": "no_run_gate",
+    "timeout_meaning": "No physical case is launched, so no timeout is assigned. A future timeout is incomplete numerical evidence, not physical disagreement.",
+    "campaign_budget_status": "not_recorded_issue19_open",
+    "source_revision_protocol": "Run from a clean source commit containing the Issue 30 input and resolver but none of the generated Issue 30 outputs; commit the source stage first and the generated result stage separately."
+  },
+  "claim_boundary": "The retained result supports only the Issue 30 supported-negative no-run decision. It does not validate limiting behavior, desorption, numerical convergence, initialization, rate observations, film flux, packed-column capture, or a model disagreement.",
+  "limitations": [
+    "Issue 36 is accepted as a supported-negative packet-bound release result with zero admitted states and no version-2 input, schema, or receipt files.",
+    "Issue 19 remains open and has no investigator-approved timing campaign budget; no physical BVP campaign is authorized.",
+    "No timeout or failed state is retained as a physical disagreement because no physical state was launched.",
+    "The result blocks column replacement and downstream Issue 31 execution until an independent, source-admitted film validation result exists."
+  ]
+}

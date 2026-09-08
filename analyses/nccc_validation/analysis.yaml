@@ -1,7 +1,7 @@
 id: nccc_validation
 title: NCCC MEA Absorber Validation And Thermodynamic Benchmark
 status: active
-summary: Reviewer-response validation artifacts for one-bed NCCC cases, solver-method contrast, ideal Henry versus routine ePC-SAFT fugacity driving-force comparisons, and diagnostic activity-coupled ePC-SAFT option checks.
+summary: Reviewer-response validation evidence for one-bed NCCC cases, solver-method contrast, ideal Henry versus routine ePC-SAFT fugacity driving-force comparisons, and bounded ePC-SAFT 0.2 fixed-chemistry checks.
 owner: project
 architecture:
   standard: local_codex_project_architecture
@@ -13,6 +13,40 @@ inputs:
     kind: packaged_reference_data
   - path: ../../src/mea_absorption_column/data/NCCC_Data.csv
     kind: packaged_reference_data
+  - path: inputs/retained_reactive_case3c/film_states.csv
+    kind: retained_reactive_film_states
+  - path: inputs/retained_reactive_case3c/speciation_table.csv
+    kind: certified_reactive_speciation_table
+  - path: inputs/retained_reactive_case3c/speciation_table_summary.json
+    kind: certified_reactive_speciation_identity
+  - path: inputs/issue17_enhancement_comparison/historical_fugacity_only_scalar_row.csv
+    kind: historical_scalar_evidence
+  - path: inputs/issue17_enhancement_comparison/current_fugacity_only_reconstruction_result.csv
+    kind: current_reconstruction_result
+  - path: inputs/issue17_enhancement_comparison/current_fugacity_only_full_profile.csv
+    kind: retained_fugacity_only_profile
+  - path: inputs/issue17_enhancement_comparison/current_fugacity_only_fixed_states.csv
+    kind: retained_fixed_state_sample
+  - path: inputs/issue17_enhancement_comparison/identity.json
+    kind: issue17_reproducibility_identity
+  - path: inputs/issue16_reactive_film_identity.json
+    kind: issue16_immutable_input_receipt
+  - path: inputs/issue33_concentration_basis.json
+    kind: issue33_source_backed_concentration_basis_input
+  - path: inputs/issue34_kinetics.json
+    kind: issue34_source_faithful_kinetics_input
+  - path: inputs/issue35_transport.json
+    kind: issue35_source_faithful_transport_input
+  - path: inputs/issue40_apparent_true_species.json
+    kind: issue40_packet_bound_apparent_true_species_input
+  - path: inputs/issue41_reversible_kinetics.json
+    kind: issue41_source_rate_evidence_input
+  - path: inputs/issue42_film_transport.json
+    kind: issue42_species_resolved_transport_input
+  - path: inputs/issue36_film_input_release.json
+    kind: issue36_packet_bound_release_input
+  - path: inputs/issue30_film_validation_gate.json
+    kind: issue30_no_run_gate_input
 outputs:
   - path: results/final/tables/verified_c_case_thermo_benchmark.csv
     kind: accepted_result_table
@@ -30,24 +64,12 @@ outputs:
     kind: solver_method_diagnostic_table
   - path: results/final/tables/source_backed_1c_6c_temperature_capture_profile_metrics.csv
     kind: source_backed_temperature_capture_profile_table
-  - path: results/final/tables/epcsaft_electrolyte_option_matrix.csv
-    kind: electrolyte_option_diagnostic_table
-  - path: results/final/reports/epcsaft_electrolyte_option_matrix.md
-    kind: electrolyte_option_diagnostic_report
-  - path: results/final/tables/epcsaft_electrolyte_column_config_matrix.csv
-    kind: electrolyte_column_configuration_table
-  - path: results/final/tables/epcsaft_electrolyte_config_user_options.csv
-    kind: electrolyte_configuration_source_table
-  - path: results/final/tables/epcsaft_electrolyte_pure_parameters.csv
-    kind: electrolyte_pure_parameter_provenance_table
-  - path: results/final/tables/epcsaft_electrolyte_binary_parameters.csv
-    kind: electrolyte_binary_parameter_provenance_table
-  - path: results/final/tables/epcsaft_electrolyte_relative_permittivity_parameters.csv
-    kind: electrolyte_relative_permittivity_parameter_table
+  - path: results/final/tables/epcsaft_v02_contribution_table.csv
+    kind: current_epcsaft_v02_fixed_state_validation
+  - path: results/final/tables/epcsaft_v02_column_row.csv
+    kind: current_epcsaft_v02_fixed_chemistry_column_validation
   - path: results/final/tables/full_species_ionic_2017_c_case_sweep.csv
     kind: activity_coupled_feasibility_table
-  - path: results/final/reports/epcsaft_electrolyte_column_config_matrix.md
-    kind: electrolyte_column_configuration_report
   - path: results/final/figures/c_case_thermo_benchmark.pdf
     kind: manuscript_figure
   - path: results/final/figures/error_regime_capture_error.pdf
@@ -58,6 +80,120 @@ outputs:
     kind: manuscript_figure
   - path: results/final/figures/source_backed_1c_6c_temperature_capture_profiles
     kind: source_backed_temperature_capture_gallery
+  - path: results/final/tables/retained_reactive_case3c_profile_comparison.csv
+    kind: reactive_profile_comparison_table
+  - path: results/final/tables/retained_reactive_case3c_fugacity_factorial.csv
+    kind: reactive_fugacity_factorial_table
+  - path: results/final/tables/retained_reactive_case3c_sensitivity.csv
+    kind: reactive_column_sensitivity_table
+  - path: results/final/figures/retained_reactive_case3c_diagnosis.pdf
+    kind: research_journal_figure
+  - path: results/final/tables/retained_reactive_case3c_enhancement_formulations.csv
+    kind: enhancement_consistency_table
+  - path: results/final/tables/retained_reactive_case3c_enhancement_summary.json
+    kind: enhancement_consistency_summary
+  - path: results/final/tables/retained_reactive_case3c_film_runs.csv
+    kind: reactive_film_acceptance_table
+  - path: results/final/tables/retained_reactive_case3c_film_profile.csv
+    kind: reactive_film_profile_table
+  - path: results/final/tables/retained_reactive_case3c_film_summary.json
+    kind: reactive_film_acceptance_summary
+  - path: results/final/tables/issue16_exact_reactive_film_runs.csv
+    kind: issue16_exact_derivative_attempt_table
+  - path: results/final/tables/issue16_exact_reactive_film_summary.json
+    kind: issue16_exact_derivative_attempt_summary
+  - path: results/final/tables/issue16_exact_reactive_film_numerical_gate.csv
+    kind: issue16_numerical_gate_table
+  - path: results/final/tables/issue16_exact_reactive_film_numerical_gate_summary.json
+    kind: issue16_numerical_gate_summary
+  - path: results/final/tables/issue16_reactive_film_gate.csv
+    kind: issue16_scientific_gate_table
+  - path: results/final/tables/issue16_manufactured_reversible_film.csv
+    kind: issue16_reversible_architecture_check
+  - path: results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv
+    kind: identical_state_enhancement_film_comparison
+  - path: results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
+    kind: enhancement_consistency_figure
+  - path: results/final/tables/issue17_fugacity_only_enhancement_formulations.csv
+    kind: fixed_state_enhancement_comparison
+  - path: results/final/tables/issue17_fugacity_only_enhancement_aggregates.csv
+    kind: fixed_state_enhancement_aggregates
+  - path: results/final/tables/issue17_enhancement_stage_outcomes.csv
+    kind: issue17_stage_outcomes
+  - path: results/final/tables/issue17_fugacity_only_enhancement_summary.json
+    kind: issue17_comparison_summary
+  - path: results/final/tables/issue33_concentration_basis.csv
+    kind: issue33_concentration_basis_source_table
+  - path: results/final/tables/issue33_concentration_basis_summary.json
+    kind: issue33_concentration_basis_summary
+  - path: results/final/tables/issue34_finite_reactions.csv
+    kind: issue34_finite_reaction_table
+  - path: results/final/tables/issue34_partition_decisions.csv
+    kind: issue34_reaction_partition_table
+  - path: results/final/tables/issue34_rate_observation_comparisons.csv
+    kind: issue34_rate_observation_comparison_table
+  - path: results/final/tables/issue34_source_correlation_arithmetic_reconstruction.csv
+    kind: issue34_source_correlation_arithmetic_reconstruction_table
+  - path: results/final/tables/issue34_kinetics_summary.json
+    kind: issue34_kinetics_summary
+  - path: results/final/reports/issue34_reaction_kinetics.md
+    kind: issue34_reaction_kinetics_report
+  - path: results/final/tables/issue35_transport_correlations.csv
+    kind: issue35_transport_correlation_table
+  - path: results/final/tables/issue35_transport_sensitivity.csv
+    kind: issue35_transport_sensitivity_table
+  - path: results/final/tables/issue35_transport_summary.json
+    kind: issue35_transport_summary
+  - path: results/final/reports/issue35_transport_inputs.md
+    kind: issue35_transport_input_report
+  - path: results/final/tables/issue40_apparent_true_species.csv
+    kind: issue40_apparent_true_species_result_table
+  - path: results/final/tables/issue40_apparent_true_species_summary.json
+    kind: issue40_apparent_true_species_summary
+  - path: results/final/reports/issue40_apparent_true_species.md
+    kind: issue40_apparent_true_species_report
+  - path: results/final/tables/issue41_stoichiometry.csv
+    kind: issue41_stoichiometry_table
+  - path: results/final/tables/issue41_source_rate_evidence.csv
+    kind: issue41_source_rate_evidence_table
+  - path: results/final/tables/issue41_raw_rate_observations.csv
+    kind: issue41_raw_rate_observation_inventory
+  - path: results/final/tables/issue41_provider_equilibrium_relationships.csv
+    kind: issue41_provider_equilibrium_table
+  - path: results/final/tables/issue41_estimation_validation_partition.csv
+    kind: issue41_estimation_validation_partition
+  - path: results/final/tables/issue41_packet_bound_comparison.csv
+    kind: issue41_packet_bound_comparison
+  - path: results/final/tables/issue41_reversible_kinetics_summary.json
+    kind: issue41_reversible_kinetics_summary
+  - path: results/final/reports/issue41_reversible_kinetics.md
+    kind: issue41_reversible_kinetics_report
+  - path: results/final/tables/issue42_transport_inputs.csv
+    kind: issue42_transport_input_inventory
+  - path: results/final/tables/issue42_transport_comparison.csv
+    kind: issue42_transport_comparison
+  - path: results/final/tables/issue42_film_transport_summary.json
+    kind: issue42_film_transport_summary
+  - path: results/final/reports/issue42_film_transport.md
+    kind: issue42_film_transport_report
+  - path: results/final/tables/issue36_film_input_release.csv
+    kind: issue36_state_gate_table
+  - path: results/final/tables/issue36_film_input_release_summary.json
+    kind: issue36_release_summary
+  - path: results/final/reports/issue36_film_input_release.md
+    kind: issue36_release_report
+  - path: results/final/tables/issue30_film_validation_gate.csv
+    kind: issue30_case_class_gate_table
+  - path: results/final/tables/issue30_film_validation_gate_summary.json
+    kind: issue30_no_run_gate_summary
+  - path: results/final/reports/issue30_film_validation_gate.md
+    kind: issue30_no_run_gate_report
+  - path: results/final/figures/issue17_axial_enhancement.pdf
+    kind: issue17_enhancement_figure
+  - path: results/final/figures/issue17_axial_flux.pdf
+    kind: issue17_flux_figure
+  - path: results/final/figures/issue17_parity_to_gaspar_implicit.pdf
+    kind: issue17_parity_figure
   - path: results/final/profiles
     kind: clean_profile_gallery
   - path: results/runs/*/profiles
@@ -76,10 +212,49 @@ commands:
     - uv run python analyses/nccc_validation/scripts/generate_clean_profile_csvs.py --suite all --output-dir analyses/nccc_validation/results/runs/clean_profile_csvs
   validate:
     - uv run python analyses/nccc_validation/scripts/validate_results.py
-  epcsaft_electrolyte_options:
-    - uv run python analyses/nccc_validation/scripts/probe_epcsaft_electrolyte_options.py
-  epcsaft_electrolyte_column_matrix:
-    - uv run python analyses/nccc_validation/scripts/run_epcsaft_electrolyte_config_matrix.py
+  epcsaft_v02_validation:
+    - uv run python analyses/nccc_validation/scripts/generate_epcsaft_v02_validation.py
+  retained_reactive_case3c_analysis:
+    - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
+    - uv run python analyses/nccc_validation/scripts/render_retained_reactive_case3c_diagnosis.py
+  enhancement_consistency:
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
+    - uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
+    - uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
+  issue17_enhancement_comparison:
+    - uv run python analyses/nccc_validation/scripts/analyze_issue17_enhancement_comparison.py
+    - uv run python analyses/nccc_validation/scripts/render_issue17_enhancement_comparison.py
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue17-only
+  reactive_film:
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate
+  issue16_reactive_film:
+    - uv run python scripts/check_epcsaft_integration.py --mode final
+    - uv run pytest -q tests/test_reactive_film.py -k exact_epcsaft_tangent_closes_through_zero_drive_film
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --full --case-timeout-s 10
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
+    - MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/generate_issue16_evidence.py
+  issue33_concentration_basis:
+    - MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv uv run python analyses/nccc_validation/scripts/resolve_concentration_bases.py
+  issue34_kinetics:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue34_kinetics.py
+  issue35_transport:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py
+  issue40_apparent_true_species:
+    - python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue40-only
+  issue41_reversible_kinetics:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue41-only
+  issue42_film_transport:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue42-only
+  issue36_film_input_release:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue36_film_input_release.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue36-only
+  issue30_film_validation_gate:
+    - uv run python analyses/nccc_validation/scripts/resolve_issue30_film_validation_gate.py
+    - uv run python analyses/nccc_validation/scripts/validate_results.py --issue30-only
 runtime:
   quick_seconds: 10
   full_seconds: 600
@@ -91,13 +266,15 @@ external_dependencies:
       - thermo_model: epcsaft_reactive_six_concentration
       - thermo_model: epcsaft_reactive_six_activity
       - script: scripts/probe_reactive_epcsaft_speciation.py
-      - script: scripts/probe_epcsaft_electrolyte_options.py
-      - script: scripts/run_epcsaft_electrolyte_config_matrix.py
+      - script: scripts/generate_epcsaft_v02_validation.py
+      - script: analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py
     not_required_for:
       - thermo_model: ideal_henry
       - script: scripts/generate_data.py
       - script: scripts/render_figures.py
       - script: scripts/validate_results.py
+      - script: analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py
+      - script: analyses/nccc_validation/scripts/resolve_issue42_film_transport.py
     package_contract: external package is read-only from this repo; adapter, caching, guards, and benchmark scripts live here
     optional_env:
       MEA_EPCSAFT_DATASET_NAME: MEA_CO2_H2O_ionic_fit
@@ -109,3 +286,72 @@ tracked_results:
   - results/final/tables
   - results/final/figures
   - results/final/profiles
+  - results/final/tables/retained_reactive_case3c_profile_comparison.csv
+  - results/final/tables/retained_reactive_case3c_fugacity_factorial.csv
+  - results/final/tables/retained_reactive_case3c_sensitivity.csv
+  - results/final/tables/retained_reactive_case3c_diagnosis_summary.json
+  - results/final/figures/retained_reactive_case3c_diagnosis.pdf
+  - results/final/tables/retained_reactive_case3c_enhancement_formulations.csv
+  - results/final/tables/retained_reactive_case3c_enhancement_summary.json
+  - results/final/tables/retained_reactive_case3c_film_runs.csv
+  - results/final/tables/retained_reactive_case3c_film_profile.csv
+  - results/final/tables/retained_reactive_case3c_film_summary.json
+  - results/final/tables/issue16_exact_reactive_film_runs.csv
+  - results/final/tables/issue16_exact_reactive_film_summary.json
+  - results/final/tables/issue16_exact_reactive_film_numerical_gate.csv
+  - results/final/tables/issue16_exact_reactive_film_numerical_gate_summary.json
+  - results/final/tables/issue16_reactive_film_gate.csv
+  - results/final/tables/issue16_manufactured_reversible_film.csv
+  - results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv
+  - results/final/figures/retained_reactive_case3c_enhancement_consistency.pdf
+  - results/final/tables/issue17_fugacity_only_enhancement_formulations.csv
+  - results/final/tables/issue17_fugacity_only_enhancement_aggregates.csv
+  - results/final/tables/issue17_enhancement_stage_outcomes.csv
+  - results/final/tables/issue17_fugacity_only_enhancement_summary.json
+  - results/final/figures/issue17_axial_enhancement.pdf
+  - results/final/figures/issue17_axial_flux.pdf
+  - results/final/figures/issue17_parity_to_gaspar_implicit.pdf
+  - results/final/tables/issue33_concentration_basis.csv
+  - results/final/tables/issue33_concentration_basis_summary.json
+  - results/final/tables/issue34_finite_reactions.csv
+  - results/final/tables/issue34_partition_decisions.csv
+  - results/final/tables/issue34_rate_observation_comparisons.csv
+  - results/final/tables/issue34_source_correlation_arithmetic_reconstruction.csv
+  - results/final/tables/issue34_kinetics_summary.json
+  - results/final/reports/issue34_reaction_kinetics.md
+  - results/final/tables/issue35_transport_correlations.csv
+  - results/final/tables/issue35_transport_sensitivity.csv
+  - results/final/tables/issue35_transport_summary.json
+  - results/final/reports/issue35_transport_inputs.md
+  - results/final/tables/issue40_apparent_true_species.csv
+  - results/final/tables/issue40_apparent_true_species_summary.json
+  - results/final/reports/issue40_apparent_true_species.md
+  - results/final/tables/issue41_stoichiometry.csv
+  - results/final/tables/issue41_source_rate_evidence.csv
+  - results/final/tables/issue41_raw_rate_observations.csv
+  - results/final/tables/issue41_provider_equilibrium_relationships.csv
+  - results/final/tables/issue41_estimation_validation_partition.csv
+  - results/final/tables/issue41_packet_bound_comparison.csv
+  - results/final/tables/issue41_reversible_kinetics_summary.json
+  - results/final/reports/issue41_reversible_kinetics.md
+  - results/final/tables/issue42_transport_inputs.csv
+  - results/final/tables/issue42_transport_comparison.csv
+  - results/final/tables/issue42_film_transport_summary.json
+  - results/final/reports/issue42_film_transport.md
+  - results/final/tables/issue36_film_input_release.csv
+  - results/final/tables/issue36_film_input_release_summary.json
+  - results/final/reports/issue36_film_input_release.md
+  - results/final/tables/issue30_film_validation_gate.csv
+  - results/final/tables/issue30_film_validation_gate_summary.json
+  - results/final/reports/issue30_film_validation_gate.md
+historical_outputs:
+  note: Pre-0.2 runtime-option and configuration matrices are preserved for provenance only, have no supported generator, and are not current validation evidence.
+  paths:
+    - results/final/tables/epcsaft_electrolyte_option_matrix.csv
+    - results/final/reports/epcsaft_electrolyte_option_matrix.md
+    - results/final/tables/epcsaft_electrolyte_column_config_matrix.csv
+    - results/final/tables/epcsaft_electrolyte_config_user_options.csv
+    - results/final/tables/epcsaft_electrolyte_pure_parameters.csv
+    - results/final/tables/epcsaft_electrolyte_binary_parameters.csv
+    - results/final/tables/epcsaft_electrolyte_relative_permittivity_parameters.csv
+    - results/final/reports/epcsaft_electrolyte_column_config_matrix.md

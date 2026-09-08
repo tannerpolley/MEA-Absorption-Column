@@ -1,0 +1,58 @@
+id: reactive_film_evidence
+title: Physical inputs and observations for reactive-film development
+status: active
+summary: Source availability, finite-rate kinetics, transport quantities, and aggregate film-model comparison evidence.
+owner: project
+inputs:
+  - path: inputs/source_data_availability.csv
+    kind: source_availability_matrix
+  - path: ../nccc_validation/results/final/tables/issue34_rate_observation_comparisons.csv
+    kind: retained_putta2016_table4_aggregate_aard
+  - path: ../nccc_validation/results/final/tables/issue35_transport_correlations.csv
+    kind: retained_transport_correlations
+  - path: ../nccc_validation/results/final/tables/issue41_source_rate_evidence.csv
+    kind: retained_finite_rate_kinetics
+  - path: ../nccc_validation/results/final/tables/issue42_transport_inputs.csv
+    kind: retained_species_transport_inventory
+  - path: inputs/dugas2011_table1_mea.csv
+    kind: exact_local_film_observations
+  - path: inputs/diffusion_anchor_assumptions.csv
+    kind: labeled_diffusion_anchors_and_assumptions
+  - path: inputs/ramezani2021_si_rows.csv
+    kind: exact_supplied_si_rows
+  - path: inputs/ganesan2026_si_rows.csv
+    kind: exact_supplied_si_rows
+  - path: inputs/ganesan2026_si_model_choices.csv
+    kind: exact_supplied_si_model_choices
+outputs:
+  - path: results/final/tables/putta2016_table4_aard_plot.csv
+    kind: exact_plot_data
+  - path: results/final/tables/chemical_potential_isolation_plot.csv
+    kind: exact_plot_data_non_predictive
+  - path: results/final/tables/chemical_potential_definition_trace.csv
+    kind: exact_diagnostic_trace_non_predictive
+  - path: results/final/tables/diffusion_anchor_plot.csv
+    kind: exact_plot_data_non_predictive
+  - path: results/final/tables/dugas2011_table1_mea_plot.csv
+    kind: exact_plot_data
+  - path: results/final/tables/ramezani_viscosity_sensitivity_plot.csv
+    kind: exact_plot_data_non_predictive
+  - path: results/final/tables/ganesan2026_si_rows_plot.csv
+    kind: exact_plot_data
+  - path: results/final/tables/ganesan2026_si_model_choices_plot.csv
+    kind: exact_plot_data
+  - path: results/final/figures/putta2016_table4_aard.png
+    kind: aggregate_model_comparison_figure
+  - path: results/final/figures/putta2016_table4_aard.pdf
+    kind: aggregate_model_comparison_figure
+  - path: results/final/figures/reactive_film_evidence_panels.png
+    kind: three_panel_non_validation_evidence_figure
+  - path: results/final/figures/reactive_film_evidence_panels.pdf
+    kind: three_panel_non_validation_evidence_figure
+commands:
+  generate:
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/reactive_film_evidence/scripts/build_reactive_film_evidence.py
+  render:
+    - uv run python analyses/reactive_film_evidence/scripts/render_reactive_film_evidence.py
+    - uv run python analyses/reactive_film_evidence/scripts/render_putta2016_aard.py
+claim_boundary: Source-availability, thermodynamic-force isolation, normalized fixed-chemistry viscosity sensitivity, and dimensional aggregate film evidence only; diagonal mobility is an explicit approximation, self/probe diffusion is not a nine-species Maxwell-Stefan/Onsager matrix, no kinetics fit or packed-column/capture claim is made, and all retained figures are non-predictive/non-validation evidence.

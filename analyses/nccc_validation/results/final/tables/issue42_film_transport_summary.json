@@ -1,0 +1,352 @@
+{
+  "schema_version": "issue42_film_transport_result_v1",
+  "issue": 42,
+  "claim_label": "supported_negative_source_only_transport_and_ionic_closure",
+  "source_revision": "9543ff740323ffefed080c2e13622306f87395e3",
+  "source_worktree_clean_at_generation": true,
+  "source_revision_protocol": "Run from a clean source commit; commit the input and resolver first, then commit generated result files separately. The recorded source commit is not the result-containing commit.",
+  "input_sha256": "032c6176c3173207d94810b9478cba17c05b1cfc760e9be797605b424eb49118",
+  "generator_sha256": "9defe968f2daaacafb013d4284e04f9badb892395d331fc2fe79b559d53f4e4a",
+  "exact_command": "uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py",
+  "machine": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+  "workers": 1,
+  "run_id": "issue42_source_only_9543ff740323",
+  "source_documents": [
+    {
+      "id": "Putta2017",
+      "citation": "Putta et al. (2017), CO2 absorption into loaded aqueous MEA solutions: Impact of different model parameter correlations and thermodynamic models",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/YPM9CEQV/Putta et al. - 2017 - CO2 absorption into loaded aqueous MEA solutions Impact of different model parameter correlations a.pdf",
+      "source_pdf_sha256": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+      "role": "CO2 diffusivity correlation and transport-correlation context",
+      "locators": [
+        "PDF p. 14, Section 2.3, Eqs. 12--13",
+        "PDF pp. 14--15, Table 4"
+      ],
+      "verified_sha256": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+      "verification_status": "verified"
+    },
+    {
+      "id": "Putta2016",
+      "citation": "Putta et al. (2016), CO2 absorption into loaded aqueous MEA solutions: Kinetics assessment using penetration theory",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/BSUB8BSF/Putta et al. - 2016 - CO2 absorption into loaded aqueous MEA solutions Kinetics assessment using penetration theory.pdf",
+      "source_pdf_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "role": "film boundary and liquid-property source inventory",
+      "locators": [
+        "printed p. 343, Eqs. 31--37 and Table 3",
+        "printed p. 353, reference 29"
+      ],
+      "verified_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+      "verification_status": "verified"
+    },
+    {
+      "id": "Luo2015",
+      "citation": "Luo et al. (2015), Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutions",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/MFRDNYCS/Luo et al. - 2015 - Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutio.pdf",
+      "source_pdf_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "role": "CO2, MEA, density, viscosity, and source-basis transport relationships",
+      "locators": [
+        "printed p. 61, Eqs. 15--24"
+      ],
+      "verified_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+      "verification_status": "verified"
+    },
+    {
+      "id": "Snijder1993",
+      "citation": "Snijder et al. (1993), Diffusion coefficients of several aqueous alkanolamine solutions",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/ANNK86SA/Snijder et al. - 1993 - Diffusion coefficients of several aqueous alkanolamine solutions.pdf",
+      "source_pdf_sha256": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+      "role": "free-MEA diffusivity correlation and Table III source states",
+      "locators": [
+        "printed p. 477, Table III and Eq. 8",
+        "printed p. 479, concentration-extension discussion"
+      ],
+      "verified_sha256": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+      "verification_status": "verified"
+    },
+    {
+      "id": "Amundsen2009",
+      "citation": "Amundsen et al. (2009), Density and viscosity of monoethanolamine + water + carbon dioxide from (25 to 80) deg C",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/NGQVTDX7/Amundsen et al. - 2009 - Density and Viscosity of Monoethanolamine + Water + Carbon Dioxide from (25 to 80) \u00b0C.pdf",
+      "source_pdf_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+      "role": "Weiland density and viscosity source reconstruction",
+      "locators": [
+        "printed p. 3098, Eqs. 4--6 and Table 10",
+        "printed p. 3099, Eqs. 9--10 and Table 12"
+      ],
+      "verified_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+      "verification_status": "verified"
+    },
+    {
+      "id": "Hartono2014",
+      "citation": "Hartono et al. (2014), Physical Properties of Partially CO2 Loaded Aqueous Monoethanolamine (MEA)",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/L7SKR73P/Hartono et al. - 2014 - Physical Properties of Partially CO2 Loaded Aqueous Monoethanolamine (MEA).pdf",
+      "source_pdf_sha256": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+      "role": "loaded density and viscosity source reconstruction",
+      "locators": [
+        "printed p. 1810, Table 3 and Eqs. 3--5",
+        "printed pp. 1811--1812, Eqs. 6--9 and Table 7"
+      ],
+      "verified_sha256": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+      "verification_status": "verified"
+    },
+    {
+      "id": "Gaspar2015",
+      "citation": "Gaspar and Fosbol (2015), A general enhancement factor model for absorption and desorption systems",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/PW5C8YSL/Gaspar and Fosb\u00f8l - 2015 - A general enhancement factor model for absorption and desorption systems A CO2 capture case-study.pdf",
+      "source_pdf_sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "role": "equal/unequal diffusivity comparison context only",
+      "locators": [
+        "printed p. 204, introduction",
+        "printed p. 209, equal-diffusivity comparison"
+      ],
+      "verified_sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
+      "verification_status": "verified"
+    }
+  ],
+  "unrecovered_source_records": [
+    {
+      "id": "Ko_primary_N2O",
+      "source_chain": "Putta2017 Eq. 12 and Table 4, DC1 -> Ko et al. (2000)",
+      "source_status": "not_recovered_in_retained_local_sources",
+      "quantity_type": "effective",
+      "units": "m2/s",
+      "domain": "Putta2017 Table 4: 303--313 K, 1--5 mol/L, unloaded",
+      "uncertainty_status": "unknown",
+      "reason": "The primary N2O-water and N2O-amine rows required by the analogy are not retained; no coefficient is invented."
+    },
+    {
+      "id": "Jamal_primary_N2O",
+      "source_chain": "Putta2017 Eq. 12 and Table 4, DC2 -> Jamal source",
+      "source_status": "not_recovered_in_retained_local_sources",
+      "quantity_type": "effective",
+      "units": "m2/s",
+      "domain": "Putta2017 Table 4: 298--313 K, 0--5 mol/L, unloaded",
+      "uncertainty_status": "unknown",
+      "reason": "The primary N2O correlation and uncertainty are not retained; no coefficient is invented."
+    },
+    {
+      "id": "Ying_Eimer_primary_N2O",
+      "source_chain": "Putta2017 Eq. 12 and Table 4, DC3 -> Ying and Eimer source",
+      "source_status": "not_recovered_in_retained_local_sources",
+      "quantity_type": "effective",
+      "units": "m2/s",
+      "domain": "Putta2017 Table 4: 298--333 K, 0--12 mol/L, unloaded",
+      "uncertainty_status": "unknown",
+      "reason": "The primary N2O correlation and uncertainty are not retained; no coefficient is invented."
+    },
+    {
+      "id": "Holz_primary_water_self_diffusivity",
+      "source_chain": "Putta2016 Table 3 -> Holz et al. (2000), water self-diffusivity",
+      "source_status": "not_recovered_in_retained_local_sources",
+      "quantity_type": "tracer",
+      "units": "m2/s",
+      "domain": "not retained",
+      "uncertainty_status": "unknown",
+      "reason": "Putta identifies the source but no source-complete water self-diffusivity rows are retained."
+    }
+  ],
+  "source_reconstruction": {
+    "issue35_correlation_table_sha256": "8e3b447676f0d37c1d83c01db9fc97fbd8a5366c9e6e6d961c7471d5ceecbbaf",
+    "issue35_replay_sha256": "8e3b447676f0d37c1d83c01db9fc97fbd8a5366c9e6e6d961c7471d5ceecbbaf",
+    "issue35_replay_exact_match": true,
+    "issue35_source_observation_counts": {
+      "amundsen_weiland_unloaded_density": 5,
+      "amundsen_weiland_density": 23,
+      "hartono_density": 48,
+      "hartono_viscosity": 48
+    },
+    "issue35_source_model_evaluation_counts": {
+      "weiland_density": 23,
+      "hartono_density": 48,
+      "hartono_viscosity": 48
+    },
+    "issue35_snijder_row_count": 16,
+    "issue35_snijder_max_relative_residual": 0.05475741057031899,
+    "issue35_snijder_max_absolute_residual_m2_s": 6.401227067369358e-11
+  },
+  "dependencies": {
+    "issue35_input": {
+      "path": "analyses/nccc_validation/inputs/issue35_transport.json",
+      "sha256": "10751418c1bb813de0f9c665ae86b153c21cd5e3c8ba1db28a7867ef55839eaf"
+    },
+    "issue35_correlations": {
+      "path": "analyses/nccc_validation/results/final/tables/issue35_transport_correlations.csv",
+      "sha256": "8e3b447676f0d37c1d83c01db9fc97fbd8a5366c9e6e6d961c7471d5ceecbbaf"
+    },
+    "issue35_sensitivity": {
+      "path": "analyses/nccc_validation/results/final/tables/issue35_transport_sensitivity.csv",
+      "sha256": "6fa9d797013eaf5999612be67036ddbdb4e309db2cd0460ad09eb511c7f46a91"
+    },
+    "issue35_summary": {
+      "path": "analyses/nccc_validation/results/final/tables/issue35_transport_summary.json",
+      "sha256": "af73e314f7ea3914cafbbd93884594c55e0b98c32bbf74b298d6afb28e30d4dd"
+    },
+    "issue35_report": {
+      "path": "analyses/nccc_validation/results/final/reports/issue35_transport_inputs.md",
+      "sha256": "d8c6f55256713d6869522fb094c77b493b7f15a57da6c71eb3e7bb07c9210cbf"
+    },
+    "issue40_input": {
+      "path": "analyses/nccc_validation/inputs/issue40_apparent_true_species.json",
+      "sha256": "4cdc29a5ae5f95624f70010c016c8d6637fe93cbc90f87247975f04710c5303d"
+    },
+    "issue40_summary": {
+      "path": "analyses/nccc_validation/results/final/tables/issue40_apparent_true_species_summary.json",
+      "sha256": "1b1f678c495de625971820dbc77cbfe7797aafe5c1bcaad5fc5ecf79e84b7118"
+    },
+    "issue40_table": {
+      "path": "analyses/nccc_validation/results/final/tables/issue40_apparent_true_species.csv",
+      "sha256": "231e103ad50994041f8cb7752841b56740701409ecf3eeafdf8ce65b56165848"
+    },
+    "issue41_input": {
+      "path": "analyses/nccc_validation/inputs/issue41_reversible_kinetics.json",
+      "sha256": "bd3f19214798ab6746c2c767425a0e9f9c6d5cfc2df3c50d35745d352f196601"
+    },
+    "issue41_summary": {
+      "path": "analyses/nccc_validation/results/final/tables/issue41_reversible_kinetics_summary.json",
+      "sha256": "eb4e031467a8d18f4dce01b794c6228e384513a323ea0f7b385986fdc6691ce9"
+    },
+    "issue41_packet": {
+      "path": "analyses/nccc_validation/results/final/tables/issue41_packet_bound_comparison.csv",
+      "sha256": "0c5d7d644359d5e0a80d022e352caf7db8ade5dca0917e60a4cb47d2056b1c4d"
+    },
+    "issue41_report": {
+      "path": "analyses/nccc_validation/results/final/reports/issue41_reversible_kinetics.md",
+      "sha256": "2f6d51802c160668580ec621bd272f209ac90518f00c667bc1fddf8ba08f89c2"
+    }
+  },
+  "row_counts": {
+    "transport_records": 13,
+    "ionic_diffusivity_records": 6,
+    "declared_comparison_states": 5,
+    "evaluated_comparison_states": 0,
+    "scientifically_admitted_states": 0,
+    "candidate_A_evaluated_states": 0,
+    "candidate_B_evaluated_states": 0
+  },
+  "gates": {
+    "source_pdf_hashes_verified": true,
+    "source_input_and_generator_committed": true,
+    "issue35_reconstruction_replayed_exactly": true,
+    "issue35_supported_negative_preserved": true,
+    "issue40_scientifically_admitted_rows": 0,
+    "issue41_scientifically_admitted_packet_rows": 0,
+    "n2o_chain_complete": false,
+    "water_diffusivity_complete": false,
+    "ion_diffusivity_input_complete": false,
+    "candidate_A_all_species_effective_diffusivities_complete": false,
+    "candidate_A_source_defined_equal_ion_lump": false,
+    "candidate_B_complete_mobility_law": false,
+    "candidate_B_gamma_and_admitted_true_state_available": false,
+    "identical_state_flux_comparison_evaluated": false,
+    "paired_delta_J_evaluated": false,
+    "physical_checks_evaluated": false,
+    "physical_transport_adoption": false,
+    "no_package_or_parameter_identity_used": true,
+    "no_capture_inference": true,
+    "supported_negative": true
+  },
+  "candidate_A": {
+    "id": "A_equal_ion_effective_fick",
+    "flux_equation": "N_i = -D_i_eff dc_i/dz",
+    "charged_subset": [
+      "MEAH+",
+      "MEACOO-",
+      "HCO3-",
+      "CO3^2-",
+      "H3O+",
+      "OH-"
+    ],
+    "status": "blocked_missing_source_complete_species_set_or_source_defined_lump",
+    "required_inputs": [
+      "source-complete effective diffusivity for all nine species or a cited source-defined lump",
+      "admitted concentration basis",
+      "admitted kinetic state"
+    ],
+    "decision": "not_attempted",
+    "canonical_evidence": {
+      "source_documents_verified": true,
+      "source_pdf_sha256": {
+        "Putta2017": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+        "Putta2016": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+        "Luo2015": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+        "Snijder1993": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+        "Amundsen2009": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+        "Hartono2014": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+        "Gaspar2015": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7"
+      },
+      "transport_records": 13,
+      "ionic_diffusivity_records": 6,
+      "declared_comparison_states": 5,
+      "evaluated_comparison_states": 0,
+      "scientifically_admitted_states": 0,
+      "issue40_scientifically_admitted_rows": 0,
+      "issue41_scientifically_admitted_packet_rows": 0
+    }
+  },
+  "candidate_B": {
+    "id": "B_unequal_ion_zero_current",
+    "flux_equation": "J = -c M(x,D) [Gamma(x) d(ln x)/dz + z F/(R T) dpsi/dz]; N_i = J_i + x_i N_total",
+    "constraints": [
+      "N_total = sum(N_i)",
+      "J_i = N_i - x_i N_total",
+      "sum(J_i) = 0",
+      "sum(z_i F N_i) = 0",
+      "psi(delta_L) = 0"
+    ],
+    "status": "blocked_missing_complete_primary_mobility_law",
+    "required_inputs": [
+      "complete cited mobility/friction law",
+      "source-complete unequal-ion inputs",
+      "Gamma from ePC-SAFT",
+      "admitted true-species state",
+      "molar density"
+    ],
+    "decision": "not_attempted",
+    "canonical_evidence": {
+      "source_documents_verified": true,
+      "source_pdf_sha256": {
+        "Putta2017": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
+        "Putta2016": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
+        "Luo2015": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
+        "Snijder1993": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
+        "Amundsen2009": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
+        "Hartono2014": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
+        "Gaspar2015": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7"
+      },
+      "transport_records": 13,
+      "ionic_diffusivity_records": 6,
+      "declared_comparison_states": 5,
+      "evaluated_comparison_states": 0,
+      "scientifically_admitted_states": 0,
+      "issue40_scientifically_admitted_rows": 0,
+      "issue41_scientifically_admitted_packet_rows": 0
+    }
+  },
+  "package_parameter_identity": {
+    "used": false,
+    "package": null,
+    "parameter": null
+  },
+  "dependencies_have_zero_admitted_physical_rows": true,
+  "output_paths": {
+    "transport_inputs": "analyses/nccc_validation/results/final/tables/issue42_transport_inputs.csv",
+    "transport_comparison": "analyses/nccc_validation/results/final/tables/issue42_transport_comparison.csv",
+    "summary": "analyses/nccc_validation/results/final/tables/issue42_film_transport_summary.json",
+    "report": "analyses/nccc_validation/results/final/reports/issue42_film_transport.md"
+  },
+  "claim_boundary": "Source-only transport records and a supported unresolved Candidate A/B decision are retained. No physical film, flux, uncertainty interval, transport selection, thermodynamic validation, kinetic validation, or packed-column capture claim is admitted.",
+  "limitations": [
+    "The H2O self-diffusivity source chain is named by Putta2016 but its primary coefficient record is not retained.",
+    "The Putta2017 N2O analogy lacks the primary Ko, Jamal, and Ying-Eimer input records and uncertainty.",
+    "No species-resolved ionic diffusivities or source-defined equal-ion lump are retained.",
+    "No complete primary unequal-ion mobility/friction law is retained; scalar diffusivities are not promoted to a matrix.",
+    "Issue 40 has zero scientifically admitted true-species rows and Issue 41 has zero admitted packet/kinetic rows.",
+    "Density and viscosity reconstructions remain source-labeled and cannot become film inputs without an admitted concentration basis."
+  ],
+  "regeneration_command": "uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py",
+  "output_sha256": {
+    "transport_inputs": "fad87d02ed2b31ec3932ee748e9cee91baa0f57824654c728accf0bb0d8bf124",
+    "transport_comparison": "c1a5951f5c19333817141b980623e950854cf659025e3e9ff9d2d23e6271836e",
+    "report": "c6caeb6572688d50fafb3b59cb0cfeac3ec32a3d1250a37589c138ce66850ddb"
+  }
+}

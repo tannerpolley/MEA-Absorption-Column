@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "issue": 40,
+  "claim_label": "packet_bound_apparent_to_true_species_mapping_with_basis_unresolved_admission",
+  "bundle": {
+    "path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+    "outer_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+    "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+    "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+    "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
+    "parameter_fingerprint": "sha256:c1fc2665e94d136eb85f27c793b7defbd16d1d82cb3173cb50a9aaf6513c8940",
+    "chemistry_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c"
+  },
+  "source_inputs": {
+    "issue33_table": {
+      "path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis.csv",
+      "sha256": "1d8c6cc7ff3a801a8b8e1975a6b7f8618ae2bcef3a01a63df08c49bdfeb09b1d"
+    },
+    "issue33_summary": {
+      "path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis_summary.json",
+      "sha256": "28363ae5d9b18b93b03988976abdba14d4e6035ebfac224962b685258c8bc75e"
+    },
+    "retained_profile": {
+      "path": "analyses/nccc_validation/inputs/retained_reactive_case3c/film_states.csv",
+      "sha256": "2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a"
+    }
+  },
+  "state_domain": {
+    "temperature_K": [293.15, 323.15],
+    "loading_mol_CO2_per_mol_MEA": [0.0, 0.5],
+    "pressure_source": "retained Case 3C source input; no experimental reporting interval retained",
+    "basis": "one reactive single-liquid state at specified T, P, and apparent component feed"
+  },
+  "concentration_definitions": {
+    "prepared": "unloaded MEA-water preparation concentration; requires the preparation temperature and unloaded solution volume basis",
+    "analytical": "loaded-solution concentration of MEA + MEAH+ + MEACOO-",
+    "free_MEA": "molecular MEA species concentration only",
+    "apparent": "source component feed totals on the analytical-MEA basis; source CO2 feed is apparent total inorganic carbon",
+    "true": "nine individual reactive species in the fixed order below",
+    "diagnostic_density": "a source or packet density used for a stated conversion or mapping diagnostic; never a basis relabeling"
+  },
+  "species": [
+    {"id": "carbon-dioxide", "short_name": "CO2", "formula": "CO2", "charge": 0},
+    {"id": "monoethanolamine", "short_name": "MEA", "formula": "C2H7NO", "charge": 0},
+    {"id": "water", "short_name": "H2O", "formula": "H2O", "charge": 0},
+    {"id": "protonated-monoethanolamine", "short_name": "MEAH+", "formula": "C2H8NO+", "charge": 1},
+    {"id": "carbamate-anion", "short_name": "MEACOO-", "formula": "C3H6NO3-", "charge": -1},
+    {"id": "bicarbonate-anion", "short_name": "HCO3-", "formula": "HCO3-", "charge": -1},
+    {"id": "carbonate-anion", "short_name": "CO3^2-", "formula": "CO3^2-", "charge": -2},
+    {"id": "hydronium-cation", "short_name": "H3O+", "formula": "H3O+", "charge": 1},
+    {"id": "hydroxide-anion", "short_name": "OH-", "formula": "OH-", "charge": -1}
+  ],
+  "apparent_transform": {
+    "description": "Each row is a linear total of true-species concentrations in the fixed nine-species order.",
+    "row_order": ["analytical_MEA", "total_inorganic_carbon", "water_equivalent", "elemental_C", "elemental_N", "charge"],
+    "matrix": [
+      [0, 1, 0, 1, 1, 0, 0, 0, 0],
+      [1, 0, 0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 0, 0, 1, 1, 1, 1],
+      [1, 2, 0, 2, 3, 1, 1, 0, 0],
+      [0, 1, 0, 1, 1, 0, 0, 0, 0],
+      [0, 0, 0, 1, -1, -1, -2, 1, -1]
+    ],
+    "apparent_input_order": ["total_inorganic_carbon", "analytical_MEA", "water_equivalent"],
+    "apparent_input_basis": "normalized component flow amounts, mol per mol analytical MEA; CO2 flow is the source apparent total inorganic carbon"
+  },
+  "solver_start": {
+    "positive_interior_seed_mol": [0.00001, 0.00001, 0.00008, 0.00001, 0.00011, 0.00001],
+    "seed_species_order": ["protonated-monoethanolamine", "carbamate-anion", "bicarbonate-anion", "carbonate-anion", "hydronium-cation", "hydroxide-anion"],
+    "note": "The seed is an electroneutral positive interior start. Conserved C/N totals are set independently from the exact apparent source totals, as in the authoritative state packet."
+  },
+  "selected_state": {
+    "case_id": "3C",
+    "position": 1.0,
+    "temperature_K": 318.15,
+    "pressure_Pa": 109500.0,
+    "source_loaded_analytical_MEA_mol_L": 4.889309897097635,
+    "source_free_MEA_mol_L": 2.491683471902737,
+    "issue33_reconstructed_true_species_loading": {
+      "value": 0.24999627615967537,
+      "unit": "mol CO2 per mol MEA",
+      "basis": "Issue 33 retained reactive true-species reconstruction; domain gate only"
+    },
+    "apparent_total_inorganic_carbon_to_analytical_MEA_flow_ratio": {
+      "value": 0.25000000000000006,
+      "unit": "mol apparent total inorganic carbon flow per mol analytical MEA flow",
+      "basis": "retained film_states.csv Fl_CO2/Fl_MEA apparent component-flow input to the packet"
+    },
+    "loading_apparent_flow_ratio_difference": {
+      "value": 3.7238403246819818e-06,
+      "unit": "mol per mol",
+      "basis": "apparent flow ratio minus Issue 33 reconstructed loading"
+    },
+    "loading_apparent_not_relabelled_or_fitted": true,
+    "source_basis_status": "basis_unresolved",
+    "source_locator": "retained Case 3C profile: film_states.csv Position=1.0; Issue 33 concentration-basis table"
+  },
+  "reaction_source_locators": {
+    "R1": "MEA-Thermodynamics data/reference/MEA/manifests/chemical_reaction_source_contract.json: R1 selected_source Austgen1991_TableV_reaction_1a",
+    "R2": "MEA-Thermodynamics data/reference/MEA/manifests/chemical_reaction_source_contract.json: R2 selected_source Austgen1991_TableV_reaction_4a",
+    "R3": "MEA-Thermodynamics data/reference/MEA/manifests/chemical_reaction_source_contract.json: R3 selected_source Austgen1991_TableV_reaction_5a",
+    "R4": "MEA-Thermodynamics data/reference/MEA/manifests/chemical_reaction_source_contract.json: R4 selected_source Tong2012_Table5_K5_MEA_via_Aroua1999; bundle-selected fitted coefficients",
+    "R5": "MEA-Thermodynamics data/reference/MEA/manifests/chemical_reaction_source_contract.json: R5 selected_source BatesPinching1951_equation_7"
+  },
+  "reproduction": {
+    "command": "python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+    "runtime": "Python 3.13 with the bundle wheel installed in an isolated environment",
+    "workers": 1,
+    "source_revision_protocol": "Run the resolver from a clean source commit; commit the generated result artifacts separately. The recorded source commit is not the result-containing commit."
+  }
+}

@@ -1,8 +1,17 @@
 # ePC-SAFT reactive-VLE upstream acceptance handoff
 
-Status: downstream v1 source contract frozen; upstream issues 30 and 31 published, implementation pending
+Status: historical handoff; superseded for current decisions by
+`docs/scientific/CONTEXT.md`
 Required for G0: accepted source-neutral implementation plans and frozen predictive-v2 MEA manifests by 2026-08-13
 Required installed release candidate: 2026-08-21
+
+Historical boundary: this handoff records the August 12 request and frozen-v1
+tracer contract. Its statements that Engine #30/#31 are pending are obsolete:
+#30/#31/#44/#48 are closed. MEA-Thermodynamics #70 subsequently produced a
+supported-negative parameter decision and explicit downstream transfer refusal;
+no accepted predictive parameter set resulted. The JSON contract and checks
+remain the historical frozen-v1 interface record, not a current transfer
+receipt or GitHub work queue.
 
 ## Requested scientific capability
 

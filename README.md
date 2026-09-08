@@ -15,6 +15,12 @@ All design variables and parameters are customizable, making the tool adaptable 
 The model is currently under active development.  
 ✅ **Functional** – It can already produce consistent results with the current implementation.
 
+The August 27 submission status is `FALLBACK_ACTIVE`: the manuscript retains
+the fixed-chemistry Henry/ePC-SAFT comparison because upstream produced a
+supported-negative predictive-parameter decision and no parameter set was
+accepted for column transfer. See `docs/scientific/CONTEXT.md` for the current
+claim boundary, immutable refusal identity, and future transfer gate.
+
 ## Project organization
 
 This repository follows the local project architecture standard for scientific Python work:
@@ -55,7 +61,7 @@ Set up the project-local Python environment once from the repository root:
 uv sync --group test
 ```
 
-The local environment lives at `.venv/` and is ignored by Git. The project dependency points to the ePC-SAFT 0.2 wheel built by `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project`; the final integration check enforces the recorded Engine commit and wheel SHA-256. The absorber adapter uses only the public `Parameters`, `Mixture`, and `State` API. Model-family choices are encoded in the parameter document, and CppAD is the package's sole production derivative authority; there is no downstream derivative-backend selector. Henry-only validation can still run without evaluating ePC-SAFT. Use the project-local interpreter directly for normal checks:
+The local environment lives at `.venv/` and is ignored by Git. The project dependency points to the read-only ePC-SAFT 0.2 wheel built with Meson from Engine commit `38e91823b6d4f26c1d549f07aaef24a089d8e16d`, wheel SHA-256 `d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a`, native-core SHA-256 `39c8f4aa0bc0455f3b192258a05329ad47547919ba420d16ab830fa84e4dee6e`. The default vendored reactive bundle is used for typed homogeneous-equilibrium and tangent diagnostics; the retained manuscript benchmark rows explicitly record the older `MEA_CO2_H2O_ionic_fit` dataset. The diagnostic bundle does not reclassify the fixed-chemistry benchmark or imply predictive parameter adoption. The absorber adapter uses only public ePC-SAFT APIs. Model-family choices are encoded in the parameter document, and CppAD is the package's sole production derivative authority; there is no downstream derivative-backend selector. Henry-only validation can still run without evaluating ePC-SAFT. Use the project-local interpreter directly for normal checks:
 
 ```bash
 uv run python -m pytest -q -p no:cacheprovider

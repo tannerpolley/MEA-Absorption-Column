@@ -1,7 +1,5 @@
 # Local Codex Instructions
 
-Repository Profile: scientific-computing
-
 ## Startup Reads
 
 - Read `docs/.codex-journal/user_preferences.md` when it exists.

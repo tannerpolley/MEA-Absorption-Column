@@ -1,0 +1,92 @@
+{
+  "schema_version": "issue36_packet_bound_film_input_release_v1",
+  "issue": 36,
+  "claim_label": "supported_negative_packet_bound_film_input_release_blocked",
+  "owner": "MEA-Absorption-Column/analyses/nccc_validation",
+  "scope": "Retain the packet-bound Work Package B release decision and every declared state-level blocker without releasing physical film inputs.",
+  "species_order": ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"],
+  "reaction_order": ["R1", "R2", "R3", "R4", "R5"],
+  "bundle": {
+    "bundle_id": "mea-reactive-epcsaft-parameter-bundle",
+    "path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+    "outer_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+    "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+    "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+    "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
+    "chemistry_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c",
+    "parameter_fingerprint": "sha256:c1fc2665e94d136eb85f27c793b7defbd16d1d82cb3173cb50a9aaf6513c8940",
+    "engine_wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "required_members": [
+      "chemistry/reaction-system.json",
+      "engine/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+      "parameters/parameters.json",
+      "validation/state-packet.json",
+      "verify_bundle.py"
+    ]
+  },
+  "work_package_a": {
+    "repository": "tannerpolley/MEA-Thermodynamics",
+    "local_checkout": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics",
+    "owner_revision": "3d7fa12f397678898321f40eec9b31bff9ec5914",
+    "base_commit": "9f7c83d80900a10fbff7007c2137d126e92d9b3d",
+    "files": [
+      {"path": "data/reference/MEA/film_chemistry_inputs/1/input.json", "sha256": "dd145293305f69c117d1384d99ebb5baaf0277527fc438c0cadecf0edfa759bd"},
+      {"path": "data/reference/MEA/film_chemistry_inputs/1/schema.json", "sha256": "1a7db95c5cee19a3be9cf2c05811f65812e0789ee7362524e708010a10f02601"},
+      {"path": "data/reference/MEA/film_chemistry_inputs/1.receipt.json", "sha256": "88d3714aa0399c63a3367d0aa4ddb3b8708fc4c1e881a329ff522f277bbc1abc"}
+    ]
+  },
+  "release_guard": {
+    "paths": [
+      "data/reference/MEA/film_chemistry_inputs/2/input.json",
+      "data/reference/MEA/film_chemistry_inputs/2/schema.json",
+      "data/reference/MEA/film_chemistry_inputs/2.receipt.json"
+    ],
+    "external_paths": [
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/data/reference/MEA/film_chemistry_inputs/2/input.json",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/data/reference/MEA/film_chemistry_inputs/2/schema.json",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/data/reference/MEA/film_chemistry_inputs/2.receipt.json"
+    ],
+    "external_revision_paths": [
+      "data/reference/MEA/film_chemistry_inputs/2/input.json",
+      "data/reference/MEA/film_chemistry_inputs/2/schema.json",
+      "data/reference/MEA/film_chemistry_inputs/2.receipt.json"
+    ]
+  },
+  "dependencies": [
+    {"id": "issue40_input", "path": "analyses/nccc_validation/inputs/issue40_apparent_true_species.json", "sha256": "4cdc29a5ae5f95624f70010c016c8d6637fe93cbc90f87247975f04710c5303d"},
+    {"id": "issue40_table", "path": "analyses/nccc_validation/results/final/tables/issue40_apparent_true_species.csv", "sha256": "231e103ad50994041f8cb7752841b56740701409ecf3eeafdf8ce65b56165848"},
+    {"id": "issue40_summary", "path": "analyses/nccc_validation/results/final/tables/issue40_apparent_true_species_summary.json", "sha256": "1b1f678c495de625971820dbc77cbfe7797aafe5c1bcaad5fc5ecf79e84b7118"},
+    {"id": "issue40_report", "path": "analyses/nccc_validation/results/final/reports/issue40_apparent_true_species.md", "sha256": "d8def358f331c7456d6804a37e18c746f19dbcce15bd69fe733638258da8a88c"},
+    {"id": "issue41_input", "path": "analyses/nccc_validation/inputs/issue41_reversible_kinetics.json", "sha256": "bd3f19214798ab6746c2c767425a0e9f9c6d5cfc2df3c50d35745d352f196601"},
+    {"id": "issue41_stoichiometry", "path": "analyses/nccc_validation/results/final/tables/issue41_stoichiometry.csv", "sha256": "0bc796ec762e1cef53cca1bfb36f28f7716f3b707ed70a4e2a53afab6f061960"},
+    {"id": "issue41_source_rate_evidence", "path": "analyses/nccc_validation/results/final/tables/issue41_source_rate_evidence.csv", "sha256": "9cbf42ad2c8db766219a54ca364fe7a9bb3bd52b6be5eb3bc7c7cde3e86279d9"},
+    {"id": "issue41_raw_observations", "path": "analyses/nccc_validation/results/final/tables/issue41_raw_rate_observations.csv", "sha256": "59ace27fd5587109921694293e018a8909c39a8d6cdb264966b1adf260857799"},
+    {"id": "issue41_provider_relationships", "path": "analyses/nccc_validation/results/final/tables/issue41_provider_equilibrium_relationships.csv", "sha256": "d2210337ca389275361a11b300ff9d7e6bb346462d754a6d64e1a57bca03ea12"},
+    {"id": "issue41_partition", "path": "analyses/nccc_validation/results/final/tables/issue41_estimation_validation_partition.csv", "sha256": "4adeb6d20c1f030895eae9f9515c7f72bc3ab4026182a93937c3ac4032dcbee1"},
+    {"id": "issue41_packet", "path": "analyses/nccc_validation/results/final/tables/issue41_packet_bound_comparison.csv", "sha256": "0c5d7d644359d5e0a80d022e352caf7db8ade5dca0917e60a4cb47d2056b1c4d"},
+    {"id": "issue41_summary", "path": "analyses/nccc_validation/results/final/tables/issue41_reversible_kinetics_summary.json", "sha256": "eb4e031467a8d18f4dce01b794c6228e384513a323ea0f7b385986fdc6691ce9"},
+    {"id": "issue41_report", "path": "analyses/nccc_validation/results/final/reports/issue41_reversible_kinetics.md", "sha256": "2f6d51802c160668580ec621bd272f209ac90518f00c667bc1fddf8ba08f89c2"},
+    {"id": "issue42_input", "path": "analyses/nccc_validation/inputs/issue42_film_transport.json", "sha256": "032c6176c3173207d94810b9478cba17c05b1cfc760e9be797605b424eb49118"},
+    {"id": "issue42_transport_inputs", "path": "analyses/nccc_validation/results/final/tables/issue42_transport_inputs.csv", "sha256": "fad87d02ed2b31ec3932ee748e9cee91baa0f57824654c728accf0bb0d8bf124"},
+    {"id": "issue42_comparison", "path": "analyses/nccc_validation/results/final/tables/issue42_transport_comparison.csv", "sha256": "c1a5951f5c19333817141b980623e950854cf659025e3e9ff9d2d23e6271836e"},
+    {"id": "issue42_summary", "path": "analyses/nccc_validation/results/final/tables/issue42_film_transport_summary.json", "sha256": "6aac0180b874160aeddd61e916ba4e16a63d8f0090cfdc04c509901ec2275bbd"},
+    {"id": "issue42_report", "path": "analyses/nccc_validation/results/final/reports/issue42_film_transport.md", "sha256": "c6caeb6572688d50fafb3b59cb0cfeac3ec32a3d1250a37589c138ce66850ddb"}
+  ],
+  "required_state_ids": ["Putta2016_1M", "Putta2016_5M", "Case3C_position_0", "Case3C_position_0.5", "Case3C_position_1"],
+  "reproduction": {
+    "command": "uv run python analyses/nccc_validation/scripts/resolve_issue36_film_input_release.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+    "workers": 1,
+    "machine": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+    "run_id_prefix": "issue36_blocked_",
+    "source_revision_protocol": "Run from a clean source commit containing the input and resolver but none of the generated Issue 36 outputs; commit the source stage first and the generated result stage separately.",
+    "bundle_verification": "Extract the bundle into a clean temporary Python 3.13 environment, install only its wheel, and run verify_bundle.py before any packet-bound calculation."
+  },
+  "claim_boundary": "The retained result proves only that the packet-bound downstream film-input release is blocked for the declared states. It does not validate bulk equilibrium, detailed balance, kinetics, transport, film flux, uncertainty propagation, packed-column capture, or the manuscript.",
+  "limitations": [
+    "The immutable bundle is available and its hashes are verified, but no state has the complete concentration mapping, kinetic closure, and transport intersection required for release.",
+    "Issue 40 retains five basis_unresolved rows and admits zero true-species rows; its Position 1 packet evaluation remains diagnostic only.",
+    "Issue 41 retains source-faithful rate evidence but admits zero kinetic states because row-level observations and provider activity closure are unavailable; F3 remains unavailable.",
+    "Issue 42 retains 13 transport records but admits zero Candidate A/B transport states because source-complete ionic inputs and a complete unequal-ion mobility law are unavailable.",
+    "No v2 release files are created, and downstream issue #30 remains blocked."
+  ]
+}
