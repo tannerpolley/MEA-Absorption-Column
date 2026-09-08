@@ -205,29 +205,26 @@ def test_heat_transfer_guards_reject_nonpositive_coefficients():
     assert diagnostics["domain_guard_counts"]["heat_transfer"] == 1
 
 
-def test_enhancement_factor_is_finite_for_valid_inputs():
+def test_implicit_enhancement_rejects_stationary_nonroot():
     diagnostics = make_solver_diagnostics()
 
-    E, Psi, Psi_H, payload = enhancement_factor(
-        Tl=323.15,
-        Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
-        y_CO2=0.08,
-        P=109500.0,
-        H_CO2_mix=2.5e6,
-        kl_CO2=2e-4,
-        kv_CO2=0.01,
-        Dl_CO2=1e-9,
-        Dl_MEA=8e-10,
-        Dl_ion=8e-10,
-        E_type="implicit",
-        diagnostics=diagnostics,
-    )
+    # The old fixture terminates at a stationary point with residual ~68, not a root.
+    with pytest.raises(DomainGuardError, match="residual_inf="):
+        enhancement_factor(
+            Tl=323.15,
+            Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
+            y_CO2=0.08,
+            P=109500.0,
+            H_CO2_mix=2.5e6,
+            kl_CO2=2e-4,
+            kv_CO2=0.01,
+            Dl_CO2=1e-9,
+            Dl_MEA=8e-10,
+            Dl_ion=8e-10,
+            E_type="implicit",
+            diagnostics=diagnostics,
+        )
 
-    assert E >= 1.0
-    assert Psi > 0.0
-    assert Psi_H > 0.0
-    assert all(np.isfinite(payload))
-    assert payload[-1] == pytest.approx(1.0)
 
 
 def test_enhancement_factor_eta_psi_scales_driving_factor():
@@ -278,38 +275,37 @@ def test_enhancement_factor_rejects_nonpositive_eta_psi():
     assert diagnostics["domain_guard_counts"]["enhancement_factor"] == 1
 
 
-def test_enhancement_factor_falls_back_to_explicit_when_implicit_subsolve_fails(monkeypatch):
+@pytest.mark.parametrize("success", [False, True])
+def test_enhancement_factor_rejects_failed_or_inaccurate_implicit_subsolve(monkeypatch, success):
     diagnostics = make_solver_diagnostics()
 
     class FailedSolve:
-        success = False
+        pass
         message = "synthetic failure"
-        x = np.array([np.nan, np.nan])
+        x = np.array([2., .9])
 
+    FailedSolve.success = success
     monkeypatch.setattr(
         "mea_absorption_column.Transport.Enhancement_Factor.least_squares",
         lambda *args, **kwargs: FailedSolve(),
     )
 
-    E, Psi, Psi_H, payload = enhancement_factor(
-        Tl=323.15,
-        Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
-        y_CO2=0.08,
-        P=109500.0,
-        H_CO2_mix=2.5e6,
-        kl_CO2=2e-4,
-        kv_CO2=0.01,
-        Dl_CO2=1e-9,
-        Dl_MEA=8e-10,
-        Dl_ion=8e-10,
-        E_type="implicit",
-        diagnostics=diagnostics,
-    )
+    with pytest.raises(DomainGuardError, match="implicit subsolve rejected"):
+        enhancement_factor(
+            Tl=323.15,
+            Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
+            y_CO2=0.08,
+            P=109500.0,
+            H_CO2_mix=2.5e6,
+            kl_CO2=2e-4,
+            kv_CO2=0.01,
+            Dl_CO2=1e-9,
+            Dl_MEA=8e-10,
+            Dl_ion=8e-10,
+            E_type="implicit",
+            diagnostics=diagnostics,
+        )
 
-    assert E >= 1.0
-    assert Psi > 0.0
-    assert Psi_H > 0.0
-    assert all(np.isfinite(payload))
     assert diagnostics["domain_guard_counts"]["enhancement_factor"] == 1
 
 

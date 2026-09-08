@@ -1,0 +1,97 @@
+
+******************************************************************************
+This program contains Ipopt, a library for large-scale nonlinear optimization.
+ Ipopt is released as open source code under the Eclipse Public License (EPL).
+         For more information visit https://github.com/coin-or/Ipopt
+******************************************************************************
+
+[
+  {
+    "method": "trapezoidal",
+    "initial_nodes": 9,
+    "accepted": true,
+    "final_nodes": 9,
+    "profile_samples": 9,
+    "state_error_inf": 0.0010331477576231984,
+    "boundary_residual_inf": 0.0,
+    "algebraic_residual_inf": 0.0,
+    "failure": null
+  },
+  {
+    "method": "trapezoidal",
+    "initial_nodes": 17,
+    "accepted": true,
+    "final_nodes": 17,
+    "profile_samples": 17,
+    "state_error_inf": 0.00025848653014326484,
+    "boundary_residual_inf": 0.0,
+    "algebraic_residual_inf": 0.0,
+    "failure": null
+  },
+  {
+    "method": "central",
+    "initial_nodes": 9,
+    "accepted": true,
+    "final_nodes": 9,
+    "profile_samples": 9,
+    "state_error_inf": 0.008731608958965076,
+    "boundary_residual_inf": 0.0,
+    "algebraic_residual_inf": 0.0,
+    "failure": null
+  },
+  {
+    "method": "central",
+    "initial_nodes": 17,
+    "accepted": true,
+    "final_nodes": 17,
+    "profile_samples": 17,
+    "state_error_inf": 0.0022469194785044166,
+    "boundary_residual_inf": 0.0,
+    "algebraic_residual_inf": 0.0,
+    "failure": null
+  },
+  {
+    "method": "shooting",
+    "initial_nodes": 9,
+    "accepted": true,
+    "final_nodes": 5,
+    "profile_samples": 28,
+    "state_error_inf": 9.37902422393222e-10,
+    "boundary_residual_inf": 3.219646771412954e-13,
+    "algebraic_residual_inf": 0.0,
+    "failure": null
+  },
+  {
+    "method": "shooting",
+    "initial_nodes": 17,
+    "accepted": true,
+    "final_nodes": 5,
+    "profile_samples": 36,
+    "state_error_inf": 9.37902422393222e-10,
+    "boundary_residual_inf": 3.219646771412954e-13,
+    "algebraic_residual_inf": 0.0,
+    "failure": null
+  },
+  {
+    "method": "collocation",
+    "initial_nodes": 9,
+    "accepted": true,
+    "final_nodes": 33,
+    "profile_samples": 65,
+    "state_error_inf": 3.579615492910193e-09,
+    "boundary_residual_inf": 0.0,
+    "algebraic_residual_inf": 0.0,
+    "failure": null
+  },
+  {
+    "method": "collocation",
+    "initial_nodes": 17,
+    "accepted": true,
+    "final_nodes": 33,
+    "profile_samples": 65,
+    "state_error_inf": 3.3946452315802844e-09,
+    "boundary_residual_inf": 0.0,
+    "algebraic_residual_inf": 0.0,
+    "failure": null
+  }
+]

@@ -66,25 +66,13 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
                 bounds=(array((1.0, 1.0e-8)), array((1.0e4, 1.0))),
                 max_nfev=100,
             )
-            if not solution.success or not np.all(np.isfinite(solution.x)):
-                record_domain_guard(
-                    diagnostics,
-                    "enhancement_factor",
-                    f"implicit subsolve fallback: {solution.message}",
-                )
-                E = _explicit_enhancement_factor(
-                    Ha=Ha,
-                    Dl_MEA=Dl_MEA,
-                    Cl_MEA_true=Cl_MEA_true,
-                    Dl_MEAH=Dl_MEAH,
-                    Cl_MEAH_true=Cl_MEAH_true,
-                    Dl_MEACOO=Dl_MEACOO,
-                    Cl_MEACOO_true=Cl_MEACOO_true,
-                    Dl_CO2=Dl_CO2,
-                    Cl_CO2_true=Cl_CO2_true,
-                )
-            else:
-                E, Cl_MEA_int = solution.x
+            # Both original equations are dimensionless enhancement residuals.
+            residual = solve(solution.x) if np.all(np.isfinite(solution.x)) else np.array([np.inf])
+            if not solution.success or np.max(np.abs(residual)) > 1.0e-6:
+                reason = f"implicit subsolve rejected: {solution.message}; residual_inf={np.max(np.abs(residual)):g}"
+                record_domain_guard(diagnostics, "enhancement_factor", reason)
+                raise DomainGuardError("enhancement_factor", reason)
+            E, Cl_MEA_int = solution.x
 
         elif E_type == 'explicit':
 
@@ -101,7 +89,7 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
             )
 
         else:
-            raise ValueError('E_type must be explicit or explicit')
+            raise ValueError('E_type must be explicit or implicit')
 
     else:
         E = Ha

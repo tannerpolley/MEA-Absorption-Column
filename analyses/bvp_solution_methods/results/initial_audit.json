@@ -1,0 +1,77 @@
+{
+  "audit_date": "2026-09-03",
+  "claim": "No accepted full thermal column in the inspected records; these are numerical diagnostic cases, not corrected published 3C.",
+  "source_path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_coupled_verification.json",
+  "source_sha256": "add5241255212a6aca8bf534ea72cd8eeaf0361d84aec8a4383c2bfb80eb8342",
+  "source_case": "fixed-bulk numerical verification, not predictive 3C",
+  "interface_attempt": {
+    "accepted": false,
+    "termination": "external_wall_time_limit",
+    "limit_seconds": 300,
+    "exit_code": 124,
+    "candidate": null,
+    "failure": "No candidate returned before wall-time limit; not a native derivative failure."
+  },
+  "instrumented_column": {
+    "engine_identity": {
+      "engine_commit": "c5d4e40161cb58268240984591e49bccc911b68f",
+      "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+      "wheel_sha256": "f954221b874b473144f2f8ed317ebfd2a82c1e37c091c9c0696deca9a24c3853",
+      "core_sha256": "de91b518c5a464dee20d3fa3d38b6384caa7e32b526bb5b8aefd13d45f291cde"
+    },
+    "execution_status": "external_wall_time_limit",
+    "grid_m": [
+      0.0,
+      1.0
+    ],
+    "limit_seconds": 600,
+    "exit_code": 124,
+    "result": null,
+    "iteration_count": null,
+    "final_physical_residuals": null,
+    "callbacks": {
+      "liquid_value_A1": {
+        "started": 414,
+        "completed": 413,
+        "rejected": 8,
+        "wall_seconds": 539.636765893978,
+        "maximum_seconds": 3.859949529000005
+      },
+      "liquid_A2": {
+        "started": 30,
+        "completed": 30,
+        "rejected": 0,
+        "wall_seconds": 41.445360276999054,
+        "maximum_seconds": 1.9698746979993302
+      },
+      "vapor_value_A1_or_H2": {
+        "started": 180,
+        "completed": 180,
+        "rejected": 0,
+        "wall_seconds": 14.716898225993646,
+        "maximum_seconds": 0.28271081399907416
+      }
+    },
+    "diagnostic_limit": "No candidate or solver statistics returned before timeout. Native callback counts/timing and all captured rejections are retained; outer IPOPT iteration text was absent despite print_level5. A callback started but not completed at timeout is not included in completed wall time."
+  },
+  "unavailable": [
+    "accepted full-column capture",
+    "accepted thermal profiles",
+    "final conservation residuals",
+    "repeat runtime distribution",
+    "matched-accuracy method ranking"
+  ],
+  "timing_limitation": "Callback wall times include instrumentation; interrupted callback time is missing. Limits are watchdog budgets, not completed runtimes.",
+  "live_trial_not_used": {
+    "name": "log_interface_trial",
+    "execution_status_at_inspection": "external_wall_time_limit",
+    "reason": "Mutable unfinished diagnostic; not a column result."
+  },
+  "source_hashes": {
+    "src/mea_absorption_column/BVP/Coupled_Column.py": "52a657362dee514dfffacc5a844e2527c1cca93c588682b5b1486c99f5d8bbac",
+    "src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py": "a70297c7d7424f3cc79645081f2661e7231b633df430c8621c3c666b44a10aad",
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "b32fcb9edcf2d30b13d39254d1ea8e7a49239e322992b57543a16b30314e4a08",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185"
+  }
+}

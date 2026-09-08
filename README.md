@@ -1,127 +1,86 @@
-# MEA Absorption Column
+# MEA absorption-column research
 
-## 🧪 Overview
-This is a custom Python-based model built to simulate an amine-based absorption column. The model is intended for quick, flexible simulation of post-combustion carbon capture processes.
+Explore how thermodynamic, film, transport and numerical choices affect absorber
+capture, axial temperature, conservation and computational cost. The manuscript
+revision has been submitted; new work belongs in `analyses/` and Quarto notebooks.
 
-## 🎯 Purpose
-The goal of this model is to enable the development and further the research of Post-Combustion Carbon Capture. It supports rapid simulations using a variety of numerical methods such as:
-- Shooting Method  
-- Finite Difference  
-- Collocation  
+## Submitted revision
 
-All design variables and parameters are customizable, making the tool adaptable to the user's research or engineering needs.
+The clean remote branch `codex/fallback-manuscript` at `eef9dce` preserves the
+submitted document, source, supporting results and reproduction instructions.
+Retrieve its `docs/submitted_revision/revision_submission_2026-09-04.zip` for the
+exact PDF, letters, bibliography and source. Its checksum list is for that archive
+commit, not for this evolving research checkout. Do not edit manuscript prose here.
 
-## ⚙️ Status
-The model is currently under active development.  
-✅ **Functional** – It can already produce consistent results with the current implementation.
+## Select a research calculation
 
-The August 27 submission status is `FALLBACK_ACTIVE`: the manuscript retains
-the fixed-chemistry Henry/ePC-SAFT comparison because upstream produced a
-supported-negative predictive-parameter decision and no parameter set was
-accepted for column transfer. See `docs/scientific/CONTEXT.md` for the current
-claim boundary, immutable refusal identity, and future transfer gate.
-
-## Project organization
-
-This repository follows the local project architecture standard for scientific Python work:
-
-- Package code and reusable model data live under `src/mea_absorption_column/`.
-- Fast regression tests live under `tests/`.
-- Manuscript validation workflows live under `analyses/nccc_validation/`.
-- Manuscript source and LaTeX build scripts live under `docs/latex/`.
-- Root `scripts/` is reserved for repo-wide tools or small smoke checks, not benchmark sweeps.
-
-For a handoff map that tells another Codex agent which scripts run the absorber, which scripts only render or validate artifacts, and which workflows require the external ePC-SAFT package, see `docs/workflow_map.md`.
-
-## Usage
-
-This repo is now `uv`-first for reproducible reviewer-response benchmarks.
-
-The Overleaf mirror is a separate Git checkout configured locally. The source of truth remains `docs/latex`; mirror paths are intentionally machine-local and should not be committed.
-
-The manuscript source lives in `docs/latex`. To refresh the flat Overleaf mirror checkout after manuscript or figure updates, run:
+Preview options without importing the scientific runtime or running a calculation:
 
 ```bash
-uv run python docs/latex/scripts/latex_workflows.py sync-overleaf --clean-build-files
+python3 src/mea_absorption_column/research.py --list-options
+python3 src/mea_absorption_column/research.py analyses/research_options/options.toml
 ```
 
-Use `--dry-run` first when you want to preview the route without writing. The sync command excludes `scripts/` and `builds/` from the Overleaf projection.
-
-To build a fresh local manuscript PDF after editing `docs/latex/main.tex` or included LaTeX inputs, run:
+Edit the TOML selections, case IDs, output directory and numerical settings.
+Then explicitly run a new calculation in the uv environment:
 
 ```bash
-uv run python docs/latex/scripts/latex_workflows.py build
+uv sync --frozen --group test
+uv run python -m mea_absorption_column.research analyses/research_options/options.toml --run
 ```
 
-The clickable local artifact is `docs/latex/builds/main.pdf`. The build command also runs a freshness check and can open the PDF with `--open`.
+Existing output directories are refused. The resolved selection and benchmark
+settings are saved beside each new result. Presets are starting points, not
+scientific admission rules. An unknown or incompatible implemented option fails
+explicitly; numerical completion and physical agreement remain separate questions.
 
-Set up the project-local Python environment once from the repository root:
+| Formulation | Thermodynamics / film | Methods |
+|---|---|---|
+| `seven_state` | Henry, neutral/ionic ePC-SAFT, or nine-species reactive ePC-SAFT; explicit/implicit enhancement or a supplied frozen film linearization | `single`, `scipy-bvp`, `finite` |
+| `conserved` | A user-supplied `problem_factory` builds compatible balances and boundary equations, interpreting the selected thermo/film labels | `trapezoidal`, `central`, `shooting`, `collocation` |
+
+The coupled twelve-state column experiment is preserved under
+`archive/coupled-solver-2026-09-08`; its derivative/caloric interface is not yet
+integrated with the seven-state runtime. The independent conservative solvers are
+available now. Built-in eNRTL and MDEA column paths are not implemented by a menu
+label. Their future implementation can use the same explicit problem selection.
+See `analyses/research_options/README.md` and its rendered notebook for evidence,
+compatibility and candidate studies.
+
+## Organization and ownership
+
+- `src/mea_absorption_column/`: reusable column equations, adapters, methods and
+  packaged input data.
+- `analyses/`: study inputs, scripts, retained attempts and Quarto notebooks.
+- `tests/`: focused behavior and independent analytic checks.
+- `docs/latex/`: preserved submitted manuscript; no ongoing editorial work.
+- `ePC-SAFT-project`: generic Engine equations, equilibrium and derivatives.
+- `MEA-Thermodynamics`: parameter fitting and thermodynamic parameter adoption.
+
+Use identified, non-editable Engine wheels. The pinned dependency is a convenient
+starting environment, not an assertion that all experiments must use its inputs.
+An intentional candidate wheel requires its exact identity and explicit dependency
+selection. `scripts/check_epcsaft_integration.py --mode dev --self-only` inspects
+research dependencies without enforcing the submitted wheel hash; stable/final
+modes retain archive identity checks. Parameter bundles validate their own input
+hashes, species, charges and units. Do not import a mutable sibling source tree.
+
+## Notebook and validation workflow
 
 ```bash
-uv sync --group test
+cd analyses/research_options
+bash render.sh notebook.qmd --to html
 ```
 
-The local environment lives at `.venv/` and is ignored by Git. The project dependency points to the read-only ePC-SAFT 0.2 wheel built with Meson from Engine commit `38e91823b6d4f26c1d549f07aaef24a089d8e16d`, wheel SHA-256 `d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a`, native-core SHA-256 `39c8f4aa0bc0455f3b192258a05329ad47547919ba420d16ab830fa84e4dee6e`. The default vendored reactive bundle is used for typed homogeneous-equilibrium and tangent diagnostics; the retained manuscript benchmark rows explicitly record the older `MEA_CO2_H2O_ionic_fit` dataset. The diagnostic bundle does not reclassify the fixed-chemistry benchmark or imply predictive parameter adoption. The absorber adapter uses only public ePC-SAFT APIs. Model-family choices are encoded in the parameter document, and CppAD is the package's sole production derivative authority; there is no downstream derivative-backend selector. Henry-only validation can still run without evaluating ePC-SAFT. Use the project-local interpreter directly for normal checks:
+Rendering is explicitly non-executing. Run studies separately into new output
+folders, then describe their observations, numerical checks, uncertainty and next
+questions in the notebook. Promotion is a later investigator decision; a failed
+or preliminary calculation may still be useful research evidence.
+
+Focused configuration and method checks:
 
 ```bash
-uv run python -m pytest -q -p no:cacheprovider
-uv run python -m mea_absorption_column.benchmark --methods single scipy-bvp --thermo-models ideal_henry
+uv run --frozen pytest -q -p no:cacheprovider tests/test_research_options.py tests/test_research_model_dispatch.py tests/test_epcsaft_contract.py
 ```
 
-Benchmark CSV and Markdown outputs are written to `analyses/nccc_validation/results/runs/benchmark` by default. Run-specific files under `results/runs/` are ignored by Git; curated manuscript evidence lives under `analyses/nccc_validation/results/final/`.
-
-### NCCC validation results
-
-The reviewer-response benchmark evidence is organized as a self-contained analysis:
-
-```text
-analyses/nccc_validation/
-  scripts/
-  results/
-    runs/
-    final/
-      tables/
-      figures/
-      profiles/
-      reports/
-```
-
-Use these commands to refresh and validate the curated tables, figures, and clean profile index without rerunning long simulations:
-
-```bash
-uv run python analyses/nccc_validation/scripts/generate_data.py
-uv run python analyses/nccc_validation/scripts/render_figures.py
-uv run python analyses/nccc_validation/scripts/collect_clean_profiles.py --collect-existing
-uv run python analyses/nccc_validation/scripts/validate_results.py
-```
-
-Clean temperature-profile PNGs are arranged by case and thermodynamic lane under `analyses/nccc_validation/results/final/profiles/`.
-
-See `analyses/README.md`, `analyses/nccc_validation/README.md`, and `analyses/nccc_validation/analysis.yaml` before adding new validation scripts or result folders.
-
-The benchmark CLI exposes solver settings for reproducibility:
-
-```bash
-uv run python -m mea_absorption_column.benchmark --methods scipy-bvp --thermo-models ideal_henry --mesh-points 51 --tol 0.5 --bc-tol 0.001 --max-nodes 1000 --success-boundary-residual-max 1
-```
-
-The hand-built central-difference Jacobian is available with `--finite-jacobian`, but it is opt-in because it is slower than the default solver path on stiff nonlinear cases.
-
-Shooting-method experiments can use `--shooting-integrator euler|bdf|radau|rk45`. Stiff IVP integrators are diagnostic only at this stage; pair them with `--max-runtime-s` or `--subprocess-timeout-s` when sweeping cases so a bad shooting branch returns a structured timeout row instead of tying up the workflow.
-
-## Thermodynamics
-
-The default model is `ideal_henry`, matching the Henry-law CO2 driving-force implementation. The selected manuscript ePC-SAFT comparison is `epcsaft_ionic`: it retains the concentration-based chemical-equilibrium calculation and replaces the CO2 driving force with vapor- and liquid-side ePC-SAFT fugacity coefficients. The archived nine-species activity-rebased results were generated with the superseded package interface and are retained only as historical numerical-feasibility evidence.
-
-Thermodynamic modes are intentionally explicit:
-
-- `ideal_henry`: default validation baseline; concentration-based chemical equilibrium and Henry-law CO2 driving force.
-- `epcsaft_ionic`: selected ePC-SAFT fugacity lane; concentration-based chemistry is retained while the ionic liquid state is passed to ePC-SAFT for CO2 fugacity.
-- `epcsaft_neutral`: historical or diagnostic sensitivity lane only; not the selected manuscript comparison.
-- `epcsaft_reactive_*`: intentionally fail closed after the 0.2 cutover. Re-enabling them requires independently sourced, dimensionless reaction constants, an explicit standard-state conversion, and migration to the typed chemical-equilibrium API.
-
-The supported ePC-SAFT comparison in the manuscript is a controlled thermodynamic driving-force benchmark, not a claim that every absorber result uses the full activity-coupled chemistry loop. Full reactive rows must be reported with runtime and convergence diagnostics.
-
-The MEA ePC-SAFT parameter datasets are vendored in this repository under `src/mea_absorption_column/data/epcsaft_datasets/`. `MEA_EPCSAFT_DATASET_NAME` can select a different vendored dataset, and `MEA_THERMODYNAMICS_EPCSAFT_DATASET` remains an override for temporary external comparisons only. Normal repo tests and absorber runs must not depend on a sibling MEA-Thermodynamics checkout for parameter files.
-
-`--epcsaft-fugacity-blend <0..1>` is available for continuation diagnostics. A value of `0` returns the Henry-law fugacity values through the ePC-SAFT adapter path, intermediate values linearly blend Henry and ePC-SAFT fugacity values, and `1` is the full ePC-SAFT fugacity endpoint. This is intended for branch diagnosis and warm-start studies, not as a publishable calibrated thermodynamic model by itself.
+These checks do not reproduce the manuscript results.

@@ -76,6 +76,10 @@ def run_model(df,
         if staged_beds != "auto"
         else method == "scipy-bvp" and (beds_count > 1 or intercoolers_count > 0)
     )
+    if use_staged_beds and solver_settings_for_run.get('co2_mass_transfer_model') == 'reactive_film_linearization':
+        raise ValueError('reactive_film_linearization requires unstaged beds; per-bed profile coordinates are not implemented')
+    if solver_settings_for_run.get('jacobian_mode') == 'native' and (method != 'scipy-bvp' or use_staged_beds):
+        raise ValueError('Native Jacobian is implemented only for unstaged scipy-bvp')
     intercooler_settings = dict(intercooler_settings or {})
     requested_intercooler_model = intercooler_settings.get(
         "model",
@@ -105,10 +109,12 @@ def run_model(df,
         shooting_seed_settings = {
             **solver_settings_for_run,
             "seed_from_shooting": False,
+            "jacobian_mode": "numerical",
             "return_internal_profile": True,
             "continuation_stage": "shooting_seed",
             "continuation_path": "shooting->scipy-bvp",
         }
+        solver_settings_for_run["shooting_seed_jacobian_mode"] = "numerical"
         shooting_seed = run_model(
             df,
             method="single",
@@ -211,6 +217,9 @@ def run_model(df,
     guard_rhs = bool(solver_settings_for_run.get('guard_rhs', True))
     model_options = {
         'thermo_model': thermo_model,
+        'co2_mass_transfer_model': solver_settings_for_run.get('co2_mass_transfer_model', 'enhancement_factor'),
+        'reactive_film_linearization': solver_settings_for_run.get('reactive_film_linearization'),
+        'enhancement_type': solver_settings_for_run.get('enhancement_type', 'explicit'),
         'chemical_equilibrium_model': solver_settings_for_run.get(
             'chemical_equilibrium_model',
             _default_chemical_equilibrium_model(thermo_model),
@@ -233,7 +242,8 @@ def run_model(df,
     solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
     if thermo_model == REACTIVE_MODEL:
         model_options['reactive_liquid'] = ReactiveLiquid(
-            REACTIVE_DATASET, loading_anchor=.25,
+            solver_settings_for_run.get('reactive_dataset', REACTIVE_DATASET),
+            loading_anchor=solver_settings_for_run.get('reactive_loading_anchor', .25),
             water_per_mea_anchor=Fl_H2O_b/Fl_MEA_b,
             reuse_states=bool(solver_settings_for_run.get('reactive_reuse_states', False)),
             kij_scale=solver_settings_for_run.get('reactive_kij_scale'),
@@ -542,6 +552,8 @@ Run #{run + 1:03d}:
             'case_id': str(df.index[run]),
             'method': method,
             'thermo_model': thermo_model,
+            'co2_mass_transfer_model': model_options['co2_mass_transfer_model'],
+            'enhancement_type': model_options['enhancement_type'],
             'chemical_equilibrium_model': model_options.get('chemical_equilibrium_model', 'legacy'),
             'success': method_success,
             'message': f"{gated_message}{output_message_suffix}",
@@ -563,7 +575,7 @@ Run #{run + 1:03d}:
             'co2_capture_guess_pct': CO2_cap_guess,
             'h2o_capture_guess_pct': H2O_cap_guess,
             'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
-            'epcsaft_dataset': str(REACTIVE_DATASET if thermo_model == REACTIVE_MODEL else MEA_THERMODYNAMICS_EPCSAFT_DATASET),
+            'epcsaft_dataset': str(model_options['reactive_liquid'].dataset if thermo_model == REACTIVE_MODEL else MEA_THERMODYNAMICS_EPCSAFT_DATASET),
             'eta_psi': float(solver_settings_for_run.get('eta_psi', 1.0)),
             'gas_flow_basis': case_metadata.get('gas_flow_basis', 'reported_total_wet'),
             'beds': beds_count,
@@ -576,6 +588,7 @@ Run #{run + 1:03d}:
                 if stack_spec.intercoolers
                 else 'none'
             ),
+            'shooting_seed_jacobian_mode': solver_settings_for_run.get('shooting_seed_jacobian_mode'),
             'continuation_stage': solver_settings_for_run.get('continuation_stage', 'direct'),
             'continuation_success': bool(method_success and solver_settings_for_run.get('continuation_stage', 'direct') != 'failed'),
             'invalid_state_count': int(solver_diagnostics.get('invalid_state_count', 0)),

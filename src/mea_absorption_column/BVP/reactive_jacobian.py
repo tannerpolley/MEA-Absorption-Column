@@ -45,6 +45,9 @@ class ReactiveColumnJacobian:
             raise ValueError('Native nonisothermal Jacobian requires raw temperature-state bidirectional equations')
         if options.get('gas_velocity_area_exponent', 0):
             raise ValueError('Native Jacobian does not cover gas-velocity area tuning')
+        if (options.get('co2_mass_transfer_model', 'enhancement_factor') != 'enhancement_factor'
+                or options.get('enhancement_type', 'explicit') != 'explicit'):
+            raise ValueError('Native Jacobian covers only explicit enhancement; select numerical derivatives for this film')
         self.scales = np.asarray(scales)
         state = ca.SX.sym('physical', 7)
         native = ca.SX.sym('native', 12)  # amounts[9], density, liquid fCO2, neutral-vapor fCO2

@@ -21,6 +21,10 @@ from mea_absorption_column.misc.Save_Run_Outputs import build_profile_coordinate
 
 
 BENCHMARK_COLUMNS = [
+    "co2_mass_transfer_model",
+    "enhancement_type",
+    "reactive_dataset",
+    "shooting_seed_jacobian_mode",
     "case_id",
     "case_source",
     "method",

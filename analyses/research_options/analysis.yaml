@@ -1,0 +1,12 @@
+id: research_options
+title: Absorber research formulations and options
+status: active
+summary: Selectable research methods and retained evidence; no new column results.
+commands:
+  preview: python3 src/mea_absorption_column/research.py analyses/research_options/options.toml
+  render: bash render.sh notebook.qmd --to html
+inputs:
+  - ../reactive_film_evidence/notebook.qmd
+  - ../bvp_solution_methods/README.md
+  - ../bvp_derivative_trials/results/final/reports/issue22_casadi_comparison.md
+  - ../issue16_reactive_film_runtime/notebook.qmd

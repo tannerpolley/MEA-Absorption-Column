@@ -1,0 +1,8 @@
+project:
+  type: default
+  render:
+    - notebook.qmd
+  output-dir: builds
+
+execute:
+  enabled: false

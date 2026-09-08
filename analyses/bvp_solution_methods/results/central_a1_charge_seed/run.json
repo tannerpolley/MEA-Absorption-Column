@@ -1,0 +1,339 @@
+{
+  "run_id": "central_a1_charge_seed",
+  "method": "trapezoidal",
+  "settings": {
+    "stage": "central",
+    "nodes": 2,
+    "film_points": 3,
+    "tolerance": 1e-07,
+    "max_iterations": 20,
+    "max_nodes": 100,
+    "local_tolerance": 1e-09,
+    "local_solver_tolerance": 1e-11,
+    "local_evaluations": 30,
+    "max_condition": 1000000000000.0,
+    "ivp_rtol": 1e-07,
+    "ivp_atol": 1e-09,
+    "method_source_sha256": "9b9f3cc27b75455f4153f3938b46b4fe7a777f6370ce0f5a655e997fe8c2fda1",
+    "case_sha256": "98971362c28184e0f9548b43a9a262aa87f6b0f169f81f5e9457499b4014047b"
+  },
+  "execution_status": "completed",
+  "stage": "central_A1_finished",
+  "result": null,
+  "physical_certification": {
+    "accepted": null
+  },
+  "failure": null,
+  "limit_seconds": 60.0,
+  "measurements": {
+    "context": {
+      "hardware": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39; x86_64",
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "software": {
+        "python": "3.13.13",
+        "numpy": "2.4.4",
+        "scipy": "1.17.1",
+        "casadi": "3.7.2",
+        "engine": {
+          "engine_commit": "a86ac6bb9507e771d27317622bbd62c0bc7c7f25",
+          "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+          "wheel_sha256": "ee6c34b587edc117247c675666228d0b395f35dc9ba0f880f1efb4ab4219f4ae",
+          "core_sha256": "620020eadf7e2d209abbebab2fe941f4c408bce29a02d7b41ce7e539df6307e5"
+        }
+      },
+      "scope": "One fresh worker including import/setup/initialization/solve/verification; global_wall_s includes iteration checkpoint I/O"
+    },
+    "wall_s": 14.113026169000022,
+    "cpu_s": 13.952259000000002,
+    "peak_rss_bytes": 182571008
+  },
+  "problem": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      }
+    },
+    "state_layout": [
+      "Fl_CO2_mol_s",
+      "Fl_H2O_mol_s",
+      "Fv_CO2_mol_s",
+      "Fv_H2O_mol_s",
+      "Tl_K",
+      "Tv_K",
+      "P_Pa",
+      "holdup",
+      "j_CO2_mol_m2_s",
+      "j_H2O_mol_m2_s",
+      "energy_flux_W_m2",
+      "interface_log_loading"
+    ],
+    "coordinate": "height_m_from_gas_inlet",
+    "model_source_sha256": {
+      "src/mea_absorption_column/BVP/Coupled_Column.py": "52a657362dee514dfffacc5a844e2527c1cca93c588682b5b1486c99f5d8bbac",
+      "src/mea_absorption_column/BVP/robust_core.py": "5cc404210a9c08bc017c704fdfcde375880a18bc95d8a86c736aa4981d43a416",
+      "src/mea_absorption_column/Properties/Thermophysical_Properties.py": "0e8733652d831c7e789befebe67d3f19e69876a23be4d6c66ae662e44f75cf12",
+      "src/mea_absorption_column/Properties/Transport_Properties.py": "90d93517f28a57d7e513cfa4a37f133af98d78368acdea90f7b5b94d62059c2d",
+      "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "b32fcb9edcf2d30b13d39254d1ea8e7a49239e322992b57543a16b30314e4a08",
+      "src/mea_absorption_column/Thermodynamics/epcsaft_v02.py": "65c6b2b7bd5329423ec9fea0062564ffea0f549c4722e1f54bc8305878094fad",
+      "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "f6a3e75646cf30702271af62fe1c4c57fa0932a37243ca1a78ff97e30284379e",
+      "src/mea_absorption_column/Thermodynamics/thermo_models.py": "9753afac4d61f769a76919b36f9f9bd7c7a520932850b6011ef45c1ee8311bfd",
+      "src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "9c1f9e2eefab2410f35c013d4b4e789e8445f60bb8caeff9ff707d28d6d0fe03",
+      "src/mea_absorption_column/Transport/Pressure_Drop.py": "72d8ba9caf20f709cce4e4467b003c698c109ceac9ced0e0d0e06c8135a70256",
+      "src/mea_absorption_column/Transport/Reactive_Film.py": "c26846f99ba1d8e88b578f93fd9a6dfc98c37bc65c1ddbe9f29c2fbbac4f54f3",
+      "src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+      "src/mea_absorption_column/Transport/domain_guards.py": "0ff000ca9b1b0ad929de3c72a9f3170df9f37890985a0ef7bb93206ecb770df5",
+      "src/mea_absorption_column/config/Constants.py": "945ff1f39f07dc8580adb9f1449f76e001b32200e3286d9fc75bfdd9385c6883",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/README.md": "16a5be11ecef5580ece2f3b5ad9392c4488e79aa671f072f637fa1b56926a336",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "42b0e9e6363f9cab3440d138eb6c0b6b939a73bc1475d3d37ffa2f101cc8e89e",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/reference-thermochemistry.json": "72b944e0221233152c4cdc85652ad792c7158e5a319366742939273024b77347",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/adoption-receipt.json": "bf178ed7b043e90dcca297ba9b80f1b262ef41bcdfe5e53af9211a1fe8b237e6",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/bundle.json": "19fe755463307b0df314f8a9e77b30a00e5b2f01adcc90a13b578f247f14fb05",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+      "src/mea_absorption_column/BVP/ABS_Column.py": "dc60679a6c50ed6fa6730151f39b0d4ffaf391c64b606baefdfa030886a35ef2",
+      "src/mea_absorption_column/BVP/Methods/Finite_Difference_Solve.py": "55844334ee563404435aa4324a7b5239ab84687b9e7eb0b0a78a4bec609ee370",
+      "src/mea_absorption_column/BVP/Methods/Integration_Methods.py": "aaea50b1010734f73b39d7e3127301bf2eebdb3c5e540c21711bfa66d73c6efd",
+      "src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py": "6aa4acc191260b2fb25289e205dc7a47f81726f6a12dff3cb11e318f5e19adf9",
+      "src/mea_absorption_column/BVP/Methods/Segmented_Scipy_BVP_Solve.py": "7662dfaf3445ac7536d86c6fdb89ff48778e89c8fe014e8cf6c837eb963298a5",
+      "src/mea_absorption_column/BVP/Methods/Single_Shoot_Solve.py": "115d3a7b4e336d29b92deade1d963facce936e0946f5ada1d5db4d6245f03245",
+      "src/mea_absorption_column/Run_Model.py": "c653561ea7629d217f5fd00caa33926199bbbf3bfa2f40c98afa19f2ac1b9cda",
+      "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py": "e0ca6d1737130d56f827fbe6423c3002d322bc05802c25156310606eb0c6452f",
+      "src/mea_absorption_column/Thermodynamics/Fugacity.py": "fc4db0aa1cbc61393e78693f474347624192d1fbbc1f056a3b5b163d821875ec",
+      "src/mea_absorption_column/Transport/Enhancement_Factor.py": "59dd0cb3c56d36b3c411a917133e74512e27e9b22ec7fa6ca58c9d668f03f40b",
+      "src/mea_absorption_column/Transport/Flux.py": "f94109ee7263a1116eac0f6c3566aa8725c62397e585151c2b97ae8fe0e8c950",
+      "src/mea_absorption_column/__init__.py": "d35dd44ca40eb7c88491300184711dcdf68dd854416caa4fe03a6d2878570f1e",
+      "src/mea_absorption_column/intercooling.py": "21bae55deeb2410ffe6445824d93fddee17df0d2abee8d913cb6543ee36963b0",
+      "src/mea_absorption_column/misc/Convert_Data.py": "2d5a280f55df0e3c063769a2028e647fb72d77c20a96a60f767103c528c2d695",
+      "src/mea_absorption_column/misc/Get_Temperature_Enthalpy.py": "01db37eca398e2dfd78da9662e261bf69c4e6ce1d9ea67c6e426fe834002b7da",
+      "src/mea_absorption_column/misc/Polynomial_Fit.py": "1c77123a36f65741ca12df8c3d88217ff3f3b43ff71ae985501ae63e7178224c",
+      "src/mea_absorption_column/misc/Save_Run_Outputs.py": "77ed6cb4a1c9311efd324a78cd38307f6a0502474e85668fe0821b3632649921",
+      "src/mea_absorption_column/misc/Scaling.py": "e9dc674d700d4562fd51267a650044aaaa1cd6cf2ad048aca15d0f8c49d68d4e",
+      "analyses/bvp_solution_methods/scripts/run_case.py": "9df540fd1882667b6ebd41de9aab65707ae5617ffff868a895daa1dbedc66382"
+    },
+    "engine_commit": "a86ac6bb9507e771d27317622bbd62c0bc7c7f25",
+    "wheel_sha256": "ee6c34b587edc117247c675666228d0b395f35dc9ba0f880f1efb4ab4219f4ae",
+    "parameters_sha256": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+    "reference_sha256": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185"
+  },
+  "input_record": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      }
+    },
+    "source_record": {
+      "path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_baseline.json",
+      "sha256": "df1dcaf5fe5c617663f62b1e23325fdc1c732b9dae03161bdb8f02a8c362adb0"
+    },
+    "model_input_row": {
+      "L": 2.088055555555556,
+      "G": 0.5591666666666667,
+      "alpha": 0.25,
+      "w_MEA": 0.3,
+      "y_CO2": 0.093,
+      "Tl": 318.15,
+      "Tv": 316.75,
+      "P": 110900.0,
+      "Beds": 1,
+      "Intercoolers": 0,
+      "CO2  %": 89.5,
+      "lean_solvent_temp_imputed": true,
+      "lean_solvent_temp_imputed_C": 45.0,
+      "y_O2": 0.09
+    },
+    "assumptions": [
+      "Tl318.15K is user-approved imputation, not measurement",
+      "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "Reported gasmass interpreted as totalwet mass; source moisture basis unspecified",
+      "Loaded liquid mass and unloaded wMEA basis; molar conversion uses current native molar masses",
+      "Pressure boundary is bottom/inlet110900Pa; measured top109500Pa reserved for comparison"
+    ],
+    "initial_bulk_state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.052715134432693156
+    ],
+    "initial_interface_bracket": [
+      0.0,
+      1.0
+    ],
+    "liquid_molar_masses_kg_mol": [
+      0.044009,
+      0.061084,
+      0.018015
+    ],
+    "vapor_molar_masses_kg_mol": [
+      0.04401,
+      0.01801528,
+      0.02801,
+      0.031999
+    ],
+    "mobility_basis": "Same nine species diffusivity estimates and harmonic-mean pair closure as the retained owner runner",
+    "source_runner_sha256": "2b6ff7c74450504e916284560dc006237d6a9f3a5027ccece0d446bbab93bf0d",
+    "physical_residual_tolerance": 1e-07,
+    "central_readiness_point": [
+      318.15,
+      110900.0,
+      5.277293318431409,
+      9.729282110481522,
+      76.97519250729157
+    ]
+  },
+  "native_calls": {
+    "liquid_value_A1": {
+      "started": 1,
+      "returned": 1,
+      "failed": 0,
+      "wall_s": 12.413383288000205
+    },
+    "liquid_A2": {
+      "started": 0,
+      "returned": 0,
+      "failed": 0,
+      "wall_s": 0.0
+    },
+    "vapor_value_A1_H2": {
+      "started": 0,
+      "returned": 0,
+      "failed": 0,
+      "wall_s": 0.0
+    }
+  },
+  "native_counts_scope": "Native calls through the two shared callbacks; cumulative through verification. Timeout counts are the last saved snapshot.",
+  "central_readiness": {
+    "inputs": [
+      318.15,
+      110900.0,
+      5.277293318431409,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "accepted": true,
+    "amounts_mol": [
+      8.80175218131643e-05,
+      0.00888395344198215,
+      0.8141357796134856,
+      0.0623215176375442,
+      0.034568557065153646,
+      0.01768065524415319,
+      0.005036023986870992,
+      9.191619426851227e-10,
+      2.5827365730475496e-07
+    ],
+    "density_mol_m3": 53024.00899976211,
+    "fugacities_pa": [
+      8710.019674586434,
+      0.5766801594685043,
+      8544.381161632919,
+      1.0710818375386398e-56,
+      2.143564045647167e-59,
+      3.985554542096884e-66,
+      1.6535577539321167e-292,
+      3.178342315676489e-182,
+      2.8966322721974693e-74
+    ],
+    "total_enthalpy_j": -318424.1941822957,
+    "native_evidence": {
+      "objective_over_rt": -212.71701420928096,
+      "balance_inf_norm": 1.3877787807814457e-16,
+      "pressure_relative_inf_norm": 1.18050280021213e-11,
+      "reaction_affinity_inf_norm": 1.4210854715202004e-13,
+      "transfer_chemical_potential_inf_norm": 0.0,
+      "kkt_stationarity_inf_norm": 5.684341886080802e-14,
+      "source_reference_representation_residual_inf_norm": 3.0585274717610927e-16,
+      "phase_distinctness": 0.0,
+      "reduced_hessian_min_eigenvalue": 2.676988948315585e-05,
+      "declared_direction_rank": 5,
+      "admissible_nullity": 5,
+      "optimizer_iterations": 11,
+      "eos_evaluation_count": 62,
+      "local_evaluation_valid": 1,
+      "equilibrium_value_valid": 1,
+      "local_stability_status": "passed",
+      "sensitivity_status": "available",
+      "kkt_rank": 12,
+      "scaled_kkt_condition_number_2": 606674.538508923,
+      "absorber.loading_anchor": 0.25,
+      "absorber.max_log_loading_step": 0.1,
+      "absorber.loading_steps": 8,
+      "absorber.max_loading_steps": 32
+    },
+    "A1_finite": true,
+    "A2_checked": false,
+    "full_interface_checked": false
+  }
+}

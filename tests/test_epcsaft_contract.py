@@ -21,8 +21,8 @@ def test_epcsaft_contract_self_check_passes() -> None:
     assert completed.returncode == 0, completed.stdout + completed.stderr
 
 
-@pytest.mark.parametrize("mode", ["stable", "dev", "final"])
-def test_all_modes_reject_a_different_wheel(monkeypatch, capsys, mode):
+@pytest.mark.parametrize("mode", ["stable", "final"])
+def test_archive_modes_reject_a_different_wheel(monkeypatch, capsys, mode):
     spec = importlib.util.spec_from_file_location("integration_check", ROOT / "scripts/check_epcsaft_integration.py")
     check = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(check)
@@ -36,3 +36,16 @@ def test_all_modes_reject_a_different_wheel(monkeypatch, capsys, mode):
     monkeypatch.setattr(check, "run_smoke", lambda _: None)
     assert check.main(["--mode", mode, "--self-only"]) == 1
     assert "does not match frozen identity" in capsys.readouterr().out
+
+
+def test_research_mode_allows_a_distinct_immutable_wheel(monkeypatch):
+    spec = importlib.util.spec_from_file_location("research_integration_check", ROOT / "scripts/check_epcsaft_integration.py")
+    check = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(check)
+    monkeypatch.setattr(check, "resolve_epcsaft", lambda _: {
+        "module_path": "unused", "version": "0.2.0.dev0", "source_kind": "local_file",
+        "source_detail": "explicit research wheel", "wheel_path": "candidate.whl",
+        "wheel_sha256": "a" * 64,
+    })
+    monkeypatch.setattr(check, "scan_direct_imports", lambda _: [])
+    assert check.main(["--mode", "dev", "--self-only"]) == 0

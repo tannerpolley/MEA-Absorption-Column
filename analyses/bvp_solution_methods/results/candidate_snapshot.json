@@ -1,0 +1,284 @@
+{
+  "source_checkout": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column",
+  "source_head": "501e86c832355e6a27c0b9964a04c00e181b9fb7",
+  "snapshot_kind": "Explicitly authorized candidate node/derivative development snapshot, not a verified column delivery",
+  "files": [
+    {
+      "path": "integration/epcsaft_contract.json",
+      "sha256": "a925c1a1853b4b6d4faf071d33cffc20d7b44ea3945d1c7a42c330f639e4b775",
+      "copied": true,
+      "previous_sha256": "c109d986bf48bb066d408a8f0c20d26b76698d45677bcfecd3894df8af27b803"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "29005ff31404ccbcf8ee1812181a650984fa57553cf03f30f66bc7e825dab361",
+      "copied": true,
+      "previous_sha256": "f98155484a5cf7e8cd8e6eb95d99b109b8c2f7e347e30904152906d63f39497b"
+    },
+    {
+      "path": "scripts/check_epcsaft_integration.py",
+      "sha256": "e049fa0f0891d4d6f702cbe46282cb4f97acd15934195992d5dbba5d0e6d35c9",
+      "copied": false,
+      "previous_sha256": "e049fa0f0891d4d6f702cbe46282cb4f97acd15934195992d5dbba5d0e6d35c9"
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/Coupled_Column.py",
+      "sha256": "52a657362dee514dfffacc5a844e2527c1cca93c588682b5b1486c99f5d8bbac",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py",
+      "sha256": "c81df13c42036e9694c976ba6167a12c790e37c9dfd6d6f092ab733b6a12f73b",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/robust_core.py",
+      "sha256": "5cc404210a9c08bc017c704fdfcde375880a18bc95d8a86c736aa4981d43a416",
+      "copied": true,
+      "previous_sha256": "2e80c31da9d340f9bac0ddf20842d0f2fe8c0152000ef6b9e866cfa30499bdf4"
+    },
+    {
+      "path": "src/mea_absorption_column/Properties/Thermophysical_Properties.py",
+      "sha256": "0e8733652d831c7e789befebe67d3f19e69876a23be4d6c66ae662e44f75cf12",
+      "copied": true,
+      "previous_sha256": "1f24c9810f2cdc2d7d8c4b392ebde47aecad36f81582e12e87f4287b26056e89"
+    },
+    {
+      "path": "src/mea_absorption_column/Properties/Transport_Properties.py",
+      "sha256": "90d93517f28a57d7e513cfa4a37f133af98d78368acdea90f7b5b94d62059c2d",
+      "copied": true,
+      "previous_sha256": "a6e78d086931ec83b87b2b0b8c74223aa11495762fb7c0f00773e5239db11d07"
+    },
+    {
+      "path": "src/mea_absorption_column/Thermodynamics/casadi_reactive.py",
+      "sha256": "b32fcb9edcf2d30b13d39254d1ea8e7a49239e322992b57543a16b30314e4a08",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/Thermodynamics/epcsaft_v02.py",
+      "sha256": "65c6b2b7bd5329423ec9fea0062564ffea0f549c4722e1f54bc8305878094fad",
+      "copied": true,
+      "previous_sha256": "78e9eb3119bac712e286c564b78cf4f1f6dfcdde434a5c12e3cc35c3d765ff65"
+    },
+    {
+      "path": "src/mea_absorption_column/Thermodynamics/reactive_bundle.py",
+      "sha256": "584ccf625cec030fbbd6b2153034f08cc93fa72b3e5ef4dfb8df8f40af9a7884",
+      "copied": true,
+      "previous_sha256": "b05ccf7d61c65890aab8f5d1f8f519e4d35e64a780fed291a55ee1f1ea223dca"
+    },
+    {
+      "path": "src/mea_absorption_column/Thermodynamics/thermo_models.py",
+      "sha256": "9753afac4d61f769a76919b36f9f9bd7c7a520932850b6011ef45c1ee8311bfd",
+      "copied": true,
+      "previous_sha256": "f0ce33e30fab765257371a7db0010782de9546142ec08fd65278b733b750a3f4"
+    },
+    {
+      "path": "src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py",
+      "sha256": "9c1f9e2eefab2410f35c013d4b4e789e8445f60bb8caeff9ff707d28d6d0fe03",
+      "copied": true,
+      "previous_sha256": "fd3586346900a902358b744cd10cc171a7a90f36e04dbc083f8520d681993e44"
+    },
+    {
+      "path": "src/mea_absorption_column/Transport/Pressure_Drop.py",
+      "sha256": "72d8ba9caf20f709cce4e4467b003c698c109ceac9ced0e0d0e06c8135a70256",
+      "copied": true,
+      "previous_sha256": "921ab5e158c5cbea803aefd5d584a0006fca5ce4c0133741e6734fecd1b9a60f"
+    },
+    {
+      "path": "src/mea_absorption_column/Transport/Reactive_Film.py",
+      "sha256": "c26846f99ba1d8e88b578f93fd9a6dfc98c37bc65c1ddbe9f29c2fbbac4f54f3",
+      "copied": true,
+      "previous_sha256": "c4634d9c442c5983d8543ac19a3b8d6ae06a8ec8f9b3a169a418960abf7f4e89"
+    },
+    {
+      "path": "src/mea_absorption_column/Transport/Transfer_Coefficients.py",
+      "sha256": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+      "copied": true,
+      "previous_sha256": "5bfcbc03ad75b035d8864ed6d6248b9ca8457d855f753d70e59c5e54bfc166ff"
+    },
+    {
+      "path": "src/mea_absorption_column/Transport/domain_guards.py",
+      "sha256": "0ff000ca9b1b0ad929de3c72a9f3170df9f37890985a0ef7bb93206ecb770df5",
+      "copied": true,
+      "previous_sha256": "f98d129f10a691e2997140a0709a6c6e6f327f36f7c59a71eaa6c8ff11124379"
+    },
+    {
+      "path": "src/mea_absorption_column/config/Constants.py",
+      "sha256": "945ff1f39f07dc8580adb9f1449f76e001b32200e3286d9fc75bfdd9385c6883",
+      "copied": false,
+      "previous_sha256": "945ff1f39f07dc8580adb9f1449f76e001b32200e3286d9fc75bfdd9385c6883"
+    },
+    {
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/README.md",
+      "sha256": "16a5be11ecef5580ece2f3b5ad9392c4488e79aa671f072f637fa1b56926a336",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+      "sha256": "42b0e9e6363f9cab3440d138eb6c0b6b939a73bc1475d3d37ffa2f101cc8e89e",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/reference-thermochemistry.json",
+      "sha256": "72b944e0221233152c4cdc85652ad792c7158e5a319366742939273024b77347",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/adoption-receipt.json",
+      "sha256": "bf178ed7b043e90dcca297ba9b80f1b262ef41bcdfe5e53af9211a1fe8b237e6",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/anchored-reference-thermochemistry.json",
+      "sha256": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/bundle.json",
+      "sha256": "19fe755463307b0df314f8a9e77b30a00e5b2f01adcc90a13b578f247f14fb05",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/parameters.json",
+      "sha256": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/reaction-system.json",
+      "sha256": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "tests/test_coupled_column.py",
+      "sha256": "76459f6f927652b2eea655c45afca55d8ea1e10519f1b8ba42b466dc87d397cf",
+      "copied": true,
+      "previous_sha256": null
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "482535dc767312f31ebd5b848914b834627a9cc3be338c1d4c37d56e76930267",
+      "copied": true,
+      "previous_sha256": "ce1dd8d07a429563c2cfb0548bc37739f95b34bff3a25f7b94db1ebeee60390f"
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/ABS_Column.py",
+      "sha256": "dc60679a6c50ed6fa6730151f39b0d4ffaf391c64b606baefdfa030886a35ef2",
+      "copied": true,
+      "previous_sha256": "4e114a2b0848e0bd1cf49b6dc8ffd30b8ff842990f8e24418f5fd9577ba56632"
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/Methods/Finite_Difference_Solve.py",
+      "sha256": "55844334ee563404435aa4324a7b5239ab84687b9e7eb0b0a78a4bec609ee370",
+      "copied": true,
+      "previous_sha256": "dd9e87000a99149f74b18c89fe258d2f9d4aee16a00562dde22b7bd1e8915ae9"
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/Methods/Integration_Methods.py",
+      "sha256": "aaea50b1010734f73b39d7e3127301bf2eebdb3c5e540c21711bfa66d73c6efd",
+      "copied": true,
+      "previous_sha256": "d678019effbe1f923fbcca6736a1554e61959a24f5ec17d434314cedaf03b2d3"
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py",
+      "sha256": "6aa4acc191260b2fb25289e205dc7a47f81726f6a12dff3cb11e318f5e19adf9",
+      "copied": true,
+      "previous_sha256": "fd55a33b15435e307fc57f848b78f7406122dc6b27739689a11e72855e5bc897"
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/Methods/Segmented_Scipy_BVP_Solve.py",
+      "sha256": "7662dfaf3445ac7536d86c6fdb89ff48778e89c8fe014e8cf6c837eb963298a5",
+      "copied": true,
+      "previous_sha256": "d0bbb3d291dc72e64c1878b1bdb27211c576a5b973c2d471ea5d82680498ede2"
+    },
+    {
+      "path": "src/mea_absorption_column/BVP/Methods/Single_Shoot_Solve.py",
+      "sha256": "115d3a7b4e336d29b92deade1d963facce936e0946f5ada1d5db4d6245f03245",
+      "copied": true,
+      "previous_sha256": "f118899a14ca9a4fb874ed4eeb76c0c281c745489f0a6f01dca6c617bc909050"
+    },
+    {
+      "path": "src/mea_absorption_column/Run_Model.py",
+      "sha256": "c653561ea7629d217f5fd00caa33926199bbbf3bfa2f40c98afa19f2ac1b9cda",
+      "copied": true,
+      "previous_sha256": "ea4228dd54ce1868fb4db0304390405891c28b6394ab92857488340ab726ce31"
+    },
+    {
+      "path": "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py",
+      "sha256": "e0ca6d1737130d56f827fbe6423c3002d322bc05802c25156310606eb0c6452f",
+      "copied": true,
+      "previous_sha256": "58c62cdc23dac0c9c126089b06355d54bd6ffec0dc02b125c77d8c908477f944"
+    },
+    {
+      "path": "src/mea_absorption_column/Thermodynamics/Fugacity.py",
+      "sha256": "fc4db0aa1cbc61393e78693f474347624192d1fbbc1f056a3b5b163d821875ec",
+      "copied": true,
+      "previous_sha256": "891dfb338d41385c822da3b255decc143459ae62870eced3db10fd541b9525d7"
+    },
+    {
+      "path": "src/mea_absorption_column/Transport/Enhancement_Factor.py",
+      "sha256": "59dd0cb3c56d36b3c411a917133e74512e27e9b22ec7fa6ca58c9d668f03f40b",
+      "copied": false,
+      "previous_sha256": "59dd0cb3c56d36b3c411a917133e74512e27e9b22ec7fa6ca58c9d668f03f40b"
+    },
+    {
+      "path": "src/mea_absorption_column/Transport/Flux.py",
+      "sha256": "f94109ee7263a1116eac0f6c3566aa8725c62397e585151c2b97ae8fe0e8c950",
+      "copied": false,
+      "previous_sha256": "f94109ee7263a1116eac0f6c3566aa8725c62397e585151c2b97ae8fe0e8c950"
+    },
+    {
+      "path": "src/mea_absorption_column/__init__.py",
+      "sha256": "d35dd44ca40eb7c88491300184711dcdf68dd854416caa4fe03a6d2878570f1e",
+      "copied": false,
+      "previous_sha256": "d35dd44ca40eb7c88491300184711dcdf68dd854416caa4fe03a6d2878570f1e"
+    },
+    {
+      "path": "src/mea_absorption_column/intercooling.py",
+      "sha256": "21bae55deeb2410ffe6445824d93fddee17df0d2abee8d913cb6543ee36963b0",
+      "copied": false,
+      "previous_sha256": "21bae55deeb2410ffe6445824d93fddee17df0d2abee8d913cb6543ee36963b0"
+    },
+    {
+      "path": "src/mea_absorption_column/misc/Convert_Data.py",
+      "sha256": "2d5a280f55df0e3c063769a2028e647fb72d77c20a96a60f767103c528c2d695",
+      "copied": false,
+      "previous_sha256": "2d5a280f55df0e3c063769a2028e647fb72d77c20a96a60f767103c528c2d695"
+    },
+    {
+      "path": "src/mea_absorption_column/misc/Get_Temperature_Enthalpy.py",
+      "sha256": "01db37eca398e2dfd78da9662e261bf69c4e6ce1d9ea67c6e426fe834002b7da",
+      "copied": true,
+      "previous_sha256": "ef313f8a7098d401bce1e5fae6e27b159f63b30b30bb1de812193786dce15cd7"
+    },
+    {
+      "path": "src/mea_absorption_column/misc/Polynomial_Fit.py",
+      "sha256": "1c77123a36f65741ca12df8c3d88217ff3f3b43ff71ae985501ae63e7178224c",
+      "copied": false,
+      "previous_sha256": "1c77123a36f65741ca12df8c3d88217ff3f3b43ff71ae985501ae63e7178224c"
+    },
+    {
+      "path": "src/mea_absorption_column/misc/Save_Run_Outputs.py",
+      "sha256": "77ed6cb4a1c9311efd324a78cd38307f6a0502474e85668fe0821b3632649921",
+      "copied": true,
+      "previous_sha256": "751d58c447635b85cbb590629e532641b861260d18e674b55525cd000b8cbdef"
+    },
+    {
+      "path": "src/mea_absorption_column/misc/Scaling.py",
+      "sha256": "e9dc674d700d4562fd51267a650044aaaa1cd6cf2ad048aca15d0f8c49d68d4e",
+      "copied": false,
+      "previous_sha256": "e9dc674d700d4562fd51267a650044aaaa1cd6cf2ad048aca15d0f8c49d68d4e"
+    }
+  ],
+  "import_dependency_note": "Package __init__ eagerly imports Run_Model; include its matching candidate import closure rather than compatibility stubs."
+}

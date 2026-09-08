@@ -13,6 +13,10 @@ outputs:
     kind: retained_results
   - path: results/final/tables/issue19_scipy_bvp_summary.json
     kind: retained_summary
+  - path: results/final/tables/issue22_casadi_probe.json
+    kind: supported_negative_casadi_comparison
+  - path: results/final/reports/issue22_casadi_comparison.md
+    kind: supported_negative_casadi_report
   - path: results/final/figures/issue19_scipy_bvp_summary.png
     kind: retained_summary_figure
   - path: notebook.qmd
@@ -20,6 +24,7 @@ outputs:
 commands:
   generate:
     - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py --case-timeout-s 100
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 uv run python analyses/bvp_derivative_trials/scripts/run_issue22_casadi_probe.py
   validate:
     - uv run pytest analyses/bvp_derivative_trials/tests/test_analysis.py -q
     - uv run python analyses/bvp_derivative_trials/scripts/run_issue19_column_verification.py --validate-only
