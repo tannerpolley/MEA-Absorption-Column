@@ -66,7 +66,21 @@ def test_changed_payload_is_rejected(tmp_path, monkeypatch):
         packet.validate_packet()
 
 
-@pytest.mark.parametrize("case", ["model", "species", "reaction", "basis", "domain", "baseline", "unavailable", "counts"])
+@pytest.mark.parametrize(
+    "case",
+    [
+        "model",
+        "species",
+        "reaction",
+        "basis",
+        "interaction_defaults",
+        "solver",
+        "domain",
+        "baseline",
+        "unavailable",
+        "counts",
+    ],
+)
 def test_semantic_tampering_is_rejected_after_hash_refresh(tmp_path, monkeypatch, case):
     data = _sandbox(tmp_path, monkeypatch)
     manifest_path = data / "enrtl_packet/manifest.json"
@@ -81,6 +95,10 @@ def test_semantic_tampering_is_rejected_after_hash_refresh(tmp_path, monkeypatch
         manifest["model"]["reaction_order"] = ["wrong"]
     elif case == "basis":
         manifest["model"]["bases"]["property_basis"] = "apparent"
+    elif case == "interaction_defaults":
+        manifest["model"]["interaction_defaults"]["alpha"]["molecule_molecule"]["value"] = 0.2
+    elif case == "solver":
+        manifest["dependencies"]["solver"]["version"] = "wrong"
     elif case == "domain":
         manifest["property_domains"]["calibration_VLE"]["loading"] = "wrong"
     elif case == "baseline":

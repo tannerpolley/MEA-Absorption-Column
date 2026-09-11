@@ -3,7 +3,7 @@
   "identity": "mea-column-enrtl-packet-adoption-receipt-v1",
   "packet_directory": "mea_absorption_column_enrtl_packet/data/enrtl_packet",
   "source_repository": "https://github.com/tannerpolley/eNRTL_Fitting_Routine",
-  "source_commit": "2bff1ea4578a5d2556441f1231d26fb8eb14874f",
+  "source_commit": "fd7527aa41ac6be07b08fd214a1163b83fc5f557",
   "upstream_receipt": "MEA-Thermodynamics/data/reference/MEA/enrtl_packet_adoption_receipt.json",
   "issue": "MEA-Absorption-Column#55",
   "files": {
@@ -12,10 +12,10 @@
       "bytes": 29066
     },
     "manifest.json": {
-      "sha256": "6ce805ede64ec33f36df7601c4e6e546699f0bc999dd63f9bd763d3d137390cf",
-      "bytes": 9497
+      "sha256": "81137004bed7930431ff589b1371fd0e1e3a5bbac8ef4cbb2d3dc674ce3a3011",
+      "bytes": 10095
     }
   },
-  "manifest_sha256_external": "6ce805ede64ec33f36df7601c4e6e546699f0bc999dd63f9bd763d3d137390cf",
+  "manifest_sha256_external": "81137004bed7930431ff589b1371fd0e1e3a5bbac8ef4cbb2d3dc674ce3a3011",
   "adoption_role": "comparison/adoption record only; no column model dispatch"
 }
