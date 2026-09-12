@@ -23,5 +23,9 @@ setup(
             "data/epcsaft_datasets/*/mixed/binary_interaction/*.csv",
             "data/epcsaft_datasets/*/mixed/rel_perm/*.csv",
         ],
+        "mea_absorption_column_enrtl_packet": [
+            "data/enrtl_packet/*.json",
+            "data/enrtl_packet_adoption_receipt.json",
+        ],
     },
 )
