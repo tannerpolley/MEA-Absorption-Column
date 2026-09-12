@@ -1,8 +1,29 @@
+import hashlib
+import json
+
 import numpy as np
 from scipy.optimize import root
 
 from ..config.Constants import MWs_l, MWs_v, column_params, packing_params, n
 from ..Properties.Thermophysical_Properties import vapor_pressure
+
+
+def physical_input_fingerprint(parameters, *, data_type, vapor_composition_mode, gas_flow_basis):
+    """Hash only the canonical SI record produced by ``convert_data``."""
+    payload = {
+        "parameters": np.asarray(parameters, dtype=object).tolist(),
+        "units": {
+            "flows": "mol/s",
+            "temperature": "K",
+            "pressure": "Pa",
+            "coordinate": "normalized_height",
+        },
+        "data_type": data_type,
+        "vapor_composition_mode": vapor_composition_mode,
+        "gas_flow_basis": gas_flow_basis,
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode()
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def convert_data(

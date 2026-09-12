@@ -30,6 +30,7 @@ def make_solver_diagnostics() -> dict:
         "last_invalid_state": "",
         "jacobian_status": "",
         "domain_guard_counts": {},
+        "stage_status": {},
         "first_failed_domain": "",
         "epcsaft_cache_hits": 0,
         "epcsaft_cache_misses": 0,

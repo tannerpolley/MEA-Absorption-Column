@@ -11,6 +11,7 @@ from dataclasses import asdict
 import json
 import importlib
 import inspect
+import importlib.util
 from pathlib import Path
 import tomllib
 
@@ -29,8 +30,31 @@ LIMITATION = (
     "the twelve-state column is not integrated. Built-in eNRTL and MDEA are unavailable."
 )
 
+_COLUMN_API = None
 
-def resolve_config(config):
+
+def _column_api():
+    global _COLUMN_API
+    if _COLUMN_API is not None:
+        return _COLUMN_API
+    if __package__:
+        from .config.column import ColumnConfig, resolve_column_config
+    else:
+        path = Path(__file__).with_name("config") / "column.py"
+        spec = importlib.util.spec_from_file_location("_mea_absorption_column_config", path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f"Cannot load configuration module: {path}")
+        module = importlib.util.module_from_spec(spec)
+        import sys
+
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+        ColumnConfig, resolve_column_config = module.ColumnConfig, module.resolve_column_config
+    _COLUMN_API = (ColumnConfig, resolve_column_config)
+    return _COLUMN_API
+
+
+def _resolve_legacy_config(config):
     """Validate and copy a mapping without importing or evaluating any models."""
     if not isinstance(config, dict):
         raise ValueError("Configuration must be a mapping")
@@ -78,9 +102,26 @@ def resolve_config(config):
     return resolved
 
 
+def resolve_config(config):
+    """Resolve a new immutable preset or preserve the legacy mapping API."""
+    ColumnConfig, resolve_column_config = _column_api()
+    if isinstance(config, ColumnConfig):
+        return config
+    if isinstance(config, dict) and ("preset" in config or "case" in config):
+        return resolve_column_config(config)
+    return _resolve_legacy_config(config)
+
+
 def run_research(config):
     """Run one selection using the existing benchmark and retain its settings."""
     resolved = resolve_config(config)
+    ColumnConfig, _ = _column_api()
+    if isinstance(resolved, ColumnConfig):
+        if resolved.execution.output_dir is None:
+            raise ValueError("An explicit new output_dir is required for --run")
+        from mea_absorption_column.column import run_column
+
+        return run_column(resolved)
     if "output_dir" not in resolved:
         raise ValueError("An explicit new output_dir is required for --run")
     output = Path(resolved["output_dir"])
@@ -162,7 +203,9 @@ def main(argv=None):
         parser.error("Provide a TOML config or --list-options")
     with args.config.open("rb") as stream:
         config = resolve_config(tomllib.load(stream))
-    print(json.dumps({"selection": config, "limitations": LIMITATION}, indent=2))
+    ColumnConfig, _ = _column_api()
+    selection = config.as_dict() if isinstance(config, ColumnConfig) else config
+    print(json.dumps({"selection": selection, "limitations": LIMITATION}, indent=2))
     if args.run:
         run_research(config)
 

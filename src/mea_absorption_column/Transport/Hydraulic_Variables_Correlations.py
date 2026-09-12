@@ -1,4 +1,5 @@
 import numpy as np
+import casadi as ca
 from ..config.Constants import g
 from mea_absorption_column.BVP.robust_core import record_domain_guard
 from .domain_guards import require_fraction_between, require_positive
@@ -30,13 +31,16 @@ def interfacial_area_expression(rho_mass_l, sigma, ul, A, packing):
     a_p, ϵ, *_ = packing
     Lp = A * a_p / ϵ
 
-    # Compute interfacial area
-    A1 = 1.42
-    A2 = .12
-    # a_e = a_p * A1 * (rho_mass_l / sigma * g ** 1/3 * (ul * A / Lp) ** (4 / 3)) ** A2
-    a_e = np.log(a_p) + np.log(A1) + A2 * (
-                np.log(rho_mass_l) - np.log(sigma) + 1 / 3 * np.log(g) + 4 / 3 * (np.log(ul) + np.log(A) - np.log(Lp)))
-    a_e = np.exp(a_e)
+    # Keep the positive-domain expression shared; retain NaN (not complex) for
+    # legacy diagnostics when a deliberately invalid numeric probe is supplied.
+    symbolic = any(isinstance(value, (ca.MX, ca.SX, ca.DM)) for value in (rho_mass_l, sigma, ul, A))
+    if symbolic:
+        a_e = 1.42 * a_p * (rho_mass_l / sigma * g ** (1 / 3)
+                            * (ul * A / Lp) ** (4 / 3)) ** .12
+    else:
+        a_e = np.exp(np.log(a_p) + np.log(1.42) + .12 * (
+            np.log(rho_mass_l) - np.log(sigma) + np.log(g) / 3
+            + 4 * (np.log(ul) + np.log(A) - np.log(Lp)) / 3))
     a_eA = a_e * A  # Combining cross-sectional area and interfacial area
     return a_e, a_eA
 
@@ -62,6 +66,12 @@ def holdup(ul, mul_mix, rho_mass_l, packing, diagnostics=None):
 def raw_holdup_expression(ul, mul_mix, rho_mass_l):
     # Chinen 2018 fitted parameters, Tsai 2010 correlation.
     return 11.4474 * ((ul * 3.185966) * (mul_mix / rho_mass_l) ** (1 / 3)) ** .6471
+
+
+def holdup_expression(ul, mul_mix, rho_mass_l, packing):
+    """Raw Tsai/Chinen holdup and void; caller enforces admissible bounds."""
+    h_l = raw_holdup_expression(ul, mul_mix, rho_mass_l)
+    return h_l, packing[1] - h_l
 
 
 def bounded_holdup_expression(raw, eps, maximum=max):
