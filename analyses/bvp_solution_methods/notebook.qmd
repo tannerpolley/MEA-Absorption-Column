@@ -1,6 +1,6 @@
 ---
 title: "Conserved full-column BVP: corrected 3C baseline"
-subtitle: "Working analysis view of the first two-node numerical result"
+subtitle: "Working analysis view of the first physically certified two-node result"
 execute:
   enabled: false
 ---
@@ -11,9 +11,10 @@ create retained values.
 
 ## Question
 
-Does the corrected published 3C case produce a numerically accepted solution
-of the twelve-state conserved full-column formulation with the trapezoidal
-scheme, and what evidence is still needed before comparing solution methods?
+Does the corrected published 3C case produce a numerically and physically
+accepted solution of the twelve-state conserved full-column formulation with
+the trapezoidal scheme, and what evidence is still needed before comparing
+solution methods?
 The intended use is to establish a bounded numerical baseline for subsequent
 solution-verification work.
 
@@ -34,12 +35,12 @@ The formulation has 12 states, 7 conserved balances, 5 algebraic relations,
 and 7 boundary equations. It uses the native corrected 3C full-film interface,
 three film-quadrature points, two axial nodes, IPOPT, and the trapezoidal
 scheme. The wall limit was 600 s. The exact retained result is
-`results/conserved_runner_20260912_0700/attempt.json`; its attempt identifier is
-`20260912T070113-8e2326ecb61e`.
+`results/conserved_public_physical_20260915T204019Z/attempt.json`; its attempt
+identifier is `20260915T204030-698952033653`.
 
 ## Results
 
-The solver returned `Solve_Succeeded` after 14 IPOPT iterations in 428.101 s.
+The solver returned `Solve_Succeeded` after 14 IPOPT iterations in 472.343 s.
 The retained numerical acceptance flag is `accepted`, with scaled residual
 infinity norm `6.371460913581593e-08` against the `1e-07` criterion and zero
 scaled bound violation.
@@ -53,41 +54,45 @@ scaled bound violation.
 | Liquid temperature | 329.3895574786238 | 318.1500000201476 | K |
 | Gas temperature | 316.7500000049194 | 329.5709707501707 | K |
 | Pressure | 110899.9999804368 | 110154.5012295384 | Pa |
-| Holdup | 0.052016874592320 | 0.052715144240204 | retained state basis |
+| Holdup | 0.052016874592320 | 0.052715144240870 | retained state basis |
 
 The two-node profile is a pair of endpoint states, not an axial profile. It
 cannot resolve an interior temperature maximum, a continuous capture profile,
 or the shape of any conserved quantity. A curve would overstate the evidence,
 so this notebook uses tables only.
 
-The retained original-equation subset checks were below the numerical
-criterion after scaling: material `1.0353163955845279e-08`, energy
-`3.5776455893663017e-10`, interface `2.3549869358501044e-08`, and boundary
-`3.4969443333986616e-10`. These are diagnostics on the returned two-node
-solution; they do not certify the full physical acceptance conditions.
+The retained physical certificate is accepted. All five scaled maxima are below
+the fixed `1e-07` criterion: material `1.0353163955845279e-08`, energy
+`3.5776455893663017e-10`, charge `6.530518144212249e-18`, interface
+`2.3549869358501044e-08`, and boundary `3.4969443333986616e-10`. The original
+bounds pass. Vapor CO2 decreases from `1.6540435152488` to
+`0.03889305082703422` mol/s, corresponding to `97.6486077622%` endpoint capture.
 
 ## Interpretation
 
 This attempt supports that the corrected 3C twelve-state trapezoidal assembly
-can return a finite, bounded, numerically accepted two-node candidate under the
-declared settings. The result is a first coarse full-column numerical result.
-It does not establish physical validation, numerical refinement, a continuous
-axial maximum, or a ranking among shooting, collocation, and difference
-methods.
+can return a finite, bounded, numerically and physically accepted two-node
+candidate under the declared settings. Physical acceptance is limited to the
+native nodes and configured film quadrature. The result does not establish
+physical validation, numerical refinement, a continuous axial maximum, or a
+ranking among shooting, collocation, and difference methods.
 
 ## Limitations
 
-Physical certification remains unavailable because the retained diagnostics do
-not include the required film-quadrature charge and capture checks. Species
-mobilities use the declared case-estimated closure, and the vapor caloric
-reference is provisional. The Engine identity is the installed wheel recorded
+Physical certification covers only native-node balances, configured
+film-quadrature charge, interface and boundary residuals, original bounds, and
+endpoint capture direction. It does not establish between-node accuracy.
+Species mobilities use the declared case-estimated closure, and the vapor
+caloric reference is provisional. The Engine identity is the installed wheel recorded
 in the result: declared and expected commit
 `7b1e62f0483571f8a194b32441467bdb58b45ce7`, verified installed wheel SHA-256
 `91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4`; commit
-evidence is unavailable from the installed distribution. The source tree was
-dirty at execution: the result preserves the dirty patch SHA-256 and the two
-changed source paths. Those source and wheel identities must travel with any
-later comparison.
+evidence is unavailable from the installed distribution. The result preserves
+source-tree SHA-256
+`ecca148204e6ab2b3f42ebf5d898484a14afab3c000f209bc2bd26661b30b845`
+and dirty-patch SHA-256
+`bda7a310c9d79e10840c991dac8eeb2f4a637cdb8697e204816ef59bba9fae17`.
+Those source and wheel identities must travel with any later comparison.
 
 The earlier 900 s timeout remains a separate retained attempt with its own
 identity and is not rewritten by this result. Neither attempt supplies a
@@ -95,20 +100,18 @@ matched-accuracy method comparison.
 
 ## Conclusion and next steps
 
-The practical answer is that one coarse two-node baseline is numerically
-accepted and useful as a starting point, while its physical and solution
-accuracy remain unresolved. The next scientific questions are to refine axial
-resolution and film quadrature separately; repeat three initializations before
-making any branch claim; add charge and capture checks; run the other selected
-solution methods; and collect matched achieved-accuracy costs. Complete the
-actual Engine wheel capability evidence before using the result for a broader
-comparison.
+The practical answer is that one coarse two-node baseline is numerically and
+physically accepted and useful as a starting point, while its solution accuracy
+remains unresolved. The next scientific questions are to refine axial
+resolution and film quadrature separately, repeat three initializations before
+making any branch claim, run the other selected solution methods, and collect
+matched achieved-accuracy costs.
 
 ## Provenance
 
 Retained input: `input/case_3c.json` (SHA-256
 `0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385`). Retained
-result: `results/conserved_runner_20260912_0700/attempt.json`. The attempt was
+result: `results/conserved_public_physical_20260915T204019Z/attempt.json`. The attempt was
 launched through `mea_absorption_column.column.run_column`; its exact request is
 retained in `resolved_config.json`. Supporting method records remain in this analysis set,
 including the adapter checks and prior attempts. The source record for the

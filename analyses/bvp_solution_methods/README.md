@@ -2,29 +2,26 @@
 
 The four adapters are implemented and verified on an independent analytic DAE.
 The corrected 3C full-film interface has also passed recovery and the original
-algebraic equations. The retained two-node trapezoidal attempt in
-`results/conserved_runner_20260912_0700/attempt.json` returned a numerically
-accepted full-column candidate in 428.101 s (14 IPOPT iterations, scaled
-residual infinity norm 6.371460913581593e-08, zero bound violation). This is a
-first coarse numerical result. Physical certification, refinement, and a
-matched-accuracy timing comparison remain required; no manuscript claim or
+algebraic equations. The corrected public two-node trapezoidal attempt in
+`results/conserved_public_physical_20260915T204019Z/attempt.json` returned a
+numerically and physically accepted full-column candidate in 472.343 s (14
+IPOPT iterations, scaled residual infinity norm 6.371460913581593e-08, zero
+bound violation). All five native-grid and film-quadrature checks pass the
+fixed 1e-7 physical criterion. This is a first coarse result; refinement and a
+matched-accuracy timing comparison remain required, and no manuscript claim or
 physical method ranking follows from this attempt.
 
-This task owns numerical methods and analysis in the attached
-`codex/section-4-3-solvers` checkout. Imported physics retains the source hashes
+This analysis set owns the numerical-method evidence. Imported physics retains the source hashes
 in `results/candidate_snapshot.json`; the centered discretization and
 `Conserved_Reduction.py` are this task's extensions. Historical seven-state
 `Run_Model` solver dispatch uses different physics and is not a comparison path.
 
 ## Runtime and retained evidence
 
-The current immutable Engine build is `9e1bef97fbea5c6f465612ae27b054192f91f19c`.
-Wheel SHA-256: `b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b`.
-Native SHA-256: `b5f97d49eb9439da84312dbeacb8ac0bae26ce6939562339a3c73d842fccce34`.
-Both were independently verified before installation with no active task-owned
-native calculation. `results/precision_runtime_adoption.json` records the
-transition from the charge-seed wheel; `results/runtime_adoption.json` records
-its predecessor. Earlier records keep their actual source and wheel identities.
+The current public attempt declares and expects Engine commit
+`7b1e62f0483571f8a194b32441467bdb58b45ce7` and verifies installed wheel SHA-256
+`91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4`.
+Earlier records keep their actual source and wheel identities.
 The repaired wheel changes native mixed-action precision, not model equations,
 physical tolerances or root selection. Final integration and the repaired-wheel local recovery replay passed.
 `results/consistent_3c_reduction_balanced_actions/run.json` retains the latter:
