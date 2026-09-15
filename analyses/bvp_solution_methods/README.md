@@ -11,6 +11,16 @@ fixed 1e-7 physical criterion. This is a first coarse result; refinement and a
 matched-accuracy timing comparison remain required, and no manuscript claim or
 physical method ranking follows from this attempt.
 
+The first public three-node axial attempt is retained in
+`results/conserved_public_axial_n3_20260915/attempt.json`. It reached the fixed
+20-iteration limit in 889.577 s with a finite, bounded candidate and no native
+callback failure, but its scaled residual remained `8.449045858900252e-03`.
+Numerical and physical acceptance are rejected, so it supplies no refinement
+estimate and is not evidence of formulation infeasibility. The preceding
+`results/trapezoidal_axial_n3_20260915/run.json` setup failure records that the
+older comparison runner still targets its frozen candidate snapshot; no model
+was assembled in that attempt.
+
 This analysis set owns the numerical-method evidence. Imported physics retains the source hashes
 in `results/candidate_snapshot.json`; the centered discretization and
 `Conserved_Reduction.py` are this task's extensions. Historical seven-state

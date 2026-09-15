@@ -1,0 +1,49 @@
+{
+  "run_id": "trapezoidal_axial_n3_20260915",
+  "method": "trapezoidal",
+  "settings": {
+    "stage": "column",
+    "nodes": 3,
+    "film_points": 3,
+    "initial_record": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/input/consistent_3c_interface.json",
+    "initial_profile": null,
+    "tolerance": 1e-07,
+    "max_iterations": 20,
+    "max_nodes": 100,
+    "local_tolerance": 1e-09,
+    "local_solver_tolerance": 1e-11,
+    "local_evaluations": 30,
+    "max_condition": 1000000000000.0,
+    "ivp_rtol": 1e-07,
+    "ivp_atol": 1e-09
+  },
+  "execution_status": "failed",
+  "stage": "starting",
+  "result": null,
+  "physical_certification": {
+    "accepted": null
+  },
+  "failure": "[Errno 2] No such file or directory: '/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/adoption-receipt.json'",
+  "limit_seconds": 900.0,
+  "measurements": {
+    "context": {
+      "hardware": {
+        "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+        "cpu_model": "AMD Ryzen 5 5500",
+        "logical_cpus": 12
+      },
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "software": null,
+      "scope": "One fresh worker including import/setup/initialization/solve/verification; global_wall_s includes iteration checkpoint I/O"
+    },
+    "wall_s": 1.0156082630001038,
+    "cpu_s": 0.982794,
+    "peak_rss_bytes": 157446144
+  },
+  "failure_type": "FileNotFoundError",
+  "termination": "worker_exit_1"
+}

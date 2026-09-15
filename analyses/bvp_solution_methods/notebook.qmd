@@ -68,6 +68,20 @@ the fixed `1e-07` criterion: material `1.0353163955845279e-08`, energy
 bounds pass. Vapor CO2 decreases from `1.6540435152488` to
 `0.03889305082703422` mol/s, corresponding to `97.6486077622%` endpoint capture.
 
+### First axial refinement attempt
+
+The retained public three-node attempt at
+`results/conserved_public_axial_n3_20260915/attempt.json` kept the same
+trapezoidal method, three film-quadrature points, `1e-07` tolerance, and
+20-iteration limit. The public attempt completed in 889.577 s with IPOPT status
+`Maximum_Iterations_Exceeded`. The candidate is finite and within the original bounds, and no
+native callback failed, but the scaled solver residual is
+`8.449045858900252e-03`. Its scaled material and interface residuals are
+`4.227323014032967e-03` and `1.1893689450451015e-03`, respectively, so both
+numerical and physical acceptance are rejected. This candidate is ineligible
+for a refinement comparison. This iteration-limited rejection is not evidence
+of formulation infeasibility.
+
 ## Interpretation
 
 This attempt supports that the corrected 3C twelve-state trapezoidal assembly
@@ -103,9 +117,10 @@ matched-accuracy method comparison.
 The practical answer is that one coarse two-node baseline is numerically and
 physically accepted and useful as a starting point, while its solution accuracy
 remains unresolved. The next scientific questions are to refine axial
-resolution and film quadrature separately, repeat three initializations before
-making any branch claim, run the other selected solution methods, and collect
-matched achieved-accuracy costs.
+resolution with a matched retained-profile initialization, then refine film
+quadrature separately. Three initializations remain required before making any
+branch claim. Other selected solution methods and matched achieved-accuracy
+costs remain later work.
 
 ## Provenance
 
@@ -114,7 +129,8 @@ Retained input: `input/case_3c.json` (SHA-256
 result: `results/conserved_public_physical_20260915T204019Z/attempt.json`. The attempt was
 launched through `mea_absorption_column.column.run_column`; its exact request is
 retained in `resolved_config.json`. Supporting method records remain in this analysis set,
-including the adapter checks and prior attempts. The source record for the
+including the rejected public three-node attempt and the preceding comparison-runner
+setup failure. The source record for the
 corrected case is Morgan et al. (2020), DOI
 `10.1016/j.apenergy.2020.114533`, Tables A1, A4, C2, and 6, as reconciled in
 `input/case_3c_source.md`. This notebook is a working view
