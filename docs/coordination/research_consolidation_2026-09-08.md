@@ -94,3 +94,23 @@ Change accounting against `26fa66c` reports 3,276 gross executable additions and
 121 removals, within the approved 3,500-line ceiling. New equations remain in the
 coupled column and existing transport owners; generic thermodynamic equations
 and derivatives remain in the immutable Engine. Submitted evidence is unchanged.
+
+The subsequent `codex/conserved-column-execution` work connects trapezoidal and
+central execution with explicit equilibrium-manifold or enhancement-reference
+film selection, case-policy checks, verified worker inputs, atomic
+checkpoints and separate raw termination/numerical acceptance. The old
+solution-method analysis remains a frozen replay owner; its migration and the
+reduced-method controls remain open. A two-node trapezoidal attempt completed in
+428.101 s and was numerically accepted at a scaled residual infinity norm of
+6.371460913581593e-08. Physical certification and refinement remain open. The
+subsequent atomic-output correction retains completed payloads, checkpoints,
+transport failures, timeouts and interruptions. An independent final-tree
+capability review on 15 September 2026 found no remaining blocker in this
+bounded execution and termination surface. This does not establish physical
+certification or promote the working notebook.
+
+The current tree passes 159 focused tests and the final Engine integration
+check. Accounting against `26fa66c` reports 3,608 gross executable additions and
+121 removals. On 15 September 2026, after reviewing the added execution and
+failure-evidence responsibilities, the investigator approved a 3,800-line
+ceiling for this milestone. No roadmap issue is closed by these partial milestones.

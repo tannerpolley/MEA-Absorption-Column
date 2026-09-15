@@ -493,6 +493,10 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         vapor,
         species_diffusivities=species_diffusivities,
         quadrature_points=settings["quadrature_points"],
+        co2_model={
+            "equilibrium_manifold": "reactive_film",
+            "enhancement_reference": "enhancement_reference",
+        }[config.model.film_model],
         liquid_feed_mol_s=liquid_feed,
         vapor_feed_mol_s=vapor_feed,
         liquid_temperature_k=liquid_temperature,
@@ -561,7 +565,11 @@ def _prepare_conserved_column_in_process(config: ColumnConfig) -> dict[str, Any]
         "assembly": assembly,
         "capabilities": {
             "a1_equilibrium_values": "required_on_evaluation",
-            "a2_equilibrium_actions": "required_on_outer_derivative",
+            "a2_equilibrium_actions": (
+                "required_on_outer_derivative"
+                if config.model.film_model == "equilibrium_manifold"
+                else "not_required_by_selected_film"
+            ),
             "caloric_actions": "required_on_outer_derivative",
             "finite_difference_fallback": False,
         },
@@ -614,6 +622,242 @@ def prepare_conserved_column(config: ColumnConfig | Mapping[str, Any]) -> dict[s
         return result
 
 
+def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[str, Any]:
+    """Run the case-owned twelve-state collocation path in the verified worker."""
+    if config.numerics.method not in {"trapezoidal", "central"}:
+        raise CapabilityRefusal(
+            f"Conserved method {config.numerics.method!r} is configured but unavailable: "
+            "the reduced-method controls have not been migrated to this execution boundary"
+        )
+    import casadi as ca
+    from scipy.optimize import brentq
+
+    payload = _physical_payload(config)
+    physical = payload["physical_inputs"] if payload is not None else None
+    if not isinstance(physical, Mapping):
+        raise ConfigurationError("Conserved execution requires the case physical_inputs record")
+    bulk = np.asarray(payload.get("initial_bulk_state"), dtype=float)
+    bracket = np.asarray(payload.get("initial_interface_bracket"), dtype=float)
+    tolerance = payload.get("physical_residual_tolerance")
+    if bulk.shape != (8,) or np.any(~np.isfinite(bulk)):
+        raise ConfigurationError("Conserved execution needs a finite eight-state initial_bulk_state")
+    if bracket.shape != (2,) or np.any(~np.isfinite(bracket)) or bracket[0] >= bracket[1]:
+        raise ConfigurationError("Conserved execution needs an increasing initial_interface_bracket")
+    if not isinstance(tolerance, (int, float)) or not math.isfinite(tolerance) or tolerance <= 0:
+        raise ConfigurationError("Conserved execution needs a positive physical_residual_tolerance")
+    liquid_feed = np.asarray(physical.get("liquid_feed_mol_s"), dtype=float)
+    vapor_feed = np.asarray(physical.get("vapor_feed_mol_s"), dtype=float)
+    expected_seed = np.r_[liquid_feed[0], liquid_feed[2], vapor_feed[:2],
+                          physical.get("liquid_temperature_k"), physical.get("vapor_temperature_k"),
+                          physical.get("bottom_pressure_pa")]
+    packing = np.asarray(physical.get("packing"), dtype=float)
+    if (liquid_feed.shape != (3,) or vapor_feed.shape != (4,) or packing.shape != (7,)
+            or not np.allclose(bulk[:7], expected_seed, rtol=0.0, atol=1e-12)
+            or packing[1] != .97 or not np.all((293.15 <= bulk[4:6]) & (bulk[4:6] <= 393.15))):
+        raise ConfigurationError(
+            "Only the case-declared 3C policy is supported: matching feed-seeded bulk state, "
+            "0.97 packing void fraction, and 293.15--393.15 K inlet/initial temperatures"
+        )
+    checkpoint.update(stage="policy_checked", support_limits={
+        "policy": "case_declared_native_inputs: 3C fixed 293.15--393.15 K bounds, 300 K state scale, 100 K span, 0.97 holdup/packing void fraction",
+        "unsupported": "arbitrary packing void fractions, feed-seed mismatches, and temperature policies",
+    })
+    prepared = _prepare_conserved_column_in_process(config)
+    assembly, inputs = prepared["assembly"], prepared["resolved_inputs"]
+    checkpoint.update(resolved_inputs=inputs, engine=prepared["engine"], assets=prepared["assets"],
+                      capabilities=prepared["capabilities"], layout=prepared["layout"])
+    settings = dict(config.numerics.as_dict()["solver_settings"])
+    node, boundary, diagnostics, balance = (assembly[name] for name in ("node", "boundary", "diagnostics", "balance"))
+    liquid, vapor = assembly["liquid"], assembly["vapor"]
+    liquid_feed, vapor_feed = (np.asarray(value, dtype=float) for value in inputs["parameters"][:2])
+    checkpoint.update(stage="initializing", native_calls={})
+
+    def instrument(owner, name, label):
+        original = getattr(owner, name)
+        counts = checkpoint["native_calls"][label] = {"started": 0, "returned": 0, "failed": 0, "wall_s": 0.0}
+        def observed(*args, **kwargs):
+            counts["started"] += 1
+            started = time.perf_counter()
+            try:
+                value = original(*args, **kwargs)
+                counts["returned"] += 1
+                return value
+            except Exception:
+                counts["failed"] += 1
+                raise
+            finally:
+                counts["wall_s"] += time.perf_counter() - started
+        setattr(owner, name, observed)
+
+    instrument(assembly["reactive_liquid"], "solve", "liquid_value_A1")
+    instrument(assembly["reactive_liquid"], "solve_actions", "liquid_A2")
+    instrument(vapor, "_state", "vapor_value_A1_H2")
+    np.testing.assert_array_equal(liquid.molar_masses[:3], payload["liquid_molar_masses_kg_mol"])
+    np.testing.assert_array_equal(vapor.molar_masses, payload["vapor_molar_masses_kg_mol"])
+    bulk[7] -= float(balance(bulk, [0.0, 0.0, 0.0])[2])
+    gas = np.asarray(balance(bulk, [0.0, 0.0, 0.0])[4]).ravel()
+    evaluations = []
+
+    def interface_residual(loading):
+        value = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])
+        residual = float(value[1] / value[2] - value[3][0] * (gas[0] - value[7]))
+        evaluations.append({"loading": float(loading), "original_co2_residual": residual})
+        checkpoint.update(stage="interface_initialization", initialization_evaluations=evaluations)
+        return residual
+
+    loading, root = brentq(interface_residual, *bracket, full_output=True, disp=False)
+    diagnostic = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])
+    point = np.r_[bulk, float(diagnostic[1] / diagnostic[2]),
+                  float(diagnostic[3][1] * (gas[1] - balance(bulk, [0.0, 0.0, 0.0])[3][20])), 0.0, loading]
+    point[10] = float(diagnostic[4]) * (bulk[5] - bulk[4]) + point[8:10] @ np.asarray(diagnostic[6]).ravel()
+    height, span = assembly["height_m"], 393.15 - 293.15
+    capacity = np.array([
+        liquid_feed.sum() * liquid.input_jacobian(np.r_[bulk[4], bulk[6], liquid_feed])[-1, 0],
+        vapor_feed.sum() * vapor.input_jacobian(np.r_[bulk[5], bulk[6], vapor_feed])[-1, 0],
+    ])
+    if np.any(~np.isfinite(capacity)) or np.any(capacity <= 0):
+        raise RuntimeError("Native capacity scales must be finite positive")
+    flux_scale = np.asarray(diagnostic[3]).ravel() * gas[:2]
+    heat_scale = float(diagnostic[4]) * span + np.abs(np.asarray(diagnostic[6]).ravel()) @ flux_scale
+    state_scale = np.r_[bulk[:4], 300.0, 300.0, bulk[6], .97, flux_scale, heat_scale, 1.0]
+    balance_scale = np.r_[bulk[:4] / height, capacity * span / height, bulk[6] / height]
+    algebraic_scale = np.r_[.97, flux_scale[0] * float(diagnostic[2]), flux_scale, heat_scale]
+    boundary_scale = np.r_[bulk[:4], span, span, bulk[6]]
+    if any(np.any(~np.isfinite(scale)) or np.any(scale <= 0) for scale in (state_scale, balance_scale, algebraic_scale, boundary_scale)):
+        raise RuntimeError("Conserved state, balance, algebraic and boundary scales must be finite positive")
+    margin = .97 * np.finfo(float).eps
+    lower = np.r_[[0.0] * 4, 293.15, 293.15, 1.0, margin, [-np.inf] * 4]
+    upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97-margin, [np.inf] * 4]
+    algebraic = np.asarray(node(0.0, point)[2]).ravel()
+    initialized = bool(root.converged and np.max(abs(algebraic / algebraic_scale)) <= tolerance)
+    checkpoint.update(stage="initialized", initialization={"state": point, "algebraic_residual": algebraic, "accepted": initialized},
+                      scaling={"state_scale": state_scale, "balance_scale": balance_scale, "algebraic_scale": algebraic_scale,
+                               "boundary_scale": boundary_scale, "capacity_rates_w_k": capacity,
+                               "policy": "case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds"})
+    if not initialized:
+        raise RuntimeError("Full original algebraic initialization check failed")
+    grid = assembly["coordinate"]
+    initial = np.tile(point[:, None], (1, len(grid)))
+    checkpoint.update(stage="global_solve", initial_profile=initial)
+    from .BVP.Methods.Casadi_Collocation import solve_conservative_collocation
+    result = solve_conservative_collocation(
+        node, boundary, grid, initial, lower, upper, state_scale=state_scale, balance_scale=balance_scale,
+        algebraic_scale=algebraic_scale, boundary_scale=boundary_scale, tolerance=settings["tolerance"],
+        max_iterations=settings["max_iterations"], scheme=config.numerics.method,
+        boundary_slots=[(0, -1), (1, -1), (2, 0), (3, 0), (4, -1), (5, 0), (6, 0)] if config.numerics.method == "central" else None,
+    )
+    checkpoint.update(stage="physical_verification", result=result)
+    missing_physical_checks = (
+        "film-quadrature charge and capture"
+        if config.model.film_model == "equilibrium_manifold" else "capture"
+    )
+    physical = {"accepted": False, "reason": f"Subset checks omit {missing_physical_checks} evidence"}
+    if result["profile"] is not None:
+        profile = np.asarray(result["profile"])
+        evaluated = [tuple(np.asarray(value).ravel() for value in node(z, state)) for z, state in zip(result["grid"], profile.T)]
+        conserved = np.column_stack([value[0] for value in evaluated])
+        interface = np.column_stack([value[2] for value in evaluated])
+        drift = conserved[[2, 3, 5]] - conserved[[0, 1, 4]]
+        drift -= drift[:, :1]
+        residual = {
+            "material": drift[:2], "energy": drift[2], "interface": interface,
+            "boundary": np.asarray(boundary(profile[:, 0], profile[:, -1])).ravel(),
+        }
+        scaled = {
+            "material": float(np.max(abs(drift[:2] / boundary_scale[:2, None]))),
+            "energy": float(np.max(abs(drift[2] / (balance_scale[4] * height)))),
+            "interface": float(np.max(abs(interface / algebraic_scale[:, None]))),
+            "boundary": float(np.max(abs(residual["boundary"] / boundary_scale))),
+        }
+        physical = {"accepted": False,
+            "original_residuals": residual, "scaled_residual_inf": scaled,
+            "criteria": {key: tolerance for key in scaled},
+            "scope": (
+                "Subset: native grid conservation, interface, boundary, and original bounds; "
+                f"{missing_physical_checks} checks remain unavailable"
+            ),
+            "reason": "Subset checks cannot establish physical certification"}
+    result_record = {key: value for key, value in prepared.items() if key != "assembly"}
+    result_record.update(stage="finished", execution_status="completed", initialization=checkpoint["initialization"],
+                         scaling=checkpoint["scaling"], initial_profile=initial, result=result,
+                         physical_certification=physical, native_calls=checkpoint["native_calls"])
+    return result_record
+
+
+def execute_conserved_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
+    """Execute one twelve-state case through its selected verified interpreter."""
+    config = resolve_column_config(config.as_dict() if isinstance(config, ColumnConfig) else config)
+    if config.preset != TWELVE_PRESET:
+        raise ConfigurationError("execute_conserved_column requires the twelve_state_conserved preset")
+    with tempfile.TemporaryDirectory(prefix="conserved_execute_") as temporary:
+        temporary = Path(temporary)
+        input_path, output_path = temporary / "input.json", temporary / "output.json"
+        input_path.write_text(json.dumps(_safe({"task": "conserved_execution", "config": config.as_dict(),
+            "output_path": str(output_path), "runtime_identity": config.engine.as_dict()})), encoding="utf-8")
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = str(_ROOT / "src") + os.pathsep + environment.get("PYTHONPATH", "")
+        for name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+            environment[name] = "1"
+        completed = None
+        cause = None
+        try:
+            completed = subprocess.run(
+                [config.engine.python, "-m", "mea_absorption_column.benchmark_worker", str(input_path)],
+                cwd=_ROOT, env=environment, capture_output=True, text=True,
+                timeout=config.execution.wall_limit_s, check=False,
+            )
+        except BaseException as error:
+            cause = error
+        raw_output = output_path.read_text(encoding="utf-8") if output_path.is_file() else None
+        transport = {
+            "returncode": getattr(completed, "returncode", None),
+            "stdout": getattr(completed, "stdout", None) if completed is not None else getattr(cause, "stdout", None),
+            "stderr": getattr(completed, "stderr", None) if completed is not None else getattr(cause, "stderr", None),
+            "cause": type(cause).__name__ if cause is not None else None,
+            "message": str(cause) if cause is not None else None,
+        }
+        parsed = None
+        output_error = None
+        if raw_output is not None:
+            try:
+                parsed = json.loads(raw_output)
+                if not isinstance(parsed, Mapping):
+                    raise ValueError("worker output must be a JSON object")
+            except (TypeError, ValueError, json.JSONDecodeError) as error:
+                output_error = str(error)
+        checkpoint = parsed.get("last_checkpoint") if isinstance(parsed, Mapping) else None
+        worker_failure = parsed.get("failure_kind") if isinstance(parsed, Mapping) else None
+        timed_out = isinstance(cause, subprocess.TimeoutExpired)
+        interrupted = isinstance(cause, KeyboardInterrupt)
+        if output_error is not None or raw_output is None:
+            status = ("interrupted" if interrupted else "timed_out" if timed_out else
+                      "launch_failed" if isinstance(cause, OSError) else "output_invalid")
+            return {"failure_kind": status, "execution_status": status, "message": output_error or "worker returned no output",
+                    "raw_output": raw_output, "last_checkpoint": checkpoint or {}, "transport_failure":
+                    "launch_failed" if isinstance(cause, OSError) else None, "transport": transport}
+        if timed_out or interrupted:
+            status = "interrupted" if interrupted else "timed_out"
+            return {**parsed, "failure_kind": status, "execution_status": status,
+                    "message": "Conserved execution worker was interrupted" if interrupted else "Conserved execution worker exceeded its wall limit",
+                    "completed_payload": parsed if parsed.get("stage") == "finished" and isinstance(parsed.get("result"), Mapping) else None,
+                    "last_checkpoint": checkpoint or {}, "transport": transport}
+        if parsed.get("stage") == "finished" and not isinstance(parsed.get("result"), Mapping):
+            return {"failure_kind": "output_invalid", "execution_status": "output_invalid",
+                    "message": "Worker completed payload has the wrong shape", "raw_output": raw_output,
+                    "last_checkpoint": checkpoint or {}, "transport": transport}
+        transport_failure = "nonzero_exit" if transport["returncode"] not in (None, 0) else None
+        status = worker_failure or transport_failure
+        if status is not None:
+            return {**parsed, "failure_kind": status, "execution_status": "failed",
+                    "worker_failure_kind": worker_failure, "transport_failure": transport_failure,
+                    "transport": transport}
+        if parsed.get("stage") != "finished":
+            return {**parsed, "failure_kind": "incomplete", "execution_status": "incomplete",
+                    "message": "Worker returned a checkpoint without a completed payload",
+                    "last_checkpoint": checkpoint or {}, "transport": transport}
+        return {**parsed, "execution_status": "completed", "transport": transport}
+
+
 def _structured_solver_success(method: str, stages: Mapping[str, Any]) -> bool:
     required = {"single": ("root", "ivp"), "scipy-bvp": ("outer",), "finite": ("outer",)}.get(method, ("outer",))
     if not stages or any(
@@ -630,7 +874,7 @@ def _structured_solver_success(method: str, stages: Mapping[str, Any]) -> bool:
 
 
 def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
-    """Phase-3 boundary: assemble the graph and retain capability scope."""
+    """Run the configured conserved column and retain the actual worker result."""
     output_dir = Path(config.execution.output_dir) if config.execution.output_dir else None
     if output_dir is not None:
         if output_dir.exists():
@@ -651,23 +895,51 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
         "numerical_acceptance": "not_evaluated",
         "physical_acceptance": "not_evaluated",
         "scientific_acceptance": "not_evaluated",
-        "native_profile": {"available": False, "reason": "Phase 3 assembly only; Phase 4 owns the full column solve"},
+        "native_profile": {"available": False, "reason": "worker has not returned a native profile"},
         "solver": {"method": config.numerics.method, "stages": {}},
         "limitations": [
-            "exploratory assembly only; no full-column convergence claim",
-            "species mobilities are case-estimated and use the declared harmonic-mean closure",
+            "exploratory numerical attempt only; no physical certification or scientific promotion claim",
+            (
+                "species mobilities are case-estimated and use the declared harmonic-mean closure"
+                if config.model.film_model == "equilibrium_manifold"
+                else "the enhancement reference retains its declared empirical kinetics and diffusivity basis"
+            ),
             "native vapor caloric reference remains provisional for thermal interpretation",
         ],
         "failure": None,
     }
+    _record(output_dir, "resolved_config.json", config.as_dict())
+    _record(output_dir, "attempt.json", base)
     try:
-        prepared = prepare_conserved_column(config)
+        prepared = execute_conserved_column(config)
+        if prepared.get("failure_kind") or prepared.get("execution_status") in {"incomplete", "output_invalid", "interrupted"}:
+            kind = prepared["failure_kind"]
+            base["execution"].update(status=prepared.get("execution_status", "failed"), runtime_s=time.perf_counter() - started)
+            base["failure"] = {"kind": kind, "phase": prepared.get("last_checkpoint", {}).get("stage", "worker"),
+                               "message": prepared.get("message"), "last_checkpoint": prepared.get("last_checkpoint"),
+                               "worker_failure_kind": prepared.get("worker_failure_kind"),
+                               "transport_failure": prepared.get("transport_failure"),
+                               "transport": prepared.get("transport"), "raw_output": prepared.get("raw_output"),
+                               "completed_payload": prepared.get("completed_payload")}
+            _record(output_dir, "attempt.json", base)
+            return base
         base.update({
             "resolved_inputs": prepared["resolved_inputs"],
             "engine": prepared["engine"],
+            "transport": prepared.get("transport"),
             "dependencies": {"assets": prepared["assets"], "capabilities": prepared["capabilities"]},
             "assembly": prepared["layout"],
-            "diagnostics": {"assembly": "complete", "full_solve": "deferred_to_phase4"},
+            "result": prepared.get("result"),
+            "initialization": prepared.get("initialization"), "scaling": prepared.get("scaling"),
+            "initial_profile": prepared.get("initial_profile"), "native_calls": prepared.get("native_calls"),
+            "diagnostics": {"assembly": "complete", "solver_failure": prepared.get("result", {}).get("failure"),
+                            "physical_certification": prepared.get("physical_certification")},
+            "native_profile": {"available": prepared.get("result", {}).get("profile") is not None,
+                               "grid": prepared.get("result", {}).get("grid"),
+                               "state_matrix": prepared.get("result", {}).get("profile")},
+            "solver": {"method": config.numerics.method, "stages": {"outer": {
+                "success": bool((prepared.get("result", {}).get("solver_statistics") or {}).get("success", False)),
+                "status": prepared.get("result", {}).get("status")}}},
         })
     except CapabilityRefusal as error:
         base["execution"].update(status="failed", runtime_s=time.perf_counter() - started)
@@ -680,6 +952,9 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
         base["failure"] = {"kind": "preparation_failed", "phase": "preparation", "message": str(error)}
     else:
         base["execution"]["runtime_s"] = time.perf_counter() - started
+        base["execution"]["status"] = "completed"
+        base["numerical_acceptance"] = "accepted" if prepared.get("result", {}).get("accepted") else "rejected"
+        base["physical_acceptance"] = "not_evaluated"
     if output_dir is not None:
         _record(output_dir, "resolved_config.json", config.as_dict())
         _record(output_dir, "attempt.json", base)

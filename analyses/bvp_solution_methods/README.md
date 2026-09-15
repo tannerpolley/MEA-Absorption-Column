@@ -1,10 +1,14 @@
 # Boundary-value solution methods (Section 4.3)
 
 The four adapters are implemented and verified on an independent analytic DAE.
-The corrected 3C full-film interface has also passed local recovery and the
-original algebraic equations. A converged full column, physical refinement
-study and matched-accuracy timing comparison are still required. No manuscript
-claim or physical method ranking follows from these local checks.
+The corrected 3C full-film interface has also passed recovery and the original
+algebraic equations. The retained two-node trapezoidal attempt in
+`results/conserved_runner_20260912_0700/attempt.json` returned a numerically
+accepted full-column candidate in 428.101 s (14 IPOPT iterations, scaled
+residual infinity norm 6.371460913581593e-08, zero bound violation). This is a
+first coarse numerical result. Physical certification, refinement, and a
+matched-accuracy timing comparison remain required; no manuscript claim or
+physical method ranking follows from this attempt.
 
 This task owns numerical methods and analysis in the attached
 `codex/section-4-3-solvers` checkout. Imported physics retains the source hashes
@@ -150,10 +154,9 @@ as its boundary; do not impose both or silently substitute top pressure.
 The retained `input/case_3c.json` supplies height 6 m, diameter .64 m, packing,
 resolved wet molar feeds and the explicit species-diffusivity closure.
 
-The authoritative source reconciliation was inspected read-only at
-`/home/tnnrpolley21/.codex/worktrees/1b26/MEA-Absorption-Column/analyses/nccc_validation/r18_sensitivity.md`,
-“Primary-source case identity check”: Morgan et al. (2020), DOI
-`10.1016/j.apenergy.2020.114533`, Tables A1, A4, C2 and Table 6. This task did
+The durable source reconciliation is `input/case_3c_source.md`: Morgan et al.
+(2020), DOI `10.1016/j.apenergy.2020.114533`, Tables A1, A4, C2 and Table 6.
+It was recovered from the repository's archived source review; this task did
 not independently reacquire or re-read the paper. Legacy `C_cases_data.csv`
 and the intermediate campaign CSV do not contain the selected gas composition.
 
@@ -214,11 +217,14 @@ checks that other settings are fixed and emits exact plotted CSV plus SVG/PNG/PD
 The cost view requires explicit `--capture-limit-pp` and `--temperature-limit-k`.
 Filled/open points distinguish inside/outside achieved-difference limits;
 failed or uncertified attempts remain crosses at measured durations. Timing
-contexts must match, and timeout budgets never substitute for measurements.
-Manufactured pipeline-check figures are temporary validation, not manuscript
-results. No physical figures or research notebook have yet been populated.
+environments must match, and timeout budgets never substitute for measurements.
+Manufactured method-check figures are temporary validation, not manuscript
+results. The working non-executing notebook is `notebook.qmd`, with its
+rendered HTML at `builds/notebook.html`. It reports the two-node result as
+endpoint tables only: two nodes cannot resolve an interior profile or
+continuous peak without overstating evidence.
 
-## Retained run contract
+## Retained attempt requirements
 
 Each JSON file contains one attempt. `result` is the native conservative
 solver result dictionary, including its unchanged `grid`, `profile`, defects,
@@ -257,8 +263,9 @@ The surrounding fields are:
   `setup_wall_s`, `thermo_wall_s`, `film_wall_s`, `global_wall_s`, and native
   counts/other diagnostics. Missing measurements stay null or absent.
   `context` carries hardware, software, thread settings and exact timing scope
-  under `hardware`, `software`, `threads`, `scope`. Unknown context suppresses
-  timing statistics. Identical declared method/settings/context are grouped;
+  under `hardware`, `software`, `threads`, `scope`. An unknown execution
+  environment suppresses timing statistics. Identical declared method, settings,
+  and execution environment are grouped;
   no averaging across meshes, film settings or starts. Actual wall time and
   timeout budget (`limit_seconds`) are different fields.
 - `execution_status` is required: `completed`, `failed`, `timeout`,
@@ -287,4 +294,3 @@ statistics are min/median/max of measured eligible samples, alongside total
 attempt and ineligible counts. Null data never become zero. Timing components
 are summarized separately and never added or subtracted into an invented
 exclusive breakdown.
-

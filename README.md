@@ -39,10 +39,19 @@ explicitly; numerical completion and physical agreement remain separate question
 | `seven_state` | Henry, neutral/ionic ePC-SAFT, or nine-species reactive ePC-SAFT; explicit/implicit enhancement or a supplied frozen film linearization | `single`, `scipy-bvp`, `finite` |
 | `conserved` | A user-supplied `problem_factory` builds compatible balances and boundary equations, interpreting the selected thermo/film labels | `trapezoidal`, `central`, `shooting`, `collocation` |
 
-The preserved twelve-state column is also available through the immutable
-`twelve_state_conserved` configuration for graph preparation and native
-derivative checks. This preparation does not run the full column or establish
-convergence. The earlier experiment remains under
+The immutable `twelve_state_conserved` configuration connects trapezoidal and
+central methods to a bounded worker. Always supply `execution.wall_limit_s` for
+an actual run. `prepare_conserved_column` provides graph preparation separately.
+Set `model.film_model` to `equilibrium_manifold` (the default) or
+`enhancement_reference`; unsupported finite-rate choices fail before assembly.
+The first retained native attempt is a numerically accepted two-node
+trapezoidal result. An independent final-tree capability review found no
+remaining blocker in the bounded execution path; physical certification,
+refinement, and notebook review remain open. The solver connection is
+bounded to its retained coarse result and establishes no resolved profile or
+physical-accuracy claim.
+Reduced shooting and collocation remain explicit unavailable choices.
+Their existing generic research interface remains available. The earlier experiment remains under
 `archive/coupled-solver-2026-09-08`. Built-in eNRTL and MDEA column paths are not implemented by a menu
 label. Their future implementation can use the same explicit problem selection.
 See `analyses/research_options/README.md` and its rendered notebook for evidence,

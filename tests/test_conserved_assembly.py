@@ -142,6 +142,22 @@ def test_callbacks_are_repeatable_in_reverse_order(assembly, point):
     np.testing.assert_allclose(values[0], values[2], rtol=1e-12, atol=1e-12)
 
 
+def test_enhancement_reference_builds_the_selected_casadi_closure(point):
+    request = {
+        **REQUEST,
+        "model": {"film_model": "enhancement_reference"},
+    }
+    prepared = _prepare_conserved_column_in_process(resolve_column_config(request))
+    assembly = prepared["assembly"]
+    diagnostics = assembly["diagnostics"]
+    assert diagnostics.name_out(diagnostics.n_out() - 1) == "enhancement_factor"
+    assert prepared["capabilities"]["a2_equilibrium_actions"] == "not_required_by_selected_film"
+    state = np.r_[point, 1.0e-4, 0.0, 0.0, 0.05]
+    values = np.concatenate([np.asarray(value).ravel() for value in assembly["node"](0.0, state)])
+    assert np.all(np.isfinite(values))
+    assert float(diagnostics(state)[-1]) >= 1.0
+
+
 def test_shared_hydraulic_and_pressure_expressions_match_numeric_and_symbolic():
     packing = [250.0, .97, .203, .35, .017, .292, .119]
     inputs = ca.MX.sym("transport_inputs", 8)

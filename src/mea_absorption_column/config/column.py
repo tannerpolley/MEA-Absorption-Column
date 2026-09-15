@@ -605,24 +605,35 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     model_values = dict(_section(request, "model"))
     dependencies = _dependencies(_section(request, "dependencies"))
     if preset == TWELVE_PRESET:
+        film_model = model_values.get("film_model", "equilibrium_manifold")
+        if film_model not in {"equilibrium_manifold", "enhancement_reference"}:
+            raise ConfigurationError(
+                "twelve_state_conserved model.film_model must be "
+                "'equilibrium_manifold' or 'enhancement_reference'"
+            )
+        if film_model == "enhancement_reference" and dependencies.mobility_law is not None:
+            raise ConfigurationError(
+                "enhancement_reference does not consume dependencies.mobility_law"
+            )
         dependencies = replace(
             dependencies,
             dataset=dependencies.dataset or _REACTIVE_DATASET,
-            mobility_law=dependencies.mobility_law or "harmonic_mean_onsager_v1",
+            mobility_law=(dependencies.mobility_law or "harmonic_mean_onsager_v1")
+            if film_model == "equilibrium_manifold" else None,
             thermal_reference=dependencies.thermal_reference or f"{_REACTIVE_DATASET}/anchored-reference-thermochemistry.json",
             references=dependencies.references or (
                 f"{_NEUTRAL_VAPOR_DATASET}/parameters.json",
                 f"{_NEUTRAL_VAPOR_DATASET}/reference-thermochemistry.json",
             ),
         )
-        if dependencies.mobility_law != "harmonic_mean_onsager_v1":
+        if film_model == "equilibrium_manifold" and dependencies.mobility_law != "harmonic_mean_onsager_v1":
             raise ConfigurationError("twelve_state_conserved requires mobility_law='harmonic_mean_onsager_v1'")
         if len(dependencies.references) != 2:
             raise ConfigurationError("twelve_state_conserved requires neutral-vapor parameter and reference assets")
         expected = {
             "formulation": "twelve_state_conserved",
             "thermo_model": "reactive_epcsaft",
-            "film_model": "equilibrium_manifold",
+            "film_model": film_model,
             "energy_model": "native_total_enthalpy",
             "pressure_model": "hydraulic_pressure_drop",
             "layout": "twelve_conserved",
@@ -640,7 +651,7 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
         }
     for name, value in model_values.items():
         if name not in expected:
-            raise ConfigurationError(f"Unknown seven-state model key: {name}")
+            raise ConfigurationError(f"Unknown model key: {name}")
         if value != expected[name]:
             raise ConfigurationError(f"{preset} fixes model.{name}={expected[name]!r}; got {value!r}")
     model = ModelConfig(**expected)

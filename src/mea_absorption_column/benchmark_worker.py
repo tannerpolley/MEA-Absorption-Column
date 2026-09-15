@@ -60,6 +60,30 @@ def main(argv=None):
                 "failure_kind": "preparation_failed", "message": str(exc)
             })), encoding="utf-8")
         return 0
+    if payload.get("task") == "conserved_execution":
+        from mea_absorption_column.column import _record, _run_conserved_column_in_process
+        from mea_absorption_column.config.column import resolve_column_config
+        class Checkpoint(dict):
+            def update(self, *args, **kwargs):
+                super().update(*args, **kwargs)
+                _record(output_path.parent, output_path.name, _json_clean({"last_checkpoint": self}))
+        checkpoint = Checkpoint(stage="prepared")
+        try:
+            result = _run_conserved_column_in_process(resolve_column_config(payload["config"]), checkpoint)
+            _record(output_path.parent, output_path.name, _json_clean(result))
+        except CapabilityRefusal as exc:
+            _record(output_path.parent, output_path.name, _json_clean({
+                "failure_kind": "capability_refusal", "message": str(exc), "last_checkpoint": checkpoint,
+            }))
+        except ConfigurationError as exc:
+            _record(output_path.parent, output_path.name, _json_clean({
+                "failure_kind": "preparation_failed", "message": str(exc), "last_checkpoint": checkpoint,
+            }))
+        except (OSError, RuntimeError, ValueError) as exc:
+            _record(output_path.parent, output_path.name, _json_clean({
+                "failure_kind": "execution_failed", "message": str(exc), "last_checkpoint": checkpoint,
+            }))
+        return 0
     settings = settings_from_payload(payload["settings"])
     if settings.cache_policy == "disabled":
         os.environ["MEA_EPCSAFT_DISABLE_CACHE"] = "1"

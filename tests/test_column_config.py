@@ -19,7 +19,6 @@ def test_new_preset_is_immutable_and_does_not_mutate_request():
     request = {
         "preset": "seven_state_legacy",
         "case": {"source": "C_cases_data", "id": "3C"},
-        "numerics": {"method": "single"},
         "numerics": {"method": "scipy-bvp", "solver_settings": {"mesh_points": 21}},
     }
     config = resolve_column_config(request)
@@ -42,12 +41,55 @@ def test_twelve_state_resolves_its_declared_native_dependencies():
     assert config.engine.required is True
 
 
-def test_twelve_state_run_column_stops_at_phase_three_assembly():
+def test_twelve_state_selects_only_implemented_film_closures():
+    request = {
+        "preset": "twelve_state_conserved",
+        "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+    }
+    manifold = resolve_column_config(request)
+    reference = resolve_column_config({
+        **request,
+        "model": {"film_model": "enhancement_reference"},
+    })
+    assert manifold.model.film_model == "equilibrium_manifold"
+    assert manifold.dependencies.mobility_law == "harmonic_mean_onsager_v1"
+    assert reference.model.film_model == "enhancement_reference"
+    assert reference.dependencies.mobility_law is None
+    assert reference.resolved_config_sha256 != manifold.resolved_config_sha256
+    with pytest.raises(ConfigurationError, match="equilibrium_manifold.*enhancement_reference"):
+        resolve_column_config({
+            **request,
+            "model": {"film_model": "differential_finite_rate"},
+        })
+
+
+@pytest.mark.parametrize("method", ["shooting", "collocation"])
+def test_twelve_state_reduced_methods_remain_explicitly_unavailable(method):
+    config = resolve_column_config({
+        "preset": "twelve_state_conserved",
+        "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+        "numerics": {"method": method},
+    })
+    with pytest.raises(CapabilityRefusal, match="reduced-method controls have not been migrated"):
+        column_runner._run_conserved_column_in_process(config, {})
+
+
+def test_twelve_state_run_column_retains_conserved_execution(monkeypatch):
+    monkeypatch.setattr(column_runner, "execute_conserved_column", lambda config: {
+        "resolved_inputs": {"case_id": "3C"}, "engine": {}, "assets": {}, "capabilities": {},
+        "layout": {"states": 12, "conserved_balances": 7, "algebraic_equations": 5,
+                   "boundary_equations": 7, "coordinate": "physical_height"},
+        "result": {"accepted": False, "status": "maximum iterations", "profile": None,
+                   "solver_statistics": {"success": True}},
+        "physical_certification": {"accepted": False},
+        "initialization": {"accepted": True}, "scaling": {"state_scale": [1]},
+        "initial_profile": [[1]], "native_calls": {"liquid_value_A1": {"started": 1}},
+    })
     result = run_column({
         "preset": "twelve_state_conserved",
         "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
     })
-    assert result["execution"]["status"] == "prepared"
+    assert result["execution"]["status"] == "completed"
     assert result["assembly"] == {
         "states": 12,
         "conserved_balances": 7,
@@ -55,7 +97,10 @@ def test_twelve_state_run_column_stops_at_phase_three_assembly():
         "boundary_equations": 7,
         "coordinate": "physical_height",
     }
-    assert result["diagnostics"]["full_solve"] == "deferred_to_phase4"
+    assert result["numerical_acceptance"] == "rejected"
+    assert result["solver"]["stages"]["outer"]["success"] is True
+    assert result["initialization"]["accepted"] is True
+    assert result["native_calls"]["liquid_value_A1"]["started"] == 1
 
 
 def test_conserved_preparation_rejects_wrong_preset_mapping():
@@ -145,22 +190,88 @@ def test_conserved_initialization_interface_bracket_is_refused_before_assembly()
         })
 
 
-def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch):
+def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch, tmp_path):
     original_run = column_runner.subprocess.run
     def timeout(*args, **kwargs):
         command = args[0] if args else kwargs.get("args", "worker")
         if isinstance(command, (list, tuple)) and command and command[0] == "git":
             return original_run(*args, **kwargs)
+        payload = json.loads(Path(command[-1]).read_text())
+        output = Path(payload["output_path"])
+        column_runner._record(output.parent, output.name, {
+            "last_checkpoint": {"stage": "global_solve", "result": {"profile": [[1.0, 2.0]]}}
+        })
+        (output.parent / f".{output.name}.tmp").write_text('{"incomplete":')
         raise subprocess.TimeoutExpired(command, 1)
 
     monkeypatch.setattr(column_runner.subprocess, "run", timeout)
     result = column_runner.run_column({
         "preset": "twelve_state_conserved",
         "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
-        "execution": {"wall_limit_s": 1},
+        "execution": {"wall_limit_s": 1, "output_dir": str(tmp_path / "attempt")},
     })
     assert result["execution"]["status"] == "timed_out"
     assert result["failure"]["kind"] == "timed_out"
+    retained = json.loads((tmp_path / "attempt" / "attempt.json").read_text())
+    assert retained["failure"]["phase"] == "global_solve"
+    assert retained["failure"]["last_checkpoint"]["result"]["profile"] == [[1.0, 2.0]]
+
+
+@pytest.mark.parametrize("case, expected", [
+    ("negative", "nonzero_exit"), ("timeout_final", "timed_out"), ("checkpoint", "incomplete"),
+    ("malformed", "output_invalid"), ("missing", "output_invalid"),
+    ("wrong_shape", "output_invalid"), ("launch", "launch_failed"),
+    ("interrupt", "interrupted"),
+])
+def test_conserved_termination_classifies_transport_and_output(monkeypatch, tmp_path, case, expected):
+    original_run = column_runner.subprocess.run
+
+    def fake_run(command, **kwargs):
+        if isinstance(command, (list, tuple)) and command and command[0] == "git":
+            return original_run(command, **kwargs)
+        payload = json.loads(Path(command[-1]).read_text())
+        output = Path(payload["output_path"])
+        if case == "negative":
+            column_runner._record(output.parent, output.name, {"last_checkpoint": {"stage": "global_solve"}})
+            return subprocess.CompletedProcess(command, 7, "worker out", "worker err")
+        if case == "checkpoint":
+            column_runner._record(output.parent, output.name, {"last_checkpoint": {"stage": "global_solve"}})
+            return subprocess.CompletedProcess(command, 0, "", "")
+        if case == "malformed":
+            output.write_text("{bad", encoding="utf-8")
+            return subprocess.CompletedProcess(command, 0, "", "")
+        if case == "wrong_shape":
+            output.write_text(json.dumps({"stage": "finished", "result": []}), encoding="utf-8")
+            return subprocess.CompletedProcess(command, 0, "", "")
+        if case == "missing":
+            return subprocess.CompletedProcess(command, 0, "", "")
+        if case == "launch":
+            raise OSError("interpreter missing")
+        if case == "interrupt":
+            raise KeyboardInterrupt()
+        column_runner._record(output.parent, output.name, {
+            "stage": "finished", "result": {"profile": [[1.0]]},
+        })
+        raise subprocess.TimeoutExpired(command, 1)
+
+    monkeypatch.setattr(column_runner.subprocess, "run", fake_run)
+    result = column_runner.run_column({
+        "preset": "twelve_state_conserved",
+        "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+        "execution": {"output_dir": str(tmp_path / case)},
+    })
+    assert result["failure"]["kind"] == expected
+    if case == "negative":
+        assert result["failure"]["transport"]["returncode"] == 7
+        assert result["failure"]["transport"]["stderr"] == "worker err"
+    if case == "checkpoint":
+        assert result["failure"]["last_checkpoint"]["stage"] == "global_solve"
+    if case == "timeout_final":
+        assert result["failure"]["completed_payload"]["result"]["profile"] == [[1.0]]
+    if case == "launch":
+        assert result["failure"]["transport"]["returncode"] is None
+    if case == "interrupt":
+        assert result["execution"]["status"] == "interrupted"
 
 
 def test_conserved_worker_retains_preparation_failure_kind(tmp_path):
