@@ -21,6 +21,18 @@ estimate and is not evidence of formulation infeasibility. The preceding
 older comparison runner still targets its frozen candidate snapshot; no model
 was assembled in that attempt.
 
+The matched retained-profile rerun is preserved in
+`results/conserved_public_axial_n3_seeded_20260915/attempt.json`. It admitted
+the accepted two-node profile with matching model, inputs, Engine identity,
+scales, and non-node solver settings, then interpolated its twelve physical states onto
+the three-node grid. Under the unchanged 20-iteration budget, its scaled
+solver residual decreased from `1.6129296196679564e+02` to
+`1.64310785649288e+01`, so numerical and physical acceptance are rejected.
+The interpolated seed was worse than the unseeded initialization under this
+fixed budget; neither rejected attempt supplies refinement evidence or proves
+formulation infeasibility. No further retry is justified without a new design
+for algebraically consistent interior initialization or continuation.
+
 This analysis set owns the numerical-method evidence. Imported physics retains the source hashes
 in `results/candidate_snapshot.json`; the centered discretization and
 `Conserved_Reduction.py` are this task's extensions. Historical seven-state

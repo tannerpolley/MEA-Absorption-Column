@@ -1,0 +1,68 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "conserved_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "corrected published 2017 3C",
+    "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/input/case_3c.json",
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/input/case_3c.json",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle",
+    "mobility_law": "harmonic_mean_onsager_v1",
+    "references": [
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/reference-thermochemistry.json"
+    ],
+    "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/anchored-reference-thermochemistry.json"
+  },
+  "engine": {
+    "commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "required": true,
+    "sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_public_axial_n3_seeded_20260915",
+    "process_isolation": true,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 1200.0
+  },
+  "initialization": {
+    "policy": "case_declared_native_inputs",
+    "values": {
+      "retained_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_public_physical_20260915T204019Z/attempt.json"
+    }
+  },
+  "model": {
+    "coordinate": "physical_height",
+    "energy_model": "native_total_enthalpy",
+    "film_model": "equilibrium_manifold",
+    "formulation": "twelve_state_conserved",
+    "layout": "twelve_conserved",
+    "pressure_model": "hydraulic_pressure_drop",
+    "thermo_model": "reactive_epcsaft"
+  },
+  "numerics": {
+    "method": "trapezoidal",
+    "solver_settings": {
+      "max_iterations": 20,
+      "nodes": 3,
+      "quadrature_points": 3,
+      "tolerance": 1e-07
+    }
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_config_sha256": "5d439257fe8a79a02f88051d946972c2780d3c4fd9fdb9a2053d5238df4258a6",
+  "schema_version": 1
+}

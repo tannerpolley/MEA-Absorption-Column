@@ -82,6 +82,30 @@ numerical and physical acceptance are rejected. This candidate is ineligible
 for a refinement comparison. This iteration-limited rejection is not evidence
 of formulation infeasibility.
 
+### Matched retained-profile initialization
+
+The bounded rerun at
+`results/conserved_public_axial_n3_seeded_20260915/attempt.json` used the same
+three-node grid, quadrature, tolerance, and 20-iteration limit. Its admitted
+seed is the accepted two-node physical profile interpolated row by row onto
+`[0, 3, 6]` m. The retained provenance verifies the source attempt, source-file
+digest, model and physical inputs, expected Engine commit and verified
+installed-wheel hash, all four scale vectors, and the unchanged non-node solver
+settings.
+
+This attempt completed in 910.514 s with IPOPT status
+`Maximum_Iterations_Exceeded`. The scaled solver residual fell from
+`1.6129296196679564e+02` at iteration zero to `1.64310785649288e+01` at
+iteration 20, compared with `7.848385466224866e+01` to
+`8.449045858900252e-03` for the unseeded attempt. The returned profile is
+finite and within the original bounds, capture direction passes, and no native
+callback failed. However, scaled energy and interface residuals remain
+`9.583110269343715e-03` and `2.055855723927622`, so numerical and physical
+acceptance are rejected. Linear physical-state interpolation therefore did not
+improve this n3 solve under the fixed budget. This result is not a refinement
+estimate, a general rejection of retained-profile initialization, or evidence
+of formulation infeasibility.
+
 ## Interpretation
 
 This attempt supports that the corrected 3C twelve-state trapezoidal assembly
@@ -115,12 +139,13 @@ matched-accuracy method comparison.
 ## Conclusion and next steps
 
 The practical answer is that one coarse two-node baseline is numerically and
-physically accepted and useful as a starting point, while its solution accuracy
-remains unresolved. The next scientific questions are to refine axial
-resolution with a matched retained-profile initialization, then refine film
-quadrature separately. Three initializations remain required before making any
-branch claim. Other selected solution methods and matched achieved-accuracy
-costs remain later work.
+physically accepted, while its solution accuracy remains unresolved. Neither
+the unseeded nor linearly seeded three-node attempt passed the fixed numerical
+and physical criteria. A further axial retry now requires a separately designed
+algebraically consistent interior initialization or continuation strategy;
+changing the iteration budget would not be a matched rerun. Film-quadrature
+refinement, other solution methods, and matched achieved-accuracy costs remain
+later work.
 
 ## Provenance
 
@@ -130,7 +155,8 @@ result: `results/conserved_public_physical_20260915T204019Z/attempt.json`. The a
 launched through `mea_absorption_column.column.run_column`; its exact request is
 retained in `resolved_config.json`. Supporting method records remain in this analysis set,
 including the rejected public three-node attempt and the preceding comparison-runner
-setup failure. The source record for the
+setup failure. The rejected matched retained-profile attempt is preserved in
+`results/conserved_public_axial_n3_seeded_20260915/attempt.json`. The source record for the
 corrected case is Morgan et al. (2020), DOI
 `10.1016/j.apenergy.2020.114533`, Tables A1, A4, C2, and 6, as reconciled in
 `input/case_3c_source.md`. This notebook is a working view
