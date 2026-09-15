@@ -622,6 +622,77 @@ def prepare_conserved_column(config: ColumnConfig | Mapping[str, Any]) -> dict[s
         return result
 
 
+def _equilibrium_physical_certification(
+    result, assembly, liquid_feed, lower, upper, scaling, tolerance, quadrature_points,
+) -> dict[str, Any]:
+    """Evaluate the case-owned native-grid and film-quadrature certificate."""
+    profile = np.asarray(result["profile"], dtype=float)
+    evaluated = [
+        tuple(np.asarray(value).ravel() for value in assembly["node"](z, state))
+        for z, state in zip(result["grid"], profile.T)
+    ]
+    conserved = np.column_stack([value[0] for value in evaluated])
+    interface = np.column_stack([value[2] for value in evaluated])
+    drift = conserved[[2, 3, 5]] - conserved[[0, 1, 4]]
+    drift -= drift[:, :1]
+    charges = []
+    charge_numbers = np.asarray(assembly["reactive_liquid"]._reactions["charges"], dtype=float)
+    for state in profile.T:
+        for fraction in np.linspace(0.0, 1.0, quadrature_points):
+            amounts = [state[0] * np.exp(fraction * state[11]), liquid_feed[1], state[1]]
+            liquid_state = assembly["reactive_liquid"].solve(
+                state[4], state[6], amounts, state_input_derivatives=False,
+            )
+            charges.append(float(np.asarray(liquid_state["amounts_mol"]) @ charge_numbers))
+    boundary = np.asarray(assembly["boundary"](profile[:, 0], profile[:, -1])).ravel()
+    residuals = {
+        "material": drift[:2], "energy": drift[2], "charge": np.asarray(charges),
+        "interface": interface, "boundary": boundary,
+    }
+    height = assembly["height_m"]
+    scaled = {
+        "material": float(np.max(abs(drift[:2] / scaling["boundary_scale"][:2, None]))),
+        "energy": float(np.max(abs(drift[2] / (scaling["balance_scale"][4] * height)))),
+        "charge": float(np.max(abs(residuals["charge"]))),
+        "interface": float(np.max(abs(interface / scaling["algebraic_scale"][:, None]))),
+        "boundary": float(np.max(abs(boundary / scaling["boundary_scale"]))),
+    }
+    finite_profile = bool(np.all(np.isfinite(profile)))
+    bounds = {
+        "accepted": bool(finite_profile and np.all(profile >= lower[:, None]) and np.all(profile <= upper[:, None])),
+        "finite_profile": finite_profile, "lower_satisfied": bool(np.all(profile >= lower[:, None])),
+        "upper_satisfied": bool(np.all(profile <= upper[:, None])), "lower": lower, "upper": upper,
+        "scope": "All twelve states at every native grid node",
+    }
+    inlet, outlet = float(profile[2, 0]), float(profile[2, -1])
+    capture = {
+        "accepted": bool(math.isfinite(inlet) and math.isfinite(outlet) and 0.0 <= outlet <= inlet),
+        "inlet_vapor_co2_mol_s": inlet, "outlet_vapor_co2_mol_s": outlet,
+        "criterion": "0 <= outlet_vapor_co2_mol_s <= inlet_vapor_co2_mol_s",
+    }
+    accepted = bool(
+        all(math.isfinite(value) and value <= tolerance for value in scaled.values())
+        and bounds["accepted"] and capture["accepted"]
+    )
+    return {
+        "accepted": accepted, "original_residuals": residuals, "scaled_residual_inf": scaled,
+        "criteria": {name: tolerance for name in scaled}, "original_bounds": bounds,
+        "capture": capture,
+        "scope": (
+            "Native-grid material/energy invariants, bulk/film-quadrature charge, interface, boundary, "
+            "original bounds, and CO2 capture direction; between-node accuracy still requires refinement"
+        ),
+        "residual_units": {
+            "material": "mol/s", "energy": "W",
+            "charge": "elementary charge mol per apparent feed mol",
+            "interface": "holdup fraction; mol/m/s; mol/m2/s; mol/m2/s; W/m2",
+            "boundary": "four mol/s; two K; Pa",
+        },
+        "conserved": conserved, "sources": np.column_stack([value[1] for value in evaluated]),
+        "reason": "physical criteria accepted" if accepted else "one or more physical criteria failed",
+    }
+
+
 def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[str, Any]:
     """Run the case-owned twelve-state collocation path in the verified worker."""
     if config.numerics.method not in {"trapezoidal", "central"}:
@@ -629,7 +700,6 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
             f"Conserved method {config.numerics.method!r} is configured but unavailable: "
             "the reduced-method controls have not been migrated to this execution boundary"
         )
-    import casadi as ca
     from scipy.optimize import brentq
 
     payload = _physical_payload(config)
@@ -747,36 +817,39 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
         boundary_slots=[(0, -1), (1, -1), (2, 0), (3, 0), (4, -1), (5, 0), (6, 0)] if config.numerics.method == "central" else None,
     )
     checkpoint.update(stage="physical_verification", result=result)
-    missing_physical_checks = (
-        "film-quadrature charge and capture"
-        if config.model.film_model == "equilibrium_manifold" else "capture"
-    )
-    physical = {"accepted": False, "reason": f"Subset checks omit {missing_physical_checks} evidence"}
+    missing_physical_checks = "film-quadrature charge and capture" if config.model.film_model == "equilibrium_manifold" else "capture"
+    physical = {"accepted": False, "reason": "No completed candidate profile was returned"}
     if result["profile"] is not None:
-        profile = np.asarray(result["profile"])
-        evaluated = [tuple(np.asarray(value).ravel() for value in node(z, state)) for z, state in zip(result["grid"], profile.T)]
-        conserved = np.column_stack([value[0] for value in evaluated])
-        interface = np.column_stack([value[2] for value in evaluated])
-        drift = conserved[[2, 3, 5]] - conserved[[0, 1, 4]]
-        drift -= drift[:, :1]
-        residual = {
-            "material": drift[:2], "energy": drift[2], "interface": interface,
-            "boundary": np.asarray(boundary(profile[:, 0], profile[:, -1])).ravel(),
-        }
-        scaled = {
-            "material": float(np.max(abs(drift[:2] / boundary_scale[:2, None]))),
-            "energy": float(np.max(abs(drift[2] / (balance_scale[4] * height)))),
-            "interface": float(np.max(abs(interface / algebraic_scale[:, None]))),
-            "boundary": float(np.max(abs(residual["boundary"] / boundary_scale))),
-        }
-        physical = {"accepted": False,
-            "original_residuals": residual, "scaled_residual_inf": scaled,
-            "criteria": {key: tolerance for key in scaled},
-            "scope": (
-                "Subset: native grid conservation, interface, boundary, and original bounds; "
-                f"{missing_physical_checks} checks remain unavailable"
-            ),
-            "reason": "Subset checks cannot establish physical certification"}
+        profile = np.asarray(result["profile"], dtype=float)
+        if config.model.film_model == "equilibrium_manifold":
+            physical = _equilibrium_physical_certification(
+                result, assembly, liquid_feed, lower, upper, checkpoint["scaling"],
+                tolerance, settings["quadrature_points"],
+            )
+        else:
+            evaluated = [tuple(np.asarray(value).ravel() for value in node(z, state)) for z, state in zip(result["grid"], profile.T)]
+            conserved = np.column_stack([value[0] for value in evaluated])
+            interface = np.column_stack([value[2] for value in evaluated])
+            drift = conserved[[2, 3, 5]] - conserved[[0, 1, 4]]
+            drift -= drift[:, :1]
+            residual = {
+                "material": drift[:2], "energy": drift[2], "interface": interface,
+                "boundary": np.asarray(boundary(profile[:, 0], profile[:, -1])).ravel(),
+            }
+            scaled = {
+                "material": float(np.max(abs(drift[:2] / boundary_scale[:2, None]))),
+                "energy": float(np.max(abs(drift[2] / (balance_scale[4] * height)))),
+                "interface": float(np.max(abs(interface / algebraic_scale[:, None]))),
+                "boundary": float(np.max(abs(residual["boundary"] / boundary_scale))),
+            }
+            physical = {"accepted": False,
+                "original_residuals": residual, "scaled_residual_inf": scaled,
+                "criteria": {key: tolerance for key in scaled},
+                "scope": (
+                    "Subset: native grid conservation, interface, boundary, and original bounds; "
+                    f"{missing_physical_checks} checks remain unavailable"
+                ),
+                "reason": "Subset checks cannot establish physical certification"}
     result_record = {key: value for key, value in prepared.items() if key != "assembly"}
     result_record.update(stage="finished", execution_status="completed", initialization=checkpoint["initialization"],
                          scaling=checkpoint["scaling"], initial_profile=initial, result=result,
@@ -895,16 +968,19 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
         "numerical_acceptance": "not_evaluated",
         "physical_acceptance": "not_evaluated",
         "scientific_acceptance": "not_evaluated",
+        "physical_certification": {"accepted": None, "reason": "worker has not returned a candidate"},
         "native_profile": {"available": False, "reason": "worker has not returned a native profile"},
         "solver": {"method": config.numerics.method, "stages": {}},
         "limitations": [
-            "exploratory numerical attempt only; no physical certification or scientific promotion claim",
+            "exploratory numerical attempt only; no solution-verification, validation, or scientific-promotion claim",
             (
                 "species mobilities are case-estimated and use the declared harmonic-mean closure"
                 if config.model.film_model == "equilibrium_manifold"
                 else "the enhancement reference retains its declared empirical kinetics and diffusivity basis"
             ),
             "native vapor caloric reference remains provisional for thermal interpretation",
+            "physical certification is limited to the native grid and configured film quadrature",
+            "the case-declared 3C policy does not establish continuous-profile or peak behavior",
         ],
         "failure": None,
     }
@@ -915,6 +991,7 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
         if prepared.get("failure_kind") or prepared.get("execution_status") in {"incomplete", "output_invalid", "interrupted"}:
             kind = prepared["failure_kind"]
             base["execution"].update(status=prepared.get("execution_status", "failed"), runtime_s=time.perf_counter() - started)
+            base["physical_certification"] = prepared.get("physical_certification", base["physical_certification"])
             base["failure"] = {"kind": kind, "phase": prepared.get("last_checkpoint", {}).get("stage", "worker"),
                                "message": prepared.get("message"), "last_checkpoint": prepared.get("last_checkpoint"),
                                "worker_failure_kind": prepared.get("worker_failure_kind"),
@@ -932,6 +1009,7 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
             "result": prepared.get("result"),
             "initialization": prepared.get("initialization"), "scaling": prepared.get("scaling"),
             "initial_profile": prepared.get("initial_profile"), "native_calls": prepared.get("native_calls"),
+            "physical_certification": prepared.get("physical_certification"),
             "diagnostics": {"assembly": "complete", "solver_failure": prepared.get("result", {}).get("failure"),
                             "physical_certification": prepared.get("physical_certification")},
             "native_profile": {"available": prepared.get("result", {}).get("profile") is not None,
@@ -954,7 +1032,18 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
         base["execution"]["runtime_s"] = time.perf_counter() - started
         base["execution"]["status"] = "completed"
         base["numerical_acceptance"] = "accepted" if prepared.get("result", {}).get("accepted") else "rejected"
-        base["physical_acceptance"] = "not_evaluated"
+        profile = prepared.get("result", {}).get("profile")
+        certificate = prepared.get("physical_certification") or {}
+        if profile is None:
+            base["physical_acceptance"] = "not_evaluated"
+            reason = "candidate profile unavailable"
+        elif certificate.get("accepted") is True:
+            base["physical_acceptance"] = "accepted"
+            reason = "complete physical certification accepted"
+        else:
+            base["physical_acceptance"] = "rejected"
+            reason = certificate.get("reason", "physical certification rejected")
+        base["diagnostics"]["physical_acceptance_reason"] = reason
     if output_dir is not None:
         _record(output_dir, "resolved_config.json", config.as_dict())
         _record(output_dir, "attempt.json", base)

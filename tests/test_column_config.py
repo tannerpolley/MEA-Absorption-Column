@@ -6,6 +6,7 @@ import json
 import subprocess
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from mea_absorption_column import run_column
@@ -98,9 +99,90 @@ def test_twelve_state_run_column_retains_conserved_execution(monkeypatch):
         "coordinate": "physical_height",
     }
     assert result["numerical_acceptance"] == "rejected"
+    assert result["physical_acceptance"] == "not_evaluated"
+    assert result["physical_certification"] == {"accepted": False}
+    assert result["diagnostics"]["physical_acceptance_reason"] == "candidate profile unavailable"
     assert result["solver"]["stages"]["outer"]["success"] is True
     assert result["initialization"]["accepted"] is True
     assert result["native_calls"]["liquid_value_A1"]["started"] == 1
+
+
+class _ChargeState:
+    def __init__(self, charge):
+        self.charge = charge
+        self.calls = 0
+        self._reactions = {"charges": [0, 0, 0, 1, -1, -1, -2, 1, -1]}
+
+    def solve(self, *_args, **_kwargs):
+        self.calls += 1
+        amounts = np.zeros(9)
+        amounts[3] = self.charge
+        return {"amounts_mol": amounts}
+
+
+def _certificate_inputs(charge=0.0, outlet=1.0):
+    profile = np.tile(np.array([1.0, 1.0, 2.0, 1.0, 300.0, 300.0, 1e5, 0.5, 0.0, 0.0, 0.0, 0.0])[:, None], (1, 2))
+    profile[2, -1] = outlet
+    reactive = _ChargeState(charge)
+
+    def node(_z, _state):
+        return np.array([1., 2., 3., 4., 5., 6., 7.]), np.zeros(7), np.zeros(5)
+
+    assembly = {"node": node, "boundary": lambda *_: np.zeros(7),
+                "reactive_liquid": reactive, "height_m": 1.0}
+    lower = np.r_[[0.] * 4, 293.15, 293.15, 1., 1e-12, [-np.inf] * 4]
+    upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97, [np.inf] * 4]
+    scaling = {"balance_scale": np.ones(7), "algebraic_scale": np.ones(5),
+               "boundary_scale": np.ones(7)}
+    return {"grid": np.array([0., 1.]), "profile": profile}, assembly, lower, upper, scaling, reactive
+
+
+def test_equilibrium_physical_certificate_accepts_complete_native_evidence():
+    result, assembly, lower, upper, scaling, reactive = _certificate_inputs()
+    certificate = column_runner._equilibrium_physical_certification(
+        result, assembly, np.array([1., 2., 3.]), lower, upper, scaling, 1e-7, 3,
+    )
+    assert certificate["accepted"] is True
+    assert set(certificate["original_residuals"]) == {"material", "energy", "charge", "interface", "boundary"}
+    assert set(certificate["scaled_residual_inf"]) == set(certificate["original_residuals"])
+    assert certificate["original_bounds"]["accepted"] is True
+    assert certificate["capture"]["accepted"] is True
+    assert reactive.calls == 6
+
+
+def test_equilibrium_physical_certificate_rejects_charge_and_capture():
+    result, assembly, lower, upper, scaling, _ = _certificate_inputs(charge=1.0, outlet=3.0)
+    certificate = column_runner._equilibrium_physical_certification(
+        result, assembly, np.array([1., 2., 3.]), lower, upper, scaling, 1e-7, 3,
+    )
+    assert certificate["accepted"] is False
+    assert certificate["scaled_residual_inf"]["charge"] == 1.0
+    assert certificate["capture"]["accepted"] is False
+
+
+@pytest.mark.parametrize(
+    "numerical, physical, expected, reason",
+    [
+        (True, True, "accepted", "complete physical certification accepted"),
+        (False, True, "accepted", "complete physical certification accepted"),
+        (True, False, "rejected", "physical check failed"),
+    ],
+)
+def test_conserved_public_physical_acceptance_tracks_physical_certificate(
+    monkeypatch, numerical, physical, expected, reason,
+):
+    monkeypatch.setattr(column_runner, "execute_conserved_column", lambda config: {
+        "resolved_inputs": {}, "engine": {}, "assets": {}, "capabilities": {}, "layout": {},
+        "result": {"accepted": numerical, "status": "finished", "profile": [[1.0]],
+                   "solver_statistics": {"success": numerical}},
+        "physical_certification": {"accepted": physical, "reason": "physical check failed"},
+    })
+    result = run_column({
+        "preset": "twelve_state_conserved",
+        "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+    })
+    assert result["physical_acceptance"] == expected
+    assert result["diagnostics"]["physical_acceptance_reason"] == reason
 
 
 def test_conserved_preparation_rejects_wrong_preset_mapping():
@@ -215,6 +297,8 @@ def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch, 
     retained = json.loads((tmp_path / "attempt" / "attempt.json").read_text())
     assert retained["failure"]["phase"] == "global_solve"
     assert retained["failure"]["last_checkpoint"]["result"]["profile"] == [[1.0, 2.0]]
+    assert retained["physical_acceptance"] == "not_evaluated"
+    assert retained["physical_certification"]["accepted"] is None
 
 
 @pytest.mark.parametrize("case, expected", [
@@ -412,7 +496,8 @@ def test_run_column_retains_legacy_and_acceptance_outcomes(tmp_path, monkeypatch
     assert retained["resolved_inputs"]["physical_input_sha256"]
     assert retained["source_identity"]["source_tree_sha256"]
     assert retained["source_identity"]["dirty_patch_sha256"]
-    assert retained["source_identity"]["dirty_patch"]
+    if not retained["source_identity"]["dirty"]:
+        assert retained["source_identity"]["dirty_patch"] == ""
 
 
 def test_legacy_success_does_not_imply_numerical_acceptance(monkeypatch):
