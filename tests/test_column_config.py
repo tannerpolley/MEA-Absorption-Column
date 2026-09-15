@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError
+import hashlib
 import importlib.metadata
 import json
 import subprocess
@@ -270,6 +271,141 @@ def test_conserved_initialization_interface_bracket_is_refused_before_assembly()
             "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
             "initialization": {"values": {"interface_bracket": [.1, .5]}},
         })
+
+
+def _retained_profile_context(tmp_path, mismatch=None):
+    accepted_path = Path("analyses/bvp_solution_methods/results/conserved_public_physical_20260915T204019Z/attempt.json")
+    baseline = json.loads(accepted_path.read_text())
+    source = json.loads(json.dumps(baseline))
+    if mismatch == "status":
+        source["physical_acceptance"] = "rejected"
+    if mismatch == "certificate":
+        source["physical_certification"]["accepted"] = False
+    if mismatch == "record":
+        source["engine"] = []
+    if mismatch == "grid":
+        source["native_profile"]["grid"][-1] = 5.0
+    if mismatch == "profile":
+        source["native_profile"]["state_matrix"] = source["native_profile"]["state_matrix"][:11]
+    if mismatch == "identity":
+        source["config"]["model"]["film_model"] = "enhancement_reference"
+    if mismatch == "physics":
+        source["resolved_inputs"]["physical_input_sha256"] = "wrong"
+    if mismatch == "solver":
+        source["config"]["numerics"]["solver_settings"]["quadrature_points"] = 4
+    if mismatch == "engine":
+        source["engine"]["actual_sha256"] = "wrong"
+    if mismatch == "scale":
+        source["scaling"]["state_scale"][0] += 1.0
+    if mismatch == "bounds":
+        source["native_profile"]["state_matrix"][0][0] = -1.0
+    source_path = tmp_path / "attempt.json"
+    source_path.write_text(json.dumps(source))
+    config = resolve_column_config({
+        "preset": "twelve_state_conserved",
+        "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+        "numerics": {"method": "trapezoidal", "nodes": 3,
+                     "solver_settings": {"quadrature_points": 3, "tolerance": 1e-7, "max_iterations": 20}},
+        "initialization": {"values": {"retained_profile": str(source_path)}},
+    })
+    prepared = {"resolved_inputs": baseline["resolved_inputs"], "engine": baseline["engine"],
+                "assembly": {"coordinate": np.linspace(0.0, 6.0, 3), "height_m": 6.0}}
+    scaling = {name: np.asarray(baseline["scaling"][name]) for name in
+               ("state_scale", "balance_scale", "algebraic_scale", "boundary_scale")}
+    margin = .97 * np.finfo(float).eps
+    lower = np.r_[[0.] * 4, 293.15, 293.15, 1., margin, [-np.inf] * 4]
+    upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97-margin, [np.inf] * 4]
+    return config, prepared, scaling, lower, upper, baseline, source_path
+
+
+def test_retained_profile_interpolates_accepted_n2_seed_before_solver(tmp_path):
+    config, prepared, scaling, lower, upper, source, source_path = _retained_profile_context(tmp_path)
+    initial, provenance = column_runner._retained_initial_profile(
+        config.initialization.as_dict()["values"]["retained_profile"],
+        config, prepared, scaling, lower, upper,
+    )
+    profile = np.asarray(source["native_profile"]["state_matrix"])
+    expected = np.array([np.interp([0., 3., 6.], [0., 6.], row) for row in profile])
+    np.testing.assert_array_equal(initial, expected)
+    assert config.initialization.as_dict()["values"]["retained_profile"] == str(source_path.resolve())
+    assert provenance["attempt_id"] == source["attempt_id"]
+    assert provenance["config_sha256"] == source["config_sha256"]
+    assert provenance["source_file_sha256"] == hashlib.sha256(source_path.read_bytes()).hexdigest()
+    assert provenance["engine_identity"]["actual_sha256"] == source["engine"]["actual_sha256"]
+    assert provenance["source_grid"] == [0.0, 6.0]
+    assert provenance["target_grid"] == [0.0, 3.0, 6.0]
+    assert provenance["interpolation"] == "numpy.interp row-wise in physical state basis"
+    assert provenance["accepted_source"] == {
+        "execution": "completed", "numerical_acceptance": "accepted",
+        "physical_acceptance": "accepted", "physical_certification": True,
+    }
+    relative = resolve_column_config({
+        "preset": "twelve_state_conserved",
+        "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+        "initialization": {"values": {"retained_profile":
+            "analyses/bvp_solution_methods/results/conserved_public_physical_20260915T204019Z/attempt.json"}},
+    })
+    assert Path(relative.initialization.as_dict()["values"]["retained_profile"]).is_absolute()
+    with pytest.raises(ConfigurationError, match="Unknown initialization values"):
+        resolve_column_config({"preset": "seven_state_legacy",
+                               "case": {"source": "C_cases_data", "id": "3C"},
+                               "initialization": {"values": {"retained_profile": str(source_path)}}})
+
+
+@pytest.mark.parametrize("mismatch", ["status", "certificate", "record", "grid", "profile", "identity", "physics", "solver", "engine", "scale", "bounds"])
+def test_retained_profile_rejects_mismatch_before_solver(tmp_path, mismatch):
+    config, prepared, scaling, lower, upper, _, _ = _retained_profile_context(tmp_path, mismatch)
+    with pytest.raises(ConfigurationError, match="Retained profile"):
+        column_runner._retained_initial_profile(
+            config.initialization.as_dict()["values"]["retained_profile"],
+            config, prepared, scaling, lower, upper,
+        )
+
+
+def test_retained_profile_reaches_solver_and_rejection_does_not(tmp_path, monkeypatch):
+    config, prepared, _, _, _, source, _ = _retained_profile_context(tmp_path)
+    payload = {
+        "physical_inputs": {"liquid_feed_mol_s": [1., 1., 1.], "vapor_feed_mol_s": [1., 1., 1., 1.],
+                            "liquid_temperature_k": 300., "vapor_temperature_k": 300.,
+                            "bottom_pressure_pa": 1e5, "packing": [1., .97, 1., 1., 1., 1., 1.]},
+        "initial_bulk_state": [1., 1., 1., 1., 300., 300., 1e5, .5],
+        "initial_interface_bracket": [0., 1.], "physical_residual_tolerance": 1e-7,
+        "liquid_molar_masses_kg_mol": [1., 1., 1.], "vapor_molar_masses_kg_mol": [1., 1., 1., 1.],
+    }
+
+    class Phase:
+        molar_masses = np.ones(4)
+        solve = solve_actions = _state = lambda *args: None
+        def input_jacobian(self, *_args):
+            return np.ones((1, 1))
+
+    def fake_prepared(_config):
+        liquid, vapor = Phase(), Phase()
+        liquid.molar_masses = np.ones(3)
+        def diagnostic(state):
+            return None, state[-1] - .5, 1., np.ones(2), 1., None, np.ones(2), 1.
+        def balance(*_args):
+            return None, None, 0., np.r_[np.zeros(20), 1.], np.ones(2)
+        assembly = {"node": lambda *_: (np.zeros(7), np.zeros(7), np.zeros(5)), "boundary": lambda *_: np.zeros(7),
+                    "diagnostics": diagnostic, "balance": balance, "liquid": liquid, "vapor": vapor,
+                    "reactive_liquid": liquid, "coordinate": np.array([0., 3., 6.]), "height_m": 6.}
+        return {**prepared, "assembly": assembly, "assets": {}, "capabilities": {}, "layout": {}}
+
+    expected = np.asarray(source["native_profile"]["state_matrix"])
+    expected = np.array([np.interp([0., 3., 6.], [0., 6.], row) for row in expected])
+    calls = []
+    monkeypatch.setattr(column_runner, "_physical_payload", lambda _: payload)
+    monkeypatch.setattr(column_runner, "_prepare_conserved_column_in_process", fake_prepared)
+    monkeypatch.setattr(column_runner, "_retained_initial_profile", lambda *_: (expected, {"accepted": True}))
+    monkeypatch.setattr("mea_absorption_column.BVP.Methods.Casadi_Collocation.solve_conservative_collocation",
+                        lambda *args, **kwargs: calls.append(args[3]) or {"profile": None})
+    column_runner._run_conserved_column_in_process(config, {})
+    np.testing.assert_array_equal(calls, [expected])
+    monkeypatch.setattr(column_runner, "_retained_initial_profile",
+                        lambda *_: (_ for _ in ()).throw(ConfigurationError("Retained profile rejected")))
+    with pytest.raises(ConfigurationError, match="Retained profile rejected"):
+        column_runner._run_conserved_column_in_process(config, {})
+    assert len(calls) == 1
 
 
 def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch, tmp_path):

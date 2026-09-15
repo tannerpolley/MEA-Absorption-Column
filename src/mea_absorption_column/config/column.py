@@ -663,12 +663,13 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     init_payload = init_values.get("values", {})
     if not isinstance(init_payload, Mapping):
         raise ConfigurationError("initialization.values must be a table/mapping")
+    init_payload = dict(init_payload)
     default_policy = "case_declared_native_inputs" if preset == TWELVE_PRESET else "legacy_capture_temperature_guesses"
     policy = init_values.get("policy", default_policy)
     if preset == TWELVE_PRESET:
         if policy != "case_declared_native_inputs":
             raise ConfigurationError("Only case_declared_native_inputs is implemented for twelve_state_conserved")
-        unknown_init = set(init_payload) - {"interface_bracket", "loading_anchor", "max_log_loading_step", "max_loading_steps"}
+        unknown_init = set(init_payload) - {"interface_bracket", "loading_anchor", "max_log_loading_step", "max_loading_steps", "retained_profile"}
     else:
         if policy != "legacy_capture_temperature_guesses":
             raise ConfigurationError("Only legacy_capture_temperature_guesses is implemented")
@@ -676,6 +677,15 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     if unknown_init:
         raise ConfigurationError(f"Unknown initialization values: {sorted(unknown_init)}")
     for key, value in init_payload.items():
+        if key == "retained_profile":
+            if not isinstance(value, str) or not value:
+                raise ConfigurationError("initialization.values.retained_profile must be an existing file path")
+            path = Path(value)
+            path = (path if path.is_absolute() else _ROOT / path).resolve()
+            if not path.is_file():
+                raise ConfigurationError("initialization.values.retained_profile must be an existing file path")
+            init_payload[key] = str(path)
+            continue
         if key == "interface_bracket":
             if not isinstance(value, (list, tuple)) or len(value) != 2 or any(isinstance(item, bool) or not isinstance(item, (int, float)) or not math.isfinite(item) for item in value) or value[0] >= value[1]:
                 raise ConfigurationError("initialization.values.interface_bracket must be an increasing finite pair")

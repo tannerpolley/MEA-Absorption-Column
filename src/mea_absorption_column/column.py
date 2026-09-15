@@ -693,6 +693,83 @@ def _equilibrium_physical_certification(
     }
 
 
+def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
+    """Admit one accepted public profile and interpolate its physical states."""
+    source_path = Path(path)
+    source = json.loads(source_path.read_text(encoding="utf-8"))
+    if not isinstance(source, Mapping):
+        raise ConfigurationError("Retained profile source must be a public attempt record")
+    records = tuple(source.get(name) for name in ("config", "resolved_inputs", "execution", "engine", "native_profile", "scaling", "physical_certification"))
+    if any(not isinstance(value, Mapping) for value in records):
+        raise ConfigurationError("Retained profile source record is incomplete")
+    source_config, source_inputs, source_execution, source_engine, native, source_scaling, source_certificate = records
+    current_config, current_inputs = config.as_dict(), prepared["resolved_inputs"]
+    accepted = {
+        "execution": source_execution.get("status"),
+        "numerical_acceptance": source.get("numerical_acceptance"),
+        "physical_acceptance": source.get("physical_acceptance"),
+        "physical_certification": source_certificate.get("accepted"),
+    }
+    if accepted != {"execution": "completed", "numerical_acceptance": "accepted", "physical_acceptance": "accepted", "physical_certification": True}:
+        raise ConfigurationError("Retained profile source must be completed, numerically accepted, and physically accepted")
+    source_numerics = source_config.get("numerics")
+    source_settings = source_numerics.get("solver_settings") if isinstance(source_numerics, Mapping) else None
+    if not isinstance(source_settings, Mapping):
+        raise ConfigurationError("Retained profile source solver settings are incomplete")
+    current_settings = current_config["numerics"]["solver_settings"]
+    identity_matches = (
+        source.get("preset") == config.preset
+        and source.get("formulation") == config.model.formulation
+        and source.get("native_layout") == config.model.layout
+        and source.get("coordinate") == config.model.coordinate
+        and source_config.get("model") == current_config["model"]
+        and source_config.get("dependencies") == current_config["dependencies"]
+        and source.get("config_sha256") == source_config.get("resolved_config_sha256")
+        and source_numerics.get("method") == config.numerics.method
+        and {k: v for k, v in source_settings.items() if k != "nodes"}
+        == {k: v for k, v in current_settings.items() if k != "nodes"}
+        and source_inputs.get("case_id") == current_inputs.get("case_id")
+        and source_inputs.get("physical_input_sha256") == current_inputs.get("physical_input_sha256")
+        and source_inputs.get("parameters") == current_inputs.get("parameters")
+        and source_inputs.get("raw_input") == current_inputs.get("raw_input")
+        and (source_inputs.get("metadata") or {}).get("physical_input_basis")
+        == (current_inputs.get("metadata") or {}).get("physical_input_basis")
+        and source_inputs.get("conserved_policy") == current_inputs.get("conserved_policy")
+    )
+    if not identity_matches:
+        raise ConfigurationError("Retained profile model, physical inputs, or solver settings do not match")
+    engine_keys = ("actual_sha256", "expected_commit", "expected_sha256")
+    current_engine = prepared["engine"]
+    if any(source_engine.get(key) != current_engine.get(key) for key in engine_keys):
+        raise ConfigurationError("Retained profile Engine identity does not match")
+    source_grid = np.asarray(native.get("grid"), dtype=float)
+    profile = np.asarray(native.get("state_matrix"), dtype=float)
+    target_grid = np.asarray(prepared["assembly"]["coordinate"], dtype=float)
+    height = prepared["assembly"]["height_m"]
+    if (native.get("available") is not True or source_grid.ndim != 1 or len(source_grid) < 2
+            or np.any(~np.isfinite(source_grid)) or np.any(np.diff(source_grid) <= 0)
+            or source_grid[0] != 0.0 or source_grid[-1] != height
+            or profile.shape != (12, len(source_grid)) or np.any(~np.isfinite(profile))
+            or source_settings.get("nodes") != len(source_grid) or current_settings["nodes"] != len(target_grid)
+            or target_grid[0] != 0.0 or target_grid[-1] != height):
+        raise ConfigurationError("Retained profile grid or state matrix is invalid for the current domain")
+    scale_keys = ("state_scale", "balance_scale", "algebraic_scale", "boundary_scale")
+    if any(not np.array_equal(np.asarray(source_scaling.get(key)), scaling[key]) for key in scale_keys):
+        raise ConfigurationError("Retained profile scales do not match")
+    initial = np.array([np.interp(target_grid, source_grid, row) for row in profile])
+    if (initial.shape != (12, len(target_grid)) or np.any(~np.isfinite(initial))
+            or np.any(initial < lower[:, None]) or np.any(initial > upper[:, None])):
+        raise ConfigurationError("Retained profile interpolation violates current bounds")
+    provenance = {
+        "attempt_id": source.get("attempt_id"), "config_sha256": source.get("config_sha256"),
+        "source_file": str(source_path), "source_file_sha256": hashlib.sha256(source_path.read_bytes()).hexdigest(),
+        "engine_identity": {key: source_engine[key] for key in engine_keys},
+        "source_grid": source_grid.tolist(), "target_grid": target_grid.tolist(),
+        "interpolation": "numpy.interp row-wise in physical state basis", "accepted_source": accepted,
+    }
+    return initial, provenance
+
+
 def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[str, Any]:
     """Run the case-owned twelve-state collocation path in the verified worker."""
     if config.numerics.method not in {"trapezoidal", "central"}:
@@ -808,6 +885,12 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
         raise RuntimeError("Full original algebraic initialization check failed")
     grid = assembly["coordinate"]
     initial = np.tile(point[:, None], (1, len(grid)))
+    retained = config.initialization.as_dict()["values"].get("retained_profile")
+    if retained is not None:
+        initial, provenance = _retained_initial_profile(
+            retained, config, prepared, checkpoint["scaling"], lower, upper,
+        )
+        checkpoint.update(initialization={**checkpoint["initialization"], "retained_profile": provenance})
     checkpoint.update(stage="global_solve", initial_profile=initial)
     from .BVP.Methods.Casadi_Collocation import solve_conservative_collocation
     result = solve_conservative_collocation(
