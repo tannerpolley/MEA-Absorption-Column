@@ -7,6 +7,27 @@ from .domain_guards import DomainGuardError, require_positive
 
 CO2_CONCENTRATION_DIVISOR = 1.04542981654115
 
+
+def enhancement_reference_expression(temperature_k, concentrations, liquid_coefficient, diffusivities):
+    """CasADi expression for the declared native-concentration reference closure."""
+    import casadi as ca
+
+    inputs = ca.vertcat(temperature_k, concentrations[:5], liquid_coefficient, diffusivities)
+    if inputs.shape != (10, 1):
+        raise ValueError("Enhancement reference requires five concentrations and three diffusivities")
+    inputs = ca.MX(inputs).attachAssert(
+        ca.mmin(ca.logic_and(inputs > 0., inputs < ca.inf)),
+        "Enhancement reference inputs must be finite positive")
+    temperature, c, kl, d = inputs[0], inputs[1:6], inputs[6], inputs[7:]
+    k2 = 2.003e4 * ca.exp(-4742. / temperature) * c[1] + 4.147 * ca.exp(-3110. / temperature) * c[2]
+    hatta = ca.sqrt(k2 * c[1] * d[0]) / kl
+    r_plus = d[1] * c[1] / (2. * d[2] * c[3])
+    r_minus = d[1] * c[1] / (2. * d[2] * c[4])
+    e_hat = d[1] * c[1] / (2. * d[0] * (c[0] / CO2_CONCENTRATION_DIVISOR))
+    raw = 1. + (hatta - 1.) / (1. + hatta * (r_plus + r_minus + 2.) / e_hat)
+    raw = raw.attachAssert(ca.logic_and(raw > 0., raw < ca.inf), "Enhancement reference must be finite positive")
+    return ca.fmin(ca.fmax(raw, 1.), 1e4)
+
 def enhancement_factor(Tl, Cl_true, y_CO2, P,
                        H_CO2_mix, kl_CO2, kv_CO2,
                        Dl_CO2, Dl_MEA, Dl_ion, E_type='explicit', diagnostics=None, eta_psi=1.0,

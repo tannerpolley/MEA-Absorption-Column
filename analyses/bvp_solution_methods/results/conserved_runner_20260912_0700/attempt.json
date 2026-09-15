@@ -1,0 +1,990 @@
+{
+  "assembly": {
+    "algebraic_equations": 5,
+    "boundary_equations": 7,
+    "conserved_balances": 7,
+    "coordinate": "physical_height",
+    "states": 12
+  },
+  "attempt_id": "20260912T070113-8e2326ecb61e",
+  "config": {
+    "acceptance": {
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null,
+      "numerical": "conserved_original_equations",
+      "physical": "not_evaluated"
+    },
+    "case": {
+      "data_type": "mole",
+      "gas_flow_basis": "reported_total_wet",
+      "id": "corrected published 2017 3C",
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/input/case_3c.json",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/input/case_3c.json",
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "dependencies": {
+      "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle",
+      "mobility_law": "harmonic_mean_onsager_v1",
+      "references": [
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/reference-thermochemistry.json"
+      ],
+      "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/anchored-reference-thermochemistry.json"
+    },
+    "engine": {
+      "commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+      "required": true,
+      "sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+      "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+    },
+    "execution": {
+      "cache_policy": "legacy_explicit",
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_runner_20260912_0700",
+      "process_isolation": true,
+      "resume": false,
+      "retry": false,
+      "threads": 1,
+      "wall_limit_s": 600.0
+    },
+    "initialization": {
+      "policy": "case_declared_native_inputs",
+      "values": {}
+    },
+    "model": {
+      "coordinate": "physical_height",
+      "energy_model": "native_total_enthalpy",
+      "film_model": "equilibrium_manifold",
+      "formulation": "twelve_state_conserved",
+      "layout": "twelve_conserved",
+      "pressure_model": "hydraulic_pressure_drop",
+      "thermo_model": "reactive_epcsaft"
+    },
+    "numerics": {
+      "method": "trapezoidal",
+      "solver_settings": {
+        "max_iterations": 20,
+        "nodes": 2,
+        "quadrature_points": 3,
+        "tolerance": 1e-07
+      }
+    },
+    "preset": "twelve_state_conserved",
+    "resolved_config_sha256": "4ee7c06492aaea25665e076f1022b3e1f3ba2e6447b936ffae0c6d669cedb6d4",
+    "schema_version": 1
+  },
+  "config_sha256": "4ee7c06492aaea25665e076f1022b3e1f3ba2e6447b936ffae0c6d669cedb6d4",
+  "coordinate": "physical_height",
+  "dependencies": {
+    "assets": {
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "42b0e9e6363f9cab3440d138eb6c0b6b939a73bc1475d3d37ffa2f101cc8e89e",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/reference-thermochemistry.json": "72b944e0221233152c4cdc85652ad792c7158e5a319366742939273024b77347",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle": "5e374f988e3235dcce3cf99bb58334adb56fc1a39600d11a5244effa28a64a76",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185"
+    },
+    "capabilities": {
+      "a1_equilibrium_values": "required_on_evaluation",
+      "a2_equilibrium_actions": "required_on_outer_derivative",
+      "caloric_actions": "required_on_outer_derivative",
+      "finite_difference_fallback": false
+    }
+  },
+  "diagnostics": {
+    "assembly": "complete",
+    "physical_certification": {
+      "accepted": false,
+      "criteria": {
+        "boundary": 1e-07,
+        "energy": 1e-07,
+        "interface": 1e-07,
+        "material": 1e-07
+      },
+      "original_residuals": {
+        "boundary": [
+          -8.505689486071333e-10,
+          -1.1455497883616772e-08,
+          -4.820097654345545e-10,
+          -1.7255108453184675e-10,
+          2.0147638224443654e-08,
+          4.919399998470908e-09,
+          -1.9563245587050915e-05
+        ],
+        "energy": [
+          0.0,
+          0.00026509910821914673
+        ],
+        "interface": [
+          [
+            -1.4620892690997422e-10,
+            -1.7162961329919568e-10
+          ],
+          [
+            7.547833571218385e-14,
+            8.925173247966117e-14
+          ],
+          [
+            5.759357192547387e-10,
+            5.046129052804771e-11
+          ],
+          [
+            6.85318327087181e-09,
+            9.921493626663391e-10
+          ],
+          [
+            0.00017887257126858458,
+            0.00011599850404309109
+          ]
+        ],
+        "material": [
+          [
+            0.0,
+            4.52102799641807e-10
+          ],
+          [
+            0.0,
+            7.969367885607426e-07
+          ]
+        ]
+      },
+      "reason": "Subset checks cannot establish physical certification",
+      "scaled_residual_inf": {
+        "boundary": 3.4969443333986616e-10,
+        "energy": 3.5776455893663017e-10,
+        "interface": 2.3549869358501044e-08,
+        "material": 1.0353163955845279e-08
+      },
+      "scope": "Subset: native grid conservation, interface, boundary, and original bounds; charge/capture checks remain unavailable"
+    },
+    "solver_failure": null
+  },
+  "engine": {
+    "actual_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "archive_hash_status": "verified_from_installed_contents",
+    "commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "commit_evidence": "not_available_from_installed_distribution",
+    "declared_archive_sha256": null,
+    "declared_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "declared_wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "expected_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "expected_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "installed_artifact_members": 26,
+    "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/lib/python3.13/site-packages",
+    "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "loaded_version": "0.2.0.dev0",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv",
+    "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+    "python_implementation": "cpython",
+    "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv",
+    "python_version": "3.13.13",
+    "required": true,
+    "status": "verified",
+    "verified_commit": null,
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "execution": {
+    "runtime_s": 428.101092491,
+    "started_at_utc": "2026-09-12T07:01:13Z",
+    "status": "completed"
+  },
+  "failure": null,
+  "formulation": "twelve_state_conserved",
+  "initial_profile": [
+    [
+      2.4323205276203805,
+      2.4323205276203805
+    ],
+    [
+      76.97519250729157,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.6540435157308098
+    ],
+    [
+      1.5624169375299577,
+      1.5624169375299577
+    ],
+    [
+      318.15,
+      318.15
+    ],
+    [
+      316.75,
+      316.75
+    ],
+    [
+      110900.0,
+      110900.0
+    ],
+    [
+      0.0527151344326932,
+      0.0527151344326932
+    ],
+    [
+      0.01831591442799128,
+      0.01831591442799128
+    ],
+    [
+      0.014962144014177555,
+      0.014962144014177555
+    ],
+    [
+      -10940.409344548052,
+      -10940.409344548052
+    ],
+    [
+      0.7745668932575391,
+      0.7745668932575391
+    ]
+  ],
+  "initialization": {
+    "accepted": true,
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -6.1201044232461754e-15,
+      0.0,
+      0.0
+    ],
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ]
+  },
+  "limitations": [
+    "exploratory numerical attempt only; no physical certification or scientific promotion claim",
+    "species mobilities are case-estimated and use the declared harmonic-mean closure",
+    "native vapor caloric reference remains provisional for thermal interpretation"
+  ],
+  "native_calls": {
+    "liquid_A2": {
+      "failed": 0,
+      "returned": 96,
+      "started": 96,
+      "wall_s": 76.8579303769991
+    },
+    "liquid_value_A1": {
+      "failed": 0,
+      "returned": 612,
+      "started": 612,
+      "wall_s": 336.4636921560011
+    },
+    "vapor_value_A1_H2": {
+      "failed": 0,
+      "returned": 492,
+      "started": 492,
+      "wall_s": 12.281016469999031
+    }
+  },
+  "native_layout": "twelve_conserved",
+  "native_profile": {
+    "available": true,
+    "grid": [
+      0.0,
+      6.0
+    ],
+    "state_matrix": [
+      [
+        4.04747099164368,
+        2.4323205267698116
+      ],
+      [
+        76.09022399713623,
+        76.97519249583607
+      ],
+      [
+        1.6540435152488,
+        0.03889305082703422
+      ],
+      [
+        1.5624169373574066,
+        2.4473862329940412
+      ],
+      [
+        329.3895574786238,
+        318.1500000201476
+      ],
+      [
+        316.7500000049194,
+        329.57097075017066
+      ],
+      [
+        110899.99998043675,
+        110154.50122953838
+      ],
+      [
+        0.052016874592319975,
+        0.052715144240870204
+      ],
+      [
+        0.004152821929475733,
+        0.003260841913260175
+      ],
+      [
+        -0.19396500939796837,
+        0.18955339894271964
+      ],
+      [
+        44024.633074237165,
+        -45908.13453008542
+      ],
+      [
+        0.16817814616992194,
+        0.1830332785015083
+      ]
+    ]
+  },
+  "numerical_acceptance": "accepted",
+  "physical_acceptance": "not_evaluated",
+  "preset": "twelve_state_conserved",
+  "resolved_inputs": {
+    "case_id": "corrected published 2017 3C",
+    "conserved_policy": {
+      "loading_anchor": 0.25,
+      "max_loading_steps": 32,
+      "max_log_loading_step": 0.1,
+      "precedence": "physical_inputs defaults, overridden by initialization.values, then numerics.solver_settings reactive_loading_* values",
+      "species_diffusivity_model": {
+        "co2_activation_j_mol": 15230.0,
+        "co2_prefactor_m2_s": 3.14e-07,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ]
+      }
+    },
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "metadata": {
+      "beds": 1,
+      "case_id": "corrected published 2017 3C",
+      "diameter_m": 0.64,
+      "gas_flow_basis": "reported_total_wet",
+      "intercoolers": 0,
+      "physical_input_basis": "direct_canonical_SI",
+      "single_bed_height_m": 6.0,
+      "total_packed_height_m": 6.0,
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "parameters": [
+      [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      318.15,
+      316.75,
+      [
+        0.0,
+        0.01,
+        0.02,
+        0.03,
+        0.04,
+        0.05,
+        0.06,
+        0.07,
+        0.08,
+        0.09,
+        0.1,
+        0.11,
+        0.12,
+        0.13,
+        0.14,
+        0.15,
+        0.16,
+        0.17,
+        0.18,
+        0.19,
+        0.2,
+        0.21,
+        0.22,
+        0.23,
+        0.24,
+        0.25,
+        0.26,
+        0.27,
+        0.28,
+        0.29,
+        0.3,
+        0.31,
+        0.32,
+        0.33,
+        0.34,
+        0.35000000000000003,
+        0.36,
+        0.37,
+        0.38,
+        0.39,
+        0.4,
+        0.41000000000000003,
+        0.42,
+        0.43,
+        0.44,
+        0.45,
+        0.46,
+        0.47000000000000003,
+        0.48,
+        0.49,
+        0.5,
+        0.51,
+        0.52,
+        0.53,
+        0.54,
+        0.55,
+        0.56,
+        0.5700000000000001,
+        0.58,
+        0.59,
+        0.6,
+        0.61,
+        0.62,
+        0.63,
+        0.64,
+        0.65,
+        0.66,
+        0.67,
+        0.68,
+        0.6900000000000001,
+        0.7000000000000001,
+        0.71,
+        0.72,
+        0.73,
+        0.74,
+        0.75,
+        0.76,
+        0.77,
+        0.78,
+        0.79,
+        0.8,
+        0.81,
+        0.8200000000000001,
+        0.8300000000000001,
+        0.84,
+        0.85,
+        0.86,
+        0.87,
+        0.88,
+        0.89,
+        0.9,
+        0.91,
+        0.92,
+        0.93,
+        0.9400000000000001,
+        0.9500000000000001,
+        0.96,
+        0.97,
+        0.98,
+        0.99,
+        1.0
+      ],
+      6.0,
+      0.3216990877275948,
+      110900.0,
+      [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ]
+    ],
+    "physical_input_sha256": "601f79091ee94d790b247bb91b0c67387e65411b112b760023e9b9050e53d17c",
+    "raw_input": [
+      4.607069120719279,
+      19.347831085173077,
+      0.25,
+      0.2999967360887997,
+      0.08548986749209121,
+      318.15,
+      316.75,
+      110900.0,
+      1.0
+    ],
+    "source_lineage": {
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/input/case_3c.json",
+      "physical_input_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/input/case_3c.json",
+      "source_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+      "source_row_sha256": "8483a65064aebcece44880142fceccca7fd9a306c73516447a5fda0870bdb936"
+    },
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "result": {
+    "accepted": true,
+    "algebraic_residual": [
+      [
+        -1.4620892690997422e-10,
+        -1.7162961329919568e-10
+      ],
+      [
+        7.547833571218385e-14,
+        8.925173247966117e-14
+      ],
+      [
+        5.759357192547387e-10,
+        5.046129052804771e-11
+      ],
+      [
+        6.85318327087181e-09,
+        9.921493626663391e-10
+      ],
+      [
+        0.00017887257126858458,
+        0.00011599850404309109
+      ]
+    ],
+    "balance_residual_per_length": [
+      [
+        -9.659584243593144e-11
+      ],
+      [
+        -1.3530929710015016e-07
+      ],
+      [
+        -2.124544984383192e-11
+      ],
+      [
+        -2.4864970082916216e-09
+      ],
+      [
+        0.0006014631750682989
+      ],
+      [
+        0.0006456466896149019
+      ],
+      [
+        2.4132803370472783e-07
+      ]
+    ],
+    "bound_violation": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "boundary_residual": [
+      [
+        -8.505689486071333e-10
+      ],
+      [
+        -1.1455497883616772e-08
+      ],
+      [
+        -4.820097654345545e-10
+      ],
+      [
+        -1.7255108453184675e-10
+      ],
+      [
+        2.0147638224443654e-08
+      ],
+      [
+        4.919399998470908e-09
+      ],
+      [
+        -1.9563245587050915e-05
+      ]
+    ],
+    "boundary_slots": null,
+    "defect_units": "B",
+    "defects": [
+      [
+        -5.795750546155887e-10
+      ],
+      [
+        -8.11855782600901e-07
+      ],
+      [
+        -1.2747269906299152e-10
+      ],
+      [
+        -1.491898204974973e-08
+      ],
+      [
+        0.003608779050409794
+      ],
+      [
+        0.0038738801376894116
+      ],
+      [
+        1.4479682022283669e-06
+      ]
+    ],
+    "failure": null,
+    "grid": [
+      0.0,
+      6.0
+    ],
+    "iterations": 14,
+    "nlp_scaling_method": "none",
+    "profile": [
+      [
+        4.04747099164368,
+        2.4323205267698116
+      ],
+      [
+        76.09022399713623,
+        76.97519249583607
+      ],
+      [
+        1.6540435152488,
+        0.03889305082703422
+      ],
+      [
+        1.5624169373574066,
+        2.4473862329940412
+      ],
+      [
+        329.3895574786238,
+        318.1500000201476
+      ],
+      [
+        316.7500000049194,
+        329.57097075017066
+      ],
+      [
+        110899.99998043675,
+        110154.50122953838
+      ],
+      [
+        0.052016874592319975,
+        0.052715144240870204
+      ],
+      [
+        0.004152821929475733,
+        0.003260841913260175
+      ],
+      [
+        -0.19396500939796837,
+        0.18955339894271964
+      ],
+      [
+        44024.633074237165,
+        -45908.13453008542
+      ],
+      [
+        0.16817814616992194,
+        0.1830332785015083
+      ]
+    ],
+    "profile_finite": true,
+    "scaled_bound_violation_inf": 0.0,
+    "scaled_residual_inf": 6.371460913581593e-08,
+    "scheme": "trapezoidal",
+    "solver_statistics": {
+      "iter_count": 14,
+      "iterations": {
+        "alpha_du": [
+          0.0,
+          1.0,
+          0.9979983912718442,
+          1.0,
+          0.0,
+          0.005954424403040646,
+          0.13419912523782448,
+          0.8672930183191353,
+          1.0,
+          1.0,
+          1.0,
+          0.9992279236504255,
+          0.9809609527755727,
+          0.993225824379583,
+          1.0,
+          0.0
+        ],
+        "alpha_pr": [
+          0.0,
+          0.7235615008207913,
+          0.023091456008425146,
+          0.0002560421533776552,
+          3.206772896019731e-07,
+          0.0013007099932818948,
+          0.006599922547834431,
+          0.11662962722659502,
+          0.8877056945226183,
+          0.7456337425439963,
+          0.8441438409765472,
+          1.0,
+          0.999252264543373,
+          0.9854995254042387,
+          1.0,
+          3.206772896019731e-07
+        ],
+        "d_norm": [
+          0.0,
+          1.3682320008416244,
+          0.4719636639229669,
+          0.4349487331239443,
+          0.0,
+          15263.946885883131,
+          230.20191501214785,
+          6.328713490237929,
+          0.3633935992647131,
+          0.18365963558182954,
+          0.9461223921602503,
+          0.38060917174488684,
+          0.23980046099608415,
+          0.005334239351158111,
+          0.0005515335579977497,
+          0.43711561526663045
+        ],
+        "inf_du": [
+          1.0,
+          26.592156340719946,
+          106.99946701751287,
+          434154.39890890545,
+          1000.0,
+          1004.1535692227998,
+          923.9219198785531,
+          932.3325685601333,
+          56.36101765893727,
+          72.20121234214785,
+          39.01169539684531,
+          0.6875911476523138,
+          0.4576747247743115,
+          0.25187448252756894,
+          0.016271613224082188,
+          1.6402990077324375e-11
+        ],
+        "inf_pr": [
+          78.48385466224866,
+          21.888647279623164,
+          21.38341039614028,
+          21.377935362908428,
+          21.377935362908428,
+          1.2209995380127892,
+          0.964078615750331,
+          1.3388367721520673,
+          0.2754727766213355,
+          0.08176305236607882,
+          0.22837371099399456,
+          0.06182304239732692,
+          0.036794881126220716,
+          0.0004864601529986151,
+          6.371460913581593e-08,
+          6.371460913581593e-08
+        ],
+        "mu": [
+          1.0,
+          0.9455360339497094,
+          0.1328008682649133,
+          0.022052028018959106,
+          21.377935362908428,
+          1425.885696574459,
+          230.56151297671045,
+          36.71768207662887,
+          8.515452032647143,
+          0.3981475173616922,
+          0.09767529252325127,
+          1.4380353611090229,
+          0.04908371486047115,
+          0.0017898007868578619,
+          5.134855031555182e-05,
+          0.003964181094664279
+        ],
+        "obj": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "regularization_size": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "n_call_callback_fun": 0,
+      "n_call_nlp_f": 19,
+      "n_call_nlp_g": 19,
+      "n_call_nlp_grad": 0,
+      "n_call_nlp_grad_f": 6,
+      "n_call_nlp_jac_g": 16,
+      "n_call_total": 1,
+      "return_status": "Solve_Succeeded",
+      "success": true,
+      "t_proc_callback_fun": 0.0,
+      "t_proc_nlp_f": 7.3e-05,
+      "t_proc_nlp_g": 85.244215,
+      "t_proc_nlp_grad": 0.0,
+      "t_proc_nlp_grad_f": 2.7000000000000002e-05,
+      "t_proc_nlp_jac_g": 293.723229,
+      "t_proc_total": 378.988549,
+      "t_wall_callback_fun": 0.0,
+      "t_wall_nlp_f": 7.394799999999999e-05,
+      "t_wall_nlp_g": 87.21796958699998,
+      "t_wall_nlp_grad": 0.0,
+      "t_wall_nlp_grad_f": 2.4075000000000002e-05,
+      "t_wall_nlp_jac_g": 296.72947048000003,
+      "t_wall_total": 383.989868938,
+      "unified_return_status": "SOLVER_RET_SUCCESS"
+    },
+    "status": "Solve_Succeeded"
+  },
+  "scaling": {
+    "algebraic_scale": [
+      0.97,
+      1.8447310837197383e-05,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568
+    ],
+    "balance_scale": [
+      0.40538675460339674,
+      12.82919875121526,
+      0.2756739192884683,
+      0.2604028229216596,
+      123497.93628109811,
+      10133.416784188732,
+      18483.333333333332
+    ],
+    "boundary_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      100.0,
+      100.0,
+      110900.0
+    ],
+    "capacity_rates_w_k": [
+      7409.876176865887,
+      608.0050070513239
+    ],
+    "policy": "case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds",
+    "state_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      300.0,
+      300.0,
+      110900.0,
+      0.97,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568,
+      1.0
+    ]
+  },
+  "schema_version": 1,
+  "scientific_acceptance": "not_evaluated",
+  "solver": {
+    "method": "trapezoidal",
+    "stages": {
+      "outer": {
+        "status": "Solve_Succeeded",
+        "success": true
+      }
+    }
+  },
+  "source_identity": {
+    "commit": "a4f4c2e1ed77b77eb2bbc88d675198c9a73652ac",
+    "dirty": true,
+    "dirty_patch": "diff --git a/src/mea_absorption_column/benchmark_worker.py b/src/mea_absorption_column/benchmark_worker.py\nindex 2a6cacb..d90e888 100644\n--- a/src/mea_absorption_column/benchmark_worker.py\n+++ b/src/mea_absorption_column/benchmark_worker.py\n@@ -60,6 +60,30 @@ def main(argv=None):\n                 \"failure_kind\": \"preparation_failed\", \"message\": str(exc)\n             })), encoding=\"utf-8\")\n         return 0\n+    if payload.get(\"task\") == \"conserved_execution\":\n+        from mea_absorption_column.column import _record, _run_conserved_column_in_process\n+        from mea_absorption_column.config.column import resolve_column_config\n+        class Checkpoint(dict):\n+            def update(self, *args, **kwargs):\n+                super().update(*args, **kwargs)\n+                _record(output_path.parent, output_path.name, _json_clean({\"last_checkpoint\": self}))\n+        checkpoint = Checkpoint(stage=\"prepared\")\n+        try:\n+            result = _run_conserved_column_in_process(resolve_column_config(payload[\"config\"]), checkpoint)\n+            _record(output_path.parent, output_path.name, _json_clean(result))\n+        except CapabilityRefusal as exc:\n+            _record(output_path.parent, output_path.name, _json_clean({\n+                \"failure_kind\": \"capability_refusal\", \"message\": str(exc), \"last_checkpoint\": checkpoint,\n+            }))\n+        except ConfigurationError as exc:\n+            _record(output_path.parent, output_path.name, _json_clean({\n+                \"failure_kind\": \"preparation_failed\", \"message\": str(exc), \"last_checkpoint\": checkpoint,\n+            }))\n+        except (OSError, RuntimeError, ValueError) as exc:\n+            _record(output_path.parent, output_path.name, _json_clean({\n+                \"failure_kind\": \"execution_failed\", \"message\": str(exc), \"last_checkpoint\": checkpoint,\n+            }))\n+        return 0\n     settings = settings_from_payload(payload[\"settings\"])\n     if settings.cache_policy == \"disabled\":\n         os.environ[\"MEA_EPCSAFT_DISABLE_CACHE\"] = \"1\"\ndiff --git a/src/mea_absorption_column/column.py b/src/mea_absorption_column/column.py\nindex 03f54f5..53a7f87 100644\n--- a/src/mea_absorption_column/column.py\n+++ b/src/mea_absorption_column/column.py\n@@ -614,6 +614,190 @@ def prepare_conserved_column(config: ColumnConfig | Mapping[str, Any]) -> dict[s\n         return result\n \n \n+def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[str, Any]:\n+    \"\"\"Run the case-owned twelve-state collocation path in the verified worker.\"\"\"\n+    if config.numerics.method not in {\"trapezoidal\", \"central\"}:\n+        raise CapabilityRefusal(\n+            f\"Conserved method {config.numerics.method!r} is configured but unavailable: \"\n+            \"the reduced-method controls have not been migrated to this execution boundary\"\n+        )\n+    import casadi as ca\n+    from scipy.optimize import brentq\n+\n+    payload = _physical_payload(config)\n+    physical = payload[\"physical_inputs\"] if payload is not None else None\n+    if not isinstance(physical, Mapping):\n+        raise ConfigurationError(\"Conserved execution requires the case physical_inputs record\")\n+    bulk = np.asarray(payload.get(\"initial_bulk_state\"), dtype=float)\n+    bracket = np.asarray(payload.get(\"initial_interface_bracket\"), dtype=float)\n+    tolerance = payload.get(\"physical_residual_tolerance\")\n+    if bulk.shape != (8,) or np.any(~np.isfinite(bulk)):\n+        raise ConfigurationError(\"Conserved execution needs a finite eight-state initial_bulk_state\")\n+    if bracket.shape != (2,) or np.any(~np.isfinite(bracket)) or bracket[0] >= bracket[1]:\n+        raise ConfigurationError(\"Conserved execution needs an increasing initial_interface_bracket\")\n+    if not isinstance(tolerance, (int, float)) or not math.isfinite(tolerance) or tolerance <= 0:\n+        raise ConfigurationError(\"Conserved execution needs a positive physical_residual_tolerance\")\n+    liquid_feed = np.asarray(physical.get(\"liquid_feed_mol_s\"), dtype=float)\n+    vapor_feed = np.asarray(physical.get(\"vapor_feed_mol_s\"), dtype=float)\n+    expected_seed = np.r_[liquid_feed[0], liquid_feed[2], vapor_feed[:2],\n+                          physical.get(\"liquid_temperature_k\"), physical.get(\"vapor_temperature_k\"),\n+                          physical.get(\"bottom_pressure_pa\")]\n+    packing = np.asarray(physical.get(\"packing\"), dtype=float)\n+    if (liquid_feed.shape != (3,) or vapor_feed.shape != (4,) or packing.shape != (7,)\n+            or not np.allclose(bulk[:7], expected_seed, rtol=0.0, atol=1e-12)\n+            or packing[1] != .97 or not np.all((293.15 <= bulk[4:6]) & (bulk[4:6] <= 393.15))):\n+        raise ConfigurationError(\n+            \"Only the case-declared 3C policy is supported: matching feed-seeded bulk state, \"\n+            \"0.97 packing void fraction, and 293.15--393.15 K inlet/initial temperatures\"\n+        )\n+    checkpoint.update(stage=\"policy_checked\", support_limits={\n+        \"policy\": \"case_declared_native_inputs: 3C fixed 293.15--393.15 K bounds, 300 K state scale, 100 K span, 0.97 holdup/packing void fraction\",\n+        \"unsupported\": \"arbitrary packing void fractions, feed-seed mismatches, and temperature policies\",\n+    })\n+    prepared = _prepare_conserved_column_in_process(config)\n+    assembly, inputs = prepared[\"assembly\"], prepared[\"resolved_inputs\"]\n+    checkpoint.update(resolved_inputs=inputs, engine=prepared[\"engine\"], assets=prepared[\"assets\"],\n+                      capabilities=prepared[\"capabilities\"], layout=prepared[\"layout\"])\n+    settings = dict(config.numerics.as_dict()[\"solver_settings\"])\n+    node, boundary, diagnostics, balance = (assembly[name] for name in (\"node\", \"boundary\", \"diagnostics\", \"balance\"))\n+    liquid, vapor = assembly[\"liquid\"], assembly[\"vapor\"]\n+    liquid_feed, vapor_feed = (np.asarray(value, dtype=float) for value in inputs[\"parameters\"][:2])\n+    checkpoint.update(stage=\"initializing\", native_calls={})\n+\n+    def instrument(owner, name, label):\n+        original = getattr(owner, name)\n+        counts = checkpoint[\"native_calls\"][label] = {\"started\": 0, \"returned\": 0, \"failed\": 0, \"wall_s\": 0.0}\n+        def observed(*args, **kwargs):\n+            counts[\"started\"] += 1\n+            started = time.perf_counter()\n+            try:\n+                value = original(*args, **kwargs)\n+                counts[\"returned\"] += 1\n+                return value\n+            except Exception:\n+                counts[\"failed\"] += 1\n+                raise\n+            finally:\n+                counts[\"wall_s\"] += time.perf_counter() - started\n+        setattr(owner, name, observed)\n+\n+    instrument(assembly[\"reactive_liquid\"], \"solve\", \"liquid_value_A1\")\n+    instrument(assembly[\"reactive_liquid\"], \"solve_actions\", \"liquid_A2\")\n+    instrument(vapor, \"_state\", \"vapor_value_A1_H2\")\n+    np.testing.assert_array_equal(liquid.molar_masses[:3], payload[\"liquid_molar_masses_kg_mol\"])\n+    np.testing.assert_array_equal(vapor.molar_masses, payload[\"vapor_molar_masses_kg_mol\"])\n+    bulk[7] -= float(balance(bulk, [0.0, 0.0, 0.0])[2])\n+    gas = np.asarray(balance(bulk, [0.0, 0.0, 0.0])[4]).ravel()\n+    evaluations = []\n+\n+    def interface_residual(loading):\n+        value = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])\n+        residual = float(value[1] / value[2] - value[3][0] * (gas[0] - value[7]))\n+        evaluations.append({\"loading\": float(loading), \"original_co2_residual\": residual})\n+        checkpoint.update(stage=\"interface_initialization\", initialization_evaluations=evaluations)\n+        return residual\n+\n+    loading, root = brentq(interface_residual, *bracket, full_output=True, disp=False)\n+    diagnostic = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])\n+    point = np.r_[bulk, float(diagnostic[1] / diagnostic[2]),\n+                  float(diagnostic[3][1] * (gas[1] - balance(bulk, [0.0, 0.0, 0.0])[3][20])), 0.0, loading]\n+    point[10] = float(diagnostic[4]) * (bulk[5] - bulk[4]) + point[8:10] @ np.asarray(diagnostic[6]).ravel()\n+    height, span = assembly[\"height_m\"], 393.15 - 293.15\n+    capacity = np.array([\n+        liquid_feed.sum() * liquid.input_jacobian(np.r_[bulk[4], bulk[6], liquid_feed])[-1, 0],\n+        vapor_feed.sum() * vapor.input_jacobian(np.r_[bulk[5], bulk[6], vapor_feed])[-1, 0],\n+    ])\n+    if np.any(~np.isfinite(capacity)) or np.any(capacity <= 0):\n+        raise RuntimeError(\"Native capacity scales must be finite positive\")\n+    flux_scale = np.asarray(diagnostic[3]).ravel() * gas[:2]\n+    heat_scale = float(diagnostic[4]) * span + np.abs(np.asarray(diagnostic[6]).ravel()) @ flux_scale\n+    state_scale = np.r_[bulk[:4], 300.0, 300.0, bulk[6], .97, flux_scale, heat_scale, 1.0]\n+    balance_scale = np.r_[bulk[:4] / height, capacity * span / height, bulk[6] / height]\n+    algebraic_scale = np.r_[.97, flux_scale[0] * float(diagnostic[2]), flux_scale, heat_scale]\n+    boundary_scale = np.r_[bulk[:4], span, span, bulk[6]]\n+    if any(np.any(~np.isfinite(scale)) or np.any(scale <= 0) for scale in (state_scale, balance_scale, algebraic_scale, boundary_scale)):\n+        raise RuntimeError(\"Conserved state, balance, algebraic and boundary scales must be finite positive\")\n+    margin = .97 * np.finfo(float).eps\n+    lower = np.r_[[0.0] * 4, 293.15, 293.15, 1.0, margin, [-np.inf] * 4]\n+    upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97-margin, [np.inf] * 4]\n+    algebraic = np.asarray(node(0.0, point)[2]).ravel()\n+    initialized = bool(root.converged and np.max(abs(algebraic / algebraic_scale)) <= tolerance)\n+    checkpoint.update(stage=\"initialized\", initialization={\"state\": point, \"algebraic_residual\": algebraic, \"accepted\": initialized},\n+                      scaling={\"state_scale\": state_scale, \"balance_scale\": balance_scale, \"algebraic_scale\": algebraic_scale,\n+                               \"boundary_scale\": boundary_scale, \"capacity_rates_w_k\": capacity,\n+                               \"policy\": \"case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds\"})\n+    if not initialized:\n+        raise RuntimeError(\"Full original algebraic initialization check failed\")\n+    grid = assembly[\"coordinate\"]\n+    initial = np.tile(point[:, None], (1, len(grid)))\n+    checkpoint.update(stage=\"global_solve\", initial_profile=initial)\n+    from .BVP.Methods.Casadi_Collocation import solve_conservative_collocation\n+    result = solve_conservative_collocation(\n+        node, boundary, grid, initial, lower, upper, state_scale=state_scale, balance_scale=balance_scale,\n+        algebraic_scale=algebraic_scale, boundary_scale=boundary_scale, tolerance=settings[\"tolerance\"],\n+        max_iterations=settings[\"max_iterations\"], scheme=config.numerics.method,\n+        boundary_slots=[(0, -1), (1, -1), (2, 0), (3, 0), (4, -1), (5, 0), (6, 0)] if config.numerics.method == \"central\" else None,\n+    )\n+    checkpoint.update(stage=\"physical_verification\", result=result)\n+    physical = {\"accepted\": False, \"reason\": \"Subset checks omit film-quadrature charge and capture evidence\"}\n+    if result[\"profile\"] is not None:\n+        profile = np.asarray(result[\"profile\"])\n+        evaluated = [tuple(np.asarray(value).ravel() for value in node(z, state)) for z, state in zip(result[\"grid\"], profile.T)]\n+        conserved = np.column_stack([value[0] for value in evaluated])\n+        interface = np.column_stack([value[2] for value in evaluated])\n+        drift = conserved[[2, 3, 5]] - conserved[[0, 1, 4]]\n+        drift -= drift[:, :1]\n+        residual = {\n+            \"material\": drift[:2], \"energy\": drift[2], \"interface\": interface,\n+            \"boundary\": np.asarray(boundary(profile[:, 0], profile[:, -1])).ravel(),\n+        }\n+        scaled = {\n+            \"material\": float(np.max(abs(drift[:2] / boundary_scale[:2, None]))),\n+            \"energy\": float(np.max(abs(drift[2] / (balance_scale[4] * height)))),\n+            \"interface\": float(np.max(abs(interface / algebraic_scale[:, None]))),\n+            \"boundary\": float(np.max(abs(residual[\"boundary\"] / boundary_scale))),\n+        }\n+        physical = {\"accepted\": False,\n+            \"original_residuals\": residual, \"scaled_residual_inf\": scaled,\n+            \"criteria\": {key: tolerance for key in scaled},\n+            \"scope\": \"Subset: native grid conservation, interface, boundary, and original bounds; charge/capture checks remain unavailable\",\n+            \"reason\": \"Subset checks cannot establish physical certification\"}\n+    result_record = {key: value for key, value in prepared.items() if key != \"assembly\"}\n+    result_record.update(stage=\"finished\", execution_status=\"completed\", initialization=checkpoint[\"initialization\"],\n+                         scaling=checkpoint[\"scaling\"], initial_profile=initial, result=result,\n+                         physical_certification=physical, native_calls=checkpoint[\"native_calls\"])\n+    return result_record\n+\n+\n+def execute_conserved_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:\n+    \"\"\"Execute one twelve-state case through its selected verified interpreter.\"\"\"\n+    config = resolve_column_config(config.as_dict() if isinstance(config, ColumnConfig) else config)\n+    if config.preset != TWELVE_PRESET:\n+        raise ConfigurationError(\"execute_conserved_column requires the twelve_state_conserved preset\")\n+    with tempfile.TemporaryDirectory(prefix=\"conserved_execute_\") as temporary:\n+        temporary = Path(temporary)\n+        input_path, output_path = temporary / \"input.json\", temporary / \"output.json\"\n+        input_path.write_text(json.dumps(_safe({\"task\": \"conserved_execution\", \"config\": config.as_dict(),\n+            \"output_path\": str(output_path), \"runtime_identity\": config.engine.as_dict()})), encoding=\"utf-8\")\n+        environment = os.environ.copy()\n+        environment[\"PYTHONPATH\"] = str(_ROOT / \"src\") + os.pathsep + environment.get(\"PYTHONPATH\", \"\")\n+        for name in (\"OMP_NUM_THREADS\", \"MKL_NUM_THREADS\", \"OPENBLAS_NUM_THREADS\", \"NUMEXPR_NUM_THREADS\"):\n+            environment[name] = \"1\"\n+        try:\n+            completed = subprocess.run([config.engine.python, \"-m\", \"mea_absorption_column.benchmark_worker\", str(input_path)],\n+                cwd=_ROOT, env=environment, capture_output=True, text=True, timeout=config.execution.wall_limit_s, check=False)\n+        except subprocess.TimeoutExpired as error:\n+            checkpoint = {}\n+            if output_path.is_file():\n+                checkpoint = json.loads(output_path.read_text(encoding=\"utf-8\")).get(\"last_checkpoint\", {})\n+            return {\"failure_kind\": \"timed_out\", \"message\": \"Conserved execution worker exceeded its wall limit\",\n+                    \"last_checkpoint\": checkpoint, \"execution_status\": \"timed_out\"}\n+        if completed.returncode != 0 or not output_path.is_file():\n+            detail = (completed.stderr or completed.stdout or \"\").strip().splitlines()\n+            raise CapabilityRefusal(f\"Conserved execution worker failed: {detail[-1] if detail else completed.returncode}\")\n+        return json.loads(output_path.read_text(encoding=\"utf-8\"))\n+\n+\n def _structured_solver_success(method: str, stages: Mapping[str, Any]) -> bool:\n     required = {\"single\": (\"root\", \"ivp\"), \"scipy-bvp\": (\"outer\",), \"finite\": (\"outer\",)}.get(method, (\"outer\",))\n     if not stages or any(\n@@ -630,7 +814,7 @@ def _structured_solver_success(method: str, stages: Mapping[str, Any]) -> bool:\n \n \n def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:\n-    \"\"\"Phase-3 boundary: assemble the graph and retain capability scope.\"\"\"\n+    \"\"\"Run the configured conserved column and retain the actual worker result.\"\"\"\n     output_dir = Path(config.execution.output_dir) if config.execution.output_dir else None\n     if output_dir is not None:\n         if output_dir.exists():\n@@ -651,23 +835,42 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:\n         \"numerical_acceptance\": \"not_evaluated\",\n         \"physical_acceptance\": \"not_evaluated\",\n         \"scientific_acceptance\": \"not_evaluated\",\n-        \"native_profile\": {\"available\": False, \"reason\": \"Phase 3 assembly only; Phase 4 owns the full column solve\"},\n+        \"native_profile\": {\"available\": False, \"reason\": \"worker has not returned a native profile\"},\n         \"solver\": {\"method\": config.numerics.method, \"stages\": {}},\n         \"limitations\": [\n-            \"exploratory assembly only; no full-column convergence claim\",\n+            \"exploratory numerical attempt only; no physical certification or scientific promotion claim\",\n             \"species mobilities are case-estimated and use the declared harmonic-mean closure\",\n             \"native vapor caloric reference remains provisional for thermal interpretation\",\n         ],\n         \"failure\": None,\n     }\n+    _record(output_dir, \"resolved_config.json\", config.as_dict())\n+    _record(output_dir, \"attempt.json\", base)\n     try:\n-        prepared = prepare_conserved_column(config)\n+        prepared = execute_conserved_column(config)\n+        if prepared.get(\"failure_kind\"):\n+            kind = prepared[\"failure_kind\"]\n+            base[\"execution\"].update(status=\"timed_out\" if kind == \"timed_out\" else \"failed\", runtime_s=time.perf_counter() - started)\n+            base[\"failure\"] = {\"kind\": kind, \"phase\": prepared.get(\"last_checkpoint\", {}).get(\"stage\", \"worker\"),\n+                               \"message\": prepared.get(\"message\"), \"last_checkpoint\": prepared.get(\"last_checkpoint\")}\n+            _record(output_dir, \"attempt.json\", base)\n+            return base\n         base.update({\n             \"resolved_inputs\": prepared[\"resolved_inputs\"],\n             \"engine\": prepared[\"engine\"],\n             \"dependencies\": {\"assets\": prepared[\"assets\"], \"capabilities\": prepared[\"capabilities\"]},\n             \"assembly\": prepared[\"layout\"],\n-            \"diagnostics\": {\"assembly\": \"complete\", \"full_solve\": \"deferred_to_phase4\"},\n+            \"result\": prepared.get(\"result\"),\n+            \"initialization\": prepared.get(\"initialization\"), \"scaling\": prepared.get(\"scaling\"),\n+            \"initial_profile\": prepared.get(\"initial_profile\"), \"native_calls\": prepared.get(\"native_calls\"),\n+            \"diagnostics\": {\"assembly\": \"complete\", \"solver_failure\": prepared.get(\"result\", {}).get(\"failure\"),\n+                            \"physical_certification\": prepared.get(\"physical_certification\")},\n+            \"native_profile\": {\"available\": prepared.get(\"result\", {}).get(\"profile\") is not None,\n+                               \"grid\": prepared.get(\"result\", {}).get(\"grid\"),\n+                               \"state_matrix\": prepared.get(\"result\", {}).get(\"profile\")},\n+            \"solver\": {\"method\": config.numerics.method, \"stages\": {\"outer\": {\n+                \"success\": bool((prepared.get(\"result\", {}).get(\"solver_statistics\") or {}).get(\"success\", False)),\n+                \"status\": prepared.get(\"result\", {}).get(\"status\")}}},\n         })\n     except CapabilityRefusal as error:\n         base[\"execution\"].update(status=\"failed\", runtime_s=time.perf_counter() - started)\n@@ -680,6 +883,9 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:\n         base[\"failure\"] = {\"kind\": \"preparation_failed\", \"phase\": \"preparation\", \"message\": str(error)}\n     else:\n         base[\"execution\"][\"runtime_s\"] = time.perf_counter() - started\n+        base[\"execution\"][\"status\"] = \"completed\"\n+        base[\"numerical_acceptance\"] = \"accepted\" if prepared.get(\"result\", {}).get(\"accepted\") else \"rejected\"\n+        base[\"physical_acceptance\"] = \"not_evaluated\"\n     if output_dir is not None:\n         _record(output_dir, \"resolved_config.json\", config.as_dict())\n         _record(output_dir, \"attempt.json\", base)\n",
+    "dirty_patch_sha256": "16908dfc0d4b18e9b665a580b51e6a940a1a906165057935cc418071872266e7",
+    "dirty_paths": [
+      "src/mea_absorption_column/benchmark_worker.py",
+      "src/mea_absorption_column/column.py"
+    ],
+    "repository_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column",
+    "source_tree_sha256": "180d9469b75fdaedccefb5005ef8f3810e33f8885f18a0c2afd5187901ebde03"
+  }
+}

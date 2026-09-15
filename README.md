@@ -39,13 +39,50 @@ explicitly; numerical completion and physical agreement remain separate question
 | `seven_state` | Henry, neutral/ionic ePC-SAFT, or nine-species reactive ePC-SAFT; explicit/implicit enhancement or a supplied frozen film linearization | `single`, `scipy-bvp`, `finite` |
 | `conserved` | A user-supplied `problem_factory` builds compatible balances and boundary equations, interpreting the selected thermo/film labels | `trapezoidal`, `central`, `shooting`, `collocation` |
 
-The coupled twelve-state column experiment is preserved under
-`archive/coupled-solver-2026-09-08`; its derivative/caloric interface is not yet
-integrated with the seven-state runtime. The independent conservative solvers are
-available now. Built-in eNRTL and MDEA column paths are not implemented by a menu
+The immutable `twelve_state_conserved` configuration connects trapezoidal and
+central methods to a bounded worker. Always supply `execution.wall_limit_s` for
+an actual run. `prepare_conserved_column` provides graph preparation separately.
+Set `model.film_model` to `equilibrium_manifold` (the default) or
+`enhancement_reference`; unsupported finite-rate choices fail before assembly.
+The first retained native attempt is a numerically accepted two-node
+trapezoidal result. An independent final-tree capability review found no
+remaining blocker in the bounded execution path; physical certification,
+refinement, and notebook review remain open. The solver connection is
+bounded to its retained coarse result and establishes no resolved profile or
+physical-accuracy claim.
+Reduced shooting and collocation remain explicit unavailable choices.
+Their existing generic research interface remains available. The earlier experiment remains under
+`archive/coupled-solver-2026-09-08`. Built-in eNRTL and MDEA column paths are not implemented by a menu
 label. Their future implementation can use the same explicit problem selection.
 See `analyses/research_options/README.md` and its rendered notebook for evidence,
 compatibility and candidate studies.
+
+For a reproducible single case, the same preview/run command also accepts an
+immutable preset configuration:
+
+```toml
+preset = "seven_state_legacy"
+[case]
+source = "C_cases_data"
+id = "3C"
+[numerics]
+method = "scipy-bvp"
+[execution]
+output_dir = "analyses/research_options/results/runs/my-3c"
+process_isolation = true
+wall_limit_s = 600
+```
+
+The attempt retains resolved SI inputs, configuration and source identities,
+the selected and verified Engine wheel, native profiles, raw solver stages,
+and every multistart candidate. Solver termination, numerical checks,
+observation agreement and physical certification are distinct. A changed wheel
+requires an explicitly prepared interpreter and its exact hash; no environment
+is installed automatically. The conserved preset additionally requires an
+identified physical-input JSON, such as
+`analyses/bvp_solution_methods/input/case_3c.json`. Estimated mobilities and
+provisional caloric references permit exploratory calculations, not a thermal
+validation claim.
 
 ## Organization and ownership
 
@@ -81,6 +118,8 @@ Focused configuration and method checks:
 
 ```bash
 uv run --frozen pytest -q -p no:cacheprovider tests/test_research_options.py tests/test_research_model_dispatch.py tests/test_epcsaft_contract.py
+uv run --frozen pytest -q -p no:cacheprovider tests/test_column_config.py tests/test_conserved_assembly.py
+uv run python scripts/check_epcsaft_integration.py --mode final
 ```
 
 These checks do not reproduce the manuscript results.

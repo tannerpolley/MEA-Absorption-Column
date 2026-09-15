@@ -1,0 +1,119 @@
+---
+title: "Conserved full-column BVP: corrected 3C baseline"
+subtitle: "Working analysis view of the first two-node numerical result"
+execute:
+  enabled: false
+---
+
+This working analysis notebook has not been independently reviewed or promoted
+for manuscript use. It reads the retained result and does not run a model or
+create retained values.
+
+## Question
+
+Does the corrected published 3C case produce a numerically accepted solution
+of the twelve-state conserved full-column formulation with the trapezoidal
+scheme, and what evidence is still needed before comparing solution methods?
+The intended use is to establish a bounded numerical baseline for subsequent
+solution-verification work.
+
+## Conditions
+
+The case is the corrected published 2017 3C input, represented by the retained
+SI input snapshot at `input/case_3c.json`. The packed bed is 6.0 m high and
+0.64 m in diameter. The resolved wet feed rates are 2.4323205276203805,
+9.729282110481522, and 76.97519250729157 mol/s for the liquid entries, and
+1.6540435157308098, 1.5624169375299577, 14.530683358624426, and
+1.6006872732878803 mol/s for the vapor entries. Liquid inlet temperature is
+318.15 K, gas inlet temperature is 316.75 K, and the gas-inlet pressure used by
+the boundary is 110900 Pa. The liquid inlet temperature is an assumption; the
+gas-flow moisture convention is `reported_total_wet` with `legacy_ratio`
+vapor composition.
+
+The formulation has 12 states, 7 conserved balances, 5 algebraic relations,
+and 7 boundary equations. It uses the native corrected 3C full-film interface,
+three film-quadrature points, two axial nodes, IPOPT, and the trapezoidal
+scheme. The wall limit was 600 s. The exact retained result is
+`results/conserved_runner_20260912_0700/attempt.json`; its attempt identifier is
+`20260912T070113-8e2326ecb61e`.
+
+## Results
+
+The solver returned `Solve_Succeeded` after 14 IPOPT iterations in 428.101 s.
+The retained numerical acceptance flag is `accepted`, with scaled residual
+infinity norm `6.371460913581593e-08` against the `1e-07` criterion and zero
+scaled bound violation.
+
+| State | At gas inlet, z = 0 | At liquid inlet, z = 6 m | Unit or basis |
+|---|---:|---:|---|
+| Apparent component flow 1 | 4.047470991643680 | 2.432320526769812 | mol/s |
+| Apparent component flow 2 | 76.09022399713623 | 76.97519249583607 | mol/s |
+| Apparent component flow 3 | 1.654043515248800 | 0.038893050827034 | mol/s |
+| Apparent component flow 4 | 1.562416937357407 | 2.447386232994041 | mol/s |
+| Liquid temperature | 329.3895574786238 | 318.1500000201476 | K |
+| Gas temperature | 316.7500000049194 | 329.5709707501707 | K |
+| Pressure | 110899.9999804368 | 110154.5012295384 | Pa |
+| Holdup | 0.052016874592320 | 0.052715144240204 | retained state basis |
+
+The two-node profile is a pair of endpoint states, not an axial profile. It
+cannot resolve an interior temperature maximum, a continuous capture profile,
+or the shape of any conserved quantity. A curve would overstate the evidence,
+so this notebook uses tables only.
+
+The retained original-equation subset checks were below the numerical
+criterion after scaling: material `1.0353163955845279e-08`, energy
+`3.5776455893663017e-10`, interface `2.3549869358501044e-08`, and boundary
+`3.4969443333986616e-10`. These are diagnostics on the returned two-node
+solution; they do not certify the full physical acceptance conditions.
+
+## Interpretation
+
+This attempt supports that the corrected 3C twelve-state trapezoidal assembly
+can return a finite, bounded, numerically accepted two-node candidate under the
+declared settings. The result is a first coarse full-column numerical result.
+It does not establish physical validation, numerical refinement, a continuous
+axial maximum, or a ranking among shooting, collocation, and difference
+methods.
+
+## Limitations
+
+Physical certification remains unavailable because the retained diagnostics do
+not include the required film-quadrature charge and capture checks. Species
+mobilities use the declared case-estimated closure, and the vapor caloric
+reference is provisional. The Engine identity is the installed wheel recorded
+in the result: declared and expected commit
+`7b1e62f0483571f8a194b32441467bdb58b45ce7`, verified installed wheel SHA-256
+`91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4`; commit
+evidence is unavailable from the installed distribution. The source tree was
+dirty at execution: the result preserves the dirty patch SHA-256 and the two
+changed source paths. Those source and wheel identities must travel with any
+later comparison.
+
+The earlier 900 s timeout remains a separate retained attempt with its own
+identity and is not rewritten by this result. Neither attempt supplies a
+matched-accuracy method comparison.
+
+## Conclusion and next steps
+
+The practical answer is that one coarse two-node baseline is numerically
+accepted and useful as a starting point, while its physical and solution
+accuracy remain unresolved. The next scientific questions are to refine axial
+resolution and film quadrature separately; repeat three initializations before
+making any branch claim; add charge and capture checks; run the other selected
+solution methods; and collect matched achieved-accuracy costs. Complete the
+actual Engine wheel capability evidence before using the result for a broader
+comparison.
+
+## Provenance
+
+Retained input: `input/case_3c.json` (SHA-256
+`0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385`). Retained
+result: `results/conserved_runner_20260912_0700/attempt.json`. The attempt was
+launched through `mea_absorption_column.column.run_column`; its exact request is
+retained in `resolved_config.json`. Supporting method records remain in this analysis set,
+including the adapter checks and prior attempts. The source record for the
+corrected case is Morgan et al. (2020), DOI
+`10.1016/j.apenergy.2020.114533`, Tables A1, A4, C2, and 6, as reconciled in
+`input/case_3c_source.md`. This notebook is a working view
+and its values have not been independently reviewed or promoted for manuscript
+use.

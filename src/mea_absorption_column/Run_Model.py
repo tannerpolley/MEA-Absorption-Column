@@ -40,21 +40,27 @@ def run_model(df,
               plot_temperature=False,
               thermo_model='ideal_henry',
               solver_settings=None,
-              return_details=False,
-              staged_beds='auto',
-              intercooler_settings=None,
-              ):
+             return_details=False,
+             staged_beds='auto',
+             intercooler_settings=None,
+             ):
 
     thermo_model = (thermo_model or 'ideal_henry').lower()
     solver_settings_for_run = dict(solver_settings or {})
-    inputs, X, case_metadata = convert_data(
-        df,
-        run=run,
-        type=data_type,
-        return_metadata=True,
-        vapor_composition_mode=solver_settings_for_run.get("vapor_composition_mode", "legacy_ratio"),
-        gas_flow_basis=solver_settings_for_run.get("gas_flow_basis", "reported_total_wet"),
-    )
+    resolved_inputs = solver_settings_for_run.pop("_resolved_inputs", None)
+    if resolved_inputs is None:
+        inputs, X, case_metadata = convert_data(
+            df,
+            run=run,
+            type=data_type,
+            return_metadata=True,
+            vapor_composition_mode=solver_settings_for_run.get("vapor_composition_mode", "legacy_ratio"),
+            gas_flow_basis=solver_settings_for_run.get("gas_flow_basis", "reported_total_wet"),
+        )
+    else:
+        inputs = resolved_inputs["parameters"]
+        X = np.asarray(resolved_inputs["raw_input"], dtype=float)
+        case_metadata = dict(resolved_inputs["metadata"])
 
     L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
 
@@ -350,6 +356,7 @@ Run #{run + 1:03d}:
         Y_scaled_for_outputs = external_profile_from_stacked_solution(raw_Y_scaled, stack_spec.beds)
     else:
         Y_scaled_for_outputs = raw_Y_scaled
+    # Preserve the historical sampled output grid; adaptive solver nodes are retained separately.
     z_outputs = np.linspace(z[0], z[-1], Y_scaled_for_outputs.shape[1])
 
     Y = []
@@ -596,6 +603,7 @@ Run #{run + 1:03d}:
             'domain_guard_counts': _format_domain_guard_counts(solver_diagnostics.get('domain_guard_counts', {})),
             'first_failed_domain': solver_diagnostics.get('first_failed_domain', ''),
             'jacobian_status': solver_diagnostics.get('jacobian_status', ''),
+            'solver_stage_status': solver_diagnostics.get('stage_status', {}),
             'scaling_mode': solver_settings_for_run.get('scaling_mode', 'legacy_flow_enthalpy'),
             'transform_mode': solver_settings_for_run.get('transform_mode', 'bounded_guarded_raw_state'),
             'continuation_path': solver_settings_for_run.get('continuation_path', 'none'),
@@ -657,6 +665,27 @@ Run #{run + 1:03d}:
                 )
         if return_internal_profile:
             result["_raw_solution_scaled"] = raw_Y_scaled
+            native_profile = solver_diagnostics.get("native_profile")
+            if native_profile is None:
+                native_grid = np.asarray(z_outputs, dtype=float)
+                native_state = np.asarray(Y_scaled_for_outputs, dtype=float)
+                native_layout = {
+                    "coordinate": "normalized_height",
+                    "representation": "sampled_legacy_fallback",
+                    "beds": int(stack_spec.beds) if use_staged_beds else 1,
+                    "state_order": (
+                        "F_L_CO2", "F_L_H2O", "F_V_CO2", "F_V_H2O",
+                        "H_L_or_T_L", "H_V_or_T_V", "P",
+                    ),
+                    "state_scale": np.asarray(scales, dtype=float),
+                }
+            else:
+                native_grid = np.asarray(native_profile["grid"], dtype=float)
+                native_state = np.asarray(native_profile["state_matrix_scaled"], dtype=float)
+                native_layout = native_profile.get("layout")
+            result["_native_grid"] = native_grid
+            result["_native_state_scaled"] = native_state
+            result["_native_state_layout"] = native_layout
         if return_profiles:
             result["_profiles"] = dfs_dict
         return result

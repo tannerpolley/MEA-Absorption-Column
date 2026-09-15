@@ -121,6 +121,53 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
     assert "initial_guess" in captured
 
 
+def test_scipy_bvp_preserves_sampled_return_and_records_adaptive_native_profile(monkeypatch):
+    sampled_grid = np.linspace(0.0, 1.0, 5)
+    adaptive_grid = np.array([0.0, 0.2, 0.65, 1.0])
+    adaptive_state = np.vstack(
+        [np.linspace(index + 1.0, index + 2.0, adaptive_grid.size) for index in range(7)]
+    )
+
+    class FakeSolution:
+        success = True
+        message = "ok"
+        status = 0
+        niter = 2
+        rms_residuals = np.array([0.1])
+
+        def __init__(self):
+            self.x = adaptive_grid
+            self.y = adaptive_state
+
+        def sol(self, query):
+            query = np.asarray(query, dtype=float)
+            return np.vstack([
+                np.interp(query, self.x, row)
+                for row in self.y
+            ])
+
+    monkeypatch.setattr(scipy_bvp_module, "solve_bvp", lambda *_args, **_kwargs: FakeSolution())
+    diagnostics = {}
+    parameters = (np.ones(7), None, None, None, None, None, {"solver_diagnostics": diagnostics})
+
+    sampled_state, returned_grid, _, success, _ = scipy_bvp_module.scipy_BVP_solve(
+        np.ones(7),
+        np.ones(7),
+        sampled_grid,
+        parameters,
+        settings={"mesh_points": 3},
+    )
+
+    assert success is True
+    assert returned_grid.shape == sampled_grid.shape
+    assert sampled_state.shape == (7, sampled_grid.size)
+    native = diagnostics["native_profile"]
+    assert native["grid"].shape == adaptive_grid.shape
+    assert native["state_matrix_scaled"].shape == adaptive_state.shape
+    assert np.allclose(native["grid"], adaptive_grid)
+    assert np.allclose(native["state_matrix_scaled"], adaptive_state)
+
+
 def test_sanitize_scaled_state_clips_flows_and_pressure_without_mutating_input():
     original = np.array([-1.0, -0.5, 0.0, -0.25, 1.0e5, 2.0e5, -10.0])
     scales = np.array([10.0, 10.0, 2.0, 2.0, 1.0e6, 1.0e6, 1.0e5])

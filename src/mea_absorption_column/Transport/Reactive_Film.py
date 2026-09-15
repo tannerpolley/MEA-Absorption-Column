@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
+import casadi as ca
 import numpy as np
 from scipy.integrate import cumulative_trapezoid
 from scipy.interpolate import PchipInterpolator
@@ -15,6 +16,23 @@ class ReactiveFilmDomainError(ValueError):
 
 class ReactiveFilmSolveError(RuntimeError):
     """The scalar film calculation did not satisfy its numerical checks."""
+
+
+def interface_balance_residuals(
+    transfer, *, liquid_conductance_integral, film_thickness_m,
+    vapor_fugacities_pa, interface_co2_fugacity_pa, liquid_water_fugacity_pa,
+    gas_coefficients_mol_m2_s_pa, heat_coefficient_w_m2_k,
+    vapor_temperature_k, liquid_temperature_k, transfer_enthalpies_j_mol,
+):
+    """Four shared interface equations for CO2, water and total energy."""
+    transfer = ca.reshape(transfer, 3, 1)
+    return ca.vertcat(
+        film_thickness_m * transfer[0] - liquid_conductance_integral,
+        transfer[0] - gas_coefficients_mol_m2_s_pa[0] * (vapor_fugacities_pa[0] - interface_co2_fugacity_pa),
+        transfer[1] - gas_coefficients_mol_m2_s_pa[1] * (vapor_fugacities_pa[1] - liquid_water_fugacity_pa),
+        transfer[2] - heat_coefficient_w_m2_k * (vapor_temperature_k - liquid_temperature_k)
+        - ca.dot(transfer[:2], transfer_enthalpies_j_mol),
+    )
 
 
 @dataclass(frozen=True)
@@ -56,6 +74,14 @@ class EquilibriumManifoldFilmResult:
 def binary_diffusivities_from_species(species_diffusivities_m2_s):
     """Estimate symmetric pair diffusivities by the harmonic mean."""
 
+    if isinstance(species_diffusivities_m2_s, (ca.MX, ca.SX, ca.DM)):
+        values = ca.reshape(species_diffusivities_m2_s, -1, 1)
+        if values.numel() < 2:
+            raise ReactiveFilmDomainError("species diffusivity estimates require at least two species")
+        pairs = 2 * (values @ values.T) / (
+            ca.repmat(values, 1, values.numel()) + ca.repmat(values.T, values.numel(), 1)
+        )
+        return pairs - ca.diag(ca.diag(pairs))
     values = np.asarray(species_diffusivities_m2_s, dtype=float)
     if values.ndim != 1 or values.size < 2 or np.any(~np.isfinite(values)) or np.any(values <= 0.0):
         raise ReactiveFilmDomainError(
@@ -109,32 +135,51 @@ def constrained_onsager_mobility(
             "total concentration must be positive and finite"
         )
 
-    weights = float(total_concentration_mol_m3) * x[:, None] * x[None, :] * pairs
-    mobility = np.diag(weights.sum(axis=1)) - weights
+    mobility = np.asarray(onsager_mobility_expression(
+        ca.DM(x), float(total_concentration_mol_m3), ca.DM(pairs),
+        charge_numbers, additional_flux_constraints,
+    ))
+    if np.any(~np.isfinite(mobility)):
+        raise ReactiveFilmDomainError("Onsager constraint projection is singular or non-finite")
+    return 0.5 * (mobility + mobility.T)
+
+
+def onsager_mobility_expression(
+    composition, total_concentration_mol_m3, binary_diffusivities_m2_s,
+    charge_numbers=None, additional_flux_constraints=None,
+):
+    """Shared CasADi mobility expression used by numeric and native paths."""
+    x = ca.reshape(composition, -1, 1)
+    pairs = binary_diffusivities_m2_s
+    if x.numel() < 2 or pairs.shape != (x.numel(), x.numel()):
+        raise ReactiveFilmDomainError("Onsager composition and pair dimensions disagree")
     constraints = []
     if charge_numbers is not None:
         charges = np.asarray(charge_numbers, dtype=float)
-        if charges.shape != x.shape or np.any(~np.isfinite(charges)):
-            raise ReactiveFilmDomainError(
-                "charge_numbers must have one finite value per species"
-            )
+        if charges.shape != (x.numel(),) or np.any(~np.isfinite(charges)):
+            raise ReactiveFilmDomainError("charge_numbers must have one finite value per species")
         constraints.append(charges)
     if additional_flux_constraints is not None:
         additional = np.atleast_2d(np.asarray(additional_flux_constraints, dtype=float))
-        if additional.shape[1] != x.size or np.any(~np.isfinite(additional)):
-            raise ReactiveFilmDomainError(
-                "additional_flux_constraints must have one finite column per species"
-            )
+        if additional.shape[1] != x.numel() or np.any(~np.isfinite(additional)):
+            raise ReactiveFilmDomainError("additional_flux_constraints must have one finite column per species")
         constraints.extend(additional)
+    weights = total_concentration_mol_m3 * (x @ x.T) * pairs
+    mobility = ca.diag(ca.sum2(weights)) - weights
     if constraints:
         constraint_matrix = np.asarray(constraints, dtype=float)
         norms = np.linalg.norm(constraint_matrix, axis=1)
         if np.any(norms <= np.finfo(float).eps):
             raise ReactiveFilmDomainError("zero-flux constraints must be nonzero")
         constraint_matrix /= norms[:, None]
+        independent = constraint_matrix - constraint_matrix.mean(axis=1, keepdims=True)
+        rank_tolerance = np.finfo(float).eps * max(constraint_matrix.shape) * np.linalg.norm(constraint_matrix, 2)
+        if np.linalg.matrix_rank(independent, tol=rank_tolerance) != len(constraints):
+            raise ReactiveFilmDomainError("zero-flux constraints must be independent modulo total flux")
         directions = mobility @ constraint_matrix.T
         gram = constraint_matrix @ directions
-        mobility -= directions @ np.linalg.pinv(gram, rcond=1.0e-12, hermitian=True) @ directions.T
+        scale = ca.trace(gram)
+        mobility -= directions @ ca.solve(gram / scale, directions.T / scale, "qr")
     return 0.5 * (mobility + mobility.T)
 
 

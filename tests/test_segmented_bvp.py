@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+import mea_absorption_column.BVP.Methods.Segmented_Scipy_BVP_Solve as segmented_module
 from mea_absorption_column.BVP.Methods.Segmented_Scipy_BVP_Solve import (
     external_profile_from_stacked_solution,
     _stack_initial_guess,
@@ -93,6 +94,71 @@ def test_segmented_scipy_bvp_returns_structured_timeout():
     assert "max_runtime_s" in message
     assert y.shape == (7, 5)
     assert z.shape == (5,)
+
+
+def test_segmented_scipy_bvp_preserves_sampled_return_and_names_native_stack(monkeypatch):
+    sampled_grid = np.linspace(0.0, 1.0, 6)
+    adaptive_grid = np.array([0.0, 0.3, 0.7, 1.0])
+    adaptive_state = np.vstack(
+        [np.linspace(index + 1.0, index + 2.0, adaptive_grid.size) for index in range(14)]
+    )
+
+    class FakeSolution:
+        success = True
+        message = "ok"
+        status = 0
+        niter = 2
+        rms_residuals = np.array([0.1])
+
+        def __init__(self):
+            self.x = adaptive_grid
+            self.y = adaptive_state
+
+        def sol(self, query):
+            query = np.asarray(query, dtype=float)
+            return np.vstack([
+                np.interp(query, self.x, row)
+                for row in self.y
+            ])
+
+    monkeypatch.setattr(segmented_module, "solve_bvp", lambda *_args, **_kwargs: FakeSolution())
+    diagnostics = {}
+    parameters = (
+        np.ones(7),
+        np.ones(7),
+        (1.0, 1.0, 1.0),
+        6.1,
+        1.0,
+        (250.0, 0.97, 1.0, 1.0, 1.0, 1.0, 1.0),
+        {"solver_diagnostics": diagnostics},
+    )
+
+    sampled_state, returned_grid, _, success, _ = segmented_scipy_BVP_solve(
+        np.ones(7),
+        np.ones(7),
+        sampled_grid,
+        parameters,
+        stack_spec=build_bed_stack_spec(2, 1, 6.1, 314.0),
+        settings={"mesh_points": 3},
+    )
+
+    assert success is True
+    assert returned_grid.shape == sampled_grid.shape
+    assert sampled_state.shape == (14, sampled_grid.size)
+    native = diagnostics["native_profile"]
+    assert native["grid"].shape == adaptive_grid.shape
+    assert native["state_matrix_scaled"].shape == adaptive_state.shape
+    layout = native["layout"]
+    assert "bed_1.F_L_CO2" in layout["state_order"]
+    assert "bed_2.P" in layout["state_order"]
+    assert layout["state_scale"].shape == (14,)
+    assert layout["interface_sides"] == [
+        {
+            "interface": 1,
+            "lower": {"bed": 1, "side": "top"},
+            "upper": {"bed": 2, "side": "bottom"},
+        }
+    ]
 
 
 def test_stack_initial_guess_expands_single_bed_seed_profile_across_beds():

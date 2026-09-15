@@ -110,6 +110,10 @@ class ReactiveLiquid:
         self._accepted = None
         self.stats = dict(queries=0, cache_hits=0, native_solves=0, native_seconds=0., warm_starts=0)
 
+    def name(self):
+        """Stable callback owner name; no runtime identity is encoded in it."""
+        return "reactive_liquid"
+
     def solve(self, temperature_k, pressure_pa, apparent_amounts, *, state_input_derivatives=False):
         inputs = tuple(float(v) for v in (temperature_k, pressure_pa, *apparent_amounts))
         if len(inputs) != 5 or not all(math.isfinite(v) and v > 0 for v in inputs):
@@ -160,6 +164,19 @@ class ReactiveLiquid:
             # ponytail: bounded per-column cache; eviction recomputes, never approximates.
             if len(self._states) > 2048:
                 self._states.popitem(last=False)
+        return result
+
+    def solve_actions(self, temperature_k, pressure_pa, apparent_amounts, actions, output_ids):
+        """Evaluate selected native A2/caloric actions on one certified state."""
+        result, _ = _solve_homogeneous_reactive_result(
+            self.dataset, temperature_k, pressure_pa, apparent_amounts,
+            model=self.model, reactions=self._reactions, molar_masses=self.molar_masses,
+            state_input_derivatives=True, state_input_actions=tuple(actions),
+            output_ids=tuple(output_ids), thermochemistry=self.thermochemistry,
+            loading_anchor=self.loading_anchor, water_per_mea_anchor=self.water_per_mea_anchor,
+            max_log_loading_step=self.max_log_loading_step,
+            max_loading_steps=self.max_loading_steps, _diagnostics=self.stats,
+        )
         return result
 
 
@@ -527,6 +544,8 @@ def _solve_homogeneous_reactive_result(
     reactions: dict | None = None,
     molar_masses=None,
     state_input_derivatives: bool = False,
+    state_input_actions=(),
+    output_ids=None,
     thermochemistry=None,
     loading_anchor=None,
     max_log_loading_step=.1,
@@ -545,7 +564,8 @@ def _solve_homogeneous_reactive_result(
     liquid_path = loading_anchor is not None or _phase_start is not None
     # A1 mode admits only the declared start in GREPE, including intermediate
     # steps. It must not silently try generated starts after a path failure.
-    state_input_derivatives = state_input_derivatives or liquid_path
+    state_input_actions = tuple(state_input_actions)
+    state_input_derivatives = state_input_derivatives or bool(state_input_actions) or liquid_path
     if state_input_derivatives:
         if not hasattr(equilibrium, "EquilibriumStateInputDerivatives"):
             raise RuntimeError(
@@ -650,6 +670,19 @@ def _solve_homogeneous_reactive_result(
     if thermochemistry is not None:
         thermochemistry.validate_component_order(tuple(model.component_ids))
         problem = replace(problem, thermochemistry=thermochemistry)
+    if output_ids is not None:
+        outputs = {output.identity: output for output in problem.outputs}
+        missing = [identity for identity in output_ids if identity not in outputs]
+        if missing:
+            raise ValueError(f"Native action outputs are not available: {missing}")
+        problem = replace(problem, outputs=tuple(outputs[identity] for identity in output_ids))
+    if state_input_actions:
+        if not hasattr(equilibrium, "EquilibriumStateInputAction"):
+            raise RuntimeError(
+                "Exact outer derivatives require an immutable Engine wheel exposing "
+                "EquilibriumStateInputAction; numerical derivative substitution is disabled"
+            )
+        problem = replace(problem, state_input_actions=state_input_actions)
     started = time.perf_counter()
     try:
         result = equilibrium.solve(model, problem)

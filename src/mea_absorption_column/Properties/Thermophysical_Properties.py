@@ -1,4 +1,5 @@
 import numpy as np
+import casadi as ca
 from numpy import log, exp
 from mea_absorption_column.config.Constants import MWs_l, MWs_v, R
 
@@ -14,7 +15,7 @@ def henrys_law(T, z):
     Tl = T
     x = z
 
-    x_CO2, x_MEA, x_H2O = x
+    x_CO2, x_MEA, x_H2O = x[0], x[1], x[2]
 
     m_MEA = x_MEA * MWs_l[1]
     m_H2O = x_H2O * MWs_l[2]
@@ -52,7 +53,7 @@ def density_expression(T, z, P, phase='liquid'):
     if phase == 'liquid':
         Tl = T
         x = z
-        x_CO2, x_MEA, x_H2O = x
+        x_CO2, x_MEA, x_H2O = x[0], x[1], x[2]
 
         MWT_l = sum([x[i] * MWs_l[i] for i in range(len(x))])
 
@@ -95,7 +96,7 @@ def surface_tension(T, z, w_MEA, w_H2O):
     Tl = T
     x = z
 
-    x_CO2, x_MEA, x_H2O = x
+    x_CO2, x_MEA, x_H2O = x[0], x[1], x[2]
 
     alpha = x_CO2/x_MEA
 
@@ -243,7 +244,8 @@ def enthalpy_expression(T, z, phase='liquid'):
 
 
 def thermal_conductivity(T, z, muv):
-    T = float(np.asarray(T, dtype=float).reshape(-1)[0])
+    if not isinstance(T, (ca.MX, ca.SX, ca.DM)):
+        T = float(np.asarray(T, dtype=float).reshape(-1)[0])
     return thermal_conductivity_expression(T, z, muv)
 
 
@@ -262,9 +264,9 @@ def thermal_conductivity_expression(T, z, muv):
         kt_i.append((A * T ** B) / (1 + C / T + D / (T ** 2)))
 
     k_vap = 0
-    for i in range(len(z)):
+    for i in range(4):
         sum_ij = 0
-        for j in range(len(z)):
+        for j in range(4):
             Aij = (1 + (muv[i] / muv[j]) ** .5 * (MWs_v[j] / MWs_v[i]) ** .25) ** 2 * (
                     8 * (1 + MWs_v[i] / MWs_v[j])) ** -.5
             sum_ij += Aij * z[j]
