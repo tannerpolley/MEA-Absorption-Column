@@ -43,6 +43,26 @@ def test_twelve_state_resolves_its_declared_native_dependencies():
     assert config.engine.required is True
 
 
+def test_source_homotopy_configuration_is_paired_and_trapezoidal():
+    request = {
+        "preset": "twelve_state_conserved",
+        "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+        "numerics": {"method": "trapezoidal", "solver_settings": {
+            "source_homotopy_initial_step": .25, "source_homotopy_min_step": .03125}},
+    }
+    settings = resolve_column_config(request).numerics.as_dict()["solver_settings"]
+    assert (settings["source_homotopy_initial_step"], settings["source_homotopy_min_step"]) == (.25, .03125)
+    for numerics in (
+        {"method": "trapezoidal", "solver_settings": {"source_homotopy_initial_step": .25}},
+        {"method": "central", "solver_settings": {"source_homotopy_initial_step": .25,
+                                                    "source_homotopy_min_step": .03125}},
+        {"method": "trapezoidal", "solver_settings": {"source_homotopy_initial_step": .25,
+                                                        "source_homotopy_min_step": .5}},
+    ):
+        with pytest.raises(ConfigurationError, match="Source homotopy"):
+            resolve_column_config({**request, "numerics": numerics})
+
+
 def test_twelve_state_selects_only_implemented_film_closures():
     request = {
         "preset": "twelve_state_conserved",
@@ -406,6 +426,45 @@ def test_retained_profile_reaches_solver_and_rejection_does_not(tmp_path, monkey
     with pytest.raises(ConfigurationError, match="Retained profile rejected"):
         column_runner._run_conserved_column_in_process(config, {})
     assert len(calls) == 1
+
+    homotopy = resolve_column_config({
+        "preset": "twelve_state_conserved",
+        "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+        "numerics": {"method": "trapezoidal", "nodes": 3, "solver_settings": {
+            "quadrature_points": 3, "tolerance": 1e-7, "max_iterations": 2,
+            "source_homotopy_initial_step": .5, "source_homotopy_min_step": .25}},
+    })
+    staged = []
+    def staged_solver(*args, source_multiplier=None, **_kwargs):
+        seed = np.asarray(args[3])
+        accepted = bool(staged)
+        staged.append((source_multiplier, seed.copy()))
+        profile = seed + (source_multiplier if accepted else 100.)
+        return {"accepted": accepted, "profile": profile, "grid": args[2],
+                "status": "Solve_Succeeded" if accepted else "Maximum_Iterations_Exceeded",
+                "scaled_residual_inf": 0. if accepted else 1., "scaled_bound_violation_inf": 0.}
+    monkeypatch.setattr("mea_absorption_column.BVP.Methods.Casadi_Collocation.solve_conservative_collocation",
+                        staged_solver)
+    monkeypatch.setattr(column_runner, "_equilibrium_physical_certification",
+                        lambda *_args, **_kwargs: {"accepted": True})
+    outcome = column_runner._run_conserved_column_in_process(homotopy, {})
+    assert [stage[0] for stage in staged] == [.5, .25, .5, .75, 1.]
+    np.testing.assert_array_equal(staged[1][1], staged[0][1])
+    np.testing.assert_array_equal(staged[2][1], staged[1][1] + .25)
+    assert outcome["result"]["continuation"]["last_accepted_source_multiplier"] == 1.
+    np.testing.assert_array_equal(outcome["initial_profile"], staged[0][1])
+
+    def rejected(*args, source_multiplier=None, **_kwargs):
+        return {"accepted": False, "profile": np.asarray(args[3]) + 1., "grid": args[2],
+                "status": "Maximum_Iterations_Exceeded", "scaled_residual_inf": 1.,
+                "scaled_bound_violation_inf": 0., "source_multiplier": source_multiplier}
+    monkeypatch.setattr("mea_absorption_column.BVP.Methods.Casadi_Collocation.solve_conservative_collocation", rejected)
+    incomplete = column_runner._run_conserved_column_in_process(homotopy, {})
+    result = incomplete["result"]
+    assert result["status"] == "Source_Homotopy_Incomplete" and result["profile"] is None
+    assert incomplete["physical_certification"]["accepted"] is None
+    assert [stage["result"]["source_multiplier"] for stage in result["continuation"]["stages"][1:]] == [.5, .25]
+    np.testing.assert_array_equal(result["continuation"]["last_accepted_profile"], incomplete["initial_profile"])
 
 
 def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch, tmp_path):

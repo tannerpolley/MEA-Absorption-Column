@@ -8,7 +8,7 @@ import numpy as np
 def solve_conservative_collocation(
     node, boundary, grid, initial, lower, upper, *, state_scale,
     balance_scale, algebraic_scale, boundary_scale, tolerance=1e-8,
-    max_iterations=200, iteration_callback=None, scheme="trapezoidal", boundary_slots=None,
+    max_iterations=200, iteration_callback=None, scheme="trapezoidal", boundary_slots=None, source_multiplier=None,
 ):
     """Solve dB(z,u)/dz=R(z,u), a(z,u)=0 with countercurrent boundaries.
 
@@ -61,6 +61,10 @@ def solve_conservative_collocation(
         raise ValueError("Tolerance and iteration limit must be positive")
     if scheme not in ("trapezoidal", "central"):
         raise ValueError("Unknown conservative difference scheme")
+    if source_multiplier is not None:
+        if (isinstance(source_multiplier, (bool, np.bool_)) or not np.isfinite(source_multiplier)
+                or not 0 <= source_multiplier <= 1 or scheme != "trapezoidal"):
+            raise ValueError("Source multiplier must be finite in [0,1] and applies only to trapezoidal differences")
     if scheme == "central":
         if (grid.size < 3 or boundary_slots is None or len(boundary_slots) != m
                 or sorted(row for row, _ in boundary_slots) != list(range(m))
@@ -74,8 +78,9 @@ def solve_conservative_collocation(
     evaluated = [node.call([ca.MX(float(z)), physical[:, k]], True, False) for k, z in enumerate(grid)]
     if scheme == "trapezoidal":
         defects = ca.horzcat(*[
-            evaluated[k + 1][0] - evaluated[k][0]
-            - .5 * h * (evaluated[k + 1][1] + evaluated[k][1])
+            evaluated[k + 1][0] - evaluated[k][0] - .5 * h
+            * ((evaluated[k + 1][1] + evaluated[k][1]) if source_multiplier is None
+               else source_multiplier * (evaluated[k + 1][1] + evaluated[k][1]))
             for k, h in enumerate(np.diff(grid))])
         balance_denominator = balance_scale[:, None] * np.diff(grid)[None, :]
         balance_constraints = ca.vec(defects / balance_denominator)

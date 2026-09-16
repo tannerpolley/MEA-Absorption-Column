@@ -477,12 +477,16 @@ def _conserved_numeric(request: Mapping[str, Any]) -> NumericConfig:
         "collocation": {"nodes": 11, "quadrature_points": 9, "tolerance": 1.0e-7, "boundary_tolerance": 1.0e-7, "max_nodes": 100},
     }[method]
     settings = dict(settings)
+    homotopy = {"source_homotopy_initial_step", "source_homotopy_min_step"}
+    configured_homotopy = homotopy & set(settings)
+    if configured_homotopy and (configured_homotopy != homotopy or method != "trapezoidal"):
+        raise ConfigurationError("Source homotopy requires both step settings and trapezoidal differences")
     if direct_nodes is not None:
         if "nodes" in settings:
             raise ConfigurationError("nodes must be supplied either directly or in solver_settings")
         settings["nodes"] = direct_nodes
     override_keys = {"reactive_loading_anchor", "reactive_max_log_loading_step", "reactive_max_loading_steps"}
-    unknown = set(settings) - set(defaults) - override_keys
+    unknown = set(settings) - set(defaults) - override_keys - homotopy
     if unknown:
         raise ConfigurationError(f"Unknown or irrelevant conserved solver settings: {sorted(unknown)}")
     resolved = dict(defaults)
@@ -498,6 +502,8 @@ def _conserved_numeric(request: Mapping[str, Any]) -> NumericConfig:
         raise ConfigurationError("numerics.solver_settings.quadrature_points must be >= 2")
     if method == "central" and resolved["nodes"] < 3:
         raise ConfigurationError("central conserved differences require at least three nodes")
+    if configured_homotopy and not (0 < resolved["source_homotopy_min_step"] <= resolved["source_homotopy_initial_step"] <= 1):
+        raise ConfigurationError("Source homotopy requires 0 < minimum step <= initial step <= 1")
     return NumericConfig(method, _freeze(resolved))
 
 

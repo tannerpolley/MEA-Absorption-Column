@@ -886,6 +886,9 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     grid = assembly["coordinate"]
     initial = np.tile(point[:, None], (1, len(grid)))
     retained = config.initialization.as_dict()["values"].get("retained_profile")
+    homotopy_step = settings.get("source_homotopy_initial_step")
+    if retained is not None and homotopy_step is not None:
+        raise ConfigurationError("Retained profiles cannot replace the exact source-homotopy start")
     if retained is not None:
         initial, provenance = _retained_initial_profile(
             retained, config, prepared, checkpoint["scaling"], lower, upper,
@@ -893,15 +896,60 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
         checkpoint.update(initialization={**checkpoint["initialization"], "retained_profile": provenance})
     checkpoint.update(stage="global_solve", initial_profile=initial)
     from .BVP.Methods.Casadi_Collocation import solve_conservative_collocation
-    result = solve_conservative_collocation(
-        node, boundary, grid, initial, lower, upper, state_scale=state_scale, balance_scale=balance_scale,
-        algebraic_scale=algebraic_scale, boundary_scale=boundary_scale, tolerance=settings["tolerance"],
-        max_iterations=settings["max_iterations"], scheme=config.numerics.method,
-        boundary_slots=[(0, -1), (1, -1), (2, 0), (3, 0), (4, -1), (5, 0), (6, 0)] if config.numerics.method == "central" else None,
-    )
+    def solve(profile, multiplier=None):
+        return solve_conservative_collocation(
+            node, boundary, grid, profile, lower, upper, state_scale=state_scale, balance_scale=balance_scale,
+            algebraic_scale=algebraic_scale, boundary_scale=boundary_scale, tolerance=settings["tolerance"],
+            max_iterations=settings["max_iterations"], scheme=config.numerics.method,
+            boundary_slots=[(0, -1), (1, -1), (2, 0), (3, 0), (4, -1), (5, 0), (6, 0)] if config.numerics.method == "central" else None,
+            source_multiplier=multiplier,
+        )
+    if homotopy_step is None:
+        result = solve(initial)
+    else:
+        zero_inf = max(np.max(abs(algebraic / algebraic_scale)),
+                       np.max(abs(np.asarray(boundary(initial[:, 0], initial[:, -1])).ravel() / boundary_scale)))
+        zero_bound, zero_failed = float(np.max(np.maximum(np.maximum(lower[:, None] - initial, initial - upper[:, None]), 0.) / state_scale[:, None])), sum(counts["failed"] for counts in checkpoint["native_calls"].values())
+        if not np.all(np.isfinite(initial)) or not math.isfinite(zero_inf) or zero_inf > settings["tolerance"] or zero_bound > settings["tolerance"] or zero_failed:
+            raise RuntimeError("Exact source-homotopy start failed original finite, bound, algebraic, boundary, or native checks")
+        alpha, step = 0.0, homotopy_step
+        stages = [{"source_multiplier": 0.0, "step": 0.0, "accepted": True, "status": "exact_initial", "profile_finite": True,
+                   "scaled_residual_inf": zero_inf, "scaled_bound_violation_inf": zero_bound, "native_failures": zero_failed, "profile": initial}]
+        while alpha < 1.0:
+            target = min(1.0, alpha + step)
+            continuation = {"last_accepted_source_multiplier": alpha, "last_accepted_profile": initial,
+                            "target_source_multiplier": target, "step": step, "stages": stages}
+            checkpoint.update(stage="global_solve", continuation=continuation)
+            failed_before = sum(counts["failed"] for counts in checkpoint["native_calls"].values())
+            candidate = solve(initial, target)
+            failed = sum(counts["failed"] for counts in checkpoint["native_calls"].values()) - failed_before
+            candidate["candidate_by_residual"] = bool(
+                target == 1.0 and failed == 0 and candidate.get("profile") is not None
+                and candidate.get("scaled_residual_inf", math.inf) <= settings["tolerance"]
+                and candidate.get("scaled_bound_violation_inf", math.inf) <= settings["tolerance"])
+            accepted = bool(candidate["accepted"] and failed == 0)
+            stages.append({"source_multiplier": target, "step": step, "accepted": accepted,
+                           "native_failures": failed, "result": {**candidate}})
+            if accepted:
+                alpha, initial, result = target, np.asarray(candidate["profile"]), candidate
+            else:
+                step *= 0.5
+                if step < settings["source_homotopy_min_step"]:
+                    result = {**candidate, "accepted": False, "profile": None,
+                              "status": "Source_Homotopy_Incomplete",
+                              "failure": "Source homotopy exhausted its minimum step"}
+                    break
+            checkpoint.update(stage="global_solve", continuation={**continuation,
+                "last_accepted_source_multiplier": alpha, "last_accepted_profile": initial,
+                "target_source_multiplier": None, "step": step, "stages": stages})
+        result["continuation"] = {"last_accepted_source_multiplier": alpha,
+            "last_accepted_profile": initial, "initial_step": homotopy_step,
+            "minimum_step": settings["source_homotopy_min_step"], "stages": stages}
     checkpoint.update(stage="physical_verification", result=result)
     missing_physical_checks = "film-quadrature charge and capture" if config.model.film_model == "equilibrium_manifold" else "capture"
-    physical = {"accepted": False, "reason": "No completed candidate profile was returned"}
+    physical = ({"accepted": None, "reason": "Source homotopy did not reach full physics"}
+                if result.get("status") == "Source_Homotopy_Incomplete" else
+                {"accepted": False, "reason": "No completed candidate profile was returned"})
     if result["profile"] is not None:
         profile = np.asarray(result["profile"], dtype=float)
         if config.model.film_model == "equilibrium_manifold":
@@ -935,7 +983,7 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
                 "reason": "Subset checks cannot establish physical certification"}
     result_record = {key: value for key, value in prepared.items() if key != "assembly"}
     result_record.update(stage="finished", execution_status="completed", initialization=checkpoint["initialization"],
-                         scaling=checkpoint["scaling"], initial_profile=initial, result=result,
+                         scaling=checkpoint["scaling"], initial_profile=checkpoint["initial_profile"], result=result,
                          physical_certification=physical, native_calls=checkpoint["native_calls"])
     return result_record
 

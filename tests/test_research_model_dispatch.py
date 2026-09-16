@@ -42,6 +42,19 @@ def test_additive_conserved_solver_local_recovery():
         solve_conservative_collocation(node, boundary, [0., 0.], np.ones((2, 2)), [.1, .1], [10., 20.],
             state_scale=[1., 1.], balance_scale=[1.], algebraic_scale=[1.], boundary_scale=[1.])
 
+    kwargs = dict(state_scale=[1., 1.], balance_scale=[1.], algebraic_scale=[1.], boundary_scale=[1.],
+                  tolerance=1e-9, max_iterations=20)
+    flat = np.array([[2., 2.], [4., 4.]])
+    zero = solve_conservative_collocation(node, boundary, [0., 1.], flat, [.1, .1], [10., 20.],
+                                          source_multiplier=0., **kwargs)
+    full = solve_conservative_collocation(node, boundary, [0., 1.], flat, [.1, .1], [10., 20.], **kwargs)
+    assert zero['accepted'] and full['accepted']
+    np.testing.assert_allclose(zero['profile'], flat, atol=1e-8)
+    np.testing.assert_allclose(full['profile'], [[2., 3.], [4., 6.]], atol=1e-7)
+    with pytest.raises(ValueError, match='Source multiplier'):
+        solve_conservative_collocation(node, boundary, [0., 1.], flat, [.1, .1], [10., 20.],
+                                       source_multiplier=True, **kwargs)
+
 
 def test_staged_film_rejected_before_solver(monkeypatch):
     import importlib
