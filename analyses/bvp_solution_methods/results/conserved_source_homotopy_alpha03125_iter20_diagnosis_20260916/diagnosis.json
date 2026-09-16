@@ -1,0 +1,55 @@
+{
+  "question": "Did the eight-iteration stage cap alone prevent source homotopy from advancing beyond alpha=0.28125?",
+  "answer": "No. A 20-iteration retry from the accepted alpha=0.28125 profile remained rejected and increased the scaled residual from 0.03103790977909822 to 0.15461748137358913.",
+  "public_attempt": {
+    "path": "../conserved_public_source_homotopy_n3_20260916/attempt.json",
+    "attempt_id": "20260916T203512-e1bb3c61faf4",
+    "runtime_s": 1792.7503430909983,
+    "status": "Source_Homotopy_Incomplete",
+    "last_accepted_source_multiplier": 0.28125,
+    "accepted_scaled_residual_inf": 1.9025392402983816e-11,
+    "failed_target_source_multiplier": 0.3125,
+    "failed_target_iterations": 8,
+    "failed_target_scaled_residual_inf": 0.03103790977909822,
+    "failed_target_native_failures": 0
+  },
+  "iteration_falsifier": {
+    "path": "attempt.json",
+    "target_source_multiplier": 0.3125,
+    "max_iterations": 20,
+    "runtime_s": 894.7865619350014,
+    "status": "Maximum_Iterations_Exceeded",
+    "accepted": false,
+    "profile_finite": true,
+    "scaled_bound_violation_inf": 0.0,
+    "scaled_residual_inf": 0.15461748137358913,
+    "largest_scaled_rows": {
+      "vapor_enthalpy_balance": 0.15461748137358913,
+      "water_interface_flux_closure": 0.15217212071743566,
+      "vapor_water_balance": 0.024648731969333686,
+      "co2_interface_flux_closure": 0.013925179171548908,
+      "liquid_enthalpy_balance": 0.01323193573566677
+    },
+    "boundary_residual_inf": 0.0
+  },
+  "native_trial_failure": {
+    "reproduced_runs": 2,
+    "source": "runtime stderr from both identical 20-iteration probes; the first terminal payload was not retained after a result-directory creation error and is not used for numerical conclusions",
+    "classification": "Reactive ePC-SAFT equilibrium numerical_convergence_failure; physical status not adjudicated",
+    "node": "bottom",
+    "temperature_k": 314.767,
+    "pressure_pa": 110900.0,
+    "apparent_liquid_flow_mol_s": {
+      "co2": 3.47748,
+      "mea": 9.72928,
+      "water": 74.6799
+    },
+    "trial_transfer": {
+      "co2_flux_mol_m2_s": 0.0124989,
+      "water_flux_mol_m2_s": 0.0596058,
+      "total_energy_flux_w_m2": -19118.8
+    }
+  },
+  "diagnosis": "The observed local continuation barrier is a coupled water-transfer and vapor-energy correction that drives nonlinear trial states outside the native reactive-equilibrium solver's evaluable basin. Increasing the iteration cap from 8 to 20 does not recover the alpha=0.3125 stage; recovery beyond 20 iterations or by another numerical path remains unresolved.",
+  "claim_limit": "All accepted alpha<1 profiles solve artificial source-scaled equations. They are numerical path evidence only and do not support thermodynamic, transfer-performance, refinement, uniqueness, validation, or continuous-profile claims. No alpha=1 profile or physical certificate was obtained."
+}
