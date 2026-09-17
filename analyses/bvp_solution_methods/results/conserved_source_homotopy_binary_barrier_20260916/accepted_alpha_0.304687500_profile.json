@@ -1,0 +1,125 @@
+{
+  "physical_inputs": {
+    "case_id": "corrected published 2017 3C",
+    "height_m": 6.0,
+    "area_m2": 0.3216990877275948,
+    "packing": [
+      250.0,
+      0.97,
+      0.203,
+      0.35,
+      0.017,
+      0.292,
+      0.119
+    ],
+    "liquid_feed_mol_s": [
+      2.4323205276203805,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "vapor_feed_mol_s": [
+      1.6540435157308098,
+      1.5624169375299577,
+      14.530683358624426,
+      1.6006872732878803
+    ],
+    "liquid_temperature_k": 318.15,
+    "vapor_temperature_k": 316.75,
+    "bottom_pressure_pa": 110900.0,
+    "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+    "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+    "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+    "reported_top_pressure_pa": 109500.0,
+    "liquid_branch_policy": {
+      "loading_anchor": 0.25,
+      "max_log_loading_step": 0.1,
+      "max_loading_steps": 32
+    },
+    "species_diffusivity_model": {
+      "co2_prefactor_m2_s": 3.14e-07,
+      "co2_activation_j_mol": 15230.0,
+      "gas_constant_j_mol_k": 8.314462618,
+      "other_species_m2_s": [
+        8.8e-10,
+        8.8e-10,
+        8.4e-10,
+        6.8e-10,
+        6.8e-10,
+        6.8e-10,
+        1.8439088914585774e-09,
+        1.8439088914585774e-09
+      ],
+      "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+    }
+  },
+  "grid": [
+    0.0,
+    3.0,
+    6.0
+  ],
+  "profile": [
+    [
+      3.473795047647864,
+      3.013244439662086,
+      2.4323205276203805
+    ],
+    [
+      75.2020856705759,
+      81.32241789466038,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.1934929077450316,
+      0.612568995703326
+    ],
+    [
+      1.5624169375299577,
+      7.68274916161446,
+      3.3355237742456385
+    ],
+    [
+      318.0430025377733,
+      351.0244440500433,
+      318.15
+    ],
+    [
+      316.75,
+      347.46246981851425,
+      329.02739260743965
+    ],
+    [
+      110900.0,
+      110747.34928814486,
+      110591.42224090142
+    ],
+    [
+      0.053953328072228704,
+      0.04720172672269783,
+      0.05271513856709622
+    ],
+    [
+      0.011340787680671984,
+      0.002534424010127677,
+      0.014909619643338123
+    ],
+    [
+      0.014616509230051295,
+      -0.19558577503105848,
+      0.32960911640799373
+    ],
+    [
+      -8106.866876025887,
+      45581.78062864652,
+      -84239.08126802849
+    ],
+    [
+      0.42436644403671847,
+      0.15165061631793036,
+      0.6486845822380726
+    ]
+  ],
+  "seed_source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_source_homotopy_binary_barrier_20260916/stage_00_alpha_0.304687500/run.json",
+  "seed_source_multiplier": 0.3046875,
+  "seed_claim": "artificial source-homotopy numerical seed only"
+}
