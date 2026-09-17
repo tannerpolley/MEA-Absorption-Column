@@ -132,14 +132,20 @@ def test_full_native_node_jacobian_is_19_by_12_and_finite(assembly, point):
 
 def test_callbacks_are_repeatable_in_reverse_order(assembly, point):
     balance = assembly["balance"]
+    reactive = assembly["reactive_liquid"]
+    assert reactive.reuse_states
+    assert not reactive.warm_starts
+    assert reactive._accepted is None
     first = point.copy()
     second = point.copy()
     second[4] += 0.5
-    values = [
-        np.concatenate([np.asarray(item).ravel() for item in balance(state, [0.0, 0.0, 0.0])])
-        for state in (first, second, first)
-    ]
-    np.testing.assert_allclose(values[0], values[2], rtol=1e-12, atol=1e-12)
+    initial = np.concatenate([np.asarray(item).ravel() for item in balance(first, [0.0, 0.0, 0.0])])
+    balance(second, [0.0, 0.0, 0.0])
+    before = reactive.stats["native_solves"]
+    repeated = np.concatenate([np.asarray(item).ravel() for item in balance(first, [0.0, 0.0, 0.0])])
+    np.testing.assert_allclose(initial, repeated, rtol=1e-12, atol=1e-12)
+    assert reactive.stats["native_solves"] == before
+    assert reactive._accepted is None
 
 
 def test_enhancement_reference_builds_the_selected_casadi_closure(point):

@@ -85,7 +85,8 @@ class ReactiveLiquid:
 
     def __init__(self, dataset: str | Path, *, thermochemistry=None,
                  loading_anchor=None, max_log_loading_step=.1, max_loading_steps=32,
-                 water_per_mea_anchor=None, reuse_states=False, kij_scale=None, reaction_scale=None):
+                 water_per_mea_anchor=None, reuse_states=False, warm_starts=True,
+                 kij_scale=None, reaction_scale=None):
         import epcsaft
 
         self.dataset = str(dataset)
@@ -106,6 +107,7 @@ class ReactiveLiquid:
         self.max_loading_steps = max_loading_steps
         self.water_per_mea_anchor = water_per_mea_anchor
         self.reuse_states = reuse_states
+        self.warm_starts = warm_starts
         self._states = OrderedDict()
         self._accepted = None
         self.stats = dict(queries=0, cache_hits=0, native_solves=0, native_seconds=0., warm_starts=0)
@@ -124,14 +126,15 @@ class ReactiveLiquid:
                     json.dumps(self._reactions, sort_keys=True), self.molar_masses,
                     None if self.thermochemistry is None else self.thermochemistry.scientific_fingerprint)
         key = (identity, inputs, state_input_derivatives, self.loading_anchor,
-               self.water_per_mea_anchor, self.max_log_loading_step, self.max_loading_steps)
+               self.water_per_mea_anchor, self.max_log_loading_step, self.max_loading_steps,
+               self.warm_starts)
         self.stats['queries'] += 1
         if self.reuse_states and key in self._states:
             self.stats['cache_hits'] += 1
             self._states.move_to_end(key)
             return deepcopy(self._states[key])
         start = None
-        if self.reuse_states and self._accepted is not None:
+        if self.reuse_states and self.warm_starts and self._accepted is not None:
             old = self._accepted
             if old['parameter_fingerprint'] != self.model.parameter_fingerprint:
                 raise ValueError('Parameter identity changed within a reactive initialization sequence')
@@ -159,7 +162,8 @@ class ReactiveLiquid:
         )
         if self.reuse_states:
             # Exceptions and rejected roots never update the accepted seed or cache.
-            self._accepted = deepcopy(result)
+            if self.warm_starts:
+                self._accepted = deepcopy(result)
             self._states[key] = deepcopy(result)
             # ponytail: bounded per-column cache; eviction recomputes, never approximates.
             if len(self._states) > 2048:

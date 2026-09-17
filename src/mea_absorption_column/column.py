@@ -465,7 +465,8 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         loading_anchor=policy["loading_anchor"],
         max_log_loading_step=policy["max_log_loading_step"],
         max_loading_steps=policy["max_loading_steps"],
-        reuse_states=False,
+        reuse_states=True,
+        warm_starts=False,
     )
     liquid = ReactiveLiquidCallback("column_liquid", reactive)
     neutral_parameters = _dependency_path(config.dependencies.references[0])
