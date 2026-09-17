@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import importlib
 from pathlib import Path
+from types import SimpleNamespace
 
 import casadi as ca
 import numpy as np
@@ -93,6 +94,14 @@ def test_native_a2_and_caloric_actions_are_available(assembly, point, case):
     assert returned.failure is None
     assert returned.output_identities == liquid.output_ids[9:18]
     assert np.all(np.isfinite(returned.values))
+    native_solves = reactive.stats["native_solves"]
+    cache_hits = reactive.stats["cache_hits"]
+    repeated = reactive.solve_actions(
+        point[4], point[6], [point[0], liquid_feed[1], point[1]], [action], liquid.output_ids[9:18],
+    ).state_input_actions[0]
+    np.testing.assert_array_equal(repeated.values, returned.values)
+    assert reactive.stats["native_solves"] == native_solves
+    assert reactive.stats["cache_hits"] == cache_hits + 1
 
     vapor = assembly["vapor"]
     vapor_inputs = np.r_[point[5], point[6], vapor_feed]
@@ -106,6 +115,22 @@ def test_native_a2_and_caloric_actions_are_available(assembly, point, case):
     assert vapor_result.failure is None
     assert vapor_result.caloric_failure is None
     assert np.isfinite(vapor_result.total_enthalpy_action_j)
+
+
+def test_failed_native_a2_action_is_not_cached(assembly, point, case, monkeypatch):
+    import mea_absorption_column.Thermodynamics.reactive_bundle as bundle
+
+    calls = []
+    failed = SimpleNamespace(failure=object(), caloric_failure=None, values=(None,))
+    monkeypatch.setattr(bundle, "_solve_homogeneous_reactive_result",
+                        lambda *args, **kwargs: (calls.append(True) or SimpleNamespace(
+                            state_input_actions=(failed,)), None))
+    reactive = assembly["reactive_liquid"]
+    inputs = (point[4], point[6], [point[0], case["physical_inputs"]["liquid_feed_mol_s"][1], point[1]])
+    action = object()
+    for _ in range(2):
+        reactive.solve_actions(*inputs, [action], ["failed-output"])
+    assert len(calls) == 2
 
 
 def test_full_native_node_jacobian_is_19_by_12_and_finite(assembly, point):

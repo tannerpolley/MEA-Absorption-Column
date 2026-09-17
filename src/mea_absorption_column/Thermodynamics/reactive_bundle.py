@@ -172,15 +172,34 @@ class ReactiveLiquid:
 
     def solve_actions(self, temperature_k, pressure_pa, apparent_amounts, actions, output_ids):
         """Evaluate selected native A2/caloric actions on one certified state."""
+        inputs = tuple(float(v) for v in (temperature_k, pressure_pa, *apparent_amounts))
+        actions, output_ids = tuple(actions), tuple(output_ids)
+        identity = (self.model.parameter_fingerprint,
+                    json.dumps(self._reactions, sort_keys=True), self.molar_masses,
+                    None if self.thermochemistry is None else self.thermochemistry.scientific_fingerprint)
+        key = ("actions", identity, inputs, actions, output_ids, self.loading_anchor,
+               self.water_per_mea_anchor, self.max_log_loading_step, self.max_loading_steps)
+        self.stats['queries'] += 1
+        if self.reuse_states and key in self._states:
+            self.stats['cache_hits'] += 1
+            self._states.move_to_end(key)
+            return deepcopy(self._states[key])
         result, _ = _solve_homogeneous_reactive_result(
-            self.dataset, temperature_k, pressure_pa, apparent_amounts,
+            self.dataset, *inputs[:2], inputs[2:],
             model=self.model, reactions=self._reactions, molar_masses=self.molar_masses,
-            state_input_derivatives=True, state_input_actions=tuple(actions),
-            output_ids=tuple(output_ids), thermochemistry=self.thermochemistry,
+            state_input_derivatives=True, state_input_actions=actions,
+            output_ids=output_ids, thermochemistry=self.thermochemistry,
             loading_anchor=self.loading_anchor, water_per_mea_anchor=self.water_per_mea_anchor,
             max_log_loading_step=self.max_log_loading_step,
             max_loading_steps=self.max_loading_steps, _diagnostics=self.stats,
         )
+        if (self.reuse_states and len(result.state_input_actions) == len(actions)
+                and all(action.failure is None and action.caloric_failure is None
+                        and all(value is not None for value in action.values)
+                        for action in result.state_input_actions)):
+            self._states[key] = deepcopy(result)
+            if len(self._states) > 2048:
+                self._states.popitem(last=False)
         return result
 
 
