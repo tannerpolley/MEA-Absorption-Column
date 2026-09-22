@@ -1,3 +1,4 @@
+from ..Properties.Amine_Properties import resolve_amine_properties
 from ..Properties.Thermophysical_Properties import enthalpy
 from scipy.optimize import root
 from scipy.optimize import least_squares
@@ -6,9 +7,11 @@ import numpy as np
 TEMPERATURE_BOUNDS_K = (250.0, 500.0)
 
 
-def get_liquid_temperature(x, Hl_T_given):
+def get_liquid_temperature(x, Hl_T_given, amine_properties=None):
+    amine_properties = resolve_amine_properties(amine_properties)
+
     def solve(Tl):
-        _, Hl_T = enthalpy(Tl, x, phase='liquid')
+        _, Hl_T = amine_properties.enthalpy(Tl, x)
 
         return Hl_T - Hl_T_given
 
@@ -54,9 +57,10 @@ def _safe_temperature_residual(residual):
     return wrapped
 
 
-def get_liquid_enthalpy(Fl, Tl):
+def get_liquid_enthalpy(Fl, Tl, amine_properties=None):
+    amine_properties = resolve_amine_properties(amine_properties)
     x = [Fl[i] / sum(Fl) for i in range(len(Fl))]
-    _, Hl_T = enthalpy(Tl, x, phase='liquid')
+    _, Hl_T = amine_properties.enthalpy(Tl, x)
     return Hl_T
 
 
@@ -64,7 +68,6 @@ def get_vapor_enthalpy(Fv, Tv):
     y = [Fv[i] / sum(Fv) for i in range(len(Fv))]
     _, Hv_T = enthalpy(Tv, y, phase='vapor')
     return Hv_T
-
 
 
 

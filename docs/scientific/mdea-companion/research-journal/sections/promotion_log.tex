@@ -1,0 +1,30 @@
+\section{Promotion gates and log}\label{sec:promotion-gates}
+
+MDEA material may enter the candidate manuscript only when all of the following are true:
+
+\begin{enumerate}
+  \item Every admitted pressure row and speciation state evaluates successfully with one frozen
+  parameter set; no failed admitted row is removed from the reported denominator.
+  \item Full reactive bubble/VLE behavior and reactive speciation pass mass, charge, reaction,
+  phase-equilibrium, and domain checks.
+  \item Required first derivatives are finite and agree with independent numerical checks over
+  the admitted domain.
+  \item Engine commit, immutable wheel SHA-256, parameter-artifact identity, datasets, and
+  solver configuration are recorded and reproducible.
+  \item The installed-wheel integration gate passes without mutable source imports.
+  \item MEA regression remains unchanged and the MDEA column cases converge without hidden
+  failed cases or solvent-specific constants outside the amine contract.
+  \item Capture and temperature-profile comparisons against admitted MDEA column data meet
+  predeclared acceptance criteria.
+  \item Manuscript language is restricted to the domain and evidence actually validated.
+\end{enumerate}
+
+\subsection*{Promotion log}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} >{\raggedright\arraybackslash}p{0.55\textwidth}}
+\toprule
+Date & Decision & Evidence \\
+\midrule
+2026-08-25 & Journal initialized & No MDEA result admitted; no candidate-manuscript change. \\
+\bottomrule
+\end{longtable}
