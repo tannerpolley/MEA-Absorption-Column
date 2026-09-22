@@ -41,14 +41,12 @@ def main() -> int:
     case_table = _build_case_table()
     case_table.to_csv(TABLES / "nccc_one_bed_case_scope.csv", index=False)
     _write_latex_case_table(case_table)
-    _write_latex_attempted_status_table(attempted)
     _plot_accepted_results(accepted, summary)
 
     print(f"Read {ATTEMPTED_RESULTS}")
     print(f"Wrote {ACCEPTED_RESULTS}")
     print(f"Wrote {ACCEPTED_SUMMARY}")
     print(f"Wrote {TABLES / 'nccc_one_bed_case_scope.csv'}")
-    print(f"Wrote {LATEX_TABLES / 'nccc_one_bed_attempted_status.tex'}")
     print(f"Wrote {FIGURES / 'nccc_one_bed_thermo_benchmark.pdf'}")
     print(f"Wrote {LATEX_FIGURES / 'nccc-one-bed-thermo-benchmark.pdf'}")
     return 0
