@@ -1,0 +1,5 @@
+run,mesh_iteration,nodes,max_rms_residual_printed,max_scaled_boundary_residual_printed,nodes_added,rhs_batches_cumulative,jacobian_batches_cumulative
+reactive_native_21,1,21,1.86e0,0.00e0,1,11,2
+reactive_native_21,2,22,1.25e-1,0.00e0,0,19,4
+reactive_native_41,1,41,5.66e-2,0.00e0,1,9,2
+reactive_native_41,2,42,4.31e-2,0.00e0,0,17,4

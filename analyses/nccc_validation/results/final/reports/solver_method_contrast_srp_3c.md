@@ -55,13 +55,12 @@ control across the full temperature profile.
 
 ## ePC-SAFT Electrolyte Configuration Evidence
 
-The pressure-state smoke table has been superseded by
-`epcsaft_electrolyte_column_config_matrix.csv`. The selected paper-facing
-configuration is `2025_Figiel_empirical_fitted_Born_SSM_DS`, which keeps the
-six-species MEA absorber state and uses the repo-vendored
-`MEA_CO2_H2O_ionic_fit` dataset. In the Case 3C configuration matrix, that row
-converged with the collocation BVP calculation, predicted 89.83% capture, and
-reported a 7.90 s runtime under the matrix smoke settings.
+The pre-0.2 `epcsaft_electrolyte_column_config_matrix.csv` is historical and is
+not current validation evidence. Current fixed-state and one-row column evidence
+is retained in `epcsaft_v02_contribution_table.csv` and
+`epcsaft_v02_column_row.csv`. Those tables use the locked ePC-SAFT 0.2 wheel and
+the separately identified `MEA_CO2_H2O_ionic_fit` parameter document without
+runtime model-family or derivative switches.
 
 The current ePC-SAFT calls remain pressure-specified states. The MEA adapter
 passes the previous converged molar density as an initial guess for the package's

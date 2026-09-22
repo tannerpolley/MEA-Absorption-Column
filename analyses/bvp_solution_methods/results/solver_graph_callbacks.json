@@ -1,0 +1,47 @@
+{
+  "scope": "Static callback leaves; no numerical evaluation or solver run. Counts are not native solve counts or measured speedups.",
+  "source_sha256": {
+    "analyses/bvp_solution_methods/scripts/inspect_solver_graph.py": "7f6a1fa94c74b101e17ac8031376b6fc39e8704835e1f6321014a6a891ef660b",
+    "analyses/bvp_solution_methods/input/case_3c.json": "5dbc093cfbbc537631bd228809af9bfe37e8c88fa77bb70bd49245cb6534c6d5",
+    "src/mea_absorption_column/BVP/Coupled_Column.py": "52a657362dee514dfffacc5a844e2527c1cca93c588682b5b1486c99f5d8bbac",
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "b32fcb9edcf2d30b13d39254d1ea8e7a49239e322992b57543a16b30314e4a08"
+  },
+  "graphs": {
+    "default": {
+      "nlp_g": {
+        "inspect_liquid": 8,
+        "inspect_vapor": 4,
+        "inspect_liquid_loading_tangent": 6,
+        "inspect_vapor_caloric": 2
+      },
+      "nlp_jac_g": {
+        "inspect_liquid": 24,
+        "inspect_vapor": 12,
+        "inspect_liquid_loading_tangent": 18,
+        "inspect_vapor_caloric": 6,
+        "jac_inspect_liquid": 8,
+        "jac_inspect_vapor": 4,
+        "jac_inspect_liquid_loading_tangent": 6,
+        "jac_inspect_vapor_caloric": 2
+      }
+    },
+    "inline_cse_jacobian": {
+      "nlp_g": {
+        "inspect_liquid": 8,
+        "inspect_vapor": 4,
+        "inspect_liquid_loading_tangent": 6,
+        "inspect_vapor_caloric": 2
+      },
+      "nlp_jac_g": {
+        "inspect_liquid": 16,
+        "inspect_vapor": 8,
+        "inspect_liquid_loading_tangent": 12,
+        "inspect_vapor_caloric": 4,
+        "jac_inspect_liquid": 8,
+        "jac_inspect_vapor": 4,
+        "jac_inspect_liquid_loading_tangent": 6,
+        "jac_inspect_vapor_caloric": 2
+      }
+    }
+  }
+}

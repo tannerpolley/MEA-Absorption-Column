@@ -12,7 +12,7 @@ from mea_absorption_column.BVP.robust_core import (
     solver_to_scaled_physical,
     solver_to_scaled_physical_derivative,
 )
-from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import DEFAULT_SCIPY_BVP_SETTINGS
+from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import DEFAULT_SCIPY_BVP_SETTINGS, native_state_layout
 from mea_absorption_column.misc.Polynomial_Fit import polynomial_fit
 from mea_absorption_column.Thermodynamics.Chemical_Equilibrium import chemical_equilibrium
 from mea_absorption_column.intercooling import (
@@ -282,6 +282,7 @@ def segmented_scipy_BVP_solve(
         return df_dy
 
     jacobian_kwargs = {'fun_jac': fun_jac} if settings.get('use_finite_jacobian', False) else {}
+    legacy_grid = np.asarray(z, dtype=float).copy()
     try:
         sol = solve_bvp(
             column_odes,
@@ -297,11 +298,47 @@ def segmented_scipy_BVP_solve(
     except TimeoutError as exc:
         if isinstance(model_options, dict):
             model_options.get("solver_diagnostics", {})["jacobian_status"] = "timeout"
+            model_options.get("solver_diagnostics", {}).setdefault("stage_status", {})["outer"] = {
+                "status": "timed_out", "success": False, "message": str(exc)
+            }
         return y_guess, z_mesh, "Segmented SciPy collocation-style BVP", False, str(exc)
+    native_grid = np.asarray(sol.x, dtype=float)
+    native_state = _stacked_profile_to_physical(
+        sol.sol(native_grid), stack_spec.beds, transform_mode, bounds=case_bounds
+    )
+    if native_state.shape[1] != native_grid.size:
+        raise RuntimeError("Adaptive native profile grid/state lengths disagree")
+    native_profile = {
+        "grid": native_grid,
+        "state_matrix_scaled": np.asarray(native_state, dtype=float),
+        "layout": native_state_layout(
+            scales,
+            beds=stack_spec.beds,
+            thermal_state_mode=thermal_state_mode,
+            coordinate="normalized_bed_height",
+            representation="adaptive_collocation_stacked",
+        ),
+    }
     if isinstance(model_options, dict):
         model_options.get("solver_diagnostics", {})["jacobian_status"] = str(sol.status)
+        model_options.get("solver_diagnostics", {}).setdefault("stage_status", {})["outer"] = {
+            "status": "converged" if bool(sol.success) else "failed",
+            "success": bool(sol.success),
+            "message": str(sol.message),
+            "status_code": int(sol.status),
+            "iterations": int(sol.niter),
+            "grid_points": int(native_grid.size),
+        }
+        model_options.get("solver_diagnostics", {}).update(
+            solver_iterations=int(getattr(sol, "niter", 0)),
+            final_mesh_nodes=int(native_grid.size),
+            max_rms_residual=float(np.max(getattr(sol, "rms_residuals", [np.nan]))),
+            max_scaled_boundary_residual=float(np.max(np.abs(boundary(sol.y[:, 0], sol.y[:, -1])))),
+            legacy_grid=legacy_grid,
+            native_profile=native_profile,
+        )
 
-    return _stacked_profile_to_physical(sol.sol(z), stack_spec.beds, transform_mode, bounds=case_bounds), sol.x, "Segmented SciPy collocation-style BVP", sol.success, sol.message
+    return _stacked_profile_to_physical(sol.sol(legacy_grid), stack_spec.beds, transform_mode, bounds=case_bounds), legacy_grid, "Segmented SciPy collocation-style BVP", sol.success, sol.message
 
 
 def _physical_rhs_to_solver_rhs(y_solver, rhs_physical, transform_mode, bounds=None):

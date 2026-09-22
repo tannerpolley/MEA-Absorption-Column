@@ -1,7 +1,5 @@
 # Local Codex Instructions
 
-Repository Profile: scientific-computing
-
 ## Startup Reads
 
 - Read `docs/.codex-journal/user_preferences.md` when it exists.
@@ -11,14 +9,14 @@ Repository Profile: scientific-computing
 
 - Keep user preferences and durable project facts concise, date-stamped, and deduplicated.
 - Do not update memory for routine Q&A or small one-off work.
-- Do not store secrets, add placeholder entries, or create new memory under `.codex` or `$HOME/.codex/projects`.
+- Do not store secrets, add placeholder entries, or create new agent memory, including `.codex`, `$HOME/.codex/projects`, or Claude auto memory.
 
 ## Repository Workflow
 
 - Prefer `Local` for foreground solver inspection and `Worktree` for isolated background implementation.
 - Prefer uv-managed commands. Use `.venv/bin/python` only for interpreter-specific debugging.
 - Use `.codex/environments/environment.toml` actions when available.
-- For LaTeX/manuscript work, apply `$HOME/.codex/LATEX.md` plus repository-local policy.
+- For LaTeX/manuscript work, apply the `cse:latex` skill plus repository-local policy.
 - Preserve the user's existing dirty worktree and inspect overlapping files before editing.
 
 ## Commit Discipline
@@ -37,3 +35,7 @@ Repository Profile: scientific-computing
 - Preserve result-critical datasets under `src/mea_absorption_column/data/epcsaft_datasets`.
 - Keep reusable `epcsaft` interactions behind explicit thermodynamics/runtime modules.
 - Use `epcsaft-cross-repo` for contracts, upstream feedback, and handoffs.
+
+This is a CSE project. Every agent performing scientific or engineering work
+MUST use the installed CSE skills and MUST read `docs/scientific/README.md` and
+`docs/scientific/CONTEXT.md` before selecting the evidence-justified CSE route.

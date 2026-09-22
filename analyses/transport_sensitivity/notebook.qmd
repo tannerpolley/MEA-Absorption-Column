@@ -1,0 +1,213 @@
+---
+title: "Transport sensitivity of the reactive MEA absorber"
+subtitle: "Case 3C — one-at-a-time correlation multipliers"
+execute:
+  enabled: false
+---
+
+All seven study points and an additional initialization control converged.
+Independent review supports the bounded result and transport-scaling implementation;
+it does not establish a general-purpose initialization capability. No manuscript
+files have been edited.
+Rendering never runs the model.
+
+## Question and conditions
+
+How do ±10% changes in liquid viscosity, liquid free-CO₂ diffusivity and the
+liquid-side CO₂ transfer coefficient affect capture and peak liquid temperature
+in the manuscript's nonisothermal Case 3C? These are exploratory correlation
+sensitivities, not measured uncertainty intervals or a joint uncertainty model.
+
+The model is read directly from the manuscript task's `bad5` checkout, without
+editing its files: nine-species reactive ePC-SAFT bulk equilibrium, neutral-vapor
+closure and conventional enhancement-factor film, with the existing empirical
+caloric and transport correlations. This is not the separate full reactive-film
+study or an eNRTL comparison.
+
+The feed table supplies liquid flow 2.08805556 kg/s, reported dry gas flow
+0.55916667 kg/s, lean loading 0.25 mol CO₂/mol MEA, unloaded MEA mass fraction
+0.30, dry CO₂/O₂ fractions 0.093/0.090, gas temperature 316.75 K, and pressure
+109500 Pa. Lean temperature 318.15 K is an imputed input, as marked in that
+table, not a newly verified measurement. Dry saturated vapor conversion,
+packing, effective-area correlation, kinetics and caloric inputs are held fixed.
+
+Engine commit: `9e1bef97fbea5c6f465612ae27b054192f91f19c`.
+Wheel SHA-256: `b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b`.
+Evaluated parameter fingerprint:
+`sha256:07e3f93b209d8e117af4b69e2d0ab3b5bc0b2e94568643c28629e4799d8aa062`.
+The installed-wheel final-integration check passed; see
+[the retained check](figures/response/input/engine_check.txt).
+Each run retains the parameter and reaction documents and input/source hashes.
+
+The supplied column Jacobian combines native thermodynamic derivatives with
+differentiated absorber equations. All runs use 41 initial nodes, residual
+tolerance 0.05, boundary tolerance 0.001 and at most 1000 nodes, matching the
+manuscript's refined reference.
+Reported temperature peaks are maxima on the common 101-position exported
+profile, using the same definition as the manuscript reference.
+
+| Perturbed input | Multipliers | Dependencies recalculated |
+|---|---|---|
+| Liquid-mixture viscosity, Pa s | 0.9 and 1.1 | Ionic diffusion, holdup, liquid transfer, gas transfer through holdup, enhancement and heat transfer |
+| Liquid free-CO₂ diffusivity, m²/s | 0.9 and 1.1 | Liquid transfer, Hatta number and enhancement; MEA and ion diffusivities are not directly scaled |
+| Liquid-side CO₂ coefficient, m/s | 0.9 and 1.1 | Hatta number, enhancement and combined film resistance; scaling precedes these evaluations |
+
+Vapor viscosity and diffusivity are not directly perturbed. Because the three
+perturbations share physical dependencies, their responses must not be combined
+as independent statistical uncertainties.
+In this model, ionic diffusivity varies as liquid viscosity to the power −0.7;
+the separate CO₂ and MEA diffusivity correlations are not directly functions of
+viscosity. The viscosity screen preserves that distinction.
+
+## Baseline verification
+
+The fresh unit-multiplier column converged in two mesh iterations to 42 nodes,
+with capture **91.5483865996%**, maximum normalized residual **0.0431384383**
+and zero maximum scaled boundary residual. Its capture differs from the
+manuscript's retained refined result by **−0.0000000227 percentage points**.
+Three model files have changed since the retained initialization run; the wheel,
+parameter bundle and physical settings match. The new factor-one result is the
+baseline for the transport comparisons.
+
+All six perturbed assembled column-RHS directional-derivative checks passed using
+the manuscript's existing independent check at one seven-state test point per
+multiplier. This is not an independent derivative audit at every axial position.
+Centered differences verify the Jacobian here; they never construct the
+production solver Jacobian.
+See [derivative_checks.json](figures/response/output/derivative_checks.json).
+
+## Column response
+
+![Case 3C capture and peak liquid-temperature changes under separate ±10% transport multipliers. Points are completed simulations, not a fitted response curve. Shading shows the magnitude of the previous joint mesh/tolerance change; it is not an uncertainty interval.](figures/response/output/transport_sensitivity.png){#fig-transport}
+
+| Input | Multiplier | Capture (%) | Capture change (percentage points) | Peak liquid temperature (K) | Peak-temperature change (K) |
+|---|---:|---:|---:|---:|---:|
+| Baseline | 1.0 | 91.548387 | 0 | 347.861545 | 0 |
+| Liquid viscosity | 0.9 | 91.830465 | +0.282078 | 347.878178 | +0.016633 |
+| Liquid viscosity | 1.1 | 91.256147 | −0.292240 | 347.840313 | −0.021233 |
+| Liquid CO₂ diffusivity | 0.9 | 91.630866 | +0.082479 | 347.866071 | +0.004526 |
+| Liquid CO₂ diffusivity | 1.1 | 91.455059 | −0.093328 | 347.855017 | −0.006529 |
+| Liquid-side CO₂ coefficient | 0.9 | 91.017015 | −0.531371 | 347.824975 | −0.036570 |
+| Liquid-side CO₂ coefficient | 1.1 | 91.946512 | +0.398125 | 347.879041 | +0.017496 |
+
+The numerical authority is [summary.csv](figures/response/output/summary.csv);
+[profiles.csv](figures/response/output/profiles.csv) retains axial responses,
+transport values and effective conductances. Extra displayed digits make the
+comparison reproducible, not an assertion of corresponding physical accuracy.
+
+For equal relative perturbations, capture responds most to the liquid-side
+coefficient, then viscosity, then CO₂ diffusivity. The tested capture range is
+**91.017–91.947%**, versus **91.548%** at baseline. Every capture change exceeds
+the previous 0.00510-percentage-point refinement change. This establishes a
+resolved local transport response for this case, not a probabilistic uncertainty
+range or a ranking under measured input uncertainties.
+
+Increasing CO₂ diffusivity does not simply increase capture in the adopted
+enhancement-factor model: it changes both physical transfer and enhancement.
+For the +10% run, the median ratio at corresponding axial positions is
+approximately **1.047** for the liquid coefficient and **0.931** for enhancement;
+their product has a median ratio of **0.975**. These are recoupled profile
+comparisons, not fixed-state derivatives. They support interpreting the small
+negative capture response through the combined film closure rather than
+assuming proportionality to diffusivity. This sign is conditional on that
+closure and is not asserted as a general property of reactive absorption.
+
+All computed peak-temperature changes are within **0.037 K**, below the
+previous **0.04493 K** refinement change. The study therefore does not establish
+the sign or ordering of these small thermal responses as numerically resolved.
+
+### Numerical evidence
+
+All seven points converged in two mesh iterations to 42 nodes. Maximum
+normalized residuals span **0.04270–0.04354**, below the common 0.05 stopping
+tolerance; maximum scaled boundary residuals are zero. Accepted runs report no
+invalid-state penalties or failed/best-effort equilibrium states. Maximum axial
+CO₂ and water flow-balance variations are **2.23×10⁻¹⁵** and **4.27×10⁻¹⁴ mol/s**;
+maximum species-balance and charge discrepancies are **1.51×10⁻¹¹** and
+**2.65×10⁻¹⁵ mol/s**, respectively.
+
+Net enthalpy-flow variation is **272.08–273.14 W**, approximately **6.1×10⁻⁵**
+relative to its profile magnitude. It is retained as a numerical diagnostic,
+not reported as exact energy conservation. Each run retains its full result,
+profiles, parameter/reaction documents and source identities.
+
+## Diagnosed initialization failure
+
+The first −10% diffusivity run and its instrumented repetition failed in a cold
+equilibrium initialization at **323.8714530382 K and 109500 Pa**. The failing
+state was the loading-path anchor (CO₂/MEA = 0.25), not an accepted column
+result. The Engine reported numerical nonconvergence without adjudicating
+physical feasibility.
+
+A direct probe reproduced the cold-start failure. A certified neighbor 0.01 K
+higher then initialized convergence at the **exact original temperature**, and
+subsequently at the exact requested column composition. Both exact states had
+native derivatives available and passed local stability checks. The requested
+column state had liquid density **51114.8520963 mol/m³** and CO₂ fugacity
+**1302.3693696 Pa**. This identifies an initialization failure, not an
+inadmissible thermodynamic state or failure of the transport formulation.
+
+Changing only the initial column profile passed the first failed trial but
+encountered the same cold-start issue during mesh refinement at
+323.8714274963 K. The second exact state also converged after warm initialization.
+The completed calculation supplies the certified anchor composition as an
+equilibrium starting guess, conservatively mapped to the requested feed by the
+model's existing helper. Every requested state is still solved and certified
+at its own temperature, pressure and composition. Physical inputs, equations,
+transport multiplier and stopping tolerances are unchanged. The direct probe
+establishes state-only feasibility; the completed column separately exercises
+the unchanged production loading-continuation path. No failed trial is replaced
+by a penalty or counted as a converged result.
+See [the exact failure trace](figures/response/output/diffusivity_090_diagnostic/failure_trace.json)
+and [direct probes](figures/response/output/diffusivity_090_diagnostic/state_probe.json).
+The [profile-only retry](figures/response/output/diffusivity_090_reinitialized/failure_trace.json)
+and [its exact-state probes](figures/response/output/diffusivity_090_reinitialized/state_probe.json)
+are retained separately.
+
+The factor-one control and −10% diffusivity run each used 11 supplied cold-anchor
+starting guesses. The control changed capture by **1.01×10⁻¹¹ percentage points**,
+peak liquid temperature by **1.20×10⁻¹² K**, and the liquid-temperature profile
+by at most **5.53×10⁻¹¹ K**. This checks that the starting-guess change did not
+shift the baseline result. See [initialization_control.csv](figures/response/output/initialization_control.csv)
+and the completed run's [initialization record](figures/response/output/diffusivity_090_seeded/initialization.json).
+It does not establish general cold-start reliability for the Engine.
+The starting-profile and anchor inputs are verified for these retained runs;
+the diagnostic helper is not validated for arbitrary external seed files.
+
+## Interpretation limits
+
+The manuscript's previous joint mesh/tolerance refinement changed capture by
+approximately **0.00510 percentage points** and peak liquid temperature by
+**0.04493 K**. These are resolution indicators, not certified error bounds.
+Small responses cannot establish temperature insensitivity below that
+resolution. One operating case cannot establish plant-wide uncertainty,
+correlation accuracy or general cold-start reliability.
+
+For reviewer R1.9, the supported contribution is a direct column-level
+transport sensitivity study with the current manuscript thermodynamics:
+capture changes by at most 0.532 percentage points in the specified screen,
+whereas the smaller temperature responses remain below the previous refinement
+change. This complements, but does not replace, source/applicability discussion
+for the correlations, the thermodynamic-parameter study, or operating-condition
+sensitivity. It does not cover gas-side correlation uncertainty, interfacial
+area, kinetics, caloric inputs, correlated errors or other operating cases.
+
+## Retained evidence and reproduction
+
+- [Generation](figures/response/scripts/generate_data.py): one column per process,
+  reversible liquid-only multipliers in numeric and symbolic expressions.
+- [Failure capture and initial-profile selection](figures/response/scripts/capture_failure.py)
+  and [direct state probes](figures/response/scripts/diagnose_state.py).
+- [Assembled column-RHS derivative verification](figures/response/scripts/check_derivatives.py).
+- [Summary and figure rendering](figures/response/scripts/render_figure.py), from completed runs only.
+- [Model source](figures/response/input/manuscript_model.tar.gz) and
+  [parameter bundle](figures/response/input/reactive_bundle.tar.gz); Engine wheel identified above.
+- [Original reference column and verification helpers](figures/response/input/reference_column.tar.gz),
+  [scripts used for the retained runs](figures/response/input/run_scripts.tar.gz),
+  and [comparison provenance](figures/response/output/provenance.json).
+- [Fresh baseline result](figures/response/output/baseline/result.json) and
+  [its inputs](figures/response/output/baseline/identity.json).
+
+Scripts and outputs belong to `ac57`, branch `codex/transport-sensitivity`.
+The manuscript model files were not edited. Timing reflects concurrent,
+single-threaded runs and is not a solver-speed comparison.

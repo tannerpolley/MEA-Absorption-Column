@@ -1,0 +1,171 @@
+{
+  "source_sha256": {
+    "integration/epcsaft_contract.json": "b9e4cd0c42549153f11e9df92580f737a4eb962700710d4f3bd2672295534ca6",
+    "pyproject.toml": "6bb85d3c323fa557c9b9d1bd7217df17df6e6434255fba9edf18876d000ac85c",
+    "scripts/check_epcsaft_integration.py": "e049fa0f0891d4d6f702cbe46282cb4f97acd15934195992d5dbba5d0e6d35c9",
+    "src/mea_absorption_column/BVP/Coupled_Column.py": "52a657362dee514dfffacc5a844e2527c1cca93c588682b5b1486c99f5d8bbac",
+    "src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py": "9b9f3cc27b75455f4153f3938b46b4fe7a777f6370ce0f5a655e997fe8c2fda1",
+    "src/mea_absorption_column/BVP/robust_core.py": "5cc404210a9c08bc017c704fdfcde375880a18bc95d8a86c736aa4981d43a416",
+    "src/mea_absorption_column/Properties/Thermophysical_Properties.py": "0e8733652d831c7e789befebe67d3f19e69876a23be4d6c66ae662e44f75cf12",
+    "src/mea_absorption_column/Properties/Transport_Properties.py": "90d93517f28a57d7e513cfa4a37f133af98d78368acdea90f7b5b94d62059c2d",
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "b32fcb9edcf2d30b13d39254d1ea8e7a49239e322992b57543a16b30314e4a08",
+    "src/mea_absorption_column/Thermodynamics/epcsaft_v02.py": "65c6b2b7bd5329423ec9fea0062564ffea0f549c4722e1f54bc8305878094fad",
+    "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "584ccf625cec030fbbd6b2153034f08cc93fa72b3e5ef4dfb8df8f40af9a7884",
+    "src/mea_absorption_column/Thermodynamics/thermo_models.py": "9753afac4d61f769a76919b36f9f9bd7c7a520932850b6011ef45c1ee8311bfd",
+    "src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "9c1f9e2eefab2410f35c013d4b4e789e8445f60bb8caeff9ff707d28d6d0fe03",
+    "src/mea_absorption_column/Transport/Pressure_Drop.py": "72d8ba9caf20f709cce4e4467b003c698c109ceac9ced0e0d0e06c8135a70256",
+    "src/mea_absorption_column/Transport/Reactive_Film.py": "c26846f99ba1d8e88b578f93fd9a6dfc98c37bc65c1ddbe9f29c2fbbac4f54f3",
+    "src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+    "src/mea_absorption_column/Transport/domain_guards.py": "0ff000ca9b1b0ad929de3c72a9f3170df9f37890985a0ef7bb93206ecb770df5",
+    "src/mea_absorption_column/config/Constants.py": "945ff1f39f07dc8580adb9f1449f76e001b32200e3286d9fc75bfdd9385c6883",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/README.md": "16a5be11ecef5580ece2f3b5ad9392c4488e79aa671f072f637fa1b56926a336",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "42b0e9e6363f9cab3440d138eb6c0b6b939a73bc1475d3d37ffa2f101cc8e89e",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/reference-thermochemistry.json": "72b944e0221233152c4cdc85652ad792c7158e5a319366742939273024b77347",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/adoption-receipt.json": "bf178ed7b043e90dcca297ba9b80f1b262ef41bcdfe5e53af9211a1fe8b237e6",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/bundle.json": "19fe755463307b0df314f8a9e77b30a00e5b2f01adcc90a13b578f247f14fb05",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+    "tests/test_coupled_column.py": "76459f6f927652b2eea655c45afca55d8ea1e10519f1b8ba42b466dc87d397cf",
+    "uv.lock": "5f5a4a221000c1f3ed89bfd57d781b8418a31b0b7b99a5eb5b5879bd87f716cb",
+    "src/mea_absorption_column/BVP/ABS_Column.py": "dc60679a6c50ed6fa6730151f39b0d4ffaf391c64b606baefdfa030886a35ef2",
+    "src/mea_absorption_column/BVP/Methods/Finite_Difference_Solve.py": "55844334ee563404435aa4324a7b5239ab84687b9e7eb0b0a78a4bec609ee370",
+    "src/mea_absorption_column/BVP/Methods/Integration_Methods.py": "aaea50b1010734f73b39d7e3127301bf2eebdb3c5e540c21711bfa66d73c6efd",
+    "src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py": "6aa4acc191260b2fb25289e205dc7a47f81726f6a12dff3cb11e318f5e19adf9",
+    "src/mea_absorption_column/BVP/Methods/Segmented_Scipy_BVP_Solve.py": "7662dfaf3445ac7536d86c6fdb89ff48778e89c8fe014e8cf6c837eb963298a5",
+    "src/mea_absorption_column/BVP/Methods/Single_Shoot_Solve.py": "115d3a7b4e336d29b92deade1d963facce936e0946f5ada1d5db4d6245f03245",
+    "src/mea_absorption_column/Run_Model.py": "c653561ea7629d217f5fd00caa33926199bbbf3bfa2f40c98afa19f2ac1b9cda",
+    "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py": "e0ca6d1737130d56f827fbe6423c3002d322bc05802c25156310606eb0c6452f",
+    "src/mea_absorption_column/Thermodynamics/Fugacity.py": "fc4db0aa1cbc61393e78693f474347624192d1fbbc1f056a3b5b163d821875ec",
+    "src/mea_absorption_column/Transport/Enhancement_Factor.py": "59dd0cb3c56d36b3c411a917133e74512e27e9b22ec7fa6ca58c9d668f03f40b",
+    "src/mea_absorption_column/Transport/Flux.py": "f94109ee7263a1116eac0f6c3566aa8725c62397e585151c2b97ae8fe0e8c950",
+    "src/mea_absorption_column/__init__.py": "d35dd44ca40eb7c88491300184711dcdf68dd854416caa4fe03a6d2878570f1e",
+    "src/mea_absorption_column/intercooling.py": "21bae55deeb2410ffe6445824d93fddee17df0d2abee8d913cb6543ee36963b0",
+    "src/mea_absorption_column/misc/Convert_Data.py": "2d5a280f55df0e3c063769a2028e647fb72d77c20a96a60f767103c528c2d695",
+    "src/mea_absorption_column/misc/Get_Temperature_Enthalpy.py": "01db37eca398e2dfd78da9662e261bf69c4e6ce1d9ea67c6e426fe834002b7da",
+    "src/mea_absorption_column/misc/Polynomial_Fit.py": "1c77123a36f65741ca12df8c3d88217ff3f3b43ff71ae985501ae63e7178224c",
+    "src/mea_absorption_column/misc/Save_Run_Outputs.py": "77ed6cb4a1c9311efd324a78cd38307f6a0502474e85668fe0821b3632649921",
+    "src/mea_absorption_column/misc/Scaling.py": "e9dc674d700d4562fd51267a650044aaaa1cd6cf2ad048aca15d0f8c49d68d4e",
+    "analyses/bvp_solution_methods/results/runtime_adoption.json": "61a383c5200e7adcfe9342c1a7d5db975dad61f395fb487928c4cd84b00ef631",
+    "src/mea_absorption_column/BVP/Methods/Conserved_Reduction.py": "cb8101fe90803b5b7bbbde47512e8007c7f734e5fb3d5d9206f9b08b04844e86",
+    "analyses/bvp_solution_methods/scripts/check_native_adapter.py": "f2d30127ceab0dd40f04ca444e5e9d1bc4ed39457451c12458c12ec1934bb86d"
+  },
+  "frozen_candidate_verified": true,
+  "runtime_adoption": {
+    "reason": "Explicit supervisor instruction: adopt reviewed charge-preserving seed wheel; preserve build commit",
+    "source_task": "01a0686d-8e35-7e43-a451-fad261638d00",
+    "previous_identity": {
+      "engine_commit": "c5d4e40161cb58268240984591e49bccc911b68f",
+      "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+      "wheel_sha256": "f954221b874b473144f2f8ed317ebfd2a82c1e37c091c9c0696deca9a24c3853",
+      "core_sha256": "de91b518c5a464dee20d3fa3d38b6384caa7e32b526bb5b8aefd13d45f291cde"
+    },
+    "final_identity": {
+      "engine_commit": "a86ac6bb9507e771d27317622bbd62c0bc7c7f25",
+      "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+      "wheel_sha256": "ee6c34b587edc117247c675666228d0b395f35dc9ba0f880f1efb4ab4219f4ae",
+      "core_sha256": "620020eadf7e2d209abbebab2fe941f4c408bce29a02d7b41ce7e539df6307e5"
+    },
+    "previous_file_sha256": {
+      "pyproject.toml": "29005ff31404ccbcf8ee1812181a650984fa57553cf03f30f66bc7e825dab361",
+      "uv.lock": "482535dc767312f31ebd5b848914b834627a9cc3be338c1d4c37d56e76930267",
+      "integration/epcsaft_contract.json": "a925c1a1853b4b6d4faf071d33cffc20d7b44ea3945d1c7a42c330f639e4b775"
+    },
+    "file_sha256": {
+      "pyproject.toml": "6bb85d3c323fa557c9b9d1bd7217df17df6e6434255fba9edf18876d000ac85c",
+      "uv.lock": "5f5a4a221000c1f3ed89bfd57d781b8418a31b0b7b99a5eb5b5879bd87f716cb",
+      "integration/epcsaft_contract.json": "b9e4cd0c42549153f11e9df92580f737a4eb962700710d4f3bd2672295534ca6"
+    }
+  },
+  "declared_candidate_extensions": [
+    "src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py"
+  ],
+  "accepted_column": false,
+  "local_root_attempted": false,
+  "failure": null,
+  "scope": "Known-valid thermodynamic point, not an algebraically consistent interface or published 3C",
+  "engine_identity": {
+    "engine_commit": "a86ac6bb9507e771d27317622bbd62c0bc7c7f25",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "ee6c34b587edc117247c675666228d0b395f35dc9ba0f880f1efb4ab4219f4ae",
+    "core_sha256": "620020eadf7e2d209abbebab2fe941f4c408bce29a02d7b41ce7e539df6307e5"
+  },
+  "state": [
+    0.1529,
+    7.911,
+    2.4,
+    1.2,
+    313.15,
+    353.15,
+    101325.0,
+    0.012136437909066353,
+    0.0001,
+    0.0,
+    0.0,
+    0.05
+  ],
+  "conserved": [
+    0.1529,
+    7.911,
+    2.4,
+    1.2,
+    -2831215.5893193744,
+    -1200887.1777054274,
+    101325.0
+  ],
+  "sources": [
+    -0.005028565569262639,
+    -0.0,
+    -0.005028565569262639,
+    -0.0,
+    -0.0,
+    -0.0,
+    -131.0017876759044
+  ],
+  "original_algebraic_residual": [
+    0.0,
+    -1.9121551036061458e-08,
+    -0.3407507903409999,
+    0.012785119817027315,
+    -3882.4116925284775
+  ],
+  "state_scale": [
+    0.2,
+    8.0,
+    3.0,
+    2.0,
+    300.0,
+    300.0,
+    100000.0,
+    0.1,
+    0.001,
+    0.001,
+    1000.0,
+    1.0
+  ],
+  "conserved_scale": [
+    0.2,
+    8.0,
+    3.0,
+    2.0,
+    100.0,
+    100.0,
+    100000.0
+  ],
+  "algebraic_scale": [
+    0.1,
+    1e-07,
+    0.001,
+    0.001,
+    1000.0
+  ],
+  "scaled_matrix_condition": 880621739.0142547,
+  "implicit_linear_solve_residual_inf": 1.8189894035458565e-12,
+  "node_jacobian_shape": [
+    19,
+    12
+  ],
+  "derivatives_finite": true,
+  "algebraically_consistent": false,
+  "diagnostic_wall_s": 51.60076574200002
+}

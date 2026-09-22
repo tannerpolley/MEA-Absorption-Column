@@ -27,6 +27,7 @@ from mea_absorption_column.misc.Get_Temperature_Enthalpy import (
 from mea_absorption_column.misc.Scaling import scaling
 from mea_absorption_column.Properties.Amine_Properties import resolve_amine_properties
 from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET, epcsaft_cache_stats
+from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET as REACTIVE_DATASET, MODEL as REACTIVE_MODEL, ReactiveLiquid
 
 np.set_printoptions(suppress=True)
 
@@ -40,23 +41,27 @@ def run_model(df,
               plot_temperature=False,
               thermo_model='ideal_henry',
               solver_settings=None,
-              return_details=False,
-              staged_beds='auto',
-              intercooler_settings=None,
-              amine_properties=None,
-              ):
+             return_details=False,
+             staged_beds='auto',
+             intercooler_settings=None,
+             ):
 
-    amine_properties = resolve_amine_properties(amine_properties, require_column_ready=True)
+    thermo_model = (thermo_model or 'ideal_henry').lower()
     solver_settings_for_run = dict(solver_settings or {})
-    inputs, X, case_metadata = convert_data(
-        df,
-        run=run,
-        type=data_type,
-        return_metadata=True,
-        vapor_composition_mode=solver_settings_for_run.get("vapor_composition_mode", "legacy_ratio"),
-        gas_flow_basis=solver_settings_for_run.get("gas_flow_basis", "reported_total_wet"),
-        amine_molar_mass_kg_per_mol=amine_properties.amine_molar_mass_kg_per_mol,
-    )
+    resolved_inputs = solver_settings_for_run.pop("_resolved_inputs", None)
+    if resolved_inputs is None:
+        inputs, X, case_metadata = convert_data(
+            df,
+            run=run,
+            type=data_type,
+            return_metadata=True,
+            vapor_composition_mode=solver_settings_for_run.get("vapor_composition_mode", "legacy_ratio"),
+            gas_flow_basis=solver_settings_for_run.get("gas_flow_basis", "reported_total_wet"),
+        )
+    else:
+        inputs = resolved_inputs["parameters"]
+        X = np.asarray(resolved_inputs["raw_input"], dtype=float)
+        case_metadata = dict(resolved_inputs["metadata"])
 
     L_G, Fv_T, alpha, w_MEA_unloaded, y_CO2, Tl_z, Tv_0, P, beds = X[:9]
 
@@ -78,6 +83,23 @@ def run_model(df,
         if staged_beds != "auto"
         else method == "scipy-bvp" and (beds_count > 1 or intercoolers_count > 0)
     )
+    if use_staged_beds and solver_settings_for_run.get('co2_mass_transfer_model') == 'reactive_film_linearization':
+        raise ValueError('reactive_film_linearization requires unstaged beds; per-bed profile coordinates are not implemented')
+    if solver_settings_for_run.get('jacobian_mode') == 'native' and (method != 'scipy-bvp' or use_staged_beds):
+        raise ValueError('Native Jacobian is implemented only for unstaged scipy-bvp')
+    intercooler_settings = dict(intercooler_settings or {})
+    requested_intercooler_model = intercooler_settings.get(
+        "model",
+        solver_settings_for_run.get("intercooler_model", "liquid_temperature_reset"),
+    )
+    if (
+        method == "scipy-bvp"
+        and use_staged_beds
+        and intercoolers_count > 0
+        and requested_intercooler_model == "pumparound_temperature_approach"
+        and "thermal_state_mode" not in solver_settings_for_run
+    ):
+        solver_settings_for_run["thermal_state_mode"] = "temperature"
     thermal_state_mode = solver_settings_for_run.get("thermal_state_mode", "enthalpy")
     if (
         method == "scipy-bvp"
@@ -94,10 +116,12 @@ def run_model(df,
         shooting_seed_settings = {
             **solver_settings_for_run,
             "seed_from_shooting": False,
+            "jacobian_mode": "numerical",
             "return_internal_profile": True,
             "continuation_stage": "shooting_seed",
             "continuation_path": "shooting->scipy-bvp",
         }
+        solver_settings_for_run["shooting_seed_jacobian_mode"] = "numerical"
         shooting_seed = run_model(
             df,
             method="single",
@@ -201,6 +225,9 @@ def run_model(df,
     guard_rhs = bool(solver_settings_for_run.get('guard_rhs', True))
     model_options = {
         'thermo_model': thermo_model,
+        'co2_mass_transfer_model': solver_settings_for_run.get('co2_mass_transfer_model', 'enhancement_factor'),
+        'reactive_film_linearization': solver_settings_for_run.get('reactive_film_linearization'),
+        'enhancement_type': solver_settings_for_run.get('enhancement_type', 'explicit'),
         'chemical_equilibrium_model': solver_settings_for_run.get(
             'chemical_equilibrium_model',
             'mdea_ideal' if amine_properties.amine_id == 'MDEA' else _default_chemical_equilibrium_model(thermo_model),
@@ -222,8 +249,15 @@ def run_model(df,
         'amine_properties': amine_properties,
     }
     solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
+    if thermo_model == REACTIVE_MODEL:
+        model_options['reactive_liquid'] = ReactiveLiquid(
+            solver_settings_for_run.get('reactive_dataset', REACTIVE_DATASET),
+            loading_anchor=solver_settings_for_run.get('reactive_loading_anchor', .25),
+            water_per_mea_anchor=Fl_H2O_b/Fl_MEA_b,
+            reuse_states=bool(solver_settings_for_run.get('reactive_reuse_states', False)),
+            kij_scale=solver_settings_for_run.get('reactive_kij_scale'),
+            reaction_scale=solver_settings_for_run.get('reactive_reaction_scale'))
     parameters = scales, eq_scales, const_flow, H, A, packing, model_options
-    intercooler_settings = intercooler_settings or {}
     stack_spec = build_bed_stack_spec(
         beds=beds_count if use_staged_beds else 1,
         intercoolers=intercoolers_count if use_staged_beds else 0,
@@ -231,6 +265,7 @@ def run_model(df,
         liquid_feed_temperature_K=Tl_z,
         target_temperatures_K=intercooler_settings.get("target_temperatures_K"),
         intercooler_strength=float(intercooler_settings.get("strength", solver_settings_for_run.get("intercooler_strength", 1.0))),
+        intercooler_model=requested_intercooler_model,
     )
     if (
         method == "scipy-bvp"
@@ -305,6 +340,7 @@ Run #{run + 1:03d}:
 
     # Starts the time tracker for the total computation time for one simulation run
     start = time.time()
+    cpu_start = time.process_time()
 
     if method == "scipy-bvp" and use_staged_beds:
         Y_scaled, z_new, solving_type, success, message = segmented_scipy_BVP_solve(
@@ -325,6 +361,7 @@ Run #{run + 1:03d}:
         Y_scaled_for_outputs = external_profile_from_stacked_solution(raw_Y_scaled, stack_spec.beds)
     else:
         Y_scaled_for_outputs = raw_Y_scaled
+    # Preserve the historical sampled output grid; adaptive solver nodes are retained separately.
     z_outputs = np.linspace(z[0], z[-1], Y_scaled_for_outputs.shape[1])
 
     Y = []
@@ -335,6 +372,7 @@ Run #{run + 1:03d}:
     # Ends the time tracker for the total computation time for one simulation run
     end = time.time()
     total_time = end - start
+    solver_cpu_time = time.process_time() - cpu_start
 
     # Collects data from the final integration output
 
@@ -460,6 +498,8 @@ Run #{run + 1:03d}:
                                   include_coordinate_columns=bool(profile_csv_dir),
                                   )
         except Exception as exc:
+            if thermo_model == "epcsaft_reactive_nine":
+                raise
             dfs_dict = _fallback_temperature_profile(
                 Y,
                 z_outputs,
@@ -517,18 +557,26 @@ Run #{run + 1:03d}:
             message=str(message),
             boundary_residual_norm=boundary_residual_norm,
             capture_error_pct=capture_error_pct,
-            settings=solver_settings_for_run,
+            settings={**solver_settings_for_run, "accept_low_residual_final_iterate": False}
+            if thermo_model == "epcsaft_reactive_nine" else solver_settings_for_run,
         )
         cache_stats = _epcsaft_cache_delta(epcsaft_cache_start, epcsaft_cache_stats())
         result = {
             'case_id': str(df.index[run]),
             'method': method,
             'thermo_model': thermo_model,
+            'co2_mass_transfer_model': model_options['co2_mass_transfer_model'],
+            'enhancement_type': model_options['enhancement_type'],
             'chemical_equilibrium_model': model_options.get('chemical_equilibrium_model', 'legacy'),
             'amine_id': amine_properties.amine_id,
             'success': method_success,
             'message': f"{gated_message}{output_message_suffix}",
             'runtime_s': float(total_time),
+            'solver_cpu_time_s': float(solver_cpu_time),
+            'solver_iterations': solver_diagnostics.get('solver_iterations'),
+            'final_mesh_nodes': solver_diagnostics.get('final_mesh_nodes'),
+            'max_rms_residual': solver_diagnostics.get('max_rms_residual'),
+            'max_scaled_boundary_residual': solver_diagnostics.get('max_scaled_boundary_residual'),
             'capture_pct': float(CO2_cap),
             'capture_error_pct': capture_error_pct,
             'temperature_rmse_K': temperature_rmse,
@@ -541,18 +589,20 @@ Run #{run + 1:03d}:
             'co2_capture_guess_pct': CO2_cap_guess,
             'h2o_capture_guess_pct': H2O_cap_guess,
             'epcsaft_fugacity_blend': float(solver_settings_for_run.get('epcsaft_fugacity_blend', 1.0)),
-            'epcsaft_dataset': str(MEA_THERMODYNAMICS_EPCSAFT_DATASET),
+            'epcsaft_dataset': str(model_options['reactive_liquid'].dataset if thermo_model == REACTIVE_MODEL else MEA_THERMODYNAMICS_EPCSAFT_DATASET),
             'eta_psi': float(solver_settings_for_run.get('eta_psi', 1.0)),
             'gas_flow_basis': case_metadata.get('gas_flow_basis', 'reported_total_wet'),
             'beds': beds_count,
             'intercoolers': intercoolers_count,
             'staged_beds': bool(use_staged_beds),
-            'intercooler_model': 'liquid_temperature_reset' if stack_spec.intercoolers else 'none',
+            'intercooler_model': stack_spec.model if stack_spec.intercoolers else 'none',
+            'thermal_state_mode': thermal_state_mode,
             'intercooler_assumption': (
                 f"{stack_spec.assumption};strength={stack_spec.intercoolers[0].strength:g}"
                 if stack_spec.intercoolers
                 else 'none'
             ),
+            'shooting_seed_jacobian_mode': solver_settings_for_run.get('shooting_seed_jacobian_mode'),
             'continuation_stage': solver_settings_for_run.get('continuation_stage', 'direct'),
             'continuation_success': bool(method_success and solver_settings_for_run.get('continuation_stage', 'direct') != 'failed'),
             'invalid_state_count': int(solver_diagnostics.get('invalid_state_count', 0)),
@@ -560,6 +610,7 @@ Run #{run + 1:03d}:
             'domain_guard_counts': _format_domain_guard_counts(solver_diagnostics.get('domain_guard_counts', {})),
             'first_failed_domain': solver_diagnostics.get('first_failed_domain', ''),
             'jacobian_status': solver_diagnostics.get('jacobian_status', ''),
+            'solver_stage_status': solver_diagnostics.get('stage_status', {}),
             'scaling_mode': solver_settings_for_run.get('scaling_mode', 'legacy_flow_enthalpy'),
             'transform_mode': solver_settings_for_run.get('transform_mode', 'bounded_guarded_raw_state'),
             'continuation_path': solver_settings_for_run.get('continuation_path', 'none'),
@@ -571,9 +622,13 @@ Run #{run + 1:03d}:
             'epcsaft_chemistry_cache_hits': int(solver_diagnostics.get('epcsaft_chemistry_cache_hits', 0)),
             'epcsaft_chemistry_cache_misses': int(solver_diagnostics.get('epcsaft_chemistry_cache_misses', 0)),
             'epcsaft_chemistry_solve_s': float(solver_diagnostics.get('epcsaft_chemistry_solve_s', 0.0)),
-            'epcsaft_chemistry_max_mass_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_mass_residual', 0.0)),
-            'epcsaft_chemistry_max_reaction_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_reaction_residual', 0.0)),
-            'epcsaft_chemistry_max_charge_residual': float(solver_diagnostics.get('epcsaft_chemistry_max_charge_residual', 0.0)),
+            'epcsaft_chemistry_max_mass_residual': None if thermo_model == REACTIVE_MODEL else float(solver_diagnostics.get('epcsaft_chemistry_max_mass_residual', 0.0)),
+            'epcsaft_chemistry_max_reaction_residual': None if thermo_model == REACTIVE_MODEL else float(solver_diagnostics.get('epcsaft_chemistry_max_reaction_residual', 0.0)),
+            'epcsaft_chemistry_max_charge_residual': None if thermo_model == REACTIVE_MODEL else float(solver_diagnostics.get('epcsaft_chemistry_max_charge_residual', 0.0)),
+            'epcsaft_chemistry_last_evidence': json.dumps(solver_diagnostics.get('epcsaft_chemistry_last_evidence', {}), sort_keys=True),
+            'reactive_evaluations': solver_diagnostics.get('reactive_evaluations'),
+            'reactive_kij_scale': solver_settings_for_run.get('reactive_kij_scale'),
+            'reactive_reaction_scale': solver_settings_for_run.get('reactive_reaction_scale'),
             'epcsaft_chemistry_accepted_best_effort_count': int(solver_diagnostics.get('epcsaft_chemistry_accepted_best_effort_count', 0)),
             'epcsaft_chemistry_failed_count': int(solver_diagnostics.get('epcsaft_chemistry_failed_count', 0)),
             'epcsaft_chemistry_last_iterations': int(solver_diagnostics.get('epcsaft_chemistry_last_iterations', 0)),
@@ -617,6 +672,27 @@ Run #{run + 1:03d}:
                 )
         if return_internal_profile:
             result["_raw_solution_scaled"] = raw_Y_scaled
+            native_profile = solver_diagnostics.get("native_profile")
+            if native_profile is None:
+                native_grid = np.asarray(z_outputs, dtype=float)
+                native_state = np.asarray(Y_scaled_for_outputs, dtype=float)
+                native_layout = {
+                    "coordinate": "normalized_height",
+                    "representation": "sampled_legacy_fallback",
+                    "beds": int(stack_spec.beds) if use_staged_beds else 1,
+                    "state_order": (
+                        "F_L_CO2", "F_L_H2O", "F_V_CO2", "F_V_H2O",
+                        "H_L_or_T_L", "H_V_or_T_V", "P",
+                    ),
+                    "state_scale": np.asarray(scales, dtype=float),
+                }
+            else:
+                native_grid = np.asarray(native_profile["grid"], dtype=float)
+                native_state = np.asarray(native_profile["state_matrix_scaled"], dtype=float)
+                native_layout = native_profile.get("layout")
+            result["_native_grid"] = native_grid
+            result["_native_state_scaled"] = native_state
+            result["_native_state_layout"] = native_layout
         if return_profiles:
             result["_profiles"] = dfs_dict
         return result
@@ -757,6 +833,7 @@ def _apply_method_success_gates(
     settings,
 ):
     method_success = bool(solver_success)
+    capture_threshold = settings.get("accept_capture_error_max_pct", settings.get("success_capture_error_max_pct"))
     gate_messages = []
     boundary_rejected = False
     if boundary_residual_norm > float(settings.get("success_boundary_residual_max", 1.0)):
@@ -765,8 +842,9 @@ def _apply_method_success_gates(
         gate_messages.append(f"Rejected by strict boundary residual gate: {boundary_residual_norm:.6g}")
     if (
         method in {"single", "finite"}
+        and "success_capture_error_max_pct" in settings
         and capture_error_pct is not None
-        and abs(float(capture_error_pct)) > float(settings.get("success_capture_error_max_pct", 10.0))
+        and abs(float(capture_error_pct)) > float(settings["success_capture_error_max_pct"])
     ):
         method_success = False
         gate_messages.append(f"Rejected by strict capture gate: {capture_error_pct:.6g} pct")
@@ -783,17 +861,12 @@ def _apply_method_success_gates(
         and not method_success
         and not boundary_rejected
         and "max_runtime_s" not in str(message)
-        and settings.get("accept_low_residual_final_iterate", True)
+        and settings.get("accept_low_residual_final_iterate", False)
         and boundary_residual_norm <= float(settings.get("accept_boundary_residual_max", 10.0))
         and (
             capture_error_pct is None
-            or abs(float(capture_error_pct))
-            <= float(
-                settings.get(
-                    "accept_capture_error_max_pct",
-                    settings.get("success_capture_error_max_pct", 5.0),
-                )
-            )
+            or capture_threshold is None
+            or abs(float(capture_error_pct)) <= float(capture_threshold)
         )
     ):
         method_success = True

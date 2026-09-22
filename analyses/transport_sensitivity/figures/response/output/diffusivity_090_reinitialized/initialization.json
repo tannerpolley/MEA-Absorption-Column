@@ -1,0 +1,20 @@
+{
+  "command": [
+    "analyses/transport_sensitivity/figures/response/scripts/capture_failure.py",
+    "--model-root",
+    "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column",
+    "--reference",
+    "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/analyses/nccc_validation/results/runs/reactive_native_41",
+    "--initial-profile",
+    "analyses/transport_sensitivity/figures/response/output/baseline/solution_scaled.csv",
+    "--output",
+    "analyses/transport_sensitivity/figures/response/output/diffusivity_090_reinitialized",
+    "--quantity",
+    "diffusivity",
+    "--factor",
+    ".9"
+  ],
+  "initial_profile": "/home/tnnrpolley21/.codex/worktrees/ac57/MEA-Absorption-Column/analyses/transport_sensitivity/figures/response/output/baseline/solution_scaled.csv",
+  "sha256": "8a1f677e23cc4c18f1c3da886c44b02d58b28dd61e282abb858344c7dc3821e8",
+  "purpose": "Only the initial column profile changes after the diagnosed cold-anchor failure; physical inputs, transport multiplier, equations and tolerances are unchanged."
+}

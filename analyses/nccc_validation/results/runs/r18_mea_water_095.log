@@ -1,0 +1,111 @@
+accepted initialization available after 0.004s
+column rhs_batches=1 nodes=41 elapsed=0.00s thermodynamics={'queries': 0, 'cache_hits': 0, 'native_solves': 0, 'native_seconds': 0.0, 'warm_starts': 0}
+   Iteration    Max residual  Max BC residual  Total nodes    Nodes added  
+column rhs_batches=2 nodes=41 elapsed=101.30s thermodynamics={'queries': 41, 'cache_hits': 0, 'native_solves': 47, 'native_seconds': 89.6941429239996, 'warm_starts': 40}
+column rhs_batches=3 nodes=40 elapsed=101.38s thermodynamics={'queries': 82, 'cache_hits': 41, 'native_solves': 47, 'native_seconds': 89.6941429239996, 'warm_starts': 40}
+column jacobian_batches=1 nodes=41 elapsed=185.57s thermodynamics={'queries': 122, 'cache_hits': 41, 'native_solves': 87, 'native_seconds': 163.482883269995, 'warm_starts': 80}
+column jacobian_batches=2 nodes=40 elapsed=185.69s thermodynamics={'queries': 163, 'cache_hits': 82, 'native_solves': 87, 'native_seconds': 163.482883269995, 'warm_starts': 80}
+column rhs_batches=4 nodes=41 elapsed=185.81s thermodynamics={'queries': 203, 'cache_hits': 122, 'native_solves': 87, 'native_seconds': 163.482883269995, 'warm_starts': 80}
+column rhs_batches=5 nodes=40 elapsed=276.77s thermodynamics={'queries': 244, 'cache_hits': 122, 'native_solves': 128, 'native_seconds': 243.20674621599755, 'warm_starts': 121}
+column rhs_batches=6 nodes=41 elapsed=352.78s thermodynamics={'queries': 284, 'cache_hits': 122, 'native_solves': 168, 'native_seconds': 309.6465218449939, 'warm_starts': 161}
+column rhs_batches=7 nodes=40 elapsed=439.20s thermodynamics={'queries': 325, 'cache_hits': 123, 'native_solves': 208, 'native_seconds': 385.350745097001, 'warm_starts': 201}
+column rhs_batches=8 nodes=41 elapsed=527.84s thermodynamics={'queries': 365, 'cache_hits': 123, 'native_solves': 248, 'native_seconds': 463.4059271890019, 'warm_starts': 241}
+column rhs_batches=9 nodes=40 elapsed=527.92s thermodynamics={'queries': 406, 'cache_hits': 164, 'native_solves': 248, 'native_seconds': 463.4059271890019, 'warm_starts': 241}
+column rhs_batches=10 nodes=40 elapsed=528.03s thermodynamics={'queries': 446, 'cache_hits': 204, 'native_solves': 248, 'native_seconds': 463.4059271890019, 'warm_starts': 241}
+column rhs_batches=11 nodes=40 elapsed=622.91s thermodynamics={'queries': 486, 'cache_hits': 204, 'native_solves': 288, 'native_seconds': 545.8335919409965, 'warm_starts': 281}
+       1          5.44e-02       0.00e+00          41              1       
+column rhs_batches=12 nodes=42 elapsed=710.77s thermodynamics={'queries': 526, 'cache_hits': 204, 'native_solves': 328, 'native_seconds': 623.0856510500034, 'warm_starts': 321}
+column rhs_batches=13 nodes=41 elapsed=713.05s thermodynamics={'queries': 568, 'cache_hits': 245, 'native_solves': 329, 'native_seconds': 624.9801797460041, 'warm_starts': 322}
+column jacobian_batches=3 nodes=42 elapsed=717.61s thermodynamics={'queries': 609, 'cache_hits': 284, 'native_solves': 331, 'native_seconds': 628.9434189060048, 'warm_starts': 324}
+column jacobian_batches=4 nodes=41 elapsed=717.73s thermodynamics={'queries': 651, 'cache_hits': 326, 'native_solves': 331, 'native_seconds': 628.9434189060048, 'warm_starts': 324}
+column rhs_batches=14 nodes=42 elapsed=717.85s thermodynamics={'queries': 692, 'cache_hits': 367, 'native_solves': 331, 'native_seconds': 628.9434189060048, 'warm_starts': 324}
+column rhs_batches=15 nodes=41 elapsed=804.26s thermodynamics={'queries': 734, 'cache_hits': 368, 'native_solves': 372, 'native_seconds': 704.9040506050096, 'warm_starts': 365}
+column rhs_batches=16 nodes=42 elapsed=897.88s thermodynamics={'queries': 775, 'cache_hits': 368, 'native_solves': 413, 'native_seconds': 786.9436935860067, 'warm_starts': 406}
+column rhs_batches=17 nodes=41 elapsed=897.98s thermodynamics={'queries': 817, 'cache_hits': 410, 'native_solves': 413, 'native_seconds': 786.9436935860067, 'warm_starts': 406}
+column rhs_batches=18 nodes=41 elapsed=898.09s thermodynamics={'queries': 858, 'cache_hits': 451, 'native_solves': 413, 'native_seconds': 786.9436935860067, 'warm_starts': 406}
+column rhs_batches=19 nodes=41 elapsed=988.92s thermodynamics={'queries': 899, 'cache_hits': 451, 'native_solves': 454, 'native_seconds': 867.0756454450147, 'warm_starts': 447}
+       2          4.23e-02       0.00e+00          42              0       
+Solved in 2 iterations, number of nodes 42. 
+Maximum relative residual: 4.23e-02 
+Maximum boundary residual: 0.00e+00
+{
+  "case_id": "3C",
+  "method": "scipy-bvp",
+  "thermo_model": "epcsaft_reactive_nine",
+  "chemical_equilibrium_model": "epcsaft_reactive_nine",
+  "success": true,
+  "message": "The algorithm converged to the desired accuracy.",
+  "runtime_s": 1076.5319583415985,
+  "solver_cpu_time_s": 997.927365882,
+  "solver_iterations": 2,
+  "final_mesh_nodes": 42,
+  "max_rms_residual": 0.04226427826538442,
+  "max_scaled_boundary_residual": 0.0,
+  "capture_pct": 90.72594972141118,
+  "capture_error_pct": 1.2259497214111832,
+  "temperature_rmse_K": null,
+  "boundary_residual_norm": 0.0,
+  "boundary_residual_components": "{\"Fl_CO2_pct\": 0.0, \"Fl_H2O_pct\": 0.0, \"Fv_CO2_pct\": 0.0, \"Fv_H2O_pct\": 0.0, \"Tl_pct\": 0.0, \"Tv_pct\": 0.0}",
+  "mesh_points": 41,
+  "tol": 0.05,
+  "bc_tol": 0.001,
+  "max_nodes": 1000,
+  "co2_capture_guess_pct": 95.0,
+  "h2o_capture_guess_pct": -100.0,
+  "epcsaft_fugacity_blend": 1.0,
+  "epcsaft_dataset": "/home/tnnrpolley21/.codex/worktrees/bad5/MEA-Absorption-Column/src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle",
+  "eta_psi": 1.0,
+  "gas_flow_basis": "reported_dry_mass",
+  "beds": 1,
+  "intercoolers": 0,
+  "staged_beds": false,
+  "intercooler_model": "none",
+  "thermal_state_mode": "temperature",
+  "intercooler_assumption": "none",
+  "continuation_stage": "direct",
+  "continuation_success": true,
+  "invalid_state_count": 0,
+  "guard_penalty_count": 0,
+  "domain_guard_counts": "",
+  "first_failed_domain": "",
+  "jacobian_status": "0",
+  "scaling_mode": "legacy_flow_enthalpy",
+  "transform_mode": "raw",
+  "continuation_path": "none",
+  "epcsaft_cache_hits": 0,
+  "epcsaft_cache_misses": 0,
+  "epcsaft_direct_density_solve_s": 0.0,
+  "epcsaft_rho_guess_hits": 0,
+  "epcsaft_rho_guess_misses": 0,
+  "epcsaft_chemistry_cache_hits": 0,
+  "epcsaft_chemistry_cache_misses": 0,
+  "epcsaft_chemistry_solve_s": 1147.3865949330448,
+  "epcsaft_chemistry_max_mass_residual": null,
+  "epcsaft_chemistry_max_reaction_residual": null,
+  "epcsaft_chemistry_max_charge_residual": null,
+  "epcsaft_chemistry_last_evidence": "{\"admissible_nullity\": 5, \"balance_inf_norm\": 2.6454533008646308e-17, \"declared_direction_rank\": 5, \"eos_evaluation_count\": 98, \"equilibrium_value_valid\": 1, \"kkt_rank\": 12, \"kkt_stationarity_inf_norm\": 1.8294274603494e-14, \"local_evaluation_valid\": 1, \"local_stability_status\": \"passed\", \"objective_over_rt\": -216.74952413583017, \"optimizer_iterations\": 18, \"parameter_fingerprint\": \"sha256:8fef6d03faa8ad88283b15222bfed746e44a7d4e64e0bb3d6dd2acd524f516a5\", \"phase_distinctness\": 0.0, \"pressure_relative_inf_norm\": 2.188355551360677e-11, \"reaction_affinity_inf_norm\": 1.7053025658242404e-13, \"reduced_hessian_min_eigenvalue\": 2.1815830222016647e-05, \"scaled_kkt_condition_number_2\": 8056.623716730557, \"sensitivity_status\": \"available\", \"source_reference_representation_residual_inf_norm\": 3.0585274717610927e-16, \"transfer_chemical_potential_inf_norm\": 0.0}",
+  "reactive_evaluations": {
+    "queries": 1042,
+    "cache_hits": 471,
+    "native_solves": 577,
+    "native_seconds": 1083.4260374460137,
+    "warm_starts": 570
+  },
+  "reactive_kij_scale": [
+    "pair/monoethanolamine/water/k_ij",
+    0.95
+  ],
+  "epcsaft_chemistry_accepted_best_effort_count": 0,
+  "epcsaft_chemistry_failed_count": 0,
+  "epcsaft_chemistry_last_iterations": 18,
+  "epcsaft_chemistry_last_native_success": true,
+  "epcsaft_chemistry_last_message": "",
+  "profile_png": "",
+  "profile_csv_dir": "",
+  "profile_csv_status": "",
+  "profile_csv_files": "",
+  "python_version": "3.13.13",
+  "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+  "package_versions": "mea-absorption-column=0.1.0;numpy=2.4.4;pandas=3.0.2;scipy=1.17.1;matplotlib=3.10.9",
+  "total_wall_including_seed_and_outputs_s": 1236.4324029
+}

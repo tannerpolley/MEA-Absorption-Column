@@ -1,0 +1,765 @@
+{
+  "run_id": "stage_02_alpha_0.308593750",
+  "method": "trapezoidal",
+  "settings": {
+    "stage": "column",
+    "nodes": 3,
+    "film_points": 3,
+    "initial_record": "/tmp/initial_record_case3c.json",
+    "initial_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_source_homotopy_binary_barrier_20260916/accepted_alpha_0.304687500_profile.json",
+    "tolerance": 1e-07,
+    "max_iterations": 8,
+    "max_nodes": 100,
+    "local_tolerance": 1e-09,
+    "local_solver_tolerance": 1e-11,
+    "local_evaluations": 30,
+    "max_condition": 1000000000000.0,
+    "ivp_rtol": 1e-07,
+    "ivp_atol": 1e-09,
+    "runner_source_sha256": "c762434f83828e7042586675e8ba637a23049b4b413c3bc6e99090997ae3229f",
+    "method_source_sha256": "f9097c3df67d0f7ee842ab224d7af27c16bbf6593d7a6f0b8fe52c74d96de0f2",
+    "case_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+    "initial_record_sha256": "acc2561d68f5abdca981f913ce00302aa922044db7e3584fcb4697f6649e13ec",
+    "state_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      300.0,
+      300.0,
+      110900.0,
+      0.97,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568,
+      1.0
+    ],
+    "balance_scale": [
+      0.40538675460339674,
+      12.82919875121526,
+      0.2756739192884683,
+      0.2604028229216596,
+      123497.93628109811,
+      10133.416784188732,
+      18483.333333333332
+    ],
+    "algebraic_scale": [
+      0.97,
+      1.8447310837197383e-05,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568
+    ],
+    "boundary_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      100.0,
+      100.0,
+      110900.0
+    ],
+    "lower": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      293.15,
+      293.15,
+      1.0,
+      2.1538326677728036e-16,
+      "-inf",
+      "-inf",
+      "-inf",
+      "-inf"
+    ],
+    "upper": [
+      "inf",
+      "inf",
+      "inf",
+      "inf",
+      393.15,
+      393.15,
+      10000000.0,
+      0.9699999999999998,
+      "inf",
+      "inf",
+      "inf",
+      "inf"
+    ],
+    "initial_state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ],
+    "initialization": "Retained profile interpolated as an outer numerical guess; full original equations apply",
+    "initial_profile_sha256": "d7017c01e8e1be729c718ff7956ab605bb9805e401c6b4c3ad47df28a85b6973"
+  },
+  "execution_status": "running",
+  "stage": "global_solve",
+  "result": null,
+  "physical_certification": {
+    "accepted": null
+  },
+  "failure": null,
+  "limit_seconds": 600.0,
+  "measurements": {
+    "context": {
+      "hardware": {
+        "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+        "cpu_model": "AMD Ryzen 5 5500",
+        "logical_cpus": 12
+      },
+      "threads": {
+        "OMP_NUM_THREADS": null,
+        "OPENBLAS_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "software": {
+        "python": "3.13.13",
+        "numpy": "2.4.4",
+        "scipy": "1.17.1",
+        "casadi": "3.7.2",
+        "engine": {
+          "engine_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+          "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+          "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+          "reactive_inputs_sha256": {
+            "parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+            "reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+            "anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185",
+            "adoption-receipt.json": "bf178ed7b043e90dcca297ba9b80f1b262ef41bcdfe5e53af9211a1fe8b237e6",
+            "bundle.json": "19fe755463307b0df314f8a9e77b30a00e5b2f01adcc90a13b578f247f14fb05"
+          }
+        }
+      },
+      "scope": "One retained binary source-homotopy stage; current local runtime"
+    },
+    "setup_wall_s": 5.720440588000201
+  },
+  "problem": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "state_layout": [
+      "Fl_CO2_mol_s",
+      "Fl_H2O_mol_s",
+      "Fv_CO2_mol_s",
+      "Fv_H2O_mol_s",
+      "Tl_K",
+      "Tv_K",
+      "P_Pa",
+      "holdup",
+      "j_CO2_mol_m2_s",
+      "j_H2O_mol_m2_s",
+      "energy_flux_W_m2",
+      "interface_log_loading"
+    ],
+    "coordinate": "height_m_from_gas_inlet",
+    "model_source_sha256": {},
+    "engine_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "parameters_sha256": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+    "reference_sha256": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185"
+  },
+  "input_record": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "source_record": {
+      "path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_baseline.json",
+      "sha256": "df1dcaf5fe5c617663f62b1e23325fdc1c732b9dae03161bdb8f02a8c362adb0"
+    },
+    "model_input_row": {
+      "L": 2.088055555555556,
+      "G": 0.5591666666666667,
+      "alpha": 0.25,
+      "w_MEA": 0.3,
+      "y_CO2": 0.093,
+      "Tl": 318.15,
+      "Tv": 316.75,
+      "P": 110900.0,
+      "Beds": 1,
+      "Intercoolers": 0,
+      "CO2  %": 89.5,
+      "lean_solvent_temp_imputed": true,
+      "lean_solvent_temp_imputed_C": 45.0,
+      "y_O2": 0.09
+    },
+    "assumptions": [
+      "Tl318.15K is user-approved imputation, not measurement",
+      "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "Reported gasmass interpreted as totalwet mass; source moisture basis unspecified",
+      "Loaded liquid mass and unloaded wMEA basis; molar conversion uses current native molar masses",
+      "Pressure boundary is bottom/inlet110900Pa; measured top109500Pa reserved for comparison"
+    ],
+    "initial_bulk_state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.052715134432693156
+    ],
+    "initial_interface_bracket": [
+      0.0,
+      1.0
+    ],
+    "liquid_molar_masses_kg_mol": [
+      0.044009,
+      0.061084,
+      0.018015
+    ],
+    "vapor_molar_masses_kg_mol": [
+      0.04401,
+      0.01801528,
+      0.02801,
+      0.031999
+    ],
+    "mobility_basis": "Same nine species diffusivity estimates and harmonic-mean pair closure as the retained owner runner",
+    "source_runner_sha256": "2b6ff7c74450504e916284560dc006237d6a9f3a5027ccece0d446bbab93bf0d",
+    "physical_residual_tolerance": 1e-07,
+    "central_readiness_point": [
+      318.15,
+      110900.0,
+      5.277293318431409,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "claim_limits": {
+      "caloric_status": "provisional_shared_reference",
+      "caloric_limitation": "The coupled owner records an unresolved pure-water vapor Cp discrepancy. Thermal predictions remain provisional; comparisons assess numerical methods on the shared declared model.",
+      "source_record": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_coupled_shared.json"
+    }
+  },
+  "resolved_runtime": {},
+  "runtime_identity_verified": true,
+  "native_calls": {
+    "liquid_value_A1": {
+      "started": 107,
+      "returned": 107,
+      "failed": 0,
+      "wall_s": 53.62306407200049
+    },
+    "liquid_A2": {
+      "started": 18,
+      "returned": 18,
+      "failed": 0,
+      "wall_s": 12.907738245001383
+    },
+    "vapor_value_A1_H2": {
+      "started": 87,
+      "returned": 87,
+      "failed": 0,
+      "wall_s": 1.993531827993138
+    }
+  },
+  "native_counts_scope": "Native calls through the two shared callbacks; cumulative through verification. Timeout counts are the last saved snapshot.",
+  "initialization_evaluations": [],
+  "initial_guess_engine_identity": {
+    "actual_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "archive_hash_status": "verified_from_installed_contents",
+    "commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "commit_evidence": "not_available_from_installed_distribution",
+    "declared_archive_sha256": null,
+    "declared_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "declared_wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "expected_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "expected_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "installed_artifact_members": 26,
+    "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/lib/python3.13/site-packages",
+    "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "loaded_version": "0.2.0.dev0",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv",
+    "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+    "python_implementation": "cpython",
+    "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv",
+    "python_version": "3.13.13",
+    "required": true,
+    "status": "verified",
+    "verified_commit": null,
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "imported_initialization": {
+    "accepted": true,
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -6.1201044232461754e-15,
+      0.0,
+      0.0
+    ],
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ]
+  },
+  "initialization": {
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ],
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -6.1201044232461754e-15,
+      0.0,
+      0.0
+    ],
+    "accepted": true
+  },
+  "supplied_initial_profile": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "grid": [
+      0.0,
+      3.0,
+      6.0
+    ],
+    "profile": [
+      [
+        3.473795047647864,
+        3.013244439662086,
+        2.4323205276203805
+      ],
+      [
+        75.2020856705759,
+        81.32241789466038,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.1934929077450316,
+        0.612568995703326
+      ],
+      [
+        1.5624169375299577,
+        7.68274916161446,
+        3.3355237742456385
+      ],
+      [
+        318.0430025377733,
+        351.0244440500433,
+        318.15
+      ],
+      [
+        316.75,
+        347.46246981851425,
+        329.02739260743965
+      ],
+      [
+        110900.0,
+        110747.34928814486,
+        110591.42224090142
+      ],
+      [
+        0.053953328072228704,
+        0.04720172672269783,
+        0.05271513856709622
+      ],
+      [
+        0.011340787680671984,
+        0.002534424010127677,
+        0.014909619643338123
+      ],
+      [
+        0.014616509230051295,
+        -0.19558577503105848,
+        0.32960911640799373
+      ],
+      [
+        -8106.866876025887,
+        45581.78062864652,
+        -84239.08126802849
+      ],
+      [
+        0.42436644403671847,
+        0.15165061631793036,
+        0.6486845822380726
+      ]
+    ],
+    "seed_source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_source_homotopy_binary_barrier_20260916/stage_00_alpha_0.304687500/run.json",
+    "seed_source_multiplier": 0.3046875,
+    "seed_claim": "artificial source-homotopy numerical seed only"
+  },
+  "initial_profile": [
+    [
+      3.473795047647864,
+      3.013244439662086,
+      2.4323205276203805
+    ],
+    [
+      75.2020856705759,
+      81.32241789466038,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.1934929077450316,
+      0.612568995703326
+    ],
+    [
+      1.5624169375299577,
+      7.68274916161446,
+      3.3355237742456385
+    ],
+    [
+      318.0430025377733,
+      351.0244440500433,
+      318.15
+    ],
+    [
+      316.75,
+      347.46246981851425,
+      329.02739260743965
+    ],
+    [
+      110900.0,
+      110747.34928814486,
+      110591.42224090142
+    ],
+    [
+      0.053953328072228704,
+      0.04720172672269783,
+      0.05271513856709622
+    ],
+    [
+      0.011340787680671984,
+      0.002534424010127677,
+      0.014909619643338123
+    ],
+    [
+      0.014616509230051295,
+      -0.19558577503105848,
+      0.32960911640799373
+    ],
+    [
+      -8106.866876025887,
+      45581.78062864652,
+      -84239.08126802849
+    ],
+    [
+      0.42436644403671847,
+      0.15165061631793036,
+      0.6486845822380726
+    ]
+  ],
+  "iteration_observations": [
+    {
+      "elapsed_s": 30.13274224199995,
+      "profile": [
+        [
+          3.473795047647864,
+          3.013244439662086,
+          2.4323205276203805
+        ],
+        [
+          75.2020856705759,
+          81.32241789466038,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1934929077450316,
+          0.612568995703326
+        ],
+        [
+          1.5624169375299577,
+          7.68274916161446,
+          3.3355237742456385
+        ],
+        [
+          318.0430025377733,
+          351.0244440500433,
+          318.15
+        ],
+        [
+          316.75,
+          347.46246981851425,
+          329.02739260743965
+        ],
+        [
+          110900.0,
+          110747.34928814486,
+          110591.42224090142
+        ],
+        [
+          0.053953328072228704,
+          0.04720172672269783,
+          0.05271513856709622
+        ],
+        [
+          0.011340787680671984,
+          0.002534424010127677,
+          0.014909619643338123
+        ],
+        [
+          0.014616509230051295,
+          -0.19558577503105848,
+          0.32960911640799373
+        ],
+        [
+          -8106.866876025887,
+          45581.78062864652,
+          -84239.08126802849
+        ],
+        [
+          0.42436644403671847,
+          0.15165061631793036,
+          0.6486845822380726
+        ]
+      ],
+      "scaled_residual_inf": 0.5359859845608299
+    },
+    {
+      "elapsed_s": 63.10676291500022,
+      "profile": [
+        [
+          3.476215234012117,
+          3.007756416218386,
+          2.4323205276203805
+        ],
+        [
+          75.00940143786494,
+          81.54891268538107,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1855846979370788,
+          0.6101488093390736
+        ],
+        [
+          1.5624169375299577,
+          8.10192818504609,
+          3.528208006956592
+        ],
+        [
+          316.8473414275699,
+          352.1997543963083,
+          318.15
+        ],
+        [
+          316.75,
+          347.9117441939199,
+          329.9704957405047
+        ],
+        [
+          110900.0,
+          110742.87297029755,
+          110581.37654891146
+        ],
+        [
+          0.05426563133167555,
+          0.047039217049566186,
+          0.05271513870169099
+        ],
+        [
+          0.011753218001846135,
+          0.002194498080976578,
+          0.014868721049278546
+        ],
+        [
+          0.03159087600765487,
+          -0.2220172169146339,
+          0.36169269715718205
+        ],
+        [
+          -12255.837477119723,
+          51972.22698307358,
+          -91843.35158751329
+        ],
+        [
+          0.4350365531599286,
+          0.13450316484018526,
+          0.6472090841018393
+        ]
+      ],
+      "scaled_residual_inf": 0.009322888997218276
+    }
+  ]
+}

@@ -12,6 +12,7 @@ from scipy.optimize import least_squares, root
 
 from mea_absorption_column.BVP.robust_core import record_domain_guard
 from mea_absorption_column.Properties.Thermophysical_Properties import density
+from mea_absorption_column.Thermodynamics.reactive_bundle import MODEL, reactive_liquid
 from mea_absorption_column.Thermodynamics.thermo_models import (
     MEA_THERMODYNAMICS_EPCSAFT_DATASET,
     ensure_epcsaft_importable,
@@ -308,6 +309,12 @@ def chemical_equilibrium_with_model(
         )
     if normalized_model in {"legacy", "legacy_concentration", "local"}:
         return chemical_equilibrium(Fl, Tl)
+    if normalized_model == MODEL:
+        started = time.perf_counter()
+        result = reactive_liquid().solve(float(Tl), float(P), Fl)
+        record_coupled_result(diagnostics, result, time.perf_counter() - started)
+        composition = result["composition"]
+        return composition * result["density_mol_m3"], composition.copy()
     if normalized_model in {
         "epcsaft_reactive_six",
         "epcsaft_reactive_six_concentration",
@@ -409,49 +416,16 @@ def chemical_equilibrium_with_model(
     )
 
 
-def mdea_ideal_chemical_equilibrium(Fl, Tl, *, liquid_molar_density=None):
-    """Ideal-activity Uyan et al. (2015) eight-species MDEA speciation."""
-    raw = np.zeros(len(MDEA_SPECIES), dtype=float)
-    raw[:3] = np.maximum(np.asarray(Fl[:3], dtype=float), 1.0e-30)
-    hydrated = min(0.80 * raw[0], 0.80 * raw[1])
-    carbonate = min(0.01 * hydrated, 0.01 * raw[0])
-    extents = np.array((1.0e-8, hydrated, carbonate, -(hydrated + carbonate)))
-    initial = np.maximum(raw + MDEA_REACTIONS.T @ extents, 1.0e-30)
-    totals = MDEA_BALANCES @ raw
-    scales = np.maximum(np.abs(totals), 1.0)
-    T = float(Tl)
-    ln_k = np.array(
-        [a + b / T + c * np.log(T) + d * T for a, b, c, d in MDEA_LN_K_COEFFICIENTS]
-    )
-
-    def residual(log_amounts):
-        amounts = np.exp(log_amounts)
-        mole_fractions = amounts / amounts.sum()
-        return np.concatenate(
-            ((MDEA_BALANCES @ amounts - totals) / scales, MDEA_REACTIONS @ np.log(mole_fractions) - ln_k)
-        )
-
-    result = root(residual, np.log(initial))
-    max_residual = float(np.max(np.abs(residual(result.x))))
-    if not result.success or max_residual > 1.0e-7:
-        result = least_squares(
-            residual,
-            np.log(initial),
-            bounds=(-70.0, np.log(max(float(raw.sum()) * 2.0, 1.0))),
-            xtol=1.0e-11,
-            ftol=1.0e-11,
-            gtol=1.0e-11,
-            max_nfev=250,
-        )
-        max_residual = float(np.max(np.abs(residual(result.x))))
-    if not result.success or max_residual > 1.0e-7:
-        raise RuntimeError(
-            f"MDEA ideal-activity speciation failed: {result.message}; max residual={max_residual:.3e}"
-        )
-    amounts = np.exp(result.x)
-    x_true = amounts / amounts.sum()
-    molar_density = 1.0 if liquid_molar_density is None else float(liquid_molar_density)
-    return x_true * molar_density, x_true
+def record_coupled_result(diagnostics, result, elapsed):
+    if diagnostics is not None:
+        _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", elapsed)
+        diagnostics['epcsaft_chemistry_last_native_success'] = True
+        diagnostics['epcsaft_chemistry_last_iterations'] = result['evidence']['optimizer_iterations']
+        diagnostics['epcsaft_chemistry_last_evidence'] = {
+            'parameter_fingerprint': result['parameter_fingerprint'], **result['evidence']}
+        for name, value in result['evidence'].items():
+            if name.endswith('inf_norm') and isinstance(value, (int, float)):
+                _set_diagnostic_max(diagnostics, f'epcsaft_chemistry_{name}', value)
 
 
 def epcsaft_reactive_chemical_equilibrium(
@@ -488,7 +462,9 @@ def epcsaft_reactive_chemical_equilibrium(
         calibrate_activity_to_legacy,
         species_set,
     )
-    cache = getattr(epcsaft_reactive_chemical_equilibrium, "cache", {})
+    cache = {} if os.environ.get("MEA_EPCSAFT_DISABLE_CACHE") == "1" else getattr(
+        epcsaft_reactive_chemical_equilibrium, "cache", {}
+    )
     cached = cache.get(cache_key)
     if cached is not None:
         _increment_diagnostic(diagnostics, "epcsaft_chemistry_cache_hits")

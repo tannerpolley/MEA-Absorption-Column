@@ -1,12 +1,13 @@
 # NCCC Validation Analysis
 
-This analysis owns the reviewer-response validation artifacts for the MEA absorber model. It separates disposable benchmark runs from curated final evidence so completed results can be inspected without digging through temporary solver folders.
+This analysis owns the reviewer-response validation evidence for the MEA absorber model. It separates disposable benchmark runs from curated final evidence so completed results can be inspected without digging through temporary solver folders.
 
 ## Layout
 
 - `results/runs/`: disposable benchmark runs and long diagnostics. This folder is ignored by Git.
+- `inputs/retained_reactive_case3c/`: tracked 21-state film input and certified 44-state reactive-speciation table used by the retained calculations.
 - `results/final/tables/`: accepted result CSVs, diagnostic CSVs, plot-ready tables, and profile indexes.
-- `results/final/figures/`: paper-ready SVG/PDF benchmark figures.
+- `results/final/figures/`: retained PDF benchmark figures.
 - `results/final/profiles/<case_id>/<thermo_model>/`: clean temperature-profile PNGs for quick visual review.
 - `results/final/reports/`: Markdown or CSV summaries for accepted rows, fallback rows, and unresolved diagnostics.
 - `results/runs/<run_id>/profiles/<case_source>/<case_id>/<method>/<thermo_model>/`: requested dense profile CSV exports. These are the CSV replacement for the older `Profiles.xlsx` workbook: each old workbook sheet is written as its own CSV, with `Position`, `height_m`, `bed_id`, and `bed_position_m` coordinate columns.
@@ -30,9 +31,21 @@ export PYTHONPATH="src"
 | `generate_clean_profile_csvs.py` | Runs accepted clean rows with per-case timeouts and writes dense profile CSV folders. | Yes. | Required only for ePC-SAFT rows in the selected suite. |
 | `render_c_case_campaign_temperature_gallery.py` | Renders the corrected one-bed C-case temperature overlay gallery from a completed campaign-input benchmark run. | No. | No direct dependency; the source run may include ePC-SAFT rows. |
 | `probe_reactive_epcsaft_speciation.py` | Archived probe for the superseded reactive package interface. | No supported current run. | Retained for provenance pending typed-equilibrium migration. |
-| `probe_epcsaft_electrolyte_options.py` | Archived runtime-option matrix from the superseded package interface. | No supported current run. | Model-family variants now require separately identified parameter documents. |
-| `run_epcsaft_electrolyte_config_matrix.py` | Archived runtime-option column matrix from the superseded package interface. | No supported current run. | Not part of the 0.2 reproduction route. |
+| `generate_epcsaft_v02_validation.py` | Writes the current neutral-versus-ionic contribution table and exactly one fixed-chemistry Case 3C column row. | Yes, one column row. | Requires the locked ePC-SAFT 0.2 wheel and `MEA_CO2_H2O_ionic_fit` parameter document. |
 | `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
+| `analyze_retained_reactive_case3c.py` | Builds the controlled retained-versus-prior Case 3C fugacity, speciation, parameter, mesh, and transfer-sensitivity tables. | Reads completed column runs and evaluates bounded liquid states. | Requires the retained ePC-SAFT wheel and parameter documents. |
+| `render_retained_reactive_case3c_diagnosis.py` | Renders the reviewed Case 3C diagnostic figure from retained tables. | No. | No direct dependency. |
+| `analyze_enhancement_consistency.py` | Compares explicit and complete Gaspar-style enhancement calculations at retained Case 3C states under fixed thermodynamic parameters. | Evaluates 21 retained liquid states. | Requires the retained ePC-SAFT wheel, parameter document, and reactive table. |
+| `render_enhancement_consistency.py` | Renders enhancement and fixed-state flux comparisons from the retained enhancement table. | No. | No direct dependency. |
+| `analyze_issue17_enhancement_comparison.py` | Evaluates the four issue 17 enhancement equations on 21 retained current-reconstruction fugacity-only states and applies the staged numerical and physical gates. | Evaluates 84 fixed-state rows. | No direct dependency; reads the retained fixed-state table. |
+| `render_issue17_enhancement_comparison.py` | Renders the three issue 17 equation-comparison figures from the retained 84-row table. | No. | No direct dependency. |
+| `resolve_concentration_bases.py` | Reconstructs prepared, loaded analytical, and free-MEA concentration bases for Putta/Luo labels and retained NCCC Case 3C states. | Reconstructs retained nine-species states. | Requires the certified reactive ePC-SAFT table. |
+| `resolve_issue35_transport.py` | Reconstructs source-labeled diffusivity, density, and viscosity inputs and retains the unequal-ion closure decision. | No. | No. |
+| `resolve_issue40_apparent_true_species.py` | Maps retained apparent Case 3C inputs to one authoritative packet-bound nine-species single-liquid state while retaining unresolved and out-of-domain rows. | Yes, one packet-bound state plus replay. | Requires Python 3.13 with the immutable handoff wheel installed. |
+| `resolve_issue41_reversible_kinetics.py` | Retains source-rate laws, exact reaction projections, raw-observation availability, provider K(T), and packet-bound blockers. | No. | No direct ePC-SAFT dependency; reads the immutable handoff archive. |
+| `resolve_issue42_film_transport.py` | Retains species-resolved transport source records and the blocked Candidate A/B film-transport decision. | No. | No ePC-SAFT package or parameter identity is used. |
+| `resolve_issue36_film_input_release.py` | Retains the packet-bound Work Package B release decision and five typed state-level blockers. | No physical calculation. | Verifies the immutable handoff archive; no package import is used. |
+| `resolve_issue30_film_validation_gate.py` | Retains the supported-negative Issue 30 no-run gate across seven predeclared film-validation case classes. | No physical calculation. | Verifies the accepted Issue 36 result and no-run boundary; no package import is used. |
 
 Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
 
@@ -44,11 +57,23 @@ export MEA_EPCSAFT_DATASET_NAME="MEA_CO2_H2O_ionic_fit"
 
 Runtime derivative and Born-model option matrices are not supported by API 0.2. CppAD is the sole production derivative authority; alternative model families require separately identified parameter documents.
 
-Run the column-level electrolyte configuration matrix and regenerate the pure-component and binary-interaction parameter provenance tables:
+Regenerate the current ePC-SAFT 0.2 fixed-state table and one bounded ionic/fixed-chemistry column row:
 
 ```bash
-uv run python analyses/nccc_validation/scripts/run_epcsaft_electrolyte_config_matrix.py
+uv run python analyses/nccc_validation/scripts/generate_epcsaft_v02_validation.py
 ```
+
+This command writes `epcsaft_v02_contribution_table.csv` and
+`epcsaft_v02_column_row.csv`. The provider parameter fingerprint is labeled
+checkout-path-local; the dataset and generated parameter-document SHA-256
+values are the portable identities. `run_directory_at_generation` records the
+disposable run path used by the command; it is not a retained artifact. The
+final CSVs and their immutable identities are retained. The two current tables
+validate fixed chemistry and configuration plumbing only. They do not
+establish predictive reactive chemistry, predictive absorber performance, or
+parameter accuracy.
+The incompatible pre-0.2 generators were removed; their tables remain listed
+under `historical_outputs` in `analysis.yaml` for provenance only.
 
 Regenerate plot-ready tables from curated inputs or available run folders:
 
@@ -109,14 +134,191 @@ uv run python analyses/nccc_validation/scripts/generate_clean_profile_csvs.py --
 This script writes each case row as soon as it finishes. If a case exceeds the default 60-second subprocess timeout or errors, the row is logged as a failed diagnostic result and the script continues to the next case. Use `--per-case-timeout-s <seconds>` only when intentionally running a longer diagnostic probe.
 It also writes `profile_runtime_index.csv` and refreshes each profile folder's `profile_manifest.json` / `profile_manifest.csv` with `runtime_s` and a human-readable `runtime_label`.
 
-Validate the analysis artifacts used by the manuscript:
+Validate the analysis results used by the manuscript:
 
 ```bash
 uv run python analyses/nccc_validation/scripts/validate_results.py
 ```
 
+Generate and render the retained reactive Case 3C diagnosis after its named
+run folders are present:
+
+```bash
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_retained_reactive_case3c.py
+uv run python analyses/nccc_validation/scripts/render_retained_reactive_case3c_diagnosis.py
+```
+
+Run the enhancement/interface consistency experiment from issue 16:
+
+```bash
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_enhancement_consistency.py
+uv run python analyses/nccc_validation/scripts/render_enhancement_consistency.py
+uv run pytest -q analyses/nccc_validation/tests/test_enhancement_consistency.py
+```
+
+Regenerate the issue 17 fixed-state comparison and its three retained-table
+figures:
+
+```bash
+uv run python analyses/nccc_validation/scripts/analyze_issue17_enhancement_comparison.py
+uv run python analyses/nccc_validation/scripts/render_issue17_enhancement_comparison.py
+uv run pytest -q analyses/nccc_validation/tests/test_issue17_enhancement_comparison.py
+```
+
+The historical 89.832629% row lacks a retained ePC-SAFT wheel identity and
+dense profile. Issue 17 therefore uses the separately named
+`current_fugacity_only_reconstruction_b2d6636` input snapshot; its exact
+identity and the historical gap are recorded in
+`inputs/issue17_enhancement_comparison/identity.json`. The retained 101-state
+profile supplies the 21 exact positions at 0.05 intervals, including both
+boundaries.
+
+Run the three-position direct-boundary numerical gate:
+
+```bash
+MEA_EPCSAFT_DATASET_NAME=MEA_CO2_H2O_retained_predictive \
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/analyze_reactive_film.py --numerical-gate --case-timeout-s 10
+```
+
+This issue 16 command consumes the public exact fixed-\(T,P\) derivative and
+writes `issue16_exact_reactive_film_*` outputs. It retains every failed row and
+returns nonzero when a physical or numerical gate fails. The prior Stage A
+tables remain unchanged. Gate and immutable-input identities are in
+`issue16_reactive_film_gate.csv` and
+`inputs/issue16_reactive_film_identity.json`;
+all placeholder-dependent evidence is `provisional_concept_only`.
+
+Resolve the Issue 42 source-only species-resolved film-transport record:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue42_film_transport.py
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue42-only
+```
+
+This command rehashes the seven retained local source PDFs, replays the Issue
+35 correlation table exactly, and inventories molecular, ionic, mobility-law,
+density, and viscosity transport records. Candidate A remains blocked without
+source-complete nine-species effective diffusivities or a source-defined ionic
+lump. Candidate B remains blocked without a complete primary unequal-ion
+mobility/friction law. The five declared states remain `not_attempted`, so no
+film flux, species flux, uncertainty interval, residual, transport selection,
+or capture result is retained.
+
+Resolve the Issue 36 packet-bound film-input release decision:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue36_film_input_release.py \
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue36-only
+```
+
+The result verifies the immutable bundle, records the Work Package A owner and exact #40/#41/#42 identities, and retains five blocked state rows. It creates no `data/reference/MEA/film_chemistry_inputs/2` release files; bulk equilibrium, detailed balance, rate comparison, transport comparison, uncertainty propagation, and downstream issue #30 remain blocked.
+
+Retain the Issue 30 supported-negative film-validation gate without running a physical campaign:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue30_film_validation_gate.py
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue30-only
+```
+
+The gate retains all seven predeclared case classes as `not_attempted`, distinguishes dependency-blocked or incomplete evidence from model disagreement, records zero admitted physical states, and blocks column replacement and downstream Issue 31 execution. It creates no film values or physical run outputs.
+
+Resolve the Issue 33 concentration bases and retain the source table:
+
+```bash
+MEA_EPCSAFT_REACTIVE_TABLE=analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv \
+uv run python analyses/nccc_validation/scripts/resolve_concentration_bases.py
+```
+
+The input record `inputs/issue33_concentration_basis.json` keeps the equations,
+source locators, Zotero attachment hashes, density observations, uncertainty,
+and admission rules. The output table reports Putta's nominal 1 M and 5 M
+labels plus Case 3C positions 0, 0.5, and 1. Position 1 retains the computed
+`4.889309897097635 mol/L` analytical MEA concentration and its separate free
+MEA concentration; it is not rounded or admitted as exact 5 M. Every row
+remains `basis_unresolved` until the missing preparation-temperature and
+prepared-to-loaded-volume evidence is supplied.
+
+Regenerate the Issue 34 source-faithful kinetics and reaction-partition record:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue34_kinetics.py
+```
+
+This retains the Putta F1/F2 relationships, rejects the printed third-order
+`s^-2` coefficient unit by dimensional reconstruction, records the unavailable
+Gondal F3 coefficient as a supported negative, and keeps unresolved film
+timescales and aggregate rate comparisons out of physical film adoption. The
+source-correlation arithmetic reconstruction table is explicitly not a
+physical kinetic or transport sensitivity study. It also refreshes the
+source-faithful report at
+`results/final/reports/issue34_reaction_kinetics.md`.
+
+Regenerate the Issue 35 source-faithful transport-input and unequal-ion closure record:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue35_transport.py
+```
+
+This retains the Luo/Snijder/Amundsen source reconstructions, density and viscosity observations, the blocked Putta N2O analogy, and the unattributed legacy ion-scalar rejection. Candidate B remains non-executable until a complete mobility law, unequal-ion inputs, and an accepted true-species basis are available. No physical flux comparison or transport adoption is performed.
+
+Resolve the Issue 40 apparent-to-true species mapping with the supplied immutable handoff bundle:
+
+```bash
+python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py \
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+```
+
+After committing the generated result artifacts separately from the source
+revision, run the retained-output/source-lineage consistency validator:
+
+```bash
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue40-only
+```
+
+This validator rehashes the current source inputs and result table against the
+recorded identities; it is not an independent physical reproduction.
+
+Install the bundle wheel in an isolated Python 3.13 environment first and run
+the bundle verifier. The resolver verifies the outer and member hashes and the
+installed wheel hash before solving. It retains all five Issue 33 source rows,
+evaluates only the in-domain Position 1 state as one finite liquid phase, and
+keeps every row `basis_unresolved` for scientific admission. Its result table
+records the fixed species order, explicit apparent transform, source reporting
+interval status, true concentrations, inverse residuals, branch identity,
+replay identity, exact source values, and the no-capture/no-fit boundary.
+
+Morgan's 7.3% campaign uncertainty is used only for the diagnostic unloaded
+concentration at each local state temperature; it is not a prepared-concentration
+result or a loaded-versus-5 M admission basis. The NCCC preparation temperature is
+unreported, so true prepared concentration remains unresolved. Amundsen's
+instrument density uncertainty is kept separate from its combined relative
+estimates, which are converted row-wise for the diagnostic local-state density.
+
+Resolve the Issue 41 source-rate evidence and packet-consistent reversible
+kinetics record:
+
+```bash
+uv run python analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py \
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+uv run python analyses/nccc_validation/scripts/validate_results.py --issue41-only
+```
+
+This command reads the immutable bundle archive and the retained Issue 34/40
+artifacts without importing ePC-SAFT. It writes the fixed stoichiometric
+projections, five source-rate rows, 23-row raw/aggregate observation inventory,
+nine provider `K(T)` rows, five predeclared estimation/validation rows, and
+five packet comparison rows. The result is supported-negative: F3 has no
+recovered coefficient, no row-level rate fit is possible, and all packet rows
+remain `basis_unresolved`, so detailed balance and physical film rates are not
+evaluated.
+
 ## Result Semantics
 
 The clean profile gallery contains accepted validation rows and explicitly accepted fallback rows used in the manuscript. Diagnostic or unresolved rows stay in final tables and reports, but they are not mixed into the clean profile gallery unless the caveat is explicit in the profile index.
 
-The dense profile CSV folders are run artifacts, not summary tables. Use them to inspect how internal variables change with column position; use `verified_*.csv`, `raw_*.csv`, and `plot_*.csv` for manuscript validation metrics and figure generation.
+The dense profile CSV folders are run outputs, not summary tables. Use them to inspect how internal variables change with column position; use `verified_*.csv`, `raw_*.csv`, and `plot_*.csv` for manuscript validation metrics and figure generation.

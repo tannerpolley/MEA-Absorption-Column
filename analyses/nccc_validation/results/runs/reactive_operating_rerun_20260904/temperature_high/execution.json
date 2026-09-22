@@ -1,0 +1,12 @@
+{
+  "returncode": 0,
+  "timeout_s": 900,
+  "command": [
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/nccc_validation/scripts/run_reactive_column.py",
+    "--inputs",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/nccc_validation/results/runs/reactive_operating_rerun_20260904/temperature_high_inputs.csv",
+    "--output",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/nccc_validation/results/runs/reactive_operating_rerun_20260904/temperature_high"
+  ]
+}

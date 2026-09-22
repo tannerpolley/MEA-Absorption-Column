@@ -1,0 +1,29 @@
+{
+  "physical_state": [
+    4.087096190146402,
+    75.2853477794609,
+    1.7417130263823344,
+    1.6681384637478156,
+    325.0,
+    316.75,
+    109500.0
+  ],
+  "before_scipy_forward_difference_including_base": {
+    "wall_s": 65.86216454399982,
+    "queries": 8,
+    "cache_hits": 0,
+    "native_solves": 56,
+    "native_seconds": 60.82013446900419,
+    "warm_starts": 0
+  },
+  "after_native_assembly_with_evaluated_base": {
+    "wall_s": 0.017561665999892284,
+    "additional_native_solves": 0,
+    "queries": 2,
+    "cache_hits": 1,
+    "native_solves": 7,
+    "native_seconds": 7.3918936110003415,
+    "warm_starts": 0
+  },
+  "scope": "Same corrected physical equations; single point; column speedup not inferred; after time includes symbolic assembly."
+}

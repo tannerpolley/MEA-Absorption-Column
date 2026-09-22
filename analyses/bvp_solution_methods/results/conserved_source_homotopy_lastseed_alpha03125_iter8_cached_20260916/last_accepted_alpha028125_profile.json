@@ -1,0 +1,125 @@
+{
+  "physical_inputs": {
+    "case_id": "corrected published 2017 3C",
+    "height_m": 6.0,
+    "area_m2": 0.3216990877275948,
+    "packing": [
+      250.0,
+      0.97,
+      0.203,
+      0.35,
+      0.017,
+      0.292,
+      0.119
+    ],
+    "liquid_feed_mol_s": [
+      2.4323205276203805,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "vapor_feed_mol_s": [
+      1.6540435157308098,
+      1.5624169375299577,
+      14.530683358624426,
+      1.6006872732878803
+    ],
+    "liquid_temperature_k": 318.15,
+    "vapor_temperature_k": 316.75,
+    "bottom_pressure_pa": 110900.0,
+    "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+    "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+    "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+    "reported_top_pressure_pa": 109500.0,
+    "liquid_branch_policy": {
+      "loading_anchor": 0.25,
+      "max_log_loading_step": 0.1,
+      "max_loading_steps": 32
+    },
+    "species_diffusivity_model": {
+      "co2_prefactor_m2_s": 3.14e-07,
+      "co2_activation_j_mol": 15230.0,
+      "gas_constant_j_mol_k": 8.314462618,
+      "other_species_m2_s": [
+        8.8e-10,
+        8.8e-10,
+        8.4e-10,
+        6.8e-10,
+        6.8e-10,
+        6.8e-10,
+        1.8439088914585774e-09,
+        1.8439088914585774e-09
+      ],
+      "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+    }
+  },
+  "grid": [
+    0.0,
+    3.0,
+    6.0
+  ],
+  "profile": [
+    [
+      3.4524783599208666,
+      3.0181824132368016,
+      2.4323205276203805
+    ],
+    [
+      75.82260797080909,
+      80.50265353623627,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.2197475690467445,
+      0.6338856834303235
+    ],
+    [
+      1.5624169375299577,
+      6.242462502957124,
+      2.7150014740124266
+    ],
+    [
+      321.7323276709458,
+      346.48721987653283,
+      318.15
+    ],
+    [
+      316.75,
+      345.2017200324383,
+      325.92938714691815
+    ],
+    [
+      110900.0,
+      110766.95409410448,
+      110633.85240340233
+    ],
+    [
+      0.0530063212045794,
+      0.0478472151277804,
+      0.05271513799860581
+    ],
+    [
+      0.010199789369659817,
+      0.003935914922694926,
+      0.015114520834726418
+    ],
+    [
+      -0.0422097705619001,
+      -0.10904180291273904,
+      0.22552749513410456
+    ],
+    [
+      5718.448133400393,
+      24521.619205585877,
+      -59581.191507074764
+    ],
+    [
+      0.3957752562678014,
+      0.21847934611649855,
+      0.6560847701607729
+    ]
+  ],
+  "seed_source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_source_homotopy_secant_alpha03125_cached_20260916/attempt.json",
+  "seed_source_multiplier": 0.28125,
+  "seed_claim": "last accepted artificial-source stage; direct-seed continuation only"
+}

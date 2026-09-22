@@ -1,0 +1,17 @@
+{
+  "reason": "Explicit supervisor delivery: shared local loading-path evaluation; default full-film equations unchanged",
+  "source_task": "01a0686d-8e35-7e43-a451-fad261638d00",
+  "source_root": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column",
+  "previous_file_sha256": {
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "b32fcb9edcf2d30b13d39254d1ea8e7a49239e322992b57543a16b30314e4a08",
+    "src/mea_absorption_column/BVP/Coupled_Column.py": "52a657362dee514dfffacc5a844e2527c1cca93c588682b5b1486c99f5d8bbac",
+    "src/mea_absorption_column/Transport/Enhancement_Factor.py": "59dd0cb3c56d36b3c411a917133e74512e27e9b22ec7fa6ca58c9d668f03f40b"
+  },
+  "file_sha256": {
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "26941095b1a30dd50e11b170a785ffc7e6ae43a74c88821dcbbc47b74400f172",
+    "src/mea_absorption_column/BVP/Coupled_Column.py": "72ba7324aa5291cf0c6a16ad5e97fb421072f2034d3f41fa55d25a3078315964",
+    "src/mea_absorption_column/Transport/Enhancement_Factor.py": "82a8012487018cf5722b381ec409f782a6c5c4df7c1097ffff52c88e15873c39"
+  },
+  "newly_frozen_paths": [],
+  "method_reconciliation": "Local centered extension retained; inline/CSE Jacobian already matches the supplied trapezoidal changes"
+}

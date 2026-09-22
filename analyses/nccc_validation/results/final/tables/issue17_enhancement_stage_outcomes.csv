@@ -1,0 +1,7 @@
+stage,attempted,stopped_by,outcome,diagnostic,claim_strength
+0,yes,none,evaluated,historical package/profile identity gap retained; separately named current reconstruction retained,result
+1,yes,none,evaluated,84 formulation/state rows evaluated on 21 identical current-reconstruction states,result
+2,yes,physical_check,physical_invalidity,21 rows violate E >= 1,boundary_at_state
+3,yes,none,evaluated,fixed-state aggregates and three table-derived figures retained,result
+4,no,physical_check,not_attempted,Stage 2 physical gate failed; controlled column variants were not run,not_established
+5,no,physical_check,not_attempted,"A retained reactive profile exists, but the required Stage 2/4 sequence did not pass; the reactive repeat was not run",not_established

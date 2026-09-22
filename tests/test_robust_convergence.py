@@ -121,6 +121,53 @@ def test_scipy_bvp_positive_transform_clips_initial_profile_before_solving(monke
     assert "initial_guess" in captured
 
 
+def test_scipy_bvp_preserves_sampled_return_and_records_adaptive_native_profile(monkeypatch):
+    sampled_grid = np.linspace(0.0, 1.0, 5)
+    adaptive_grid = np.array([0.0, 0.2, 0.65, 1.0])
+    adaptive_state = np.vstack(
+        [np.linspace(index + 1.0, index + 2.0, adaptive_grid.size) for index in range(7)]
+    )
+
+    class FakeSolution:
+        success = True
+        message = "ok"
+        status = 0
+        niter = 2
+        rms_residuals = np.array([0.1])
+
+        def __init__(self):
+            self.x = adaptive_grid
+            self.y = adaptive_state
+
+        def sol(self, query):
+            query = np.asarray(query, dtype=float)
+            return np.vstack([
+                np.interp(query, self.x, row)
+                for row in self.y
+            ])
+
+    monkeypatch.setattr(scipy_bvp_module, "solve_bvp", lambda *_args, **_kwargs: FakeSolution())
+    diagnostics = {}
+    parameters = (np.ones(7), None, None, None, None, None, {"solver_diagnostics": diagnostics})
+
+    sampled_state, returned_grid, _, success, _ = scipy_bvp_module.scipy_BVP_solve(
+        np.ones(7),
+        np.ones(7),
+        sampled_grid,
+        parameters,
+        settings={"mesh_points": 3},
+    )
+
+    assert success is True
+    assert returned_grid.shape == sampled_grid.shape
+    assert sampled_state.shape == (7, sampled_grid.size)
+    native = diagnostics["native_profile"]
+    assert native["grid"].shape == adaptive_grid.shape
+    assert native["state_matrix_scaled"].shape == adaptive_state.shape
+    assert np.allclose(native["grid"], adaptive_grid)
+    assert np.allclose(native["state_matrix_scaled"], adaptive_state)
+
+
 def test_sanitize_scaled_state_clips_flows_and_pressure_without_mutating_input():
     original = np.array([-1.0, -0.5, 0.0, -0.25, 1.0e5, 2.0e5, -10.0])
     scales = np.array([10.0, 10.0, 2.0, 2.0, 1.0e6, 1.0e6, 1.0e5])
@@ -454,7 +501,7 @@ def test_collocation_success_gate_accepts_low_residual_final_iterate():
         message="A singular Jacobian encountered when solving the collocation system.",
         boundary_residual_norm=0.04,
         capture_error_pct=0.1,
-        settings={},
+        settings={"accept_low_residual_final_iterate": True},
     )
 
     assert success is True
@@ -468,7 +515,7 @@ def test_collocation_success_gate_rejects_large_capture_error_even_with_low_boun
         message="A singular Jacobian encountered when solving the collocation system.",
         boundary_residual_norm=0.04,
         capture_error_pct=7.0,
-        settings={},
+        settings={"accept_low_residual_final_iterate": True, "accept_capture_error_max_pct": 5.0},
     )
 
     assert success is False
@@ -482,7 +529,7 @@ def test_collocation_low_residual_acceptance_uses_explicit_capture_gate():
         message="A singular Jacobian encountered when solving the collocation system.",
         boundary_residual_norm=0.04,
         capture_error_pct=6.5,
-        settings={"success_capture_error_max_pct": 8.0},
+        settings={"accept_low_residual_final_iterate": True, "success_capture_error_max_pct": 8.0},
     )
 
     assert success is True
@@ -726,3 +773,13 @@ def test_run_model_accepts_documented_calibration_factor_settings():
     assert result.success is True
     assert calls[0]["solver_settings"]["mass_transfer_factor"] == 0.5
     assert calls[0]["solver_settings"]["heat_transfer_factor"] == 0.8
+
+
+@pytest.mark.parametrize("method", ["single", "finite", "scipy-bvp"])
+def test_research_capture_agreement_is_opt_in(method):
+    args = dict(method=method, solver_success=True, message="converged",
+                boundary_residual_norm=0.0, capture_error_pct=50.0)
+    assert _apply_method_success_gates(**args, settings={})[0]
+    assert not _apply_method_success_gates(**args, settings={"success_capture_error_max_pct": 10.0})[0]
+    args.update(solver_success=False)
+    assert not _apply_method_success_gates(**args, settings={})[0]

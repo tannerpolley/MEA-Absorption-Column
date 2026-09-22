@@ -1,0 +1,199 @@
+{
+  "claim_label": "packet_bound_apparent_to_true_species_mapping_with_basis_unresolved_admission",
+  "analysis": "nccc_validation",
+  "issue": 40,
+  "rows": 5,
+  "generator_sha256": "96a3b2f77fb2b576825962cf1c36fed703425f73863706d2e8c13eed9faffc6e",
+  "source_repository_commit": "a98bdc43af8aefe46d2c3e746354fc19c63f7509",
+  "source_worktree_clean_at_generation": true,
+  "source_revision_protocol": "Run the resolver from a clean source commit; commit the generated result artifacts separately. The recorded source commit is not the result-containing commit.",
+  "machine": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+  "workers": 1,
+  "reproduction_command": "python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+  "bundle": {
+    "outer_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+    "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+    "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+    "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
+    "parameter_fingerprint": "sha256:c1fc2665e94d136eb85f27c793b7defbd16d1d82cb3173cb50a9aaf6513c8940",
+    "chemistry_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c"
+  },
+  "source_inputs": {
+    "config_sha256": "4cdc29a5ae5f95624f70010c016c8d6637fe93cbc90f87247975f04710c5303d",
+    "issue33_table_sha256": "1d8c6cc7ff3a801a8b8e1975a6b7f8618ae2bcef3a01a63df08c49bdfeb09b1d",
+    "issue33_summary_sha256": "28363ae5d9b18b93b03988976abdba14d4e6035ebfac224962b685258c8bc75e",
+    "retained_profile_sha256": "2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a"
+  },
+  "species_order": [
+    "carbon-dioxide",
+    "monoethanolamine",
+    "water",
+    "protonated-monoethanolamine",
+    "carbamate-anion",
+    "bicarbonate-anion",
+    "carbonate-anion",
+    "hydronium-cation",
+    "hydroxide-anion"
+  ],
+  "species_short_name_order": [
+    "CO2",
+    "MEA",
+    "H2O",
+    "MEAH+",
+    "MEACOO-",
+    "HCO3-",
+    "CO3^2-",
+    "H3O+",
+    "OH-"
+  ],
+  "apparent_transform": {
+    "description": "Each row is a linear total of true-species concentrations in the fixed nine-species order.",
+    "row_order": [
+      "analytical_MEA",
+      "total_inorganic_carbon",
+      "water_equivalent",
+      "elemental_C",
+      "elemental_N",
+      "charge"
+    ],
+    "matrix": [
+      [
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        1,
+        2,
+        0,
+        2,
+        3,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        -1,
+        -1,
+        -2,
+        1,
+        -1
+      ]
+    ],
+    "apparent_input_order": [
+      "total_inorganic_carbon",
+      "analytical_MEA",
+      "water_equivalent"
+    ],
+    "apparent_input_basis": "normalized component flow amounts, mol per mol analytical MEA; CO2 flow is the source apparent total inorganic carbon"
+  },
+  "state_domain": {
+    "temperature_K": [
+      293.15,
+      323.15
+    ],
+    "loading_mol_CO2_per_mol_MEA": [
+      0.0,
+      0.5
+    ],
+    "pressure_source": "retained Case 3C source input; no experimental reporting interval retained",
+    "basis": "one reactive single-liquid state at specified T, P, and apparent component feed"
+  },
+  "row_counts": {
+    "source_rows": 5,
+    "literature_label_rows": 2,
+    "retained_case3c_rows": 3,
+    "packet_candidate_rows": 1,
+    "packet_evaluated_rows": 1,
+    "packet_non_evaluable_rows": 0,
+    "packet_not_attempted_rows": 4,
+    "scientifically_admitted_rows": 0,
+    "basis_unresolved_rows": 5
+  },
+  "gates": {
+    "fixed_nine_species_order": true,
+    "single_liquid_only": true,
+    "vle_fugacity_equality_imposed": false,
+    "position_1_exact_source_analytical_mol_L": 4.889309897097635,
+    "position_1_exact_source_free_MEA_mol_L": 2.491683471902737,
+    "position_1_issue33_reconstructed_true_species_loading": 0.24999627615967537,
+    "position_1_apparent_flow_ratio": 0.25000000000000006,
+    "position_1_apparent_minus_issue33_loading": 3.7238403246819818e-06,
+    "loading_and_apparent_ratio_distinct_not_relabelled_or_fitted": true,
+    "position_1_source_basis_unresolved": true,
+    "packet_evaluated_at_least_one_row": true,
+    "analytical_and_elemental_residual_pass": true,
+    "mole_fraction_normalization_pass": true,
+    "charge_residual_pass": true,
+    "deterministic_replay_pass": true,
+    "replay_branch_match_pass": true,
+    "no_capture_inference": true,
+    "no_thermo_or_kinetic_fit": true
+  },
+  "packet_state_evidence": {
+    "state_packet_observation_count": 123,
+    "state_packet_is_historical_evidence_only": true,
+    "non_evaluable_state_table_sha256": "7319794109bf25b253a9e9362788574b009803df7fe9326a93499b20ad3f3fc9",
+    "non_evaluable_state_count": 31
+  },
+  "unresolved_rows": [
+    "Putta2016_1M",
+    "Putta2016_5M",
+    "Case3C_position_0",
+    "Case3C_position_0.5",
+    "Case3C_position_1"
+  ],
+  "failure_rows": [],
+  "limitations": [
+    "The Position 1 packet mapping is evaluated but is not a prepared/loaded concentration admission because NCCC preparation temperature and prepared-to-loaded volume basis remain unreported.",
+    "The two out-of-domain Case 3C profile rows and two source-only Putta labels are retained as not attempted or unresolved rows; no row is silently dropped.",
+    "The apparent-to-true transform is a conserved-total forward map plus packet equilibrium inverse reconstruction; it is not an algebraic unique inverse of the rank-deficient transform.",
+    "The historical packet contains non-evaluable states; those states are retained as evidence and no historical continuation state is reused as a process-column initial condition.",
+    "No vapor phase, VLE fugacity equality, packed-column capture, transport, area, hydraulic, or fitted quantity is used."
+  ],
+  "result_table_sha256": "231e103ad50994041f8cb7752841b56740701409ecf3eeafdf8ce65b56165848"
+}

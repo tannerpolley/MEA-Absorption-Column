@@ -1,0 +1,26 @@
+{
+  "reason": "Explicit supervisor instruction: adopt reviewed charge-preserving seed wheel; preserve build commit",
+  "source_task": "01a0686d-8e35-7e43-a451-fad261638d00",
+  "previous_identity": {
+    "engine_commit": "c5d4e40161cb58268240984591e49bccc911b68f",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "f954221b874b473144f2f8ed317ebfd2a82c1e37c091c9c0696deca9a24c3853",
+    "core_sha256": "de91b518c5a464dee20d3fa3d38b6384caa7e32b526bb5b8aefd13d45f291cde"
+  },
+  "final_identity": {
+    "engine_commit": "a86ac6bb9507e771d27317622bbd62c0bc7c7f25",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "ee6c34b587edc117247c675666228d0b395f35dc9ba0f880f1efb4ab4219f4ae",
+    "core_sha256": "620020eadf7e2d209abbebab2fe941f4c408bce29a02d7b41ce7e539df6307e5"
+  },
+  "previous_file_sha256": {
+    "pyproject.toml": "29005ff31404ccbcf8ee1812181a650984fa57553cf03f30f66bc7e825dab361",
+    "uv.lock": "482535dc767312f31ebd5b848914b834627a9cc3be338c1d4c37d56e76930267",
+    "integration/epcsaft_contract.json": "a925c1a1853b4b6d4faf071d33cffc20d7b44ea3945d1c7a42c330f639e4b775"
+  },
+  "file_sha256": {
+    "pyproject.toml": "6bb85d3c323fa557c9b9d1bd7217df17df6e6434255fba9edf18876d000ac85c",
+    "uv.lock": "5f5a4a221000c1f3ed89bfd57d781b8418a31b0b7b99a5eb5b5879bd87f716cb",
+    "integration/epcsaft_contract.json": "b9e4cd0c42549153f11e9df92580f737a4eb962700710d4f3bd2672295534ca6"
+  }
+}

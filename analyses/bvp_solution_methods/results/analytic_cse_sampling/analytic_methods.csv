@@ -1,0 +1,9 @@
+method,initial_nodes,accepted,final_nodes,profile_samples,state_error_inf,boundary_residual_inf,algebraic_residual_inf,failure
+trapezoidal,9,True,9,9,0.0010331477576231984,0.0,0.0,
+trapezoidal,17,True,17,17,0.00025848653014326484,0.0,0.0,
+central,9,True,9,9,0.008731608958965076,0.0,0.0,
+central,17,True,17,17,0.0022469194785044166,0.0,0.0,
+shooting,9,True,5,28,9.37902422393222e-10,3.219646771412954e-13,0.0,
+shooting,17,True,5,36,9.37902422393222e-10,3.219646771412954e-13,0.0,
+collocation,9,True,33,65,3.579615492910193e-09,0.0,0.0,
+collocation,17,True,33,65,3.3946452315802844e-09,0.0,0.0,

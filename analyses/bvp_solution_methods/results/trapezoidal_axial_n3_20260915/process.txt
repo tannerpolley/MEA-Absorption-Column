@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/scripts/run_case.py", line 459, in <module>
+    main()
+    ~~~~^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/scripts/run_case.py", line 403, in main
+    worker(args, record, path)
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/scripts/run_case.py", line 104, in worker
+    model_hashes = source_identity()
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/scripts/run_case.py", line 69, in source_identity
+    changed = [p for p, h in expected.items() if digest(ROOT / p) != h]
+                                                 ~~~~~~^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/scripts/run_case.py", line 23, in digest
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+                          ~~~~~~~~~~~~~~~^^
+  File "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/lib/python3.13/pathlib/_abc.py", line 625, in read_bytes
+    with self.open(mode='rb') as f:
+         ~~~~~~~~~^^^^^^^^^^^
+  File "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_2026_09_03/adoption-receipt.json'

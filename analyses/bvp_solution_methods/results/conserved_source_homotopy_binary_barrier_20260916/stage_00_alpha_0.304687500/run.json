@@ -1,0 +1,1478 @@
+{
+  "run_id": "stage_00_alpha_0.304687500",
+  "method": "trapezoidal",
+  "settings": {
+    "stage": "column",
+    "nodes": 3,
+    "film_points": 3,
+    "initial_record": "/tmp/initial_record_case3c.json",
+    "initial_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_source_homotopy_binary_barrier_20260916/seed_alpha0296875_profile.json",
+    "tolerance": 1e-07,
+    "max_iterations": 8,
+    "max_nodes": 100,
+    "local_tolerance": 1e-09,
+    "local_solver_tolerance": 1e-11,
+    "local_evaluations": 30,
+    "max_condition": 1000000000000.0,
+    "ivp_rtol": 1e-07,
+    "ivp_atol": 1e-09,
+    "runner_source_sha256": "c762434f83828e7042586675e8ba637a23049b4b413c3bc6e99090997ae3229f",
+    "method_source_sha256": "f9097c3df67d0f7ee842ab224d7af27c16bbf6593d7a6f0b8fe52c74d96de0f2",
+    "case_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+    "initial_record_sha256": "acc2561d68f5abdca981f913ce00302aa922044db7e3584fcb4697f6649e13ec",
+    "state_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      300.0,
+      300.0,
+      110900.0,
+      0.97,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568,
+      1.0
+    ],
+    "balance_scale": [
+      0.40538675460339674,
+      12.82919875121526,
+      0.2756739192884683,
+      0.2604028229216596,
+      123497.93628109811,
+      10133.416784188732,
+      18483.333333333332
+    ],
+    "algebraic_scale": [
+      0.97,
+      1.8447310837197383e-05,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568
+    ],
+    "boundary_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      100.0,
+      100.0,
+      110900.0
+    ],
+    "lower": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      293.15,
+      293.15,
+      1.0,
+      2.1538326677728036e-16,
+      "-inf",
+      "-inf",
+      "-inf",
+      "-inf"
+    ],
+    "upper": [
+      "inf",
+      "inf",
+      "inf",
+      "inf",
+      393.15,
+      393.15,
+      10000000.0,
+      0.9699999999999998,
+      "inf",
+      "inf",
+      "inf",
+      "inf"
+    ],
+    "initial_state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ],
+    "initialization": "Retained profile interpolated as an outer numerical guess; full original equations apply",
+    "initial_profile_sha256": "1d88473726779908e704cdf4ae8bce829570663458c0a3ff92c7571d9495ea4c"
+  },
+  "execution_status": "completed",
+  "stage": "finished",
+  "result": {
+    "accepted": true,
+    "profile": [
+      [
+        3.473795047647864,
+        3.013244439662086,
+        2.4323205276203805
+      ],
+      [
+        75.2020856705759,
+        81.32241789466038,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.1934929077450316,
+        0.612568995703326
+      ],
+      [
+        1.5624169375299577,
+        7.68274916161446,
+        3.3355237742456385
+      ],
+      [
+        318.0430025377733,
+        351.0244440500433,
+        318.15
+      ],
+      [
+        316.75,
+        347.46246981851425,
+        329.02739260743965
+      ],
+      [
+        110900.0,
+        110747.34928814486,
+        110591.42224090142
+      ],
+      [
+        0.053953328072228704,
+        0.04720172672269783,
+        0.05271513856709622
+      ],
+      [
+        0.011340787680671984,
+        0.002534424010127677,
+        0.014909619643338123
+      ],
+      [
+        0.014616509230051295,
+        -0.19558577503105848,
+        0.32960911640799373
+      ],
+      [
+        -8106.866876025887,
+        45581.78062864652,
+        -84239.08126802849
+      ],
+      [
+        0.42436644403671847,
+        0.15165061631793036,
+        0.6486845822380726
+      ]
+    ],
+    "grid": [
+      0.0,
+      3.0,
+      6.0
+    ],
+    "status": "Solve_Succeeded",
+    "failure": null,
+    "profile_finite": true,
+    "defects": [
+      [
+        -2.275957200481571e-15,
+        -1.4432899320127035e-15
+      ],
+      [
+        -2.4158453015843406e-13,
+        -1.1901590823981678e-13
+      ],
+      [
+        -2.7200464103316335e-15,
+        -1.4432899320127035e-15
+      ],
+      [
+        -2.1760371282653068e-13,
+        -1.3145040611561853e-13
+      ],
+      [
+        7.35744833946228e-08,
+        6.007030606269836e-08
+      ],
+      [
+        5.2386894822120667e-08,
+        3.3760443329811096e-08
+      ],
+      [
+        -1.5347723092418164e-12,
+        -1.5063505998114124e-12
+      ]
+    ],
+    "algebraic_residual": [
+      [
+        -5.384581669432009e-15,
+        9.71445146547012e-16,
+        3.469446951953614e-17
+      ],
+      [
+        6.199222382717411e-19,
+        -1.6792428179316504e-19,
+        -2.964615315390051e-20
+      ],
+      [
+        -3.2240043967846077e-12,
+        -2.841564223504678e-12,
+        -6.4791921827733745e-15
+      ],
+      [
+        1.3557210909453943e-13,
+        5.005995618034831e-13,
+        2.6922908347160046e-14
+      ],
+      [
+        -9.094947017729282e-13,
+        2.764863893389702e-10,
+        -4.656612873077393e-10
+      ]
+    ],
+    "boundary_residual": [
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ]
+    ],
+    "bound_violation": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "balance_residual_per_length": [
+      [
+        -7.586524001605236e-16,
+        -4.810966440042345e-16
+      ],
+      [
+        -8.052817671947803e-14,
+        -3.967196941327226e-14
+      ],
+      [
+        -9.066821367772111e-16,
+        -4.810966440042345e-16
+      ],
+      [
+        -7.25345709421769e-14,
+        -4.3816802038539514e-14
+      ],
+      [
+        2.45248277982076e-08,
+        2.0023435354232788e-08
+      ],
+      [
+        1.7462298274040222e-08,
+        1.1253481109937033e-08
+      ],
+      [
+        -5.115907697472721e-13,
+        -5.021168666038042e-13
+      ]
+    ],
+    "scaled_residual_inf": 1.3725548227659399e-11,
+    "scaled_bound_violation_inf": 0.0,
+    "iterations": 4,
+    "solver_statistics": {
+      "iter_count": 4,
+      "iterations": {
+        "alpha_du": [
+          0.0,
+          0.9942568979303146,
+          0.9997663051294701,
+          1.0,
+          0.9999993628327151
+        ],
+        "alpha_pr": [
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "d_norm": [
+          0.0,
+          0.335122588743749,
+          0.06536964213895062,
+          0.0025896201529137367,
+          4.054139601268709e-06
+        ],
+        "inf_du": [
+          1.0,
+          4.920436125379436,
+          0.8478349318499905,
+          0.0027911506830463387,
+          6.5843576759221e-22
+        ],
+        "inf_pr": [
+          1.020137637458603,
+          0.01599791832505577,
+          0.0005019295082360346,
+          7.268606786094798e-07,
+          1.3725548227659399e-11
+        ],
+        "mu": [
+          1.0,
+          0.3819330118315884,
+          0.008712208552075365,
+          7.037240891257777e-05,
+          7.03918686837698e-11
+        ],
+        "obj": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "regularization_size": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "n_call_callback_fun": 5,
+      "n_call_nlp_f": 5,
+      "n_call_nlp_g": 5,
+      "n_call_nlp_grad": 0,
+      "n_call_nlp_grad_f": 5,
+      "n_call_nlp_jac_g": 5,
+      "n_call_total": 1,
+      "return_status": "Solve_Succeeded",
+      "success": true,
+      "t_proc_callback_fun": 0.004569,
+      "t_proc_nlp_f": 1.8e-05,
+      "t_proc_nlp_g": 31.032453,
+      "t_proc_nlp_grad": 0.0,
+      "t_proc_nlp_grad_f": 3.2e-05,
+      "t_proc_nlp_jac_g": 131.283725,
+      "t_proc_total": 162.329703,
+      "t_wall_callback_fun": 0.004582479,
+      "t_wall_nlp_f": 1.5089e-05,
+      "t_wall_nlp_g": 30.960183376,
+      "t_wall_nlp_grad": 0.0,
+      "t_wall_nlp_grad_f": 2.6171e-05,
+      "t_wall_nlp_jac_g": 134.990375693,
+      "t_wall_total": 165.961875383,
+      "unified_return_status": "SOLVER_RET_SUCCESS"
+    },
+    "scheme": "trapezoidal",
+    "boundary_slots": null,
+    "nlp_scaling_method": "none",
+    "defect_units": "B"
+  },
+  "physical_certification": {
+    "accepted": true,
+    "original_residuals": {
+      "material": [
+        [
+          0.0,
+          -4.440892098500626e-16,
+          -4.440892098500626e-16
+        ],
+        [
+          0.0,
+          2.842170943040401e-14,
+          1.4210854715202004e-14
+        ]
+      ],
+      "energy": [
+        0.0,
+        -2.2351741790771484e-08,
+        -4.842877388000488e-08
+      ],
+      "charge": [
+        1.152176566502662e-18,
+        -3.797883977251469e-19,
+        -9.57983675432773e-18,
+        3.239901023247699e-20,
+        -7.773856631663155e-18,
+        -1.6656902907755816e-18,
+        1.0427399097174064e-17,
+        -7.266907412731456e-18,
+        1.091666650333183e-18
+      ],
+      "interface": [
+        [
+          -5.384581669432009e-15,
+          9.71445146547012e-16,
+          3.469446951953614e-17
+        ],
+        [
+          6.199222382717411e-19,
+          -1.6792428179316504e-19,
+          -2.964615315390051e-20
+        ],
+        [
+          -3.2240043967846077e-12,
+          -2.841564223504678e-12,
+          -6.4791921827733745e-15
+        ],
+        [
+          1.3557210909453943e-13,
+          5.005995618034831e-13,
+          2.6922908347160046e-14
+        ],
+        [
+          -9.094947017729282e-13,
+          2.764863893389702e-10,
+          -4.656612873077393e-10
+        ]
+      ],
+      "boundary": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "scaled_residual_inf": {
+      "material": 3.692320669118395e-16,
+      "energy": 6.53570622829065e-14,
+      "charge": 1.0427399097174064e-17,
+      "interface": 1.3725548227659399e-11,
+      "boundary": 0.0
+    },
+    "criteria": {
+      "material": 1e-07,
+      "energy": 1e-07,
+      "charge": 1e-07,
+      "interface": 1e-07,
+      "boundary": 1e-07
+    },
+    "scope": "Native grid material/energy invariants, bulk/film-quadrature charge, interface, boundary and bounds; between-node accuracy still requires refinement",
+    "residual_units": {
+      "material": "mol/s",
+      "energy": "W",
+      "charge": "elementary charge mol per apparent feed mol",
+      "interface": "holdup fraction; mol/m/s; mol/m2/s; mol/m2/s; W/m2",
+      "boundary": "four mol/s; two K; Pa"
+    },
+    "conserved": [
+      [
+        3.473795047647864,
+        3.013244439662086,
+        2.4323205276203805
+      ],
+      [
+        75.2020856705759,
+        81.32241789466038,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.1934929077450316,
+        0.612568995703326
+      ],
+      [
+        1.5624169375299577,
+        7.68274916161446,
+        3.3355237742456385
+      ],
+      [
+        -27945473.68959326,
+        -29216414.122646123,
+        -27956668.334595133
+      ],
+      [
+        -1018337.2208407687,
+        -2289277.653893654,
+        -1029531.8658426895
+      ],
+      [
+        110900.0,
+        110747.34928814486,
+        110591.42224090142
+      ]
+    ],
+    "sources": [
+      [
+        -0.8204692014865412,
+        -0.1872312741062667,
+        -1.0838501060875474
+      ],
+      [
+        -1.0574570298092603,
+        14.448953178233946,
+        -23.960830948886805
+      ],
+      [
+        -0.8204692014865412,
+        -0.1872312741062667,
+        -1.0838501060875474
+      ],
+      [
+        -1.0574570298092603,
+        14.448953178233946,
+        -23.960830948886805
+      ],
+      [
+        586505.5214521509,
+        -3367366.6399269546,
+        6123733.4924144605
+      ],
+      [
+        586505.5214521509,
+        -3367366.6399269546,
+        6123733.4924144605
+      ],
+      [
+        -129.65228176466545,
+        -204.352694602129,
+        -136.8210156057445
+      ]
+    ]
+  },
+  "failure": null,
+  "limit_seconds": 600.0,
+  "measurements": {
+    "context": {
+      "hardware": {
+        "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+        "cpu_model": "AMD Ryzen 5 5500",
+        "logical_cpus": 12
+      },
+      "threads": {
+        "OMP_NUM_THREADS": null,
+        "OPENBLAS_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "software": {
+        "python": "3.13.13",
+        "numpy": "2.4.4",
+        "scipy": "1.17.1",
+        "casadi": "3.7.2",
+        "engine": {
+          "engine_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+          "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+          "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+          "reactive_inputs_sha256": {
+            "parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+            "reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+            "anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185",
+            "adoption-receipt.json": "bf178ed7b043e90dcca297ba9b80f1b262ef41bcdfe5e53af9211a1fe8b237e6",
+            "bundle.json": "19fe755463307b0df314f8a9e77b30a00e5b2f01adcc90a13b578f247f14fb05"
+          }
+        }
+      },
+      "scope": "One retained binary source-homotopy stage; current local runtime"
+    },
+    "setup_wall_s": 5.904914523000116,
+    "global_wall_s": 172.1540256139997,
+    "stage_wall_s": 188.3600952779998,
+    "cache_before": {
+      "epcsaft_cache_hits": 0,
+      "epcsaft_cache_misses": 0,
+      "epcsaft_direct_density_solve_s": 0.0,
+      "epcsaft_rho_guess_hits": 0,
+      "epcsaft_rho_guess_misses": 0
+    },
+    "cache_after": {
+      "epcsaft_cache_hits": 0,
+      "epcsaft_cache_misses": 0,
+      "epcsaft_direct_density_solve_s": 0.0,
+      "epcsaft_rho_guess_hits": 0,
+      "epcsaft_rho_guess_misses": 0
+    }
+  },
+  "problem": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "state_layout": [
+      "Fl_CO2_mol_s",
+      "Fl_H2O_mol_s",
+      "Fv_CO2_mol_s",
+      "Fv_H2O_mol_s",
+      "Tl_K",
+      "Tv_K",
+      "P_Pa",
+      "holdup",
+      "j_CO2_mol_m2_s",
+      "j_H2O_mol_m2_s",
+      "energy_flux_W_m2",
+      "interface_log_loading"
+    ],
+    "coordinate": "height_m_from_gas_inlet",
+    "model_source_sha256": {},
+    "engine_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "parameters_sha256": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+    "reference_sha256": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185"
+  },
+  "input_record": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "source_record": {
+      "path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_baseline.json",
+      "sha256": "df1dcaf5fe5c617663f62b1e23325fdc1c732b9dae03161bdb8f02a8c362adb0"
+    },
+    "model_input_row": {
+      "L": 2.088055555555556,
+      "G": 0.5591666666666667,
+      "alpha": 0.25,
+      "w_MEA": 0.3,
+      "y_CO2": 0.093,
+      "Tl": 318.15,
+      "Tv": 316.75,
+      "P": 110900.0,
+      "Beds": 1,
+      "Intercoolers": 0,
+      "CO2  %": 89.5,
+      "lean_solvent_temp_imputed": true,
+      "lean_solvent_temp_imputed_C": 45.0,
+      "y_O2": 0.09
+    },
+    "assumptions": [
+      "Tl318.15K is user-approved imputation, not measurement",
+      "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "Reported gasmass interpreted as totalwet mass; source moisture basis unspecified",
+      "Loaded liquid mass and unloaded wMEA basis; molar conversion uses current native molar masses",
+      "Pressure boundary is bottom/inlet110900Pa; measured top109500Pa reserved for comparison"
+    ],
+    "initial_bulk_state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.052715134432693156
+    ],
+    "initial_interface_bracket": [
+      0.0,
+      1.0
+    ],
+    "liquid_molar_masses_kg_mol": [
+      0.044009,
+      0.061084,
+      0.018015
+    ],
+    "vapor_molar_masses_kg_mol": [
+      0.04401,
+      0.01801528,
+      0.02801,
+      0.031999
+    ],
+    "mobility_basis": "Same nine species diffusivity estimates and harmonic-mean pair closure as the retained owner runner",
+    "source_runner_sha256": "2b6ff7c74450504e916284560dc006237d6a9f3a5027ccece0d446bbab93bf0d",
+    "physical_residual_tolerance": 1e-07,
+    "central_readiness_point": [
+      318.15,
+      110900.0,
+      5.277293318431409,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "claim_limits": {
+      "caloric_status": "provisional_shared_reference",
+      "caloric_limitation": "The coupled owner records an unresolved pure-water vapor Cp discrepancy. Thermal predictions remain provisional; comparisons assess numerical methods on the shared declared model.",
+      "source_record": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_coupled_shared.json"
+    }
+  },
+  "resolved_runtime": {},
+  "runtime_identity_verified": true,
+  "native_calls": {
+    "liquid_value_A1": {
+      "started": 284,
+      "returned": 284,
+      "failed": 0,
+      "wall_s": 148.66134007500114
+    },
+    "liquid_A2": {
+      "started": 45,
+      "returned": 45,
+      "failed": 0,
+      "wall_s": 33.45460310500857
+    },
+    "vapor_value_A1_H2": {
+      "started": 222,
+      "returned": 222,
+      "failed": 0,
+      "wall_s": 5.22480406300383
+    }
+  },
+  "native_counts_scope": "Native calls through the two shared callbacks; cumulative through verification. Timeout counts are the last saved snapshot.",
+  "initialization_evaluations": [],
+  "initial_guess_engine_identity": {
+    "actual_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "archive_hash_status": "verified_from_installed_contents",
+    "commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "commit_evidence": "not_available_from_installed_distribution",
+    "declared_archive_sha256": null,
+    "declared_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "declared_wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "expected_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "expected_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "installed_artifact_members": 26,
+    "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/lib/python3.13/site-packages",
+    "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "loaded_version": "0.2.0.dev0",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv",
+    "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+    "python_implementation": "cpython",
+    "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv",
+    "python_version": "3.13.13",
+    "required": true,
+    "status": "verified",
+    "verified_commit": null,
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "imported_initialization": {
+    "accepted": true,
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -6.1201044232461754e-15,
+      0.0,
+      0.0
+    ],
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ]
+  },
+  "initialization": {
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ],
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -6.1201044232461754e-15,
+      0.0,
+      0.0
+    ],
+    "accepted": true
+  },
+  "supplied_initial_profile": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "grid": [
+      0.0,
+      3.0,
+      6.0
+    ],
+    "profile": [
+      [
+        3.4676963672346055,
+        3.0188213022778028,
+        2.4323205276203805
+      ],
+      [
+        75.48446821103991,
+        80.97501218959907,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.2051684507740068,
+        0.6186676761165849
+      ],
+      [
+        1.5624169375299577,
+        7.052960916089112,
+        3.05314123378161
+      ],
+      [
+        319.7646213858587,
+        349.16837580009496,
+        318.15
+      ],
+      [
+        316.75,
+        346.65660494644493,
+        327.63290628812376
+      ],
+      [
+        110900.0,
+        110754.89986264262,
+        110608.06509583096
+      ],
+      [
+        0.05350776536232231,
+        0.047461220791817894,
+        0.0527151383441109
+      ],
+      [
+        0.01077351806933304,
+        0.00308745626267568,
+        0.01498364333508119
+      ],
+      [
+        -0.01077125171064343,
+        -0.1565204360608132,
+        0.282437167178488
+      ],
+      [
+        -1914.6094079551065,
+        36112.19844296189,
+        -73060.51189877004
+      ],
+      [
+        0.4098376087074787,
+        0.17890418606166122,
+        0.6513561499903736
+      ]
+    ],
+    "seed_source": "conserved_source_homotopy_halfstep_two_stage_20260916/attempt.json",
+    "seed_source_multiplier": 0.296875,
+    "seed_claim": "artificial source-homotopy numerical seed only"
+  },
+  "initial_profile": [
+    [
+      3.4676963672346055,
+      3.0188213022778028,
+      2.4323205276203805
+    ],
+    [
+      75.48446821103991,
+      80.97501218959907,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.2051684507740068,
+      0.6186676761165849
+    ],
+    [
+      1.5624169375299577,
+      7.052960916089112,
+      3.05314123378161
+    ],
+    [
+      319.7646213858587,
+      349.16837580009496,
+      318.15
+    ],
+    [
+      316.75,
+      346.65660494644493,
+      327.63290628812376
+    ],
+    [
+      110900.0,
+      110754.89986264262,
+      110608.06509583096
+    ],
+    [
+      0.05350776536232231,
+      0.047461220791817894,
+      0.0527151383441109
+    ],
+    [
+      0.01077351806933304,
+      0.00308745626267568,
+      0.01498364333508119
+    ],
+    [
+      -0.01077125171064343,
+      -0.1565204360608132,
+      0.282437167178488
+    ],
+    [
+      -1914.6094079551065,
+      36112.19844296189,
+      -73060.51189877004
+    ],
+    [
+      0.4098376087074787,
+      0.17890418606166122,
+      0.6513561499903736
+    ]
+  ],
+  "iteration_observations": [
+    {
+      "elapsed_s": 31.941518894000183,
+      "profile": [
+        [
+          3.4676963672346055,
+          3.0188213022778028,
+          2.4323205276203805
+        ],
+        [
+          75.48446821103991,
+          80.97501218959907,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.2051684507740068,
+          0.6186676761165849
+        ],
+        [
+          1.5624169375299577,
+          7.052960916089112,
+          3.05314123378161
+        ],
+        [
+          319.7646213858587,
+          349.16837580009496,
+          318.15
+        ],
+        [
+          316.75,
+          346.65660494644493,
+          327.63290628812376
+        ],
+        [
+          110900.0,
+          110754.89986264262,
+          110608.06509583096
+        ],
+        [
+          0.05350776536232231,
+          0.047461220791817894,
+          0.0527151383441109
+        ],
+        [
+          0.01077351806933304,
+          0.00308745626267568,
+          0.01498364333508119
+        ],
+        [
+          -0.01077125171064343,
+          -0.1565204360608132,
+          0.282437167178488
+        ],
+        [
+          -1914.6094079551065,
+          36112.19844296189,
+          -73060.51189877004
+        ],
+        [
+          0.4098376087074787,
+          0.17890418606166122,
+          0.6513561499903736
+        ]
+      ],
+      "scaled_residual_inf": 1.020137637458603
+    },
+    {
+      "elapsed_s": 64.52025340699947,
+      "profile": [
+        [
+          3.4739222747589067,
+          3.015577069089789,
+          2.4323205276203805
+        ],
+        [
+          75.2573924914509,
+          81.27153767881218,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.195698310061692,
+          0.6124417685922834
+        ],
+        [
+          1.5624169375299577,
+          7.576562124891232,
+          3.280216953370618
+        ],
+        [
+          318.39597309662713,
+          350.7865635028891,
+          318.15
+        ],
+        [
+          316.75,
+          347.43232210367023,
+          328.7751394441288
+        ],
+        [
+          110900.0,
+          110747.98367813624,
+          110592.99656538696
+        ],
+        [
+          0.05385787526490177,
+          0.047231850550355246,
+          0.052715138546002974
+        ],
+        [
+          0.011208404560165855,
+          0.002596301471874503,
+          0.014916877276969791
+        ],
+        [
+          0.010180827561904544,
+          -0.18817641872599888,
+          0.3204851117925195
+        ],
+        [
+          -7016.842892453561,
+          43805.400385671404,
+          -82075.7555991579
+        ],
+        [
+          0.4209268750448045,
+          0.15530973167076328,
+          0.6489455871083573
+        ]
+      ],
+      "scaled_residual_inf": 0.01599791832505577
+    },
+    {
+      "elapsed_s": 106.97234202300024,
+      "profile": [
+        [
+          3.473809735092272,
+          3.013338393308072,
+          2.4323205276203805
+        ],
+        [
+          75.20409390453905,
+          81.32037372797848,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1935721739466099,
+          0.6125543082589181
+        ],
+        [
+          1.5624169375299577,
+          7.6786967609694,
+          3.333515540282488
+        ],
+        [
+          318.0559617001478,
+          351.01478267874336,
+          318.15
+        ],
+        [
+          316.75,
+          347.46069506056506,
+          329.0183880008646
+        ],
+        [
+          110900.0,
+          110747.37352981525,
+          110591.48200623674
+        ],
+        [
+          0.05394971245128494,
+          0.04720301341132467,
+          0.05271513856629545
+        ],
+        [
+          0.011335647439089491,
+          0.002537020083889145,
+          0.014909816807915671
+        ],
+        [
+          0.01446903204406605,
+          -0.19532455269034465,
+          0.32927971810264584
+        ],
+        [
+          -8070.451646060428,
+          45519.04832474014,
+          -84160.98797855274
+        ],
+        [
+          0.4242352705674561,
+          0.15179329751696446,
+          0.6486916862721888
+        ]
+      ],
+      "scaled_residual_inf": 0.0005019295082360346
+    },
+    {
+      "elapsed_s": 136.810632789,
+      "profile": [
+        [
+          3.4737950665957054,
+          3.0132445852124654,
+          2.4323205276203805
+        ],
+        [
+          75.20208884055279,
+          81.32241473038093,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1934930343475698,
+          0.612568976755485
+        ],
+        [
+          1.5624169375299577,
+          7.68274282735808,
+          3.3355206042687255
+        ],
+        [
+          318.0430229354385,
+          351.02442913832715,
+          318.15
+        ],
+        [
+          316.75,
+          347.462467203352,
+          329.027378258988
+        ],
+        [
+          110900.0,
+          110747.34932601753,
+          110591.42233439587
+        ],
+        [
+          0.05395332241106487,
+          0.047201728691607645,
+          0.05271513856709499
+        ],
+        [
+          0.011340779632510808,
+          0.00253442799807772,
+          0.014909619980381372
+        ],
+        [
+          0.014616272124677109,
+          -0.19558536001572643,
+          0.32960859570015016
+        ],
+        [
+          -8106.808373225976,
+          45581.68099455573,
+          -84238.95781497392
+        ],
+        [
+          0.42436623886135855,
+          0.1516508380819828,
+          0.6486845943905144
+        ]
+      ],
+      "scaled_residual_inf": 7.268606786094798e-07
+    },
+    {
+      "elapsed_s": 166.3764557200011,
+      "profile": [
+        [
+          3.473795047647864,
+          3.013244439662086,
+          2.4323205276203805
+        ],
+        [
+          75.2020856705759,
+          81.32241789466038,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1934929077450316,
+          0.612568995703326
+        ],
+        [
+          1.5624169375299577,
+          7.68274916161446,
+          3.3355237742456385
+        ],
+        [
+          318.0430025377733,
+          351.0244440500433,
+          318.15
+        ],
+        [
+          316.75,
+          347.46246981851425,
+          329.02739260743965
+        ],
+        [
+          110900.0,
+          110747.34928814486,
+          110591.42224090142
+        ],
+        [
+          0.053953328072228704,
+          0.04720172672269783,
+          0.05271513856709622
+        ],
+        [
+          0.011340787680671984,
+          0.002534424010127677,
+          0.014909619643338123
+        ],
+        [
+          0.014616509230051295,
+          -0.19558577503105848,
+          0.32960911640799373
+        ],
+        [
+          -8106.866876025887,
+          45581.78062864652,
+          -84239.08126802849
+        ],
+        [
+          0.42436644403671847,
+          0.15165061631793036,
+          0.6486845822380726
+        ]
+      ],
+      "scaled_residual_inf": 1.3725548227659399e-11
+    }
+  ],
+  "termination": "Solve_Succeeded"
+}

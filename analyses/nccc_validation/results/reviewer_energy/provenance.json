@@ -1,0 +1,31 @@
+{
+  "input_sha256": {
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_reference/benchmark_results.csv": "313794ed210dcded1adc82e9cf7d65ddaafb9c1bec1aafdc402010763b1ed811",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_reference/run_identity.json": "6b1e713a7461b3c00798e746ee14d79d41345cb77cc30bf6735cab6d7c4cd56d",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_reference/profiles/NCCC_2017_cases/3C/scipy-bvp/ideal_henry/T.csv": "f344c4f973368bd4af1ea88dc7e53bd8e1e4ef221d955648a15d95666b9faaf1",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_reference/profiles/NCCC_2017_cases/3C/scipy-bvp/ideal_henry/Hl.csv": "3adf6f9df86daaa18c0b48eed8adc9b1b6b17325b006597024e00e92dcbe523c",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_reference/profiles/NCCC_2017_cases/3C/scipy-bvp/ideal_henry/Hv.csv": "ab16888cdb47cafea5c3db6b3b9b6ee88660ed8c7344216a1ac563e1376d44ae",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_refined/benchmark_results.csv": "c5f004e4850a687e7defa03b9b888d2efd67de403d09437b575d794a77a7283f",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_refined/run_identity.json": "b73a19fbef7af318e9daadcad64e34684dcee7bd222e79cf7c4ebd4aa23894d2",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_refined/profiles/NCCC_2017_cases/3C/scipy-bvp/ideal_henry/T.csv": "1323ae1a902f35674dd6513ca5d30febdc7a5fd0a6221a138fe8af7b76bc9e1d",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_refined/profiles/NCCC_2017_cases/3C/scipy-bvp/ideal_henry/Hl.csv": "bcfc04b3fa2af6e6c2b691edc55c3bd5980d8566fd2c25115e969d95478fea13",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_refined/profiles/NCCC_2017_cases/3C/scipy-bvp/ideal_henry/Hv.csv": "ed24700cdac08e4da5efa6eb4e5dd39eddc1fce245e6d1a7defcbb4d9ef49aa4",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/benchmark_results.csv": "6c11e4b140b59132c5a4e4b82072db94eab0b3ae4c74289b0ee71d9e4455b0dd",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/run_identity.json": "c4e956bb8139eff0190eba1fa41ad8c59e80fe5166eec372e8df8c79f42ef572",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/1C/scipy-bvp/ideal_henry/T.csv": "5695744ec107b0adc2fe2d785c7800b821782e11cc3d29afe01d083b8d128f43",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/1C/scipy-bvp/ideal_henry/Hl.csv": "d75761e0041489eb0736d2b15485adde47ae3839fddf0b5014814fb7640a181c",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/1C/scipy-bvp/ideal_henry/Hv.csv": "f4558e26b2881f241ee65635030626c6e0fb0021f096516dd3d4dbf8c899c3b8",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/2C/scipy-bvp/ideal_henry/T.csv": "c93b2a3e42039c2d852e5952f1615ac243b783bcc561e508990b1b342e089a75",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/2C/scipy-bvp/ideal_henry/Hl.csv": "9cad2827cd0a57e079aeda4622bac1babe00a135ed547a204c2ca055b761430c",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/2C/scipy-bvp/ideal_henry/Hv.csv": "cad6d865fb425ac93621876c29391ef9cbb059af3d88afd6f99af3efec3b88d5",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/4C/scipy-bvp/ideal_henry/T.csv": "c5868517e4fa4d1f350cd3460792b97a531d1ccd55cfe65afed70969f972e45b",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/4C/scipy-bvp/ideal_henry/Hl.csv": "38292e3d689fb429fceeb4d5935edc29efcc8fa85e0b2b5a80943bf3431e6bda",
+    "analyses/nccc_validation/results/runs/energy_corrected_additional_henry/profiles/NCCC_2017_cases/4C/scipy-bvp/ideal_henry/Hv.csv": "2794b791d2a41a7c973e5d76173af7b28cfce7113d79cc4917163c87f600c546",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_method_attempts/benchmark_results.csv": "637375b1c8d8668c4aa7e65f46c090d6191bdac9f164177f9ae59b560f456dea",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_method_attempts/run_identity.json": "7c0bac712cd2cdba53ca5e97b60ee2a3bb76ae95b35464994ea5e4610150e317",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_reactive_diagnostic/benchmark_results.csv": "7922628bffda78ec66453e4392e2616dd7bc3e1fb3ae690f9f0268a17b10a884",
+    "analyses/nccc_validation/results/runs/energy_corrected_3c_reactive_diagnostic/run_identity.json": "7dc0ba6a9c50dbb90eb0d377904548ecb1daa6dcdd01944011dfeaa2f93f5cf8"
+  },
+  "renderer_sha256": "0d802899f9b15b70313d05f8d6024faa459cce9a98bd58b7d109f366c4e24991",
+  "scope": "Working reviewer evidence; not promoted manuscript results. No observation uncertainty supplied."
+}

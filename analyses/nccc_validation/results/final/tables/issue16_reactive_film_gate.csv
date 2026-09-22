@@ -1,0 +1,13 @@
+gate,status,claim_level,evidence,diagnostic
+immutable_engine_wheel,pass,final_identity,engine=41e7dc1984d00f82785900b314a0135beebe56cd; wheel=2d089d5bdeda5b1655c5e6cf5df7308507233381175745889f8430c22ffe1edb; core=fc1f1a78b2fe5c68a54b8678ce6bc844a2eba11edec91d49e6f9a51c62e1132f,clean detached upstream build and non-editable downstream install verified
+public_fixed_pressure_derivative,pass,final_identity,retained position 1: dln(f_CO2)/dln(C_CO2)=0.9999970079124699; condition=1.0,public installed-wheel API returned the exact charged tangent
+exact_tangent_zero_drive_film,pass,provisional_concept_only,tests/test_reactive_film.py::test_exact_epcsaft_tangent_closes_through_zero_drive_film,public exact tangent exercised through the film solver without physical-input claims
+reversible_nine_species_architecture,pass,provisional_concept_only,issue16_manufactured_reversible_film.csv,"manufactured F1/F2/F3 zero-drive, absorption, and desorption checks"
+stage_a_exact_retained_attempt,blocked,provisional_concept_only,issue16_exact_reactive_film_runs.csv,all rows stopped at typed input preflight
+work_package_a_state_domain,failed,provisional_concept_only,retained position 1 MEA=4.8893098971 mol/L,not an admitted exact 1.0 or 5.0 mol/L state
+finite_rate_coefficients,blocked,provisional_concept_only,F1/F2 rejected_source_unit_inconsistency; F3 rejected_primary_coefficient_source_unavailable,no source-admitted executable reversible rate coefficients
+effective_fick_transport_inputs,blocked,provisional_concept_only,all numeric diffusion candidates rejected,no source-complete executable transport coefficient chain
+maxwell_stefan_comparison,not_run,no_claim,common physical basis did not pass,production route not earned
+independent_rate_validation,blocked,no_claim,raw observations unavailable,no source-complete rate comparison
+controlled_column_integration,not_run,no_claim,film gates did not pass,no flux or fitted multiplier applied
+manuscript_migration,not_run,no_claim,scientific gates did not pass,no provisional result entered the manuscript

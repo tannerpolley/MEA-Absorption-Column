@@ -1,0 +1,22 @@
+{
+  "observed_capture_pct": 89.5,
+  "prior_capture_pct": 87.18263977998646,
+  "retained_capture_pct_mesh51": 71.1512119478282,
+  "profile_median_liquid_fugacity_ratio_retained_to_prior": 1.3023397657292073,
+  "profile_median_driving_force_ratio_retained_to_prior": 1.542862625774191,
+  "profile_median_enhancement_ratio_retained_to_prior": 0.4825052191729067,
+  "profile_median_transfer_rate_ratio_retained_to_prior": 0.7383118093304517,
+  "factorial_median_x_CO2_ratio_reactive_to_legacy": 4.0482801145773175,
+  "factorial_median_parameter_ratio_at_legacy_speciation": 0.4040371479087195,
+  "factorial_median_speciation_ratio_with_prior_parameters": 3.8875151279730966,
+  "factorial_median_total_fugacity_ratio": 1.542844335391203,
+  "factorial_CO2_water_T_adjustment_ratio_range": [
+    1.0229090608533833,
+    1.1594134643471554
+  ],
+  "factorial_k_CO2_MEA_zero_ratio_range": [
+    1.3205105465634424,
+    1.620438252712876
+  ],
+  "maximum_direct_interpolation_fugacity_relative_error": 0.019554851504838044
+}

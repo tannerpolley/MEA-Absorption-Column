@@ -1,4 +1,5 @@
 import numpy as np
+import casadi as ca
 from numpy import log, exp
 from mea_absorption_column.config.Constants import MWs_l, MWs_v, R
 
@@ -14,7 +15,7 @@ def henrys_law(T, z):
     Tl = T
     x = z
 
-    x_CO2, x_MEA, x_H2O = x
+    x_CO2, x_MEA, x_H2O = x[0], x[1], x[2]
 
     m_MEA = x_MEA * MWs_l[1]
     m_H2O = x_H2O * MWs_l[2]
@@ -43,11 +44,16 @@ def henrys_law(T, z):
 
 
 def density(T, z, P, phase='liquid'):
+    T = float(np.asarray(T, dtype=float).reshape(-1)[0])
+    return density_expression(T, z, P, phase)
+
+
+def density_expression(T, z, P, phase='liquid'):
 
     if phase == 'liquid':
-        Tl = float(np.asarray(T, dtype=float).reshape(-1)[0])
+        Tl = T
         x = z
-        x_CO2, x_MEA, x_H2O = x
+        x_CO2, x_MEA, x_H2O = x[0], x[1], x[2]
 
         MWT_l = sum([x[i] * MWs_l[i] for i in range(len(x))])
 
@@ -72,7 +78,7 @@ def density(T, z, P, phase='liquid'):
         return rho_mol_l, rho_mass_l, volume
 
     elif phase == 'vapor':
-        Tv = float(np.asarray(T, dtype=float).reshape(-1)[0])
+        Tv = T
         y = z
         rho_mol_v = P/(R*Tv) # Vapor Molar Density (mol/m3)
 
@@ -90,7 +96,7 @@ def surface_tension(T, z, w_MEA, w_H2O):
     Tl = T
     x = z
 
-    x_CO2, x_MEA, x_H2O = x
+    x_CO2, x_MEA, x_H2O = x[0], x[1], x[2]
 
     alpha = x_CO2/x_MEA
 
@@ -118,11 +124,16 @@ def surface_tension(T, z, w_MEA, w_H2O):
 
 
 def heat_capacity(T, z, phase='liquid'):
+    T = float(np.asarray(T, dtype=float).reshape(-1)[0])
+    return heat_capacity_expression(T, z, phase)
+
+
+def heat_capacity_expression(T, z, phase='liquid'):
 
 
 
     if phase == 'liquid':
-        Tl = float(np.asarray(T, dtype=float).reshape(-1)[0])
+        Tl = T
         x = z
 
         w = [MWs_l[i] * x[i] / sum([MWs_l[j] * x[j] for j in range(len(x))]) for i in range(len(x))]
@@ -146,7 +157,7 @@ def heat_capacity(T, z, phase='liquid'):
         return Cpl, Cpl_T
 
     elif phase == 'vapor':
-        Tv = float(np.asarray(T, dtype=float).reshape(-1)[0])
+        Tv = T
         y = z
 
         coefficients = {'CO2': np.array([5.457, 1.045e-3, -1.157e5]),
@@ -178,11 +189,16 @@ def heat_of_vaporization(Tl, species):
 
 
 def enthalpy(T, z, phase='liquid'):
+    T = float(np.asarray(T, dtype=float).reshape(-1)[0])
+    return enthalpy_expression(T, z, phase)
+
+
+def enthalpy_expression(T, z, phase='liquid'):
 
     if phase == 'liquid':
-        Tl = float(np.asarray(T, dtype=float).reshape(-1)[0])
+        Tl = T
         x = z
-        rho_mol_l, _, _ = density(Tl, x, 0, phase=phase)
+        rho_mol_l, _, _ = density_expression(Tl, x, 0, phase=phase)
 
         Tr = 298.15 - 273.15
         Pref = 101325.0
@@ -190,7 +206,7 @@ def enthalpy(T, z, phase='liquid'):
 
         dh_vap_MEA = 58000
         dh_vap_H2O = 49.99e3
-        t = float(Tl) - 273.15
+        t = Tl - 273.15
         Hl_CO2 = CO2_HEAT_OF_ABSORPTION_J_PER_MOL
 
         coefficients = {'CO2': np.array([276370, -2090.1, 8.125, -.014116, 9.3701e-6]),
@@ -208,7 +224,7 @@ def enthalpy(T, z, phase='liquid'):
         return Hl, Hl_T
 
     if phase == 'vapor':
-        Tv = float(np.asarray(T, dtype=float).reshape(-1)[0])
+        Tv = T
         y = z
         coefficients = {'CO2': np.array([5.457, 1.045e-3, -1.157e5]),
                         'H2O': np.array([3.47, 1.45e-3, 0.121e5]),
@@ -228,7 +244,13 @@ def enthalpy(T, z, phase='liquid'):
 
 
 def thermal_conductivity(T, z, muv):
-    T = float(np.asarray(T, dtype=float).reshape(-1)[0])
+    if not isinstance(T, (ca.MX, ca.SX, ca.DM)):
+        T = float(np.asarray(T, dtype=float).reshape(-1)[0])
+    return thermal_conductivity_expression(T, z, muv)
+
+
+def thermal_conductivity_expression(T, z, muv):
+    T = T
     coefficients = {'CO2': np.array([3.69, -0.3838, 964., 1.86e6]),
                     'H2O': np.array([6.204e-6, 1.3973, 0, 0,]),
                     'N2': np.array([.000331, .7722, 16.323, 373.72,]),
@@ -242,9 +264,9 @@ def thermal_conductivity(T, z, muv):
         kt_i.append((A * T ** B) / (1 + C / T + D / (T ** 2)))
 
     k_vap = 0
-    for i in range(len(z)):
+    for i in range(4):
         sum_ij = 0
-        for j in range(len(z)):
+        for j in range(4):
             Aij = (1 + (muv[i] / muv[j]) ** .5 * (MWs_v[j] / MWs_v[i]) ** .25) ** 2 * (
                     8 * (1 + MWs_v[i] / MWs_v[j])) ** -.5
             sum_ij += Aij * z[j]

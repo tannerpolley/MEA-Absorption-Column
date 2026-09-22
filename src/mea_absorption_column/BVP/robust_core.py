@@ -30,6 +30,7 @@ def make_solver_diagnostics() -> dict:
         "last_invalid_state": "",
         "jacobian_status": "",
         "domain_guard_counts": {},
+        "stage_status": {},
         "first_failed_domain": "",
         "epcsaft_cache_hits": 0,
         "epcsaft_cache_misses": 0,
@@ -201,12 +202,19 @@ def guard_column_rhs(
 ):
     scales = np.asarray(parameters[0], dtype=float)
     model_options = parameters[6] if len(parameters) > 6 else {}
+    # A rejected coupled EOS state must not become a finite penalty solution.
+    reactive = any(
+        str(model_options.get(key, "")).lower() == "epcsaft_reactive_nine"
+        for key in ("thermo_model", "chemical_equilibrium_model")
+    )
     diagnostics = model_options.get("solver_diagnostics") if isinstance(model_options, dict) else None
     settings = model_options.get("bounded_state_settings", BoundedStateSettings()) if isinstance(model_options, dict) else BoundedStateSettings()
 
     sanitized_scaled, report = sanitize_scaled_state(y_scaled, scales, settings)
     try:
         if report.invalid:
+            if reactive:
+                raise ValueError(report.reason)
             record_invalid_state(diagnostics, report.reason)
             record_guard_penalty(diagnostics)
             return _penalty_rhs(y_scaled, sanitized_scaled, settings)
@@ -217,6 +225,8 @@ def guard_column_rhs(
         return rhs
     except Exception as exc:
         record_invalid_state(diagnostics, str(exc))
+        if reactive:
+            raise
         record_guard_penalty(diagnostics)
         fallback_scaled, _ = sanitize_scaled_state(sanitized_scaled, np.ones_like(scales), settings)
         return _penalty_rhs(y_scaled, fallback_scaled, settings)

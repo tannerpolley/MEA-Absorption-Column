@@ -1,0 +1,45 @@
+id: bvp_solution_methods
+title: Boundary-value solution methods for the coupled MEA absorber
+status: draft
+owner: manuscript_section_4_3
+summary: Four adapters and consistent native 3C local recovery verified; full-column refinement and cost comparison remain in progress.
+runtime:
+  proposed_baseline_wall_limit_seconds: 600
+  proposed_campaign_wall_limit_seconds: 3600
+claim_boundary: No current four-method physical ranking; historical fixed-chemistry evidence and incomplete coupled attempts remain separate.
+inputs:
+  - path: results/initial_audit.json
+    kind: retained_read_only_diagnostic_extract
+commands:
+  validate:
+    - PYTHONDONTWRITEBYTECODE=1 uv run --no-project --python 3.13 python -m unittest discover -s analyses/bvp_solution_methods/tests -v
+  adapters:
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 timeout 40 uv run pytest -q -p no:cacheprovider tests/test_conserved_methods.py analyses/bvp_solution_methods/tests/test_compare.py
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 timeout 40 uv run python analyses/bvp_solution_methods/scripts/check_adapters.py --output NEW_ANALYTIC_OUTPUT_DIRECTORY
+  native_adapter:
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 timeout 90 uv run python analyses/bvp_solution_methods/scripts/check_native_adapter.py --output NEW_NATIVE_POINT_JSON
+  native_case:
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_solution_methods/scripts/run_case.py --method trapezoidal --nodes 2 --film-points 3 --wall-limit 600 --output NEW_BASELINE_DIRECTORY
+  figures:
+    - uv run python analyses/bvp_solution_methods/figures/method_comparison/scripts/render_comparison.py COMPARISON_JSON --refinement axial --output NEW_FIGURE_DIRECTORY
+  reduce:
+    - uv run --no-project --python 3.13 python analyses/bvp_solution_methods/scripts/compare.py RUN_JSON [MORE_RUN_JSON ...] --reference RUN_ID --output NEW_OUTPUT_DIRECTORY
+outputs:
+  - path: results/precision_runtime_adoption.json
+    kind: explicit_native_precision_runtime_transition
+  - path: results/consistent_3c_reduction_check/run.json
+    kind: native_consistent_node_recovery_not_column
+  - path: figures/method_comparison/output/
+    kind: future_native_profile_refinement_cost_figures
+  - path: results/central_a1_charge_seed/
+    kind: verified_central_A1_not_interface_or_column
+  - path: results/runtime_adoption.json
+    kind: explicit_immutable_runtime_transition
+  - path: results/native_adapter_point_charge_seed.json
+    kind: native_derivative_connection_on_charge_seed_wheel
+  - path: results/analytic/
+    kind: analytic_dae_verification_only
+  - path: results/native_adapter_point.json
+    kind: native_derivative_connection_not_consistent_root
+  - path: results/runs/
+    kind: future_per_attempt_records_and_reductions

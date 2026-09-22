@@ -208,12 +208,6 @@ def _model_families(dataset: Path) -> list[dict[str, object]]:
                 f"{base}/user_options.json:empirical relative-permittivity rule"
             ),
         },
-        {
-            "family_id": "model/polar",
-            "kind": "polar",
-            "choice": "none",
-            "provenance": _model_provenance(f"{base}/pure/any_solvent.csv:no polar model"),
-        },
     ]
 
 

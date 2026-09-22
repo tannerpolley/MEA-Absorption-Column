@@ -11,6 +11,7 @@ from importlib import resources
 from pathlib import Path
 
 import numpy as np
+from mea_absorption_column.Thermodynamics.reactive_bundle import MODEL as REACTIVE_MODEL, reactive_fugacity
 
 from mea_absorption_column.BVP.robust_core import record_guard_penalty, record_invalid_state
 from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
@@ -219,6 +220,14 @@ def ensure_epcsaft_importable():
         ) from exc
 
 
+def epcsaft_diagnostic_modules():
+    """Load the selected wheel and its process-local instrumentation handles."""
+    module = ensure_epcsaft_importable()
+    from epcsaft import equilibrium, _core
+
+    return module, equilibrium, _core
+
+
 @lru_cache(maxsize=1)
 def epcsaft_mixture():
     ensure_epcsaft_importable()
@@ -390,8 +399,8 @@ def _store_rho_guess(mixture_kind, phase, state):
         _EPCSAFT_RHO_GUESS_CACHE[_rho_guess_key(mixture_kind, phase)] = rho
 
 
-def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, mixture_kind):
-    rho_guess = _rho_guess_from_cache(mixture_kind, phase)
+def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, mixture_kind, *, cache=True):
+    rho_guess = _rho_guess_from_cache(mixture_kind, phase) if cache else None
     if rho_guess is not None:
         try:
             state = _state_from_density_newton(
@@ -401,7 +410,8 @@ def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, m
                 composition=np.asarray(composition, dtype=float),
                 rho_guess=rho_guess,
             )
-            _store_rho_guess(mixture_kind, phase, state)
+            if cache:
+                _store_rho_guess(mixture_kind, phase, state)
             return state
         except Exception:
             pass
@@ -412,7 +422,8 @@ def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, m
         composition=np.asarray(composition, dtype=float),
         phase=phase,
     )
-    _store_rho_guess(mixture_kind, phase, state)
+    if cache:
+        _store_rho_guess(mixture_kind, phase, state)
     return state
 
 
@@ -449,6 +460,7 @@ def _state_from_density_newton(mixture, *, T, P, composition, rho_guess):
 
 
 def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral") -> float:
+    cache = bool(cache) and os.environ.get("MEA_EPCSAFT_DISABLE_CACHE") != "1"
     composition_arr = np.asarray(composition, dtype=float)
     if mixture_kind == "ionic":
         epcsaft_runtime_user_options()
@@ -473,7 +485,9 @@ def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral"
     else:
         raise ValueError(f"Unknown ePC-SAFT mixture kind: {mixture_kind}")
     start = time.perf_counter()
-    state = _pressure_state_with_optional_rho_guess(mixture, T, P, composition_arr, phase, mixture_kind)
+    state = _pressure_state_with_optional_rho_guess(
+        mixture, T, P, composition_arr, phase, mixture_kind, cache=cache
+    )
     _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] += time.perf_counter() - start
     phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
     phi_co2 = float(phi[CO2_INDEX])
@@ -492,6 +506,15 @@ def epcsaft_phi_co2_batch(records, cache=True) -> list[float]:
     calls for duplicate or near-duplicate BVP mesh states under the local cache
     quantization.
     """
+    cache = bool(cache) and os.environ.get("MEA_EPCSAFT_DISABLE_CACHE") != "1"
+    if not cache:
+        return [
+            epcsaft_phi_co2(
+                record["T"], record["P"], record["composition"], record["phase"],
+                cache=False, mixture_kind=record.get("mixture_kind", "neutral"),
+            )
+            for record in records
+        ]
     resolved: dict[tuple, float] = {}
     results: list[float] = []
     for record in records:
@@ -565,6 +588,10 @@ def compute_fugacity(
     epcsaft_fugacity_blend=1.0,
 ):
     normalized_model = (model or "ideal_henry").lower()
+    if normalized_model == REACTIVE_MODEL:
+        if epcsaft_fugacity_blend != 1.0:
+            raise ValueError("Coupled nine-species mode requires unblended ePC-SAFT fugacity")
+        return reactive_fugacity(y, x_true, Cl_true, Tl, Tv, P, P_sat_H2O)
     if normalized_model in {"ideal", "ideal_henry", "henry"}:
         return ideal_henry_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
     if normalized_model in {"epcsaft", "epcsaft_neutral", "epc-saft"}:
@@ -640,10 +667,16 @@ def guarded_compute_fugacity(
             P_sat_H2O,
             epcsaft_fugacity_blend=epcsaft_fugacity_blend,
         )
+        if (model or "").lower() == REACTIVE_MODEL:
+            if any(not math.isfinite(value) or value <= 0 for value in values):
+                raise ValueError("Nonpositive or nonfinite coupled reactive fugacity")
+            return values
         return tuple(_positive_finite(value) for value in values)
     except Exception as exc:
         record_invalid_state(diagnostics, f"fugacity guard: {exc}")
         record_guard_penalty(diagnostics)
+        if (model or "").lower() == REACTIVE_MODEL:
+            raise
         return _fallback_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
 
 

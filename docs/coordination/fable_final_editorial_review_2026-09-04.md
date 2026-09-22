@@ -1,0 +1,31 @@
+# Final editorial review of the revision package (2026-09-04)
+
+Reviewer: Fable 5.1 session that performed the 2026-09-04 language audit. Scope: language, word choice, story, consistency and submission package. Read-only; no scientific re-audit.
+
+Inputs verified: `docs/latex/builds/main.pdf` (33 pages, SHA-256 59d8b1b2…7ac8441, byte-identical to `revised_manuscript.pdf`); `original_manuscript.pdf` (29 pages, byte-identical to the preserved 2026-08-12 pre-revision copy); `response_to_reviewers.pdf` (9 pages, 20 responses); `cover_letter.pdf` (1 page); `READ_ME.md` and `SHA256SUMS.txt`. Letter PDFs match their canonical Markdown sources. Full `pdftotext` diff of the final manuscript against the audited version was read line by line; the unchanged remainder was read in full during the earlier audit.
+
+## 1. Submission-blocking issues
+
+None. The package is ready to upload once the author creates the `nce-revision-v3` tag (a known release step, not a manuscript issue).
+
+## 2. Worthwhile small edits (preferences, not required)
+
+1. **Grid-size formatting is inconsistent.** p. 15: "At 10 001 sampled positions"; p. 13 and Table S1: "10,001 positions". Use one form. Simplest: replace `\num{10001}` in `results.tex` line 24 with `10,001`.
+2. **Clumsy label for the finest refinement.** p. 15: "the second additional Case 3C refinement gives an axial net-enthalpy-flow range of 0.134 W" → "the finest additional Case 3C refinement (81 to 121 nodes, tolerance 5 × 10⁻⁵) gives an axial net-enthalpy-flow range of 0.134 W".
+3. **"Original" is ambiguous on p. 13.** "table 5 presents the original paired Case 3C refinement" → "table 5 presents the paired Case 3C refinement". ("Original" now reads as "the May manuscript's".)
+4. **Loading response quoted at two precisions.** Abstract: "+3.8 and −6.9 points"; Conclusions: "3.75 and −6.86 points". Both are correct; using "3.75 and −6.86" in the abstract removes the mismatch.
+5. **Table S1 inside the main PDF.** The table is labeled "S1" and cited as "Supplementary Table S1" in the response, but it is printed on p. 31 of the manuscript rather than in a separate supplementary file. Elsevier normally expects supplementary material as a separate upload. Either rename it "Table 11" (or Appendix C) and drop "Supplementary" from the response and cover letter, or move it to a separate SI file and keep the S1 label. Author's choice; the current form is not wrong, only unconventional.
+6. **Table S1 page layout.** The float sits in the lower half of p. 31 with a large blank area above it. A `[t]` placement or `\clearpage` before it would tidy the page. Cosmetic.
+7. **Response letter, Reviewer 1 Comment 10.** The reviewer's quoted text contains "histories". It is a verbatim quotation of the reviewer, so it should stay; noting it only because of the author's prohibited-word rule, which applies to the manuscript.
+
+## 3. Pass / no further edit
+
+- **Earlier audit findings.** All blocking and important items from the 2026-09-04 audit are resolved: no development-status language ("Implementation has begun", "already underway" gone); no internal artifact references (parameter document, reproduction guide, JSON files, runtime selection, file paths); no implementer imperatives in Appendix B; Code and Data Availability now give the repository, tag, package status and archival intent; the five convergence template paragraphs are replaced by one statement in §3.2 plus Table S1; the reviewer-response reasoning is out of the Introduction; the future-work section is one conditional paragraph; over-precise numbers are rounded in prose with full precision kept in tables and captions; provenance vocabulary is translated into source attributions; "selected/retained/implemented/inherited/transferred/provisional/lineage/holdout" are gone from the prose (remaining "retained"/"transferred" are physics uses); figure legends and the Figure 7 note are corrected; "Appendix A/B" cross-references are standardized.
+- **Prohibited words.** Zero occurrences of local, history, historical, histories in the manuscript PDF (prose, tables, captions, embedded figure text, back matter).
+- **Story and consistency.** Abstract, §4 and Conclusions describe the same contribution (coupled nine-species reactive ePC-SAFT column), the same evaluation (seven cases, paired refinement, sensitivities, operating response, cost) and the same numbers (5.85 pp MAE; 91.55 vs 89.50 %; 0.005 pp / 0.045 K; ~35 s; 0.82 / 0.53 pp; 3.75 / −6.86 pp). The reuse framing is now motivation only. The Conclusions carry one concise limitations sentence. The energy-flow diagnostic is reported once in §4.1 with correctly labeled 101- and 10,001-position grids and in Table 5 / Table S1, with no attributed cause.
+- **Response to reviewers.** All 20 comments reproduced verbatim; each response describes what the final manuscript actually contains; every page, figure and table reference checked against the final PDF is correct (Sections 2 pp. 3–11, 3.3 p. 13, 4.1 pp. 14–17, 4.2 pp. 18–19, 4.3 pp. 19–20, 4.4 p. 20, Conclusions p. 21; Table 2 p. 3, Table 4 p. 12, Table 5 p. 15, Table 6 p. 27, Tables 7–9 p. 28, Table 10 p. 29, Table S1 p. 31; Figures 1 p. 4, 5 p. 18, 6 p. 19, 7 p. 20; availability p. 32; references pp. 32–33). Quoted values (−0.82/+0.76, 0.53, 34.66 s and 34.41–34.89 s, 34.23 s CPU, 51.45 s, 203.51 MiB, +11.45/−11.93) match the manuscript. Tone is direct, without checklist labels or defensive stacking.
+- **Cover letter.** Addressed to Next Chemical Engineering, correct title and authors, corresponding author matches the manuscript's marked author, accurately summarizes the revision, no manuscript ID (none supplied). Formatting clean.
+- **Package labels.** `original_manuscript.pdf` is the author-confirmed 29-page May 10 version; `revised_manuscript.pdf` is the 33-page final; README states page references refer to the clean revised PDF and that no redline was generated. Checksums file present. Both source folders included.
+- **Visible formatting.** Sample pages (1, 15, 20, 28–32), cover letter and response page 1 render cleanly; title block, tables and equations show no clipping or overflow.
+
+Verdict: clean for submission. Items in section 2 are optional polish; none changes technical content.

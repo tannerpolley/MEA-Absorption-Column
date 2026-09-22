@@ -1,0 +1,17 @@
+{
+  "source_path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py",
+  "source_task": "01a069ef-d021-7050-abc7-d38ddb17425a",
+  "authority_task": "01a0686d-8e35-7e43-a451-fad261638d00",
+  "previous_file_sha256": {
+    "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "584ccf625cec030fbbd6b2153034f08cc93fa72b3e5ef4dfb8df8f40af9a7884"
+  },
+  "file_sha256": {
+    "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "f6a3e75646cf30702271af62fe1c4c57fa0932a37243ca1a78ff97e30284379e"
+  },
+  "policy": {
+    "loading_anchor": 0.25,
+    "max_log_loading_step": 0.1,
+    "max_loading_steps": 32
+  },
+  "scope": "Supplied central/A1 evaluator; rich-state A2 and consistent film state remain unverified"
+}

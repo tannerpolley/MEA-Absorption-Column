@@ -1,4 +1,5 @@
 import numpy as np
+import casadi as ca
 from mea_absorption_column.config.Constants import MWs_v
 
 
@@ -16,7 +17,8 @@ def viscosity(T, z, w_MEA, w_H2O, phase='liquid'):
 
         # print(f'From Viscosity: {a}')
 
-        deviation = np.exp(r * (Tl * (a * r + b) + c * r + d) * (alpha * (e * r + f * Tl + g) + 1) / Tl ** 2)
+        exponent = r * (Tl * (a * r + b) + c * r + d) * (alpha * (e * r + f * Tl + g) + 1) / Tl ** 2
+        deviation = ca.exp(exponent) if isinstance(exponent, (ca.MX, ca.SX, ca.DM)) else np.exp(exponent)
         mul_mix = mul_H2O * deviation
 
         return mul_mix, mul_H2O
@@ -24,7 +26,6 @@ def viscosity(T, z, w_MEA, w_H2O, phase='liquid'):
     elif phase == 'vapor':
         Tv = T
         y = z
-        y_CO2, y_H2O, y_N2, y_O2 = y
 
         # Get Viscosity Vapor
         muv_CO2 = 2.148e-6 * Tv ** .46 / (1 + 290 / Tv)
@@ -37,11 +38,11 @@ def viscosity(T, z, w_MEA, w_H2O, phase='liquid'):
         # muv = [0.0000161853801328463, 0.000010739452610202,
         #        0.0000188550342242103, 0.0000218920854587055]
         # print(muv)
-        theta_ij = np.zeros((4, 4))
+        theta_ij = [[0 for _ in muv] for _ in muv]
 
         for i in range(len(muv)):
             for j in range(i + 1, len(muv)):
-                theta_ij[i, j] = (
+                theta_ij[i][j] = (
                                          1
                                          + 2
                                          * np.sqrt(muv[i] / muv[j])
@@ -51,19 +52,19 @@ def viscosity(T, z, w_MEA, w_H2O, phase='liquid'):
                                          * (MWs_v[j] / MWs_v[i]) ** 0.5
                                  ) / (8 + 8 * MWs_v[i] / MWs_v[j]) ** 0.5
 
-                theta_ij[j, i] = (
+                theta_ij[j][i] = (
                         muv[j]
                         / muv[i]
                         * MWs_v[i]
                         / MWs_v[j]
-                        * theta_ij[i, j]
+                        * theta_ij[i][j]
                 )
         for i in range(len(muv)):
             for j in range(len(muv)):
                 if i == j:
-                    theta_ij[i, j] = 1
+                    theta_ij[i][j] = 1
 
-        muv_mix = sum([y[i] * muv[i] / sum([y[j] * theta_ij[i, j] for j in range(len(muv))]) for i in range(len(muv))])
+        muv_mix = sum([y[i] * muv[i] / sum([y[j] * theta_ij[i][j] for j in range(len(muv))]) for i in range(len(muv))])
         return muv_mix, muv
     return None
 
@@ -79,13 +80,15 @@ def diffusivity(T, z, P, mul_mix, rho_mol_l, phase='liquid'):
         # Get Diffusivity of Liquid
         a, b, c, d, e = 2.35e-6, 2.9837E-08, -9.7078e-9, -2119, -20.132
 
-        Dl_CO2 = (a + b * C_MEA_scaled + c * C_MEA_scaled ** 2) * np.exp((d + (e * C_MEA_scaled)) / Tl)
+        symbolic = any(isinstance(value, (ca.MX, ca.SX, ca.DM)) for value in (T, Cl_MEA, mul_mix))
+        exp, log = (ca.exp, ca.log) if symbolic else (np.exp, np.log)
+        Dl_CO2 = (a + b * C_MEA_scaled + c * C_MEA_scaled ** 2) * exp((d + (e * C_MEA_scaled)) / Tl)
 
         a, b, c = -13.275, -2198.3, -7.8142e-5
-        Dl_MEA = np.exp(a + b / Tl + c * Cl_MEA)
+        Dl_MEA = exp(a + b / Tl + c * Cl_MEA)
 
         a, b, c = -22.64, -1000, -.7
-        Dl_ion = np.exp(a + b / Tl + c * np.log(mul_mix))
+        Dl_ion = exp(a + b / Tl + c * log(mul_mix))
 
         return Dl_CO2, Dl_MEA, Dl_ion
 
@@ -120,11 +123,9 @@ def diffusivity(T, z, P, mul_mix, rho_mol_l, phase='liquid'):
             Dv_i = (1 - y[i]) / (sum1 + sum2)
             Dv.append(Dv_i)
 
-        Dv_T = np.sum([y[i] * Dv[i] for i in range(len(y))])
+        Dv_T = sum(y[i] * Dv[i] for i in range(4))
 
         Dv_CO2, Dv_H2O, Dv_N2, Dv_O2 = Dv
 
         return Dv_CO2, Dv_H2O, Dv_N2, Dv_O2, Dv_T
     return None
-
-

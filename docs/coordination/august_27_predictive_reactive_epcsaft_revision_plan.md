@@ -1,16 +1,24 @@
 # August 27 predictive reactive ePC-SAFT revision plan
 
-Status: canonical
+Status: historical schedule record; superseded for current decisions by
+`docs/scientific/CONTEXT.md`
 Schedule status on 2026-08-24: `FALLBACK_ACTIVE`; the August 22 predictive-model freeze was missed, so August 23--26 are reserved for the fixed-chemistry submission package and reviewer response
 Submission deadline: 2026-08-27
 Internal model freeze: 2026-08-22
 Internal submission-ready deadline: 2026-08-26
 
+Historical boundary: this file preserves the dated August 12--24 plan and its
+then-current evidence. Statements below that Engine #30/#31 were pending are
+historical; #30/#31/#44/#48 are now closed. MEA-Thermodynamics #70 later
+recorded a supported-negative result and explicit transfer refusal, so no
+predictive parameter set entered the August 27 submission. Do not use this file
+as a work queue.
+
 ## Authority and objective
 
-This is the canonical cross-repository execution plan for the revised
-MEA-absorption manuscript. It supersedes informal date estimates for this
-revision, but it does not supersede repository-local scientific contracts,
+For its dated execution window, this was the canonical cross-repository plan
+for the revised MEA-absorption manuscript. It superseded informal date
+estimates for that revision, but not repository-local scientific contracts,
 governance decisions, immutable data receipts, or accepted engine promotion
 evidence.
 

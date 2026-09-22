@@ -1,0 +1,22 @@
+{
+  "case_id": "4C",
+  "case_source": "NCCC_2017_cases",
+  "method": "scipy-bvp",
+  "output_dir": "analyses/nccc_validation/results/runs/energy_corrected_additional_henry",
+  "solver_settings": {
+    "bc_tol": 0.001,
+    "co2_capture_guess_pct": 95.0,
+    "epcsaft_fugacity_blend": 1.0,
+    "eta_psi": 1.0,
+    "gas_flow_basis": "reported_dry_mass",
+    "h2o_capture_guess_pct": -100.0,
+    "max_nodes": 1000,
+    "mesh_points": 21,
+    "scaling_mode": "legacy_flow_enthalpy",
+    "tol": 0.5,
+    "transform_mode": "bounded_guarded_raw_state",
+    "vapor_composition_mode": "dry_saturated"
+  },
+  "staged_beds": "auto",
+  "thermo_model": "ideal_henry"
+}

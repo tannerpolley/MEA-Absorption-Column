@@ -1,0 +1,99 @@
+{
+  "claim_label": "reference_backed_mapping_with_basis_unresolved_admission",
+  "analysis": "nccc_validation",
+  "issue": 33,
+  "source_table_path": "analyses/nccc_validation/results/final/tables/issue33_concentration_basis.csv",
+  "rows": 5,
+  "reported_case3c_positions": [
+    0.0,
+    0.5,
+    1.0
+  ],
+  "gates": {
+    "all_requested_positions_present": true,
+    "analytical_balance_max_abs_residual_mol_L": 8.881784197001252e-16,
+    "analytical_balance_max_relative_residual": 1.816572151066474e-16,
+    "analytical_balance_relative_tolerance": 1e-10,
+    "analytical_balance_pass": true,
+    "position_1_analytical_concentration_mol_L": 4.889309897097635,
+    "position_1_exact_value_preserved": true,
+    "position_1_not_rounded_to_5M": true,
+    "exact_discrete_1M_or_5M_admission": false,
+    "capture_or_kinetic_tuning_performed": false
+  },
+  "conclusions": [
+    "The prepared-concentration definition is a mass-fraction/density conversion on an unloaded-solution basis, but the NCCC preparation temperature is unreported so its true prepared concentration remains unresolved.",
+    "Loaded analytical concentration is the conserved sum of MEA, MEAH+, and MEACOO- on the loaded-solution volume basis.",
+    "Free MEA is the molecular MEA species concentration and remains separate from both prepared and analytical concentration.",
+    "The retained Position 1 calculation is 4.889309897097635 mol/L (4.8893098971 mol/L at the requested display precision), not exact 5 M.",
+    "The local-temperature unloaded concentration is a diagnostic conversion only; Morgan2018 supplies its 7.3% campaign-level expanded uncertainty, and neither is a prepared concentration or a loaded-versus-5 M admission basis."
+  ],
+  "limitations": [
+    "Putta/Luo do not report all source-local preparation temperatures, loaded analytical concentrations, or paired volume bases needed to admit exact 1 M/5 M literature inputs.",
+    "NCCC Case 3C preparation temperature and prepared-to-loaded solution-volume ratio are absent from the retained case record.",
+    "Amundsen density values are used as source-backed interpolation evidence; instrument and combined uncertainties are retained separately, and the retained ePC-SAFT profile density does not redefine a literature label.",
+    "All source and retained state rows are reported, but every mapping row remains basis_unresolved for exact discrete absorber admission."
+  ],
+  "immutable_inputs": {
+    "issue16_identity_path": "analyses/nccc_validation/inputs/issue16_reactive_film_identity.json",
+    "issue16_identity_sha256": "1b18c1a02e1371ed83001c82ddbe7216d163ecb71488bb2fcab676bf950bb5ca",
+    "retained_speciation_table_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv",
+    "retained_speciation_table_sha256": "36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4",
+    "speciation_table_generation_summary_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table_summary.json",
+    "speciation_table_generation_summary_sha256": "fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a",
+    "nccc_source_preserving_case_path": "src/mea_absorption_column/data/NCCC_2017_cases.csv",
+    "nccc_source_preserving_case_sha256": "165e974d53a90e0570955aea766642eb823f7865914dac6d8761f75f484f7834",
+    "case_source_path": "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv",
+    "case_source_sha256": "5cfb1ab670adcfbdb90a003c5e163262470d85e1467aa250ff6e50ab7a79785f",
+    "retained_profile_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/film_states.csv",
+    "retained_profile_sha256": "2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a"
+  },
+  "selected_speciation_table_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv",
+  "selected_speciation_table_sha256": "36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4",
+  "speciation_table_generation_identity": {
+    "role": "generation identity for the retained certified reactive speciation table",
+    "summary_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table_summary.json",
+    "summary_sha256": "fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a",
+    "table_path": "analyses/nccc_validation/inputs/retained_reactive_case3c/speciation_table.csv",
+    "table_sha256": "36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4",
+    "engine_wheel_sha256": "81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80",
+    "generation_input_state_table_sha256": "b45dc2c81b08d6594f313ec49f1e7431b75a433b12b11463e03660412f4c23bc"
+  },
+  "issue16_downstream_derivative_runtime_identity": {
+    "role": "Issue 16 downstream derivative/runtime identity for the retained film evidence",
+    "identity_path": "analyses/nccc_validation/inputs/issue16_reactive_film_identity.json",
+    "identity_sha256": "1b18c1a02e1371ed83001c82ddbe7216d163ecb71488bb2fcab676bf950bb5ca",
+    "engine_commit": "41e7dc1984d00f82785900b314a0135beebe56cd",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "2d089d5bdeda5b1655c5e6cf5df7308507233381175745889f8430c22ffe1edb",
+    "core_sha256": "fc1f1a78b2fe5c68a54b8678ce6bc844a2eba11edec91d49e6f9a51c62e1132f",
+    "speciation_table_sha256": "36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4"
+  },
+  "source_records": [
+    {
+      "id": "Putta2016",
+      "doi": "10.1016/j.ijggc.2016.08.009",
+      "zotero_attachment_key": "BSUB8BSF",
+      "attachment_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99"
+    },
+    {
+      "id": "Luo2015",
+      "doi": "10.1016/j.ces.2014.10.013",
+      "zotero_attachment_key": "MFRDNYCS",
+      "attachment_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44"
+    },
+    {
+      "id": "Morgan2018",
+      "doi": "10.1021/acs.iecr.8b01472",
+      "zotero_attachment_key": "HCDWUYJZ",
+      "attachment_sha256": "bf9cfa2877c31a1ed8346951e149b6af7fc7e8413e3f62fde22a76e6c31b5ddb"
+    },
+    {
+      "id": "Amundsen2009",
+      "doi": "10.1021/je900188m",
+      "zotero_attachment_key": "NGQVTDX7",
+      "attachment_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e"
+    }
+  ],
+  "source_table_sha256": "1d8c6cc7ff3a801a8b8e1975a6b7f8618ae2bcef3a01a63df08c49bdfeb09b1d"
+}

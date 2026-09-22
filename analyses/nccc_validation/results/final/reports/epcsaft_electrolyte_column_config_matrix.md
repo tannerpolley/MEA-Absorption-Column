@@ -1,5 +1,7 @@
 # ePC-SAFT Electrolyte Column Configuration Matrix
 
+> Historical pre-0.2 evidence only. This report is not a current validation result; use `epcsaft_v02_contribution_table.csv` and `epcsaft_v02_column_row.csv`.
+
 These runs use the six-species MEA absorber state with the repo-vendored `MEA_CO2_H2O_ionic_fit` ePC-SAFT dataset.
 The 3C C-case is intentionally small enough to keep the comparison reproducible while still running the full column solver.
 

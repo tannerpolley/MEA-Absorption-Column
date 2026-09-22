@@ -1,0 +1,182 @@
+[
+  {
+    "label": "exact_anchor_cold",
+    "temperature_K": 323.87142749631914,
+    "pressure_Pa": 109500.0,
+    "apparent_amounts_mol": [
+      2.4324688150831837,
+      9.729875260332735,
+      76.95348624320872
+    ],
+    "success": false,
+    "error": "Reactive ePC-SAFT equilibrium failed: infeasible_problem_detected; NonEvaluableTrial(code='numerical_convergence_failure', diagnostic='ipopt_solve_failed'); numerical=failed, physical=not_adjudicated; evidence={'local_evaluation_valid': 0.0, 'equilibrium_value_valid': 0.0, 'balance_inf_norm': nan, 'pressure_relative_inf_norm': nan, 'reaction_affinity_inf_norm': nan, 'transfer_chemical_potential_inf_norm': nan, 'kkt_stationarity_inf_norm': nan, 'local_stability_status': 'not_adjudicated', 'sensitivity_status': 'not_requested', 'partial_selection_reason': 'none'}"
+  },
+  {
+    "label": "neighbor_anchor_cold",
+    "temperature_K": 323.88142749631913,
+    "pressure_Pa": 109500.0,
+    "apparent_amounts_mol": [
+      2.4324688150831837,
+      9.729875260332735,
+      76.95348624320872
+    ],
+    "success": true,
+    "density_mol_m3": 48021.82501495247,
+    "amounts_mol": [
+      5.263953449935955e-07,
+      0.05573928022055061,
+      0.8610702948747826,
+      0.028597209969813655,
+      0.024845854018791257,
+      0.0011496244261097396,
+      0.001299581212042802,
+      6.239707705276016e-11,
+      2.569163224129522e-06
+    ],
+    "feed_amounts_mol": [
+      0.027295586052288774,
+      0.1091823442091551,
+      0.8635220697385562,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "fugacity_CO2_Pa": 69.2154060093582,
+    "evidence": {
+      "objective_over_rt": -212.7630098768575,
+      "balance_inf_norm": 1.9290125052862095e-15,
+      "pressure_relative_inf_norm": 6.252007780077795e-12,
+      "reaction_affinity_inf_norm": 3.694822225952521e-13,
+      "transfer_chemical_potential_inf_norm": 0.0,
+      "kkt_stationarity_inf_norm": 5.684341886080802e-14,
+      "source_reference_representation_residual_inf_norm": 3.0585274717610927e-16,
+      "phase_distinctness": 0.0,
+      "reduced_hessian_min_eigenvalue": 7.229968124716913e-05,
+      "declared_direction_rank": 5,
+      "admissible_nullity": 5,
+      "optimizer_iterations": 108,
+      "eos_evaluation_count": 620,
+      "local_evaluation_valid": 1,
+      "equilibrium_value_valid": 1,
+      "local_stability_status": "passed",
+      "sensitivity_status": "available",
+      "kkt_rank": 12,
+      "scaled_kkt_condition_number_2": 6833.1786436619495
+    }
+  },
+  {
+    "label": "exact_anchor_warm",
+    "temperature_K": 323.87142749631914,
+    "pressure_Pa": 109500.0,
+    "apparent_amounts_mol": [
+      2.4324688150831837,
+      9.729875260332735,
+      76.95348624320872
+    ],
+    "success": true,
+    "density_mol_m3": 48022.106767297504,
+    "amounts_mol": [
+      5.259519213559296e-07,
+      0.05573914034076493,
+      0.861069882433555,
+      0.028597761741017802,
+      0.024845442127372365,
+      0.0011494855396309612,
+      0.0013001324333640977,
+      6.235996407189316e-11,
+      2.5692696462465894e-06
+    ],
+    "feed_amounts_mol": [
+      0.027295586052288774,
+      0.1091823442091551,
+      0.8635220697385562,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "fugacity_CO2_Pa": 69.14966643913263,
+    "evidence": {
+      "objective_over_rt": -212.7698541358528,
+      "balance_inf_norm": 3.701915144327557e-17,
+      "pressure_relative_inf_norm": 3.3528542945578216e-11,
+      "reaction_affinity_inf_norm": 1.1368683772161603e-13,
+      "transfer_chemical_potential_inf_norm": 0.0,
+      "kkt_stationarity_inf_norm": 2.842170943040401e-14,
+      "source_reference_representation_residual_inf_norm": 3.0585274717610927e-16,
+      "phase_distinctness": 0.0,
+      "reduced_hessian_min_eigenvalue": 7.225134175049818e-05,
+      "declared_direction_rank": 5,
+      "admissible_nullity": 5,
+      "optimizer_iterations": 16,
+      "eos_evaluation_count": 88,
+      "local_evaluation_valid": 1,
+      "equilibrium_value_valid": 1,
+      "local_stability_status": "passed",
+      "sensitivity_status": "available",
+      "kkt_rank": 12,
+      "scaled_kkt_condition_number_2": 6834.174188090404
+    }
+  },
+  {
+    "label": "exact_column_state_warm",
+    "temperature_K": 323.87142749631914,
+    "pressure_Pa": 109500.0,
+    "apparent_amounts_mol": [
+      4.028415544317623,
+      9.729875260332735,
+      75.2377472691089
+    ],
+    "success": true,
+    "density_mol_m3": 51114.821584148325,
+    "amounts_mol": [
+      1.0597560252419119e-05,
+      0.024290824035450236,
+      0.8368201327642495,
+      0.048368604125162244,
+      0.03666987987295063,
+      0.00547135692317049,
+      0.0031132766700173926,
+      2.96801102681915e-10,
+      8.142858074401857e-07
+    ],
+    "feed_amounts_mol": [
+      0.045265111026390886,
+      0.1093293080335631,
+      0.845405580940046,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "fugacity_CO2_Pa": 1302.3041135957071,
+    "evidence": {
+      "objective_over_rt": -210.0459230871091,
+      "balance_inf_norm": 1.6132928326584306e-16,
+      "pressure_relative_inf_norm": 6.193800119164328e-12,
+      "reaction_affinity_inf_norm": 2.8421709430404007e-13,
+      "transfer_chemical_potential_inf_norm": 0.0,
+      "kkt_stationarity_inf_norm": 2.842170943040401e-14,
+      "source_reference_representation_residual_inf_norm": 3.0585274717610927e-16,
+      "phase_distinctness": 0.0,
+      "reduced_hessian_min_eigenvalue": 5.6664763841117234e-05,
+      "declared_direction_rank": 5,
+      "admissible_nullity": 5,
+      "optimizer_iterations": 65,
+      "eos_evaluation_count": 1244,
+      "local_evaluation_valid": 1,
+      "equilibrium_value_valid": 1,
+      "local_stability_status": "passed",
+      "sensitivity_status": "available",
+      "kkt_rank": 12,
+      "scaled_kkt_condition_number_2": 77076.18298005787
+    }
+  }
+]

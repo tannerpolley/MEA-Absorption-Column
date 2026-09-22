@@ -1,9 +1,54 @@
 from __future__ import annotations
 
+import argparse
+import csv
+import hashlib
+import io
+import json
 import re
+import subprocess
+import zipfile
 from pathlib import Path
 
 import pandas as pd
+
+from analyze_issue17_enhancement_comparison import (
+    RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS,
+    stable_csv_sha256,
+)
+from resolve_issue42_film_transport import (
+    COMPARISON_FIELDS,
+    SOURCE_FIELDS,
+    canonical_decision_summaries,
+    canonical_run_metadata,
+    canonical_source_documents,
+    canonical_summary,
+    comparison_rows as build_issue42_comparison_rows,
+    replay_issue35 as replay_issue42_issue35,
+    source_revision_contains_issue42_outputs,
+    source_rows as build_issue42_source_rows,
+    validate_dependencies as validate_issue42_dependencies,
+    validate_source_documents as validate_issue42_source_documents,
+    report_text as build_issue42_report_text,
+)
+from resolve_issue36_film_input_release import (
+    INPUT as ISSUE36_INPUT,
+    REPORT as ISSUE36_REPORT,
+    RESULT_FIELDS as ISSUE36_RESULT_FIELDS,
+    SUMMARY as ISSUE36_SUMMARY,
+    TABLE as ISSUE36_TABLE,
+    build_rows as build_issue36_rows,
+    canonical_summary as build_issue36_summary,
+    git_blob_sha256 as issue36_git_blob_sha256,
+    load_json as issue36_load_json,
+    report_text as build_issue36_report_text,
+    source_revision_has_issue36_outputs,
+    validate_bundle as validate_issue36_bundle,
+    validate_dependency_files as validate_issue36_dependencies,
+    validate_release_guard as validate_issue36_release_guard,
+    validate_work_package_a as validate_issue36_work_package_a,
+)
+from resolve_issue30_film_validation_gate import validate_outputs as validate_issue30_outputs
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -13,15 +58,103 @@ TABLES = FINAL / "tables"
 FIGURES = FINAL / "figures"
 PROFILES = FINAL / "profiles"
 DOCS_LATEX = ROOT / "docs" / "latex"
+ISSUE17_INPUTS = ANALYSIS / "inputs" / "issue17_enhancement_comparison"
+ISSUE17_TABLES = [
+    TABLES / "issue17_fugacity_only_enhancement_formulations.csv",
+    TABLES / "issue17_fugacity_only_enhancement_aggregates.csv",
+    TABLES / "issue17_enhancement_stage_outcomes.csv",
+    TABLES / "issue17_fugacity_only_enhancement_summary.json",
+]
+ISSUE17_FIGURES = [
+    FIGURES / "issue17_axial_enhancement.pdf",
+    FIGURES / "issue17_axial_flux.pdf",
+    FIGURES / "issue17_parity_to_gaspar_implicit.pdf",
+]
+ISSUE40_INPUT = ANALYSIS / "inputs/issue40_apparent_true_species.json"
+ISSUE40_TABLE = TABLES / "issue40_apparent_true_species.csv"
+ISSUE40_SUMMARY = TABLES / "issue40_apparent_true_species_summary.json"
+ISSUE40_REPORT = FINAL / "reports/issue40_apparent_true_species.md"
+ISSUE41_INPUT = ANALYSIS / "inputs/issue41_reversible_kinetics.json"
+ISSUE41_TABLES = {
+    "stoichiometry": TABLES / "issue41_stoichiometry.csv",
+    "source_rate_evidence": TABLES / "issue41_source_rate_evidence.csv",
+    "raw_observations": TABLES / "issue41_raw_rate_observations.csv",
+    "provider_equilibrium_relationships": TABLES / "issue41_provider_equilibrium_relationships.csv",
+    "estimation_validation_partition": TABLES / "issue41_estimation_validation_partition.csv",
+    "packet_bound_comparison": TABLES / "issue41_packet_bound_comparison.csv",
+}
+ISSUE41_SUMMARY = TABLES / "issue41_reversible_kinetics_summary.json"
+ISSUE41_REPORT = FINAL / "reports/issue41_reversible_kinetics.md"
+ISSUE42_INPUT = ANALYSIS / "inputs/issue42_film_transport.json"
+ISSUE42_TABLES = {
+    "transport_inputs": TABLES / "issue42_transport_inputs.csv",
+    "transport_comparison": TABLES / "issue42_transport_comparison.csv",
+}
+ISSUE42_SUMMARY = TABLES / "issue42_film_transport_summary.json"
+ISSUE42_REPORT = FINAL / "reports/issue42_film_transport.md"
+
+
+def _read_csv_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
+    with path.open(newline="", encoding="utf-8-sig") as handle:
+        reader = csv.DictReader(handle)
+        return reader.fieldnames or [], list(reader)
+
+
+def _canonical_csv_rows(rows: list[dict], fields: list[str]) -> list[dict[str, str]]:
+    buffer = io.StringIO(newline="")
+    writer = csv.DictWriter(buffer, fieldnames=fields, extrasaction="raise", lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    return list(csv.DictReader(io.StringIO(buffer.getvalue(), newline="")))
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--issue17-only", action="store_true")
+    parser.add_argument("--issue40-only", action="store_true")
+    parser.add_argument("--issue41-only", action="store_true")
+    parser.add_argument("--issue42-only", action="store_true")
+    parser.add_argument("--issue36-only", action="store_true")
+    parser.add_argument("--issue30-only", action="store_true")
+    args = parser.parse_args()
+    if args.issue17_only:
+        _check_issue17_enhancement_comparison()
+        print("Issue 17 retained outputs are internally consistent.")
+        return 0
+    if args.issue40_only:
+        _check_issue40_apparent_true_species()
+        print("Issue 40 retained-output/source-lineage consistency checks passed.")
+        return 0
+    if args.issue41_only:
+        _check_issue41_reversible_kinetics()
+        print("Issue 41 source-rate and packet-bound consistency checks passed.")
+        return 0
+    if args.issue42_only:
+        _check_issue42_film_transport()
+        print("Issue 42 source-only film-transport consistency checks passed.")
+        return 0
+    if args.issue36_only:
+        _check_issue36_film_input_release()
+        print("Issue 36 blocked film-input release consistency checks passed.")
+        return 0
+    if args.issue30_only:
+        validate_issue30_outputs()
+        print("Issue 30 supported-negative film-validation gate consistency checks passed.")
+        return 0
+
     checks = [
+        _check_issue17_enhancement_comparison,
+        _check_issue40_apparent_true_species,
+        _check_issue41_reversible_kinetics,
+        _check_issue42_film_transport,
+        _check_issue36_film_input_release,
+        validate_issue30_outputs,
         _check_required_files,
         _check_c_case_benchmark,
         _check_full_species_ionic_sweep,
         _check_accuracy_credibility_tables,
         _check_method_contrast,
+        _check_epcsaft_v02_validation,
         _check_profile_index,
         _check_referenced_profile_csv_dirs,
         _check_final_tables_do_not_point_to_removed_docs_paths,
@@ -33,6 +166,305 @@ def main() -> int:
         check()
     print("NCCC validation analysis artifacts are internally consistent.")
     return 0
+
+
+def _check_issue17_enhancement_comparison() -> None:
+    _require_existing(ISSUE17_TABLES + ISSUE17_FIGURES)
+    result = pd.read_csv(ISSUE17_TABLES[0])
+    aggregates = pd.read_csv(ISSUE17_TABLES[1])
+    stages = pd.read_csv(ISSUE17_TABLES[2])
+    summary = json.loads(ISSUE17_TABLES[3].read_text(encoding="utf-8"))
+    expected_positions = [index / 20.0 for index in range(21)]
+    expected_formulations = {
+        "EF-GF-IMPLICIT",
+        "EF-AOP-78-PUBLISHED-MEA",
+        "EF-AOP-73-CORRECTED-MEA",
+        "EF-CURRENT",
+    }
+    positions = result["Position"].drop_duplicates().tolist()
+    if len(result) != 84 or len(positions) != 21 or any(
+        abs(actual - expected) > 1.0e-15
+        for actual, expected in zip(positions, expected_positions, strict=True)
+    ):
+        raise AssertionError("Issue 17 must retain 84 rows at positions 0.00, 0.05, ..., 1.00.")
+    if set(result["formulation"]) != expected_formulations:
+        raise AssertionError("Issue 17 retained table does not contain exactly four formulations.")
+    if not result.groupby("Position").size().eq(4).all():
+        raise AssertionError("Each Issue 17 position must contain exactly four formulation rows.")
+    explicit = result.loc[result["formulation"].ne("EF-GF-IMPLICIT")]
+    if len(explicit) != 63 or not explicit["scalar_reference_relative_error"].between(
+        0.0, 1.0e-12
+    ).all():
+        raise AssertionError("All 63 explicit Issue 17 rows must agree with scalar transcription.")
+    if not (
+        summary["state_count"] == 21
+        and summary["formulation_count"] == 4
+        and summary["admitted_row_count"] == 84
+        and summary["numerical_gate_pass"] is True
+        and summary["physical_gate_pass"] is False
+        and summary["stage4_allowed"] is False
+    ):
+        raise AssertionError("Issue 17 summary gates do not match the retained negative result.")
+    try:
+        pd.testing.assert_frame_equal(
+            aggregates,
+            pd.DataFrame(summary["aggregates"]),
+            check_dtype=False,
+            check_exact=False,
+            rtol=1.0e-12,
+            atol=1.0e-12,
+        )
+    except AssertionError as error:
+        raise AssertionError("Issue 17 aggregate table is stale relative to the summary.") from error
+    blocked = stages.loc[stages["stage"].isin([4, 5])]
+    if len(blocked) != 2 or not (
+        blocked["attempted"].eq("no").all()
+        and blocked["stopped_by"].eq("physical_check").all()
+        and blocked["outcome"].eq("not_attempted").all()
+    ):
+        raise AssertionError("Issue 17 Stages 4 and 5 must stop at the Stage 2 physical check.")
+
+    scientific_hash = stable_csv_sha256(
+        ISSUE17_TABLES[0], RESULT_SCIENTIFIC_HASH_EXCLUDED_COLUMNS
+    )
+    if summary.get("result_table_scientific_sha256") != scientific_hash:
+        raise AssertionError("Issue 17 summary is stale relative to the retained scientific values.")
+    figure_marker = f"issue17_result_scientific_sha256={scientific_hash}".encode()
+    for figure in ISSUE17_FIGURES:
+        if figure_marker not in figure.read_bytes():
+            raise AssertionError(f"Issue 17 figure is stale: {figure.name}")
+    for path in list(ISSUE17_INPUTS.glob("*")) + ISSUE17_TABLES + ISSUE17_FIGURES:
+        content = path.read_bytes()
+        if b"/home/" in content or b".codex/worktrees" in content:
+            raise AssertionError(f"Issue 17 retained file contains a machine-local path: {path.name}")
+
+
+def _check_issue40_apparent_true_species() -> None:
+    _require_existing([ISSUE40_INPUT, ISSUE40_TABLE, ISSUE40_SUMMARY, ISSUE40_REPORT])
+    config = json.loads(ISSUE40_INPUT.read_text(encoding="utf-8"))
+    summary = json.loads(ISSUE40_SUMMARY.read_text(encoding="utf-8"))
+    data = pd.read_csv(ISSUE40_TABLE, keep_default_na=False)
+
+    def git_blob_sha256(revision: str, path: Path) -> str:
+        result = subprocess.run(
+            ["git", "show", f"{revision}:{path.relative_to(ROOT)}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        )
+        return hashlib.sha256(result.stdout).hexdigest()
+
+    source_commit = summary.get("source_repository_commit", "")
+    current_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip()
+    if not source_commit or source_commit == current_commit:
+        raise AssertionError("Issue 40 retained results must record a distinct source commit from the result-artifact commit.")
+    if subprocess.run(
+        ["git", "cat-file", "-e", f"{source_commit}^{{commit}}"], cwd=ROOT, capture_output=True
+    ).returncode != 0:
+        raise AssertionError("Issue 40 source repository commit is not a local commit.")
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_commit, current_commit], cwd=ROOT).returncode != 0:
+        raise AssertionError("Issue 40 source repository commit is not an ancestor of the retained result commit.")
+    if summary.get("source_worktree_clean_at_generation") is not True:
+        raise AssertionError("Issue 40 source commit was not generated from a clean worktree.")
+    source_inputs = summary.get("source_inputs", {})
+    actual_source_inputs = {
+        "config_sha256": hashlib.sha256(ISSUE40_INPUT.read_bytes()).hexdigest(),
+        "issue33_table_sha256": hashlib.sha256((TABLES / "issue33_concentration_basis.csv").read_bytes()).hexdigest(),
+        "issue33_summary_sha256": hashlib.sha256((TABLES / "issue33_concentration_basis_summary.json").read_bytes()).hexdigest(),
+        "retained_profile_sha256": hashlib.sha256((ANALYSIS / "inputs/retained_reactive_case3c/film_states.csv").read_bytes()).hexdigest(),
+    }
+    expected_inputs = config["source_inputs"]
+    if (
+        actual_source_inputs["issue33_table_sha256"] != expected_inputs["issue33_table"]["sha256"]
+        or actual_source_inputs["issue33_summary_sha256"] != expected_inputs["issue33_summary"]["sha256"]
+        or actual_source_inputs["retained_profile_sha256"] != expected_inputs["retained_profile"]["sha256"]
+    ):
+        raise AssertionError("Issue 40 current source input hash disagrees with the input record.")
+    if source_inputs != actual_source_inputs:
+        raise AssertionError("Issue 40 recorded source input hashes are stale.")
+    issue33_summary = json.loads(
+        (TABLES / "issue33_concentration_basis_summary.json").read_text(encoding="utf-8")
+    )
+    if issue33_summary.get("source_table_sha256") != actual_source_inputs["issue33_table_sha256"]:
+        raise AssertionError("Issue 40 Issue 33 summary hash does not match the current Issue 33 table.")
+    if summary.get("generator_sha256") != git_blob_sha256(
+        source_commit, ANALYSIS / "scripts/resolve_issue40_apparent_true_species.py"
+    ):
+        raise AssertionError("Issue 40 generator hash does not match the recorded source commit.")
+    if actual_source_inputs["config_sha256"] != git_blob_sha256(source_commit, ISSUE40_INPUT):
+        raise AssertionError("Issue 40 input hash does not match the recorded source commit.")
+    if summary.get("source_revision_protocol") != config["reproduction"]["source_revision_protocol"]:
+        raise AssertionError("Issue 40 source revision protocol is stale.")
+
+    expected_species = [
+        "carbon-dioxide", "monoethanolamine", "water", "protonated-monoethanolamine",
+        "carbamate-anion", "bicarbonate-anion", "carbonate-anion", "hydronium-cation", "hydroxide-anion",
+    ]
+    if len(data) != 5 or set(data["source_row_id"]) != {
+        "Putta2016_1M", "Putta2016_5M", "Case3C_position_0", "Case3C_position_0.5", "Case3C_position_1"
+    }:
+        raise AssertionError("Issue 40 must retain the two source labels and three Case 3C positions.")
+    if data["scientific_admission"].ne("basis_unresolved").any():
+        raise AssertionError("Issue 40 must not scientifically admit a source-basis-unresolved row.")
+    if data["packet_bound_status"].value_counts().to_dict() != {"not_attempted": 4, "evaluated": 1}:
+        raise AssertionError("Issue 40 packet row accounting changed.")
+    p1 = data.loc[data["source_row_id"] == "Case3C_position_1"].iloc[0]
+    if not (
+        abs(float(p1["source_loaded_analytical_MEA_mol_L"]) - 4.889309897097635) <= 1.0e-15
+        and abs(float(p1["source_free_MEA_mol_L"]) - 2.491683471902737) <= 1.0e-15
+        and p1["packet_bound_status"] == "evaluated"
+        and p1["inverse_mapping_status"] == "evaluated_packet_equilibrium_roundtrip"
+        and p1["forward_transform_status"] == "evaluated"
+        and p1["inverse_replay_status"] == "identity_pass"
+        and p1["forward_replay_status"] == "identity_pass"
+        and p1["replay_branch_match_status"] == "identity_pass"
+        and p1["branch_identity"] == p1["replay_branch_identity"]
+        and p1["packet_density_status"] == "ePC-SAFT phase density; true-state mapping diagnostic only"
+        and p1["diagnostic_density_marker"] == "source density does not define prepared or analytical basis"
+        and float(p1["inverse_max_abs_residual"]) <= 1.0e-10
+        and float(p1["charge_residual"]) <= 1.0e-10
+        and abs(float(p1["issue33_reconstructed_true_species_loading_mol_CO2_per_mol_MEA"]) - 0.24999627615967537) <= 1.0e-15
+        and abs(float(p1["apparent_total_inorganic_carbon_to_analytical_MEA_flow_ratio_mol_per_mol"]) - 0.25000000000000006) <= 1.0e-15
+        and abs(float(p1["apparent_minus_issue33_loading_mol_per_mol"]) - 3.7238403246819818e-06) <= 1.0e-15
+        and p1["loading_apparent_difference_status"] == "distinct inputs; neither relabelled nor fitted"
+    ):
+        raise AssertionError("Issue 40 Position 1 packet mapping or exact source values failed.")
+    if summary["species_order"] != expected_species or summary["gates"] != {
+        "fixed_nine_species_order": True,
+        "single_liquid_only": True,
+        "vle_fugacity_equality_imposed": False,
+        "position_1_exact_source_analytical_mol_L": 4.889309897097635,
+        "position_1_exact_source_free_MEA_mol_L": 2.491683471902737,
+        "position_1_issue33_reconstructed_true_species_loading": 0.24999627615967537,
+        "position_1_apparent_flow_ratio": 0.25000000000000006,
+        "position_1_apparent_minus_issue33_loading": 3.7238403246819818e-06,
+        "loading_and_apparent_ratio_distinct_not_relabelled_or_fitted": True,
+        "position_1_source_basis_unresolved": True,
+        "packet_evaluated_at_least_one_row": True,
+        "analytical_and_elemental_residual_pass": True,
+        "mole_fraction_normalization_pass": True,
+        "charge_residual_pass": True,
+        "deterministic_replay_pass": True,
+        "replay_branch_match_pass": True,
+        "no_capture_inference": True,
+        "no_thermo_or_kinetic_fit": True,
+    }:
+        raise AssertionError("Issue 40 summary gates or species order changed.")
+    for identity in ("outer_sha256", "parameter_document_sha256", "engine_wheel_sha256", "state_packet_sha256", "parameter_fingerprint", "chemistry_sha256"):
+        expected = config["bundle"].get(identity)
+        if expected is not None and summary["bundle"].get(identity) != expected:
+            raise AssertionError(f"Issue 40 bundle identity changed: {identity}")
+    if summary["row_counts"] != {
+        "source_rows": 5, "literature_label_rows": 2, "retained_case3c_rows": 3,
+        "packet_candidate_rows": 1, "packet_evaluated_rows": 1, "packet_non_evaluable_rows": 0,
+        "packet_not_attempted_rows": 4, "scientifically_admitted_rows": 0, "basis_unresolved_rows": 5,
+    }:
+        raise AssertionError("Issue 40 row counts changed.")
+    result_hash = hashlib.sha256(ISSUE40_TABLE.read_bytes()).hexdigest()
+    if summary.get("result_table_sha256") != result_hash or summary["packet_state_evidence"]["non_evaluable_state_count"] != 31:
+        raise AssertionError("Issue 40 retained result hash or historical failure accounting is stale.")
+    for _, row in data.loc[data["source_row_id"].astype(str).str.startswith("Putta")].iterrows():
+        inputs = json.loads(row["apparent_inputs_json"])
+        intervals = json.loads(row["apparent_input_reporting_intervals_json"])
+        if inputs != {"CO2": None, "H2O": None, "MEA": None, "normalized_CO2_MEA_H2O": None, "status": "not_reported_source_label_only"}:
+            raise AssertionError("Issue 40 Putta source-label row must retain structured null apparent inputs.")
+        if any(intervals[key] != {"interval": None, "status": "not_reported"} for key in ("CO2_mol_s", "MEA_mol_s", "H2O_mol_s", "temperature_K", "pressure_Pa")):
+            raise AssertionError("Issue 40 Putta source-label row must retain structured null interval metadata.")
+        if any(row[key] != "not_reported" for key in ("temperature_K", "pressure_Pa")) or any(row[key] != "not_reported_source_label_only" for key in ("temperature_reporting_interval", "pressure_reporting_interval")):
+            raise AssertionError("Issue 40 Putta source-label row has incomplete T/P not-reported metadata.")
+    if "retained-output/source-lineage consistency" not in ISSUE40_REPORT.read_text(encoding="utf-8"):
+        raise AssertionError("Issue 40 report must describe the focused validator as a lineage check.")
+    if any(data[column].eq("").any() for column in ("workers", "machine", "run_id", "reproduction_command")):
+        raise AssertionError("Every Issue 40 row must retain run identity and reproduction metadata.")
+
+
+def _check_issue36_film_input_release() -> None:
+    if subprocess.run(
+        ["git", "status", "--porcelain"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip():
+        raise AssertionError("Issue 36 validator requires a clean current worktree.")
+    required = [ISSUE36_INPUT, ISSUE36_TABLE, ISSUE36_SUMMARY, ISSUE36_REPORT]
+    _require_existing(required)
+    config = issue36_load_json(ISSUE36_INPUT)
+    summary = issue36_load_json(ISSUE36_SUMMARY)
+    if config.get("schema_version") != "issue36_packet_bound_film_input_release_v1":
+        raise AssertionError("Issue 36 input record changed.")
+    if config.get("species_order") != ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"]:
+        raise AssertionError("Issue 36 species order changed.")
+    if config.get("reaction_order") != ["R1", "R2", "R3", "R4", "R5"]:
+        raise AssertionError("Issue 36 reaction order changed.")
+
+    current_revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip()
+    source_revision = summary.get("source_revision", "")
+    if not source_revision or source_revision == current_revision:
+        raise AssertionError("Issue 36 result must record a distinct source revision.")
+    if subprocess.run(["git", "cat-file", "-e", f"{source_revision}^{{commit}}"], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 36 source revision is not a local commit.")
+    if source_revision_has_issue36_outputs(source_revision):
+        raise AssertionError("Issue 36 source revision contains generated outputs.")
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_revision, current_revision], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 36 source revision is not an ancestor of the result commit.")
+    if summary.get("source_worktree_clean_at_generation") is not True:
+        raise AssertionError("Issue 36 generation was not clean.")
+
+    input_hash = hashlib.sha256(ISSUE36_INPUT.read_bytes()).hexdigest()
+    generator = ANALYSIS / "scripts/resolve_issue36_film_input_release.py"
+    generator_hash = hashlib.sha256(generator.read_bytes()).hexdigest()
+    if summary.get("input_sha256") != input_hash or summary.get("generator_sha256") != generator_hash:
+        raise AssertionError("Issue 36 current source hashes disagree with the retained summary.")
+    source_blobs = {
+        "input": issue36_git_blob_sha256(source_revision, ISSUE36_INPUT.relative_to(ROOT).as_posix()),
+        "generator": issue36_git_blob_sha256(source_revision, generator.relative_to(ROOT).as_posix()),
+    }
+    if source_blobs != {"input": input_hash, "generator": generator_hash}:
+        raise AssertionError("Issue 36 source revision/blob lineage is stale or tampered.")
+    if summary.get("source_revision_protocol") != config["reproduction"]["source_revision_protocol"]:
+        raise AssertionError("Issue 36 source revision protocol changed.")
+
+    bundle = validate_issue36_bundle(config)
+    owner = validate_issue36_work_package_a(config)
+    release_guard = validate_issue36_release_guard(config)
+    dependency_data = validate_issue36_dependencies(config)
+    metadata = {
+        key: summary[key]
+        for key in ("source_revision", "input_sha256", "generator_sha256", "exact_command", "machine", "workers", "run_id")
+    }
+    expected_rows = build_issue36_rows(config, dependency_data, metadata)
+    header, actual_rows = _read_csv_rows(ISSUE36_TABLE)
+    if header != ISSUE36_RESULT_FIELDS or actual_rows != _canonical_csv_rows(expected_rows, ISSUE36_RESULT_FIELDS):
+        raise AssertionError("Issue 36 state rows differ from canonical dependency-derived rows.")
+    if summary.get("output_sha256") != {
+        "table": hashlib.sha256(ISSUE36_TABLE.read_bytes()).hexdigest(),
+        "report": hashlib.sha256(ISSUE36_REPORT.read_bytes()).hexdigest(),
+    }:
+        raise AssertionError("Issue 36 output hashes are stale.")
+    expected_report = build_issue36_report_text(config, metadata, bundle, owner, expected_rows)
+    if ISSUE36_REPORT.read_text(encoding="utf-8") != expected_report:
+        raise AssertionError("Issue 36 report differs from canonical dependency-derived text.")
+    expected_summary = build_issue36_summary(
+        config,
+        metadata,
+        bundle,
+        owner,
+        release_guard,
+        dependency_data,
+        expected_rows,
+        summary["output_sha256"],
+    )
+    if summary != expected_summary:
+        raise AssertionError("Issue 36 summary differs from canonical source/dependency-derived content.")
+    if summary["row_counts"] != {"declared_states": 5, "blocked_states": 5, "admitted_states": 0, "release_files_created": 0}:
+        raise AssertionError("Issue 36 state counts changed.")
+    if summary["release"]["status"] != "blocked" or summary["release"]["files_created"]:
+        raise AssertionError("Issue 36 release status crossed the blocked boundary.")
+    if summary["downstream"]["issue30"] != "blocked":
+        raise AssertionError("Issue 36 downstream issue #30 is not blocked.")
+    if any(row["admission_decision"] == "admitted" for row in actual_rows):
+        raise AssertionError("Issue 36 contains an admitted state.")
 
 
 def _check_required_files() -> None:
@@ -48,6 +480,8 @@ def _check_required_files() -> None:
         TABLES / "primary_validation_gate_summary.csv",
         TABLES / "method_case_contrast.csv",
         TABLES / "full_species_ionic_2017_c_case_sweep.csv",
+        TABLES / "epcsaft_v02_contribution_table.csv",
+        TABLES / "epcsaft_v02_column_row.csv",
         FIGURES / "nccc_one_bed_thermo_benchmark.pdf",
         FIGURES
         / "nccc_2017_epcsaft_temperature_overlays"
@@ -59,6 +493,419 @@ def _check_required_files() -> None:
         ANALYSIS / "scripts" / "generate_accuracy_credibility_artifacts.py",
     ]
     _require_existing(required)
+
+
+def _check_issue41_reversible_kinetics() -> None:
+    _require_existing([ISSUE41_INPUT, ISSUE41_SUMMARY, ISSUE41_REPORT, *ISSUE41_TABLES.values()])
+    config = json.loads(ISSUE41_INPUT.read_text(encoding="utf-8"))
+    summary = json.loads(ISSUE41_SUMMARY.read_text(encoding="utf-8"))
+    if config.get("schema_version") != "issue41_source_rate_evidence_v1":
+        raise AssertionError("Issue 41 input schema changed.")
+    if config.get("species_order") != [
+        "CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"
+    ]:
+        raise AssertionError("Issue 41 species order changed.")
+    if summary.get("input_sha256") != hashlib.sha256(ISSUE41_INPUT.read_bytes()).hexdigest():
+        raise AssertionError("Issue 41 summary input hash is stale.")
+    generator = ANALYSIS / "scripts/resolve_issue41_reversible_kinetics.py"
+    if summary.get("generator_sha256") != hashlib.sha256(generator.read_bytes()).hexdigest():
+        raise AssertionError("Issue 41 generator hash is stale.")
+    source_revision = summary.get("source_revision", "")
+    if not source_revision or subprocess.run(["git", "cat-file", "-e", f"{source_revision}^{{commit}}"], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 41 source revision is not a local commit.")
+    current_revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip()
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_revision, current_revision], cwd=ROOT, capture_output=True).returncode != 0:
+        raise AssertionError("Issue 41 source revision is not an ancestor of the retained result commit.")
+    if summary.get("source_worktree_dirty_during_generation") is not False:
+        raise AssertionError("Issue 41 retained outputs were not generated from a clean source worktree.")
+    source_blob_hashes = {
+        "input": hashlib.sha256(subprocess.run(["git", "show", f"{source_revision}:analyses/nccc_validation/inputs/issue41_reversible_kinetics.json"], cwd=ROOT, check=True, capture_output=True).stdout).hexdigest(),
+        "generator": hashlib.sha256(subprocess.run(["git", "show", f"{source_revision}:analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py"], cwd=ROOT, check=True, capture_output=True).stdout).hexdigest(),
+    }
+    if source_blob_hashes != {"input": summary["input_sha256"], "generator": summary["generator_sha256"]}:
+        raise AssertionError("Issue 41 retained source revision/blob lineage is stale or tampered.")
+    _check_issue41_external_provenance(config, summary)
+    expected_gates = {
+        "fixed_nine_species_order": True, "fixed_reaction_projections": True,
+        "source_pdf_hashes_verified": True, "bundle_outer_and_member_hashes_match": True,
+        "bundle_identity_matches_input": True, "source_f1_f2_coefficients_recovered": True,
+        "source_f3_coefficient_recovered": False, "source_printed_third_order_s_minus_2_rejected": True,
+        "source_observations_row_level_available": False, "estimation_validation_partition_predeclared_only": True,
+        "issue40_basis_unresolved_preserved": True, "packet_bound_scientific_admission": False,
+        "packet_activity_closure_attempted": False, "detailed_balance_evaluable": False,
+        "reaction_timescale_evaluable": False, "physical_reactive_film_adoption": False, "supported_negative": True,
+    }
+    if summary.get("gates") != expected_gates:
+        raise AssertionError("Issue 41 gates changed.")
+    expected_bundle = {
+        "outer_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+        "parameter_document_sha256": "2666914f0f9cfebdf230e96565de843f9aadc9424035c940883147ff66af035c",
+        "engine_wheel_sha256": "d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a",
+        "state_packet_sha256": "41017bcf727a486a8f3feb280e19c111a15c5dda5a3cca4e8c7dc5b051168fef",
+        "chemistry_sha256": "1989f3e6c8fa567a019dcdbceb4bbcf26d9ca48aec3f640dad1134bdd1fd4e7c",
+        "parameter_fingerprint": "sha256:c1fc2665e94d136eb85f27c793b7defbd16d1d82cb3173cb50a9aaf6513c8940",
+    }
+    if any(summary.get("bundle", {}).get(key) != value for key, value in expected_bundle.items()):
+        raise AssertionError("Issue 41 bundle identity changed.")
+    expected_counts = {
+        "stoichiometry": 8, "source_rate_evidence": 5, "raw_observation_inventory": 23,
+        "provider_equilibrium_relationships": 9, "estimation_validation_partition": 5,
+        "packet_bound_comparison": 5, "scientifically_admitted_packet_rows": 0,
+    }
+    if summary.get("row_counts") != expected_counts:
+        raise AssertionError("Issue 41 row counts changed.")
+    tables = {key: pd.read_csv(path, keep_default_na=False) for key, path in ISSUE41_TABLES.items()}
+    stoich = tables["stoichiometry"]
+    if len(stoich) != 8 or set(stoich["reaction_id"]) != {"R1", "R2", "R3", "R4", "R5", "F1", "F2", "F3"} or not stoich["stoichiometry_balance_pass"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Issue 41 stoichiometry table is incomplete or unbalanced.")
+    rates = tables["source_rate_evidence"]
+    if len(rates) != 5 or not rates["dimensional_reconstruction_pass"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Issue 41 source-rate table is incomplete.")
+    if len(rates.loc[rates["coefficient_status"] == "recovered"]) != 4 or len(rates.loc[rates["reaction_id"] == "F3"]) != 1 or rates.loc[rates["reaction_id"] == "F3", "coefficient_status"].iloc[0] != "unavailable":
+        raise AssertionError("Issue 41 F1/F2/F3 source-rate statuses changed.")
+    raw = tables["raw_observations"]
+    if len(raw) != 23 or not raw["raw_rate_value_available"].astype(str).str.lower().eq("false").all():
+        raise AssertionError("Issue 41 raw observation inventory must remain non-row-level.")
+    partition = tables["estimation_validation_partition"]
+    if len(partition) != 5 or partition["dataset_id"].duplicated().any() or not partition["status"].eq("predeclared_only_no_row_ids").all() or not bool(partition[["row_ids_used", "rate_values_used", "uncertainty_weights_used"]].apply(lambda col: col.astype(str).str.lower().eq("false").all()).all()):
+        raise AssertionError("Issue 41 estimation/validation partition changed.")
+    provider = tables["provider_equilibrium_relationships"]
+    if len(provider) != 9 or not provider["detailed_balance_status"].eq("not_evaluable_basis_unresolved").all() or not provider[["lnQ", "detailed_balance_residual", "detailed_balance_pass"]].eq("").all().all():
+        raise AssertionError("Issue 41 provider relationship table evaluated unavailable Q data.")
+    packet = tables["packet_bound_comparison"]
+    if len(packet) != 5 or not packet["source_basis_status"].eq("basis_unresolved").all() or not packet["scientific_admission"].eq("basis_unresolved").all() or not packet["lnQ"].eq("").all() or not packet["detailed_balance_residual"].eq("").all() or not packet["detailed_balance_pass"].eq("").all():
+        raise AssertionError("Issue 41 packet-bound comparison crossed the basis-admission boundary.")
+    for key, path in ISSUE41_TABLES.items():
+        if summary["output_sha256"][key] != hashlib.sha256(path.read_bytes()).hexdigest():
+            raise AssertionError(f"Issue 41 output hash is stale: {key}")
+    if summary["output_sha256"]["report"] != hashlib.sha256(ISSUE41_REPORT.read_bytes()).hexdigest():
+        raise AssertionError("Issue 41 report hash is stale.")
+    report = ISSUE41_REPORT.read_text(encoding="utf-8")
+    if "supported-negative" not in report or "No physical reactive film is adopted" not in report or "No bundle provenance mismatch was found" not in report:
+        raise AssertionError("Issue 41 report does not state its evidence boundary.")
+
+
+def _check_issue42_film_transport() -> None:
+    current_status = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout
+    if current_status.strip():
+        raise AssertionError("Issue 42 validator requires a clean current worktree.")
+    _require_existing([ISSUE42_INPUT, ISSUE42_SUMMARY, ISSUE42_REPORT, *ISSUE42_TABLES.values()])
+    config = json.loads(ISSUE42_INPUT.read_text(encoding="utf-8"))
+    summary = json.loads(ISSUE42_SUMMARY.read_text(encoding="utf-8"))
+    if config.get("schema_version") != "issue42_species_resolved_transport_v1":
+        raise AssertionError("Issue 42 input schema changed.")
+    expected_species = [
+        "CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"
+    ]
+    if config.get("species_order") != expected_species:
+        raise AssertionError("Issue 42 species order changed.")
+    if config.get("charged_species") != ["MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"]:
+        raise AssertionError("Issue 42 charged-species closure set changed.")
+    if len(config.get("source_documents", [])) != 7 or len(config.get("transport_records", [])) != 13:
+        raise AssertionError("Issue 42 source inventory changed.")
+    if len([row for row in config["transport_records"] if row["record_kind"] == "ionic_diffusivity"]) != 6:
+        raise AssertionError("Issue 42 ionic transport inventory changed.")
+    if len(config.get("required_state_rows", [])) != 5:
+        raise AssertionError("Issue 42 declared state count changed.")
+
+    input_hash = hashlib.sha256(ISSUE42_INPUT.read_bytes()).hexdigest()
+    if summary.get("input_sha256") != input_hash:
+        raise AssertionError("Issue 42 summary input hash is stale.")
+    generator = ANALYSIS / "scripts/resolve_issue42_film_transport.py"
+    generator_hash = hashlib.sha256(generator.read_bytes()).hexdigest()
+    if summary.get("generator_sha256") != generator_hash:
+        raise AssertionError("Issue 42 generator hash is stale.")
+    source_revision = summary.get("source_revision", "")
+    if not source_revision or subprocess.run(
+        ["git", "cat-file", "-e", f"{source_revision}^{{commit}}"], cwd=ROOT, capture_output=True
+    ).returncode != 0:
+        raise AssertionError("Issue 42 source revision is not a local commit.")
+    if source_revision_contains_issue42_outputs(source_revision):
+        raise AssertionError("Issue 42 recorded source revision contains generated outputs.")
+    current_revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip()
+    if subprocess.run(
+        ["git", "merge-base", "--is-ancestor", source_revision, current_revision], cwd=ROOT, capture_output=True
+    ).returncode != 0:
+        raise AssertionError("Issue 42 source revision is not an ancestor of the retained result commit.")
+    if summary.get("source_worktree_clean_at_generation") is not True:
+        raise AssertionError("Issue 42 retained outputs were not generated from a clean source worktree.")
+    source_blob_hashes = {
+        "input": hashlib.sha256(subprocess.run(
+            ["git", "show", f"{source_revision}:analyses/nccc_validation/inputs/issue42_film_transport.json"],
+            cwd=ROOT, check=True, capture_output=True
+        ).stdout).hexdigest(),
+        "generator": hashlib.sha256(subprocess.run(
+            ["git", "show", f"{source_revision}:analyses/nccc_validation/scripts/resolve_issue42_film_transport.py"],
+            cwd=ROOT, check=True, capture_output=True
+        ).stdout).hexdigest(),
+    }
+    if source_blob_hashes != {"input": input_hash, "generator": generator_hash}:
+        raise AssertionError("Issue 42 retained source revision/blob lineage is stale or tampered.")
+
+    verified_source_files = validate_issue42_source_documents(config)
+    canonical_sources = canonical_source_documents(config, verified_source_files)
+    if summary.get("source_documents") != canonical_sources:
+        raise AssertionError("Issue 42 source-document summary differs from canonical input-derived records.")
+    if summary.get("unrecovered_source_records") != config["unrecovered_source_records"]:
+        raise AssertionError("Issue 42 unrecovered-source summary differs from the pinned input.")
+    for key, item in config["dependencies"].items():
+        path = ROOT / item["path"]
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != item["sha256"]:
+            raise AssertionError(f"Issue 42 dependency is missing or changed: {key}")
+    if summary.get("dependencies") != config["dependencies"]:
+        raise AssertionError("Issue 42 dependency provenance is stale.")
+    issue35, issue40, issue41, dependency_rows = validate_issue42_dependencies(config)
+    expected_run_metadata = canonical_run_metadata(config, source_revision, input_hash, generator_hash)
+    if any(summary.get(key) != value for key, value in expected_run_metadata.items()):
+        raise AssertionError("Issue 42 run metadata differs from canonical input/source-derived values.")
+    if summary.get("source_revision_protocol") != config["reproduction"]["source_revision_protocol"]:
+        raise AssertionError("Issue 42 source revision protocol differs from the pinned input.")
+    if summary.get("regeneration_command") != config["reproduction"]["command"]:
+        raise AssertionError("Issue 42 regeneration command differs from the pinned input.")
+
+    replay = replay_issue42_issue35(config)
+    reconstruction = summary.get("source_reconstruction", {})
+    expected_observations = {
+        "amundsen_weiland_density": 23,
+        "amundsen_weiland_unloaded_density": 5,
+        "hartono_density": 48,
+        "hartono_viscosity": 48,
+    }
+    if reconstruction.get("issue35_source_observation_counts") != expected_observations:
+        raise AssertionError("Issue 42 Issue 35 source counts changed.")
+    if reconstruction.get("issue35_source_model_evaluation_counts") != {
+        "weiland_density": 23, "hartono_density": 48, "hartono_viscosity": 48
+    } or reconstruction.get("issue35_snijder_row_count") != 16:
+        raise AssertionError("Issue 42 Issue 35 reconstruction counts changed.")
+    correlation_hash = hashlib.sha256(
+        (ROOT / config["dependencies"]["issue35_correlations"]["path"]).read_bytes()
+    ).hexdigest()
+    if reconstruction.get("issue35_correlation_table_sha256") != correlation_hash or reconstruction.get("issue35_replay_sha256") != correlation_hash or not reconstruction.get("issue35_replay_exact_match"):
+        raise AssertionError("Issue 42 Issue 35 replay identity is stale or non-exact.")
+    if issue35.get("gates", {}).get("supported_negative") is not True or issue35.get("gates", {}).get("physical_transport_adoption") is not False:
+        raise AssertionError("Issue 42 Issue 35 supported-negative boundary changed.")
+
+    expected_gates = {
+        "source_pdf_hashes_verified": True, "source_input_and_generator_committed": True,
+        "issue35_reconstruction_replayed_exactly": True, "issue35_supported_negative_preserved": True,
+        "issue40_scientifically_admitted_rows": 0, "issue41_scientifically_admitted_packet_rows": 0,
+        "n2o_chain_complete": False, "water_diffusivity_complete": False,
+        "ion_diffusivity_input_complete": False,
+        "candidate_A_all_species_effective_diffusivities_complete": False,
+        "candidate_A_source_defined_equal_ion_lump": False,
+        "candidate_B_complete_mobility_law": False,
+        "candidate_B_gamma_and_admitted_true_state_available": False,
+        "identical_state_flux_comparison_evaluated": False, "paired_delta_J_evaluated": False,
+        "physical_checks_evaluated": False, "physical_transport_adoption": False,
+        "no_package_or_parameter_identity_used": True, "no_capture_inference": True,
+        "supported_negative": True,
+    }
+    if summary.get("gates") != expected_gates:
+        raise AssertionError("Issue 42 gates changed.")
+    if summary.get("row_counts") != {
+        "transport_records": 13, "ionic_diffusivity_records": 6, "declared_comparison_states": 5,
+        "evaluated_comparison_states": 0, "scientifically_admitted_states": 0,
+        "candidate_A_evaluated_states": 0, "candidate_B_evaluated_states": 0,
+    }:
+        raise AssertionError("Issue 42 row counts changed.")
+    if summary.get("package_parameter_identity") != {"used": False, "package": None, "parameter": None}:
+        raise AssertionError("Issue 42 package or parameter identity was unexpectedly used.")
+
+    source_table = pd.read_csv(ISSUE42_TABLES["transport_inputs"], keep_default_na=False)
+    if len(source_table) != 13 or set(source_table["record_id"]) != {row["id"] for row in config["transport_records"]}:
+        raise AssertionError("Issue 42 transport source table is incomplete.")
+    if len(source_table.loc[source_table["record_kind"] == "ionic_diffusivity"]) != 6:
+        raise AssertionError("Issue 42 transport source table ionic rows changed.")
+    expected_admissions = {
+        row["id"]: row["admission_decision"] for row in config["transport_records"]
+    }
+    if source_table.set_index("record_id")["admission_decision"].to_dict() != expected_admissions:
+        raise AssertionError("Issue 42 source table admission decisions changed.")
+    run_metadata = expected_run_metadata
+    expected_source_rows = build_issue42_source_rows(config, run_metadata)
+    source_header, actual_source_rows = _read_csv_rows(ISSUE42_TABLES["transport_inputs"])
+    if source_header != SOURCE_FIELDS or actual_source_rows != _canonical_csv_rows(
+        expected_source_rows, SOURCE_FIELDS
+    ):
+        raise AssertionError("Issue 42 transport source rows differ from canonical input-derived rows.")
+
+    comparison = pd.read_csv(ISSUE42_TABLES["transport_comparison"], keep_default_na=False)
+    if len(comparison) != 5 or set(comparison["state_id"]) != {row["state_id"] for row in config["required_state_rows"]}:
+        raise AssertionError("Issue 42 comparison state inventory changed.")
+    if not comparison["attempt_status"].eq("not_attempted").all() or not comparison["decision"].eq("blocked_not_evaluable").all():
+        raise AssertionError("Issue 42 comparison crossed the not-attempted boundary.")
+    expected_domains = {
+        "Putta2016_1M": "not_evaluable_source_label_only", "Putta2016_5M": "not_evaluable_source_label_only",
+        "Case3C_position_0": "outside_common_temperature_domain",
+        "Case3C_position_0.5": "outside_common_temperature_domain", "Case3C_position_1": "basis_unresolved",
+    }
+    if comparison.set_index("state_id")["state_domain_status"].to_dict() != expected_domains:
+        raise AssertionError("Issue 42 common-domain statuses changed.")
+    blank_fields = [
+        "candidate_A_co2_flux_mol_m2_s", "candidate_B_co2_flux_mol_m2_s", "paired_delta_J_interval_mol_m2_s",
+        "candidate_A_uncertainty_halfwidth_mol_m2_s", "candidate_B_uncertainty_halfwidth_mol_m2_s",
+        "candidate_A_numerical_error_mol_m2_s", "candidate_B_numerical_error_mol_m2_s",
+        "charge_balance_residual", "zero_current_residual", "conservation_residual", "transfer_direction",
+    ]
+    if not comparison[blank_fields].eq("").all().all() or not comparison["positivity_status"].eq("not_attempted").all():
+        raise AssertionError("Issue 42 comparison contains evaluated physical outputs.")
+    issue40_header, issue40_rows = _read_csv_rows(ISSUE40_TABLE)
+    comparison_header, actual_comparison_rows = _read_csv_rows(ISSUE42_TABLES["transport_comparison"])
+    expected_comparison_rows = build_issue42_comparison_rows(config, issue40_rows, run_metadata)
+    if not issue40_header or comparison_header != COMPARISON_FIELDS or actual_comparison_rows != _canonical_csv_rows(expected_comparison_rows, COMPARISON_FIELDS):
+        raise AssertionError("Issue 42 comparison rows differ from canonical input-derived rows.")
+
+    expected_decision_summaries = canonical_decision_summaries(
+        config,
+        canonical_sources,
+        expected_source_rows,
+        expected_comparison_rows,
+        dependency_rows,
+    )
+    if summary.get("candidate_A") != expected_decision_summaries["candidate_A"] or summary.get("candidate_B") != expected_decision_summaries["candidate_B"]:
+        raise AssertionError("Issue 42 candidate decision summaries differ from canonical input/dependency-derived records.")
+
+    expected_report = build_issue42_report_text(
+        config,
+        canonical_sources,
+        replay,
+        expected_comparison_rows,
+        run_metadata,
+    )
+    if ISSUE42_REPORT.read_text(encoding="utf-8") != expected_report:
+        raise AssertionError("Issue 42 report differs from canonical input/dependency-derived text.")
+    expected_summary = canonical_summary(
+        config,
+        source_revision,
+        canonical_sources,
+        replay,
+        expected_source_rows,
+        expected_comparison_rows,
+        (issue35, issue40, issue41),
+        dependency_rows,
+        run_metadata,
+        correlation_hash,
+        {
+            "transport_inputs": hashlib.sha256(ISSUE42_TABLES["transport_inputs"].read_bytes()).hexdigest(),
+            "transport_comparison": hashlib.sha256(ISSUE42_TABLES["transport_comparison"].read_bytes()).hexdigest(),
+            "report": hashlib.sha256(ISSUE42_REPORT.read_bytes()).hexdigest(),
+        },
+    )
+    if summary != expected_summary:
+        raise AssertionError("Issue 42 summary differs from canonical input/dependency-derived records.")
+    for key, path in ISSUE42_TABLES.items():
+        if summary["output_sha256"][key] != hashlib.sha256(path.read_bytes()).hexdigest():
+            raise AssertionError(f"Issue 42 output hash is stale: {key}")
+    if summary["output_sha256"]["report"] != hashlib.sha256(ISSUE42_REPORT.read_bytes()).hexdigest():
+        raise AssertionError("Issue 42 report hash is stale.")
+def _check_issue41_external_provenance(config: dict, summary: dict) -> None:
+    for source in config["source_documents"]:
+        path = source.get("local_pdf_path")
+        expected = source.get("source_pdf_sha256")
+        if path is None:
+            if expected is not None:
+                raise AssertionError(f"Issue 41 source {source['id']} has an unresolvable PDF hash.")
+            continue
+        source_path = Path(path)
+        if not source_path.is_file() or hashlib.sha256(source_path.read_bytes()).hexdigest() != expected:
+            raise AssertionError(f"Issue 41 source PDF is missing or changed: {source['id']}")
+    bundle_config = config["bundle"]
+    bundle_path = Path(bundle_config["path"])
+    if not bundle_path.is_file() or hashlib.sha256(bundle_path.read_bytes()).hexdigest() != bundle_config["outer_sha256"]:
+        raise AssertionError("Issue 41 authorized bundle is missing or changed.")
+    with zipfile.ZipFile(bundle_path) as archive:
+        manifest_names = [name for name in archive.namelist() if name.endswith("/bundle.json")]
+        if len(manifest_names) != 1:
+            raise AssertionError("Issue 41 bundle manifest is not unique.")
+        manifest_name = manifest_names[0]
+        prefix = manifest_name[: -len("bundle.json")]
+        manifest = json.loads(archive.read(manifest_name))
+        for item in manifest["files"]:
+            member = prefix + item["path"]
+            data = archive.read(member)
+            if len(data) != item["bytes"] or hashlib.sha256(data).hexdigest() != item["sha256"]:
+                raise AssertionError(f"Issue 41 bundle member is missing or changed: {item['path']}")
+        expected = {
+            "parameter_document_sha256": bundle_config["parameter_document_sha256"],
+            "engine_wheel_sha256": bundle_config["engine_wheel_sha256"],
+            "state_packet_sha256": bundle_config["state_packet_sha256"],
+        }
+        if any(manifest[key] != value for key, value in expected.items()):
+            raise AssertionError("Issue 41 bundle manifest identity changed.")
+        chemistry_path = prefix + "chemistry/reaction-system.json"
+        if hashlib.sha256(archive.read(chemistry_path)).hexdigest() != bundle_config["chemistry_sha256"]:
+            raise AssertionError("Issue 41 bundle chemistry member identity changed.")
+    if summary.get("bundle", {}).get("outer_sha256") != bundle_config["outer_sha256"]:
+        raise AssertionError("Issue 41 summary bundle identity is stale.")
+
+
+def _check_epcsaft_v02_validation() -> None:
+    contributions = pd.read_csv(TABLES / "epcsaft_v02_contribution_table.csv")
+    _require_columns(
+        contributions,
+        [
+            "mixture_kind",
+            "co2_fugacity_Pa",
+            "a_ion",
+            "a_born",
+            "contribution_check_pass",
+            "dataset_content_sha256",
+            "parameter_document_content_sha256",
+            "provider_parameter_fingerprint_scope",
+            "engine_wheel_sha256",
+            "repository_base_commit",
+            "reproduction_command",
+        ],
+    )
+    if set(contributions["mixture_kind"]) != {"neutral", "ionic"}:
+        raise AssertionError("Current ePC-SAFT contribution evidence must contain neutral and ionic rows only.")
+    neutral = contributions.loc[contributions["mixture_kind"] == "neutral"].iloc[0]
+    ionic = contributions.loc[contributions["mixture_kind"] == "ionic"].iloc[0]
+    if abs(float(neutral["a_ion"])) > 1e-12 or abs(float(neutral["a_born"])) > 1e-12:
+        raise AssertionError("Neutral ePC-SAFT state has nonzero electrolyte-only contributions.")
+    if abs(float(ionic["a_ion"])) <= 1e-8 or abs(float(ionic["a_born"])) <= 1e-8:
+        raise AssertionError("Ionic ePC-SAFT state does not activate both ion and Born contributions.")
+    if float(ionic["co2_fugacity_Pa"]) <= 0.0:
+        raise AssertionError("Ionic ePC-SAFT state has nonpositive CO2 fugacity.")
+    if not contributions["contribution_check_pass"].astype(str).str.lower().eq("true").all():
+        raise AssertionError("Current ePC-SAFT contribution check contains a failed row.")
+    if set(contributions["provider_parameter_fingerprint_scope"]) != {
+        "checkout-path-local; not portable provenance"
+    }:
+        raise AssertionError("Provider parameter fingerprints must be labeled checkout-path-local.")
+
+    column = pd.read_csv(TABLES / "epcsaft_v02_column_row.csv")
+    _require_columns(column, ["claim_strength", "run_directory_at_generation"])
+    if "retained_run_directory" in column.columns:
+        raise AssertionError("The disposable generation run directory must not be labeled retained.")
+    if len(column) != 1:
+        raise AssertionError("Current ePC-SAFT column evidence must contain exactly one row.")
+    row = column.iloc[0]
+    if str(row["thermo_model"]) != "epcsaft_ionic" or str(row["chemical_equilibrium_model"]) != "legacy":
+        raise AssertionError("Current ePC-SAFT column row must use the ionic fixed-chemistry lane.")
+    if not str(row["validation_pass"]).lower() == "true":
+        raise AssertionError("Current ePC-SAFT column row did not pass its retained checks.")
+    if str(row["stopped_by"]) != "none" or str(row["outcome"]) != "evaluated":
+        raise AssertionError("Current ePC-SAFT column row has an incomplete status.")
+    if not 0.0 <= float(row["capture_pct"]) <= 100.0:
+        raise AssertionError("Current ePC-SAFT column capture is outside physical bounds.")
+    if float(row["boundary_residual_norm"]) > 1.0:
+        raise AssertionError("Current ePC-SAFT column boundary residual exceeds 1.0.")
+    if max(
+        float(row["co2_conservation_relative_residual"]),
+        float(row["h2o_conservation_relative_residual"]),
+    ) > float(row["conservation_relative_tolerance"]):
+        raise AssertionError("Current ePC-SAFT column row fails component conservation.")
+    if int(row["invalid_state_count"]) or int(row["guard_penalty_count"]):
+        raise AssertionError("Current ePC-SAFT column row contains invalid or guarded states.")
+    if row["dataset_content_sha256"] != ionic["dataset_content_sha256"] or row[
+        "parameter_document_content_sha256"
+    ] != ionic["parameter_document_content_sha256"]:
+        raise AssertionError("Column and ionic-state parameter content identities disagree.")
 
 
 def _check_c_case_benchmark() -> None:

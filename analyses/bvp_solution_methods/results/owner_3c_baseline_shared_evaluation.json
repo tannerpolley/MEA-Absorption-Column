@@ -1,0 +1,517 @@
+{
+  "case": "corrected source3C",
+  "source": "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv",
+  "source_sha256": "5cfb1ab670adcfbdb90a003c5e163262470d85e1467aa250ff6e50ab7a79785f",
+  "reported_top_pressure_pa": 109500.0,
+  "inlet_pressure_pa": 110900.0,
+  "metadata": {
+    "case_id": "3C",
+    "beds": 1,
+    "intercoolers": 0,
+    "single_bed_height_m": 6.0,
+    "total_packed_height_m": 6.0,
+    "diameter_m": 0.64,
+    "vapor_composition_mode": "dry_saturated",
+    "gas_flow_basis": "reported_total_wet"
+  },
+  "height_m": 6.0,
+  "area_m2": 0.3216990877275948,
+  "packing": [
+    250.0,
+    0.97,
+    0.203,
+    0.35,
+    0.017,
+    0.292,
+    0.119
+  ],
+  "liquid_flows_mol_s": [
+    2.4323205276203805,
+    9.729282110481522,
+    76.97519250729157
+  ],
+  "vapor_flows_mol_s": [
+    1.6540435157308098,
+    1.5624169375299577,
+    14.530683358624426,
+    1.6006872732878803
+  ],
+  "liquid_molar_masses_kg_mol": [
+    0.044009,
+    0.061084,
+    0.018015
+  ],
+  "vapor_molar_masses_kg_mol": [
+    0.04401,
+    0.01801528,
+    0.02801,
+    0.031999
+  ],
+  "wet_vapor_mole_fractions": [
+    0.08548986749209124,
+    0.08075411298826632,
+    0.7510238896885865,
+    0.08273212983105603
+  ],
+  "bulk_state": [
+    2.4323205276203805,
+    76.97519250729157,
+    1.6540435157308098,
+    1.5624169375299577,
+    318.15,
+    316.75,
+    110900.0,
+    0.052715134432693156
+  ],
+  "assumptions": [
+    "Tl318.15K is user-approved imputation, not measurement",
+    "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+    "Reported gasmass interpreted as totalwet mass; source moisture basis unspecified",
+    "Loaded liquid mass and unloaded wMEA basis; molar conversion uses current native molar masses",
+    "Pressure boundary is bottom/inlet110900Pa; measured top109500Pa reserved for comparison"
+  ],
+  "model_input_row": {
+    "L": 2.088055555555556,
+    "G": 0.5591666666666667,
+    "alpha": 0.25,
+    "w_MEA": 0.3,
+    "y_CO2": 0.093,
+    "Tl": 318.15,
+    "Tv": 316.75,
+    "P": 110900.0,
+    "Beds": 1,
+    "Intercoolers": 0,
+    "CO2  %": 89.5,
+    "lean_solvent_temp_imputed": true,
+    "lean_solvent_temp_imputed_C": 45.0,
+    "y_O2": 0.09
+  },
+  "source_row_pressure_pa": 109500.0,
+  "engine_identity": {
+    "engine_commit": "9e1bef97fbea5c6f465612ae27b054192f91f19c",
+    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "wheel_sha256": "b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b",
+    "core_sha256": "b5f97d49eb9439da84312dbeacb8ac0bae26ce6939562339a3c73d842fccce34"
+  },
+  "execution_status": "wall_timeout",
+  "accepted": false,
+  "quadrature_points": 3,
+  "liquid_loading_path": {
+    "anchor": 0.25,
+    "max_log_step": 0.1,
+    "max_steps": 32
+  },
+  "initialization": {
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.052715134432693156,
+      0.01831591442799182,
+      0.01496214401416971,
+      -10940.409344546371,
+      0.7745668932575522
+    ],
+    "root_iterations": 11,
+    "original_algebraic_residuals": [
+      0.0,
+      0.0,
+      1.599415044850616e-14,
+      0.0,
+      0.0
+    ],
+    "accepted": true
+  },
+  "co2_model": "reactive_film",
+  "wall_limit_seconds": 900,
+  "initialization_source": {
+    "path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_liquid_path_baseline.json",
+    "sha256": "fdcb27a03af5b991dbafba70074a002f6752b3c7579fd65ef4bd00379e28c1ba",
+    "scope": "Explicit retained outer initial guess; each thermodynamic query is recomputed."
+  },
+  "known_derivative_limitation": "Native mixed-action precision repair adopted; separate trace-species A1 accuracy remains qualified. Use the original assembled-node and physical criteria.",
+  "caloric_status": "user_approved_provisional_shared_reference",
+  "caloric_limitation": "Pure-water vapor Cp discrepancy remains unresolved; converged thermal predictions remain provisional.",
+  "scope": "Two-node coupled solve with original discrete-equation checks; axial and quadrature refinement still required.",
+  "initialization_revalidation": "casadi_3c_node_balanced_actions.json: initializer_revalidated=true on the current Engine",
+  "verification_source": "import json\nimport time\nfrom pathlib import Path\n\nimport casadi as ca\nimport numpy as np\n\nfrom mea_absorption_column.BVP.Coupled_Column import build_column_balance_functions, build_coupled_column_functions\nfrom mea_absorption_column.BVP.Methods.Casadi_Collocation import solve_conservative_collocation\nfrom mea_absorption_column.Thermodynamics.casadi_reactive import ReactiveLiquidCallback, FixedCompositionVaporCallback\nfrom mea_absorption_column.Thermodynamics.reactive_bundle import ReactiveLiquid, load_reference_thermochemistry\nfrom mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET, ensure_epcsaft_importable\n\npath = Path(__import__('sys').argv[1])\nrecord = json.loads(path.read_text())\nrecord.update(verification_source=Path(__file__).read_text(), iteration_observations=[], native_calls={})\nrecord['loaded_source_sha256'] = {f: __import__('hashlib').sha256(Path(f).read_bytes()).hexdigest() for f in ('src/mea_absorption_column/BVP/Coupled_Column.py', 'src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py', 'src/mea_absorption_column/Thermodynamics/casadi_reactive.py', 'src/mea_absorption_column/Thermodynamics/reactive_bundle.py')}\ndef clean(value):\n    if isinstance(value, dict):\n        return {k: clean(v) for k, v in value.items()}\n    if isinstance(value, np.ndarray):\n        return clean(value.tolist())\n    if isinstance(value, (tuple, list)):\n        return [clean(v) for v in value]\n    if isinstance(value, (float, np.floating)):\n        return float(value) if np.isfinite(value) else str(value)\n    if isinstance(value, np.integer):\n        return int(value)\n    return value\ndef save():\n    temporary = path.with_suffix('.tmp')\n    temporary.write_text(json.dumps(clean(record), indent=2, allow_nan=False, default=str) + '\\n')\n    temporary.replace(path)\ndef instrument(owner, method, label):\n    function = getattr(owner, method)\n    counter = record['native_calls'][label] = dict(started=0, completed=0, wall_seconds=0., failures=[])\n    def measured(*args, **kwargs):\n        start = time.monotonic()\n        counter['started'] += 1\n        counter['last_inputs'] = np.asarray(args[0]).ravel().tolist() if method == '_state' else np.r_[args[0], args[1], args[2]].tolist()\n        save()\n        try:\n            return function(*args, **kwargs)\n        except (ValueError, RuntimeError) as error:\n            inputs = np.asarray(args[0]).ravel() if method == '_state' else np.r_[args[0], args[1], args[2]]\n            counter['failures'].append(dict(inputs=inputs.tolist(), failure=str(error)))\n            raise\n        finally:\n            counter['completed'] += 1\n            counter['wall_seconds'] += time.monotonic() - start\n            save()\n    setattr(owner, method, measured)\n\nengine = ensure_epcsaft_importable()\ndataset = MEA_THERMODYNAMICS_EPCSAFT_DATASET\nreference = load_reference_thermochemistry(dataset / 'anchored-reference-thermochemistry.json')\nliquid = ReactiveLiquidCallback('case3c_liquid', ReactiveLiquid(dataset, thermochemistry=reference, loading_anchor=.25, max_log_loading_step=.1, max_loading_steps=32))\nvapor_data = dataset.parent / 'MEA_neutral_vapor'\nvapor = FixedCompositionVaporCallback('case3c_vapor', engine.Parameters.from_json(vapor_data / 'parameters.json'),\n    load_reference_thermochemistry(vapor_data / 'reference-thermochemistry.json', liquid_reference=reference),\n    packing_interval=(1e-6, .1))\ninstrument(liquid.liquid, 'solve', 'liquid_query_A1')\ninstrument(liquid.liquid, 'solve_actions', 'liquid_query_A2')\ninstrument(vapor, '_state', 'vapor_value_A1_H2')\n\nfrom epcsaft import equilibrium\nnative_solve = equilibrium.solve\nrecord['native_equilibrium'] = dict(calls=0, wall_seconds=0., failures=[])\ndef measured_native(model, problem):\n    counter = record['native_equilibrium']\n    counter['calls'] += 1\n    start = time.monotonic()\n    try:\n        result = native_solve(model, problem)\n        if result.status != 'evaluated' or result.numerical_status != 'passed' or result.physical_status != 'passed':\n            counter['failures'].append(dict(temperature=str(problem.temperature), pressure=str(problem.pressure),\n                feed=problem.reaction_system.feed_amounts_mol, status=result.solver_status, failure=str(result.failure)))\n        return result\n    finally:\n        counter['wall_seconds'] += time.monotonic() - start\n        save()\nequilibrium.solve = measured_native\n\nfl, fv, bulk = (np.asarray(record[key]) for key in ('liquid_flows_mol_s', 'vapor_flows_mol_s', 'bulk_state'))\nparameters = dict(liquid_feed_mol_s=fl, vapor_feed_mol_s=fv, liquid_temperature_k=bulk[4],\n    vapor_temperature_k=bulk[5], bottom_pressure_pa=bulk[6], area_m2=record['area_m2'], packing=record['packing'])\ndef species_diffusivities(temperature):\n    co2 = .5 * 6.28e-7 * ca.exp(-15230. / (8.314462618 * temperature))\n    return ca.vertcat(co2, 8.8e-10, 8.8e-10, 8.4e-10, 6.8e-10, 6.8e-10, 6.8e-10, np.sqrt(3.4e-18), np.sqrt(3.4e-18))\nbalance, _ = build_column_balance_functions(liquid, vapor, **parameters)\nnode, boundary, diagnostics = build_coupled_column_functions(liquid, vapor,\n    species_diffusivities=species_diffusivities, quadrature_points=3, co2_model=record[\"co2_model\"], **parameters)\nnative = balance(bulk, [0., 0., 0.])\ngas = native[4]\nrecord['execution_status'] = 'initializing'\nsave()\nstarted = time.monotonic()\ntry:\n    if record['engine_identity'] != json.loads(Path('integration/epcsaft_contract.json').read_text())['final_identity']:\n        raise RuntimeError('Initial-guess Engine identity must be explicitly reconciled')\n    if not record['initialization']['accepted']:\n        raise RuntimeError('Retained initialization is not accepted')\n    point = np.asarray(record['initialization']['state'])\n    d = diagnostics(point)\n    height = record['height_m']\n    grid = np.array([0., height])\n    span = 393.15 - 293.15\n    capacity = np.array([fl.sum() * liquid.input_jacobian(np.r_[bulk[4], bulk[6], fl])[-1, 0],\n                         fv.sum() * vapor.input_jacobian(np.r_[bulk[5], bulk[6], fv])[-1, 0]])\n    if np.any(capacity <= 0.) or np.any(~np.isfinite(capacity)):\n        raise RuntimeError('Native heat-capacity scale must be finite positive')\n    flux_scale = np.asarray(d[3]).ravel() * np.asarray(gas[:2]).ravel()\n    heat_scale = float(d[4]) * span + np.abs(np.asarray(d[6]).ravel()) @ flux_scale\n    state_scale = np.r_[bulk[:4], 300., 300., bulk[6], .97, flux_scale, heat_scale, 1.]\n    balance_scale = np.r_[bulk[:4] / height, capacity * span / height, bulk[6] / height]\n    algebraic_scale = np.r_[.97, flux_scale[0] * float(d[2]), flux_scale, heat_scale]\n    boundary_scale = np.r_[bulk[:4], span, span, bulk[6]]\n    margin = .97 * np.finfo(float).eps\n    lower = [0., 0., 0., 0., 293.15, 293.15, 1., margin, -np.inf, -np.inf, -np.inf, -np.inf]\n    upper = [np.inf, np.inf, np.inf, np.inf, 393.15, 393.15, 1e7, .97-margin, np.inf, np.inf, np.inf, np.inf]\n    record.update(grid_m=grid, initial=np.tile(point, (2, 1)).T, lower=lower, upper=upper,\n        state_scale=state_scale, balance_scale=balance_scale, algebraic_scale=algebraic_scale,\n        boundary_scale=boundary_scale, capacity_rates_w_k=capacity, tolerance=1e-7, max_iterations=20,\n        scaling_basis='Feed molar flows; native inlet capacity times admitted100K interval perheight; inlet pressure perheight; gas-film fV*kG flux scales and matching original film/energy units. Fixed before solving; no altered physical bounds or reference shifts.')\n\n    class Iterations(ca.Callback):\n        def __init__(self):\n            super().__init__()\n            self.construct('case3c_iterations', {'enable_fd': False})\n        def get_n_in(self):\n            return ca.nlpsol_n_out()\n        def get_n_out(self):\n            return 1\n        def get_name_in(self, index):\n            return ca.nlpsol_out(index)\n        def get_sparsity_in(self, index):\n            name = self.get_name_in(index)\n            return ca.Sparsity.dense(0 if name == 'lam_p' else 1 if name == 'f' else 24, 1)\n        def get_sparsity_out(self, index):\n            return ca.Sparsity.dense(1, 1)\n        def eval(self, args):\n            g = np.asarray(args[2]).ravel()\n            profile = np.asarray(args[0]).reshape((12, 2), order='F') * state_scale[:, None]\n            record['iteration_observations'].append(dict(elapsed_seconds=time.monotonic()-started,\n                profile=profile, scaled_residual_inf=float(np.max(np.abs(g))),\n                balance_defects=g[:7] * balance_scale * height,\n                algebraic=g[7:17].reshape((5, 2), order='F') * algebraic_scale[:, None],\n                boundary=g[17:] * boundary_scale))\n            save()\n            print({'iteration':len(record['iteration_observations'])-1, 'elapsed_seconds':time.monotonic()-started, 'scaled_residual_inf':float(np.max(np.abs(g)))}, flush=True)\n            return [0]\n    observer = Iterations()\n    record['execution_status'] = 'solving'\n    save()\n    result = solve_conservative_collocation(node, boundary, grid, np.tile(point, (2, 1)).T, lower, upper,\n        state_scale=state_scale, balance_scale=balance_scale, algebraic_scale=algebraic_scale,\n        boundary_scale=boundary_scale, tolerance=1e-7, max_iterations=20, iteration_callback=observer)\n    record.update(execution_status='returned', result=result, discrete_accepted=bool(result['accepted']), elapsed_seconds=time.monotonic()-started)\nexcept (ValueError, RuntimeError) as error:\n    record.update(execution_status='returned_error', accepted=False, failure=str(error), elapsed_seconds=time.monotonic()-started)\nsave()\nprint(json.dumps(clean({k: record.get(k) for k in ('execution_status', 'failure', 'result', 'elapsed_seconds')}), indent=2), flush=True)\n",
+  "iteration_observations": [
+    {
+      "elapsed_seconds": 451.8068285489999,
+      "profile": [
+        [
+          2.4323205276203805,
+          2.4323205276203805
+        ],
+        [
+          76.97519250729157,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.6540435157308098
+        ],
+        [
+          1.5624169375299577,
+          1.5624169375299577
+        ],
+        [
+          318.15,
+          318.15
+        ],
+        [
+          316.75,
+          316.75
+        ],
+        [
+          110900.0,
+          110900.0
+        ],
+        [
+          0.052715134432693156,
+          0.052715134432693156
+        ],
+        [
+          0.01831591442799182,
+          0.01831591442799182
+        ],
+        [
+          0.01496214401416971,
+          0.01496214401416971
+        ],
+        [
+          -10940.409344546371,
+          -10940.409344546371
+        ],
+        [
+          0.7745668932575522,
+          0.7745668932575522
+        ]
+      ],
+      "scaled_residual_inf": 78.48385466223661,
+      "balance_defects": [
+        7.988817769429049,
+        6.526010068406989,
+        7.98881776942905,
+        6.526010068406989,
+        -4771857.660732825,
+        -4771857.660732824,
+        779.5737998747795
+      ],
+      "algebraic": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.599415044850616e-14,
+          1.599415044850616e-14
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      "boundary": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed_seconds": 872.207743471,
+      "profile": [
+        [
+          4.069823608193883,
+          2.4323205276203805
+        ],
+        [
+          76.22455393464247,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          0.016540435157308297
+        ],
+        [
+          1.5624169375299577,
+          2.313055510179058
+        ],
+        [
+          330.31923341593136,
+          318.15
+        ],
+        [
+          316.75,
+          330.30750625081123
+        ],
+        [
+          110900.0,
+          110374.36916944658
+        ],
+        [
+          0.051608815291480745,
+          0.05271514147522401
+        ],
+        [
+          0.0024883862710670048,
+          0.015146393188025898
+        ],
+        [
+          -0.1613722232981249,
+          0.16620227097995838
+        ],
+        [
+          36719.10457513023,
+          -44923.82802314646
+        ],
+        [
+          -0.004320207656002273,
+          0.6543374718088129
+        ]
+      ],
+      "scaled_residual_inf": 21.888647279617214,
+      "balance_defects": [
+        2.207591683133213,
+        1.8538951414455958,
+        2.2075916831332147,
+        1.8538951414456015,
+        -1330597.1351593733,
+        -1330840.7143587605,
+        214.2963839741362
+      ],
+      "algebraic": [
+        [
+          -0.00024161770130774057,
+          -7.188694084447889e-15
+        ],
+        [
+          2.3710229864045026e-07,
+          6.299722964385439e-09
+        ],
+        [
+          -0.17156547611739895,
+          0.08282036328899693
+        ],
+        [
+          0.054400989025591845,
+          -0.0015745078167302973
+        ],
+        [
+          -0.6897733625883121,
+          -47.67735561997688
+        ]
+      ],
+      "boundary": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "native_calls": {
+    "liquid_query_A1": {
+      "started": 97,
+      "completed": 96,
+      "wall_seconds": 717.7498568539977,
+      "failures": [],
+      "last_inputs": [
+        330.39854508247527,
+        110900.0,
+        4.086198638999619,
+        9.729282110481522,
+        76.20927213974824
+      ]
+    },
+    "liquid_query_A2": {
+      "started": 18,
+      "completed": 18,
+      "wall_seconds": 162.69207018400266,
+      "failures": [],
+      "last_inputs": [
+        318.15,
+        110374.36916944658,
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ]
+    },
+    "vapor_value_A1_H2": {
+      "started": 79,
+      "completed": 79,
+      "wall_seconds": 8.971251160002794,
+      "failures": [],
+      "last_inputs": [
+        316.75,
+        110900.0,
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ]
+    }
+  },
+  "loaded_source_sha256": {
+    "src/mea_absorption_column/BVP/Coupled_Column.py": "72ba7324aa5291cf0c6a16ad5e97fb421072f2034d3f41fa55d25a3078315964",
+    "src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py": "e693b70d0804b91c5b3c64de566a242daf89b674d87b997fe4196f68e2d82d9d",
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "26941095b1a30dd50e11b170a785ffc7e6ae43a74c88821dcbbc47b74400f172",
+    "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "f6a3e75646cf30702271af62fe1c4c57fa0932a37243ca1a78ff97e30284379e"
+  },
+  "native_equilibrium": {
+    "calls": 599,
+    "wall_seconds": 830.790515136995,
+    "failures": []
+  },
+  "grid_m": [
+    0.0,
+    6.0
+  ],
+  "initial": [
+    [
+      2.4323205276203805,
+      2.4323205276203805
+    ],
+    [
+      76.97519250729157,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.6540435157308098
+    ],
+    [
+      1.5624169375299577,
+      1.5624169375299577
+    ],
+    [
+      318.15,
+      318.15
+    ],
+    [
+      316.75,
+      316.75
+    ],
+    [
+      110900.0,
+      110900.0
+    ],
+    [
+      0.052715134432693156,
+      0.052715134432693156
+    ],
+    [
+      0.01831591442799182,
+      0.01831591442799182
+    ],
+    [
+      0.01496214401416971,
+      0.01496214401416971
+    ],
+    [
+      -10940.409344546371,
+      -10940.409344546371
+    ],
+    [
+      0.7745668932575522,
+      0.7745668932575522
+    ]
+  ],
+  "lower": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    293.15,
+    293.15,
+    1.0,
+    2.1538326677728036e-16,
+    "-inf",
+    "-inf",
+    "-inf",
+    "-inf"
+  ],
+  "upper": [
+    "inf",
+    "inf",
+    "inf",
+    "inf",
+    393.15,
+    393.15,
+    10000000.0,
+    0.9699999999999998,
+    "inf",
+    "inf",
+    "inf",
+    "inf"
+  ],
+  "state_scale": [
+    2.4323205276203805,
+    76.97519250729157,
+    1.6540435157308098,
+    1.5624169375299577,
+    300.0,
+    300.0,
+    110900.0,
+    0.97,
+    0.23489075578691063,
+    0.29100727339695176,
+    171964.03779691568,
+    1.0
+  ],
+  "balance_scale": [
+    0.40538675460339674,
+    12.82919875121526,
+    0.2756739192884683,
+    0.2604028229216596,
+    123497.9362810935,
+    10133.416784188732,
+    18483.333333333332
+  ],
+  "algebraic_scale": [
+    0.97,
+    1.844731083719738e-05,
+    0.23489075578691063,
+    0.29100727339695176,
+    171964.03779691568
+  ],
+  "boundary_scale": [
+    2.4323205276203805,
+    76.97519250729157,
+    1.6540435157308098,
+    1.5624169375299577,
+    100.0,
+    100.0,
+    110900.0
+  ],
+  "capacity_rates_w_k": [
+    7409.8761768656095,
+    608.0050070513239
+  ],
+  "tolerance": 1e-07,
+  "max_iterations": 20,
+  "scaling_basis": "Feed molar flows; native inlet capacity times admitted100K interval perheight; inlet pressure perheight; gas-film fV*kG flux scales and matching original film/energy units. Fixed before solving; no altered physical bounds or reference shifts.",
+  "process_exit_code": 124,
+  "discrete_accepted": false,
+  "termination_reason": "External 900-second wall limit; iteration 1 retained, no returned solver candidate. This is not evidence of infeasibility.",
+  "log_tail": "\n******************************************************************************\nThis program contains Ipopt, a library for large-scale nonlinear optimization.\n Ipopt is released as open source code under the Eclipse Public License (EPL).\n         For more information visit https://github.com/coin-or/Ipopt\n******************************************************************************\n\n{'iteration': 0, 'elapsed_seconds': 451.80775343999994, 'scaled_residual_inf': 78.48385466223661}\n{'iteration': 1, 'elapsed_seconds': 872.2371364460005, 'scaled_residual_inf': 21.888647279617214}\n"
+}

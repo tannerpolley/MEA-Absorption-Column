@@ -1,0 +1,79 @@
+accepted initialization available after 0.004s
+column rhs_batches=1 nodes=21 elapsed=0.00s thermodynamics={'queries': 0, 'cache_hits': 0, 'native_solves': 0, 'native_seconds': 0.0, 'warm_starts': 0}
+   Iteration    Max residual  Max BC residual  Total nodes    Nodes added  
+column rhs_batches=2 nodes=21 elapsed=48.05s thermodynamics={'queries': 21, 'cache_hits': 0, 'native_solves': 28, 'native_seconds': 42.829877288993885, 'warm_starts': 20}
+column rhs_batches=3 nodes=20 elapsed=48.10s thermodynamics={'queries': 42, 'cache_hits': 21, 'native_solves': 28, 'native_seconds': 42.829877288993885, 'warm_starts': 20}
+column jacobian_batches=1 nodes=21 elapsed=92.36s thermodynamics={'queries': 62, 'cache_hits': 21, 'native_solves': 54, 'native_seconds': 82.56536070099537, 'warm_starts': 39}
+column jacobian_batches=2 nodes=20 elapsed=92.40s thermodynamics={'queries': 83, 'cache_hits': 42, 'native_solves': 54, 'native_seconds': 82.56536070099537, 'warm_starts': 39}
+column rhs_batches=4 nodes=21 elapsed=92.46s thermodynamics={'queries': 103, 'cache_hits': 62, 'native_solves': 54, 'native_seconds': 82.56536070099537, 'warm_starts': 39}
+column rhs_batches=5 nodes=20 elapsed=140.78s thermodynamics={'queries': 124, 'cache_hits': 62, 'native_solves': 81, 'native_seconds': 125.52037218899568, 'warm_starts': 59}
+column rhs_batches=6 nodes=21 elapsed=185.91s thermodynamics={'queries': 144, 'cache_hits': 62, 'native_solves': 107, 'native_seconds': 165.93924892999348, 'warm_starts': 78}
+column rhs_batches=7 nodes=20 elapsed=229.11s thermodynamics={'queries': 165, 'cache_hits': 62, 'native_solves': 134, 'native_seconds': 204.4220543139927, 'warm_starts': 98}
+column rhs_batches=8 nodes=21 elapsed=271.89s thermodynamics={'queries': 185, 'cache_hits': 62, 'native_solves': 160, 'native_seconds': 242.52479204799602, 'warm_starts': 117}
+column rhs_batches=9 nodes=20 elapsed=318.70s thermodynamics={'queries': 206, 'cache_hits': 62, 'native_solves': 187, 'native_seconds': 284.2979922779996, 'warm_starts': 137}
+column rhs_batches=10 nodes=21 elapsed=368.91s thermodynamics={'queries': 226, 'cache_hits': 62, 'native_solves': 213, 'native_seconds': 328.9014774229945, 'warm_starts': 156}
+column rhs_batches=11 nodes=20 elapsed=419.45s thermodynamics={'queries': 247, 'cache_hits': 63, 'native_solves': 239, 'native_seconds': 373.9888083069891, 'warm_starts': 175}
+column rhs_batches=12 nodes=21 elapsed=464.89s thermodynamics={'queries': 267, 'cache_hits': 63, 'native_solves': 265, 'native_seconds': 414.54725598798905, 'warm_starts': 194}
+column rhs_batches=13 nodes=20 elapsed=464.93s thermodynamics={'queries': 288, 'cache_hits': 84, 'native_solves': 265, 'native_seconds': 414.54725598798905, 'warm_starts': 194}
+column rhs_batches=14 nodes=20 elapsed=464.98s thermodynamics={'queries': 308, 'cache_hits': 104, 'native_solves': 265, 'native_seconds': 414.54725598798905, 'warm_starts': 194}
+column rhs_batches=15 nodes=20 elapsed=507.51s thermodynamics={'queries': 328, 'cache_hits': 104, 'native_solves': 291, 'native_seconds': 452.50728157998674, 'warm_starts': 213}
+       1          1.03e+00       0.00e+00          21              1       
+column rhs_batches=16 nodes=22 elapsed=545.91s thermodynamics={'queries': 348, 'cache_hits': 104, 'native_solves': 317, 'native_seconds': 486.8503796839723, 'warm_starts': 232}
+column rhs_batches=17 nodes=21 elapsed=548.76s thermodynamics={'queries': 370, 'cache_hits': 124, 'native_solves': 319, 'native_seconds': 489.33091315596903, 'warm_starts': 234}
+column jacobian_batches=3 nodes=22 elapsed=551.69s thermodynamics={'queries': 391, 'cache_hits': 143, 'native_solves': 321, 'native_seconds': 491.82295797596817, 'warm_starts': 236}
+column jacobian_batches=4 nodes=21 elapsed=551.74s thermodynamics={'queries': 413, 'cache_hits': 165, 'native_solves': 321, 'native_seconds': 491.82295797596817, 'warm_starts': 236}
+column rhs_batches=18 nodes=22 elapsed=551.78s thermodynamics={'queries': 434, 'cache_hits': 186, 'native_solves': 321, 'native_seconds': 491.82295797596817, 'warm_starts': 236}
+column rhs_batches=19 nodes=21 elapsed=591.43s thermodynamics={'queries': 456, 'cache_hits': 186, 'native_solves': 349, 'native_seconds': 527.1665815319684, 'warm_starts': 257}
+column rhs_batches=20 nodes=22 elapsed=628.93s thermodynamics={'queries': 477, 'cache_hits': 186, 'native_solves': 376, 'native_seconds': 560.618406771955, 'warm_starts': 277}
+column rhs_batches=21 nodes=21 elapsed=628.96s thermodynamics={'queries': 499, 'cache_hits': 208, 'native_solves': 376, 'native_seconds': 560.618406771955, 'warm_starts': 277}
+column rhs_batches=22 nodes=21 elapsed=628.99s thermodynamics={'queries': 520, 'cache_hits': 229, 'native_solves': 376, 'native_seconds': 560.618406771955, 'warm_starts': 277}
+column rhs_batches=23 nodes=21 elapsed=665.27s thermodynamics={'queries': 541, 'cache_hits': 229, 'native_solves': 403, 'native_seconds': 592.859871860961, 'warm_starts': 297}
+       2          9.53e-02       4.34e-19          22              0       
+Solved in 2 iterations, number of nodes 22. 
+Maximum relative residual: 9.53e-02 
+Maximum boundary residual: 4.34e-19
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/nccc_validation/scripts/run_reactive_column.py", line 92, in <module>
+    main()
+    ~~~~^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/nccc_validation/scripts/run_reactive_column.py", line 75, in main
+    result = run_model(data, method='scipy-bvp', data_type='mass', run=data.index.get_loc('3C'),
+                       thermo_model='epcsaft_reactive_nine', solver_settings=settings,
+                       return_details=True, staged_beds=False)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/Run_Model.py", line 472, in run_model
+    dfs_dict = save_run_outputs(Y_scaled_for_outputs, z_outputs, parameters,
+                          save_run_results=save_run_results,
+    ...<2 lines>...
+                          include_coordinate_columns=bool(profile_csv_dir),
+                          )
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/misc/Save_Run_Outputs.py", line 75, in save_run_outputs
+    outputs, _ = abs_column(z[i], Y_scaled.T[i], parameters, run_type='saving')
+                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/BVP/ABS_Column.py", line 154, in abs_column
+    native_state = liquid.solve(Tl, P, Fl, state_input_derivatives=True)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 145, in solve
+    result = solve_homogeneous_reactive_state(
+        self.dataset, temperature_k, pressure_pa, apparent_amounts,
+    ...<7 lines>...
+        _phase_start=start, _diagnostics=self.stats,
+    )
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 714, in solve_homogeneous_reactive_state
+    result, request = _solve_homogeneous_reactive_result(
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dataset_text, temperature_k, pressure_pa, apparent_amounts,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _diagnostics=_diagnostics,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 595, in _solve_homogeneous_reactive_result
+    previous, previous_request = _solve_homogeneous_reactive_result(
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dataset_text, temperature_k, pressure_pa, anchor, **common)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 665, in _solve_homogeneous_reactive_result
+    raise RuntimeError(
+    ...<3 lines>...
+    )
+RuntimeError: Reactive ePC-SAFT equilibrium failed: infeasible_problem_detected; NonEvaluableTrial(code='numerical_convergence_failure', diagnostic='ipopt_solve_failed'); numerical=failed, physical=not_adjudicated; evidence={'local_evaluation_valid': 0.0, 'equilibrium_value_valid': 0.0, 'balance_inf_norm': nan, 'pressure_relative_inf_norm': nan, 'reaction_affinity_inf_norm': nan, 'transfer_chemical_potential_inf_norm': nan, 'kkt_stationarity_inf_norm': nan, 'local_stability_status': 'not_adjudicated', 'sensitivity_status': 'not_requested', 'partial_selection_reason': 'none'}

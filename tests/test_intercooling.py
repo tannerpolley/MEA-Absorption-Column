@@ -64,6 +64,49 @@ def test_build_bed_stack_spec_accepts_intercooler_strength():
     assert all(cooler.strength == 0.25 for cooler in spec.intercoolers)
 
 
+def test_build_bed_stack_spec_accepts_pumparound_temperature_approach():
+    from mea_absorption_column.intercooling import build_bed_stack_spec
+
+    spec = build_bed_stack_spec(
+        beds=3,
+        intercoolers=2,
+        single_bed_height_m=6.1,
+        liquid_feed_temperature_K=314.0,
+        intercooler_model="pumparound_temperature_approach",
+    )
+
+    assert spec.model == "pumparound_temperature_approach"
+    assert all(cooler.mode == "pumparound_temperature_approach" for cooler in spec.intercoolers)
+
+
+def test_pumparound_model_selects_temperature_state_for_staged_run(monkeypatch):
+    import mea_absorption_column.Run_Model as run_model_module
+
+    df = pd.read_csv("src/mea_absorption_column/data/NCCC_Data.csv", index_col=0)
+    run = list(df.index).index("K3")
+
+    def fake_solver(y_a, y_b, z, _parameters, stack_spec, settings=None):
+        assert settings["thermal_state_mode"] == "temperature"
+        profile = np.vstack([np.column_stack([y_a, y_b])] * stack_spec.beds)
+        return profile, np.array([z[0], z[-1]]), "fake", True, "fake success"
+
+    monkeypatch.setattr(run_model_module, "scaling", lambda _z, y: np.maximum(np.abs(y), 1.0))
+    monkeypatch.setattr(run_model_module, "segmented_scipy_BVP_solve", fake_solver)
+
+    result = run_model_module.run_model(
+        df,
+        method="scipy-bvp",
+        run=run,
+        thermo_model="ideal_henry",
+        return_details=True,
+        intercooler_settings={"model": "pumparound_temperature_approach"},
+    )
+
+    assert result["success"] is True
+    assert result["thermal_state_mode"] == "temperature"
+    assert result["intercooler_model"] == "pumparound_temperature_approach"
+
+
 def test_liquid_enthalpy_after_intercooler_preserves_liquid_molar_flows():
     from mea_absorption_column.intercooling import liquid_enthalpy_after_intercooler
 
