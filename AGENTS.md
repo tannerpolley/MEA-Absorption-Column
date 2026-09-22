@@ -9,14 +9,14 @@
 
 - Keep user preferences and durable project facts concise, date-stamped, and deduplicated.
 - Do not update memory for routine Q&A or small one-off work.
-- Do not store secrets, add placeholder entries, or create new memory under `.codex` or `$HOME/.codex/projects`.
+- Do not store secrets, add placeholder entries, or create new agent memory, including `.codex`, `$HOME/.codex/projects`, or Claude auto memory.
 
 ## Repository Workflow
 
 - Prefer `Local` for foreground solver inspection and `Worktree` for isolated background implementation.
 - Prefer uv-managed commands. Use `.venv/bin/python` only for interpreter-specific debugging.
 - Use `.codex/environments/environment.toml` actions when available.
-- For LaTeX/manuscript work, apply `$HOME/.codex/LATEX.md` plus repository-local policy.
+- For LaTeX/manuscript work, apply the `cse:latex` skill plus repository-local policy.
 - Preserve the user's existing dirty worktree and inspect overlapping files before editing.
 
 ## Commit Discipline
