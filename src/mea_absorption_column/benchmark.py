@@ -2,21 +2,25 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import platform
 import shutil
 import subprocess
 import sys
 import time
+import uuid
 from dataclasses import dataclass
 from importlib import metadata
 from importlib import resources
+from collections.abc import Mapping
 from pathlib import Path
 
 import pandas as pd
 
 from mea_absorption_column.Run_Model import run_model
 from mea_absorption_column.calibration import nccc_linear_capture_prediction, write_calibration_artifacts
+from mea_absorption_column.config.column import EngineConfig, default_engine
 from mea_absorption_column.misc.Save_Run_Outputs import build_profile_coordinate_frame, write_profile_csvs
 
 
@@ -130,6 +134,13 @@ class BenchmarkSettings:
     subprocess_timeout_s: float | None = None
     c_case_dataset: str = "legacy"
     nccc_dataset: str = "legacy"
+    process_isolation: bool = False
+    worker_python: str | None = None
+    engine_wheel: str | None = None
+    engine_sha256: str | None = None
+    engine_commit: str | None = None
+    resolved_inputs: dict | None = None
+    cache_policy: str = "legacy_explicit"
 
 
 def _data_path(filename: str):
@@ -216,7 +227,7 @@ def _run_one_case(df, run, case_source, method, thermo_model, settings):
             "multistart_co2_flux_modes",
         )
     )
-    if settings.subprocess_timeout_s is not None and not has_multistart:
+    if (settings.subprocess_timeout_s is not None or settings.process_isolation) and not has_multistart:
         return _run_one_case_subprocess(df, run, case_source, method, thermo_model, settings)
     return _run_one_case_in_process(df, run, case_source, method, thermo_model, settings)
 
@@ -261,7 +272,10 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
             thermo_model=thermo_model,
             return_details=True,
             staged_beds=settings.staged_beds,
-            solver_settings=solver_settings or None,
+            solver_settings=(
+                {**(solver_settings or {}), "_resolved_inputs": settings.resolved_inputs}
+                if settings.resolved_inputs is not None else solver_settings or None
+            ),
         )
         result = _apply_capture_correction(df, run, result, solver_settings)
         result = _annotate_solver_settings(result, solver_settings)
@@ -305,6 +319,13 @@ def _run_one_case_subprocess(df, run, case_source, method, thermo_model, setting
     )
 
 
+def _resolved_case_payload(df, run):
+    values = {}
+    for key, value in df.iloc[run].to_dict().items():
+        values[str(key)] = value.item() if hasattr(value, "item") else value
+    return {"case_id": str(df.index[run]), "columns": list(values), "values": values}
+
+
 def _run_solver_settings_subprocess(
     df,
     run,
@@ -315,7 +336,7 @@ def _run_solver_settings_subprocess(
     solver_settings_override=None,
 ):
     start = time.time()
-    timeout_s = float(settings.subprocess_timeout_s)
+    timeout_s = None if settings.subprocess_timeout_s is None else float(settings.subprocess_timeout_s)
     effective_solver_settings = settings.solver_settings if solver_settings_override is None else solver_settings_override
     output_dir = Path(settings.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -326,6 +347,20 @@ def _run_solver_settings_subprocess(
     try:
         input_path = tmp_path / "input.json"
         output_path = tmp_path / "output.json"
+        worker_engine = None
+        explicit_engine = any(
+            value is not None
+            for value in (settings.engine_wheel, settings.engine_sha256, settings.engine_commit, settings.worker_python)
+        )
+        if thermo_model != "ideal_henry" or explicit_engine:
+            default = default_engine(required=True)
+            worker_engine = EngineConfig(
+                settings.engine_wheel or default.wheel,
+                settings.engine_sha256 or default.sha256,
+                settings.engine_commit or default.commit,
+                settings.worker_python or default.python,
+                True,
+            )
         input_payload = {
             "case_source": case_source,
             "run": int(run),
@@ -333,15 +368,33 @@ def _run_solver_settings_subprocess(
             "thermo_model": thermo_model,
             "settings": _settings_to_payload(settings, solver_settings_override=solver_settings_override),
             "output_path": str(output_path),
+            "resolved_case": _resolved_case_payload(df, run),
+            "runtime_identity": None if worker_engine is None else {
+                "wheel": worker_engine.wheel,
+                "sha256": worker_engine.sha256,
+                "commit": worker_engine.commit,
+                "python": worker_engine.python,
+            },
         }
         input_path.write_text(json.dumps(input_payload), encoding="utf-8")
-        cmd = [sys.executable, "-m", "mea_absorption_column.benchmark_worker", str(input_path)]
+        worker_python = settings.worker_python or sys.executable
+        cmd = [worker_python, "-m", "mea_absorption_column.benchmark_worker", str(input_path)]
+        worker_env = os.environ.copy()
+        source_root = str(Path(__file__).resolve().parents[1])
+        worker_env["PYTHONPATH"] = source_root + os.pathsep + worker_env.get("PYTHONPATH", "")
+        worker_env["OMP_NUM_THREADS"] = "1"
+        worker_env["MKL_NUM_THREADS"] = "1"
+        worker_env["OPENBLAS_NUM_THREADS"] = "1"
+        worker_env["NUMEXPR_NUM_THREADS"] = "1"
+        if settings.cache_policy == "disabled":
+            worker_env["MEA_EPCSAFT_DISABLE_CACHE"] = "1"
         process = subprocess.Popen(
             cmd,
             cwd=str(Path.cwd()),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            env=worker_env,
             creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0,
         )
         try:
@@ -398,7 +451,7 @@ def _run_solver_settings_subprocess(
                 **_failure_metadata(df, run, method, settings.staged_beds),
             }
             return _coerce_row(_annotate_solver_settings(failure, effective_solver_settings or {}))
-        row = json.loads(output_path.read_text(encoding="utf-8"))
+        row = _restore_json_value(json.loads(output_path.read_text(encoding="utf-8")))
         row["runtime_s"] = float(time.time() - start)
         return _coerce_row(row)
     finally:
@@ -425,6 +478,13 @@ def _settings_to_payload(settings: BenchmarkSettings, solver_settings_override=N
         "subprocess_timeout_s": None,
         "c_case_dataset": settings.c_case_dataset,
         "nccc_dataset": settings.nccc_dataset,
+        "process_isolation": settings.process_isolation,
+        "worker_python": settings.worker_python,
+        "engine_wheel": settings.engine_wheel,
+        "engine_sha256": settings.engine_sha256,
+        "engine_commit": settings.engine_commit,
+        "resolved_inputs": settings.resolved_inputs,
+        "cache_policy": settings.cache_policy,
     }
 
 
@@ -449,6 +509,13 @@ def settings_from_payload(payload: dict) -> BenchmarkSettings:
         subprocess_timeout_s=payload.get("subprocess_timeout_s"),
         c_case_dataset=payload.get("c_case_dataset", "legacy"),
         nccc_dataset=payload.get("nccc_dataset", "legacy"),
+        process_isolation=bool(payload.get("process_isolation", False)),
+        worker_python=payload.get("worker_python"),
+        engine_wheel=payload.get("engine_wheel"),
+        engine_sha256=payload.get("engine_sha256"),
+        engine_commit=payload.get("engine_commit"),
+        resolved_inputs=payload.get("resolved_inputs"),
+        cache_policy=payload.get("cache_policy", "legacy_explicit"),
     )
 
 
@@ -470,6 +537,34 @@ def _worker_error_message(returncode, stdout, stderr):
     details = (stderr or stdout or "").strip().splitlines()
     tail = " | ".join(details[-5:])
     return f"Benchmark subprocess failed with return code {returncode}: {tail}"
+
+
+def _restore_json_value(value):
+    if isinstance(value, dict):
+        value_class = value.get("value_class")
+        if value_class == "nan":
+            return float("nan")
+        if value_class == "positive_infinity":
+            return float("inf")
+        if value_class == "negative_infinity":
+            return float("-inf")
+        if value.get("__json_type__") == "dataframe":
+            return pd.DataFrame(
+                _restore_json_value(value.get("data", [])),
+                columns=value.get("columns", []),
+            ).set_axis(
+                _restore_json_value(value.get("index", [])), axis=0
+            )
+        if value.get("__json_type__") == "series":
+            return pd.Series(
+                _restore_json_value(value.get("data", [])),
+                index=_restore_json_value(value.get("index", [])),
+                name=value.get("name"),
+            )
+        return {key: _restore_json_value(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_restore_json_value(item) for item in value]
+    return value
 
 
 def _run_multistart_case(
@@ -504,7 +599,7 @@ def _run_multistart_case(
                         f"intercooler_strength={float(intercooler_strength):g};"
                         f"co2_flux_mode={flux_mode}"
                     )
-                    if settings.subprocess_timeout_s is not None:
+                    if settings.subprocess_timeout_s is not None or settings.process_isolation:
                         result = _run_solver_settings_subprocess(
                             df=df,
                             run=run,
@@ -518,13 +613,19 @@ def _run_multistart_case(
                         result["continuation_stage"] = "multistart_capture_calibrated"
                         result["continuation_path"] = path
                         result = _annotate_solver_settings(result, solver_settings)
-                        candidates.append(result)
+                        candidates.append(_annotate_multistart_candidate(
+                            result, solver_settings, len(candidates), settings.resolved_inputs
+                        ))
                         continue
                     try:
                         if settings.profile_pngs or settings.profile_csvs:
                             solver_settings["return_profiles"] = True
                         if settings.profile_csvs:
                             solver_settings["case_source"] = case_source
+                        solver_payload = {
+                            **solver_settings,
+                            "_resolved_inputs": settings.resolved_inputs,
+                        } if settings.resolved_inputs is not None else solver_settings
                         result = run_model(
                             df,
                             method=method,
@@ -536,14 +637,16 @@ def _run_multistart_case(
                             thermo_model=thermo_model,
                             return_details=True,
                             staged_beds=settings.staged_beds,
-                            solver_settings=solver_settings or None,
+                            solver_settings=solver_payload or None,
                         )
                         result = _apply_capture_correction(df, run, result, solver_settings)
                         result = _annotate_solver_settings(result, solver_settings)
                         result["case_source"] = case_source
                         result["continuation_stage"] = "multistart_capture_calibrated"
                         result["continuation_path"] = path
-                        candidates.append(result)
+                        candidates.append(_annotate_multistart_candidate(
+                            result, solver_settings, len(candidates), settings.resolved_inputs
+                        ))
                     except Exception as exc:
                         row = {
                             "case_id": str(df.index[run]),
@@ -558,10 +661,18 @@ def _run_multistart_case(
                             "package_versions": _package_versions(),
                             **_failure_metadata(df, run, method, settings.staged_beds),
                         }
-                        candidates.append(row)
+                        candidates.append(_annotate_multistart_candidate(
+                            row, solver_settings, len(candidates), settings.resolved_inputs
+                        ))
 
+    for index, candidate in enumerate(candidates):
+        candidate.setdefault("attempt_id", f"multistart-{uuid.uuid4().hex[:12]}")
+        candidate.setdefault("candidate_index", index)
     best = min(candidates, key=_multistart_objective)
     best = dict(best)
+    best["multistart_attempts"] = [dict(candidate) for candidate in candidates]
+    best["selected_attempt_id"] = best["attempt_id"]
+    best["selection_policy"] = "genuinely successful finite candidates first, then capture error, boundary residual, capture penalty, and failure penalty"
     best["runtime_s"] = float(time.time() - start)
     best["message"] = f"{best.get('message', '')}; selected from {len(candidates)} multistart candidates"
     if settings.profile_pngs and best.get("_profiles"):
@@ -572,19 +683,38 @@ def _run_multistart_case(
 
 
 def _multistart_objective(row):
-    capture_error = pd.to_numeric(row.get("capture_error_pct"), errors="coerce")
-    boundary = pd.to_numeric(row.get("boundary_residual_norm"), errors="coerce")
-    capture = pd.to_numeric(row.get("capture_pct"), errors="coerce")
-    if pd.isna(capture_error):
-        capture_error = 1.0e6
-    if pd.isna(boundary):
-        boundary = 1.0e4
-    if pd.isna(capture) or capture < -1.0 or capture > 101.0:
-        capture_penalty = 1.0e5
-    else:
-        capture_penalty = 0.0
-    success_penalty = 0.0 if bool(row.get("success", False)) else 10.0
-    return float(abs(capture_error) + 0.05 * boundary + capture_penalty + success_penalty)
+    from .column import _structured_solver_success
+
+    capture_error, boundary, capture = (
+        float(pd.to_numeric(row.get(name), errors="coerce"))
+        for name in ("capture_error_pct", "boundary_residual_norm", "capture_pct")
+    )
+    stages = row.get("solver_stage_status")
+    stages_accepted = not stages or (
+        isinstance(stages, Mapping)
+        and _structured_solver_success(str(row.get("method", "")), stages)
+    )
+    finite = all(math.isfinite(value) for value in (capture_error, boundary, capture))
+    accepted = bool(row.get("success", False)) and stages_accepted and finite and -1.0 <= capture <= 101.0
+    return (
+        not accepted,
+        abs(capture_error) if math.isfinite(capture_error) else math.inf,
+        boundary if math.isfinite(boundary) else math.inf,
+        0 if math.isfinite(capture) and -1.0 <= capture <= 101.0 else 1,
+        not bool(row.get("success", False)),
+    )
+
+
+def _annotate_multistart_candidate(result, solver_settings, index, resolved_inputs=None):
+    candidate = dict(result)
+    candidate.setdefault("attempt_id", f"multistart-{uuid.uuid4().hex[:12]}")
+    candidate.setdefault("candidate_index", index)
+    candidate["candidate_solver_settings"] = {
+        key: value for key, value in dict(solver_settings).items() if key != "_resolved_inputs"
+    }
+    if resolved_inputs is not None:
+        candidate["candidate_input_fingerprint"] = resolved_inputs.get("physical_input_sha256")
+    return candidate
 
 
 def _apply_capture_correction(df, run, result, solver_settings):
@@ -671,7 +801,17 @@ def _default_chemical_equilibrium_model(thermo_model):
 
 
 def _coerce_row(result):
-    return {column: result.get(column) for column in BENCHMARK_COLUMNS}
+    row = {column: result.get(column) for column in BENCHMARK_COLUMNS}
+    for key in (
+        "worker_identity", "solver_stage_status", "_profiles", "_raw_solution_scaled",
+        "_native_grid", "_native_state_scaled", "_native_state_layout", "_case_metadata",
+        "failure_kind",
+        "attempt_id", "candidate_index", "multistart_attempts", "selected_attempt_id", "selection_policy",
+        "candidate_solver_settings", "candidate_input_fingerprint",
+    ):
+        if key in result:
+            row[key] = result[key]
+    return row
 
 
 def _failure_metadata(df, run, method, staged_beds):

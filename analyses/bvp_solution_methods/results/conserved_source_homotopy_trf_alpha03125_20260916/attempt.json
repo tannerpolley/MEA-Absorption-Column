@@ -1,0 +1,1148 @@
+{
+  "schema_version": 1,
+  "probe_kind": "retained_exact_jacobian_trf_source_stage",
+  "source_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_source_homotopy_binary_barrier_20260916/accepted_alpha_0.304687500_profile.json",
+  "target_source_multiplier": 0.3125,
+  "claim_limit": "Artificial source-homotopy diagnostic only; alpha < 1; no full-physics thermodynamic, transfer, or certified column claim.",
+  "settings": {
+    "method": "trapezoidal",
+    "nodes": 3,
+    "film_points": 3,
+    "state_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      300.0,
+      300.0,
+      110900.0,
+      0.97,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568,
+      1.0
+    ],
+    "balance_scale": [
+      0.40538675460339674,
+      12.82919875121526,
+      0.2756739192884683,
+      0.2604028229216596,
+      123497.93628109811,
+      10133.416784188732,
+      18483.333333333332
+    ],
+    "algebraic_scale": [
+      0.97,
+      1.8447310837197383e-05,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568
+    ],
+    "boundary_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      100.0,
+      100.0,
+      110900.0
+    ],
+    "lower": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      293.15,
+      293.15,
+      1.0,
+      2.1538326677728036e-16,
+      "-inf",
+      "-inf",
+      "-inf",
+      "-inf"
+    ],
+    "upper": [
+      "inf",
+      "inf",
+      "inf",
+      "inf",
+      393.15,
+      393.15,
+      10000000.0,
+      0.9699999999999998,
+      "inf",
+      "inf",
+      "inf",
+      "inf"
+    ],
+    "tolerance": 1e-07,
+    "scipy_method": "trf",
+    "max_nfev": 20,
+    "jacobian": "exact CasADi",
+    "equations": "production scaled trapezoidal residual at target alpha"
+  },
+  "termination": {
+    "exception": "RuntimeError: Error in Function::call for 'trf_source_values' [MXFunction] at .../casadi/core/function.cpp:362:\nError in Function::operator() for 'column_balances' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_liquid' [CallbackInternal] at .../casadi/core/function.cpp:1547:\n.../casadi/core/function_internal.cpp:3807: Failed to evaluate 'eval_dm' for column_liquid:\n.../casadi/core/callback_internal.cpp:116: Error calling \"eval\" for object column_liquid:\nKeyboardInterrupt"
+  },
+  "wall_s": 298.8646483559987,
+  "native_calls": {
+    "liquid_value_A1": {
+      "started": 932,
+      "returned": 931,
+      "failed": 0,
+      "wall_s": 138.74007686998993
+    },
+    "liquid_A2": {
+      "started": 189,
+      "returned": 189,
+      "failed": 0,
+      "wall_s": 151.9039289239936
+    },
+    "vapor_value_A1_H2": {
+      "started": 301,
+      "returned": 301,
+      "failed": 0,
+      "wall_s": 7.879105105002964
+    }
+  },
+  "evaluation_count": 17,
+  "candidate_profile": [
+    [
+      3.493633287286967,
+      3.0220140318405218,
+      2.432324057435386
+    ],
+    [
+      75.15966765991465,
+      81.4125865175917,
+      76.97534517940022
+    ],
+    [
+      1.6540423032457912,
+      1.182412044589455,
+      0.5927041078953882
+    ],
+    [
+      1.562417605312991,
+      7.810960971671876,
+      3.3654844906007413
+    ],
+    [
+      317.5711249328115,
+      351.3463511772747,
+      318.1493724631671
+    ],
+    [
+      316.75002483073337,
+      347.5666194017672,
+      329.2337123807903
+    ],
+    [
+      110900.19173283897,
+      110742.93536738197,
+      110582.25257820424
+    ],
+    [
+      0.05411204100159648,
+      0.047172474660966725,
+      0.05271456672401467
+    ],
+    [
+      0.011495309180283957,
+      0.0023643997836388076,
+      0.014902391904579764
+    ],
+    [
+      0.02120030821074707,
+      -0.20115482881893862,
+      0.3349251293574324
+    ],
+    [
+      -9710.024498355504,
+      46959.56379939997,
+      -85496.39621072594
+    ],
+    [
+      0.4231410039788782,
+      0.14232370123089053,
+      0.6443564501792892
+    ]
+  ],
+  "original_residuals": {
+    "defects": [
+      [
+        7.050407267228387e-06,
+        1.3198188576035719e-05
+      ],
+      [
+        0.004368631424115144,
+        0.00822913220046484
+      ],
+      [
+        -3.952802623552465e-06,
+        -4.764100355214573e-06
+      ],
+      [
+        -6.8598940590192115e-06,
+        -6.010679185486367e-06
+      ],
+      [
+        2.5722840526141226,
+        3.3426278436090797
+      ],
+      [
+        1.109026542166248,
+        0.7268381549511105
+      ],
+      [
+        0.011453859474954697,
+        -0.0354421853780309
+      ]
+    ],
+    "algebraic": [
+      [
+        3.158294448191157e-08,
+        -1.2748405878171276e-07,
+        -7.71512544836539e-07
+      ],
+      [
+        -5.525932269437618e-11,
+        -1.772065558753458e-10,
+        -1.536656644475492e-10
+      ],
+      [
+        -4.198733613864497e-07,
+        8.149553943786504e-07,
+        -8.752193350267112e-08
+      ],
+      [
+        2.170612666527877e-06,
+        1.1618783901962138e-05,
+        -9.067435347009933e-08
+      ],
+      [
+        3.1838390273151163,
+        0.7993762504484039,
+        -2.4261641076445812
+      ]
+    ],
+    "boundary": [
+      [
+        3.5298150056206623e-06
+      ],
+      [
+        0.00015267210865488323
+      ],
+      [
+        -1.2124850186090441e-06
+      ],
+      [
+        6.677830333146062e-07
+      ],
+      [
+        -0.0006275368328942932
+      ],
+      [
+        2.4830733366343338e-05
+      ],
+      [
+        0.1917328389681643
+      ]
+    ],
+    "scaled": [
+      [
+        5.797268235963977e-06
+      ],
+      [
+        0.00011350751539078827
+      ],
+      [
+        -4.7795630356266526e-06
+      ],
+      [
+        -8.781131200310838e-06
+      ],
+      [
+        6.942853001093217e-06
+      ],
+      [
+        3.648083582550599e-05
+      ],
+      [
+        2.06561938231825e-07
+      ],
+      [
+        1.0852343205727037e-05
+      ],
+      [
+        0.0002138125786352616
+      ],
+      [
+        -5.760550203069646e-06
+      ],
+      [
+        -7.694078374481419e-06
+      ],
+      [
+        9.022088261191139e-06
+      ],
+      [
+        2.390895293695354e-05
+      ],
+      [
+        -6.391737669617835e-07
+      ],
+      [
+        3.2559736579290277e-08
+      ],
+      [
+        -2.9955218504233477e-06
+      ],
+      [
+        -1.7875261203014414e-06
+      ],
+      [
+        7.45896362379585e-06
+      ],
+      [
+        1.851456309182001e-05
+      ],
+      [
+        -1.3142686472341522e-07
+      ],
+      [
+        -9.606091502400682e-06
+      ],
+      [
+        3.4695081619898476e-06
+      ],
+      [
+        3.992609451418558e-05
+      ],
+      [
+        4.648508261898589e-06
+      ],
+      [
+        -7.953737575634422e-07
+      ],
+      [
+        -8.329976428742985e-06
+      ],
+      [
+        -3.726069730137431e-07
+      ],
+      [
+        -3.115879284103458e-07
+      ],
+      [
+        -1.4108555130054619e-05
+      ],
+      [
+        1.451212932480571e-06
+      ],
+      [
+        1.9833936581635854e-06
+      ],
+      [
+        -7.330429986138117e-07
+      ],
+      [
+        4.274038621024628e-07
+      ],
+      [
+        -6.275368328942932e-06
+      ],
+      [
+        2.4830733366343336e-07
+      ],
+      [
+        1.7288804235181632e-06
+      ]
+    ]
+  },
+  "original_residual_inf": 0.0002138125786352616,
+  "original_bound_violation_inf": 0.0,
+  "finite": true,
+  "residual_pass": false,
+  "bounds_pass": true,
+  "accepted": false,
+  "evaluation_trajectory": [
+    {
+      "kind": "residual",
+      "elapsed_s": 14.000370974999896,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 1.071971969119929,
+      "residual_l2": 1.5345823261719056,
+      "top_rows": [
+        {
+          "index": 5,
+          "value": 1.071971969119929
+        },
+        {
+          "index": 12,
+          "value": -1.0625298699169272
+        },
+        {
+          "index": 3,
+          "value": -0.20088312116951806
+        },
+        {
+          "index": 10,
+          "value": 0.1426857517314504
+        },
+        {
+          "index": 4,
+          "value": 0.08795886855422202
+        },
+        {
+          "index": 11,
+          "value": -0.08718411288268009
+        },
+        {
+          "index": 9,
+          "value": 0.018010995215641017
+        },
+        {
+          "index": 2,
+          "value": 0.014278935029267243
+        }
+      ]
+    },
+    {
+      "kind": "jacobian",
+      "elapsed_s": 33.39075319299991,
+      "shape": [
+        36,
+        36
+      ],
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "jacobian_inf": 195.88486112070947
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 48.813062925999475,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 0.0013707109260253803,
+      "residual_l2": 0.0019453103186595202,
+      "top_rows": [
+        {
+          "index": 20,
+          "value": -0.0013707109260253803
+        },
+        {
+          "index": 15,
+          "value": -0.0008957681900689181
+        },
+        {
+          "index": 25,
+          "value": -0.0007112264212765049
+        },
+        {
+          "index": 8,
+          "value": 0.00035127851214372023
+        },
+        {
+          "index": 22,
+          "value": 0.00034602441734663935
+        },
+        {
+          "index": 35,
+          "value": -0.00033423355776867833
+        },
+        {
+          "index": 1,
+          "value": -0.0003103096059673768
+        },
+        {
+          "index": 6,
+          "value": -0.00019884943879872982
+        }
+      ]
+    },
+    {
+      "kind": "jacobian",
+      "elapsed_s": 69.59153078999952,
+      "shape": [
+        36,
+        36
+      ],
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "jacobian_inf": 195.92544163212924
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 83.75548948299911,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 0.00025329981961442496,
+      "residual_l2": 0.0004060355846414489,
+      "top_rows": [
+        {
+          "index": 8,
+          "value": 0.00025329981961442496
+        },
+        {
+          "index": 26,
+          "value": 0.00023068156565632408
+        },
+        {
+          "index": 16,
+          "value": -0.0001323801038208329
+        },
+        {
+          "index": 5,
+          "value": 0.00011047375529690842
+        },
+        {
+          "index": 17,
+          "value": 7.011874500965116e-05
+        },
+        {
+          "index": 1,
+          "value": 5.847125756625937e-05
+        },
+        {
+          "index": 20,
+          "value": -5.3394959413975746e-05
+        },
+        {
+          "index": 12,
+          "value": -3.781005059682195e-05
+        }
+      ]
+    },
+    {
+      "kind": "jacobian",
+      "elapsed_s": 103.56575208399954,
+      "shape": [
+        36,
+        36
+      ],
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "jacobian_inf": 195.91256615926534
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 118.35059405899847,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 0.00022980279866914596,
+      "residual_l2": 0.0002576271727704885,
+      "top_rows": [
+        {
+          "index": 8,
+          "value": 0.00022980279866914596
+        },
+        {
+          "index": 1,
+          "value": 0.00011005223813836087
+        },
+        {
+          "index": 18,
+          "value": 2.087935908662585e-05
+        },
+        {
+          "index": 28,
+          "value": -1.558176345742024e-05
+        },
+        {
+          "index": 20,
+          "value": -1.354765442479275e-05
+        },
+        {
+          "index": 7,
+          "value": 1.1519026110835962e-05
+        },
+        {
+          "index": 25,
+          "value": -1.1176349322367857e-05
+        },
+        {
+          "index": 11,
+          "value": 7.744589612467395e-06
+        }
+      ]
+    },
+    {
+      "kind": "jacobian",
+      "elapsed_s": 138.73107767799956,
+      "shape": [
+        36,
+        36
+      ],
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "jacobian_inf": 195.91106311932373
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 153.16904578199865,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 0.0006907109279229704,
+      "residual_l2": 0.0010808710707096412,
+      "top_rows": [
+        {
+          "index": 22,
+          "value": 0.0006907109279229704
+        },
+        {
+          "index": 5,
+          "value": 0.000648731152230493
+        },
+        {
+          "index": 12,
+          "value": 0.000427039939575531
+        },
+        {
+          "index": 8,
+          "value": 0.00019836569270710854
+        },
+        {
+          "index": 17,
+          "value": 0.00010806531610990845
+        },
+        {
+          "index": 3,
+          "value": -0.00010412941482725022
+        },
+        {
+          "index": 1,
+          "value": 9.965058926835187e-05
+        },
+        {
+          "index": 10,
+          "value": -7.170142808803973e-05
+        }
+      ]
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 168.59265591299845,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 0.00021856241232647548,
+      "residual_l2": 0.0002587528198794571,
+      "top_rows": [
+        {
+          "index": 8,
+          "value": 0.00021856241232647548
+        },
+        {
+          "index": 1,
+          "value": 0.00011528143306406308
+        },
+        {
+          "index": 22,
+          "value": 4.3197558703376755e-05
+        },
+        {
+          "index": 5,
+          "value": 4.27571525361578e-05
+        },
+        {
+          "index": 12,
+          "value": 2.6920036188119216e-05
+        },
+        {
+          "index": 18,
+          "value": 1.9195978223252423e-05
+        },
+        {
+          "index": 28,
+          "value": -1.4785141128530642e-05
+        },
+        {
+          "index": 7,
+          "value": 1.110023947756419e-05
+        }
+      ]
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 183.19509933500012,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 0.00022366571242988446,
+      "residual_l2": 0.00025543835117522744,
+      "top_rows": [
+        {
+          "index": 8,
+          "value": 0.00022366571242988446
+        },
+        {
+          "index": 1,
+          "value": 0.000118287335192828
+        },
+        {
+          "index": 18,
+          "value": 1.9547956490969037e-05
+        },
+        {
+          "index": 28,
+          "value": -1.5025245846569088e-05
+        },
+        {
+          "index": 7,
+          "value": 1.13783800827052e-05
+        },
+        {
+          "index": 20,
+          "value": -9.898504770989226e-06
+        },
+        {
+          "index": 25,
+          "value": -8.73111300707135e-06
+        },
+        {
+          "index": 11,
+          "value": 7.73678878707076e-06
+        }
+      ]
+    },
+    {
+      "kind": "jacobian",
+      "elapsed_s": 203.4868976990001,
+      "shape": [
+        36,
+        36
+      ],
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "jacobian_inf": 195.9133169091725
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 218.5155335769996,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 0.00022014813807261907,
+      "residual_l2": 0.00025217874238194773,
+      "top_rows": [
+        {
+          "index": 8,
+          "value": 0.00022014813807261907
+        },
+        {
+          "index": 1,
+          "value": 0.00011711115517186486
+        },
+        {
+          "index": 18,
+          "value": 1.9145326172802967e-05
+        },
+        {
+          "index": 28,
+          "value": -1.4750903980922576e-05
+        },
+        {
+          "index": 7,
+          "value": 1.1192858948702232e-05
+        },
+        {
+          "index": 22,
+          "value": 1.0264356781810142e-05
+        },
+        {
+          "index": 20,
+          "value": -9.777628245254722e-06
+        },
+        {
+          "index": 5,
+          "value": 8.89648989721524e-06
+        }
+      ]
+    },
+    {
+      "kind": "jacobian",
+      "elapsed_s": 255.3680349639999,
+      "shape": [
+        36,
+        36
+      ],
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "jacobian_inf": 195.91805323944598
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 277.11628222799845,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": null,
+      "residual_inf": 0.0002138125786352616,
+      "residual_l2": 0.00025184352471033705,
+      "top_rows": [
+        {
+          "index": 8,
+          "value": 0.0002138125786352616
+        },
+        {
+          "index": 1,
+          "value": 0.00011350751539078827
+        },
+        {
+          "index": 22,
+          "value": 3.992609451418558e-05
+        },
+        {
+          "index": 5,
+          "value": 3.648083582550599e-05
+        },
+        {
+          "index": 12,
+          "value": 2.390895293695354e-05
+        },
+        {
+          "index": 18,
+          "value": 1.851456309182001e-05
+        },
+        {
+          "index": 28,
+          "value": -1.4108555130054619e-05
+        },
+        {
+          "index": 7,
+          "value": 1.0852343205727037e-05
+        }
+      ]
+    },
+    {
+      "kind": "jacobian",
+      "elapsed_s": 298.2508450559999,
+      "shape": [
+        36,
+        36
+      ],
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "jacobian_inf": 195.92754269753482
+    },
+    {
+      "kind": "residual",
+      "elapsed_s": 298.834789859,
+      "native_calls": {
+        "liquid_value_A1": {
+          "started": 932,
+          "returned": 931,
+          "failed": 0,
+          "wall_s": 138.74007686998993
+        },
+        "liquid_A2": {
+          "started": 189,
+          "returned": 189,
+          "failed": 0,
+          "wall_s": 151.9039289239936
+        },
+        "vapor_value_A1_H2": {
+          "started": 301,
+          "returned": 301,
+          "failed": 0,
+          "wall_s": 7.879105105002964
+        }
+      },
+      "error": "RuntimeError: Error in Function::call for 'trf_source_values' [MXFunction] at .../casadi/core/function.cpp:362:\nError in Function::operator() for 'column_balances' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_liquid' [CallbackInternal] at .../casadi/core/function.cpp:1547:\n.../casadi/core/function_internal.cpp:3807: Failed to evaluate 'eval_dm' for column_liquid:\n.../casadi/core/callback_internal.cpp:116: Error calling \"eval\" for object column_liquid:\nKeyboardInterrupt"
+    }
+  ]
+}

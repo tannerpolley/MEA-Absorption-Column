@@ -428,7 +428,9 @@ def epcsaft_reactive_chemical_equilibrium(
         calibrate_activity_to_legacy,
         species_set,
     )
-    cache = getattr(epcsaft_reactive_chemical_equilibrium, "cache", {})
+    cache = {} if os.environ.get("MEA_EPCSAFT_DISABLE_CACHE") == "1" else getattr(
+        epcsaft_reactive_chemical_equilibrium, "cache", {}
+    )
     cached = cache.get(cache_key)
     if cached is not None:
         _increment_diagnostic(diagnostics, "epcsaft_chemistry_cache_hits")

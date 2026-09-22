@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "question": "Can ordinary source-parameter continuation advance the three-node conserved column from the accepted alpha=0.28125 state to alpha=0.3125 within the bounded probes?",
+  "conclusion": "Ordinary alpha stepping encountered a severe compute-bounded convergence barrier in (0.3046875, 0.3125]. The retained evidence does not establish a fold, a nonzero-residual local minimum, or formulation failure.",
+  "claim_limit": "Every retained state has alpha < 1. These records are numerical-path diagnostics only and support no thermodynamic, transfer, capture, refinement, uniqueness, validation, or continuous-profile claim.",
+  "identities": {
+    "public_attempt": {
+      "path": "../conserved_public_source_homotopy_n3_20260916/attempt.json",
+      "attempt_id": "20260916T203512-e1bb3c61faf4",
+      "source_commit": "2a0f8161f43f7e9b3fcfc21cfc3eae0c0787f950",
+      "source_tree_sha256": "31bb97418b7ce3771c19cdfec94758bd117e11091afca58cc44ac50a3e76eaf3"
+    },
+    "cached_probe_code": {
+      "commit": "1b4efc7ae941d6d6597ef62ed163daedebc61736",
+      "source_tree_sha256": "c25f8f5b91866247f4ea977012a6ee45912f5e04894cfe37645c345791d4e51c"
+    },
+    "engine": {
+      "commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+      "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4"
+    },
+    "case": {
+      "path": "../../input/case_3c.json",
+      "file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+      "resolved_physical_input_sha256": "601f79091ee94d790b247bb91b0c67387e65411b112b760023e9b9050e53d17c"
+    }
+  },
+  "accepted_profile_lineage": [
+    {
+      "source_multiplier": 0.28125,
+      "authority": "../conserved_public_source_homotopy_n3_20260916/attempt.json result.continuation.stages[5].result.profile",
+      "recovered_copy": "../conserved_source_homotopy_lastseed_alpha03125_iter8_cached_20260916/last_accepted_alpha028125_profile.json",
+      "recovered_copy_sha256": "9d2a025f695da98ca3b489ff0b334ecdc2348e82f478a5463b02fad8a9c5ff5e",
+      "correction": "The recovered copy's seed_source field names a pruned timeout probe. Independent review verified that its profile values exactly match the authoritative public stage above; this manifest supersedes that stale locator."
+    },
+    {
+      "source_multiplier": 0.296875,
+      "authority": "../conserved_source_homotopy_halfstep_two_stage_20260916/attempt.json stages[0]",
+      "recovered_copy": "../conserved_source_homotopy_binary_barrier_20260916/seed_alpha0296875_profile.json",
+      "recovered_copy_sha256": "1d88473726779908e704cdf4ae8bce829570663458c0a3ff92c7571d9495ea4c"
+    },
+    {
+      "source_multiplier": 0.3046875,
+      "authority": "../conserved_source_homotopy_binary_barrier_20260916/stage_00_alpha_0.304687500/run.json",
+      "recovered_copy": "../conserved_source_homotopy_binary_barrier_20260916/accepted_alpha_0.304687500_profile.json",
+      "recovered_copy_sha256": "d7017c01e8e1be729c718ff7956ab605bb9805e401c6b4c3ad47df28a85b6973"
+    }
+  ],
+  "retained_artifacts": {
+    "direct_last_seed_alpha_0.3125": {
+      "path": "../conserved_source_homotopy_lastseed_alpha03125_iter8_cached_20260916/run.json",
+      "sha256": "e4e405a51db2906f55995fbb3515f07f284a926f850cc7c2bba667e97793b295",
+      "disposition": "rejected after 8 iterations; scaled residual 0.0310379098"
+    },
+    "secant_alpha_0.3125": {
+      "path": "../conserved_source_homotopy_secant_alpha03125_iter8_cached_20260916/attempt.json",
+      "sha256": "66cef90dd29c737fc9156f98e8fb437079972c040bab88be451c00fc1257426a",
+      "disposition": "rejected; this first-order predictor did not improve the direct seed"
+    },
+    "half_step": {
+      "path": "../conserved_source_homotopy_halfstep_two_stage_20260916/attempt.json",
+      "sha256": "c24a7ff8d06a7a40c878c4b0e5a6cb4e67fbc917c2ca1298b9a8528692d325c3",
+      "disposition": "alpha=0.296875 accepted; alpha=0.3125 rejected"
+    },
+    "binary_barrier": {
+      "path": "../conserved_source_homotopy_binary_barrier_20260916/attempt.json",
+      "sha256": "b13767d127d1060499c5404f727be3f92795ee4bd339f01d033e02fa5162dd95",
+      "disposition": "alpha=0.3046875 accepted; alpha=0.3125 rejected; alpha=0.30859375 interrupted before solver return"
+    },
+    "exact_jacobian_trf": {
+      "path": "../conserved_source_homotopy_trf_alpha03125_20260916/attempt.json",
+      "sha256": "c53b0f1b22bdb189c4f19f3e937cb5c485b9ec366cbde7d48a49c3ec21c09578",
+      "probe_path": "../conserved_source_homotopy_trf_alpha03125_20260916/probe.py",
+      "probe_sha256": "9922f36ced6853e93703274bbf863049b373a82adaceb66d79e3d375b20b2544",
+      "disposition": "interrupted while improving to scaled residual 0.0002138126; no convergence or optimality conclusion"
+    }
+  },
+  "excluded_artifacts": {
+    "warm_start_trace": "Pruned after showing only 2-3% speed change, nonidentical solver metadata, and no demonstrated continuation benefit.",
+    "timeout_only_secant_probes": "Pruned as superseded by returned direct/secant 8-iteration comparisons."
+  }
+}

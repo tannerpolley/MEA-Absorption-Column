@@ -79,6 +79,16 @@ def finite_difference_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None
         options={'maxfev': int(settings['maxfev'])},
     )
 
+    if len(parameters) > 6 and isinstance(parameters[6], dict):
+        diagnostics = parameters[6].setdefault("solver_diagnostics", {})
+        diagnostics.setdefault("stage_status", {})["outer"] = {
+            "status": "converged" if bool(solution.success) else "failed",
+            "success": bool(solution.success),
+            "message": str(solution.message),
+            "status_code": int(solution.status),
+            "iterations": int(getattr(solution, "nfev", 0)),
+            "grid_points": int(n_points),
+        }
     Y_scaled = solution.x.reshape(n_vars, n_points)
     if len(parameters) > 6 and isinstance(parameters[6], dict):
         parameters[6].get("solver_diagnostics", {})["jacobian_status"] = str(solution.status)

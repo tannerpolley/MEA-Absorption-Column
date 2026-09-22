@@ -1,26 +1,49 @@
 # Boundary-value solution methods (Section 4.3)
 
 The four adapters are implemented and verified on an independent analytic DAE.
-The corrected 3C full-film interface has also passed local recovery and the
-original algebraic equations. A converged full column, physical refinement
-study and matched-accuracy timing comparison are still required. No manuscript
-claim or physical method ranking follows from these local checks.
+The corrected 3C full-film interface has also passed recovery and the original
+algebraic equations. The corrected public two-node trapezoidal attempt in
+`results/conserved_public_physical_20260915T204019Z/attempt.json` returned a
+numerically and physically accepted full-column candidate in 472.343 s (14
+IPOPT iterations, scaled residual infinity norm 6.371460913581593e-08, zero
+bound violation). All five native-grid and film-quadrature checks pass the
+fixed 1e-7 physical criterion. This is a first coarse result; refinement and a
+matched-accuracy timing comparison remain required, and no manuscript claim or
+physical method ranking follows from this attempt.
 
-This task owns numerical methods and analysis in the attached
-`codex/section-4-3-solvers` checkout. Imported physics retains the source hashes
+The first public three-node axial attempt is retained in
+`results/conserved_public_axial_n3_20260915/attempt.json`. It reached the fixed
+20-iteration limit in 889.577 s with a finite, bounded candidate and no native
+callback failure, but its scaled residual remained `8.449045858900252e-03`.
+Numerical and physical acceptance are rejected, so it supplies no refinement
+estimate and is not evidence of formulation infeasibility. The preceding
+`results/trapezoidal_axial_n3_20260915/run.json` setup failure records that the
+older comparison runner still targets its frozen candidate snapshot; no model
+was assembled in that attempt.
+
+The matched retained-profile rerun is preserved in
+`results/conserved_public_axial_n3_seeded_20260915/attempt.json`. It admitted
+the accepted two-node profile with matching model, inputs, Engine identity,
+scales, and non-node solver settings, then interpolated its twelve physical states onto
+the three-node grid. Under the unchanged 20-iteration budget, its scaled
+solver residual decreased from `1.6129296196679564e+02` to
+`1.64310785649288e+01`, so numerical and physical acceptance are rejected.
+The interpolated seed was worse than the unseeded initialization under this
+fixed budget; neither rejected attempt supplies refinement evidence or proves
+formulation infeasibility. No further retry is justified without a new design
+for algebraically consistent interior initialization or continuation.
+
+This analysis set owns the numerical-method evidence. Imported physics retains the source hashes
 in `results/candidate_snapshot.json`; the centered discretization and
 `Conserved_Reduction.py` are this task's extensions. Historical seven-state
 `Run_Model` solver dispatch uses different physics and is not a comparison path.
 
 ## Runtime and retained evidence
 
-The current immutable Engine build is `9e1bef97fbea5c6f465612ae27b054192f91f19c`.
-Wheel SHA-256: `b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b`.
-Native SHA-256: `b5f97d49eb9439da84312dbeacb8ac0bae26ce6939562339a3c73d842fccce34`.
-Both were independently verified before installation with no active task-owned
-native calculation. `results/precision_runtime_adoption.json` records the
-transition from the charge-seed wheel; `results/runtime_adoption.json` records
-its predecessor. Earlier records keep their actual source and wheel identities.
+The current public attempt declares and expects Engine commit
+`7b1e62f0483571f8a194b32441467bdb58b45ce7` and verifies installed wheel SHA-256
+`91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4`.
+Earlier records keep their actual source and wheel identities.
 The repaired wheel changes native mixed-action precision, not model equations,
 physical tolerances or root selection. Final integration and the repaired-wheel local recovery replay passed.
 `results/consistent_3c_reduction_balanced_actions/run.json` retains the latter:
@@ -150,10 +173,9 @@ as its boundary; do not impose both or silently substitute top pressure.
 The retained `input/case_3c.json` supplies height 6 m, diameter .64 m, packing,
 resolved wet molar feeds and the explicit species-diffusivity closure.
 
-The authoritative source reconciliation was inspected read-only at
-`/home/tnnrpolley21/.codex/worktrees/1b26/MEA-Absorption-Column/analyses/nccc_validation/r18_sensitivity.md`,
-“Primary-source case identity check”: Morgan et al. (2020), DOI
-`10.1016/j.apenergy.2020.114533`, Tables A1, A4, C2 and Table 6. This task did
+The durable source reconciliation is `input/case_3c_source.md`: Morgan et al.
+(2020), DOI `10.1016/j.apenergy.2020.114533`, Tables A1, A4, C2 and Table 6.
+It was recovered from the repository's archived source review; this task did
 not independently reacquire or re-read the paper. Legacy `C_cases_data.csv`
 and the intermediate campaign CSV do not contain the selected gas composition.
 
@@ -214,11 +236,14 @@ checks that other settings are fixed and emits exact plotted CSV plus SVG/PNG/PD
 The cost view requires explicit `--capture-limit-pp` and `--temperature-limit-k`.
 Filled/open points distinguish inside/outside achieved-difference limits;
 failed or uncertified attempts remain crosses at measured durations. Timing
-contexts must match, and timeout budgets never substitute for measurements.
-Manufactured pipeline-check figures are temporary validation, not manuscript
-results. No physical figures or research notebook have yet been populated.
+environments must match, and timeout budgets never substitute for measurements.
+Manufactured method-check figures are temporary validation, not manuscript
+results. The working non-executing notebook is `notebook.qmd`, with its
+rendered HTML at `builds/notebook.html`. It reports the two-node result as
+endpoint tables only: two nodes cannot resolve an interior profile or
+continuous peak without overstating evidence.
 
-## Retained run contract
+## Retained attempt requirements
 
 Each JSON file contains one attempt. `result` is the native conservative
 solver result dictionary, including its unchanged `grid`, `profile`, defects,
@@ -257,8 +282,9 @@ The surrounding fields are:
   `setup_wall_s`, `thermo_wall_s`, `film_wall_s`, `global_wall_s`, and native
   counts/other diagnostics. Missing measurements stay null or absent.
   `context` carries hardware, software, thread settings and exact timing scope
-  under `hardware`, `software`, `threads`, `scope`. Unknown context suppresses
-  timing statistics. Identical declared method/settings/context are grouped;
+  under `hardware`, `software`, `threads`, `scope`. An unknown execution
+  environment suppresses timing statistics. Identical declared method, settings,
+  and execution environment are grouped;
   no averaging across meshes, film settings or starts. Actual wall time and
   timeout budget (`limit_seconds`) are different fields.
 - `execution_status` is required: `completed`, `failed`, `timeout`,
@@ -287,4 +313,3 @@ statistics are min/median/max of measured eligible samples, alongside total
 attempt and ineligible counts. Null data never become zero. Timing components
 are summarized separately and never added or subtracted into an invented
 exclusive breakdown.
-

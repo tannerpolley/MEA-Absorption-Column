@@ -85,7 +85,8 @@ class ReactiveLiquid:
 
     def __init__(self, dataset: str | Path, *, thermochemistry=None,
                  loading_anchor=None, max_log_loading_step=.1, max_loading_steps=32,
-                 water_per_mea_anchor=None, reuse_states=False, kij_scale=None, reaction_scale=None):
+                 water_per_mea_anchor=None, reuse_states=False, warm_starts=True,
+                 kij_scale=None, reaction_scale=None):
         import epcsaft
 
         self.dataset = str(dataset)
@@ -106,9 +107,14 @@ class ReactiveLiquid:
         self.max_loading_steps = max_loading_steps
         self.water_per_mea_anchor = water_per_mea_anchor
         self.reuse_states = reuse_states
+        self.warm_starts = warm_starts
         self._states = OrderedDict()
         self._accepted = None
         self.stats = dict(queries=0, cache_hits=0, native_solves=0, native_seconds=0., warm_starts=0)
+
+    def name(self):
+        """Stable callback owner name; no runtime identity is encoded in it."""
+        return "reactive_liquid"
 
     def solve(self, temperature_k, pressure_pa, apparent_amounts, *, state_input_derivatives=False):
         inputs = tuple(float(v) for v in (temperature_k, pressure_pa, *apparent_amounts))
@@ -120,14 +126,15 @@ class ReactiveLiquid:
                     json.dumps(self._reactions, sort_keys=True), self.molar_masses,
                     None if self.thermochemistry is None else self.thermochemistry.scientific_fingerprint)
         key = (identity, inputs, state_input_derivatives, self.loading_anchor,
-               self.water_per_mea_anchor, self.max_log_loading_step, self.max_loading_steps)
+               self.water_per_mea_anchor, self.max_log_loading_step, self.max_loading_steps,
+               self.warm_starts)
         self.stats['queries'] += 1
         if self.reuse_states and key in self._states:
             self.stats['cache_hits'] += 1
             self._states.move_to_end(key)
             return deepcopy(self._states[key])
         start = None
-        if self.reuse_states and self._accepted is not None:
+        if self.reuse_states and self.warm_starts and self._accepted is not None:
             old = self._accepted
             if old['parameter_fingerprint'] != self.model.parameter_fingerprint:
                 raise ValueError('Parameter identity changed within a reactive initialization sequence')
@@ -155,9 +162,42 @@ class ReactiveLiquid:
         )
         if self.reuse_states:
             # Exceptions and rejected roots never update the accepted seed or cache.
-            self._accepted = deepcopy(result)
+            if self.warm_starts:
+                self._accepted = deepcopy(result)
             self._states[key] = deepcopy(result)
             # ponytail: bounded per-column cache; eviction recomputes, never approximates.
+            if len(self._states) > 2048:
+                self._states.popitem(last=False)
+        return result
+
+    def solve_actions(self, temperature_k, pressure_pa, apparent_amounts, actions, output_ids):
+        """Evaluate selected native A2/caloric actions on one certified state."""
+        inputs = tuple(float(v) for v in (temperature_k, pressure_pa, *apparent_amounts))
+        actions, output_ids = tuple(actions), tuple(output_ids)
+        identity = (self.model.parameter_fingerprint,
+                    json.dumps(self._reactions, sort_keys=True), self.molar_masses,
+                    None if self.thermochemistry is None else self.thermochemistry.scientific_fingerprint)
+        key = ("actions", identity, inputs, actions, output_ids, self.loading_anchor,
+               self.water_per_mea_anchor, self.max_log_loading_step, self.max_loading_steps)
+        self.stats['queries'] += 1
+        if self.reuse_states and key in self._states:
+            self.stats['cache_hits'] += 1
+            self._states.move_to_end(key)
+            return deepcopy(self._states[key])
+        result, _ = _solve_homogeneous_reactive_result(
+            self.dataset, *inputs[:2], inputs[2:],
+            model=self.model, reactions=self._reactions, molar_masses=self.molar_masses,
+            state_input_derivatives=True, state_input_actions=actions,
+            output_ids=output_ids, thermochemistry=self.thermochemistry,
+            loading_anchor=self.loading_anchor, water_per_mea_anchor=self.water_per_mea_anchor,
+            max_log_loading_step=self.max_log_loading_step,
+            max_loading_steps=self.max_loading_steps, _diagnostics=self.stats,
+        )
+        if (self.reuse_states and len(result.state_input_actions) == len(actions)
+                and all(action.failure is None and action.caloric_failure is None
+                        and all(value is not None for value in action.values)
+                        for action in result.state_input_actions)):
+            self._states[key] = deepcopy(result)
             if len(self._states) > 2048:
                 self._states.popitem(last=False)
         return result
@@ -527,6 +567,8 @@ def _solve_homogeneous_reactive_result(
     reactions: dict | None = None,
     molar_masses=None,
     state_input_derivatives: bool = False,
+    state_input_actions=(),
+    output_ids=None,
     thermochemistry=None,
     loading_anchor=None,
     max_log_loading_step=.1,
@@ -545,7 +587,8 @@ def _solve_homogeneous_reactive_result(
     liquid_path = loading_anchor is not None or _phase_start is not None
     # A1 mode admits only the declared start in GREPE, including intermediate
     # steps. It must not silently try generated starts after a path failure.
-    state_input_derivatives = state_input_derivatives or liquid_path
+    state_input_actions = tuple(state_input_actions)
+    state_input_derivatives = state_input_derivatives or bool(state_input_actions) or liquid_path
     if state_input_derivatives:
         if not hasattr(equilibrium, "EquilibriumStateInputDerivatives"):
             raise RuntimeError(
@@ -650,6 +693,19 @@ def _solve_homogeneous_reactive_result(
     if thermochemistry is not None:
         thermochemistry.validate_component_order(tuple(model.component_ids))
         problem = replace(problem, thermochemistry=thermochemistry)
+    if output_ids is not None:
+        outputs = {output.identity: output for output in problem.outputs}
+        missing = [identity for identity in output_ids if identity not in outputs]
+        if missing:
+            raise ValueError(f"Native action outputs are not available: {missing}")
+        problem = replace(problem, outputs=tuple(outputs[identity] for identity in output_ids))
+    if state_input_actions:
+        if not hasattr(equilibrium, "EquilibriumStateInputAction"):
+            raise RuntimeError(
+                "Exact outer derivatives require an immutable Engine wheel exposing "
+                "EquilibriumStateInputAction; numerical derivative substitution is disabled"
+            )
+        problem = replace(problem, state_input_actions=state_input_actions)
     started = time.perf_counter()
     try:
         result = equilibrium.solve(model, problem)

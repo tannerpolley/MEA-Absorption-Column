@@ -399,8 +399,8 @@ def _store_rho_guess(mixture_kind, phase, state):
         _EPCSAFT_RHO_GUESS_CACHE[_rho_guess_key(mixture_kind, phase)] = rho
 
 
-def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, mixture_kind):
-    rho_guess = _rho_guess_from_cache(mixture_kind, phase)
+def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, mixture_kind, *, cache=True):
+    rho_guess = _rho_guess_from_cache(mixture_kind, phase) if cache else None
     if rho_guess is not None:
         try:
             state = _state_from_density_newton(
@@ -410,7 +410,8 @@ def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, m
                 composition=np.asarray(composition, dtype=float),
                 rho_guess=rho_guess,
             )
-            _store_rho_guess(mixture_kind, phase, state)
+            if cache:
+                _store_rho_guess(mixture_kind, phase, state)
             return state
         except Exception:
             pass
@@ -421,7 +422,8 @@ def _pressure_state_with_optional_rho_guess(mixture, T, P, composition, phase, m
         composition=np.asarray(composition, dtype=float),
         phase=phase,
     )
-    _store_rho_guess(mixture_kind, phase, state)
+    if cache:
+        _store_rho_guess(mixture_kind, phase, state)
     return state
 
 
@@ -458,6 +460,7 @@ def _state_from_density_newton(mixture, *, T, P, composition, rho_guess):
 
 
 def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral") -> float:
+    cache = bool(cache) and os.environ.get("MEA_EPCSAFT_DISABLE_CACHE") != "1"
     composition_arr = np.asarray(composition, dtype=float)
     if mixture_kind == "ionic":
         epcsaft_runtime_user_options()
@@ -482,7 +485,9 @@ def epcsaft_phi_co2(T, P, composition, phase, cache=True, mixture_kind="neutral"
     else:
         raise ValueError(f"Unknown ePC-SAFT mixture kind: {mixture_kind}")
     start = time.perf_counter()
-    state = _pressure_state_with_optional_rho_guess(mixture, T, P, composition_arr, phase, mixture_kind)
+    state = _pressure_state_with_optional_rho_guess(
+        mixture, T, P, composition_arr, phase, mixture_kind, cache=cache
+    )
     _EPCSAFT_CACHE_STATS["epcsaft_direct_density_solve_s"] += time.perf_counter() - start
     phi = np.asarray(_v02_fugacity_coefficients(state), dtype=float)
     phi_co2 = float(phi[CO2_INDEX])
@@ -501,6 +506,15 @@ def epcsaft_phi_co2_batch(records, cache=True) -> list[float]:
     calls for duplicate or near-duplicate BVP mesh states under the local cache
     quantization.
     """
+    cache = bool(cache) and os.environ.get("MEA_EPCSAFT_DISABLE_CACHE") != "1"
+    if not cache:
+        return [
+            epcsaft_phi_co2(
+                record["T"], record["P"], record["composition"], record["phase"],
+                cache=False, mixture_kind=record.get("mixture_kind", "neutral"),
+            )
+            for record in records
+        ]
     resolved: dict[tuple, float] = {}
     results: list[float] = []
     for record in records:

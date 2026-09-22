@@ -16,9 +16,12 @@ from mea_absorption_column.benchmark import (
     run_benchmark,
     _solver_settings_from_args,
     _settings_to_payload,
+    _restore_json_value,
     settings_from_payload,
 )
 from mea_absorption_column import benchmark_worker
+from mea_absorption_column import benchmark
+from mea_absorption_column.config.column import CapabilityRefusal
 
 
 def test_case_data_loads_from_packaged_csvs():
@@ -38,6 +41,47 @@ def test_benchmark_defaults_preserve_henry_only_baseline():
     settings = BenchmarkSettings()
 
     assert settings.thermo_models == ("ideal_henry",)
+
+
+def test_worker_profile_json_round_trip_restores_nonfinite_dataframe_values():
+    profile = pd.DataFrame(
+        {"Tl": [300.0, float("nan")], "Tv": [320.0, float("inf")]},
+        index=[0.0, 1.0],
+    )
+
+    encoded = benchmark_worker._json_clean({"profile": profile})
+    restored = _restore_json_value(encoded)["profile"]
+
+    assert restored.loc[0.0, "Tl"] == 300.0
+    assert pd.isna(restored.loc[1.0, "Tl"])
+    assert restored.loc[1.0, "Tv"] == float("inf")
+    assert restored.dtypes.tolist() == ["float64", "float64"]
+
+
+def test_worker_serializes_engine_capability_refusal(tmp_path, monkeypatch):
+    def refuse(_identity):
+        raise CapabilityRefusal("selected Engine wheel is unavailable")
+
+    monkeypatch.setattr(benchmark_worker, "verify_worker_identity", refuse)
+    input_path = tmp_path / "input.json"
+    output_path = tmp_path / "output.json"
+    payload = {
+        "case_source": "C_cases_data",
+        "run": 0,
+        "method": "single",
+        "thermo_model": "ideal_henry",
+        "runtime_identity": {},
+        "resolved_case": {"case_id": "3C", "values": {}},
+        "settings": _settings_to_payload(BenchmarkSettings()),
+        "output_path": str(output_path),
+    }
+    input_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    assert benchmark_worker.main([str(input_path)]) == 0
+    result = json.loads(output_path.read_text(encoding="utf-8"))
+    assert result["failure_kind"] == "capability_refusal"
+    assert result["jacobian_status"] == "capability_refusal"
+    assert "Engine wheel" in result["message"]
 
 
 def test_benchmark_failure_rows_keep_stable_schema(monkeypatch):
@@ -588,6 +632,28 @@ def test_benchmark_multistart_selects_lowest_capture_error(tmp_path, monkeypatch
     assert "co2_flux_mode=bidirectional" in results.loc[0, "continuation_path"]
 
 
+def test_multistart_objective_ranks_failed_candidate_after_successful_candidate():
+    accepted = {"method": "single", "success": True, "capture_error_pct": 1.0,
+                "boundary_residual_norm": 0.001, "capture_pct": 79.1,
+                "solver_stage_status": {"root": {"success": True}, "ivp": {"success": True}}}
+    for result_accepted in (False, True):
+        for root_converged in (False, True):
+            candidate = {**accepted, "success": result_accepted, "capture_error_pct": 0.0,
+                         "solver_stage_status": {"root": {"success": root_converged}, "ivp": {"success": True}}}
+            winner = min((candidate, accepted), key=benchmark._multistart_objective)
+            assert winner is (candidate if result_accepted and root_converged else accepted)
+    for candidate in (
+        {**accepted, "capture_error_pct": float("nan")},
+        {**accepted, "boundary_residual_norm": float("inf")},
+        {**accepted, "solver_stage_status": {"root": {"success": True, "status": "timed_out"},
+                                            "ivp": {"success": True}}},
+        {"success": False, "capture_error_pct": 0.0, "boundary_residual_norm": 0.0, "capture_pct": 78.1},
+    ):
+        assert min((candidate, accepted), key=benchmark._multistart_objective) is accepted
+    legacy = {key: value for key, value in accepted.items() if key != "solver_stage_status"}
+    assert benchmark._multistart_objective(legacy) == benchmark._multistart_objective(accepted)
+
+
 def test_benchmark_multistart_uses_candidate_subprocess_timeout(tmp_path, monkeypatch):
     calls = []
 
@@ -599,12 +665,16 @@ def test_benchmark_multistart_uses_candidate_subprocess_timeout(tmp_path, monkey
             "case_source": "NCCC_Data",
             "method": kwargs["method"],
             "thermo_model": kwargs["thermo_model"],
-            "success": factor == 0.26,
+            "success": True,
             "message": "ok",
             "runtime_s": 1.0,
             "capture_pct": 78.0 if factor == 0.26 else 100.0,
             "capture_error_pct": -0.1 if factor == 0.26 else 21.9,
             "boundary_residual_norm": 0.0,
+            "solver_stage_status": {
+                "root": {"success": factor != 0.26},
+                "ivp": {"success": True},
+            },
             "beds": 3,
             "intercoolers": 2,
             "staged_beds": True,
@@ -612,7 +682,7 @@ def test_benchmark_multistart_uses_candidate_subprocess_timeout(tmp_path, monkey
 
     monkeypatch.setattr("mea_absorption_column.benchmark._run_solver_settings_subprocess", fake_candidate_subprocess)
     settings = BenchmarkSettings(
-        methods=("scipy-bvp",),
+        methods=("single",),
         thermo_models=("ideal_henry",),
         c_case_limit=0,
         nccc_case_limit=1,
@@ -630,7 +700,7 @@ def test_benchmark_multistart_uses_candidate_subprocess_timeout(tmp_path, monkey
 
     assert len(calls) == 2
     assert results.loc[0, "success"] is True or results.loc[0, "success"] == True
-    assert "mass_transfer_factor=0.26" in results.loc[0, "continuation_path"]
+    assert "mass_transfer_factor=1;" in results.loc[0, "continuation_path"]
     assert calls[0]["co2_flux_mode"] == "bidirectional"
 
 

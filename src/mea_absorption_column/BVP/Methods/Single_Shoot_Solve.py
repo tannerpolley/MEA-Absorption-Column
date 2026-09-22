@@ -23,6 +23,9 @@ DEFAULT_SINGLE_SHOOT_SETTINGS = {
 def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
     settings = {**DEFAULT_SINGLE_SHOOT_SETTINGS, **(settings or {})}
     settings["_runtime_start_s"] = time.time()
+    diagnostics = parameters[6].get("solver_diagnostics") if len(parameters) > 6 and isinstance(parameters[6], dict) else None
+    if diagnostics is not None:
+        diagnostics.setdefault("stage_status", {})
     rhs = _guarded_abs_column if settings.get("guard_rhs", True) else _raw_abs_column
 
     Fl_CO2_a_guess, Fl_H2O_a_guess, Fv_CO2_a, Fv_H2O_a, Hlf_a_guess, Hvf_a, P_a = Y_a_scaled
@@ -68,6 +71,13 @@ def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
         _raise_if_timed_out(settings)
         if len(parameters) > 6 and isinstance(parameters[6], dict):
             parameters[6].get("solver_diagnostics", {})["jacobian_status"] = str(getattr(root_output, "status", ""))
+        if diagnostics is not None:
+            diagnostics["stage_status"]["root"] = {
+                "status": "converged" if bool(root_output.success) else "failed",
+                "success": bool(root_output.success),
+                "message": str(root_output.message),
+                "iterations": int(getattr(root_output, "nit", 0)),
+            }
 
         solved_initials_scaled, success, message, n_eval = root_output.x, root_output.success, root_output.message, root_output.nit
 
@@ -77,6 +87,13 @@ def single_shoot_solve(Y_a_scaled, Y_b_scaled, z, parameters, settings=None):
                       Hlf_a, Hvf_a, P_a]
 
     Y_scaled, z, success, message = integrater(rhs, Y_a_scaled, z, args=parameters)
+    if diagnostics is not None:
+        diagnostics["stage_status"]["ivp"] = {
+            "status": "converged" if bool(success) else "failed",
+            "success": bool(success),
+            "message": str(message),
+            "grid_points": int(len(z)),
+        }
 
     return Y_scaled, z, 'Single Shooting Method', success, message
 

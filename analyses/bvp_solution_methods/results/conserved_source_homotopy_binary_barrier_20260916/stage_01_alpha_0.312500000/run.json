@@ -1,0 +1,1774 @@
+{
+  "run_id": "stage_01_alpha_0.312500000",
+  "method": "trapezoidal",
+  "settings": {
+    "stage": "column",
+    "nodes": 3,
+    "film_points": 3,
+    "initial_record": "/tmp/initial_record_case3c.json",
+    "initial_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_source_homotopy_binary_barrier_20260916/accepted_alpha_0.304687500_profile.json",
+    "tolerance": 1e-07,
+    "max_iterations": 8,
+    "max_nodes": 100,
+    "local_tolerance": 1e-09,
+    "local_solver_tolerance": 1e-11,
+    "local_evaluations": 30,
+    "max_condition": 1000000000000.0,
+    "ivp_rtol": 1e-07,
+    "ivp_atol": 1e-09,
+    "runner_source_sha256": "c762434f83828e7042586675e8ba637a23049b4b413c3bc6e99090997ae3229f",
+    "method_source_sha256": "f9097c3df67d0f7ee842ab224d7af27c16bbf6593d7a6f0b8fe52c74d96de0f2",
+    "case_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+    "initial_record_sha256": "acc2561d68f5abdca981f913ce00302aa922044db7e3584fcb4697f6649e13ec",
+    "state_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      300.0,
+      300.0,
+      110900.0,
+      0.97,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568,
+      1.0
+    ],
+    "balance_scale": [
+      0.40538675460339674,
+      12.82919875121526,
+      0.2756739192884683,
+      0.2604028229216596,
+      123497.93628109811,
+      10133.416784188732,
+      18483.333333333332
+    ],
+    "algebraic_scale": [
+      0.97,
+      1.8447310837197383e-05,
+      0.23489075578691063,
+      0.29100727339695176,
+      171964.03779691568
+    ],
+    "boundary_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      100.0,
+      100.0,
+      110900.0
+    ],
+    "lower": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      293.15,
+      293.15,
+      1.0,
+      2.1538326677728036e-16,
+      "-inf",
+      "-inf",
+      "-inf",
+      "-inf"
+    ],
+    "upper": [
+      "inf",
+      "inf",
+      "inf",
+      "inf",
+      393.15,
+      393.15,
+      10000000.0,
+      0.9699999999999998,
+      "inf",
+      "inf",
+      "inf",
+      "inf"
+    ],
+    "initial_state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ],
+    "initialization": "Retained profile interpolated as an outer numerical guess; full original equations apply",
+    "initial_profile_sha256": "d7017c01e8e1be729c718ff7956ab605bb9805e401c6b4c3ad47df28a85b6973"
+  },
+  "execution_status": "completed",
+  "stage": "finished",
+  "result": {
+    "accepted": false,
+    "profile": [
+      [
+        3.4773609310257543,
+        2.9945158693975675,
+        2.4323205276203805
+      ],
+      [
+        74.65349405387613,
+        81.93763348601512,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.1711984541026226,
+        0.6090031123254357
+      ],
+      [
+        1.5624169375299577,
+        8.846556369668939,
+        3.8841153909453925
+      ],
+      [
+        314.59783535499537,
+        354.1379195144791,
+        318.15
+      ],
+      [
+        316.75,
+        348.4928863482065,
+        331.6803399217829
+      ],
+      [
+        110900.0,
+        110736.2990401924,
+        110566.21408263079
+      ],
+      [
+        0.0548601294217642,
+        0.04677701580049579,
+        0.052715138904841724
+      ],
+      [
+        0.01256531402827719,
+        0.0016556063062985909,
+        0.014811906070985285
+      ],
+      [
+        0.06166647385943126,
+        -0.27019290290250003,
+        0.42069210768269527
+      ],
+      [
+        -19626.641546461364,
+        63580.53872241294,
+        -105829.20234044282
+      ],
+      [
+        0.45618431966644757,
+        0.10611421222554814,
+        0.645160809203155
+      ]
+    ],
+    "grid": [
+      0.0,
+      3.0,
+      6.0
+    ],
+    "status": "Maximum_Iterations_Exceeded",
+    "failure": "Solver termination or original residual/bound checks failed",
+    "profile_finite": true,
+    "defects": [
+      [
+        -6.583817635696931e-05,
+        -2.303002348424954e-05
+      ],
+      [
+        -0.0037858069814760142,
+        -0.0024071466450923396
+      ],
+      [
+        -6.58381763574134e-05,
+        -2.3030023484138518e-05
+      ],
+      [
+        -0.003785806981480455,
+        -0.002407146645088787
+      ],
+      [
+        967.3857840539422,
+        512.6571766263805
+      ],
+      [
+        925.5678183250129,
+        602.4890638913494
+      ],
+      [
+        0.005955535728134009,
+        0.07793277107757035
+      ]
+    ],
+    "algebraic_residual": [
+      [
+        -1.904609696498638e-05,
+        -4.353720916207282e-06,
+        -6.938893903907228e-18
+      ],
+      [
+        -1.451910416054904e-09,
+        -1.8072830569947875e-09,
+        5.954207355993586e-13
+      ],
+      [
+        -0.0006607496360353168,
+        0.0005839423892136117,
+        -1.1661968060305145e-05
+      ],
+      [
+        0.0017081086853599492,
+        0.00912135668255798,
+        0.00020647297754777805
+      ],
+      [
+        -0.09470504389537382,
+        4.897158918065543,
+        -8.596895093942294
+      ]
+    ],
+    "boundary_residual": [
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ]
+    ],
+    "bound_violation": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "balance_residual_per_length": [
+      [
+        -2.1946058785656437e-05,
+        -7.676674494749847e-06
+      ],
+      [
+        -0.0012619356604920047,
+        -0.0008023822150307799
+      ],
+      [
+        -2.1946058785804468e-05,
+        -7.67667449471284e-06
+      ],
+      [
+        -0.001261935660493485,
+        -0.0008023822150295956
+      ],
+      [
+        322.4619280179807,
+        170.88572554212683
+      ],
+      [
+        308.52260610833764,
+        200.82968796378313
+      ],
+      [
+        0.0019851785760446696,
+        0.025977590359190117
+      ]
+    ],
+    "scaled_residual_inf": 0.03134408489548607,
+    "scaled_bound_violation_inf": 0.0,
+    "iterations": 8,
+    "solver_statistics": {
+      "iter_count": 8,
+      "iterations": {
+        "alpha_du": [
+          0.0,
+          0.996920166402069,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "alpha_pr": [
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          0.33941956704213244,
+          1.0,
+          0.5,
+          1.0,
+          0.125
+        ],
+        "d_norm": [
+          0.0,
+          0.5505922838804937,
+          0.7187470305994619,
+          0.5211058542112305,
+          6.203192297701372,
+          1.1173110249040237,
+          0.6236028306354345,
+          0.5335770875409371,
+          1.1692205256879202
+        ],
+        "inf_du": [
+          1.0,
+          21.617708570284798,
+          64.04797837135166,
+          4.129092065152373,
+          28328.883293421142,
+          6676.926267226444,
+          3873.0043523852523,
+          730.7884729224355,
+          465.9990889262378
+        ],
+        "inf_pr": [
+          1.071971969119929,
+          0.03971381455773574,
+          0.05980896466910892,
+          0.031204694155502175,
+          0.5359778013612256,
+          0.15872066639896584,
+          0.09126108052700442,
+          0.03315643552014762,
+          0.03134408489548607
+        ],
+        "mu": [
+          1.0,
+          0.6191915543110043,
+          0.06846719650836067,
+          0.05397061926114293,
+          0.0961706279311089,
+          0.07385782595416306,
+          0.07385782595416306,
+          0.07385782595416306,
+          0.07385782595416306
+        ],
+        "obj": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "regularization_size": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "n_call_callback_fun": 9,
+      "n_call_nlp_f": 14,
+      "n_call_nlp_g": 16,
+      "n_call_nlp_grad": 0,
+      "n_call_nlp_grad_f": 9,
+      "n_call_nlp_jac_g": 9,
+      "n_call_total": 1,
+      "return_status": "Maximum_Iterations_Exceeded",
+      "success": false,
+      "t_proc_callback_fun": 0.008503,
+      "t_proc_nlp_f": 4.4e-05,
+      "t_proc_nlp_g": 84.710112,
+      "t_proc_nlp_grad": 0.0,
+      "t_proc_nlp_grad_f": 3.3e-05,
+      "t_proc_nlp_jac_g": 221.094418,
+      "t_proc_total": 305.824637,
+      "t_wall_callback_fun": 0.008536459,
+      "t_wall_nlp_f": 4.1509000000000005e-05,
+      "t_wall_nlp_g": 84.93139461000001,
+      "t_wall_nlp_grad": 0.0,
+      "t_wall_nlp_grad_f": 2.9054e-05,
+      "t_wall_nlp_jac_g": 221.28677896,
+      "t_wall_total": 306.238146571,
+      "unified_return_status": "SOLVER_RET_LIMITED"
+    },
+    "scheme": "trapezoidal",
+    "boundary_slots": null,
+    "nlp_scaling_method": "none",
+    "defect_units": "B"
+  },
+  "physical_certification": {
+    "accepted": false,
+    "original_residuals": {
+      "material": [
+        [
+          0.0,
+          -4.440892098500626e-16,
+          -4.440892098500626e-16
+        ],
+        [
+          0.0,
+          -1.4210854715202004e-14,
+          0.0
+        ]
+      ],
+      "energy": [
+        0.0,
+        -41.81796573102474,
+        48.01392153277993
+      ],
+      "charge": [
+        -1.2891841457210451e-18,
+        -6.3711700710100336e-18,
+        -1.2112306447940478e-17,
+        -5.1033735072071595e-20,
+        5.747965580067682e-18,
+        2.081583467877443e-19,
+        3.0531302583781256e-18,
+        -6.438085673843123e-18,
+        1.3725639514663903e-18
+      ],
+      "interface": [
+        [
+          -1.904609696498638e-05,
+          -4.353720916207282e-06,
+          -6.938893903907228e-18
+        ],
+        [
+          -1.451910416054904e-09,
+          -1.8072830569947875e-09,
+          5.954207355993586e-13
+        ],
+        [
+          -0.0006607496360353168,
+          0.0005839423892136117,
+          -1.1661968060305145e-05
+        ],
+        [
+          0.0017081086853599492,
+          0.00912135668255798,
+          0.00020647297754777805
+        ],
+        [
+          -0.09470504389537382,
+          4.897158918065543,
+          -8.596895093942294
+        ]
+      ],
+      "boundary": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "scaled_residual_inf": {
+      "material": 1.8461603345591976e-16,
+      "energy": 6.479719820782229e-05,
+      "charge": 1.2112306447940478e-17,
+      "interface": 0.03134408489548607,
+      "boundary": 0.0
+    },
+    "criteria": {
+      "material": 1e-07,
+      "energy": 1e-07,
+      "charge": 1e-07,
+      "interface": 1e-07,
+      "boundary": 1e-07
+    },
+    "scope": "Native grid material/energy invariants, bulk/film-quadrature charge, interface, boundary and bounds; between-node accuracy still requires refinement",
+    "residual_units": {
+      "material": "mol/s",
+      "energy": "W",
+      "charge": "elementary charge mol per apparent feed mol",
+      "interface": "holdup fraction; mol/m/s; mol/m2/s; mol/m2/s; W/m2",
+      "boundary": "four mol/s; two K; Pa"
+    },
+    "conserved": [
+      [
+        3.4773609310257543,
+        2.9945158693975675,
+        2.4323205276203805
+      ],
+      [
+        74.65349405387613,
+        81.93763348601512,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.1711984541026226,
+        0.6090031123254357
+      ],
+      [
+        1.5624169375299577,
+        8.846556369668939,
+        3.8841153909453925
+      ],
+      [
+        -27816389.530575227,
+        -29357222.277221907,
+        -27956668.371854514
+      ],
+      [
+        -1018337.2208407687,
+        -2559211.7854531775,
+        -1158568.0481985195
+      ],
+      [
+        110900.0,
+        110736.2990401924,
+        110566.21408263079
+      ]
+    ],
+    "sources": [
+      [
+        -0.9073749273169637,
+        -0.12255408271360667,
+        -1.0767468490276257
+      ],
+      [
+        -4.453100981811811,
+        20.000674825268796,
+        -30.582080333702837
+      ],
+      [
+        -0.9073749273169637,
+        -0.12255408271360667,
+        -1.0767468490276257
+      ],
+      [
+        -4.453100981811811,
+        20.000674825268796,
+        -30.582080333702837
+      ],
+      [
+        1417292.2703419456,
+        -4706465.886194178,
+        7693220.549001147
+      ],
+      [
+        1417292.2703419456,
+        -4706465.886194178,
+        7693220.549001147
+      ],
+      [
+        -129.88636278532923,
+        -219.3550566137634,
+        -143.65910942931566
+      ]
+    ]
+  },
+  "failure": "Solver termination or original residual/bound checks failed",
+  "limit_seconds": 600.0,
+  "measurements": {
+    "context": {
+      "hardware": {
+        "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+        "cpu_model": "AMD Ryzen 5 5500",
+        "logical_cpus": 12
+      },
+      "threads": {
+        "OMP_NUM_THREADS": null,
+        "OPENBLAS_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "software": {
+        "python": "3.13.13",
+        "numpy": "2.4.4",
+        "scipy": "1.17.1",
+        "casadi": "3.7.2",
+        "engine": {
+          "engine_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+          "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+          "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+          "reactive_inputs_sha256": {
+            "parameters.json": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+            "reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+            "anchored-reference-thermochemistry.json": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185",
+            "adoption-receipt.json": "bf178ed7b043e90dcca297ba9b80f1b262ef41bcdfe5e53af9211a1fe8b237e6",
+            "bundle.json": "19fe755463307b0df314f8a9e77b30a00e5b2f01adcc90a13b578f247f14fb05"
+          }
+        }
+      },
+      "scope": "One retained binary source-homotopy stage; current local runtime"
+    },
+    "setup_wall_s": 6.233861504000743,
+    "global_wall_s": 312.33520341000076,
+    "stage_wall_s": 329.87571400900015,
+    "cache_before": {
+      "epcsaft_cache_hits": 0,
+      "epcsaft_cache_misses": 0,
+      "epcsaft_direct_density_solve_s": 0.0,
+      "epcsaft_rho_guess_hits": 0,
+      "epcsaft_rho_guess_misses": 0
+    },
+    "cache_after": {
+      "epcsaft_cache_hits": 0,
+      "epcsaft_cache_misses": 0,
+      "epcsaft_direct_density_solve_s": 0.0,
+      "epcsaft_rho_guess_hits": 0,
+      "epcsaft_rho_guess_misses": 0
+    }
+  },
+  "problem": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "state_layout": [
+      "Fl_CO2_mol_s",
+      "Fl_H2O_mol_s",
+      "Fv_CO2_mol_s",
+      "Fv_H2O_mol_s",
+      "Tl_K",
+      "Tv_K",
+      "P_Pa",
+      "holdup",
+      "j_CO2_mol_m2_s",
+      "j_H2O_mol_m2_s",
+      "energy_flux_W_m2",
+      "interface_log_loading"
+    ],
+    "coordinate": "height_m_from_gas_inlet",
+    "model_source_sha256": {},
+    "engine_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "wheel_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "parameters_sha256": "a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9",
+    "reference_sha256": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185"
+  },
+  "input_record": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "source_record": {
+      "path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_baseline.json",
+      "sha256": "df1dcaf5fe5c617663f62b1e23325fdc1c732b9dae03161bdb8f02a8c362adb0"
+    },
+    "model_input_row": {
+      "L": 2.088055555555556,
+      "G": 0.5591666666666667,
+      "alpha": 0.25,
+      "w_MEA": 0.3,
+      "y_CO2": 0.093,
+      "Tl": 318.15,
+      "Tv": 316.75,
+      "P": 110900.0,
+      "Beds": 1,
+      "Intercoolers": 0,
+      "CO2  %": 89.5,
+      "lean_solvent_temp_imputed": true,
+      "lean_solvent_temp_imputed_C": 45.0,
+      "y_O2": 0.09
+    },
+    "assumptions": [
+      "Tl318.15K is user-approved imputation, not measurement",
+      "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "Reported gasmass interpreted as totalwet mass; source moisture basis unspecified",
+      "Loaded liquid mass and unloaded wMEA basis; molar conversion uses current native molar masses",
+      "Pressure boundary is bottom/inlet110900Pa; measured top109500Pa reserved for comparison"
+    ],
+    "initial_bulk_state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.052715134432693156
+    ],
+    "initial_interface_bracket": [
+      0.0,
+      1.0
+    ],
+    "liquid_molar_masses_kg_mol": [
+      0.044009,
+      0.061084,
+      0.018015
+    ],
+    "vapor_molar_masses_kg_mol": [
+      0.04401,
+      0.01801528,
+      0.02801,
+      0.031999
+    ],
+    "mobility_basis": "Same nine species diffusivity estimates and harmonic-mean pair closure as the retained owner runner",
+    "source_runner_sha256": "2b6ff7c74450504e916284560dc006237d6a9f3a5027ccece0d446bbab93bf0d",
+    "physical_residual_tolerance": 1e-07,
+    "central_readiness_point": [
+      318.15,
+      110900.0,
+      5.277293318431409,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "claim_limits": {
+      "caloric_status": "provisional_shared_reference",
+      "caloric_limitation": "The coupled owner records an unresolved pure-water vapor Cp discrepancy. Thermal predictions remain provisional; comparisons assess numerical methods on the shared declared model.",
+      "source_record": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_coupled_shared.json"
+    }
+  },
+  "resolved_runtime": {},
+  "runtime_identity_verified": true,
+  "native_calls": {
+    "liquid_value_A1": {
+      "started": 539,
+      "returned": 537,
+      "failed": 2,
+      "wall_s": 262.71630256698154
+    },
+    "liquid_A2": {
+      "started": 81,
+      "returned": 81,
+      "failed": 0,
+      "wall_s": 56.90218554899184
+    },
+    "vapor_value_A1_H2": {
+      "started": 424,
+      "returned": 424,
+      "failed": 0,
+      "wall_s": 9.616376111038335
+    }
+  },
+  "native_counts_scope": "Native calls through the two shared callbacks; cumulative through verification. Timeout counts are the last saved snapshot.",
+  "initialization_evaluations": [],
+  "initial_guess_engine_identity": {
+    "actual_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "archive_hash_status": "verified_from_installed_contents",
+    "commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "commit_evidence": "not_available_from_installed_distribution",
+    "declared_archive_sha256": null,
+    "declared_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "declared_wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "expected_commit": "7b1e62f0483571f8a194b32441467bdb58b45ce7",
+    "expected_sha256": "91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4",
+    "installed_artifact_members": 26,
+    "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/lib/python3.13/site-packages",
+    "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "loaded_version": "0.2.0.dev0",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv",
+    "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+    "python_implementation": "cpython",
+    "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv",
+    "python_version": "3.13.13",
+    "required": true,
+    "status": "verified",
+    "verified_commit": null,
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "imported_initialization": {
+    "accepted": true,
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -6.1201044232461754e-15,
+      0.0,
+      0.0
+    ],
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ]
+  },
+  "initialization": {
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.0527151344326932,
+      0.01831591442799128,
+      0.014962144014177555,
+      -10940.409344548052,
+      0.7745668932575391
+    ],
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -6.1201044232461754e-15,
+      0.0,
+      0.0
+    ],
+    "accepted": true
+  },
+  "supplied_initial_profile": {
+    "physical_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "height_m": 6.0,
+      "area_m2": 0.3216990877275948,
+      "packing": [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ],
+      "liquid_feed_mol_s": [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      "vapor_feed_mol_s": [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      "liquid_temperature_k": 318.15,
+      "vapor_temperature_k": 316.75,
+      "bottom_pressure_pa": 110900.0,
+      "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+      "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.30",
+      "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+      "reported_top_pressure_pa": 109500.0,
+      "liquid_branch_policy": {
+        "loading_anchor": 0.25,
+        "max_log_loading_step": 0.1,
+        "max_loading_steps": 32
+      },
+      "species_diffusivity_model": {
+        "co2_prefactor_m2_s": 3.14e-07,
+        "co2_activation_j_mol": 15230.0,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ],
+        "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+      }
+    },
+    "grid": [
+      0.0,
+      3.0,
+      6.0
+    ],
+    "profile": [
+      [
+        3.473795047647864,
+        3.013244439662086,
+        2.4323205276203805
+      ],
+      [
+        75.2020856705759,
+        81.32241789466038,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.1934929077450316,
+        0.612568995703326
+      ],
+      [
+        1.5624169375299577,
+        7.68274916161446,
+        3.3355237742456385
+      ],
+      [
+        318.0430025377733,
+        351.0244440500433,
+        318.15
+      ],
+      [
+        316.75,
+        347.46246981851425,
+        329.02739260743965
+      ],
+      [
+        110900.0,
+        110747.34928814486,
+        110591.42224090142
+      ],
+      [
+        0.053953328072228704,
+        0.04720172672269783,
+        0.05271513856709622
+      ],
+      [
+        0.011340787680671984,
+        0.002534424010127677,
+        0.014909619643338123
+      ],
+      [
+        0.014616509230051295,
+        -0.19558577503105848,
+        0.32960911640799373
+      ],
+      [
+        -8106.866876025887,
+        45581.78062864652,
+        -84239.08126802849
+      ],
+      [
+        0.42436644403671847,
+        0.15165061631793036,
+        0.6486845822380726
+      ]
+    ],
+    "seed_source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/bvp_solution_methods/results/conserved_source_homotopy_binary_barrier_20260916/stage_00_alpha_0.304687500/run.json",
+    "seed_source_multiplier": 0.3046875,
+    "seed_claim": "artificial source-homotopy numerical seed only"
+  },
+  "initial_profile": [
+    [
+      3.473795047647864,
+      3.013244439662086,
+      2.4323205276203805
+    ],
+    [
+      75.2020856705759,
+      81.32241789466038,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.1934929077450316,
+      0.612568995703326
+    ],
+    [
+      1.5624169375299577,
+      7.68274916161446,
+      3.3355237742456385
+    ],
+    [
+      318.0430025377733,
+      351.0244440500433,
+      318.15
+    ],
+    [
+      316.75,
+      347.46246981851425,
+      329.02739260743965
+    ],
+    [
+      110900.0,
+      110747.34928814486,
+      110591.42224090142
+    ],
+    [
+      0.053953328072228704,
+      0.04720172672269783,
+      0.05271513856709622
+    ],
+    [
+      0.011340787680671984,
+      0.002534424010127677,
+      0.014909619643338123
+    ],
+    [
+      0.014616509230051295,
+      -0.19558577503105848,
+      0.32960911640799373
+    ],
+    [
+      -8106.866876025887,
+      45581.78062864652,
+      -84239.08126802849
+    ],
+    [
+      0.42436644403671847,
+      0.15165061631793036,
+      0.6486845822380726
+    ]
+  ],
+  "iteration_observations": [
+    {
+      "elapsed_s": 29.85751055900073,
+      "profile": [
+        [
+          3.473795047647864,
+          3.013244439662086,
+          2.4323205276203805
+        ],
+        [
+          75.2020856705759,
+          81.32241789466038,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1934929077450316,
+          0.612568995703326
+        ],
+        [
+          1.5624169375299577,
+          7.68274916161446,
+          3.3355237742456385
+        ],
+        [
+          318.0430025377733,
+          351.0244440500433,
+          318.15
+        ],
+        [
+          316.75,
+          347.46246981851425,
+          329.02739260743965
+        ],
+        [
+          110900.0,
+          110747.34928814486,
+          110591.42224090142
+        ],
+        [
+          0.053953328072228704,
+          0.04720172672269783,
+          0.05271513856709622
+        ],
+        [
+          0.011340787680671984,
+          0.002534424010127677,
+          0.014909619643338123
+        ],
+        [
+          0.014616509230051295,
+          -0.19558577503105848,
+          0.32960911640799373
+        ],
+        [
+          -8106.866876025887,
+          45581.78062864652,
+          -84239.08126802849
+        ],
+        [
+          0.42436644403671847,
+          0.15165061631793036,
+          0.6486845822380726
+        ]
+      ],
+      "scaled_residual_inf": 1.071971969119929
+    },
+    {
+      "elapsed_s": 60.83299278300001,
+      "profile": [
+        [
+          3.4782339894400307,
+          3.0014669128165212,
+          2.4323205276203805
+        ],
+        [
+          74.80747466885542,
+          81.78806160294809,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1772764391073007,
+          0.6081300539111598
+        ],
+        [
+          1.5624169375299577,
+          8.543003871622647,
+          3.7301347759661176
+        ],
+        [
+          315.5880504155045,
+          353.43459201592515,
+          318.15
+        ],
+        [
+          316.75,
+          348.3802867725555,
+          330.9659679078802
+        ],
+        [
+          110900.0,
+          110738.20042508781,
+          110570.85557307291
+        ],
+        [
+          0.05459389957881107,
+          0.04686815395881306,
+          0.052715138842653775
+        ],
+        [
+          0.012191168437063403,
+          0.0018399190194514795,
+          0.01482869929546468
+        ],
+        [
+          0.049469289044341704,
+          -0.24970885986530303,
+          0.39530947842048203
+        ],
+        [
+          -16627.181123572616,
+          58666.0924200974,
+          -99811.25376352726
+        ],
+        [
+          0.4464243560962858,
+          0.11665348298801356,
+          0.6457652200137655
+        ]
+      ],
+      "scaled_residual_inf": 0.03971381455773574
+    },
+    {
+      "elapsed_s": 92.67806537100114,
+      "profile": [
+        [
+          3.475272178822315,
+          2.9755190119325188,
+          2.4323205276203805
+        ],
+        [
+          74.24076250509552,
+          82.34433197359617,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.154290348841014,
+          0.6110918645288752
+        ],
+        [
+          1.5624169375299577,
+          9.665986406030608,
+          4.296846939725999
+        ],
+        [
+          311.9503169324202,
+          356.052054928842,
+          318.15
+        ],
+        [
+          316.75,
+          348.8231434214254,
+          333.5492346206236
+        ],
+        [
+          110900.0,
+          110731.32700471254,
+          110553.86905641771
+        ],
+        [
+          0.055591875545569346,
+          0.04652379866858768,
+          0.05271513907024365
+        ],
+        [
+          0.013597268748327306,
+          0.0011512917233306565,
+          0.01476588123421954
+        ],
+        [
+          0.09393175539321925,
+          -0.32484455295101894,
+          0.48863986384177954
+        ],
+        [
+          -27574.988802123706,
+          76697.35662033877,
+          -121939.588562818
+        ],
+        [
+          0.4827264569075782,
+          0.07806337564209986,
+          0.6435019258650454
+        ]
+      ],
+      "scaled_residual_inf": 0.05980896466910892
+    },
+    {
+      "elapsed_s": 126.34031644100105,
+      "profile": [
+        [
+          3.4773975099189203,
+          2.9944110276544396,
+          2.4323205276203805
+        ],
+        [
+          74.65038821881937,
+          81.93977307445441,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1710570334663288,
+          0.6089665334322703
+        ],
+        [
+          1.5624169375299577,
+          8.851801793164967,
+          3.8872212260021453
+        ],
+        [
+          314.5788125207801,
+          354.1474246004386,
+          318.15
+        ],
+        [
+          316.75,
+          348.49230875934654,
+          331.6931502268508
+        ],
+        [
+          110900.0,
+          110736.2333471641,
+          110566.10022841673
+        ],
+        [
+          0.05486527854377737,
+          0.04677585566127659,
+          0.05271513890636719
+        ],
+        [
+          0.012572005427378791,
+          0.0016532553263317706,
+          0.014811233528304697
+        ],
+        [
+          0.06197265470322471,
+          -0.27064328034743934,
+          0.42121473328804543
+        ],
+        [
+          -19701.427644270196,
+          63688.27847560913,
+          -105953.24274923594
+        ],
+        [
+          0.45635764164401493,
+          0.10594646406252738,
+          0.6451364949891487
+        ]
+      ],
+      "scaled_residual_inf": 0.031204694155502175
+    },
+    {
+      "elapsed_s": 166.46476481600075,
+      "profile": [
+        [
+          3.4681934291430547,
+          2.917939702361525,
+          2.4323205276203805
+        ],
+        [
+          72.9989932736851,
+          83.57802331124348,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1037897889492803,
+          0.6181706142081359
+        ],
+        [
+          1.5624169375299577,
+          12.141446975088332,
+          5.538616171136426
+        ],
+        [
+          303.97155032299395,
+          361.8638228978416,
+          318.15
+        ],
+        [
+          316.75,
+          349.8469770404067,
+          339.1921292816357
+        ],
+        [
+          110900.0,
+          110716.12478775282,
+          110516.402063564
+        ],
+        [
+          0.0577926913281189,
+          0.04575462591973843,
+          0.05271513957223625
+        ],
+        [
+          0.016708368176424727,
+          -0.0003829180609970315,
+          0.014631961130896988
+        ],
+        [
+          0.1903500401899248,
+          -0.4889034549041305,
+          0.6929988111192965
+        ],
+        [
+          -51331.413692359514,
+          116076.7418040302,
+          -170391.8355710658
+        ],
+        [
+          0.5628031576432079,
+          -0.007142762212032125,
+          0.6386752669716724
+        ]
+      ],
+      "scaled_residual_inf": 0.5359778013612256
+    },
+    {
+      "elapsed_s": 196.00588779600002,
+      "profile": [
+        [
+          3.4718238463845,
+          2.958233770233746,
+          2.4323205276203805
+        ],
+        [
+          73.88543356469604,
+          82.7187579324554,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1404534395800556,
+          0.6145401969666902
+        ],
+        [
+          1.5624169375299577,
+          10.395741305289329,
+          4.652175880125486
+        ],
+        [
+          309.63998969554945,
+          357.827132012537,
+          318.15
+        ],
+        [
+          316.75,
+          349.18617635968,
+          335.23874313615346
+        ],
+        [
+          110900.0,
+          110726.95778700794,
+          110542.95431456041
+        ],
+        [
+          0.05620303076566228,
+          0.04629084892539712,
+          0.052715139216482215
+        ],
+        [
+          0.014501191124591235,
+          0.0006811674730455204,
+          0.014735396305087104
+        ],
+        [
+          0.12021505326038917,
+          -0.3711379393542632,
+          0.5470853972149438
+        ],
+        [
+          -34060.14228304841,
+          87815.33592700472,
+          -135792.78111812155
+        ],
+        [
+          0.5065008937671797,
+          0.051568691216246625,
+          0.6424028138254061
+        ]
+      ],
+      "scaled_residual_inf": 0.15872066639896584
+    },
+    {
+      "elapsed_s": 226.07061940900167,
+      "profile": [
+        [
+          3.4736990391647193,
+          2.96967081525426,
+          2.4323205276203805
+        ],
+        [
+          74.12582861022669,
+          82.47198916554784,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1500152918203501,
+          0.6126650041864709
+        ],
+        [
+          1.5624169375299577,
+          9.908577492851114,
+          4.4117808345948335
+        ],
+        [
+          311.1946496973159,
+          356.66048825537683,
+          318.15
+        ],
+        [
+          316.75,
+          348.961480530937,
+          334.11549312807267
+        ],
+        [
+          110900.0,
+          110729.88708237057,
+          110550.25853533178
+        ],
+        [
+          0.05578586346403537,
+          0.04644423066286547,
+          0.05271513911861836
+        ],
+        [
+          0.013893955623015495,
+          0.0009892272363178267,
+          0.014758590041315016
+        ],
+        [
+          0.1020224376517983,
+          -0.339602566622827,
+          0.5075196441614708
+        ],
+        [
+          -29574.344754330144,
+          80243.82848781222,
+          -126413.56062343485
+        ],
+        [
+          0.4906353643917177,
+          0.0689030481091544,
+          0.6432390091776512
+        ]
+      ],
+      "scaled_residual_inf": 0.09126108052700442
+    },
+    {
+      "elapsed_s": 257.5018720470016,
+      "profile": [
+        [
+          3.47670248777086,
+          2.9892027783742803,
+          2.4323205276203805
+        ],
+        [
+          74.5389975878227,
+          82.051488264092,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1665438063342295,
+          0.6096615555803299
+        ],
+        [
+          1.5624169375299577,
+          9.07490761379925,
+          3.998611856998817
+        ],
+        [
+          313.86203988637834,
+          354.6743278508732,
+          318.15
+        ],
+        [
+          316.75,
+          348.5876272330911,
+          332.20105800852957
+        ],
+        [
+          110900.0,
+          110734.89533715042,
+          110562.7566255693
+        ],
+        [
+          0.05506303411929304,
+          0.04670602647018107,
+          0.05271513895116565
+        ],
+        [
+          0.01285227871935613,
+          0.0015139942530536512,
+          0.014799592688004596
+        ],
+        [
+          0.07054965684604335,
+          -0.2853157573575733,
+          0.4395338675674724
+        ],
+        [
+          -21815.42692755234,
+          67210.539120014,
+          -110296.44886873741
+        ],
+        [
+          0.46357062442544217,
+          0.09825265688942766,
+          0.644717023406784
+        ]
+      ],
+      "scaled_residual_inf": 0.03315643552014762
+    },
+    {
+      "elapsed_s": 306.3506491950011,
+      "profile": [
+        [
+          3.4773609310257543,
+          2.9945158693975675,
+          2.4323205276203805
+        ],
+        [
+          74.65349405387613,
+          81.93763348601512,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.1711984541026226,
+          0.6090031123254357
+        ],
+        [
+          1.5624169375299577,
+          8.846556369668939,
+          3.8841153909453925
+        ],
+        [
+          314.59783535499537,
+          354.1379195144791,
+          318.15
+        ],
+        [
+          316.75,
+          348.4928863482065,
+          331.6803399217829
+        ],
+        [
+          110900.0,
+          110736.2990401924,
+          110566.21408263079
+        ],
+        [
+          0.0548601294217642,
+          0.04677701580049579,
+          0.052715138904841724
+        ],
+        [
+          0.01256531402827719,
+          0.0016556063062985909,
+          0.014811906070985285
+        ],
+        [
+          0.06166647385943126,
+          -0.27019290290250003,
+          0.42069210768269527
+        ],
+        [
+          -19626.641546461364,
+          63580.53872241294,
+          -105829.20234044282
+        ],
+        [
+          0.45618431966644757,
+          0.10611421222554814,
+          0.645160809203155
+        ]
+      ],
+      "scaled_residual_inf": 0.03134408489548607
+    }
+  ],
+  "termination": "Maximum_Iterations_Exceeded"
+}
