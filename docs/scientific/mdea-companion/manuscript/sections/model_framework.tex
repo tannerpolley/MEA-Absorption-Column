@@ -8,7 +8,7 @@
             \caption{Absorber calculation sequence. Chemical equilibrium converts apparent component amounts to true species concentrations. The selected phase-equilibrium closure then converts each local $(T,P,\mathbf{x})$ state to CO$_2$ fugacities. Transport, hydraulics, interfacial fluxes, and column balances remain common to both thermodynamic closures.}\label{fig:absorber-calculation-sequence}
         \end{figure}
         Figure~\ref{fig:absorber-calculation-sequence}, adapted from Luo \cite{Luo2017}, outlines the calculation sequence used for the MEA absorber benchmark. The calculation begins with flow, composition, pressure, and temperature variables for the vapor and liquid phases. Chemical equilibrium determines the true liquid species state before the phase-equilibrium closure evaluates the CO$_2$ fugacity driving force. Transport and hydraulic properties then define interfacial fluxes and close the governing balances. This ordering allows the numerical method and CO$_2$ fugacity closure to change while the reaction, transport, hydraulic, and balance equations remain fixed.
-        
+
         Thermodynamic modeling includes both chemical equilibrium and vapor--liquid equilibrium (VLE). The chemical-equilibrium calculation determines true species concentrations from apparent component amounts and the retained reaction set. The VLE calculation then supplies the fugacities used in the interfacial driving force. The model switches the CO$_2$ driving-force calculation between the baseline Henry-law expression and an ePC-SAFT fugacity-coefficient calculation. In the routine ePC-SAFT campaign, the equation of state supplies local mixture density, residual-Helmholtz contributions, and vapor- and liquid-side CO$_2$ fugacity coefficients. It does not supply the reaction network or reaction-equilibrium constants. Chemical equilibrium, enhancement factor, transport correlations, hydraulics, and balances remain unchanged. Table~\ref{tab:thermodynamic-responsibility} lists the quantities supplied by each calculation.
 
         \begin{table}[htbp]
@@ -32,7 +32,7 @@
 
         \subsection{Thermodynamics}\label{subsec:thermodynamics}
             The thermodynamics section establishes the chemical and phase behavior that sets the local $\COtwo$ driving force in the MEA solvent system. It begins by solving chemical equilibrium for true species concentrations. Those concentrations then feed transport-property calculations and the vapor--liquid fugacity calculation. Together, the speciation and VLE models determine the local mass-transfer driving force used by the packed-column balances.
-        
+
             \subsubsection{Chemical Equilibrium}
                 The liquid-phase chemical-equilibrium calculation converts apparent component concentrations into true species concentrations. These true species are used in the transport correlations, enhancement factor, and fugacity calculations. The calculation begins with the apparent species concentrations and equilibrium constants for the two retained reactions:
                 \begin{align}
@@ -45,7 +45,7 @@
 
                 This reaction set gives the following stoichiometric matrix $\mathbf{\nu}_{i,r}$:
                 \begin{align}
-                    \mathbf{\nu}_{i, r} = 
+                    \mathbf{\nu}_{i, r} =
                     \begin{bmatrix}
                     -1 & -1 \\
                     -2 & -1 \\
@@ -57,7 +57,7 @@
                     && \text{dimensionless}
                 \end{align}
                 The retained temperature-dependent equilibrium-constant record has the form
-                
+
                 \begin{align}
                     \log K_r = a_r + \frac{b_r}{T_l} + c_r \ln(T_l) + d_r T_l
                     && \text{dimensionless}
@@ -100,31 +100,31 @@
                     f_i^v = f_i^l
                     \qquad \left(\unit{Pa}\right)
                 \end{equation}
-                
+
                 Evaluate both fugacities in terms of fugacity/activity coefficients:
                 \begin{equation}
                     y_i \, \hat{\phi}_i^v \, P = x_i \, \gamma_i \, f_i^\circ
                     \qquad \left(\unit{Pa}\right)
                 \end{equation}
-                
+
                 If $i$ is an infinitely dilute solute such that:
                 \begin{equation}
                     \lim_{x_i \to 0} \left( \frac{f_i^l}{x_i} \right) = H_{i,j}
                     \qquad \left(\unit{Pa}\right)
                 \end{equation}
-                
+
                 Then $f_i^l \approx x_i H_{i,j}$, and therefore $H_{i,j} = \gamma_i \, f_i^\circ$. Substituting this relation and assuming an ideal vapor phase gives
                 \begin{equation}
                     y_i\, P = x_i H_{i,j}
                     \qquad \left(\unit{Pa}\right)
                 \end{equation}
-                
+
                 Henry's law can also be written in concentration form:
                 \begin{equation}
                     y_i \, P = C_i \, H^{c}_{i,j}
                     \qquad \left(\unit{Pa}\right)
                 \end{equation}
-                
+
                 Therefore, we obtain the simplified expressions:
                 \begin{align}
                     f_i^v &= y_i P
@@ -134,7 +134,7 @@
                 \end{align}
 
                 In an activity-coefficient model, Henry's law can determine the solute activity coefficient through the infinite-dilution relation $H_{i,j} = \gamma^{\infty}_i f^{\circ}_i$.
-                
+
                 The following equations summarize the Henry-law fugacity expressions used in the baseline model for $\COtwo$.
                 \begin{align}
                     \textit{f}^{\:\vap}_{ \COtwo} &= P y_{\COtwo} && \left(\unit{Pa} \right)\\
@@ -206,7 +206,7 @@
                 \paragraph{Interfacial Area}\mbox{}\\[0.5em]
                 The effective interfacial area converts packed-bed geometry and liquid wetting into available transfer area per bed volume. It depends on liquid density, surface tension, superficial velocity, and packing geometry, and it enters both the molar-flux expression and the mass-transfer correlations reported by Tsai~\cite{Tsai2010}.
                 \begin{align}
-                    a_e 
+                    a_e
                     &= 1.42\,a_p\left[\frac{\rho_L}{\sigma_L}\,g^{1/3}\left(\frac{u_L}{a_p}\right)^{4/3}\right]^{0.116} && \left(\unit{m^{-1}}\right)
                 \end{align}
 
@@ -228,7 +228,7 @@
                            {D^{\liq}}^{1/2}
                            && \left(\frac{\unit{m} }{\unit{s}} \right)\\
                     k_v &= \frac{C^{\vap}}{R\,T_v}
-                           \left(\frac{a_p}{d_h\,h_V}\right)^{1/2}  
+                           \left(\frac{a_p}{d_h\,h_V}\right)^{1/2}
                            \left(\frac{u^{\vap}}{\rho^{\vap}\,a_p\,\mu^{\vap}}\right)^{3 / 4}
                            {D^{\vap}}^{2 / 3}
                            \left(\frac{\mu^{\vap}}{\rho^{\vap}}\right)^{1 / 3}
@@ -297,7 +297,7 @@
                 \end{align}
 
                 The enthalpy transferred is the product of molar enthalpy and molar flux of the transferring species ($\COtwo, \HtwoO$). The liquid-side enthalpy source is written as the negative vapor-side transferred enthalpy plus heat transfer so that interphase enthalpy transfer is conservative. There is also heat transfer governed by the overall heat-transfer coefficient $U$, interfacial area $\left(a_e\right)$, cross-sectional area $\left(A\right)$, and the temperature gradient.
-                
+
         \subsection{Governing Equations}\label{subsec:governing-equations}
             The governing equations combine the thermodynamic driving force, transport correlations, reaction enhancement, and packed-column balances. The numerical state contains the apparent CO$_2$ and H$_2$O molar flows in each phase, phase enthalpy flows, and pressure. This state vector is used by the shooting, finite-difference, and collocation BVP formulations so that method comparisons are made with the same model equations.
 
@@ -338,7 +338,7 @@
                     && \left(\unit{K\,m^{-1}}\right)
                 \end{align}
                 Since the vapor enthalpy is based on heat capacity, its temperature derivative reduces to $C_p^{\vap}$. The liquid derivative $\frac{dH_l}{dT_l}$ is evaluated from the liquid enthalpy correlation because the liquid enthalpy expression includes additional temperature-dependent terms. If the numerical coordinate is normalized by packed height, each right-hand side is multiplied by the total packed height.
-                
+
             \subsubsection{Pressure State}
                 Pressure is retained as a state variable so that pressure-drop extensions can use the same state layout. For the one-bed benchmark calculations reported here,
                 \begin{align}

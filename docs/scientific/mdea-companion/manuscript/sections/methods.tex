@@ -43,20 +43,20 @@
                     \frac{d \mathbf{y}}{dz}\biggr\rvert_{z=z_k}
                     \approx
                     \frac{\mathbf{y}^{k+1} - \mathbf{y}^{k-1}}{2\,\Delta z},
-                    \quad 
+                    \quad
                     k = 1, 2, \ldots, N-1
                     && \left(\text{component units of }\mathbf{y}\,\unit{m^{-1}}\right).
                 \end{align}
                 The boundary nodes enforce the inlet and outlet conditions,
                 \begin{align}
-                    \mathbf{y}^0 = \boldsymbol{\alpha}, 
-                    \quad 
+                    \mathbf{y}^0 = \boldsymbol{\alpha},
+                    \quad
                     \mathbf{y}^N = \boldsymbol{\beta},
                     && \left(\text{component units of }\mathbf{y}\right)
                 \end{align}
                 for the components fixed by the mixed column boundary specification. Collecting the finite-difference equations and boundary equations gives
                 \begin{align}
-                    \mathcal{R}\Bigl(\mathbf{y}^0,\, \mathbf{y}^1,\, \dots,\, \mathbf{y}^N\Bigr) 
+                    \mathcal{R}\Bigl(\mathbf{y}^0,\, \mathbf{y}^1,\, \dots,\, \mathbf{y}^N\Bigr)
                     = \mathbf{0},
                     && \left(\text{component residual units}\right)
                 \end{align}
