@@ -1,8 +1,9 @@
 import numpy as np
 import time
 
-from ..Properties.Amine_Properties import resolve_amine_properties
-from ..Properties.Thermophysical_Properties import density, heat_capacity, thermal_conductivity, enthalpy, vapor_pressure
+from ..config.Constants import MWs_l
+from ..Properties.Thermophysical_Properties import (density, surface_tension, heat_capacity,
+                                                      thermal_conductivity, henrys_law, enthalpy, vapor_pressure)
 from ..Properties.Transport_Properties import viscosity, diffusivity
 from ..Thermodynamics.Fugacity import fugacity
 from ..Thermodynamics.Chemical_Equilibrium import chemical_equilibrium_with_model, record_coupled_result
@@ -12,8 +13,10 @@ from ..Thermodynamics.thermo_models import neutral_vapor_composition
 from ..Transport.Hydraulic_Variables_Correlations import velocity, holdup, interfacial_area, flooding_fraction
 from ..Transport.Transfer_Coefficients import mass_transfer_coeff, heat_transfer_coeff
 from ..Transport.Pressure_Drop import pressure_drop
+from ..Transport.Enhancement_Factor import enhancement_factor
 from ..Transport.Flux import molar_flux, enthalpy_flux
 from ..misc.Get_Temperature_Enthalpy import get_liquid_temperature, get_vapor_temperature
+from ..misc.special_functions import f_dHl_dT
 from .robust_core import record_domain_guard
 
 
@@ -41,7 +44,6 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     gas_velocity_area_exponent = float(model_options.get('gas_velocity_area_exponent', 0.0) or 0.0)
     gas_velocity_area_reference_m_s = model_options.get('gas_velocity_area_reference_m_s')
     gas_velocity_area_bounds = model_options.get('gas_velocity_area_bounds', (0.1, 3.0))
-    amine_properties = resolve_amine_properties(model_options.get('amine_properties'))
     Fl_MEA, Fv_N2, Fv_O2 = const_flow
     # endregion
 
@@ -65,7 +67,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     else:
         Hl = Hlf / Fl_T
         Hv = Hvf / Fv_T
-        Tl = get_liquid_temperature(x, Hl, amine_properties)
+        Tl = get_liquid_temperature(x, Hl)
         Tv = get_vapor_temperature(y, Hv)
     temperature_bounds = model_options.get('temperature_bounds_K', (250.0, 500.0))
     if guard_invalid_states and not _temperatures_in_bounds(Tl, Tv, temperature_bounds):
@@ -76,7 +78,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         )
         raise ValueError("thermal_state: temperature outside absorber correlation bounds")
 
-    w = amine_properties.mass_fractions(x)
+    w = [MWs_l[i] * x[i] / sum([MWs_l[j] * x[j] for j in range(len(Fl))]) for i in range(len(Fl))]
 
     alpha = x[0] / x[1]
     w_MEA = w[1]
@@ -88,25 +90,25 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region -- Thermophysical Properties
 
     # region --- Henry's Law
-    H_CO2_mix = amine_properties.henry_co2(Tl, x)
+    H_CO2_mix = henrys_law(Tl, x)
     # endregion
 
     # region --- Density
-    rho_mol_l, rho_mass_l, volume = amine_properties.density(Tl, x, P)
+    rho_mol_l, rho_mass_l, volume = density(Tl, x, P, phase='liquid')
     rho_mol_v, rho_mass_v = density(Tv, y, P, phase='vapor')
     # endregion
 
     # region --- Surface Tension
-    sigma = amine_properties.surface_tension(Tl, x, w_MEA, w_H2O)
+    sigma = surface_tension(Tl, x, w_MEA, w_H2O)
     # endregion
 
     # region --- Heat Capacity
-    Cpl, Cpl_T = amine_properties.heat_capacity(Tl, x)
+    Cpl, Cpl_T = heat_capacity(Tl, x, phase='liquid')
     Cpv, Cpv_T = heat_capacity(Tv, y, phase='vapor')
     # endregion
 
     # region --- Enthalpy
-    Hl, Hl_T = amine_properties.enthalpy(Tl, x) # J/mol
+    Hl, Hl_T = enthalpy(Tl, x, phase='liquid') # J/mol
     Hl_CO2, Hl_MEA, Hl_H2O = Hl
     Hv, Hv_T = enthalpy(Tv, y, phase='vapor')  # J/mol
     Hv_CO2, Hv_H2O, Hv_N2, Hv_O2 = Hv
@@ -126,12 +128,12 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # region -- Transport Properties
 
     # region --- Viscosity
-    mul_mix, mul_H2O = amine_properties.viscosity(Tl, x, w_MEA, w_H2O)
+    mul_mix, mul_H2O = viscosity(Tl, x, w_MEA, w_H2O, phase='liquid')
     muv_mix, muv = viscosity(Tv, y, w_MEA, w_H2O, phase='vapor')
     # endregion
 
     # region --- Diffusivity
-    Dl_CO2, Dl_MEA, Dl_ion = amine_properties.diffusivity(Tl, x, P, mul_mix, rho_mol_l)
+    Dl_CO2, Dl_MEA, Dl_ion = diffusivity(Tl, x, P, mul_mix, rho_mol_l, phase='liquid')
     Dv_CO2, Dv_H2O, Dv_N2, Dv_O2, Dv_T = diffusivity(Tv, y, P, mul_mix, rho_mol_l, phase='vapor')
     # endregion
 
@@ -329,7 +331,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     dHvf_dz = Hv_flux
 
 
-    dHl_dT = amine_properties.enthalpy_temperature_derivative(Tl, x)
+    dHl_dT = f_dHl_dT(Tl, x)
     dHv_dT = Cpv_T
 
     # Differentiate sum(F_i*h_i(T)), including each actual flow derivative.

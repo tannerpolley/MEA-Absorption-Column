@@ -3,7 +3,7 @@ from numpy import exp, array
 from scipy.optimize import least_squares
 
 from mea_absorption_column.BVP.robust_core import record_domain_guard
-from .domain_guards import require_positive
+from .domain_guards import DomainGuardError, require_positive
 
 CO2_CONCENTRATION_DIVISOR = 1.04542981654115
 

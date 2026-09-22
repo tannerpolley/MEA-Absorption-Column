@@ -22,29 +22,6 @@ from mea_absorption_column.Thermodynamics.thermo_models import (
 
 SPECIES_6 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-")
 SPECIES_9 = ("CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-")
-MDEA_SPECIES = ("CO2", "MDEA", "H2O", "H+", "OH-", "HCO3-", "CO3^2-", "MDEAH+")
-MDEA_REACTIONS = np.array(
-    (
-        (0.0, 0.0, -1.0, 1.0, 1.0, 0.0, 0.0, 0.0),
-        (-1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 1.0, 0.0),
-        (0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0),
-    )
-)
-MDEA_BALANCES = np.array(
-    (
-        (1.0, 5.0, 0.0, 0.0, 0.0, 1.0, 1.0, 5.0),
-        (0.0, 13.0, 2.0, 1.0, 1.0, 1.0, 0.0, 14.0),
-        (0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0),
-        (2.0, 2.0, 1.0, 0.0, 1.0, 3.0, 3.0, 2.0),
-    )
-)
-MDEA_LN_K_COEFFICIENTS = (
-    (132.899, -13445.9, -22.477, 0.0),
-    (212.739, -11333.8, -33.844, -0.0018149),
-    (287.444, -13648.7, -48.880, 0.030232),
-    (-83.491, -819.7, 10.976, 0.0),
-)
 REACTIONS_6 = (
     {"CO2": -1.0, "MEA": -2.0, "MEAH+": 1.0, "MEACOO-": 1.0},
     {"CO2": -1.0, "MEA": -1.0, "H2O": -1.0, "MEAH+": 1.0, "HCO3-": 1.0},
@@ -276,7 +253,7 @@ def chemical_equilibrium(Fl, Tl):
             max_nfev=60,
         )
 
-    Cl_true_scaled = result.x
+    Cl_true_scaled, solution, success = result.x, result.message, result.success
 
     Cl_true = np.maximum(Cl_true_scaled*scales, 1.0e-30)
 
@@ -294,19 +271,8 @@ def chemical_equilibrium_with_model(
     model="legacy",
     P=101325.0,
     diagnostics=None,
-    amine_id="MEA",
-    liquid_molar_density=None,
 ):
     normalized_model = (model or "legacy").lower()
-    if str(amine_id).upper() == "MDEA":
-        if normalized_model not in {"legacy", "legacy_concentration", "local", "mdea_ideal"}:
-            raise RuntimeError(
-                "MDEA column integration currently supports mdea_ideal chemistry; "
-                "the typed reactive ePC-SAFT campaign remains a validation-only lane"
-            )
-        return mdea_ideal_chemical_equilibrium(
-            Fl, Tl, liquid_molar_density=liquid_molar_density
-        )
     if normalized_model in {"legacy", "legacy_concentration", "local"}:
         return chemical_equilibrium(Fl, Tl)
     if normalized_model == MODEL:

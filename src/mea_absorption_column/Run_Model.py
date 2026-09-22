@@ -25,7 +25,6 @@ from mea_absorption_column.misc.Get_Temperature_Enthalpy import (
     get_liquid_enthalpy, get_vapor_enthalpy, get_liquid_temperature, get_vapor_temperature
 )
 from mea_absorption_column.misc.Scaling import scaling
-from mea_absorption_column.Properties.Amine_Properties import resolve_amine_properties
 from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET, epcsaft_cache_stats
 from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET as REACTIVE_DATASET, MODEL as REACTIVE_MODEL, ReactiveLiquid
 
@@ -135,7 +134,6 @@ def run_model(df,
             return_details=True,
             staged_beds=False,
             intercooler_settings=intercooler_settings,
-            amine_properties=amine_properties,
         )
         if shooting_seed.get("success") and shooting_seed.get("_raw_solution_scaled") is not None:
             solver_settings_for_run["initial_guess_scaled"] = shooting_seed["_raw_solution_scaled"]
@@ -174,10 +172,10 @@ def run_model(df,
     # Convert from Temperature to Enthalpy
 
     Fl_a_guess = [Fl_CO2_a_guess, Fl_MEA_a, Fl_H2O_a_guess]
-    Hlt_a_guess = get_liquid_enthalpy(Fl_a_guess, Tl_a_guess, amine_properties)
+    Hlt_a_guess = get_liquid_enthalpy(Fl_a_guess, Tl_a_guess)
     Hlf_a_guess = Hlt_a_guess * sum(Fl_a_guess)
 
-    Hlt_b = get_liquid_enthalpy(Fl_b, Tl_b, amine_properties)
+    Hlt_b = get_liquid_enthalpy(Fl_b, Tl_b)
     Hlf_b = Hlt_b * sum(Fl_b)
 
     Hvt_a = get_vapor_enthalpy(Fv_a, Tv_a)
@@ -230,7 +228,7 @@ def run_model(df,
         'enhancement_type': solver_settings_for_run.get('enhancement_type', 'explicit'),
         'chemical_equilibrium_model': solver_settings_for_run.get(
             'chemical_equilibrium_model',
-            'mdea_ideal' if amine_properties.amine_id == 'MDEA' else _default_chemical_equilibrium_model(thermo_model),
+            _default_chemical_equilibrium_model(thermo_model),
         ),
         'solver_diagnostics': solver_diagnostics,
         'guard_invalid_states': guard_rhs,
@@ -246,7 +244,6 @@ def run_model(df,
         'gas_velocity_area_exponent': float(solver_settings_for_run.get('gas_velocity_area_exponent', 0.0) or 0.0),
         'gas_velocity_area_reference_m_s': solver_settings_for_run.get('gas_velocity_area_reference_m_s'),
         'gas_velocity_area_bounds': solver_settings_for_run.get('gas_velocity_area_bounds', (0.1, 3.0)),
-        'amine_properties': amine_properties,
     }
     solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
     if thermo_model == REACTIVE_MODEL:
@@ -294,7 +291,6 @@ def run_model(df,
             return_details=True,
             staged_beds=False,
             intercooler_settings=intercooler_settings,
-            amine_properties=amine_properties,
         )
         if collapsed_seed.get("success") and collapsed_seed.get("_raw_solution_scaled") is not None:
             solver_settings_for_run["initial_guess_scaled"] = collapsed_seed["_raw_solution_scaled"]
@@ -325,7 +321,6 @@ def run_model(df,
             return_details=True,
             staged_beds=use_staged_beds,
             intercooler_settings=intercooler_settings,
-            amine_properties=amine_properties,
         )
         if henry_seed.get("success") and henry_seed.get("_raw_solution_scaled") is not None:
             solver_settings_for_run["initial_guess_scaled"] = henry_seed["_raw_solution_scaled"]
@@ -410,8 +405,8 @@ Run #{run + 1:03d}:
         Hv_a_sim = Y[5, 0] / sum(Fv_a)
         Hv_b_sim = Y[5, -1] / sum(Fv_b)
 
-        Tl_a_sim = (get_liquid_temperature(x_a, Hl_a_sim, amine_properties))
-        Tl_b_sim = (get_liquid_temperature(x_b, Hl_b_sim, amine_properties))
+        Tl_a_sim = (get_liquid_temperature(x_a, Hl_a_sim))
+        Tl_b_sim = (get_liquid_temperature(x_b, Hl_b_sim))
         Tv_a_sim = (get_vapor_temperature(y_a, Hv_a_sim))
         Tv_b_sim = (get_vapor_temperature(y_b, Hv_b_sim))
 
@@ -507,7 +502,6 @@ Run #{run + 1:03d}:
                 Fl_MEA=Fl_MEA_a,
                 Fv_N2=Fv_N2_a,
                 Fv_O2=Fv_O2_a,
-                amine_properties=amine_properties,
             )
             if dfs_dict:
                 output_message_suffix = (
@@ -568,7 +562,6 @@ Run #{run + 1:03d}:
             'co2_mass_transfer_model': model_options['co2_mass_transfer_model'],
             'enhancement_type': model_options['enhancement_type'],
             'chemical_equilibrium_model': model_options.get('chemical_equilibrium_model', 'legacy'),
-            'amine_id': amine_properties.amine_id,
             'success': method_success,
             'message': f"{gated_message}{output_message_suffix}",
             'runtime_s': float(total_time),
@@ -724,7 +717,7 @@ def _has_temperature_taps(df):
     return any(_is_temperature_tap(column) for column in df.columns)
 
 
-def _fallback_temperature_profile(Y, z, thermal_state_mode, Fl_MEA, Fv_N2, Fv_O2, amine_properties=None):
+def _fallback_temperature_profile(Y, z, thermal_state_mode, Fl_MEA, Fv_N2, Fv_O2):
     temperatures = []
     for i in range(Y.shape[1]):
         if thermal_state_mode == "temperature":
@@ -736,7 +729,7 @@ def _fallback_temperature_profile(Y, z, thermal_state_mode, Fl_MEA, Fv_N2, Fv_O2
             try:
                 x = Fl / np.sum(Fl)
                 Hl = float(Y[4, i]) / float(np.sum(Fl))
-                Tl = _finite_or_nan(get_liquid_temperature(x, Hl, amine_properties))
+                Tl = _finite_or_nan(get_liquid_temperature(x, Hl))
             except Exception:
                 Tl = np.nan
             try:
