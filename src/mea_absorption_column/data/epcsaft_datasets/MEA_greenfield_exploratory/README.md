@@ -14,7 +14,7 @@ Inputs for the twelve-state callbacks (`reactive_bundle.engine_liquid`,
   parameter hash it belongs to; loading checks it.
 - `ideal-gas-thermochemistry.json`: physical ideal-gas records shared by the
   liquid and the four-gas vapor: NIST Shomate CO2, water (extrapolated below
-  500 K), N2, O2; Zhang–Que–Chen 2011 MEA. The Engine completes the ion
+  500 K; CO2 below 298 K), N2, O2; Zhang–Que–Chen 2011 MEA. The Engine completes the ion
   records from the reactions. Interim copy until MEA-Thermodynamics#112
   retains the same records. It replaces the liquid-fitted effective Cp
   inputs of `MEA_reactive_epcsaft_bundle/`, which the seven-state route keeps.

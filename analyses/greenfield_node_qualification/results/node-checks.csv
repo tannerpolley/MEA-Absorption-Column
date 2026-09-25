@@ -810,4 +810,4 @@ start,S1->S2,"continuation vs cold solve, max relative amount difference",0.0,0.
 S3,"360 K, 106.4 kPa, loading 0.45",value-only: liquid density mol/m3,50249.56932979858,,,,evaluated
 N6,3C,19x12 node Jacobian,,,,1e-05,refused: ReferenceUnavailable
 N6,S2 node,19x12 node Jacobian,,,,1e-05,refused: ReferenceUnavailable
-budget,all,node-check wall time s,33.84558277699762,,33.84558277699762,600.0,pass
+budget,all,node-check wall time s,34.171729802998016,,34.171729802998016,600.0,pass

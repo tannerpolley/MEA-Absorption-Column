@@ -50,11 +50,11 @@ S2-temperature anchor state. The liquid then follows native continuation from
 the last accepted state, else the case anchor loading; 3 of 264 solves used
 it. Continuation from S1 to S2 reproduces the cold-solved S2 amounts
 (largest relative amount difference 0, criterion 1e-8; 1.7e-16 in a separate replay). The stall itself is an Engine
-driver defect reported to the Engine roadmap.
+driver defect, reported as tannerpolley/ePC-SAFT#157.
 
 ## Claim limits
 
 Numerical verification only, at S1/S2/V1/V2 and their loadings, on an
-exploratory record. C4 tests the pure-water EOS residual; the ideal parts
+exploratory record. The CO2 ideal-gas Shomate record is extrapolated below 298 K. C4 tests the pure-water EOS residual; the ideal parts
 cancel. N4 e_T, dH_L/dP, N6 and the K1–K2 column checks wait for Engine #147;
 the physical checks C3, C5 and C6 belong to Engine #149.

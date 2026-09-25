@@ -67,7 +67,8 @@ class EnginePhase:
         self.stats = dict(native_solves=0, continuations=0)
         self._accepted = None
         self.solve = lru_cache(maxsize=4096)(self._solve)
-        # Separate callbacks: a refused caloric action refuses only graphs that consume H.
+        # Separate callbacks keep H refusals out of Jacobians of H-free, inlined graph slices; any
+        # Jacobian through H (or a dense e_T column) still refuses, typed and without a value.
         self._state = ActionCallback(name + "_state", self, self.state_observables)
         self._molar_enthalpy = ActionCallback(name + "_enthalpy", self, (self.enthalpy,))
 
