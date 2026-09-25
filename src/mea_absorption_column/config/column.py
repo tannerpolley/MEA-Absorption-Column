@@ -21,7 +21,7 @@ SCHEMA_VERSION = 1
 SEVEN_PRESET = "seven_state_legacy"
 TWELVE_PRESET = "twelve_state_conserved"
 _ROOT = Path(__file__).resolve().parents[3]
-_REACTIVE_DATASET = "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle"
+_REACTIVE_DATASET = "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory"
 _NEUTRAL_VAPOR_DATASET = "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor"
 _CASE_3C_INPUT = "analyses/bvp_solution_methods/input/case_3c.json"
 
@@ -626,10 +626,10 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             dataset=dependencies.dataset or _REACTIVE_DATASET,
             mobility_law=(dependencies.mobility_law or "harmonic_mean_onsager_v1")
             if film_model == "equilibrium_manifold" else None,
-            thermal_reference=dependencies.thermal_reference or f"{_REACTIVE_DATASET}/anchored-reference-thermochemistry.json",
+            thermal_reference=dependencies.thermal_reference or f"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json",
             references=dependencies.references or (
                 f"{_NEUTRAL_VAPOR_DATASET}/parameters.json",
-                f"{_NEUTRAL_VAPOR_DATASET}/reference-thermochemistry.json",
+                f"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json",
             ),
         )
         if film_model == "equilibrium_manifold" and dependencies.mobility_law != "harmonic_mean_onsager_v1":

@@ -347,6 +347,20 @@
           "qualification": "candidate_extrapolation",
           "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
           "source_sha256": "sha256:21933a45b9ce7c4178d9061cf2e5e79ccd7886631c6f56e1ce408b67b7125db8"
+        },
+        "charge_number": {
+          "value": {
+            "magnitude": 0,
+            "unit": "elementary-charge"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "neutral molecule: zero charge",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:21933a45b9ce7c4178d9061cf2e5e79ccd7886631c6f56e1ce408b67b7125db8"
         }
       },
       "coefficients": [
@@ -421,6 +435,20 @@
             "magnitude": 0.031999,
             "unit": "kilogram / mole"
           }
+        },
+        "charge_number": {
+          "value": {
+            "magnitude": 0,
+            "unit": "elementary-charge"
+          },
+          "provenance": {
+            "source_id": "thermopack-oxygen-d68c794",
+            "domain_id": "oxygen-fit-range-unreported",
+            "locator": "neutral molecule: zero charge"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "source_sha256": "sha256:ee757893099745d92732aaca3738181890222cd452b8d920950474c8d43a59c7"
         }
       },
       "coefficients": [

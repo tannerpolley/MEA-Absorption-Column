@@ -1,208 +1,164 @@
-"""Native equilibrium values and derivative actions in absorber coordinates."""
+"""Native Engine values and exact actions in absorber coordinates.
+
+Inputs are u = (T [K], P [Pa], absolute feed amounts [mol]); with an Amounts
+feed every output is extensive and no unit-feed normalization exists. Product
+and chain rules (H = N h, f = a R T rho0, the loading direction) are CasADi
+expressions; the Engine supplies only solved-state directional actions.
+"""
 from __future__ import annotations
+
+import math
+from functools import lru_cache
 
 import casadi as ca
 import numpy as np
 
-from .reactive_bundle import ReactiveLiquid
+OUTPUT_IDS = ("fugacity:carbon-dioxide", "fugacity:water", "molar-density", "total-enthalpy")
 
 
-def build_loading_path_function(liquid):
-    """Native state and d(mu/RT)/dlambda on [F_CO2 exp(lambda),F_MEA,F_water].
+class ActionUnavailable(RuntimeError):
+    """Typed refusal of a consumed Engine action: no value, never zero or a difference estimate."""
 
-    Inputs are bulk T/P/apparent flows and signed log-loading. Values require
-    A1; differentiating the tangent requires native second equilibrium actions.
-    Retain the returned function to own the underlying Python callback.
-    """
-    bulk, loading = ca.MX.sym("bulk", 5), ca.MX.sym("loading")
-    inputs = ca.vertcat(bulk[:2], bulk[2] * ca.exp(loading), bulk[3:])
-    tangent = _LoadingTangent(liquid.name() + "_loading_tangent", liquid, include_state=True)
-    evaluated = tangent(inputs)
-    size = len(liquid.output_ids)
-    path = ca.Function("native_loading_path", [bulk, loading],
-                       [evaluated[:size], evaluated[size:]])
-    path._thermodynamic_callbacks = (liquid, tangent)
-    return path
+    def __init__(self, phase, observable, directions, status, message):
+        self.status = status
+        super().__init__(f"{phase}: {observable} along input directions {directions} is unavailable: "
+                         f"{status}: {message}")
 
 
-def build_caloric_flow_function(callback, *, partial_enthalpy_indices=None):
-    """Extensive H [W], molar Cp [J/(mol K)], partial H [J/mol] from A1.
+class EnginePhase:
+    """One Engine mixture in one declared phase, solved at exact inputs.
 
-    The molar basis is apparent feed for reactive liquid and species feed for
-    vapor. Product/normalization rules belong here; native caloric derivatives
-    belong to Engine. Outer derivatives require native second caloric actions.
-    """
-    if callback.output_ids[-1] != "total-enthalpy":
-        raise ValueError("Caloric flow requires explicit native reference thermochemistry")
-    inputs = ca.MX.sym("caloric_inputs", callback.size1_in(0))
-    count = callback.size1_in(0) - 2
-    indices = tuple(range(count)) if partial_enthalpy_indices is None else tuple(partial_enthalpy_indices)
-    if len(set(indices)) != len(indices) or any(type(i) is not int or not 0 <= i < count for i in indices):
-        raise ValueError("Partial enthalpy indices must be distinct species positions")
-    total = ca.sum1(inputs[2:])
-    enthalpy = total * callback(inputs)[-1]
-    owners = (callback,)
-    if isinstance(callback, FixedCompositionVaporCallback):
-        derivative = _VaporCaloric(callback.name() + "_caloric", callback, indices)
-        values = derivative(inputs)
-        cp, partial = values[0], values[1:]
-        owners += (derivative,)
-    else:
-        derivative = ca.jacobian(enthalpy, inputs)
-        cp, partial = derivative[0] / total, derivative[[i + 2 for i in indices]].T
-    caloric = ca.Function("native_caloric_flow", [inputs],
-                          [enthalpy, cp, partial])
-    caloric._thermodynamic_callbacks = owners
-    return caloric
-
-
-def _state_input_map(block, feed_jacobian):
-    """Map physical T/P/feed changes through the complete native invariants."""
-    invariant_jacobian = np.asarray(block.invariant_matrix) @ feed_jacobian
-    invariant_rows = dict(zip(block.invariant_ids, invariant_jacobian, strict=True))
-    expected_units = dict(zip(block.invariant_ids, block.invariant_units, strict=True))
-    expected_units.update(temperature_k="kelvin", pressure_pa="pascal")
-    mapping = np.zeros((len(block.input_identities), 2 + feed_jacobian.shape[1]))
-    for row, (identity, unit) in enumerate(zip(block.input_identities, block.input_units, strict=True)):
-        if unit != expected_units[identity]:
-            raise ValueError(f"Engine derivative input unit changed: {identity}: {unit}")
-        if identity in ("temperature_k", "pressure_pa"):
-            mapping[row, 0 if identity == "temperature_k" else 1] = 1.0
-        else:
-            mapping[row, 2:] = invariant_rows[identity]
-    active = np.flatnonzero(np.any(mapping != 0.0, axis=1))
-    for index in active:
-        if block.input_failures[index] is not None:
-            raise RuntimeError(f"Native equilibrium derivative unavailable: {block.input_failures[index]}")
-    return mapping, active
-
-
-class ReactiveLiquidCallback(ca.Callback):
-    """Input: T [K], P [Pa], apparent CO2/MEA/water amounts [mol].
-
-    Output rows are nine true amounts per mole of apparent feed, nine mu/RT,
-    nine fugacities [Pa], and molar density [mol/m³], in Engine species order.
-    With explicit reference thermochemistry, the last row is total enthalpy
-    [J] on the unit apparent-feed basis, not per mole of true liquid species.
-    Multiply amounts by apparent feed flow to obtain true species flows;
-    normalize separately to obtain true mole fractions. Keep this object alive
-    while CasADi functions containing it are in use. No solved state is stored.
+    Values [n_i (liquid only), f_CO2, f_water (Pa), rho (mol/m3), H (J)] come
+    from calling the object on u; f = a R T rho0 with rho0 = 1 mol/m3. A failed
+    cold solve with a loading policy follows the case's native continuation
+    from the last accepted state (else its anchor CO2/MEA loading). Keep the object alive while CasADi
+    graphs containing it are in use.
     """
 
-    def __init__(self, name: str, liquid: ReactiveLiquid):
-        self.liquid = liquid
-        self.component_ids = tuple(liquid.model.component_ids)
-        self.molar_masses = liquid.molar_masses
-        self.output_ids = tuple(
-            f"{quantity}:{species}"
-            for quantity in ("amount", "mu", "fugacity")
-            for species in self.component_ids
-        ) + ("liquid-molar-density",)
-        self.output_units = ("mole",) * 9 + ("dimensionless",) * 9 + ("pascal",) * 9 + ("mole / meter**3",)
-        if liquid.thermochemistry is not None:
-            self.output_ids += ("total-enthalpy",)
-            self.output_units += ("joule",)
-        self._derivative_callbacks = []
-        super().__init__()
-        self.construct(name, {"enable_fd": False})
-
-    def get_n_in(self):
-        return 1
-
-    def get_n_out(self):
-        return 1
-
-    def get_sparsity_in(self, index):
-        return ca.Sparsity.dense(5, 1)
-
-    def get_sparsity_out(self, index):
-        return ca.Sparsity.dense(len(self.output_ids), 1)
-
-    def _state(self, argument):
-        inputs = np.asarray(argument, dtype=float).reshape(-1)
-        if inputs.shape != (5,) or np.any(~np.isfinite(inputs)) or np.any(inputs <= 0.0):
-            raise ValueError("Reactive liquid inputs must be finite positive T, P, CO2, MEA, water")
-        return inputs, self.liquid.solve(*inputs[:2], inputs[2:], state_input_derivatives=True)
-
-    def eval(self, arguments):
-        _, state = self._state(arguments[0])
-        return [ca.DM(self._values_from_state(state))]
-
-    def _values_from_state(self, state):
-        values = np.r_[state["amounts_mol"], state["chemical_potentials_over_rt"],
-                       state["fugacities_pa"], state["density_mol_m3"]]
-        if self.liquid.thermochemistry is not None:
-            values = np.r_[values, state["total_enthalpy_j"]]
-        if np.any(~np.isfinite(values)):
-            raise RuntimeError("Native equilibrium returned non-finite CasADi outputs")
-        return values
-
-    def has_jacobian(self):
-        return True
-
-    def get_jacobian(self, name, inames, onames, opts):
-        derivative = _EquilibriumJacobian(name, self, inames, onames, opts)
-        self._derivative_callbacks.append(derivative)
-        return derivative
-
-    def input_jacobian(self, argument):
-        """Compose A1 with the exact apparent-feed normalization/invariant map."""
-        inputs, state = self._state(argument)
-        return self._input_jacobian(inputs, state)
-
-    def _input_jacobian(self, inputs, state):
-        block = state["state_input_derivatives"]
-        if tuple(block.component_ids) != self.component_ids:
-            raise ValueError("Engine derivative species order changed")
-        feed = state["feed_amounts_mol"]
-        feed_jacobian = np.zeros((9, 3))
-        feed_jacobian[:3] = (np.eye(3) - feed[:3, None]) / inputs[2:].sum()
-        mapping, active = _state_input_map(block, feed_jacobian)
-        rows = {identity: index for index, identity in enumerate(block.output_identities)}
-        indices = [rows[identity] for identity in self.output_ids[:28]]
-        if tuple(block.output_units[index] for index in indices) != self.output_units[:28]:
-            raise ValueError("Engine derivative output units changed")
-        native = np.asarray([[block.jacobian[row][col] for col in active] for row in indices], dtype=float)
-        if self.liquid.thermochemistry is not None:
-            if block.caloric_failure is not None or block.total_enthalpy_jacobian is None:
-                raise RuntimeError(f"Native caloric derivative unavailable: {block.caloric_failure}")
-            native = np.vstack((native, np.asarray(block.total_enthalpy_jacobian, dtype=float)[active]))
-        if np.any(~np.isfinite(native)):
-            raise RuntimeError("Native equilibrium derivative is unavailable or non-finite")
-        result = native @ mapping[active]
-        if np.any(~np.isfinite(result)):
-            raise RuntimeError("Non-finite equilibrium derivative after feed mapping")
-        return result
-
-
-class FixedCompositionVaporCallback(ca.Callback):
-    """Native vapor f/rho/H and exact first derivatives in T/P/species flows.
-
-    GREPE fixes every species amount with identity balances and imposes no
-    reactions or phase splitting. H is on a unit-total gas-feed basis; multiply
-    by total gas flow for enthalpy flow. The caller supplies an admitted neutral
-    parameter set, explicit caloric reference and physical packing interval.
-    No solved state, phase-root anchor or derivative approximation is stored.
-    """
-
-    def __init__(self, name, parameters, thermochemistry, *, packing_interval):
+    def __init__(self, name, mapping, thermochemistry, *, kind, feed_ids=None, molar_masses=None,
+                 reactions=(), neutral_reference=None, loading_policy=None):
         import epcsaft
-        from epcsaft.records import SingleParameterRecord
+        from epcsaft import equilibrium
 
-        self.model = epcsaft.Mixture(parameters)
+        self._q, self._gas_constant = equilibrium, epcsaft.GAS_CONSTANT_J_PER_MOL_K
+        self.name, self.kind = name, kind
+        self.model = epcsaft.Mixture(epcsaft.Parameters.from_mapping(mapping), thermochemistry=thermochemistry)
         self.component_ids = tuple(self.model.component_ids)
-        thermochemistry.validate_component_order(self.component_ids)
-        self.thermochemistry = thermochemistry
-        self.packing_interval = tuple(packing_interval)
-        records = [r for r in parameters.records if isinstance(r, SingleParameterRecord)]
-        if any(float(r.value) != 0. for r in records if r.family == "charge_number"):
-            raise ValueError("Fixed-composition vapor must contain neutral species only")
-        masses = {r.component_id: float(r.value.to("kilogram / mole").magnitude)
-                  for r in records if r.family == "molar_mass"}
-        self.molar_masses = tuple(masses[name] for name in self.component_ids)
-        self.output_ids = tuple(f"fugacity:{s}" for s in self.component_ids) + ("vapor-molar-density", "total-enthalpy")
-        self.output_units = ("pascal",) * len(self.component_ids) + ("mole / meter**3", "joule")
-        self._derivative_callbacks = []
+        self.feed_ids = self.component_ids if feed_ids is None else tuple(feed_ids)
+        fixed = {c["component_id"]: c["fixed"] for c in mapping["components"]}
+        if any(fixed[c]["molar_mass"]["value"]["unit"] not in ("kilogram / mole", "kg / mol") for c in self.component_ids):
+            raise ValueError("Molar masses must be declared in kg/mol")
+        self.molar_masses = tuple(molar_masses or (float(fixed[c]["molar_mass"]["value"]["magnitude"])
+                                                   for c in self.component_ids))
+        self.charges = tuple(float(fixed[c]["charge_number"]["value"]["magnitude"]) for c in self.component_ids)
+        self.reactions, self.neutral_reference = tuple(reactions), neutral_reference
+        self.loading_policy = loading_policy
+        self.output_ids = (tuple(f"amount:{c}" for c in self.component_ids) if kind == "liquid" else ()) + OUTPUT_IDS
+        kinds, index = equilibrium.SolvedStateObservableKind, self.component_ids.index
+        enthalpy = epcsaft.PropertyObservable.TotalEnthalpy
+        self.log_activities = tuple(equilibrium.SolvedStateObservable(kinds.PhaseLogActivity, 0, i)
+                                    for i in range(len(self.component_ids)))
+        self.enthalpy = equilibrium.SolvedStateObservable(kinds.PhaseProperty, 0, 0, enthalpy)
+        self.state_observables = (
+            tuple(equilibrium.SolvedStateObservable(kinds.PhaseComponentAmount, 0, i)
+                  for i in range(len(self.component_ids)) if kind == "liquid")
+            + (self.log_activities[index("carbon-dioxide")], self.log_activities[index("water")],
+               equilibrium.SolvedStateObservable(kinds.PhaseMolarDensity, 0)))
+        self.stats = dict(native_solves=0, continuations=0)
+        self._accepted = None
+        self.solve = lru_cache(maxsize=4096)(self._solve)
+        # Separate callbacks keep H refusals out of Jacobians of H-free, inlined graph slices; any
+        # Jacobian through H (or a dense e_T column) still refuses, typed and without a value.
+        self._state = ActionCallback(name + "_state", self, self.state_observables)
+        self._molar_enthalpy = ActionCallback(name + "_enthalpy", self, (self.enthalpy,))
+
+    def __call__(self, inputs):
+        inputs = inputs if isinstance(inputs, ca.MX) else ca.DM(inputs)
+        y, count = self._state(inputs), len(self.state_observables) - 3
+        amounts = y[:count]
+        total = ca.sum1(amounts) if count else ca.sum1(inputs[2:])
+        return ca.vertcat(amounts, ca.exp(y[count:count + 2]) * self._gas_constant * inputs[0],
+                          y[count + 2], total * self._molar_enthalpy(inputs))
+
+    def _problem(self, temperature, pressure, feed):
+        q = self._q
+        return q.Problem(phases=[q.Phase(self.kind, kind=self.kind)], T=temperature, P=pressure,
+                         feed=q.Amounts(dict(zip(self.feed_ids, feed))), reactions=self.reactions,
+                         neutral_reference=self.neutral_reference)
+
+    def _solve(self, inputs):
+        temperature, pressure, *feed = inputs
+        if len(feed) != len(self.feed_ids) or not all(math.isfinite(v) and v > 0 for v in inputs):
+            raise ValueError(f"{self.name} requires finite positive T, P and {len(self.feed_ids)} feed amounts")
+        problem = self._problem(temperature, pressure, feed)
+        self.stats["native_solves"] += 1
+        result = self._q.solve_equilibrium(self.model, problem)
+        if not result.success and self.loading_policy is not None:
+            self.stats["continuations"] += 1
+            result = self.continue_to(inputs)
+        if not result.success:
+            raise RuntimeError(f"{self.name} equilibrium failed at {inputs}: {result.message}")
+        self._accepted = (inputs, result)
+        return self._q.compile_problem(self.model, problem), result
+
+    def continue_to(self, inputs):
+        """Native continuation from the last accepted state, else the case's anchor loading at these T, P.
+
+        The equilibrium is locally unique; the start changes the path, not the state. The
+        case policy bounds the first log-feed step and the step budget.
+        """
+        temperature, pressure, *feed = inputs
+        anchor, step, steps = (self.loading_policy[k] for k in ("loading_anchor", "max_log_loading_step", "max_loading_steps"))
+        start, start_result = self._accepted or ((temperature, pressure, anchor * feed[1], *feed[1:]), None)
+        distance = max(abs(math.log(a / b)) for a, b in zip(feed, start[2:]))
+        options = self._q.Continuation(initial_step=min(1., step / max(distance, step)), minimum_step=1. / steps,
+                                       max_steps=steps, max_retries_per_step=4)
+        path = self._q.continue_equilibrium(self.model, self._problem(start[0], start[1], start[2:]),
+                                            self._problem(temperature, pressure, feed), options, start_result)
+        return path.states[-1] if path.success else path
+
+    def _direction(self, index):
+        values = np.zeros(2 + len(self.feed_ids))
+        if index is not None:
+            values[index] = 1.
+        feed = [0.] * len(self.component_ids)
+        for name, value in zip(self.feed_ids, values[2:]):
+            feed[self.component_ids.index(name)] = float(value)
+        return self._q.SolvedStateActionDirection(float(values[0]), float(values[1]), feed, [])
+
+    def actions(self, inputs, observables, directions=()):
+        """D^k O[e_d1, ..., e_dk] over input indices d (k = 0: values); refusal raises ActionUnavailable."""
+        compiled, central = self.solve(tuple(float(v) for v in np.asarray(inputs).ravel()))
+        request = self._q.SolvedStateActionRequest(
+            list(observables), [self._direction(d) for d in directions] or [self._direction(None)])
+        values = []
+        for item in self._q.solved_state_actions(compiled, central, request).results:
+            value = item.action if directions else item.value
+            if item.status.name != "Available" or value is None or not math.isfinite(value):
+                raise ActionUnavailable(self.name, item.observable.kind.name, tuple(directions),
+                                        item.status.name, item.diagnostic_message)
+            values.append(value)
+        return np.asarray(values)
+
+    def enthalpy_temperature_derivative(self, inputs):
+        """(dH/dT)_{P,feed} [J/K] by the product rule on first actions."""
+        observables = self.state_observables[:len(self.state_observables) - 3] + (self.enthalpy,)
+        y, dy = (self.actions(inputs, observables, d) for d in ((), (0,)))
+        total = y[:-1].sum() if len(y) > 1 else float(np.sum(np.asarray(inputs)[2:]))
+        return float(dy[:-1].sum() * y[-1] + total * dy[-1])
+
+
+class ActionCallback(ca.Callback):
+    """Order-k Engine actions of fixed observables; the exact Jacobian adds one input direction.
+
+    along=None returns values (Jacobian: first actions). along=(d,...) returns
+    first actions D O[e_d] for each listed input index (Jacobian: second
+    actions D^2 O[e_d, e_j]). No higher order is provided.
+    """
+
+    def __init__(self, name, phase, observables, along=None):
+        self.phase, self.observables, self.along = phase, tuple(observables), along
+        self._owned = []
         super().__init__()
         self.construct(name, {"enable_fd": False})
 
@@ -213,95 +169,28 @@ class FixedCompositionVaporCallback(ca.Callback):
         return 1
 
     def get_sparsity_in(self, index):
-        return ca.Sparsity.dense(2 + len(self.component_ids), 1)
+        return ca.Sparsity.dense(2 + len(self.phase.feed_ids), 1)
 
     def get_sparsity_out(self, index):
-        return ca.Sparsity.dense(len(self.output_ids), 1)
+        return ca.Sparsity.dense(len(self.observables) * (1 if self.along is None else len(self.along)), 1)
 
-    def _state(self, argument, *, actions=()):
-        import epcsaft
-        from epcsaft import equilibrium as q
-
-        inputs = np.asarray(argument, dtype=float).reshape(-1)
-        n = len(self.component_ids)
-        if inputs.shape != (n + 2,) or np.any(~np.isfinite(inputs)) or np.any(inputs <= 0.):
-            raise ValueError("Vapor inputs must be finite positive T, P and species flows")
-        feed = inputs[2:] / inputs[2:].sum()
-        identity = tuple(map(tuple, np.eye(n)))
-        units = epcsaft.unit_registry
-        initial = self.model.state(T=inputs[0] * units.kelvin, P=inputs[1] * units.pascal,
-                                   x=feed, phase="vapor")
-        volume = 1. / float(initial.molar_density.to("mole / meter**3").magnitude)
-        chemistry = q.ChemicalEquilibriumProblem(
-            species_ids=self.component_ids, charges=(0,) * n,
-            molar_masses_kg_per_mol=self.molar_masses,
-            balance_matrix=identity, conserved_totals=tuple(feed), reaction_matrix=(),
-            feed_amounts_mol=tuple(feed), equilibrium_constants=(),
-            strict_interior_amount_floor_mol=1e-12,
-        )
-        phase = q.ReactivePhase("vapor", "vapor", "finite", q.AllComponents(),
-            q.EosModel(self.packing_interval, "installed-eos"), q.FinitePhaseStart(tuple(feed), volume))
-        outputs = tuple(q.EquilibriumOutput(self.output_ids[i], "phase.fugacity", "pascal",
-            "true-species", "vapor", identity[i], support="positive") for i in range(n)) + (
-            q.EquilibriumOutput("vapor-molar-density", "phase.molar_density", "mole / meter**3",
-                                "true-species", "vapor", support="positive"),
-        )
-        result = q.solve(self.model, q.GeneralReactiveEquilibriumProblem(
-            identity="absorber-fixed-composition-vapor", temperature=q.Fixed(inputs[0] * units.kelvin),
-            pressure=q.Fixed(inputs[1] * units.pascal), phases=(phase,), reaction_system=chemistry,
-            reaction_phase_ids=(), outputs=outputs, thermochemistry=self.thermochemistry,
-            state_input_derivatives=True,
-            state_input_actions=tuple(actions),
-        ))
-        if result.status != "evaluated" or result.numerical_status != "passed" or result.physical_status != "passed":
-            raise RuntimeError(f"Native vapor failed: {result.failure}; evidence={dict(result.evidence)}")
-        block, enthalpy = result.state_input_derivatives, result.total_enthalpy
-        if block is None or isinstance(block, epcsaft.NonEvaluableTrial):
-            raise RuntimeError(f"Native vapor derivatives unavailable: {block}")
-        if (not isinstance(enthalpy, epcsaft.EquilibriumEnthalpy)
-                or enthalpy.reference_fingerprint != self.thermochemistry.scientific_fingerprint
-                or enthalpy.parameter_fingerprint != result.descriptor.parameter_fingerprint):
-            raise RuntimeError(f"Native vapor enthalpy unavailable or identity changed: {enthalpy}")
-        rows = {row.identity: row for row in result.rows}
-        selected = [rows[name] for name in self.output_ids[:-1]]
-        if any(row.status != "evaluated" or row.value is None for row in selected):
-            raise RuntimeError("Native vapor did not certify all requested outputs")
-        values = np.r_[[row.value for row in selected], float(enthalpy.value.to("joule").magnitude)]
-        if np.any(~np.isfinite(values)):
-            raise RuntimeError("Native vapor outputs are non-finite")
-        return inputs, feed, block, values, result
+    def evaluate(self, inputs, extra=()):
+        prefixes = [()] if self.along is None else [(d,) for d in self.along]
+        return np.concatenate([self.phase.actions(inputs, self.observables, p + extra) for p in prefixes])
 
     def eval(self, arguments):
-        return [ca.DM(self._state(arguments[0])[3])]
+        return [ca.DM(self.evaluate(arguments[0]))]
 
     def has_jacobian(self):
         return True
 
     def get_jacobian(self, name, inames, onames, opts):
-        derivative = _EquilibriumJacobian(name, self, inames, onames, opts)
-        self._derivative_callbacks.append(derivative)
-        return derivative
-
-    def input_jacobian(self, argument):
-        inputs, feed, block, _, _ = self._state(argument)
-        if tuple(block.component_ids) != self.component_ids:
-            raise ValueError("Native vapor derivative species order changed")
-        mapping, active = _state_input_map(block, (np.eye(len(feed)) - feed[:, None]) / inputs[2:].sum())
-        rows = {identity: i for i, identity in enumerate(block.output_identities)}
-        indices = [rows[name] for name in self.output_ids[:-1]]
-        if tuple(block.output_units[i] for i in indices) != self.output_units[:-1]:
-            raise ValueError("Native vapor derivative output units changed")
-        if block.caloric_failure is not None or block.total_enthalpy_jacobian is None:
-            raise RuntimeError(f"Native vapor caloric derivative unavailable: {block.caloric_failure}")
-        native = np.vstack((np.asarray(block.jacobian, dtype=float)[indices][:, active],
-                            np.asarray(block.total_enthalpy_jacobian, dtype=float)[active]))
-        result = native @ mapping[active]
-        if np.any(~np.isfinite(result)):
-            raise RuntimeError("Native vapor derivative is unavailable or non-finite")
-        return result
+        jacobian = _ActionJacobian(name, self, inames, onames, opts)
+        self._owned.append(jacobian)
+        return jacobian
 
 
-class _EquilibriumJacobian(ca.Callback):
+class _ActionJacobian(ca.Callback):
     def __init__(self, name, parent, inames, onames, opts):
         self.parent, self.inames, self.onames = parent, inames, onames
         super().__init__()
@@ -323,191 +212,38 @@ class _EquilibriumJacobian(ca.Callback):
         return self.parent.sparsity_in(0) if index == 0 else self.parent.sparsity_out(0)
 
     def get_sparsity_out(self, index):
-        return ca.Sparsity.dense(len(self.parent.output_ids), self.parent.size1_in(0))
+        return ca.Sparsity.dense(self.parent.size1_out(0), self.parent.size1_in(0))
 
     def eval(self, arguments):
-        return [ca.DM(self.parent.input_jacobian(arguments[0]))]
+        count = self.parent.size1_in(0)
+        return [ca.DM(np.column_stack([self.parent.evaluate(arguments[0], (j,)) for j in range(count)]))]
 
 
-class _VaporCaloric(ca.Callback):
-    """Cp and selected partial H, with native H² and both flow chain rules."""
+def build_loading_path_function(liquid):
+    """Liquid values and loading tangent t = D ln a[v], v = u_CO2 e_CO2, at u_CO2 = F_CO2 exp(lambda).
 
-    def __init__(self, name, vapor, indices):
-        self.vapor = vapor
-        self.rows = (0, *(i + 2 for i in indices))
-        self.output_ids = ("vapor-cp", *(f"partial-H:{vapor.component_ids[i]}" for i in indices))
-        self._derivative_callbacks = []
-        super().__init__()
-        self.construct(name, {"enable_fd": False})
-
-    def get_n_in(self):
-        return 1
-
-    def get_n_out(self):
-        return 1
-
-    def get_sparsity_in(self, index):
-        return self.vapor.sparsity_in(0)
-
-    def get_sparsity_out(self, index):
-        return ca.Sparsity.dense(len(self.rows), 1)
-
-    def _data(self, argument):
-        inputs, feed, block, values, _ = self.vapor._state(argument)
-        if tuple(block.component_ids) != self.vapor.component_ids:
-            raise ValueError("Native vapor derivative species order changed")
-        if block.caloric_failure is not None or block.total_enthalpy_jacobian is None:
-            raise RuntimeError(f"Native vapor caloric derivative unavailable: {block.caloric_failure}")
-        mapping, active = _state_input_map(block, (np.eye(len(feed)) - feed[:, None]) / inputs[2:].sum())
-        first = np.asarray(block.total_enthalpy_jacobian, dtype=float)[active]
-        if np.any(~np.isfinite(first)):
-            raise RuntimeError("Native vapor caloric first derivative is non-finite")
-        return inputs, block, values[-1], mapping, active, first
-
-    def eval(self, arguments):
-        inputs, _, h, mapping, active, first = self._data(arguments[0])
-        dh = first @ mapping[active]
-        return [ca.DM([dh[0], *(h + inputs[2:].sum() * dh[i] for i in self.rows[1:])])]
-
-    def has_jacobian(self):
-        return True
-
-    def get_jacobian(self, name, inames, onames, opts):
-        derivative = _EquilibriumJacobian(name, self, inames, onames, opts)
-        self._derivative_callbacks.append(derivative)
-        return derivative
-
-    def input_jacobian(self, argument):
-        from epcsaft.equilibrium import EquilibriumStateInputAction
-
-        inputs, block, _, mapping, active, first = self._data(argument)
-        total, size = inputs[2:].sum(), len(inputs)
-        actions = tuple(EquilibriumStateInputAction(
-            f"vapor-H-{row}-{col}", 2, block.input_identities, block.input_units,
-            (tuple(mapping[:, row]), tuple(mapping[:, col])), total_enthalpy=True,
-        ) for row in self.rows for col in range(size))
-        result = self.vapor._state(inputs, actions=actions)[4]
-        if len(result.state_input_actions) != len(actions):
-            raise RuntimeError("Native vapor enthalpy actions are missing")
-        second = np.empty((len(self.rows), size))
-        for index, (requested, action) in enumerate(zip(actions, result.state_input_actions, strict=True)):
-            if (action.identity != requested.identity or action.order != 2
-                    or action.input_identities != requested.input_identities
-                    or action.input_units != requested.input_units or action.directions != requested.directions
-                    or action.output_identities != self.vapor.output_ids[:-1]
-                    or action.output_units != self.vapor.output_units[:-1]):
-                raise ValueError("Native vapor enthalpy action identity, order, directions or units changed")
-            # Ordinary-output failure is independent of the requested H² field.
-            if action.caloric_failure is not None or action.total_enthalpy_action_j is None:
-                raise RuntimeError(f"Native vapor enthalpy action unavailable: {action.caloric_failure}; evidence={dict(action.evidence)}; central={dict(result.evidence)}")
-            second.flat[index] = action.total_enthalpy_action_j
-        b = np.column_stack((np.zeros((size - 2, 2)), np.eye(size - 2)))
-        ds = b.sum(axis=0)
-        dh = first @ mapping[active]
-        for index, row in enumerate(self.rows):
-            a = b[:, row]
-            curvature = -(a[:, None] * ds + b * a.sum()) / total**2
-            curvature += 2 * inputs[2:, None] * a.sum() * ds / total**3
-            invariant = dict(zip(block.invariant_ids, np.asarray(block.invariant_matrix) @ curvature, strict=True))
-            native_curvature = np.asarray([np.zeros(size) if name in ("temperature_k", "pressure_pa")
-                                           else invariant[name] for name in block.input_identities])
-            # D²(S*h) includes normalization curvature and both product terms.
-            second[index] = total * (second[index] + first @ native_curvature[active]) + ds[row] * dh + ds * dh[row]
-        second[0] = second[0] / total - dh[0] * ds / total
-        if np.any(~np.isfinite(second)):
-            raise RuntimeError("Native vapor caloric second action is non-finite after normalization")
-        return second
+    The tangent's outer derivative consumes second actions D^2 ln a[v, e]. Retain
+    the returned function to own its callback.
+    """
+    bulk, loading = ca.MX.sym("bulk", 5), ca.MX.sym("loading")
+    inputs = ca.vertcat(bulk[:2], bulk[2] * ca.exp(loading), bulk[3:])
+    slope = ActionCallback(liquid.name + "_loading_slope", liquid, liquid.log_activities, along=(2,))
+    path = ca.Function("native_loading_path", [bulk, loading], [liquid(inputs), inputs[2] * slope(inputs)])
+    path._thermodynamic_callbacks = (liquid, slope)
+    return path
 
 
-class _LoadingTangent(ca.Callback):
-    """mu loading tangent and its exact A2 outer derivative, without H actions."""
+def build_caloric_flow_function(vapor, *, partial_enthalpy_indices=(0, 1)):
+    """Extensive H [W], molar Cp = dh/dT [J/(mol K)] and partial H_i = h + N dh/dF_i [J/mol] of the vapor.
 
-    def __init__(self, name, liquid_callback, *, include_state=False):
-        self.liquid_callback = liquid_callback
-        self.include_state = include_state
-        self.output_ids = (liquid_callback.output_ids if include_state else ()) + tuple(
-            f"loading-tangent:{s}" for s in liquid_callback.component_ids)
-        self._derivative_callbacks = []
-        super().__init__()
-        self.construct(name, {"enable_fd": False})
-
-    def get_n_in(self):
-        return 1
-
-    def get_n_out(self):
-        return 1
-
-    def get_sparsity_in(self, index):
-        return ca.Sparsity.dense(5, 1)
-
-    def get_sparsity_out(self, index):
-        return ca.Sparsity.dense(len(self.output_ids), 1)
-
-    def eval(self, arguments):
-        callback = self.liquid_callback
-        inputs, state = callback._state(arguments[0])
-        tangent = callback._input_jacobian(inputs, state)[9:18, 2] * inputs[2]
-        # Values and tangent consume this one evaluated state; none is retained.
-        values = np.r_[callback._values_from_state(state), tangent] if self.include_state else tangent
-        return [ca.DM(values)]
-
-    def has_jacobian(self):
-        return True
-
-    def get_jacobian(self, name, inames, onames, opts):
-        derivative = _EquilibriumJacobian(name, self, inames, onames, opts)
-        self._derivative_callbacks.append(derivative)
-        return derivative
-
-    def input_jacobian(self, argument):
-        from epcsaft.equilibrium import EquilibriumStateInputAction
-
-        callback = self.liquid_callback
-        inputs, state = callback._state(argument)
-        block = state["state_input_derivatives"]
-        if tuple(block.component_ids) != callback.component_ids:
-            raise ValueError("Engine derivative species order changed")
-        total = inputs[2:].sum()
-        feed_jacobian = np.zeros((9, 3))
-        feed_jacobian[:3] = (np.eye(3) - state["feed_amounts_mol"][:3, None]) / total
-        mapping, active = _state_input_map(block, feed_jacobian)
-        output_ids = callback.output_ids[9:18]
-        rows = {identity: index for index, identity in enumerate(block.output_identities)}
-        if tuple(block.output_units[rows[s]] for s in output_ids) != ("dimensionless",) * 9:
-            raise ValueError("Engine chemical-potential derivative units changed")
-        native_first = np.asarray([[block.jacobian[rows[s]][i] for i in active] for s in output_ids])
-        if np.any(~np.isfinite(native_first)):
-            raise RuntimeError("Native chemical-potential first derivative unavailable")
-        actions = tuple(EquilibriumStateInputAction(
-            f"loading-outer-{i}", 2, block.input_identities, block.input_units,
-            (tuple(mapping[:, 2] * inputs[2]), tuple(mapping[:, i])),
-        ) for i in range(5))
-        result = callback.liquid.solve_actions(*inputs[:2], inputs[2:], actions, output_ids)
-        returned = result.state_input_actions
-        if len(returned) != len(actions):
-            raise RuntimeError("Native loading actions are missing")
-        second = np.empty((9, 5))
-        for i, (requested, action) in enumerate(zip(actions, returned, strict=True)):
-            if (action.identity != requested.identity or action.order != 2
-                    or action.input_identities != requested.input_identities
-                    or action.input_units != requested.input_units or action.directions != requested.directions
-                    or action.output_identities != output_ids or action.output_units != ("dimensionless",) * 9):
-                raise ValueError("Native loading action identity, order, directions or units changed")
-            if action.failure is not None or any(value is None for value in action.values):
-                raise RuntimeError(f"Native loading action unavailable: {action.failure}; evidence={dict(action.evidence)}; central={dict(result.evidence)}")
-            second[:, i] = action.values
-        # q(F/S) has curvature. The first direction is F_CO2 e_CO2;
-        # additionally differentiate that direction's F_CO2 prefactor below.
-        a = np.array([inputs[2], 0., 0.])
-        b = np.column_stack((np.zeros((3, 2)), np.eye(3)))
-        curvature = np.zeros((9, 5))
-        curvature[:3] = -(a[:, None] * b.sum(axis=0) + b * a.sum()) / total**2
-        curvature[:3] += 2 * inputs[2:, None] * a.sum() * b.sum(axis=0) / total**3
-        invariant_curvature = dict(zip(block.invariant_ids, np.asarray(block.invariant_matrix) @ curvature, strict=True))
-        native_curvature = np.asarray([np.zeros(5) if identity in ("temperature_k", "pressure_pa")
-                                       else invariant_curvature[identity] for identity in block.input_identities])
-        second += native_first @ native_curvature[active]
-        second[:, 2] += native_first @ mapping[active, 2]
-        if np.any(~np.isfinite(second)):
-            raise RuntimeError("Native loading second action is non-finite after normalization")
-        return np.vstack((callback._input_jacobian(inputs, state), second)) if self.include_state else second
+    Fixed vapor composition makes (dH/dT)/N = dh/dT. Outer derivatives consume
+    second enthalpy actions.
+    """
+    inputs = ca.MX.sym("caloric_inputs", 2 + len(vapor.feed_ids))
+    slopes = ActionCallback(vapor.name + "_caloric", vapor, (vapor.enthalpy,),
+                            along=(0, *(2 + i for i in partial_enthalpy_indices)))
+    enthalpy = vapor(inputs)[-1]
+    total, dh = ca.sum1(inputs[2:]), slopes(inputs)
+    caloric = ca.Function("native_caloric_flow", [inputs], [enthalpy, dh[0], enthalpy / total + total * dh[1:]])
+    caloric._thermodynamic_callbacks = (vapor, slopes)
+    return caloric

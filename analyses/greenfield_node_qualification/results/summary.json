@@ -1,0 +1,78 @@
+{
+ "engine_commit": "4b9907578158c7ff2736facf1c3cbec1f978a77f",
+ "engine_wheel_sha256": "684b213ac8065fbe35950ca8998a33a5c05264fad5b174560110f112d60ef8ba",
+ "inputs_sha256": {
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/parameters.json": "868a501831b87e95dedf18ce40e9e7ac949f7c6a4aaf137f717cc493ecfcb7be",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/engine-reactions.json": "bcd964a0b9798d9f25169a3f49407d339e5714c2ee7ee00f794a80ac54c0d8d3",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+ },
+ "producer_sha256": "0b6efde59392bb1a9078724ccb243f9199e028573574a1c5e6c1deada0de893d",
+ "csv_sha256": "8e482587a77d062cfaeff02149f174de52c9605cf24083224adba710ee6b291a",
+ "status_counts": {
+  "N1": {
+   "pass": 20
+  },
+  "N2": {
+   "pass": 21,
+   "control-fails": 21
+  },
+  "N3": {
+   "pass": 63,
+   "control-fails": 7
+  },
+  "N4": {
+   "refused": 7,
+   "pass": 252,
+   "control-fails": 35
+  },
+  "N5": {
+   "pass": 282
+  },
+  "C1": {
+   "pass": 4,
+   "control-fails": 4
+  },
+  "C2": {
+   "pass": 54,
+   "control-fails": 30,
+   "refused": 2
+  },
+  "C4": {
+   "pass": 3,
+   "diagnostic": 2
+  },
+  "start": {
+   "pass": 1
+  },
+  "S3": {
+   "evaluated": 1
+  },
+  "N6": {
+   "refused": 2
+  },
+  "budget": {
+   "pass": 1
+  }
+ },
+ "largest_passing_defect": {
+  "N1": 4.813409053061527e-11,
+  "N2": 1.332476296116744e-14,
+  "N3": 6.864275543555959e-08,
+  "N4": 9.985564608470447e-06,
+  "N5": 4.633581448186496e-21,
+  "C1": 6.961427414865079e-15,
+  "C2": 7.29168698734839e-08,
+  "C4": 0.004235522182411757,
+  "start": 0.0,
+  "S3": null,
+  "N6": null,
+  "budget": 34.171729802998016
+ },
+ "elapsed_s": 34.171729802998016,
+ "native_solves": {
+  "native_solves": 264,
+  "continuations": 3
+ },
+ "claim_limits": "Numerical verification of consumed node quantities on the exploratory MEA record 868a5018 (not adopted) at S1/S2/V1/V2; C4 is the pure-water EOS residual only. Refusals (N4 e_T, dH_L/dP, N6) wait for Engine #147; K1-K2 and physical checks (C3, C5, C6) are not run here."
+}

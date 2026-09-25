@@ -39,7 +39,7 @@ def test_twelve_state_resolves_its_declared_native_dependencies():
     })
     assert config.model.layout == "twelve_conserved"
     assert config.dependencies.mobility_law == "harmonic_mean_onsager_v1"
-    assert config.dependencies.references[-1].endswith("MEA_neutral_vapor/reference-thermochemistry.json")
+    assert config.dependencies.references[-1].endswith("MEA_greenfield_exploratory/ideal-gas-thermochemistry.json")
     assert config.engine.required is True
 
 
@@ -129,16 +129,17 @@ def test_twelve_state_run_column_retains_conserved_execution(monkeypatch):
 
 
 class _ChargeState:
+    charges = (0, 0, 0, 1, -1, -1, -2, 1, -1)
+
     def __init__(self, charge):
         self.charge = charge
         self.calls = 0
-        self._reactions = {"charges": [0, 0, 0, 1, -1, -1, -2, 1, -1]}
 
-    def solve(self, *_args, **_kwargs):
+    def __call__(self, inputs):
         self.calls += 1
-        amounts = np.zeros(9)
-        amounts[3] = self.charge
-        return {"amounts_mol": amounts}
+        values = np.zeros(13)
+        values[3] = self.charge * sum(inputs[2:])  # extensive amounts; certificate is per apparent feed mol
+        return values
 
 
 def _certificate_inputs(charge=0.0, outlet=1.0):
@@ -150,7 +151,7 @@ def _certificate_inputs(charge=0.0, outlet=1.0):
         return np.array([1., 2., 3., 4., 5., 6., 7.]), np.zeros(7), np.zeros(5)
 
     assembly = {"node": node, "boundary": lambda *_: np.zeros(7),
-                "reactive_liquid": reactive, "height_m": 1.0}
+                "liquid": reactive, "height_m": 1.0}
     lower = np.r_[[0.] * 4, 293.15, 293.15, 1., 1e-12, [-np.inf] * 4]
     upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97, [np.inf] * 4]
     scaling = {"balance_scale": np.ones(7), "algebraic_scale": np.ones(5),
@@ -328,6 +329,9 @@ def _retained_profile_context(tmp_path, mismatch=None):
                      "solver_settings": {"quadrature_points": 3, "tolerance": 1e-7, "max_iterations": 20}},
         "initialization": {"values": {"retained_profile": str(source_path)}},
     })
+    # The retained profile predates the current records; admission is checked on the declared ones.
+    source["config"]["dependencies"] = config.as_dict()["dependencies"]
+    source_path.write_text(json.dumps(source))
     prepared = {"resolved_inputs": baseline["resolved_inputs"], "engine": baseline["engine"],
                 "assembly": {"coordinate": np.linspace(0.0, 6.0, 3), "height_m": 6.0}}
     scaling = {name: np.asarray(baseline["scaling"][name]) for name in
@@ -395,9 +399,9 @@ def test_retained_profile_reaches_solver_and_rejection_does_not(tmp_path, monkey
 
     class Phase:
         molar_masses = np.ones(4)
-        solve = solve_actions = _state = lambda *args: None
-        def input_jacobian(self, *_args):
-            return np.ones((1, 1))
+        solve = actions = lambda *args: None
+        def enthalpy_temperature_derivative(self, *_args):
+            return 1.
 
     def fake_prepared(_config):
         liquid, vapor = Phase(), Phase()
@@ -405,10 +409,10 @@ def test_retained_profile_reaches_solver_and_rejection_does_not(tmp_path, monkey
         def diagnostic(state):
             return None, state[-1] - .5, 1., np.ones(2), 1., None, np.ones(2), 1.
         def balance(*_args):
-            return None, None, 0., np.r_[np.zeros(20), 1.], np.ones(2)
+            return None, None, 0., np.r_[np.zeros(10), 1.], np.ones(2)
         assembly = {"node": lambda *_: (np.zeros(7), np.zeros(7), np.zeros(5)), "boundary": lambda *_: np.zeros(7),
                     "diagnostics": diagnostic, "balance": balance, "liquid": liquid, "vapor": vapor,
-                    "reactive_liquid": liquid, "coordinate": np.array([0., 3., 6.]), "height_m": 6.}
+                    "coordinate": np.array([0., 3., 6.]), "height_m": 6.}
         return {**prepared, "assembly": assembly, "assets": {}, "capabilities": {}, "layout": {}}
 
     expected = np.asarray(source["native_profile"]["state_matrix"])

@@ -167,35 +167,18 @@ def scan_direct_imports(contract: dict[str, Any]) -> list[str]:
 
 
 def run_smoke(contract: dict[str, Any]) -> dict[str, Any]:
-    thermo_models = importlib.import_module(contract["smoke"]["module"])
-    thermo_models.ensure_epcsaft_importable()
-    dataset_path = Path(thermo_models.MEA_THERMODYNAMICS_EPCSAFT_DATASET)
-    if not dataset_path.exists():
-        raise RuntimeError(f"Expected vendored or configured dataset path to exist: {dataset_path}")
-    diagnostics = thermo_models.epcsaft_state_contribution_diagnostics(
-        323.15,
-        109500.0,
-        (1.0e-8, 0.055, 0.888, 0.028, 0.027, 0.001),
-        phase="liquid",
-        mixture_kind="ionic",
-    )
-    if diagnostics["phi_co2"] <= 0.0:
-        raise RuntimeError("The ionic ePC-SAFT smoke state returned a nonpositive CO2 fugacity coefficient.")
-    reactive = importlib.import_module("mea_absorption_column.Thermodynamics.reactive_bundle")
+    """Solve the pinned nine-species liquid at one 3C-class state on the selected wheel."""
+    bundle = importlib.import_module(contract["smoke"]["module"])
+    dataset = REPO_ROOT / contract["smoke"]["dataset"]
     # Pin the accepted input/export combination to this runtime, without rewriting its provenance.
     for name, expected in contract["final_identity"]["reactive_inputs_sha256"].items():
-        if hashlib.sha256((reactive.DATASET / name).read_bytes()).hexdigest() != expected:
+        if hashlib.sha256((dataset / name).read_bytes()).hexdigest() != expected:
             raise RuntimeError(f"Selected reactive input differs from the integration pin: {name}")
-    reactive_result = reactive.reactive_liquid().solve(
-        313.15, 109500.0, [0.03, 0.11, 0.86]
-    )
-    return {
-        "dataset": str(dataset_path),
-        "parameter_fingerprint": diagnostics["parameter_fingerprint"],
-        "phi_co2": diagnostics["phi_co2"],
-        "reactive_parameter_fingerprint": reactive_result["parameter_fingerprint"],
-        "reactive_density_mol_m3": reactive_result["density_mol_m3"],
-    }
+    liquid = bundle.engine_liquid(dataset, dataset / "ideal-gas-thermochemistry.json")
+    values = liquid([313.15, 109500.0, 0.03, 0.11, 0.86]).full().ravel().tolist()
+    if not values[9] > 0.0 or not values[11] > 0.0:
+        raise RuntimeError("The nine-species smoke state returned a nonpositive CO2 fugacity or density.")
+    return {"dataset": str(dataset), "co2_fugacity_pa": values[9], "density_mol_m3": values[11]}
 
 
 def _version_triplet(value: str) -> tuple[int, int, int]:
@@ -272,10 +255,8 @@ def main(argv: list[str] | None = None) -> int:
         print("Research mode: inspected selected immutable wheel; no archived-result identity claim.")
     if smoke_payload is not None:
         print(f"dataset path: {smoke_payload['dataset']}")
-        print(f"parameter fingerprint: {smoke_payload['parameter_fingerprint']}")
-        print(f"CO2 fugacity coefficient: {smoke_payload['phi_co2']}")
-        print(f"Nine-species parameter fingerprint: {smoke_payload['reactive_parameter_fingerprint']}")
-        print(f"Nine-species liquid density [mol/m3]: {smoke_payload['reactive_density_mol_m3']}")
+        print(f"Nine-species CO2 fugacity [Pa]: {smoke_payload['co2_fugacity_pa']}")
+        print(f"Nine-species liquid density [mol/m3]: {smoke_payload['density_mol_m3']}")
 
     if errors:
         for error in errors:
