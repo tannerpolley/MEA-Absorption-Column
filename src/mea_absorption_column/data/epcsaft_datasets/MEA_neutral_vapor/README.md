@@ -53,3 +53,9 @@ shift is introduced. The inherited water reference remains physically
 provisional: at 298.15 K it implies ideal-gas Cp 44.918 J/mol/K, versus
 [NIST's 33.60 J/mol/K](https://cccbdb.nist.gov/exp2x.asp?casno=7732185&charge=0).
 Matching liquid Cp does not by itself validate vapor Cp.
+
+For the current Engine schema, nitrogen and oxygen carry an explicit zero
+charge number (neutral molecules); no fitted value changed. The twelve-state
+vapor uses the shared physical ideal-gas records in
+`../MEA_greenfield_exploratory/ideal-gas-thermochemistry.json`;
+`reference-thermochemistry.json` stays for the retained earlier runs.

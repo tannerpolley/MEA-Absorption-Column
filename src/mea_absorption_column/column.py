@@ -445,10 +445,9 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
     import casadi as ca
 
     from .BVP.Coupled_Column import build_coupled_column_functions
-    from .Thermodynamics.casadi_reactive import FixedCompositionVaporCallback, ReactiveLiquidCallback
-    from .Thermodynamics.reactive_bundle import ReactiveLiquid, load_reference_thermochemistry
+    from .Thermodynamics.reactive_bundle import engine_liquid, engine_vapor
     from .Thermodynamics.thermo_models import ensure_epcsaft_importable
-    epcsaft = ensure_epcsaft_importable()
+    ensure_epcsaft_importable()
 
     liquid_feed, vapor_feed, liquid_temperature, vapor_temperature, coordinate, height, area, pressure, packing = (
         resolved_inputs["parameters"]
@@ -458,25 +457,10 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         raise ConfigurationError("Resolved conserved inputs lack their case-owned policy")
     dataset = _dependency_path(config.dependencies.dataset)
     liquid_reference_path = _dependency_path(config.dependencies.thermal_reference)
-    liquid_reference = load_reference_thermochemistry(liquid_reference_path)
-    reactive = ReactiveLiquid(
-        dataset,
-        thermochemistry=liquid_reference,
-        loading_anchor=policy["loading_anchor"],
-        max_log_loading_step=policy["max_log_loading_step"],
-        max_loading_steps=policy["max_loading_steps"],
-        reuse_states=True,
-        warm_starts=False,
-    )
-    liquid = ReactiveLiquidCallback("column_liquid", reactive)
+    liquid = engine_liquid(dataset, liquid_reference_path, "column_liquid", loading_policy=policy)
     neutral_parameters = _dependency_path(config.dependencies.references[0])
     neutral_reference_path = _dependency_path(config.dependencies.references[1])
-    vapor = FixedCompositionVaporCallback(
-        "column_vapor",
-        epcsaft.Parameters.from_json(neutral_parameters),
-        load_reference_thermochemistry(neutral_reference_path, liquid_reference=liquid_reference),
-        packing_interval=(1.0e-6, .1),
-    )
+    vapor = engine_vapor(neutral_parameters, neutral_reference_path, "column_vapor")
     diffusion = policy["species_diffusivity_model"]
 
     def species_diffusivities(temperature):
@@ -510,7 +494,6 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
     return {
         "liquid": liquid,
         "vapor": vapor,
-        "reactive_liquid": reactive,
         "node": node,
         "balance": balance,
         "boundary": boundary,
@@ -637,14 +620,12 @@ def _equilibrium_physical_certification(
     drift = conserved[[2, 3, 5]] - conserved[[0, 1, 4]]
     drift -= drift[:, :1]
     charges = []
-    charge_numbers = np.asarray(assembly["reactive_liquid"]._reactions["charges"], dtype=float)
+    liquid = assembly["liquid"]
     for state in profile.T:
         for fraction in np.linspace(0.0, 1.0, quadrature_points):
-            amounts = [state[0] * np.exp(fraction * state[11]), liquid_feed[1], state[1]]
-            liquid_state = assembly["reactive_liquid"].solve(
-                state[4], state[6], amounts, state_input_derivatives=False,
-            )
-            charges.append(float(np.asarray(liquid_state["amounts_mol"]) @ charge_numbers))
+            inputs = [state[4], state[6], state[0] * np.exp(fraction * state[11]), liquid_feed[1], state[1]]
+            amounts = np.asarray(liquid(inputs)).ravel()[:9] / sum(inputs[2:])
+            charges.append(float(amounts @ np.asarray(liquid.charges)))
     boundary = np.asarray(assembly["boundary"](profile[:, 0], profile[:, -1])).ravel()
     residuals = {
         "material": drift[:2], "energy": drift[2], "charge": np.asarray(charges),
@@ -837,9 +818,9 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
                 counts["wall_s"] += time.perf_counter() - started
         setattr(owner, name, observed)
 
-    instrument(assembly["reactive_liquid"], "solve", "liquid_value_A1")
-    instrument(assembly["reactive_liquid"], "solve_actions", "liquid_A2")
-    instrument(vapor, "_state", "vapor_value_A1_H2")
+    instrument(liquid, "solve", "liquid_solve")
+    instrument(liquid, "actions", "liquid_actions")
+    instrument(vapor, "actions", "vapor_actions")
     np.testing.assert_array_equal(liquid.molar_masses[:3], payload["liquid_molar_masses_kg_mol"])
     np.testing.assert_array_equal(vapor.molar_masses, payload["vapor_molar_masses_kg_mol"])
     bulk[7] -= float(balance(bulk, [0.0, 0.0, 0.0])[2])
@@ -856,12 +837,12 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     loading, root = brentq(interface_residual, *bracket, full_output=True, disp=False)
     diagnostic = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])
     point = np.r_[bulk, float(diagnostic[1] / diagnostic[2]),
-                  float(diagnostic[3][1] * (gas[1] - balance(bulk, [0.0, 0.0, 0.0])[3][20])), 0.0, loading]
+                  float(diagnostic[3][1] * (gas[1] - balance(bulk, [0.0, 0.0, 0.0])[3][10])), 0.0, loading]
     point[10] = float(diagnostic[4]) * (bulk[5] - bulk[4]) + point[8:10] @ np.asarray(diagnostic[6]).ravel()
     height, span = assembly["height_m"], 393.15 - 293.15
     capacity = np.array([
-        liquid_feed.sum() * liquid.input_jacobian(np.r_[bulk[4], bulk[6], liquid_feed])[-1, 0],
-        vapor_feed.sum() * vapor.input_jacobian(np.r_[bulk[5], bulk[6], vapor_feed])[-1, 0],
+        liquid.enthalpy_temperature_derivative(np.r_[bulk[4], bulk[6], liquid_feed]),
+        vapor.enthalpy_temperature_derivative(np.r_[bulk[5], bulk[6], vapor_feed]),
     ])
     if np.any(~np.isfinite(capacity)) or np.any(capacity <= 0):
         raise RuntimeError("Native capacity scales must be finite positive")

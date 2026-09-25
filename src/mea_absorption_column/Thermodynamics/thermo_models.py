@@ -209,7 +209,7 @@ def ensure_epcsaft_importable():
     try:
         import epcsaft
 
-        for symbol in ("Parameters", "Mixture", "State", "unit_registry"):
+        for symbol in ("Parameters", "Mixture", "State", "ThermochemistryRecord"):
             if not hasattr(epcsaft, symbol):
                 raise AttributeError(f"missing public ePC-SAFT 0.2 symbol: {symbol}")
         return epcsaft

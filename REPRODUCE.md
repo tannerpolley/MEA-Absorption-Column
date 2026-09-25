@@ -38,7 +38,7 @@ Exact optimized wheel: `/home/tnnrpolley21/.cache/epcsaft/wheels/bafc4375476a39f
 
 The optimized implementation retains one failing temperature-boundary test (`test_solved_temperature_boundaries_certify_bubble_dew_and_total_derivatives`): the vapor-reference center reaches its iteration limit at 296.7724020931804 K, pressure residual −6.03e−7 Pa against the 1.2e−7 Pa outer target. The source notebook documents 114 affected checks passing and three of four additional slow checks passing. This does not invalidate the retained column result, and it is not a claim that every Engine check passes.
 
-The repository dependency, lock and integration checks now require the restored fast wheel identified above. Normal `uv run` and `uv sync --frozen` select that wheel; all integration modes reject other wheel identities. Older run identities remain unchanged as evidence of the calculations actually performed. For a timing check, use a new label and verify the hash first:
+Absorber `de1d70d` and earlier required the restored fast wheel identified above; manuscript, seven-state and timing reproductions need that wheel and that source (the seven-state route calls Engine names retired from the current pin, absorber #52). Older run identities remain unchanged as evidence of the calculations actually performed. For a timing check, use a new label and verify the hash first:
 
 ```bash
 runtime_wheel=/home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl
@@ -55,21 +55,21 @@ The command selects native Jacobians, exact state reuse, temperature/raw coordin
 
 ```bash
 (set -e
-test "$(sha256sum /home/tnnrpolley21/.cache/epcsaft/wheels/3dd72055259d06171e2b84513fa5be48f90eb4c6e32f539f2abae591a2dffdfd/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl | cut -d ' ' -f 1)" = 91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4
+test "$(sha256sum /home/tnnrpolley21/.cache/epcsaft/wheels/9dd86fdff35bbbff6506e010bbdb9c451a19dc4881bbd51c7aad9e07dfb0078d/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl | cut -d ' ' -f 1)" = 684b213ac8065fbe35950ca8998a33a5c05264fad5b174560110f112d60ef8ba
 uv sync --frozen --group test
-export OPENBLAS_NUM_THREADS=1
-export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
 uv run --frozen python scripts/check_epcsaft_integration.py --mode final
-uv run --frozen pytest tests/test_column_energy.py tests/test_thermodynamics_adapter.py tests/test_epcsaft_reactive_chemistry.py tests/test_robust_convergence.py -q
+uv run --frozen pytest -q tests/test_column_config.py tests/test_conserved_assembly.py
 )
 ```
 
-`pyproject.toml` pins the non-editable CPython 3.13 Linux x86-64 optimized ePC-SAFT wheel.
-Every integration mode requires wheel SHA-256 `91632d2812429cbd293aae70fe8d4efb00000efe2377a91546dd7374dca67ee4`.
-The optimized source is committed at Engine `7b1e62f0483571f8a194b32441467bdb58b45ce7`. The exact executable artifact remains identified by its wheel hash; earlier timing-wheel records retain their original identities.
+`pyproject.toml` pins the non-editable CPython 3.13 Linux x86-64 greenfield ePC-SAFT wheel,
+SHA-256 `684b213ac8065fbe35950ca8998a33a5c05264fad5b174560110f112d60ef8ba`, built from Engine
+`4b9907578158c7ff2736facf1c3cbec1f978a77f` (Engine sources identical at main `62f136ab`). Every
+integration mode requires this hash. The twelve-state callbacks use `Mixture(parameters,
+thermochemistry=...)`, `equilibrium.Problem`, `solve_equilibrium`, `compile_problem` and
+`solved_state_actions`; their node qualification is `analyses/greenfield_node_qualification/`.
 Another machine needs these exact wheel bytes at the pinned path, or an explicit path-only dependency/lock update retaining this hash.
-The downstream adapter uses the public `Parameters`, `Mixture`, and `State`
-API and `equilibrium.solve`; no mutable sibling source import is used.
 The unused `polar: none` model-family declaration was removed from the historical adapter; no polar parameters were added to the new set.
 Henry-law checks do not evaluate ePC-SAFT. Wheel identity is not inferred from its filename.
 

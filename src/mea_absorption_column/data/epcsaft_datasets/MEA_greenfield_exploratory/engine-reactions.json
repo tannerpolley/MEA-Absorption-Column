@@ -1,0 +1,139 @@
+{
+ "schema": "absorber-engine-reactions-v1",
+ "parameter_sha256": "868a501831b87e95dedf18ce40e9e7ac949f7c6a4aaf137f717cc493ecfcb7be",
+ "provenance": "MEA-Thermodynamics 04a9328 analyses/mea_parameter_bundle/scripts/shared_evaluation.py: _engine_reaction_records and _neutral_reference_data on corrected_request(vle_obs_0130); runtime Born defaults MODEL_RUNTIME_DEFAULTS. Exploratory record, not adopted (#61).",
+ "born_runtime_defaults": {
+  "c_shell": 1.0,
+  "c_dielectric": 1.0
+ },
+ "neutral_reference": {
+  "solvent": "water",
+  "solute_molality_ratios": {
+   "carbon-dioxide": 0.125,
+   "monoethanolamine": 0.125,
+   "protonated-monoethanolamine": 0.625,
+   "carbamate-anion": 0.25,
+   "bicarbonate-anion": 0.125,
+   "carbonate-anion": 0.125,
+   "hydronium-cation": 0.125,
+   "hydroxide-anion": 0.125
+  },
+  "standard_molality_mol_per_kg": 1.0
+ },
+ "reactions": [
+  {
+   "name": "R1",
+   "stoichiometry": {
+    "water": -2.0,
+    "hydronium-cation": 1.0,
+    "hydroxide-anion": 1.0
+   },
+   "correlation": {
+    "a": 3.7290977365566675,
+    "b": -13445.9,
+    "c": -22.4773,
+    "d": 0.0,
+    "reference_temperature": 313.15,
+    "temperature_min": 273.15,
+    "temperature_max": 498.15,
+    "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1"
+   },
+   "reference": {
+    "source_basis": "RawMoleFractionInfiniteDilution",
+    "reference_pressure_pa": null
+   }
+  },
+  {
+   "name": "R2",
+   "stoichiometry": {
+    "carbon-dioxide": -1.0,
+    "water": -2.0,
+    "bicarbonate-anion": 1.0,
+    "hydronium-cation": 1.0
+   },
+   "correlation": {
+    "a": 20.959245323180852,
+    "b": -11105.640030520277,
+    "c": -36.7816,
+    "d": 0.0,
+    "reference_temperature": 313.15,
+    "temperature_min": 293.15,
+    "temperature_max": 393.15,
+    "standard_state_id": "aqueous-molality-infinite-dilution-water-v1"
+   },
+   "reference": {
+    "source_basis": "CommonMolalityInfiniteDilution",
+    "reference_pressure_pa": null
+   }
+  },
+  {
+   "name": "R3",
+   "stoichiometry": {
+    "water": -1.0,
+    "bicarbonate-anion": -1.0,
+    "carbonate-anion": 1.0,
+    "hydronium-cation": 1.0
+   },
+   "correlation": {
+    "a": 12.145792981306897,
+    "b": -12431.7,
+    "c": -35.4819,
+    "d": 0.0,
+    "reference_temperature": 313.15,
+    "temperature_min": 273.15,
+    "temperature_max": 498.15,
+    "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1"
+   },
+   "reference": {
+    "source_basis": "RawMoleFractionInfiniteDilution",
+    "reference_pressure_pa": null
+   }
+  },
+  {
+   "name": "R4",
+   "stoichiometry": {
+    "monoethanolamine": 1.0,
+    "water": -1.0,
+    "carbamate-anion": -1.0,
+    "bicarbonate-anion": 1.0
+   },
+   "correlation": {
+    "a": 1.505015374192114,
+    "b": -1317.0489707842564,
+    "c": 0.0,
+    "d": 0.0,
+    "reference_temperature": 313.15,
+    "temperature_min": 293.15,
+    "temperature_max": 393.15,
+    "standard_state_id": "aqueous-molality-infinite-dilution-water-v1"
+   },
+   "reference": {
+    "source_basis": "CommonMolalityInfiniteDilution",
+    "reference_pressure_pa": 100000.0
+   }
+  },
+  {
+   "name": "R5",
+   "stoichiometry": {
+    "monoethanolamine": 1.0,
+    "water": -1.0,
+    "protonated-monoethanolamine": -1.0,
+    "hydronium-cation": 1.0
+   },
+   "correlation": {
+    "a": 2.3424545466714632,
+    "b": -6994.424474742253,
+    "c": 0.0,
+    "d": -0.0009848156442735533,
+    "reference_temperature": 313.15,
+    "temperature_min": 293.15,
+    "temperature_max": 393.15,
+    "standard_state_id": "aqueous-molality-infinite-dilution-water-v1"
+   },
+   "reference": {
+    "source_basis": "CommonMolalityInfiniteDilution",
+    "reference_pressure_pa": 100000.0
+   }
+  }
+ ]
+}

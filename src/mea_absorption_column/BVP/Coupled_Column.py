@@ -73,10 +73,11 @@ def build_column_balance_functions(
     apparent_x, vapor_y = liquid_flow / total_l, vapor_flow / total_v
     liquid_values = liquid(ca.vertcat(state[4], state[6], liquid_flow))
     vapor_values = vapor(ca.vertcat(state[5], state[6], vapor_flow))
-    true_amounts, rho_l, rho_v = liquid_values[:9], liquid_values[27], vapor_values[4]
+    # Extensive native outputs: [n_i (liquid), f_CO2, f_water, rho, H] (see EnginePhase).
+    true_amounts, rho_l, rho_v = liquid_values[:9], liquid_values[11], vapor_values[2]
     true_x = true_amounts / ca.sum1(true_amounts)
     # Reaction changes true mole count, but not mass or conserved components.
-    volume_l = total_l * ca.sum1(true_amounts) / rho_l
+    volume_l = ca.sum1(true_amounts) / rho_l
     volume_v = total_v / rho_v
     mass_density_l = rho_l * ca.dot(true_x, ca.DM(liquid.molar_masses))
     mass_density_v = rho_v * ca.dot(vapor_y, ca.DM(vapor.molar_masses))
@@ -89,7 +90,7 @@ def build_column_balance_functions(
     _, area_per_length = interfacial_area_expression(mass_density_l, sigma, ul, area_m2, packing)
     raw_holdup, _ = holdup_expression(ul, mul, mass_density_l, packing)
     gradient = pressure_drop_expression(state[7], mass_density_l, mass_density_v, mul, muv, area_m2, ul, uv, packing)
-    conserved = ca.vertcat(state[:4], total_l * liquid_values[-1], total_v * vapor_values[-1], state[6])
+    conserved = ca.vertcat(state[:4], liquid_values[-1], vapor_values[-1], state[6])
     exchange = transfer * area_per_length
     sources = -ca.vertcat(exchange[0], exchange[1], exchange[0], exchange[1], exchange[2], exchange[2], gradient)
     balance = ca.Function("column_balances", [state, transfer], [conserved, sources,
@@ -168,7 +169,7 @@ def build_coupled_column_functions(
     # Apparent concentration = apparent flow / actual reactive liquid volume.
     dl, dl_mea, dl_ion = diffusivity(state[4], x, state[6], mul, ca.sum1(liquid_flow) / hydraulics[0])
     dl = dl.attachAssert(dl > 0., "Bulk liquid CO2 diffusivity must be positive")
-    dv = diffusivity(state[5], y, state[6], mul, l[27], phase="vapor")
+    dv = diffusivity(state[5], y, state[6], mul, l[11], phase="vapor")
     kl = liquid_mass_transfer_expression(dl, mul, hydraulics[2], hydraulics[0] / area, packing)
     kg = ca.vertcat(*[gas_mass_transfer_expression(
         d, muv, hydraulics[3], hydraulics[1] / area, packing[1] - state[7], state[5], packing,
@@ -177,7 +178,7 @@ def build_coupled_column_functions(
     _, cp, partial_h = vapor_caloric(ca.vertcat(state[5], state[6], vapor_flow))
     cp = cp.attachAssert(cp > 0., "Native vapor Cp must be positive for heat transfer")
     heat = heat_transfer_expression(state[6], kg[0],
-        thermal_conductivity(state[5], y, species_viscosities), cp, v[4], dv[0])
+        thermal_conductivity(state[5], y, species_viscosities), cp, v[2], dv[0])
     conductances = []
     if co2_model == "reactive_film":
         species_d = ca.reshape(species_diffusivities(state[4]), 9, 1)
@@ -193,25 +194,25 @@ def build_coupled_column_functions(
         for fraction in np.linspace(0., 1., int(quadrature_points)):
             at_loading, tangent = loading_path(liquid_inputs, fraction * state[11])
             mobility = onsager_mobility_expression(at_loading[:9] / ca.sum1(at_loading[:9]),
-                at_loading[27], pairs, additional_flux_constraints=constraints)
+                at_loading[11], pairs, additional_flux_constraints=constraints)
             conductance = ca.dot(co2, mobility @ tangent)
             conductances.append(conductance.attachAssert(conductance > 0., "Native loading-path conductance must be positive"))
         integral = state[11] / (quadrature_points - 1) * (
             .5 * (conductances[0] + conductances[-1]) + sum(conductances[1:-1]))
     else:
         at_loading = liquid(ca.vertcat(liquid_inputs[:2], liquid_inputs[2] * ca.exp(state[11]), liquid_inputs[3:]))
-        bulk_concentrations = l[27] * l[:9] / ca.sum1(l[:9])
-        interface_co2_concentration = at_loading[27] * at_loading[0] / ca.sum1(at_loading[:9])
+        bulk_concentrations = l[11] * l[:9] / ca.sum1(l[:9])
+        interface_co2_concentration = at_loading[11] * at_loading[0] / ca.sum1(at_loading[:9])
         enhancement = enhancement_reference_expression(state[4], bulk_concentrations, kl, ca.vertcat(dl, dl_mea, dl_ion))
         integral = thickness * enhancement * kl * (interface_co2_concentration - bulk_concentrations[0])
     interface = interface_balance_residuals(state[8:11], liquid_conductance_integral=integral,
         film_thickness_m=thickness, vapor_fugacities_pa=v[:2],
-        interface_co2_fugacity_pa=at_loading[18], liquid_water_fugacity_pa=l[20],
+        interface_co2_fugacity_pa=at_loading[9], liquid_water_fugacity_pa=l[10],
         gas_coefficients_mol_m2_s_pa=kg, heat_coefficient_w_m2_k=heat,
         vapor_temperature_k=state[5], liquid_temperature_k=state[4], transfer_enthalpies_j_mol=partial_h[:2])
     node = ca.Function("coupled_column", [z, state], [conserved, sources, ca.vertcat(holdup, interface)])
     diagnostics = ca.Function("coupled_column_diagnostics", [state],
-        [ca.vertcat(*conductances), integral, thickness, kg, heat, cp, partial_h, at_loading[18]]
+        [ca.vertcat(*conductances), integral, thickness, kg, heat, cp, partial_h, at_loading[9]]
         + ([enhancement] if co2_model == "enhancement_reference" else []),
         ["state"], ["conductances", "integral", "thickness", "gas_coefficients", "heat_coefficient",
                     "vapor_cp", "vapor_partial_enthalpies", "interface_fugacity"]

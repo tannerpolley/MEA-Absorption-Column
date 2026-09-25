@@ -31,48 +31,66 @@ def _json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def load_reference_thermochemistry(path: str | Path, *, liquid_reference=None):
-    """Read retained liquid/vapor references; native types validate units/domain.
+_CORRELATION_FIELDS = ("a", "b", "c", "d", "reference_temperature", "temperature_min", "temperature_max",
+                      "standard_state_id")
 
-    Selection remains explicit: possessing a reference does not establish its
-    physical accuracy or compatibility with a different parameter set.
-    """
+
+def ideal_gas_record(path: str | Path, component_ids):
+    """Physical ideal-gas records in component order; absent species (ions) are reaction-completed by the Engine."""
     import epcsaft
 
     data = _json(Path(path))
-    fingerprint = data.pop("scientific_fingerprint")
-    actual = "sha256:" + hashlib.sha256(
-        json.dumps(data, sort_keys=True, separators=(",", ":")).encode()
-    ).hexdigest()
-    if fingerprint != actual or data["schema"] not in {
-        "mea-anchored-reaction-consistent-reference-thermochemistry-v2",
-        "absorber-neutral-reference-thermochemistry-v1",
-    }:
-        raise ValueError("Unsupported or modified MEA reference thermochemistry input")
-    liquid = data["schema"] == "mea-anchored-reaction-consistent-reference-thermochemistry-v2"
-    reference = epcsaft.ReferenceThermochemistry(
-        "mea-anchored-r1-r5-reaction-consistent-gauge-v2" if liquid else data["identity"], fingerprint,
-        tuple(data["component_ids"]), tuple(
-            epcsaft.ComponentReferenceThermochemistry(
-                row["component_id"], "mea-anchored-reaction-consistent-reference-v2" if liquid else row["reference_state_id"],
-                data["reference_temperature_k"], row["reference_enthalpy_j_per_mol"],
-                epcsaft.IdealHeatCapacityPolynomial(
-                    row["component_id"] + "-anchored-cp", tuple(row["cp_coefficients_j_per_mol_k"]),
-                    tuple(data["temperature_domain_k"]),
-                ),
-            ) for row in data["components"]
-        ),
-    )
-    if not liquid:
-        if liquid_reference is None:
-            raise ValueError("Vapor reference requires its paired liquid reference")
-        if data["inherited_liquid_reference_fingerprint"] != liquid_reference.scientific_fingerprint:
-            raise ValueError("Vapor reference does not match the paired liquid fingerprint")
-        shared = {row.component_id: row for row in liquid_reference.components}
-        if any(row.component_id in shared and row != shared[row.component_id]
-               for row in reference.components):
-            raise ValueError("Shared vapor/liquid component reference thermochemistry differs")
-    return reference
+    pressure, intervals = data["standard_pressure_pa"], []
+    for name in component_ids:
+        row = data["components"].get(name)
+        if row is None:
+            intervals.append([])
+            continue
+        if row["form"] == "shomate":
+            form = epcsaft.IdealShomate(row["coefficients"], row["formation_enthalpy_j_per_mol"])
+        else:  # Cp = sum a_j T^j re-centred at T0, where h = s = 0 (moiety convention)
+            t0, a = row["reference_temperature_k"], row["coefficients"]
+            form = epcsaft.IdealPolynomial([math.fsum(c * math.comb(j, k) * t0 ** (j - k) for j, c in enumerate(a) if j >= k)
+                                            for k in range(len(a))], t0, 0., 0.)
+        intervals.append([epcsaft.IdealInterval(*row["interval_k"], True, True,
+                                                epcsaft.IdealCorrelation(form, pressure))])
+    return epcsaft.ThermochemistryRecord(pressure, intervals)
+
+
+def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="reactive_liquid", *, loading_policy=None):
+    """Nine-species reactive liquid: MEA record, its Engine reactions and neutral reference, apparent CO2/MEA/water feed."""
+    from epcsaft import equilibrium as q
+
+    from .casadi_reactive import EnginePhase
+
+    dataset = Path(dataset)
+    record, mapping = _json(dataset / "engine-reactions.json"), _json(dataset / "parameters.json")
+    if hashlib.sha256((dataset / "parameters.json").read_bytes()).hexdigest() != record["parameter_sha256"]:
+        raise ValueError("Engine reaction records do not belong to this parameter record")
+    for family in mapping["model_families"]:
+        if family.get("kind") == "electrolyte" and family.get("choice") == "born":
+            for key, value in record["born_runtime_defaults"].items():
+                family.setdefault(key, value)
+    reactions = [q.Reaction(
+        row["stoichiometry"], name=row["name"],
+        correlation=q.ReactionLogPolynomial(*(row["correlation"][key] for key in _CORRELATION_FIELDS)),
+        reference=q.ReactionReference(getattr(q.ReferenceSourceBasis, row["reference"]["source_basis"]),
+                                      reference_pressure_pa=row["reference"]["reference_pressure_pa"]),
+    ) for row in record["reactions"]]
+    ids = [c["component_id"] for c in mapping["components"]]
+    # Formula masses (checked against the declared ones) conserve mass exactly through the reactions.
+    return EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="liquid", feed_ids=ids[:3],
+                       molar_masses=_molar_masses(dataset, ids), reactions=reactions, neutral_reference=q.NeutralReference(**record["neutral_reference"]),
+                       loading_policy=loading_policy)
+
+
+def engine_vapor(parameters_path: str | Path, thermochemistry_path: str | Path, name="neutral_vapor"):
+    """Nonreacting vapor at its species feed; the same ideal-gas records as the liquid."""
+    from .casadi_reactive import EnginePhase
+
+    mapping = _json(Path(parameters_path))
+    ids = [c["component_id"] for c in mapping["components"]]
+    return EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="vapor")
 
 
 class ReactiveLiquid:
@@ -166,38 +184,6 @@ class ReactiveLiquid:
                 self._accepted = deepcopy(result)
             self._states[key] = deepcopy(result)
             # ponytail: bounded per-column cache; eviction recomputes, never approximates.
-            if len(self._states) > 2048:
-                self._states.popitem(last=False)
-        return result
-
-    def solve_actions(self, temperature_k, pressure_pa, apparent_amounts, actions, output_ids):
-        """Evaluate selected native A2/caloric actions on one certified state."""
-        inputs = tuple(float(v) for v in (temperature_k, pressure_pa, *apparent_amounts))
-        actions, output_ids = tuple(actions), tuple(output_ids)
-        identity = (self.model.parameter_fingerprint,
-                    json.dumps(self._reactions, sort_keys=True), self.molar_masses,
-                    None if self.thermochemistry is None else self.thermochemistry.scientific_fingerprint)
-        key = ("actions", identity, inputs, actions, output_ids, self.loading_anchor,
-               self.water_per_mea_anchor, self.max_log_loading_step, self.max_loading_steps)
-        self.stats['queries'] += 1
-        if self.reuse_states and key in self._states:
-            self.stats['cache_hits'] += 1
-            self._states.move_to_end(key)
-            return deepcopy(self._states[key])
-        result, _ = _solve_homogeneous_reactive_result(
-            self.dataset, *inputs[:2], inputs[2:],
-            model=self.model, reactions=self._reactions, molar_masses=self.molar_masses,
-            state_input_derivatives=True, state_input_actions=actions,
-            output_ids=output_ids, thermochemistry=self.thermochemistry,
-            loading_anchor=self.loading_anchor, water_per_mea_anchor=self.water_per_mea_anchor,
-            max_log_loading_step=self.max_log_loading_step,
-            max_loading_steps=self.max_loading_steps, _diagnostics=self.stats,
-        )
-        if (self.reuse_states and len(result.state_input_actions) == len(actions)
-                and all(action.failure is None and action.caloric_failure is None
-                        and all(value is not None for value in action.values)
-                        for action in result.state_input_actions)):
-            self._states[key] = deepcopy(result)
             if len(self._states) > 2048:
                 self._states.popitem(last=False)
         return result
@@ -834,9 +820,7 @@ MODEL = "epcsaft_reactive_nine"
 def reactive_liquid():
     """Cache immutable model inputs only; every solve starts a fresh loading path."""
     return ReactiveLiquid(
-        DATASET,
-        thermochemistry=load_reference_thermochemistry(DATASET / "anchored-reference-thermochemistry.json"),
-        loading_anchor=.25, max_log_loading_step=.1, max_loading_steps=32,
+        DATASET, loading_anchor=.25, max_log_loading_step=.1, max_loading_steps=32,
     )
 
 
