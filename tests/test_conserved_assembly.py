@@ -176,7 +176,9 @@ def _exchanger(lam, nodes, scheme="upwind"):
 def test_upwind_cells_damp_both_stiff_directions_without_alternation(lam):
     # Measured interface-mode rates |lambda| = 10-15 1/m (#148); coarsest ladder spacing 1.5 m.
     _, _, mode, _, _ = _exchanger(lam, 5)
-    assert np.all(mode[1:] / mode[:-1] > 0), mode
+    ratios = mode[1:] / mode[:-1]
+    # Positive, and decaying along the mode's own decay direction (fails if the phases' upwind sides are swapped).
+    assert np.all(ratios > 0) and np.all((ratios < 1) == (lam < 0)), ratios
     _, _, trapezoidal_mode, _, _ = _exchanger(lam, 5, "trapezoidal")
     assert np.any(trapezoidal_mode[1:] / trapezoidal_mode[:-1] < 0)  # the failure this scheme removes
 
