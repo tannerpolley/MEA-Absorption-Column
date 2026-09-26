@@ -208,7 +208,8 @@ Diagnosis (`run_case.py diagnose`; `results/k1_k2_148/diagnosis_trapezoidal_n2.j
 estimates agree to 10 %, the two-sided change exceeds 1e-8 of the value and the entry
 exceeds 1e-9 of its column's largest entry) agrees with Richardson-extrapolated centred
 differences to 4.6e-8 or better at all nodes of the accepted two-node solution and of
-the stalled three-node iterate; N6 covers every row along the retained direction.
+the stalled three-node iterate; the node check N6 (`analyses/greenfield_node_qualification/`)
+covers every row along the retained direction.
 No derivative defect appears at the stall. The three-node collocation Jacobian there
 is nearly singular (condition 4.9e9; smallest singular value 2.3e-7 against 1.2e-2
 for the next), with the null vector in the interior vapor water flow and the
@@ -219,7 +220,7 @@ between multipliers 0.28 and 0.31. The five-node iterates alternate node to node
 (liquid temperature 310, 353, 332, 357, 318 K). On the manifold of the interface
 equations, the stiffest mode of dB/dz = R has eigenvalue −10.4 m⁻¹ (gas inlet) and
 −12.6 m⁻¹ (top) on the accepted two-node states and +14.6 m⁻¹ at the hot interior node
-of the stalled iterate: an interface relaxation length of 7–10 cm (eigenvectors were
+of the stalled iterate: a length scale 1/|λ| of 7–10 cm (eigenvectors were
 not retained, so the mode is not attributed to one phase). For the decaying modes the
 trapezoidal amplification (1 + λh/2)/(1 − λh/2) is −0.88 to −0.90 at h = 3 m and −0.77
 to −0.81 at h = 1.5 m, a sign-alternating, weakly damped mode; a non-oscillating
