@@ -43,11 +43,12 @@ def save(path, record):
     temporary.replace(path)
 
 
-def request(method, nodes, points, *, output=None, wall=1200.0, profile=None):
+def request(method, nodes, points, *, output=None, wall=1200.0, profile=None, clustering=None):
     values = {"retained_profile": str(profile)} if profile else {}
+    extra = {"end_clustering": clustering} if clustering else {}
     return {"preset": "twelve_state_conserved", "case": {"physical_input_file": CASE},
             "numerics": {"method": method, "solver_settings": {"nodes": nodes, "quadrature_points": points,
-                                                               "max_iterations": 20, "tolerance": 1e-7}},
+                                                               "max_iterations": 20, "tolerance": 1e-7, **extra}},
             "initialization": {"policy": "case_declared_native_inputs", "values": values},
             "execution": {"wall_limit_s": wall, **({"output_dir": str(output)} if output else {})}}
 
@@ -58,6 +59,7 @@ def outcome(attempt):
     profile = (attempt.get("native_profile") or {}).get("state_matrix")
     return {"attempt_id": attempt["attempt_id"], "method": attempt["config"]["numerics"]["method"],
             "nodes": attempt["config"]["numerics"]["solver_settings"]["nodes"],
+            "end_clustering": attempt["config"]["numerics"]["solver_settings"].get("end_clustering"),
             "quadrature_points": attempt["config"]["numerics"]["solver_settings"]["quadrature_points"],
             "execution": attempt["execution"]["status"], "runtime_s": attempt["execution"].get("runtime_s"),
             "iterations": result.get("iterations"),
@@ -237,13 +239,16 @@ def linear_scheme(path, node_counts):
 
 
 def summarize(paths, control):
-    rows = sorted((outcome(json.loads(Path(p).read_text())) for p in paths), key=lambda r: (r["method"], r["nodes"]))
+    rows = sorted((outcome(json.loads(Path(p).read_text())) for p in paths),
+                  key=lambda r: (r["method"], r["end_clustering"] or 0, r["nodes"]))
     k2 = []
-    for scheme in ("trapezoidal", "central", "upwind"):
-        accepted = [r for r in rows if r["method"] == scheme and r["k1_accepted"] and r["numerical_acceptance"] == "accepted"]
+    for ladder in sorted({(r["method"], r["end_clustering"]) for r in rows}, key=lambda v: (v[0], v[1] or 0)):
+        accepted = [r for r in rows if (r["method"], r["end_clustering"]) == ladder
+                    and r["k1_accepted"] and r["numerical_acceptance"] == "accepted"]
         for coarse, fine in zip(accepted, accepted[1:]):
             change = abs(fine["capture_pct"] - coarse["capture_pct"])
-            k2.append({"scheme": scheme, "nodes": [coarse["nodes"], fine["nodes"]], "capture_change_pp": change,
+            k2.append({"scheme": ladder[0], "end_clustering": ladder[1], "nodes": [coarse["nodes"], fine["nodes"]],
+                       "capture_change_pp": change,
                        "criterion_pp": CAPTURE_CHANGE, "accepted": change <= CAPTURE_CHANGE})
     return {"attempts": rows, "k2_capture_refinement": k2,
             "k2_film_quadrature": json.loads(Path(control).read_text()) if control else None}
@@ -256,6 +261,7 @@ def main():
     attempt.add_argument("--method", choices=("trapezoidal", "central", "upwind"), required=True)
     attempt.add_argument("--nodes", type=int, required=True)
     attempt.add_argument("--film-points", type=int, default=9)
+    attempt.add_argument("--end-clustering", type=float, help="0 < c <= 1 blend toward cosine nodes")
     attempt.add_argument("--initial-profile", type=Path, help="Accepted attempt.json interpolated as the initial guess")
     attempt.add_argument("--wall-limit", type=float, default=1200.0)
     attempt.add_argument("--output", type=Path, required=True)
@@ -279,7 +285,8 @@ def main():
         from mea_absorption_column.column import run_column
 
         record = run_column(request(args.method, args.nodes, args.film_points, output=args.output.resolve(),
-                                    wall=args.wall_limit, profile=args.initial_profile and args.initial_profile.resolve()))
+                                    wall=args.wall_limit, profile=args.initial_profile and args.initial_profile.resolve(),
+                                    clustering=args.end_clustering))
         print(json.dumps(clean(outcome(record)), indent=1))
     elif args.command == "film-control":
         result = film_control(args.attempt, args.film_points)

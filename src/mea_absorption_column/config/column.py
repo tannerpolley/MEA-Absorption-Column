@@ -486,7 +486,7 @@ def _conserved_numeric(request: Mapping[str, Any]) -> NumericConfig:
         if "nodes" in settings:
             raise ConfigurationError("nodes must be supplied either directly or in solver_settings")
         settings["nodes"] = direct_nodes
-    override_keys = {"reactive_loading_anchor", "reactive_max_log_loading_step", "reactive_max_loading_steps"}
+    override_keys = {"reactive_loading_anchor", "reactive_max_log_loading_step", "reactive_max_loading_steps", "end_clustering"}
     unknown = set(settings) - set(defaults) - override_keys - homotopy
     if unknown:
         raise ConfigurationError(f"Unknown or irrelevant conserved solver settings: {sorted(unknown)}")
@@ -501,6 +501,8 @@ def _conserved_numeric(request: Mapping[str, Any]) -> NumericConfig:
             raise ConfigurationError(f"numerics.solver_settings.{key} must be finite and positive")
     if resolved["quadrature_points"] < 2:
         raise ConfigurationError("numerics.solver_settings.quadrature_points must be >= 2")
+    if resolved.get("end_clustering", 1) > 1:
+        raise ConfigurationError("numerics.solver_settings.end_clustering must lie in (0, 1]")
     if method == "central" and resolved["nodes"] < 3:
         raise ConfigurationError("central conserved differences require at least three nodes")
     if configured_homotopy and not (0 < resolved["source_homotopy_min_step"] <= resolved["source_homotopy_initial_step"] <= 1):
