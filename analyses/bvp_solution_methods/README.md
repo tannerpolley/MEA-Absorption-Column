@@ -286,15 +286,16 @@ Each ladder was recorded in Engine #176 before its runs. Every attempt was cappe
 - **Cosine ladder: K2 passed.** The ladder uses end-clustered Chebyshev–Gauss–Lobatto
   nodes (`end_clustering` = 1, nested; spacing 0.058/0.014/0.0036 m at the ends and
   0.59/0.29/0.15 m at mid-height). The changes are −0.407 and −0.168 pp, both within
-  the 0.5 pp criterion. Their ratio of 2.4 gives an observed order of 1.28. The
+  the 0.5 pp criterion. Their ratio of 2.4 gives an observed order of 1.28 per node
+  doubling. Assuming the asymptotic range, which three levels cannot check, the
   Richardson limit is 88.72 % at that order, or 88.67 % at order 1, so the 65-node
   capture lies about 0.12–0.17 pp above it.
 - **Film control:** the 9 → 17-point film integral at the 65-node solution changes by
   at most 2.5e-4 relative (criterion 1e-3).
 - **Node checks:** rerun unchanged, in 53 s of the 600 s budget.
 
-No attempt alternates node to node. Every profile has one physical interior bulge:
-temperature and water peak once, with liquid temperature at 347.6 K and z = 5.32 m on
+No attempt alternates node to node. Every temperature and water profile has one
+interior bulge, with liquid temperature at 347.6 K and z = 5.32 m on
 the cosine 65-node grid. The charge certificate and the film control are evaluated at
 the node states; the cell states are retained in `cell_profile`. K2 establishes mesh convergence of capture
 for this formulation and these inputs only; it is not a physical comparison.
