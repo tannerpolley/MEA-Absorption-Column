@@ -9,6 +9,7 @@ def solve_conservative_collocation(
     node, boundary, grid, initial, lower, upper, *, state_scale,
     balance_scale, algebraic_scale, boundary_scale, tolerance=1e-8,
     max_iterations=200, iteration_callback=None, scheme="trapezoidal", boundary_slots=None, source_multiplier=None,
+    cell_sources=None,
 ):
     """Solve dB(z,u)/dz=R(z,u), a(z,u)=0 with countercurrent boundaries.
 
@@ -30,6 +31,18 @@ def solve_conservative_collocation(
     (balance row, endpoint 0 or -1) differential equations replaced by the m
     inlet conditions. All raw endpoint differential residuals remain reported.
     The default trapezoidal discretization is unchanged.
+
+    ``upwind`` is the countercurrent mixing-cell scheme: each interval is one
+    cell whose source R and algebraic equations are evaluated at one outlet
+    state, B(u_k+1)-B(u_k)=h*R(u_cell). ``cell_sources`` gives, per state,
+    "lower" (downflowing phase leaves at node k), "upper" (upflowing phase
+    leaves at node k+1) or "cell" (one of q new per-cell unknowns). Each phase
+    is implicit Euler along its own flow. For linear exchange K(y-mx) the
+    node-to-node mode ratio is (1+hKm/L)/(1+hK/G) > 0 for every h, tending
+    to the equilibrium-stage (Kremser) ratio mG/L as hK grows: stiff modes of
+    either sign never alternate. One shared cell source keeps every linear
+    invariant exact on the grid. Nodes keep their own algebraic equations.
+    First order in h.
     """
     grid = np.asarray(grid, dtype=float)
     initial = np.asarray(initial, dtype=float)
@@ -59,7 +72,7 @@ def solve_conservative_collocation(
         raise ValueError("Initial profile and original physical bounds are inconsistent")
     if not np.isfinite(tolerance) or tolerance <= 0 or int(max_iterations) != max_iterations or max_iterations < 1:
         raise ValueError("Tolerance and iteration limit must be positive")
-    if scheme not in ("trapezoidal", "central"):
+    if scheme not in ("trapezoidal", "central", "upwind"):
         raise ValueError("Unknown conservative difference scheme")
     if source_multiplier is not None:
         if (isinstance(source_multiplier, (bool, np.bool_)) or not np.isfinite(source_multiplier)
@@ -72,11 +85,29 @@ def solve_conservative_collocation(
             raise ValueError("Central differences need >=3 nodes and one endpoint replacement per balance row")
     elif boundary_slots is not None:
         raise ValueError("Boundary row replacements apply only to central differences")
+    if (cell_sources is not None) != (scheme == "upwind") or (cell_sources is not None and (
+            len(cell_sources) != n or any(v not in ("lower", "upper", "cell") for v in cell_sources)
+            or list(cell_sources).count("cell") != q)):
+        raise ValueError("Upwind cells need one lower/upper/cell source per state, with q cell unknowns")
 
     variables = ca.MX.sym("scaled_nodes", n, grid.size)
     physical = ca.repmat(ca.DM(state_scale), 1, grid.size) * variables
     evaluated = [node.call([ca.MX(float(z)), physical[:, k]], True, False) for k, z in enumerate(grid)]
-    if scheme == "trapezoidal":
+    cell_rows = [i for i, v in enumerate(cell_sources or ()) if v == "cell"]
+    cells = ca.MX.sym("scaled_cells", len(cell_rows), grid.size - 1)
+    cell_algebraic = []
+    if scheme == "upwind":
+        cell_physical = ca.repmat(ca.DM(state_scale[cell_rows]), 1, grid.size - 1) * cells
+        columns = []
+        for k, h in enumerate(np.diff(grid)):
+            state = [physical[i, k] if v == "lower" else physical[i, k + 1] if v == "upper"
+                     else cell_physical[cell_rows.index(i), k] for i, v in enumerate(cell_sources)]
+            _, source, algebraic_value = node.call([ca.MX(float(grid[k] + h / 2)), ca.vertcat(*state)], True, False)
+            columns.append(evaluated[k + 1][0] - evaluated[k][0] - h * source)
+            cell_algebraic.append(algebraic_value)
+        defects = ca.horzcat(*columns)
+        balance_constraints = ca.vec(defects / (balance_scale[:, None] * np.diff(grid)[None, :]))
+    elif scheme == "trapezoidal":
         defects = ca.horzcat(*[
             evaluated[k + 1][0] - evaluated[k][0] - .5 * h
             * ((evaluated[k + 1][1] + evaluated[k][1]) if source_multiplier is None
@@ -96,12 +127,13 @@ def solve_conservative_collocation(
         scaled_defects = ca.vec(defects / ca.repmat(ca.DM(balance_scale), 1, grid.size))
         replaced = {row+m*(0 if end == 0 else grid.size-1) for row, end in boundary_slots}
         balance_constraints = scaled_defects[[i for i in range(m*grid.size) if i not in replaced]]
-    algebraic = ca.horzcat(*[v[2] for v in evaluated])
+    algebraic = ca.horzcat(*[v[2] for v in evaluated], *cell_algebraic)
     boundary_residual = boundary(physical[:, 0], physical[:, -1])
     scaled = ca.vertcat(balance_constraints,
-                       ca.vec(algebraic / ca.repmat(ca.DM(algebraic_scale), 1, grid.size)),
+                       ca.vec(algebraic / ca.repmat(ca.DM(algebraic_scale), 1, algebraic.size2())),
                        boundary_residual / boundary_scale)
-    residuals = ca.Function("physical_residuals", [variables], [defects, algebraic, boundary_residual, scaled])
+    unknowns = ca.vertcat(ca.vec(variables), ca.vec(cells))
+    residuals = ca.Function("physical_residuals", [unknowns], [defects, algebraic, boundary_residual, scaled])
     result = {"accepted": False, "profile": None, "grid": grid.copy(), "status": None,
               "failure": None, "profile_finite": None, "defects": None, "algebraic_residual": None,
               "boundary_residual": None, "bound_violation": None,
@@ -109,14 +141,15 @@ def solve_conservative_collocation(
               "scaled_bound_violation_inf": None, "iterations": None, "solver_statistics": None,
               "scheme": scheme, "boundary_slots": boundary_slots,
               "nlp_scaling_method": "none",
-              "defect_units": "B" if scheme == "trapezoidal" else "B per metre"}
+              "cell_profile": None, "cell_sources": cell_sources,
+              "defect_units": "B per metre" if scheme == "central" else "B"}
     try:
         # Share identical native callback expressions between g and its exact
         # Jacobian; the autogenerated graph repeats their value work.
-        jacobian = ca.Function("column_constraint_jacobian", [ca.vec(variables), ca.MX.sym("p", 0)],
-                               [scaled, ca.jacobian(scaled, ca.vec(variables))], {"cse": True})
+        jacobian = ca.Function("column_constraint_jacobian", [unknowns, ca.MX.sym("p", 0)],
+                               [scaled, ca.jacobian(scaled, unknowns)], {"cse": True})
         solver = ca.nlpsol("conservative_column", "ipopt", {
-            "x": ca.vec(variables), "f": 0., "g": scaled,
+            "x": unknowns, "f": 0., "g": scaled,
         }, {"print_time": False, "record_time": True, "error_on_fail": False, "enable_fd": False,
             "jac_g": jacobian,
             **({"iteration_callback": iteration_callback} if iteration_callback is not None else {}),
@@ -126,24 +159,35 @@ def solve_conservative_collocation(
             "ipopt.nlp_scaling_method": "none",
             "ipopt.tol": tolerance, "ipopt.constr_viol_tol": tolerance,
             "ipopt.bound_relax_factor": 0., "ipopt.hessian_approximation": "limited-memory"})
-        candidate = solver(x0=ca.vec(initial / state_scale[:, None]),
-                           lbx=np.tile(lower / state_scale, grid.size),
-                           ubx=np.tile(upper / state_scale, grid.size), lbg=0., ubg=0.)
+        # Cell unknowns start from the mean of their two nodes.
+        cell_initial = (.5 * (initial[cell_rows, :-1] + initial[cell_rows, 1:]) / state_scale[cell_rows, None]).ravel(order="F")
+        candidate = solver(x0=np.r_[(initial / state_scale[:, None]).ravel(order="F"), cell_initial],
+                           lbx=np.r_[np.tile(lower / state_scale, grid.size), np.tile((lower / state_scale)[cell_rows], grid.size - 1)],
+                           ubx=np.r_[np.tile(upper / state_scale, grid.size), np.tile((upper / state_scale)[cell_rows], grid.size - 1)],
+                           lbg=0., ubg=0.)
         stats = solver.stats()
         result.update(status=stats["return_status"], iterations=stats.get("iter_count"), solver_statistics=stats)
-        coordinates = np.asarray(candidate["x"]).reshape((n, grid.size), order="F")
+        solution = np.asarray(candidate["x"]).ravel()
+        coordinates = solution[:n * grid.size].reshape((n, grid.size), order="F")
         profile = coordinates * state_scale[:, None]
         result["profile"] = profile
+        if cell_rows:
+            result["cell_profile"] = solution[n * grid.size:].reshape((len(cell_rows), -1), order="F") * state_scale[cell_rows, None]
         result["profile_finite"] = bool(np.all(np.isfinite(profile)))
         violation = np.maximum(np.maximum(lower[:, None] - profile, profile - upper[:, None]), 0.)
+        if cell_rows:
+            cell_violation = np.maximum(np.maximum(lower[cell_rows, None] - result["cell_profile"],
+                                                   result["cell_profile"] - upper[cell_rows, None]), 0.)
+            violation = np.c_[violation, np.zeros((n, grid.size - 1))]
+            violation[cell_rows, grid.size:] = cell_violation
         result.update(bound_violation=violation,
                       scaled_bound_violation_inf=float(np.max(violation / state_scale[:, None])))
         if not result["profile_finite"]:
             result["failure"] = "Solver returned a non-finite candidate"
             return result
-        defect, alg, bc, scaled_value = (np.asarray(v) for v in residuals(coordinates))
+        defect, alg, bc, scaled_value = (np.asarray(v) for v in residuals(solution))
         result.update(defects=defect, algebraic_residual=alg, boundary_residual=bc,
-                      balance_residual_per_length=defect / np.diff(grid)[None, :] if scheme == "trapezoidal" else defect,
+                      balance_residual_per_length=defect if scheme == "central" else defect / np.diff(grid)[None, :],
                       scaled_residual_inf=float(np.max(np.abs(scaled_value))))
         finite = all(np.all(np.isfinite(v)) for v in (profile, defect, alg, bc, scaled_value, violation))
         result["accepted"] = bool(stats["success"] and finite

@@ -503,10 +503,21 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         "state_count": int(node.size1_in(1)),
         "boundary_count": int(boundary.size1_out(0)),
         "height_m": float(height),
-        "coordinate": np.linspace(0.0, float(height), settings["nodes"]),
+        "coordinate": _column_grid(float(height), settings["nodes"], settings.get("end_clustering")),
         "diffusion_model": diffusion,
         "asset_paths": [str(dataset), str(liquid_reference_path), str(neutral_parameters), str(neutral_reference_path)],
     }
+
+
+def _column_grid(height, nodes, clustering=None):
+    """Uniform nodes, or blended toward cosine (Chebyshev-Gauss-Lobatto) nodes that resolve the
+    inlet layers (gas at the bottom, liquid at the top); halving the parameter step nests grids."""
+    xi = np.linspace(0.0, 1.0, nodes)
+    if clustering is None:
+        return height * xi
+    grid = height * ((1 - clustering) * xi + clustering * (1 - np.cos(np.pi * xi)) / 2)
+    grid[0], grid[-1] = 0.0, height
+    return grid
 
 
 def _prepare_conserved_column_in_process(config: ColumnConfig) -> dict[str, Any]:
@@ -707,8 +718,8 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         and source_config.get("model") == current_config["model"]
         and source_config.get("dependencies") == current_config["dependencies"]
         and source.get("config_sha256") == source_config.get("resolved_config_sha256")
-        and {k: v for k, v in source_settings.items() if k != "nodes"}
-        == {k: v for k, v in current_settings.items() if k != "nodes"}
+        and {k: v for k, v in source_settings.items() if k not in ("nodes", "end_clustering")}
+        == {k: v for k, v in current_settings.items() if k not in ("nodes", "end_clustering")}
         and source_inputs.get("case_id") == current_inputs.get("case_id")
         and source_inputs.get("physical_input_sha256") == current_inputs.get("physical_input_sha256")
         and source_inputs.get("parameters") == current_inputs.get("parameters")
@@ -753,7 +764,7 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
 
 def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[str, Any]:
     """Run the case-owned twelve-state collocation path in the verified worker."""
-    if config.numerics.method not in {"trapezoidal", "central"}:
+    if config.numerics.method not in {"trapezoidal", "central", "upwind"}:
         raise CapabilityRefusal(
             f"Conserved method {config.numerics.method!r} is configured but unavailable: "
             "the reduced-method controls have not been migrated to this execution boundary"
@@ -884,6 +895,9 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
             max_iterations=settings["max_iterations"], scheme=config.numerics.method,
             boundary_slots=[(0, -1), (1, -1), (2, 0), (3, 0), (4, -1), (5, 0), (6, 0)] if config.numerics.method == "central" else None,
             source_multiplier=multiplier,
+            # Liquid flows down (leaves a cell at its lower node), gas and its pressure up.
+            cell_sources=("lower", "lower", "upper", "upper", "lower", "upper", "upper", *["cell"] * 5)
+            if config.numerics.method == "upwind" else None,
         )
     if homotopy_step is None:
         result = solve(initial)

@@ -43,11 +43,12 @@ def save(path, record):
     temporary.replace(path)
 
 
-def request(method, nodes, points, *, output=None, wall=1200.0, profile=None):
+def request(method, nodes, points, *, output=None, wall=1200.0, profile=None, clustering=None):
     values = {"retained_profile": str(profile)} if profile else {}
+    extra = {"end_clustering": clustering} if clustering else {}
     return {"preset": "twelve_state_conserved", "case": {"physical_input_file": CASE},
             "numerics": {"method": method, "solver_settings": {"nodes": nodes, "quadrature_points": points,
-                                                               "max_iterations": 20, "tolerance": 1e-7}},
+                                                               "max_iterations": 20, "tolerance": 1e-7, **extra}},
             "initialization": {"policy": "case_declared_native_inputs", "values": values},
             "execution": {"wall_limit_s": wall, **({"output_dir": str(output)} if output else {})}}
 
@@ -58,6 +59,7 @@ def outcome(attempt):
     profile = (attempt.get("native_profile") or {}).get("state_matrix")
     return {"attempt_id": attempt["attempt_id"], "method": attempt["config"]["numerics"]["method"],
             "nodes": attempt["config"]["numerics"]["solver_settings"]["nodes"],
+            "end_clustering": attempt["config"]["numerics"]["solver_settings"].get("end_clustering"),
             "quadrature_points": attempt["config"]["numerics"]["solver_settings"]["quadrature_points"],
             "execution": attempt["execution"]["status"], "runtime_s": attempt["execution"].get("runtime_s"),
             "iterations": result.get("iterations"),
@@ -144,14 +146,109 @@ def diagnose(path):
     return report
 
 
+LIQUID, GAS = (0, 1, 4), (2, 3, 5, 6)  # bulk rows leaving a cell at its lower / upper node
+
+
+def linear_scheme(path, node_counts):
+    """Frozen-coefficient column linearization at each node of an accepted attempt (#176 design).
+
+    Per-cell transfer-matrix eigenvalues of the upwind cells and trapezoidal rule against exp(A h);
+    capture of the affine frozen BVP (native inlets) on each ladder against its exact solution."""
+    import casadi as ca
+    import scipy.linalg
+    from mea_absorption_column.column import _prepare_conserved_column_in_process
+    from mea_absorption_column.config.column import resolve_column_config
+
+    attempt = json.loads(Path(path).read_text())
+    settings = attempt["config"]["numerics"]["solver_settings"]
+    node = _prepare_conserved_column_in_process(resolve_column_config(
+        request("trapezoidal", settings["nodes"], settings["quadrature_points"])))["assembly"]["node"]
+    grid, profile = np.asarray(attempt["result"]["grid"]), np.asarray(attempt["result"]["profile"])
+    height, (bottom, top) = grid[-1], (profile[:, 0], profile[:, -1])
+    x, z = ca.MX.sym("x", 12), ca.MX.sym("z")
+    parts = ca.Function("parts", [z, x], [*node.call([z, x]), *(ca.jacobian(v, x) for v in node.call([z, x]))])
+    cell = np.zeros((12, 24))  # u_cell = cell @ [u_k; u_k+1] + (algebraic rows free)
+    for i in LIQUID:
+        cell[i, i] = 1
+    for i in GAS:
+        cell[i, 12 + i] = 1
+    report = {"source_attempt_id": attempt["attempt_id"], "nodes": []}
+    for k, u0 in enumerate(profile.T):
+        _, r0, a0, bu, ru, au = (np.asarray(v) for v in parts(grid[k], u0))
+        r0, a0 = r0.ravel(), a0.ravel()
+        manifold = scipy.linalg.null_space(au)
+        particular = u0 - np.linalg.pinv(au) @ a0
+        rate = np.linalg.solve(bu @ manifold, ru @ manifold)
+        forcing = np.linalg.solve(bu @ manifold, r0 + ru @ (particular - u0))
+
+        def transfer(h, scheme):
+            """xi_k+1 = T xi_k + c on the node manifold; cell algebraics eliminated."""
+            if scheme == "trapezoidal":
+                left = bu @ manifold - h / 2 * ru @ manifold
+                return np.linalg.solve(left, bu @ manifold + h / 2 * ru @ manifold)
+            free = np.zeros((12, 5)); free[7:, :] = np.eye(5)
+            # unknowns [xi_k+1, cell algebraics]; balances and cell algebraic equations
+            upper, lower = cell[:, 12:] @ manifold, cell[:, :12] @ manifold
+            left = np.block([[bu @ manifold - h * ru @ upper, -h * ru @ free], [au @ upper, au @ free]])
+            right = np.vstack([bu @ manifold + h * ru @ lower, -au @ lower])
+            return np.linalg.solve(left, right)[:7]
+
+        def capture(count, scheme):
+            if scheme == "exact":
+                flow = scipy.linalg.expm(np.block([[rate, forcing[:, None]], [np.zeros((1, 8))]]) * height)
+                rows = np.vstack([manifold[GAS, :], (manifold @ flow[:7, :7])[LIQUID, :]])
+                rhs = np.r_[bottom[list(GAS)] - particular[list(GAS)],
+                            top[list(LIQUID)] - particular[list(LIQUID)] - (manifold @ flow[:7, 7])[list(LIQUID)]]
+                xi0 = np.linalg.solve(rows, rhs)
+                ends = particular + manifold @ xi0, particular + manifold @ (flow[:7, :7] @ xi0 + flow[:7, 7])
+            else:  # the same affine cells as a dense global linear system over node manifold coordinates
+                h, n = height / (count - 1), count
+                size = 7 * n + 5 * (n - 1)
+                matrix, rhs = np.zeros((size, size)), np.zeros(size)
+                free = np.zeros((12, 5)); free[7:, :] = np.eye(5)
+                for j in range(n - 1):
+                    rows, lo, up, cc = slice(12 * j, 12 * j + 7), slice(7 * j, 7 * j + 7), slice(7 * j + 7, 7 * j + 14), slice(7 * n + 5 * j, 7 * n + 5 * j + 5)
+                    base = cell[:, :12] @ particular + cell[:, 12:] @ particular + free @ particular[7:]
+                    matrix[rows, lo] = -bu @ manifold - h * ru @ cell[:, :12] @ manifold
+                    matrix[rows, up] = bu @ manifold - h * ru @ cell[:, 12:] @ manifold
+                    matrix[rows, cc] = -h * ru @ free
+                    rhs[rows] = h * (r0 + ru @ (base - u0))
+                    arow = slice(12 * j + 7, 12 * j + 12)
+                    matrix[arow, lo], matrix[arow, up], matrix[arow, cc] = au @ cell[:, :12] @ manifold, au @ cell[:, 12:] @ manifold, au @ free
+                    rhs[arow] = -a0 - au @ (base - u0)
+                last = 12 * (n - 1)
+                matrix[last:last + 4, :7] = manifold[GAS, :]
+                rhs[last:last + 4] = bottom[list(GAS)] - particular[list(GAS)]
+                matrix[last + 4:last + 7, 7 * (n - 1):7 * n] = manifold[LIQUID, :]
+                rhs[last + 4:last + 7] = top[list(LIQUID)] - particular[list(LIQUID)]
+                xi = np.linalg.solve(matrix, rhs)
+                ends = particular + manifold @ xi[:7], particular + manifold @ xi[7 * (n - 1):7 * n]
+            return 100 * (1 - ends[1][2] / ends[0][2])
+
+        exact = capture(None, "exact")
+        spectrum = lambda m: [[v.real, v.imag] for v in sorted(np.linalg.eigvals(m), key=abs, reverse=True)]
+        report["nodes"].append({
+            "z_m": float(grid[k]), "eigenvalues_per_m": sorted(np.linalg.eigvals(rate).real.tolist(), key=abs, reverse=True),
+            "transfer_eigenvalues_re_im": {scheme: {str(h): spectrum(transfer(h, scheme))
+                                              for h in height / (np.asarray(node_counts) - 1)}
+                                     for scheme in ("upwind", "trapezoidal")},
+            "exp_lambda_h_re_im": {str(h): spectrum(scipy.linalg.expm(rate * h))
+                             for h in height / (np.asarray(node_counts) - 1)},
+            "frozen_capture_pct": {"exact": exact, **{str(n): capture(n, "upwind") for n in node_counts}}})
+    return report
+
+
 def summarize(paths, control):
-    rows = sorted((outcome(json.loads(Path(p).read_text())) for p in paths), key=lambda r: (r["method"], r["nodes"]))
+    rows = sorted((outcome(json.loads(Path(p).read_text())) for p in paths),
+                  key=lambda r: (r["method"], r["end_clustering"] or 0, r["nodes"]))
     k2 = []
-    for scheme in ("trapezoidal", "central"):
-        accepted = [r for r in rows if r["method"] == scheme and r["k1_accepted"] and r["numerical_acceptance"] == "accepted"]
+    for ladder in sorted({(r["method"], r["end_clustering"]) for r in rows}, key=lambda v: (v[0], v[1] or 0)):
+        accepted = [r for r in rows if (r["method"], r["end_clustering"]) == ladder
+                    and r["k1_accepted"] and r["numerical_acceptance"] == "accepted"]
         for coarse, fine in zip(accepted, accepted[1:]):
             change = abs(fine["capture_pct"] - coarse["capture_pct"])
-            k2.append({"scheme": scheme, "nodes": [coarse["nodes"], fine["nodes"]], "capture_change_pp": change,
+            k2.append({"scheme": ladder[0], "end_clustering": ladder[1], "nodes": [coarse["nodes"], fine["nodes"]],
+                       "capture_change_pp": change,
                        "criterion_pp": CAPTURE_CHANGE, "accepted": change <= CAPTURE_CHANGE})
     return {"attempts": rows, "k2_capture_refinement": k2,
             "k2_film_quadrature": json.loads(Path(control).read_text()) if control else None}
@@ -161,9 +258,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     commands = parser.add_subparsers(dest="command", required=True)
     attempt = commands.add_parser("attempt")
-    attempt.add_argument("--method", choices=("trapezoidal", "central"), required=True)
+    attempt.add_argument("--method", choices=("trapezoidal", "central", "upwind"), required=True)
     attempt.add_argument("--nodes", type=int, required=True)
     attempt.add_argument("--film-points", type=int, default=9)
+    attempt.add_argument("--end-clustering", type=float, help="0 < c <= 1 blend toward cosine nodes")
     attempt.add_argument("--initial-profile", type=Path, help="Accepted attempt.json interpolated as the initial guess")
     attempt.add_argument("--wall-limit", type=float, default=1200.0)
     attempt.add_argument("--output", type=Path, required=True)
@@ -174,6 +272,10 @@ def main():
     diagnosis = commands.add_parser("diagnose")
     diagnosis.add_argument("attempt", type=Path)
     diagnosis.add_argument("--output", type=Path, required=True)
+    linear = commands.add_parser("linear-scheme")
+    linear.add_argument("attempt", type=Path)
+    linear.add_argument("--nodes", type=int, nargs="+", default=[3, 5, 9, 17, 33, 65])
+    linear.add_argument("--output", type=Path, required=True)
     summary = commands.add_parser("summarize")
     summary.add_argument("attempts", type=Path, nargs="+")
     summary.add_argument("--film-control", type=Path)
@@ -183,14 +285,15 @@ def main():
         from mea_absorption_column.column import run_column
 
         record = run_column(request(args.method, args.nodes, args.film_points, output=args.output.resolve(),
-                                    wall=args.wall_limit, profile=args.initial_profile and args.initial_profile.resolve()))
+                                    wall=args.wall_limit, profile=args.initial_profile and args.initial_profile.resolve(),
+                                    clustering=args.end_clustering))
         print(json.dumps(clean(outcome(record)), indent=1))
     elif args.command == "film-control":
         result = film_control(args.attempt, args.film_points)
         save(args.output, result)
         print(json.dumps(clean(result), indent=1))
-    elif args.command == "diagnose":
-        result = diagnose(args.attempt)
+    elif args.command in ("diagnose", "linear-scheme"):
+        result = diagnose(args.attempt) if args.command == "diagnose" else linear_scheme(args.attempt, args.nodes)
         save(args.output, result)
         print(json.dumps(clean(result), indent=1))
     else:

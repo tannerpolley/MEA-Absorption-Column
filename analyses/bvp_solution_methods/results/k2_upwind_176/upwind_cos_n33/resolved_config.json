@@ -1,0 +1,69 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "conserved_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "corrected published 2017 3C",
+    "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/input/case_3c.json",
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/input/case_3c.json",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory",
+    "mobility_law": "harmonic_mean_onsager_v1",
+    "references": [
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+    ],
+    "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+  },
+  "engine": {
+    "commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/.venv/bin/python3",
+    "required": true,
+    "sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/results/k2_upwind_176/upwind_cos_n33",
+    "process_isolation": false,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 7200.0
+  },
+  "initialization": {
+    "policy": "case_declared_native_inputs",
+    "values": {
+      "retained_profile": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/results/k2_upwind_176/upwind_cos_n17/attempt.json"
+    }
+  },
+  "model": {
+    "coordinate": "physical_height",
+    "energy_model": "native_total_enthalpy",
+    "film_model": "equilibrium_manifold",
+    "formulation": "twelve_state_conserved",
+    "layout": "twelve_conserved",
+    "pressure_model": "hydraulic_pressure_drop",
+    "thermo_model": "reactive_epcsaft"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "end_clustering": 1.0,
+      "max_iterations": 20,
+      "nodes": 33,
+      "quadrature_points": 9,
+      "tolerance": 1e-07
+    }
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_config_sha256": "3cedb7d0430e44709e462ca2ff455a0277f7ce81e75674ff2a83cdad35f53d83",
+  "schema_version": 1
+}

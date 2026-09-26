@@ -142,3 +142,54 @@ def test_shared_hydraulic_and_pressure_expressions_match_numeric_and_symbolic():
         pressure_drop_expression(point[3], point[0], point[4], point[5], point[6], area, point[2], point[7], packing),
     ])
     np.testing.assert_allclose(symbolic, numeric, rtol=1e-12, atol=1e-12)
+
+
+def _exchanger(lam, nodes, scheme="upwind"):
+    """Linear countercurrent exchanger L dx/dz = G dy/dz = -K(y - m x) on 0 <= z <= 6 m, liquid x
+    entering at the top, gas y at the bottom. Its one nontrivial mode d = y - m x has rate
+    lambda = -K(1/G - m/L). Returns the discrete x, y, d and the exact nodal x, y."""
+    from mea_absorption_column.BVP.Methods.Casadi_Collocation import solve_conservative_collocation
+
+    big_l, big_g, height, x_in, y_in = 2.0, 1.0, 6.0, 0.1, 1.0
+    m = (0.5 if lam < 0 else 2.0) * big_l / big_g  # gas-side (lam < 0) or liquid-side controlled
+    k = -lam / (1 / big_g - m / big_l)
+    z, u = ca.MX.sym("z"), ca.MX.sym("u", 3)
+    node = ca.Function("node", [z, u], [ca.vertcat(big_l * u[0], big_g * u[1]), -ca.vertcat(u[2], u[2]),
+                                        u[2] - k * (u[1] - m * u[0])])
+    bottom, top = ca.MX.sym("bottom", 3), ca.MX.sym("top", 3)
+    boundary = ca.Function("inlets", [bottom, top], [ca.vertcat(top[0] - x_in, bottom[1] - y_in)])
+    grid = np.linspace(0.0, height, nodes)
+    result = solve_conservative_collocation(
+        node, boundary, grid, np.tile([[x_in], [y_in], [0.0]], nodes), [-10, -10, -1e3], [10, 10, 1e3],
+        state_scale=[1, 1, 1], balance_scale=[1, 1], algebraic_scale=[1], boundary_scale=[1, 1],
+        tolerance=1e-12, scheme=scheme, cell_sources=("lower", "upper", "cell") if scheme == "upwind" else None)
+    assert result["accepted"], result["failure"]
+    x, y = result["profile"][:2]
+    # Exact: d = D exp(lam (z - z_ref)), z_ref at the end the mode decays from; G y' = L x' = -K d.
+    reference = 0.0 if lam < 0 else height
+    integral = lambda s: (np.exp(lam * (s - reference)) - np.exp(-lam * reference)) / lam
+    x0, amplitude = np.linalg.solve([[m, np.exp(-lam * reference)], [1, -k / big_l * integral(height)]], [y_in, x_in])
+    return x, y, y - m * x, x0 - k / big_l * amplitude * integral(grid), y_in - k / big_g * amplitude * integral(grid)
+
+
+@pytest.mark.parametrize("lam", [-15.0, -10.0, 10.0, 15.0])
+def test_upwind_cells_damp_both_stiff_directions_without_alternation(lam):
+    # Measured interface-mode rates |lambda| = 10-15 1/m (#148); coarsest ladder spacing 1.5 m.
+    _, _, mode, _, _ = _exchanger(lam, 5)
+    ratios = mode[1:] / mode[:-1]
+    # Positive, and decaying along the mode's own decay direction (fails if the phases' upwind sides are swapped).
+    assert np.all(ratios > 0) and np.all((ratios < 1) == (lam < 0)), ratios
+    _, _, trapezoidal_mode, _, _ = _exchanger(lam, 5, "trapezoidal")
+    assert np.any(trapezoidal_mode[1:] / trapezoidal_mode[:-1] < 0)  # the failure this scheme removes
+
+
+@pytest.mark.parametrize("lam", [-15.0, 15.0])
+def test_upwind_cells_are_first_order_and_conserve_on_the_grid(lam):
+    errors = []
+    for nodes in (385, 769, 1537):
+        x, y, _, exact_x, exact_y = _exchanger(lam, nodes)
+        errors.append(max(np.max(abs(x - exact_x)), np.max(abs(y - exact_y))))
+        invariant = 1.0 * y - 2.0 * x  # G y - L x
+        assert np.max(abs(invariant - invariant[0])) < 1e-10
+    order = np.log2(np.asarray(errors[:-1]) / errors[1:])  # observed 0.89 then 0.94: approaching 1
+    assert order[0] < order[1] and abs(order[1] - 1) < 0.1, (errors, order)

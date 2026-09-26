@@ -1,0 +1,1850 @@
+{
+  "assembly": {
+    "algebraic_equations": 5,
+    "boundary_equations": 7,
+    "conserved_balances": 7,
+    "coordinate": "physical_height",
+    "states": 12
+  },
+  "attempt_id": "20260926T022531-79351656535a",
+  "config": {
+    "acceptance": {
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null,
+      "numerical": "conserved_original_equations",
+      "physical": "not_evaluated"
+    },
+    "case": {
+      "data_type": "mole",
+      "gas_flow_basis": "reported_total_wet",
+      "id": "corrected published 2017 3C",
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/input/case_3c.json",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/input/case_3c.json",
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "dependencies": {
+      "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory",
+      "mobility_law": "harmonic_mean_onsager_v1",
+      "references": [
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+      ],
+      "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+    },
+    "engine": {
+      "commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/.venv/bin/python3",
+      "required": true,
+      "sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+      "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+    },
+    "execution": {
+      "cache_policy": "legacy_explicit",
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/results/k2_upwind_176/upwind_n5",
+      "process_isolation": false,
+      "resume": false,
+      "retry": false,
+      "threads": 1,
+      "wall_limit_s": 1800.0
+    },
+    "initialization": {
+      "policy": "case_declared_native_inputs",
+      "values": {
+        "retained_profile": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/results/k1_k2_148/trapezoidal_n2/attempt.json"
+      }
+    },
+    "model": {
+      "coordinate": "physical_height",
+      "energy_model": "native_total_enthalpy",
+      "film_model": "equilibrium_manifold",
+      "formulation": "twelve_state_conserved",
+      "layout": "twelve_conserved",
+      "pressure_model": "hydraulic_pressure_drop",
+      "thermo_model": "reactive_epcsaft"
+    },
+    "numerics": {
+      "method": "upwind",
+      "solver_settings": {
+        "max_iterations": 20,
+        "nodes": 5,
+        "quadrature_points": 9,
+        "tolerance": 1e-07
+      }
+    },
+    "preset": "twelve_state_conserved",
+    "resolved_config_sha256": "331ef48e52b1674db96c9df3f43466b6af7a9a458237579ddb7d787868a77b76",
+    "schema_version": 1
+  },
+  "config_sha256": "331ef48e52b1674db96c9df3f43466b6af7a9a458237579ddb7d787868a77b76",
+  "coordinate": "physical_height",
+  "dependencies": {
+    "assets": {
+      "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory": "eb7ce6bed967b5a628b97dd36a03d53f67fac663a0da3ac726fa517b18f16d5f",
+      "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+      "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+    },
+    "capabilities": {
+      "a1_equilibrium_values": "required_on_evaluation",
+      "a2_equilibrium_actions": "required_on_outer_derivative",
+      "caloric_actions": "required_on_outer_derivative",
+      "finite_difference_fallback": false
+    }
+  },
+  "diagnostics": {
+    "assembly": "complete",
+    "physical_acceptance_reason": "complete physical certification accepted",
+    "physical_certification": {
+      "accepted": true,
+      "capture": {
+        "accepted": true,
+        "criterion": "0 <= outlet_vapor_co2_mol_s <= inlet_vapor_co2_mol_s",
+        "inlet_vapor_co2_mol_s": 1.6540435157308098,
+        "outlet_vapor_co2_mol_s": 0.11435786178193602
+      },
+      "conserved": [
+        [
+          3.9720061815692542,
+          3.5878403666293184,
+          3.2025032135192633,
+          2.7841706188780133,
+          2.4323205276203805
+        ],
+        [
+          75.9815462788615,
+          77.17913593176351,
+          77.88681991518037,
+          77.87835349782794,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.269877700790874,
+          0.8845405476808189,
+          0.46620795303956847,
+          0.11435786178193602
+        ],
+        [
+          1.5624169375299577,
+          2.7600065904319577,
+          3.4676905738488153,
+          3.4592241564963797,
+          2.5560631659600155
+        ],
+        [
+          -24009782.722685155,
+          -24140153.934959825,
+          -24156549.908392914,
+          -23990195.192281622,
+          -23637598.00966719
+        ],
+        [
+          -1018201.2993285044,
+          -1148572.511603164,
+          -1164968.4850364195,
+          -998613.7689253947,
+          -646016.5863105666
+        ],
+        [
+          110900.0,
+          110689.25243684012,
+          110473.70611416204,
+          110267.88394162456,
+          110086.16694678382
+        ]
+      ],
+      "criteria": {
+        "boundary": 1e-07,
+        "charge": 1e-07,
+        "energy": 1e-07,
+        "interface": 1e-07,
+        "material": 1e-07
+      },
+      "original_bounds": {
+        "accepted": true,
+        "finite_profile": true,
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          293.15,
+          293.15,
+          1.0,
+          2.1538326677728036e-16,
+          {
+            "value_class": "negative_infinity"
+          },
+          {
+            "value_class": "negative_infinity"
+          },
+          {
+            "value_class": "negative_infinity"
+          },
+          {
+            "value_class": "negative_infinity"
+          }
+        ],
+        "lower_satisfied": true,
+        "scope": "All twelve states at every native grid node",
+        "upper": [
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          393.15,
+          393.15,
+          10000000.0,
+          0.9699999999999998,
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          }
+        ],
+        "upper_satisfied": true
+      },
+      "original_residuals": {
+        "boundary": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "charge": [
+          -5.554524430738481e-18,
+          -7.298258219691706e-17,
+          5.3743287591219695e-17,
+          1.2088362944103967e-15,
+          1.7098524710630527e-17,
+          3.9846070965177593e-16,
+          -3.0083433912920544e-18,
+          -1.0793687907302346e-17,
+          7.339863419269653e-17,
+          2.3677001860316314e-15,
+          8.483034966751818e-17,
+          1.440008949891514e-17,
+          2.227360167440513e-15,
+          2.476799511945643e-15,
+          9.294921340650985e-16,
+          7.003956622168199e-16,
+          1.1107543260413218e-15,
+          -5.739495250595139e-18,
+          3.931452602704e-15,
+          -1.071778316731652e-16,
+          5.861954827186193e-15,
+          8.986468998952411e-17,
+          1.1518589291474417e-17,
+          3.4595004558122438e-15,
+          1.4266701926755085e-15,
+          2.950618095936674e-17,
+          1.4524380996012868e-15,
+          1.407226487843815e-14,
+          4.1508002547249734e-17,
+          -6.87574759768942e-17,
+          -3.052389104549278e-17,
+          3.814883928502863e-15,
+          6.157783413355362e-15,
+          -5.548595200107701e-17,
+          1.615154187560022e-16,
+          -1.8931186371133613e-19,
+          -5.029935750680212e-17,
+          3.3351922298138076e-18,
+          -8.640032523525402e-17,
+          -1.3112620594912285e-16,
+          -1.2697997967231305e-16,
+          1.1112225235029166e-17,
+          9.812440895489707e-15,
+          7.988733220272047e-15,
+          2.400004328574016e-17
+        ],
+        "energy": [
+          0.0,
+          1.1175870895385742e-08,
+          -1.5273690223693848e-07,
+          -4.209578037261963e-07,
+          -2.2351741790771484e-08
+        ],
+        "interface": [
+          [
+            -4.163336342344337e-17,
+            -8.326672684688674e-17,
+            -4.371503159461554e-16,
+            -1.7486012637846216e-15,
+            0.0
+          ],
+          [
+            1.9058241313221758e-21,
+            2.4352197233561135e-21,
+            -3.494010907423989e-21,
+            -3.2304269597326594e-16,
+            6.1409888675936775e-21
+          ],
+          [
+            4.6531355157863885e-14,
+            2.2011906186669705e-14,
+            -4.666406150377611e-16,
+            9.997715242487937e-10,
+            1.2247147740396258e-15
+          ],
+          [
+            -5.551115123125783e-17,
+            -1.326716514427062e-14,
+            2.329733628236852e-14,
+            2.653433028854124e-14,
+            -7.632783294297951e-15
+          ],
+          [
+            0.0,
+            -3.637978807091713e-12,
+            4.206412995699793e-12,
+            -7.275957614183426e-12,
+            1.4551915228366852e-11
+          ]
+        ],
+        "material": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            -4.440892098500626e-16,
+            0.0
+          ],
+          [
+            0.0,
+            -1.4210854715202004e-14,
+            -1.4210854715202004e-14,
+            -2.842170943040401e-14,
+            -1.4210854715202004e-14
+          ]
+        ]
+      },
+      "reason": "physical criteria accepted",
+      "residual_units": {
+        "boundary": "four mol/s; two K; Pa",
+        "charge": "elementary charge mol per apparent feed mol",
+        "energy": "W",
+        "interface": "holdup fraction; mol/m/s; mol/m2/s; mol/m2/s; W/m2",
+        "material": "mol/s"
+      },
+      "scaled_residual_inf": {
+        "boundary": 0.0,
+        "charge": 1.407226487843815e-14,
+        "energy": 6.539365725989893e-13,
+        "interface": 4.25632554370718e-09,
+        "material": 3.692320669118395e-16
+      },
+      "scope": "Native-grid material/energy invariants, bulk/film-quadrature charge, interface, boundary, original bounds, and CO2 capture direction; between-node accuracy still requires refinement",
+      "sources": [
+        [
+          -0.3207376146237424,
+          -0.3377920083125322,
+          -0.4188384844089165,
+          -0.578615889698373,
+          -0.5835391915542318
+        ],
+        [
+          15.3461567276176,
+          9.152864987496176,
+          0.78383242537809,
+          -10.542681442434063,
+          -15.015855285596148
+        ],
+        [
+          -0.3207376146237424,
+          -0.3377920083125322,
+          -0.4188384844089165,
+          -0.578615889698373,
+          -0.5835391915542318
+        ],
+        [
+          15.3461567276176,
+          9.152864987496176,
+          0.78383242537809,
+          -10.542681442434063,
+          -15.015855285596148
+        ],
+        [
+          -3488261.5243474427,
+          -2038286.7483022693,
+          -21346.759769158158,
+          2728439.4185226536,
+          3772930.878660839
+        ],
+        [
+          -3488261.5243474427,
+          -2038286.7483022693,
+          -21346.759769158158,
+          2728439.4185226536,
+          3772930.878660839
+        ],
+        [
+          -128.77151640019483,
+          -140.31645450703184,
+          -143.81883027558843,
+          -137.6669465439563,
+          -121.88716741622261
+        ]
+      ]
+    },
+    "solver_failure": null
+  },
+  "engine": {
+    "actual_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "archive_hash_status": "verified_from_installed_contents",
+    "commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "commit_evidence": "not_available_from_installed_distribution",
+    "declared_archive_sha256": null,
+    "declared_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "declared_wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "expected_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "expected_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "installed_artifact_members": 14,
+    "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/.venv/lib/python3.13/site-packages",
+    "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "loaded_version": "0.2.0.dev0",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/.venv/bin/python3",
+    "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/.venv",
+    "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+    "python_implementation": "cpython",
+    "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/.venv",
+    "python_version": "3.13.13",
+    "required": true,
+    "status": "verified",
+    "verified_commit": null,
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "execution": {
+    "runtime_s": 580.6694694850012,
+    "started_at_utc": "2026-09-26T02:25:31Z",
+    "status": "completed"
+  },
+  "failure": null,
+  "formulation": "twelve_state_conserved",
+  "initial_profile": [
+    [
+      4.044270552010099,
+      3.6412830459124716,
+      3.2382955398148443,
+      2.8353080337172174,
+      2.43232052761959
+    ],
+    [
+      75.9291885353492,
+      76.1906895283316,
+      76.45219052131401,
+      76.71369151429641,
+      76.97519250727882
+    ],
+    [
+      1.6540435157305333,
+      1.2510560096337795,
+      0.8480685035370257,
+      0.44508099744027185,
+      0.042093491343517996
+    ],
+    [
+      1.5624169375298196,
+      1.8239179310075715,
+      2.0854189244853236,
+      2.3469199179630755,
+      2.6084209114408274
+    ],
+    [
+      330.59511141471216,
+      327.48383356104665,
+      324.37255570738114,
+      321.2612778537157,
+      318.15000000005017
+    ],
+    [
+      316.7500000000134,
+      320.2634809662611,
+      323.77696193250887,
+      327.2904428987566,
+      330.8039238650043
+    ],
+    [
+      110899.9999999761,
+      110712.15768157838,
+      110524.31536318065,
+      110336.47304478294,
+      110148.6307263852
+    ],
+    [
+      0.05169516153229787,
+      0.05195015744370907,
+      0.05220515335512028,
+      0.05246014926653148,
+      0.052715145177942686
+    ],
+    [
+      0.0038698981598162437,
+      0.0037843856920773324,
+      0.003698873224338421,
+      0.00361336075659951,
+      0.0035278482888605987
+    ],
+    [
+      -0.22215268269241373,
+      -0.11236627270193006,
+      -0.00257986271144639,
+      0.10720654727903728,
+      0.21699295726952098
+    ],
+    [
+      50822.17014938303,
+      24986.326693099756,
+      -849.5167631835211,
+      -26685.360219466806,
+      -52521.20367575008
+    ],
+    [
+      0.1578416037923389,
+      0.16750516851572234,
+      0.17716873323910579,
+      0.18683229796248924,
+      0.19649586268587266
+    ]
+  ],
+  "initialization": {
+    "accepted": true,
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -2.9976021664879227e-14,
+      0.0,
+      0.0
+    ],
+    "retained_profile": {
+      "accepted_source": {
+        "execution": "completed",
+        "numerical_acceptance": "accepted",
+        "physical_acceptance": "accepted",
+        "physical_certification": true
+      },
+      "attempt_id": "20260925T235017-0ce1a4a81cc8",
+      "config_sha256": "30bfbd13fbf745b7a53d8cf7d261e6c6ce87315f77ee7fb27db1846545af58d3",
+      "engine_identity": {
+        "actual_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+        "expected_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+        "expected_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060"
+      },
+      "interpolation": "numpy.interp row-wise in physical state basis",
+      "source_file": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/results/k1_k2_148/trapezoidal_n2/attempt.json",
+      "source_file_sha256": "5162ea6d7e5feff9b4514d8eb3aa600a43deca9b8f0eaaa4f29a595a48595b5f",
+      "source_grid": [
+        0.0,
+        6.0
+      ],
+      "target_grid": [
+        0.0,
+        1.5,
+        3.0,
+        4.5,
+        6.0
+      ]
+    },
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.05271513518893747,
+      0.01870295984847483,
+      0.014962150656002149,
+      -11089.95564674784,
+      0.7743394431198521
+    ]
+  },
+  "limitations": [
+    "exploratory numerical attempt only; no solution-verification, validation, or scientific-promotion claim",
+    "species mobilities are case-estimated and use the declared harmonic-mean closure",
+    "native vapor caloric reference remains provisional for thermal interpretation",
+    "physical certification is limited to the native grid and configured film quadrature",
+    "the case-declared 3C policy does not establish continuous-profile or peak behavior"
+  ],
+  "native_calls": {
+    "liquid_actions": {
+      "failed": 0,
+      "returned": 19702,
+      "started": 19702,
+      "wall_s": 572.3515121225792
+    },
+    "liquid_solve": {
+      "failed": 0,
+      "returned": 19702,
+      "started": 19702,
+      "wall_s": 68.72903378645424
+    },
+    "vapor_actions": {
+      "failed": 0,
+      "returned": 3398,
+      "started": 3398,
+      "wall_s": 5.249050841230201
+    }
+  },
+  "native_layout": "twelve_conserved",
+  "native_profile": {
+    "available": true,
+    "grid": [
+      0.0,
+      1.5,
+      3.0,
+      4.5,
+      6.0
+    ],
+    "state_matrix": [
+      [
+        3.9720061815692542,
+        3.5878403666293184,
+        3.2025032135192633,
+        2.7841706188780133,
+        2.4323205276203805
+      ],
+      [
+        75.9815462788615,
+        77.17913593176351,
+        77.88681991518037,
+        77.87835349782794,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.269877700790874,
+        0.8845405476808189,
+        0.46620795303956847,
+        0.11435786178193602
+      ],
+      [
+        1.5624169375299577,
+        2.7600065904319577,
+        3.4676905738488153,
+        3.4592241564963797,
+        2.5560631659600155
+      ],
+      [
+        330.1499296008446,
+        334.43812989373527,
+        334.6114124529049,
+        329.1817817436121,
+        318.15
+      ],
+      [
+        316.75,
+        329.43218215674466,
+        334.16120869222965,
+        334.5856454734509,
+        329.4956300046471
+      ],
+      [
+        110900.0,
+        110689.25243684012,
+        110473.70611416204,
+        110267.88394162456,
+        110086.16694678382
+      ],
+      [
+        0.05169376801737104,
+        0.05034479492800429,
+        0.049930204320266645,
+        0.05061181416732766,
+        0.05271514600837465
+      ],
+      [
+        0.004418424691797043,
+        0.004632613691027566,
+        0.005731973722151525,
+        0.007926144803743066,
+        0.008027260676776948
+      ],
+      [
+        -0.21140594279544045,
+        -0.12552602373579755,
+        -0.010727063133126597,
+        0.14441846693153848,
+        0.2065605642376757
+      ],
+      [
+        48053.67424305033,
+        27953.873579177944,
+        292.1390240024731,
+        -37375.40967069625,
+        -51901.055005072376
+      ],
+      [
+        0.17976118216821751,
+        0.2030175572921729,
+        0.265881173283154,
+        0.37668844719367445,
+        0.3953864341065093
+      ]
+    ]
+  },
+  "numerical_acceptance": "accepted",
+  "physical_acceptance": "accepted",
+  "physical_certification": {
+    "accepted": true,
+    "capture": {
+      "accepted": true,
+      "criterion": "0 <= outlet_vapor_co2_mol_s <= inlet_vapor_co2_mol_s",
+      "inlet_vapor_co2_mol_s": 1.6540435157308098,
+      "outlet_vapor_co2_mol_s": 0.11435786178193602
+    },
+    "conserved": [
+      [
+        3.9720061815692542,
+        3.5878403666293184,
+        3.2025032135192633,
+        2.7841706188780133,
+        2.4323205276203805
+      ],
+      [
+        75.9815462788615,
+        77.17913593176351,
+        77.88681991518037,
+        77.87835349782794,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.269877700790874,
+        0.8845405476808189,
+        0.46620795303956847,
+        0.11435786178193602
+      ],
+      [
+        1.5624169375299577,
+        2.7600065904319577,
+        3.4676905738488153,
+        3.4592241564963797,
+        2.5560631659600155
+      ],
+      [
+        -24009782.722685155,
+        -24140153.934959825,
+        -24156549.908392914,
+        -23990195.192281622,
+        -23637598.00966719
+      ],
+      [
+        -1018201.2993285044,
+        -1148572.511603164,
+        -1164968.4850364195,
+        -998613.7689253947,
+        -646016.5863105666
+      ],
+      [
+        110900.0,
+        110689.25243684012,
+        110473.70611416204,
+        110267.88394162456,
+        110086.16694678382
+      ]
+    ],
+    "criteria": {
+      "boundary": 1e-07,
+      "charge": 1e-07,
+      "energy": 1e-07,
+      "interface": 1e-07,
+      "material": 1e-07
+    },
+    "original_bounds": {
+      "accepted": true,
+      "finite_profile": true,
+      "lower": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        293.15,
+        293.15,
+        1.0,
+        2.1538326677728036e-16,
+        {
+          "value_class": "negative_infinity"
+        },
+        {
+          "value_class": "negative_infinity"
+        },
+        {
+          "value_class": "negative_infinity"
+        },
+        {
+          "value_class": "negative_infinity"
+        }
+      ],
+      "lower_satisfied": true,
+      "scope": "All twelve states at every native grid node",
+      "upper": [
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        393.15,
+        393.15,
+        10000000.0,
+        0.9699999999999998,
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        }
+      ],
+      "upper_satisfied": true
+    },
+    "original_residuals": {
+      "boundary": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "charge": [
+        -5.554524430738481e-18,
+        -7.298258219691706e-17,
+        5.3743287591219695e-17,
+        1.2088362944103967e-15,
+        1.7098524710630527e-17,
+        3.9846070965177593e-16,
+        -3.0083433912920544e-18,
+        -1.0793687907302346e-17,
+        7.339863419269653e-17,
+        2.3677001860316314e-15,
+        8.483034966751818e-17,
+        1.440008949891514e-17,
+        2.227360167440513e-15,
+        2.476799511945643e-15,
+        9.294921340650985e-16,
+        7.003956622168199e-16,
+        1.1107543260413218e-15,
+        -5.739495250595139e-18,
+        3.931452602704e-15,
+        -1.071778316731652e-16,
+        5.861954827186193e-15,
+        8.986468998952411e-17,
+        1.1518589291474417e-17,
+        3.4595004558122438e-15,
+        1.4266701926755085e-15,
+        2.950618095936674e-17,
+        1.4524380996012868e-15,
+        1.407226487843815e-14,
+        4.1508002547249734e-17,
+        -6.87574759768942e-17,
+        -3.052389104549278e-17,
+        3.814883928502863e-15,
+        6.157783413355362e-15,
+        -5.548595200107701e-17,
+        1.615154187560022e-16,
+        -1.8931186371133613e-19,
+        -5.029935750680212e-17,
+        3.3351922298138076e-18,
+        -8.640032523525402e-17,
+        -1.3112620594912285e-16,
+        -1.2697997967231305e-16,
+        1.1112225235029166e-17,
+        9.812440895489707e-15,
+        7.988733220272047e-15,
+        2.400004328574016e-17
+      ],
+      "energy": [
+        0.0,
+        1.1175870895385742e-08,
+        -1.5273690223693848e-07,
+        -4.209578037261963e-07,
+        -2.2351741790771484e-08
+      ],
+      "interface": [
+        [
+          -4.163336342344337e-17,
+          -8.326672684688674e-17,
+          -4.371503159461554e-16,
+          -1.7486012637846216e-15,
+          0.0
+        ],
+        [
+          1.9058241313221758e-21,
+          2.4352197233561135e-21,
+          -3.494010907423989e-21,
+          -3.2304269597326594e-16,
+          6.1409888675936775e-21
+        ],
+        [
+          4.6531355157863885e-14,
+          2.2011906186669705e-14,
+          -4.666406150377611e-16,
+          9.997715242487937e-10,
+          1.2247147740396258e-15
+        ],
+        [
+          -5.551115123125783e-17,
+          -1.326716514427062e-14,
+          2.329733628236852e-14,
+          2.653433028854124e-14,
+          -7.632783294297951e-15
+        ],
+        [
+          0.0,
+          -3.637978807091713e-12,
+          4.206412995699793e-12,
+          -7.275957614183426e-12,
+          1.4551915228366852e-11
+        ]
+      ],
+      "material": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          -4.440892098500626e-16,
+          0.0
+        ],
+        [
+          0.0,
+          -1.4210854715202004e-14,
+          -1.4210854715202004e-14,
+          -2.842170943040401e-14,
+          -1.4210854715202004e-14
+        ]
+      ]
+    },
+    "reason": "physical criteria accepted",
+    "residual_units": {
+      "boundary": "four mol/s; two K; Pa",
+      "charge": "elementary charge mol per apparent feed mol",
+      "energy": "W",
+      "interface": "holdup fraction; mol/m/s; mol/m2/s; mol/m2/s; W/m2",
+      "material": "mol/s"
+    },
+    "scaled_residual_inf": {
+      "boundary": 0.0,
+      "charge": 1.407226487843815e-14,
+      "energy": 6.539365725989893e-13,
+      "interface": 4.25632554370718e-09,
+      "material": 3.692320669118395e-16
+    },
+    "scope": "Native-grid material/energy invariants, bulk/film-quadrature charge, interface, boundary, original bounds, and CO2 capture direction; between-node accuracy still requires refinement",
+    "sources": [
+      [
+        -0.3207376146237424,
+        -0.3377920083125322,
+        -0.4188384844089165,
+        -0.578615889698373,
+        -0.5835391915542318
+      ],
+      [
+        15.3461567276176,
+        9.152864987496176,
+        0.78383242537809,
+        -10.542681442434063,
+        -15.015855285596148
+      ],
+      [
+        -0.3207376146237424,
+        -0.3377920083125322,
+        -0.4188384844089165,
+        -0.578615889698373,
+        -0.5835391915542318
+      ],
+      [
+        15.3461567276176,
+        9.152864987496176,
+        0.78383242537809,
+        -10.542681442434063,
+        -15.015855285596148
+      ],
+      [
+        -3488261.5243474427,
+        -2038286.7483022693,
+        -21346.759769158158,
+        2728439.4185226536,
+        3772930.878660839
+      ],
+      [
+        -3488261.5243474427,
+        -2038286.7483022693,
+        -21346.759769158158,
+        2728439.4185226536,
+        3772930.878660839
+      ],
+      [
+        -128.77151640019483,
+        -140.31645450703184,
+        -143.81883027558843,
+        -137.6669465439563,
+        -121.88716741622261
+      ]
+    ]
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_inputs": {
+    "case_id": "corrected published 2017 3C",
+    "conserved_policy": {
+      "loading_anchor": 0.25,
+      "max_loading_steps": 32,
+      "max_log_loading_step": 0.1,
+      "precedence": "physical_inputs defaults, overridden by initialization.values, then numerics.solver_settings reactive_loading_* values",
+      "species_diffusivity_model": {
+        "co2_activation_j_mol": 15230.0,
+        "co2_prefactor_m2_s": 3.14e-07,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ]
+      }
+    },
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "metadata": {
+      "beds": 1,
+      "case_id": "corrected published 2017 3C",
+      "diameter_m": 0.64,
+      "gas_flow_basis": "reported_total_wet",
+      "intercoolers": 0,
+      "physical_input_basis": "direct_canonical_SI",
+      "single_bed_height_m": 6.0,
+      "total_packed_height_m": 6.0,
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "parameters": [
+      [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      318.15,
+      316.75,
+      [
+        0.0,
+        0.01,
+        0.02,
+        0.03,
+        0.04,
+        0.05,
+        0.06,
+        0.07,
+        0.08,
+        0.09,
+        0.1,
+        0.11,
+        0.12,
+        0.13,
+        0.14,
+        0.15,
+        0.16,
+        0.17,
+        0.18,
+        0.19,
+        0.2,
+        0.21,
+        0.22,
+        0.23,
+        0.24,
+        0.25,
+        0.26,
+        0.27,
+        0.28,
+        0.29,
+        0.3,
+        0.31,
+        0.32,
+        0.33,
+        0.34,
+        0.35000000000000003,
+        0.36,
+        0.37,
+        0.38,
+        0.39,
+        0.4,
+        0.41000000000000003,
+        0.42,
+        0.43,
+        0.44,
+        0.45,
+        0.46,
+        0.47000000000000003,
+        0.48,
+        0.49,
+        0.5,
+        0.51,
+        0.52,
+        0.53,
+        0.54,
+        0.55,
+        0.56,
+        0.5700000000000001,
+        0.58,
+        0.59,
+        0.6,
+        0.61,
+        0.62,
+        0.63,
+        0.64,
+        0.65,
+        0.66,
+        0.67,
+        0.68,
+        0.6900000000000001,
+        0.7000000000000001,
+        0.71,
+        0.72,
+        0.73,
+        0.74,
+        0.75,
+        0.76,
+        0.77,
+        0.78,
+        0.79,
+        0.8,
+        0.81,
+        0.8200000000000001,
+        0.8300000000000001,
+        0.84,
+        0.85,
+        0.86,
+        0.87,
+        0.88,
+        0.89,
+        0.9,
+        0.91,
+        0.92,
+        0.93,
+        0.9400000000000001,
+        0.9500000000000001,
+        0.96,
+        0.97,
+        0.98,
+        0.99,
+        1.0
+      ],
+      6.0,
+      0.3216990877275948,
+      110900.0,
+      [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ]
+    ],
+    "physical_input_sha256": "601f79091ee94d790b247bb91b0c67387e65411b112b760023e9b9050e53d17c",
+    "raw_input": [
+      4.607069120719279,
+      19.347831085173077,
+      0.25,
+      0.2999967360887997,
+      0.08548986749209121,
+      318.15,
+      316.75,
+      110900.0,
+      1.0
+    ],
+    "source_lineage": {
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/input/case_3c.json",
+      "physical_input_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176/analyses/bvp_solution_methods/input/case_3c.json",
+      "source_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+      "source_row_sha256": "8483a65064aebcece44880142fceccca7fd9a306c73516447a5fda0870bdb936"
+    },
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "result": {
+    "accepted": true,
+    "algebraic_residual": [
+      [
+        -4.163336342344337e-17,
+        -8.326672684688674e-17,
+        -4.371503159461554e-16,
+        -1.7486012637846216e-15,
+        0.0,
+        6.938893903907228e-16,
+        9.228728892196614e-16,
+        2.7755575615628914e-17,
+        -8.326672684688674e-17
+      ],
+      [
+        1.9058241313221758e-21,
+        2.4352197233561135e-21,
+        -3.494010907423989e-21,
+        -3.2304269597326594e-16,
+        6.1409888675936775e-21,
+        5.293955920339377e-22,
+        -1.641126335305207e-21,
+        3.864587821847745e-21,
+        2.6469779601696886e-21
+      ],
+      [
+        4.6531355157863885e-14,
+        2.2011906186669705e-14,
+        -4.666406150377611e-16,
+        9.997715242487937e-10,
+        1.2247147740396258e-15,
+        1.3727734227142463e-14,
+        3.961674738262033e-14,
+        -1.4821911059614834e-14,
+        -1.470178145890344e-16
+      ],
+      [
+        -5.551115123125783e-17,
+        -1.326716514427062e-14,
+        2.329733628236852e-14,
+        2.653433028854124e-14,
+        -7.632783294297951e-15,
+        -3.5605199344423966e-14,
+        -8.643259719054441e-15,
+        -1.8797693978646335e-14,
+        -1.709223040879948e-14
+      ],
+      [
+        0.0,
+        -3.637978807091713e-12,
+        4.206412995699793e-12,
+        -7.275957614183426e-12,
+        1.4551915228366852e-11,
+        1.8189894035458565e-12,
+        -3.410605131648481e-12,
+        6.821210263296962e-12,
+        -3.183231456205249e-12
+      ]
+    ],
+    "balance_residual_per_length": [
+      [
+        -7.401486830834377e-16,
+        -1.0362081563168128e-15,
+        2.9605947323337506e-16,
+        -2.220446049250313e-16
+      ],
+      [
+        9.177843670234628e-15,
+        1.0362081563168128e-15,
+        8.489736691430494e-15,
+        -9.25185853854297e-15
+      ],
+      [
+        -7.401486830834377e-16,
+        -9.62193288008469e-16,
+        -3.700743415417188e-17,
+        0.0
+      ],
+      [
+        2.220446049250313e-15,
+        1.6283271027835629e-15,
+        2.0007144089599174e-16,
+        -7.401486830834377e-17
+      ],
+      [
+        -7.314762721459071e-09,
+        1.1103353851164381e-07,
+        1.7759157344698906e-07,
+        -2.6488366226355237e-07
+      ],
+      [
+        -1.9402553637822468e-11,
+        -2.595091549058755e-10,
+        -5.820766091346741e-11,
+        0.0
+      ],
+      [
+        -5.078012084898849e-12,
+        1.2505552149377763e-11,
+        -7.939130834226186e-12,
+        8.48861721654733e-12
+      ]
+    ],
+    "bound_violation": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "boundary_residual": [
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ]
+    ],
+    "boundary_slots": null,
+    "cell_profile": [
+      [
+        0.0516937717708748,
+        0.05034479840452591,
+        0.04993020737429054,
+        0.05061181667912832
+      ],
+      [
+        0.003528133567479544,
+        0.003523111108838933,
+        0.0038167002668303474,
+        0.0032132021902076726
+      ],
+      [
+        -0.010998522226998101,
+        -0.006470306025256872,
+        7.724422572391345e-05,
+        0.008247941225561994
+      ],
+      [
+        1197.3138482692552,
+        149.90725829759555,
+        -1517.7542881016216,
+        -3220.0248560101622
+      ],
+      [
+        0.14425669166094804,
+        0.1566560467578578,
+        0.18352690108289652,
+        0.17079763110265703
+      ]
+    ],
+    "cell_sources": [
+      "lower",
+      "lower",
+      "upper",
+      "upper",
+      "lower",
+      "upper",
+      "upper",
+      "cell",
+      "cell",
+      "cell",
+      "cell",
+      "cell"
+    ],
+    "defect_units": "B",
+    "defects": [
+      [
+        -1.1102230246251565e-15,
+        -1.5543122344752192e-15,
+        4.440892098500626e-16,
+        -3.3306690738754696e-16
+      ],
+      [
+        1.3766765505351941e-14,
+        1.5543122344752192e-15,
+        1.2734605037145741e-14,
+        -1.3877787807814457e-14
+      ],
+      [
+        -1.1102230246251565e-15,
+        -1.4432899320127035e-15,
+        -5.551115123125783e-17,
+        0.0
+      ],
+      [
+        3.3306690738754696e-15,
+        2.4424906541753444e-15,
+        3.0010716134398763e-16,
+        -1.1102230246251565e-16
+      ],
+      [
+        -1.0972144082188606e-08,
+        1.665503077674657e-07,
+        2.663873601704836e-07,
+        -3.973254933953285e-07
+      ],
+      [
+        -2.9103830456733704e-11,
+        -3.892637323588133e-10,
+        -8.731149137020111e-11,
+        0.0
+      ],
+      [
+        -7.617018127348274e-12,
+        1.8758328224066645e-11,
+        -1.1908696251339279e-11,
+        1.2732925824820995e-11
+      ]
+    ],
+    "failure": null,
+    "grid": [
+      0.0,
+      1.5,
+      3.0,
+      4.5,
+      6.0
+    ],
+    "iterations": 8,
+    "nlp_scaling_method": "none",
+    "profile": [
+      [
+        3.9720061815692542,
+        3.5878403666293184,
+        3.2025032135192633,
+        2.7841706188780133,
+        2.4323205276203805
+      ],
+      [
+        75.9815462788615,
+        77.17913593176351,
+        77.88681991518037,
+        77.87835349782794,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.269877700790874,
+        0.8845405476808189,
+        0.46620795303956847,
+        0.11435786178193602
+      ],
+      [
+        1.5624169375299577,
+        2.7600065904319577,
+        3.4676905738488153,
+        3.4592241564963797,
+        2.5560631659600155
+      ],
+      [
+        330.1499296008446,
+        334.43812989373527,
+        334.6114124529049,
+        329.1817817436121,
+        318.15
+      ],
+      [
+        316.75,
+        329.43218215674466,
+        334.16120869222965,
+        334.5856454734509,
+        329.4956300046471
+      ],
+      [
+        110900.0,
+        110689.25243684012,
+        110473.70611416204,
+        110267.88394162456,
+        110086.16694678382
+      ],
+      [
+        0.05169376801737104,
+        0.05034479492800429,
+        0.049930204320266645,
+        0.05061181416732766,
+        0.05271514600837465
+      ],
+      [
+        0.004418424691797043,
+        0.004632613691027566,
+        0.005731973722151525,
+        0.007926144803743066,
+        0.008027260676776948
+      ],
+      [
+        -0.21140594279544045,
+        -0.12552602373579755,
+        -0.010727063133126597,
+        0.14441846693153848,
+        0.2065605642376757
+      ],
+      [
+        48053.67424305033,
+        27953.873579177944,
+        292.1390240024731,
+        -37375.40967069625,
+        -51901.055005072376
+      ],
+      [
+        0.17976118216821751,
+        0.2030175572921729,
+        0.265881173283154,
+        0.37668844719367445,
+        0.3953864341065093
+      ]
+    ],
+    "profile_finite": true,
+    "scaled_bound_violation_inf": 0.0,
+    "scaled_residual_inf": 4.25632554370718e-09,
+    "scheme": "upwind",
+    "solver_statistics": {
+      "iter_count": 8,
+      "iterations": {
+        "alpha_du": [
+          0.0,
+          0.9962576431778385,
+          1.0,
+          0.99618985269485,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "alpha_pr": [
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "d_norm": [
+          0.0,
+          0.9270847617890955,
+          0.1846730073735423,
+          0.1250555508549939,
+          0.08934112696960302,
+          0.057617218983845135,
+          0.02110638064931613,
+          0.0022217384661395614,
+          2.176020567893793e-05
+        ],
+        "inf_du": [
+          1.0,
+          416.51644245702323,
+          0.5387666453492641,
+          0.2587074325435891,
+          0.05367904523009422,
+          0.016518952289283573,
+          0.0037677015316529916,
+          8.875985812024592e-05,
+          9.482268629727992e-22
+        ],
+        "inf_pr": [
+          285.6498161128617,
+          9.189706897277931,
+          2.6602554739765822,
+          0.8237907306857111,
+          0.24570435401229698,
+          0.05370541357183541,
+          0.004689062060570492,
+          4.5013628586475145e-05,
+          4.25632554370718e-09
+        ],
+        "mu": [
+          1.0,
+          0.9354684573823823,
+          0.09836812899236111,
+          0.0028829459551745775,
+          4.231336281223337e-05,
+          5.511078405311569e-07,
+          7.187525342356386e-09,
+          6.777333188536353e-11,
+          1e-11
+        ],
+        "obj": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "regularization_size": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "n_call_callback_fun": 0,
+      "n_call_nlp_f": 9,
+      "n_call_nlp_g": 9,
+      "n_call_nlp_grad": 0,
+      "n_call_nlp_grad_f": 9,
+      "n_call_nlp_jac_g": 9,
+      "n_call_total": 1,
+      "return_status": "Solve_Succeeded",
+      "success": true,
+      "t_proc_callback_fun": 0.0,
+      "t_proc_nlp_f": 2.4999999999999998e-05,
+      "t_proc_nlp_g": 79.102567,
+      "t_proc_nlp_grad": 0.0,
+      "t_proc_nlp_grad_f": 3.3e-05,
+      "t_proc_nlp_jac_g": 483.08841800000005,
+      "t_proc_total": 562.205561,
+      "t_wall_callback_fun": 0.0,
+      "t_wall_nlp_f": 2.5225e-05,
+      "t_wall_nlp_g": 79.35607356499999,
+      "t_wall_nlp_grad": 0.0,
+      "t_wall_nlp_grad_f": 2.9812999999999997e-05,
+      "t_wall_nlp_jac_g": 484.261595979,
+      "t_wall_total": 563.667720357,
+      "unified_return_status": "SOLVER_RET_SUCCESS"
+    },
+    "status": "Solve_Succeeded"
+  },
+  "scaling": {
+    "algebraic_scale": [
+      0.97,
+      1.8447310874120108e-05,
+      0.23489075588377373,
+      0.29100727351695577,
+      171852.2742217299
+    ],
+    "balance_scale": [
+      0.40538675460339674,
+      12.82919875121526,
+      0.2756739192884683,
+      0.2604028229216596,
+      107288.13296911248,
+      9857.357621568704,
+      18483.333333333332
+    ],
+    "boundary_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      100.0,
+      100.0,
+      110900.0
+    ],
+    "capacity_rates_w_k": [
+      6437.287978146749,
+      591.4414572941223
+    ],
+    "policy": "case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds",
+    "state_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      300.0,
+      300.0,
+      110900.0,
+      0.97,
+      0.23489075588377373,
+      0.29100727351695577,
+      171852.2742217299,
+      1.0
+    ]
+  },
+  "schema_version": 1,
+  "scientific_acceptance": "not_evaluated",
+  "solver": {
+    "method": "upwind",
+    "stages": {
+      "outer": {
+        "status": "Solve_Succeeded",
+        "success": true
+      }
+    }
+  },
+  "source_identity": {
+    "commit": "3ab09a5d71cd098c5fc13b66e08110a1143367e9",
+    "dirty": false,
+    "dirty_patch": "",
+    "dirty_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "dirty_paths": [],
+    "repository_root": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-176",
+    "source_tree_sha256": "4065e69b4f87e9ea920d5948dbfb11254ce21b1499794a58bea4ec398d5499a7"
+  },
+  "transport": {
+    "cause": null,
+    "message": null,
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "\n******************************************************************************\nThis program contains Ipopt, a library for large-scale nonlinear optimization.\n Ipopt is released as open source code under the Eclipse Public License (EPL).\n         For more information visit http://projects.coin-or.org/Ipopt\n******************************************************************************\n\n\n******************************************************************************\nThis program contains Ipopt, a library for large-scale nonlinear optimization.\n Ipopt is released as open source code under the Eclipse Public License (EPL).\n         For more information visit https://github.com/coin-or/Ipopt\n******************************************************************************\n\n"
+  }
+}

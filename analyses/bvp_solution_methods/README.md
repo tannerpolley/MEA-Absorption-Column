@@ -231,6 +231,75 @@ coarse mesh. The predeclared 2 → 3 → 5 ladder therefore lies far above the s
 mode's step limit; completing K2 needs a new mesh or discretization design, which the
 frozen budget does not include.
 
+## K2 with countercurrent upwind cells (Engine #176, wheel `48a639e7…`)
+
+The column is a countercurrent boundary-value problem with stiff modes of both
+signs. Gas-side modes decay upward and liquid-side modes decay downward, so a
+one-direction L-stable scheme (implicit Euler, TR-BDF2, Radau IIA) mis-treats one
+family, and the trapezoidal rule damps neither. The `upwind` method
+(`Casadi_Collocation.py`) makes each interval one mixing cell. Its source and
+interface equations are evaluated at one outlet state: liquid from the lower node,
+gas and pressure from the upper node, and five cell unknowns (holdup, j_CO2,
+j_H2O, q, interface loading). The cell balance is B(u_k+1) − B(u_k) = h R(u_cell).
+Because every row shares one source, the material and energy invariants telescope
+exactly on the native grid. For linear exchange K(y − mx), the node-to-node mode
+ratio (1 + hKm/L)/(1 + hK/G) is positive for every h and tends to the
+equilibrium-stage ratio mG/L. The scheme is first order.
+
+- **Linear falsifier** (`tests/test_conserved_assembly.py`): a countercurrent exchanger
+  at λ = ±10 and ±15 m⁻¹ and h = 1.5 m. All mode ratios are positive (0.51–1.96); the
+  trapezoidal ratios are −0.76 to −1.31. The observed order on the node error is 0.89
+  and then 0.94 (h = 6/384 → 6/1536). The invariant holds to 1e-10.
+- **Frozen 7×7 column linearization** (`run_case.py linear-scheme`; `results/k2_upwind_176/linear_scheme.json`):
+  at the accepted two-node states, every upwind per-cell transfer eigenvalue is real
+  and positive at h = 3–0.375 m; the trapezoidal rule has negative eigenvalues.
+  - The frozen top (lean-end) model gives capture 98.45 / 99.57 / 99.90 / 99.99 % at
+    3 / 5 / 9 / 17 nodes (exact 99.996 %).
+  - The frozen bottom model, with a liquid-side +2.9 m⁻¹ mode acting over the whole
+    6 m, converges slowly: 103.6 / 100.9 / 93.4 / 84.3 / 76.3 % at 5 / 9 / 17 / 33 / 65
+    uniform nodes, against an exact 62.5 %.
+  - The scheme's error is therefore large where a stiff mode is under-resolved. K2
+    below is a successive-change criterion, not an error bound.
+
+Attempts are in `results/k2_upwind_176/` (`summary.json`, one `attempt.json` per directory).
+Each ladder was recorded in Engine #176 before its runs. Every attempt was capped at
+20 iterations, used tolerance 1e-7 and nine film points, and was seeded by grid sequencing.
+
+| Grid | Nodes | Iterations | Wall s | K1 worst scaled | Capture % |
+|---|---|---|---|---|---|
+| uniform | 5 | 8 | 581 | 4.3e-9 | 93.086 |
+| uniform | 9 | 5 | 741 | 5.2e-13 | 93.673 |
+| uniform | 17 | 5 | 1434 | 3.9e-12 | 92.670 |
+| cosine | 17 | 5 | 1430 | 9.0e-13 | 89.415 |
+| cosine | 33 | 4 | 2339 | 5.9e-12 | 89.008 |
+| cosine | 65 | 4 | 4672 | 8.3e-13 | 88.840 |
+
+- **Uniform ladder: not converged.** The changes are +0.59 and −1.00 pp. The spectra
+  along the uniform 17-node solution (`linear_scheme_n17.json`) show two stiff modes:
+  - a gas-side mode near −10.7 m⁻¹ over the whole height, giving a gas-inlet layer at
+    the bottom;
+  - a liquid-side mode rising to +13.7 m⁻¹ near z = 4 m, giving a liquid-inlet layer
+    about 7 cm thick at the top. The +14.6 m⁻¹ found in #148 was this mode.
+
+  With h ≥ 0.375 m the top layer sat inside one or two cells, and the temperature
+  bulge moved as it resolved: liquid temperature at z = 4.5 m was 329, 337 and 344 K.
+- **Cosine ladder: K2 passed.** The ladder uses end-clustered Chebyshev–Gauss–Lobatto
+  nodes (`end_clustering` = 1, nested; spacing 0.058/0.014/0.0036 m at the ends and
+  0.59/0.29/0.15 m at mid-height). The changes are −0.407 and −0.168 pp, both within
+  the 0.5 pp criterion. Their ratio of 2.4 gives an observed order of 1.28 per node
+  doubling. Assuming the asymptotic range, which three levels cannot check, the
+  Richardson limit is 88.72 % at that order, or 88.67 % at order 1, so the 65-node
+  capture lies about 0.12–0.17 pp above it.
+- **Film control:** the 9 → 17-point film integral at the 65-node solution changes by
+  at most 2.5e-4 relative (criterion 1e-3).
+- **Node checks:** rerun unchanged, in 53 s of the 600 s budget.
+
+No attempt alternates node to node. Every temperature and water profile has one
+interior bulge, with liquid temperature at 347.6 K and z = 5.32 m on
+the cosine 65-node grid. The charge certificate and the film control are evaluated at
+the node states; the cell states are retained in `cell_profile`. K2 establishes mesh convergence of capture
+for this formulation and these inputs only; it is not a physical comparison.
+
 ## Running and interpreting the study
 
 Run one native attempt at a time. The runner retains a new directory per attempt,
@@ -247,6 +316,13 @@ uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt
 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt --method trapezoidal --nodes 3 --initial-profile $R/trapezoidal_n2/attempt.json --output $R/trapezoidal_n3
 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py film-control $R/trapezoidal_n2/attempt.json --output $R/film_control_17.json
 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py summarize $R/*/attempt.json --film-control $R/film_control_17.json --output $R/summary.json
+# #176 cosine ladder (17 is seeded from the uniform upwind 17; each later level from the previous one)
+U=analyses/bvp_solution_methods/results/k2_upwind_176
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt --method upwind --nodes 33 --end-clustering 1 --initial-profile $U/upwind_cos_n17/attempt.json --wall-limit 7200 --output $U/upwind_cos_n33
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py linear-scheme $R/trapezoidal_n2/attempt.json --output $U/linear_scheme.json
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py linear-scheme $U/upwind_n17/attempt.json --nodes 5 17 65 --output $U/linear_scheme_n17.json
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py film-control $U/upwind_cos_n65/attempt.json --output $U/film_control_17.json
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py summarize $U/upwind_*/attempt.json --film-control $U/film_control_17.json --output $U/summary.json
 ```
 
 `run_case.py` drives the public twelve-state path (`mea_absorption_column.column.run_column`
