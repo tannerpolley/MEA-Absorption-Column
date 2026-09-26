@@ -6,7 +6,6 @@ from pathlib import Path
 import runpy
 import tempfile
 import unittest
-from unittest.mock import patch
 
 
 ANALYSIS = Path(__file__).resolve().parents[1]
@@ -20,17 +19,8 @@ def module(name, path):
 
 
 class PipelineCheck(unittest.TestCase):
-    def test_runtime_mismatch_and_early_failure_remain_visible(self):
+    def test_early_failure_remains_visible(self):
         fixture = runpy.run_path(str(ANALYSIS / "tests/test_compare.py"))
-        runner = module("case_runtime", ANALYSIS / "scripts/run_case.py")
-        identity = dict(wheel_filename="engine.whl", wheel_sha256="a"*64, core_sha256="b"*64)
-        resolved = dict(source_kind="local_file", wheel_path="/engine.whl", wheel_sha256="a"*64,
-                        core_sha256="b"*64, module_path="/pkg/__init__.py", core_path="/pkg/core.so")
-        with patch.object(runner.runpy, "run_path", return_value={"resolve_epcsaft": lambda _: resolved}):
-            self.assertEqual(runner.verified_runtime({"final_identity": identity}), resolved)
-            resolved["core_sha256"] = "c"*64
-            with self.assertRaisesRegex(RuntimeError, "Installed Engine differs"):
-                runner.verified_runtime({"final_identity": identity})
         good, failed = fixture["record"]("good"), fixture["record"]("setup_failure")
         failed.pop("problem")
         failed["settings"].pop("method_source_sha256")

@@ -81,12 +81,7 @@ def test_full_native_node_jacobian_matches_centred_difference(assembly, point, n
     expression = ca.vertcat(*node.call([ca.MX(0.0), state], True, False))
     graph = ca.Function("full_node_outer", [state], [ca.jacobian(expression, state)], {"cse": True})
     value = np.r_[point, 1e-4, 0.0, 0.0, 0.05] if node_state == "3C" else np.asarray(S2_NODE)
-    try:
-        jacobian = np.asarray(graph(value))
-    except RuntimeError as error:
-        # Until Engine #147: dH_L/dP and D2 ln a[v, e_T] are typed refusals with no value.
-        assert "ReferenceUnavailable" in str(error)
-        pytest.xfail("N6 needs Engine #147 reacting-liquid pressure-caloric and mixed temperature actions")
+    jacobian = np.asarray(graph(value))
     assert jacobian.shape == (19, 12)
     assert np.all(np.isfinite(jacobian))
 

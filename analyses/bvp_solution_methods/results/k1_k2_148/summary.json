@@ -1,0 +1,126 @@
+{
+  "attempts": [
+    {
+      "attempt_id": "20260926T001713-351e0f44515b",
+      "method": "central",
+      "nodes": 3,
+      "quadrature_points": 9,
+      "execution": "completed",
+      "runtime_s": 260.648862853006,
+      "iterations": 10,
+      "scaled_residual_inf": 2.2255054705538407e-10,
+      "numerical_acceptance": "accepted",
+      "k1_accepted": false,
+      "k1_scaled_residual_inf": {
+        "boundary": 0.0,
+        "charge": 8.894055586824599e-15,
+        "energy": 23.875100355194796,
+        "interface": 2.2255054705538407e-10,
+        "material": 1.437730666532713
+      },
+      "capture_pct": 76.01426412289698,
+      "failure": null
+    },
+    {
+      "attempt_id": "20260926T002135-640b3f21d12b",
+      "method": "central",
+      "nodes": 5,
+      "quadrature_points": 9,
+      "execution": "completed",
+      "runtime_s": 806.103540682001,
+      "iterations": 20,
+      "scaled_residual_inf": 0.6097419978678117,
+      "numerical_acceptance": "rejected",
+      "k1_accepted": false,
+      "k1_scaled_residual_inf": {
+        "boundary": 0.0001565607821986947,
+        "charge": 1.629575219948558e-14,
+        "energy": 0.11762987564114805,
+        "interface": 0.6097419978678117,
+        "material": 0.17137372534125284
+      },
+      "capture_pct": 97.80976588230742,
+      "failure": null
+    },
+    {
+      "attempt_id": "20260925T235017-0ce1a4a81cc8",
+      "method": "trapezoidal",
+      "nodes": 2,
+      "quadrature_points": 9,
+      "execution": "completed",
+      "runtime_s": 299.39248140399286,
+      "iterations": 18,
+      "scaled_residual_inf": 2.573822122725287e-11,
+      "numerical_acceptance": "accepted",
+      "k1_accepted": true,
+      "k1_scaled_residual_inf": {
+        "boundary": 5.019273885409348e-13,
+        "charge": 2.3622012481380565e-15,
+        "energy": 1.0011595315011076e-12,
+        "interface": 5.11404398109903e-12,
+        "material": 2.5740644312691978e-11
+      },
+      "capture_pct": 97.45511584530914,
+      "failure": null
+    },
+    {
+      "attempt_id": "20260925T235517-0acbc368114e",
+      "method": "trapezoidal",
+      "nodes": 3,
+      "quadrature_points": 9,
+      "execution": "completed",
+      "runtime_s": 486.66280231199926,
+      "iterations": 20,
+      "scaled_residual_inf": 0.009618994623054045,
+      "numerical_acceptance": "rejected",
+      "k1_accepted": false,
+      "k1_scaled_residual_inf": {
+        "boundary": 4.627054295269773e-13,
+        "charge": 1.3227196624105006e-14,
+        "energy": 5.1384021055102564e-09,
+        "interface": 2.7796843735979644e-06,
+        "material": 0.004809504124749256
+      },
+      "capture_pct": 97.29964829448289,
+      "failure": null
+    },
+    {
+      "attempt_id": "20260926T000325-5b9eef773036",
+      "method": "trapezoidal",
+      "nodes": 5,
+      "quadrature_points": 9,
+      "execution": "completed",
+      "runtime_s": 826.9454090060026,
+      "iterations": 20,
+      "scaled_residual_inf": 0.14490174912740392,
+      "numerical_acceptance": "rejected",
+      "k1_accepted": false,
+      "k1_scaled_residual_inf": {
+        "boundary": 3.184327140456112e-06,
+        "charge": 7.964983051705747e-15,
+        "energy": 0.00039088285253935997,
+        "interface": 0.041686300341233856,
+        "material": 0.0025115379425478413
+      },
+      "capture_pct": 93.86466375135872,
+      "failure": null
+    }
+  ],
+  "k2_capture_refinement": [],
+  "k2_film_quadrature": {
+    "source_attempt_id": "20260925T235017-0ce1a4a81cc8",
+    "film_integral_by_points": {
+      "9": [
+        3.5475610428160927e-07,
+        2.770620546577072e-07
+      ],
+      "17": [
+        3.547922973372284e-07,
+        2.770502225999876e-07
+      ]
+    },
+    "max_relative_change": 0.00010201195429208086,
+    "criterion": 0.001,
+    "accepted": true
+  }
+}

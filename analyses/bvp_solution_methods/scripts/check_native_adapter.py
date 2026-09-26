@@ -52,7 +52,7 @@ def main():
         raise ValueError(f"Frozen candidate source mismatch: {mismatches}")
     test_path = "tests/test_coupled_column.py"
     start = time.perf_counter()
-    report = dict(loading_anchor=None, scope_limit="Historical verification case without the corrected3C loading path; use run_case.py --stage reduction for that path", source_sha256=current, frozen_candidate_verified=True,
+    report = dict(loading_anchor=None, scope_limit="Historical verification case without the corrected3C loading path; the corrected-3C path is run_case.py attempt (public twelve-state path)", source_sha256=current, frozen_candidate_verified=True,
                   runtime_adoption=adoption, declared_candidate_extensions=[modified], accepted_column=False, local_root_attempted=False, failure=None,
                   scope="Known-valid thermodynamic point, not an algebraically consistent interface or published 3C",
                   engine_identity=json.loads((root/"integration/epcsaft_contract.json").read_text())["final_identity"])

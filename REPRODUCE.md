@@ -55,7 +55,7 @@ The command selects native Jacobians, exact state reuse, temperature/raw coordin
 
 ```bash
 (set -e
-test "$(sha256sum /home/tnnrpolley21/.cache/epcsaft/wheels/9dd86fdff35bbbff6506e010bbdb9c451a19dc4881bbd51c7aad9e07dfb0078d/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl | cut -d ' ' -f 1)" = 684b213ac8065fbe35950ca8998a33a5c05264fad5b174560110f112d60ef8ba
+test "$(sha256sum /home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl | cut -d " " -f 1)" = 48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060
 uv sync --frozen --group test
 export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
 uv run --frozen python scripts/check_epcsaft_integration.py --mode final
@@ -64,8 +64,8 @@ uv run --frozen pytest -q tests/test_column_config.py tests/test_conserved_assem
 ```
 
 `pyproject.toml` pins the non-editable CPython 3.13 Linux x86-64 greenfield ePC-SAFT wheel,
-SHA-256 `684b213ac8065fbe35950ca8998a33a5c05264fad5b174560110f112d60ef8ba`, built from Engine
-`4b9907578158c7ff2736facf1c3cbec1f978a77f` (Engine sources identical at main `62f136ab`). Every
+SHA-256 `48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060`, built from Engine
+`464a9897615e513e5cc404ce5b49f46a72466d3d` (Engine sources identical at main `e5687520`). Every
 integration mode requires this hash. The twelve-state callbacks use `Mixture(parameters,
 thermochemistry=...)`, `equilibrium.Problem`, `solve_equilibrium`, `compile_problem` and
 `solved_state_actions`; their node qualification is `analyses/greenfield_node_qualification/`.

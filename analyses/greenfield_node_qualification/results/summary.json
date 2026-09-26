@@ -1,14 +1,14 @@
 {
- "engine_commit": "4b9907578158c7ff2736facf1c3cbec1f978a77f",
- "engine_wheel_sha256": "684b213ac8065fbe35950ca8998a33a5c05264fad5b174560110f112d60ef8ba",
+ "engine_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+ "engine_wheel_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
  "inputs_sha256": {
   "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/parameters.json": "868a501831b87e95dedf18ce40e9e7ac949f7c6a4aaf137f717cc493ecfcb7be",
   "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/engine-reactions.json": "bcd964a0b9798d9f25169a3f49407d339e5714c2ee7ee00f794a80ac54c0d8d3",
   "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
   "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
  },
- "producer_sha256": "0b6efde59392bb1a9078724ccb243f9199e028573574a1c5e6c1deada0de893d",
- "csv_sha256": "8e482587a77d062cfaeff02149f174de52c9605cf24083224adba710ee6b291a",
+ "producer_sha256": "e2fa8d31087029149de5ed103f9bfc449ac3e5710e30395f375caf1662165f4b",
+ "csv_sha256": "de9684ed2d866622b8fc9e3805026ae082d91638c0554775a1cd079fd026fc56",
  "status_counts": {
   "N1": {
    "pass": 20
@@ -22,9 +22,8 @@
    "control-fails": 7
   },
   "N4": {
-   "refused": 7,
-   "pass": 252,
-   "control-fails": 35
+   "pass": 315,
+   "control-fails": 42
   },
   "N5": {
    "pass": 282
@@ -34,9 +33,8 @@
    "control-fails": 4
   },
   "C2": {
-   "pass": 54,
-   "control-fails": 30,
-   "refused": 2
+   "pass": 56,
+   "control-fails": 32
   },
   "C4": {
    "pass": 3,
@@ -49,30 +47,31 @@
    "evaluated": 1
   },
   "N6": {
-   "refused": 2
+   "pass": 38,
+   "control-fails": 2
   },
   "budget": {
    "pass": 1
   }
  },
  "largest_passing_defect": {
-  "N1": 4.813409053061527e-11,
-  "N2": 1.332476296116744e-14,
-  "N3": 6.864275543555959e-08,
-  "N4": 9.985564608470447e-06,
-  "N5": 4.633581448186496e-21,
-  "C1": 6.961427414865079e-15,
-  "C2": 7.29168698734839e-08,
+  "N1": 7.009774968676596e-11,
+  "N2": 1.3604282139695464e-14,
+  "N3": 6.81668686705861e-08,
+  "N4": 8.396512209417791e-06,
+  "N5": 4.881470675662446e-21,
+  "C1": 9.900696767808115e-15,
+  "C2": 1.1770256081721077e-07,
   "C4": 0.004235522182411757,
   "start": 0.0,
   "S3": null,
-  "N6": null,
-  "budget": 34.171729802998016
+  "N6": 6.104605440621123e-08,
+  "budget": 57.532678973002476
  },
- "elapsed_s": 34.171729802998016,
+ "elapsed_s": 57.532678973002476,
  "native_solves": {
-  "native_solves": 264,
-  "continuations": 3
+  "native_solves": 294,
+  "continuations": 0
  },
- "claim_limits": "Numerical verification of consumed node quantities on the exploratory MEA record 868a5018 (not adopted) at S1/S2/V1/V2; C4 is the pure-water EOS residual only. Refusals (N4 e_T, dH_L/dP, N6) wait for Engine #147; K1-K2 and physical checks (C3, C5, C6) are not run here."
+ "claim_limits": "Numerical verification of consumed node quantities on the exploratory MEA record 868a5018 (not adopted) at S1/S2/V1/V2 and the 3C/S2 node; C4 is the pure-water EOS residual only. K1-K2 are in analyses/bvp_solution_methods; physical checks (C3, C5, C6) belong to #149."
 }
