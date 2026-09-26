@@ -466,13 +466,14 @@ def _conserved_numeric(request: Mapping[str, Any]) -> NumericConfig:
     direct_nodes = values.pop("nodes", None)
     if values:
         raise ConfigurationError(f"Unknown numerics keys: {sorted(values)}")
-    if method not in {"trapezoidal", "central", "shooting", "collocation"}:
+    if method not in {"trapezoidal", "central", "upwind", "shooting", "collocation"}:
         raise ConfigurationError(f"Unsupported twelve-state method: {method!r}")
     if not isinstance(settings, Mapping):
         raise ConfigurationError("numerics.solver_settings must be a table/mapping")
     defaults = {
         "trapezoidal": {"nodes": 11, "quadrature_points": 9, "tolerance": 1.0e-7, "max_iterations": 20},
         "central": {"nodes": 11, "quadrature_points": 9, "tolerance": 1.0e-7, "max_iterations": 20},
+        "upwind": {"nodes": 11, "quadrature_points": 9, "tolerance": 1.0e-7, "max_iterations": 20},
         "shooting": {"nodes": 11, "quadrature_points": 9, "tolerance": 1.0e-7, "boundary_tolerance": 1.0e-7, "max_nodes": 100},
         "collocation": {"nodes": 11, "quadrature_points": 9, "tolerance": 1.0e-7, "boundary_tolerance": 1.0e-7, "max_nodes": 100},
     }[method]

@@ -753,7 +753,7 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
 
 def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[str, Any]:
     """Run the case-owned twelve-state collocation path in the verified worker."""
-    if config.numerics.method not in {"trapezoidal", "central"}:
+    if config.numerics.method not in {"trapezoidal", "central", "upwind"}:
         raise CapabilityRefusal(
             f"Conserved method {config.numerics.method!r} is configured but unavailable: "
             "the reduced-method controls have not been migrated to this execution boundary"
@@ -884,6 +884,9 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
             max_iterations=settings["max_iterations"], scheme=config.numerics.method,
             boundary_slots=[(0, -1), (1, -1), (2, 0), (3, 0), (4, -1), (5, 0), (6, 0)] if config.numerics.method == "central" else None,
             source_multiplier=multiplier,
+            # Liquid flows down (leaves a cell at its lower node), gas and its pressure up.
+            cell_sources=("lower", "lower", "upper", "upper", "lower", "upper", "upper", *["cell"] * 5)
+            if config.numerics.method == "upwind" else None,
         )
     if homotopy_step is None:
         result = solve(initial)
