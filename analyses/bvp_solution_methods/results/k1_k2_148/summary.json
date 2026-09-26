@@ -1,6 +1,48 @@
 {
   "attempts": [
     {
+      "attempt_id": "20260926T001713-351e0f44515b",
+      "method": "central",
+      "nodes": 3,
+      "quadrature_points": 9,
+      "execution": "completed",
+      "runtime_s": 260.648862853006,
+      "iterations": 10,
+      "scaled_residual_inf": 2.2255054705538407e-10,
+      "numerical_acceptance": "accepted",
+      "k1_accepted": false,
+      "k1_scaled_residual_inf": {
+        "boundary": 0.0,
+        "charge": 8.894055586824599e-15,
+        "energy": 23.875100355194796,
+        "interface": 2.2255054705538407e-10,
+        "material": 1.437730666532713
+      },
+      "capture_pct": 76.01426412289698,
+      "failure": null
+    },
+    {
+      "attempt_id": "20260926T002135-640b3f21d12b",
+      "method": "central",
+      "nodes": 5,
+      "quadrature_points": 9,
+      "execution": "completed",
+      "runtime_s": 806.103540682001,
+      "iterations": 20,
+      "scaled_residual_inf": 0.6097419978678117,
+      "numerical_acceptance": "rejected",
+      "k1_accepted": false,
+      "k1_scaled_residual_inf": {
+        "boundary": 0.0001565607821986947,
+        "charge": 1.629575219948558e-14,
+        "energy": 0.11762987564114805,
+        "interface": 0.6097419978678117,
+        "material": 0.17137372534125284
+      },
+      "capture_pct": 97.80976588230742,
+      "failure": null
+    },
+    {
       "attempt_id": "20260925T235017-0ce1a4a81cc8",
       "method": "trapezoidal",
       "nodes": 2,
@@ -61,48 +103,6 @@
         "material": 0.0025115379425478413
       },
       "capture_pct": 93.86466375135872,
-      "failure": null
-    },
-    {
-      "attempt_id": "20260926T001713-351e0f44515b",
-      "method": "central",
-      "nodes": 3,
-      "quadrature_points": 9,
-      "execution": "completed",
-      "runtime_s": 260.648862853006,
-      "iterations": 10,
-      "scaled_residual_inf": 2.2255054705538407e-10,
-      "numerical_acceptance": "accepted",
-      "k1_accepted": false,
-      "k1_scaled_residual_inf": {
-        "boundary": 0.0,
-        "charge": 8.894055586824599e-15,
-        "energy": 23.875100355194796,
-        "interface": 2.2255054705538407e-10,
-        "material": 1.437730666532713
-      },
-      "capture_pct": 76.01426412289698,
-      "failure": null
-    },
-    {
-      "attempt_id": "20260926T002135-640b3f21d12b",
-      "method": "central",
-      "nodes": 5,
-      "quadrature_points": 9,
-      "execution": "completed",
-      "runtime_s": 806.103540682001,
-      "iterations": 20,
-      "scaled_residual_inf": 0.6097419978678117,
-      "numerical_acceptance": "rejected",
-      "k1_accepted": false,
-      "k1_scaled_residual_inf": {
-        "boundary": 0.0001565607821986947,
-        "charge": 1.629575219948558e-14,
-        "energy": 0.11762987564114805,
-        "interface": 0.6097419978678117,
-        "material": 0.17137372534125284
-      },
-      "capture_pct": 97.80976588230742,
       "failure": null
     }
   ],

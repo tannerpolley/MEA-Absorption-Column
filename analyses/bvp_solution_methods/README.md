@@ -185,8 +185,9 @@ and the intermediate campaign CSV do not contain the selected gas composition.
 ## K1–K2 on the current interface (Engine #148, wheel `48a639e7…`)
 
 Five predeclared attempts on case 3C through the public twelve-state path, nine-point
-film quadrature, each ≤ 20 IPOPT iterations, tolerance 1e-7 and ≤ 1200 s, seeded by
-the accepted two-node profile (`results/k1_k2_148/summary.json`, one `attempt.json`
+film quadrature, each ≤ 20 IPOPT iterations, tolerance 1e-7 and ≤ 1200 s; the
+two-node replay starts from the case-declared inputs and the other four from the
+accepted two-node profile (`results/k1_k2_148/summary.json`, one `attempt.json`
 per directory).
 
 | Attempt | Iterations | Wall s | Scaled residual | K1 (≤ 1e-7) | Capture % |
@@ -203,26 +204,31 @@ changes the film integral by at most 1.0e-4 relative (criterion 1e-3). K2 captur
 refinement has no pair of accepted refinements, so it is not established.
 
 Diagnosis (`run_case.py diagnose`; `results/k1_k2_148/diagnosis_trapezoidal_n2.json`,
-`diagnosis_trapezoidal_n3.json`). Every resolved node-Jacobian entry agrees with
-Richardson-extrapolated centred differences to 4.6e-8 or better at all nodes of the
-accepted two-node solution and of the stalled three-node iterate, so the Engine actions
-and the CasADi chain are exact there. The three-node collocation Jacobian at the stall
+`diagnosis_trapezoidal_n3.json`). Every resolved node-Jacobian entry (Richardson
+estimates agree to 10 %, the two-sided change exceeds 1e-8 of the value and the entry
+exceeds 1e-9 of its column's largest entry) agrees with Richardson-extrapolated centred
+differences to 4.6e-8 or better at all nodes of the accepted two-node solution and of
+the stalled three-node iterate; N6 covers every row along the retained direction.
+No derivative defect appears at the stall. The three-node collocation Jacobian there
 is nearly singular (condition 4.9e9; smallest singular value 2.3e-7 against 1.2e-2
 for the next), with the null vector in the interior vapor water flow and the
 alternating interface water and heat fluxes, and full IPOPT steps no longer reduce
-the residual: a fold of the discrete equations, consistent with the 2026-09-16 source
-homotopy that turned back between multipliers 0.28 and 0.31. The five-node iterates
-alternate node to node (liquid temperature 310, 353, 332, 357, 318 K). On the manifold
-of the interface equations, the stiffest mode of dB/dz = R has eigenvalue −10.4 m⁻¹
-(gas inlet) and −12.6 m⁻¹ (top) on the accepted two-node states and +14.6 m⁻¹ at the
-hot interior node of the stalled iterate: a gas-side relaxation length of 7–10 cm.
-The trapezoidal amplification (1 + λh/2)/(1 − λh/2) of that mode is −0.88 to −1.10
-at h = 3 m and −0.77 to −1.20 at h = 1.5 m, an undamped sawtooth; a non-oscillating
-trapezoidal mesh needs h ≤ 2/|λ| ≈ 0.14 m. The central scheme converges at three nodes
-but does not conserve the native-grid invariants. The predeclared 2 → 3 → 5 ladder
-therefore lies in the oscillatory range of this column's stiff gas-side relaxation;
-completing K2 needs a new mesh or discretization design, which the frozen budget
-does not include.
+the residual. This is consistent with a fold (or a local minimum of the residual) of
+the discrete equations, and with the 2026-09-16 source homotopy that turned back
+between multipliers 0.28 and 0.31. The five-node iterates alternate node to node
+(liquid temperature 310, 353, 332, 357, 318 K). On the manifold of the interface
+equations, the stiffest mode of dB/dz = R has eigenvalue −10.4 m⁻¹ (gas inlet) and
+−12.6 m⁻¹ (top) on the accepted two-node states and +14.6 m⁻¹ at the hot interior node
+of the stalled iterate: an interface relaxation length of 7–10 cm (eigenvectors were
+not retained, so the mode is not attributed to one phase). For the decaying modes the
+trapezoidal amplification (1 + λh/2)/(1 − λh/2) is −0.88 to −0.90 at h = 3 m and −0.77
+to −0.81 at h = 1.5 m, a sign-alternating, weakly damped mode; a non-oscillating
+trapezoidal mesh needs h ≤ 2/|λ| ≈ 0.14 m. The central scheme's native-grid invariant
+drift is its truncation error (point-wise three-point derivatives with one endpoint row
+replaced per balance), so its K2 leg cannot meet the frozen 1e-7 K1 criterion on a
+coarse mesh. The predeclared 2 → 3 → 5 ladder therefore lies far above the stiff
+mode's step limit; completing K2 needs a new mesh or discretization design, which the
+frozen budget does not include.
 
 ## Running and interpreting the study
 
@@ -266,10 +272,7 @@ sampled extrema; continuous-peak accuracy requires further sampling/refinement. 
 refinement evidence and does not supply an absolute error automatically.
 
 Refine axial intervals for the two difference schemes with film resolution
-fixed, then film quadrature with axial settings fixed. For shooting refine
-IVP tolerance with a fixed absolute/relative tolerance ratio; sampling the same
-IVP at more heights is not refinement. For adaptive collocation refine its BVP
-tolerance. Do not average timings across different settings, starts or contexts.
+fixed, then film quadrature with axial settings fixed. Do not average timings across different settings, starts or contexts.
 At matched achieved capture/profile differences and physical residuals, repeat
 fresh-process runs sequentially and retain failures alongside successful costs.
 

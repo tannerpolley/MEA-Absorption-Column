@@ -145,7 +145,7 @@ def diagnose(path):
 
 
 def summarize(paths, control):
-    rows = [outcome(json.loads(Path(p).read_text())) for p in paths]
+    rows = sorted((outcome(json.loads(Path(p).read_text())) for p in paths), key=lambda r: (r["method"], r["nodes"]))
     k2 = []
     for scheme in ("trapezoidal", "central"):
         accepted = [r for r in rows if r["method"] == scheme and r["k1_accepted"] and r["numerical_acceptance"] == "accepted"]
