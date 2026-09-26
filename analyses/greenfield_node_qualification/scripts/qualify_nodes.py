@@ -23,7 +23,7 @@ from epcsaft import equilibrium as q
 from mea_absorption_column.column import _prepare_conserved_column_in_process
 from mea_absorption_column.config.column import resolve_column_config
 from mea_absorption_column.Thermodynamics.casadi_reactive import (
-    ActionUnavailable, build_caloric_flow_function, build_loading_path_function)
+    build_caloric_flow_function, build_loading_path_function)
 from mea_absorption_column.Thermodynamics.reactive_bundle import _FORMULAS, engine_liquid, engine_vapor
 from mea_absorption_column.Transport.Reactive_Film import binary_diffusivities_from_species, onsager_mobility_expression
 
@@ -80,15 +80,6 @@ def compare(check, state, labels, exact, reference, resolved, criterion):
         index = int(np.argmax(np.where(ok, np.abs(reference), 0)))
         record(check, state, f"control: {labels[index]} set to zero", 0.0, reference[index], 1.0, criterion,
                "control-fails" if 1.0 > criterion else "control-passed")
-
-
-def refused(check, state, item, call):
-    try:
-        call()
-    except ActionUnavailable as error:
-        record(check, state, item, None, None, None, None, f"refused: {error.status}")
-    else:
-        record(check, state, item, None, None, None, None, "fail: expected typed refusal is now available")
 
 
 def direction(phase, index):
@@ -158,8 +149,7 @@ def loading_checks(liquid, path, name, loading):
     # N4: outer actions dt/du_e = u_CO2 D2 ln a[e_CO2, e] + delta_e,CO2 D ln a[e_CO2] against differences of t.
     first = liquid.actions(u, liquid.log_activities, (2,))
     t = lambda point: point[2] * liquid.actions(point, liquid.log_activities, (2,))
-    refused("N4", label, "D2 ln a[v, e_T]", lambda: liquid.actions(u, liquid.log_activities, (2, 0)))
-    for index, tag, steps in ((1, "e_P", P_STEPS), (2, "e_CO2", None), (3, "e_MEA", None), (4, "e_H2O", None)):
+    for index, tag, steps in ((0, "e_T", T_STEPS), (1, "e_P", P_STEPS), (2, "e_CO2", None), (3, "e_MEA", None), (4, "e_H2O", None)):
         exact = u[2] * liquid.actions(u, liquid.log_activities, (2, index)) + (first if index == 2 else 0.0)
         e = np.eye(5)[index]
         reference, resolved = ladder(t, u, e, steps or tuple(s * u[index] for s in FEED_STEPS))
@@ -213,10 +203,10 @@ def caloric_checks(liquid, vapor):
         control = abs(terms[:2].sum() - total_h) / scale
         record("C1", name, "control: water term omitted", terms[:2].sum(), total_h, control, FIRST,
                "control-fails" if control > FIRST else "control-passed")
-        for index, tag, steps in ((0, "T", T_STEPS), (2, "F_CO2", None), (3, "F_MEA", None), (4, "F_H2O", None)):
+        for index, tag, steps in ((0, "T", T_STEPS), (1, "P", P_STEPS), (2, "F_CO2", None), (3, "F_MEA", None),
+                                  (4, "F_H2O", None)):
             reference, resolved = ladder(liquid_h, u, np.eye(5)[index], steps or tuple(s * u[index] for s in FEED_STEPS))
             compare("C2", name, [f"dH_L/d{tag}"], liquid_h(u, index), reference, resolved, FIRST)
-        refused("C2", name, "dH_L/dP", lambda: liquid_h(u, 1))
     caloric = build_caloric_flow_function(vapor)
     symbol = ca.MX.sym("u", 6)
     outputs = ca.vertcat(*caloric(symbol))
@@ -288,7 +278,8 @@ def main():
            ("pass" if defect <= 1e-8 else "fail") if continued.success else f"fail: {continued.message}")
     s3 = np.asarray(liquid(inputs(S3))).ravel()
     record("S3", "360 K, 106.4 kPa, loading 0.45", "value-only: liquid density mol/m3", s3[11], None, None, None, "evaluated")
-    # N6: the node Jacobian consumes dH_L/dP and D2 ln a[v, e_T]; until Engine #147 it must refuse, never estimate.
+    # N6: exact 19x12 node Jacobian along the retained direction versus a centred difference, step 1e-3;
+    # a row is resolved when the step-2e-3 difference agrees to 10 %.
     request = {"preset": "twelve_state_conserved", "case": {"physical_input_file": str(CASE.relative_to(ROOT))},
                "numerics": {"method": "trapezoidal", "nodes": 11}}
     prepared = _prepare_conserved_column_in_process(resolve_column_config(request))
@@ -297,13 +288,13 @@ def main():
     point[7] -= float(balance(point, [0.0, 0.0, 0.0])[2])
     symbol = ca.MX.sym("node_state", 12)
     graph = ca.Function("node_jacobian", [symbol], [ca.jacobian(ca.vertcat(*node.call([ca.MX(0.0), symbol], True, False)), symbol)])
+    along = np.array([.1, 1., .2, .1, 1., 1., 1e4, .01, 1e-4, 0., 0., .05])
+    evaluate = lambda x: np.concatenate([np.asarray(item).ravel() for item in node(0.0, x)])
     for label, state in (("3C", np.r_[point, 1e-4, 0.0, 0.0, 0.05]), ("S2 node", np.asarray(S2_NODE))):
-        try:
-            graph(state)
-            record("N6", label, "19x12 node Jacobian", None, None, None, 1e-5, "fail: available; run the centred comparison")
-        except RuntimeError as error:
-            cause = next((s for s in ("ReferenceUnavailable",) if s in str(error)), "other")
-            record("N6", label, "19x12 node Jacobian", None, None, None, 1e-5, f"refused: {cause}")
+        jacobian = np.asarray(graph(state))
+        fine, coarse = ((evaluate(state + h * along) - evaluate(state - h * along)) / (2 * h) for h in (1e-3, 2e-3))
+        compare("N6", label, [f"J row {i}" for i in range(jacobian.shape[0])], jacobian @ along, fine,
+                np.abs(coarse - fine) <= 0.1 * np.abs(fine), 1e-5)
     elapsed = time.perf_counter() - started
     record("budget", "all", "node-check wall time s", elapsed, None, elapsed, BUDGET_S, "pass" if elapsed <= BUDGET_S else "fail")
     OUT.mkdir(parents=True, exist_ok=True)
@@ -327,8 +318,8 @@ def main():
         "csv_sha256": hashlib.sha256((OUT / "node-checks.csv").read_bytes()).hexdigest(),
         "status_counts": counts, "largest_passing_defect": worst, "elapsed_s": elapsed, "native_solves": liquid.stats,
         "claim_limits": "Numerical verification of consumed node quantities on the exploratory MEA record 868a5018 "
-                        "(not adopted) at S1/S2/V1/V2; C4 is the pure-water EOS residual only. Refusals (N4 e_T, "
-                        "dH_L/dP, N6) wait for Engine #147; K1-K2 and physical checks (C3, C5, C6) are not run here.",
+                        "(not adopted) at S1/S2/V1/V2 and the 3C/S2 node; C4 is the pure-water EOS residual only. "
+                        "K1-K2 are in analyses/bvp_solution_methods; physical checks (C3, C5, C6) belong to #149.",
     }
     (OUT / "summary.json").write_text(json.dumps(summary, indent=1, default=float) + "\n")
     print(json.dumps(summary, indent=1, default=float))

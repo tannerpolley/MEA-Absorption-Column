@@ -6,10 +6,9 @@ from pathlib import Path
 
 import casadi as ca
 
-from mea_absorption_column.Thermodynamics.casadi_reactive import ReactiveLiquidCallback, FixedCompositionVaporCallback
-from mea_absorption_column.Thermodynamics.reactive_bundle import ReactiveLiquid, load_reference_thermochemistry
-from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET as dataset, ensure_epcsaft_importable
-from mea_absorption_column.BVP.Coupled_Column import build_coupled_column_functions
+from mea_absorption_column.column import _prepare_conserved_column_in_process
+from mea_absorption_column.config.column import resolve_column_config
+from run_case import request
 
 
 def leaves(function):
@@ -26,16 +25,8 @@ def leaves(function):
 
 def main():
     analysis = Path(__file__).resolve().parents[1]
-    p = json.loads((analysis / "input/case_3c.json").read_text())["physical_inputs"]
-    reference = load_reference_thermochemistry(dataset / "anchored-reference-thermochemistry.json")
-    liquid = ReactiveLiquidCallback("inspect_liquid", ReactiveLiquid(dataset, thermochemistry=reference, **p["liquid_branch_policy"]))
-    vapor_path = dataset.parent / "MEA_neutral_vapor"
-    vapor = FixedCompositionVaporCallback("inspect_vapor", ensure_epcsaft_importable().Parameters.from_json(vapor_path / "parameters.json"),
-        load_reference_thermochemistry(vapor_path / "reference-thermochemistry.json", liquid_reference=reference), packing_interval=(1e-6, .1))
-    d = p["species_diffusivity_model"]
-    diffusion = lambda t: ca.vertcat(d["co2_prefactor_m2_s"] * ca.exp(-d["co2_activation_j_mol"] / (d["gas_constant_j_mol_k"] * t)), *d["other_species_m2_s"])
-    node, boundary, _ = build_coupled_column_functions(liquid, vapor, species_diffusivities=diffusion, quadrature_points=3,
-        **{k: p[k] for k in ("liquid_feed_mol_s", "vapor_feed_mol_s", "liquid_temperature_k", "vapor_temperature_k", "bottom_pressure_pa", "area_m2", "packing")})
+    assembly = _prepare_conserved_column_in_process(resolve_column_config(request("trapezoidal", 2, 3)))["assembly"]
+    node, boundary = assembly["node"], assembly["boundary"]
     x, parameter = ca.MX.sym("x", 12, 2), ca.MX.sym("p", 0)
     results = {}
     for label, inline in (("default", False), ("inline_cse_jacobian", True)):

@@ -12,7 +12,7 @@ authors = [{ name = "Tanner Polley", email = "tannerwpolley@gmail.com" }]
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "casadi==3.7.2",
-    "epcsaft @ file:///home/tnnrpolley21/.cache/epcsaft/wheels/9dd86fdff35bbbff6506e010bbdb9c451a19dc4881bbd51c7aad9e07dfb0078d/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "epcsaft @ file:///home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
     "matplotlib>=3.8",
     "numpy>=1.26",
     "openpyxl>=3.1",

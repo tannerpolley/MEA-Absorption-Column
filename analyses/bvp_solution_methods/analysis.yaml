@@ -19,7 +19,7 @@ commands:
   native_adapter:
     - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 timeout 90 uv run python analyses/bvp_solution_methods/scripts/check_native_adapter.py --output NEW_NATIVE_POINT_JSON
   native_case:
-    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_solution_methods/scripts/run_case.py --method trapezoidal --nodes 2 --film-points 3 --wall-limit 600 --output NEW_BASELINE_DIRECTORY
+    - OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt --method trapezoidal --nodes 2 --output NEW_ATTEMPT_DIRECTORY
   figures:
     - uv run python analyses/bvp_solution_methods/figures/method_comparison/scripts/render_comparison.py COMPARISON_JSON --refinement axial --output NEW_FIGURE_DIRECTORY
   reduce:

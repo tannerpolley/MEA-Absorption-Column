@@ -1,0 +1,1403 @@
+{
+  "assembly": {
+    "algebraic_equations": 5,
+    "boundary_equations": 7,
+    "conserved_balances": 7,
+    "coordinate": "physical_height",
+    "states": 12
+  },
+  "attempt_id": "20260925T235017-0ce1a4a81cc8",
+  "config": {
+    "acceptance": {
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null,
+      "numerical": "conserved_original_equations",
+      "physical": "not_evaluated"
+    },
+    "case": {
+      "data_type": "mole",
+      "gas_flow_basis": "reported_total_wet",
+      "id": "corrected published 2017 3C",
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/analyses/bvp_solution_methods/input/case_3c.json",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/analyses/bvp_solution_methods/input/case_3c.json",
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "dependencies": {
+      "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory",
+      "mobility_law": "harmonic_mean_onsager_v1",
+      "references": [
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+      ],
+      "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+    },
+    "engine": {
+      "commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/.venv/bin/python3",
+      "required": true,
+      "sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+      "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+    },
+    "execution": {
+      "cache_policy": "legacy_explicit",
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/analyses/bvp_solution_methods/results/k1_k2_148/trapezoidal_n2",
+      "process_isolation": false,
+      "resume": false,
+      "retry": false,
+      "threads": 1,
+      "wall_limit_s": 1200.0
+    },
+    "initialization": {
+      "policy": "case_declared_native_inputs",
+      "values": {}
+    },
+    "model": {
+      "coordinate": "physical_height",
+      "energy_model": "native_total_enthalpy",
+      "film_model": "equilibrium_manifold",
+      "formulation": "twelve_state_conserved",
+      "layout": "twelve_conserved",
+      "pressure_model": "hydraulic_pressure_drop",
+      "thermo_model": "reactive_epcsaft"
+    },
+    "numerics": {
+      "method": "trapezoidal",
+      "solver_settings": {
+        "max_iterations": 20,
+        "nodes": 2,
+        "quadrature_points": 9,
+        "tolerance": 1e-07
+      }
+    },
+    "preset": "twelve_state_conserved",
+    "resolved_config_sha256": "30bfbd13fbf745b7a53d8cf7d261e6c6ce87315f77ee7fb27db1846545af58d3",
+    "schema_version": 1
+  },
+  "config_sha256": "30bfbd13fbf745b7a53d8cf7d261e6c6ce87315f77ee7fb27db1846545af58d3",
+  "coordinate": "physical_height",
+  "dependencies": {
+    "assets": {
+      "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory": "eb7ce6bed967b5a628b97dd36a03d53f67fac663a0da3ac726fa517b18f16d5f",
+      "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+      "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+    },
+    "capabilities": {
+      "a1_equilibrium_values": "required_on_evaluation",
+      "a2_equilibrium_actions": "required_on_outer_derivative",
+      "caloric_actions": "required_on_outer_derivative",
+      "finite_difference_fallback": false
+    }
+  },
+  "diagnostics": {
+    "assembly": "complete",
+    "physical_acceptance_reason": "complete physical certification accepted",
+    "physical_certification": {
+      "accepted": true,
+      "capture": {
+        "accepted": true,
+        "criterion": "0 <= outlet_vapor_co2_mol_s <= inlet_vapor_co2_mol_s",
+        "inlet_vapor_co2_mol_s": 1.6540435157305333,
+        "outlet_vapor_co2_mol_s": 0.042093491343517996
+      },
+      "conserved": [
+        [
+          4.044270552010099,
+          2.43232052761959
+        ],
+        [
+          75.9291885353492,
+          76.97519250727882
+        ],
+        [
+          1.6540435157305333,
+          0.042093491343517996
+        ],
+        [
+          1.5624169375298196,
+          2.6084209114408274
+        ],
+        [
+          -24026260.13726264,
+          -23637597.911184806
+        ],
+        [
+          -1018201.2993283545,
+          -629539.0732498782
+        ],
+        [
+          110899.9999999761,
+          110148.6307263852
+        ]
+      ],
+      "criteria": {
+        "boundary": 1e-07,
+        "charge": 1e-07,
+        "energy": 1e-07,
+        "interface": 1e-07,
+        "material": 1e-07
+      },
+      "original_bounds": {
+        "accepted": true,
+        "finite_profile": true,
+        "lower": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          293.15,
+          293.15,
+          1.0,
+          2.1538326677728036e-16,
+          {
+            "value_class": "negative_infinity"
+          },
+          {
+            "value_class": "negative_infinity"
+          },
+          {
+            "value_class": "negative_infinity"
+          },
+          {
+            "value_class": "negative_infinity"
+          }
+        ],
+        "lower_satisfied": true,
+        "scope": "All twelve states at every native grid node",
+        "upper": [
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          393.15,
+          393.15,
+          10000000.0,
+          0.9699999999999998,
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          },
+          {
+            "value_class": "positive_infinity"
+          }
+        ],
+        "upper_satisfied": true
+      },
+      "original_residuals": {
+        "boundary": [
+          -7.904787935331115e-13,
+          -1.2747136679536197e-11,
+          -2.76445533131664e-13,
+          -1.3811174426336947e-13,
+          5.019273885409348e-11,
+          1.3415046851150692e-11,
+          -2.389424480497837e-08
+        ],
+        "charge": [
+          2.3622012481380565e-15,
+          1.7601759690088516e-15,
+          1.5385106230859534e-15,
+          6.085709379873494e-17,
+          7.036987730737565e-16,
+          5.10781407743314e-16,
+          1.2018486961120223e-16,
+          -6.275630048515669e-17,
+          -1.3123282622135848e-16,
+          1.0587911840678754e-19,
+          3.813384680186223e-17,
+          3.953695687898898e-17,
+          -2.5092504029461393e-17,
+          -3.030218017154897e-17,
+          -9.37767116564181e-17,
+          3.275391703737654e-17,
+          -3.805634328718846e-17,
+          1.9870334151401818e-17
+        ],
+        "energy": [
+          0.0,
+          6.444752216339111e-07
+        ],
+        "interface": [
+          [
+            5.306866057708248e-14,
+            5.571931804837504e-15
+          ],
+          [
+            7.603184786747334e-17,
+            9.434035914325663e-17
+          ],
+          [
+            5.2390817378844545e-14,
+            -5.747919501475351e-14
+          ],
+          [
+            1.4246936963502321e-13,
+            2.6256774532384952e-14
+          ],
+          [
+            2.116867108270526e-07,
+            2.0176958059892058e-07
+          ]
+        ],
+        "material": [
+          [
+            0.0,
+            3.4932057246805925e-12
+          ],
+          [
+            0.0,
+            1.981391051231185e-09
+          ]
+        ]
+      },
+      "reason": "physical criteria accepted",
+      "residual_units": {
+        "boundary": "four mol/s; two K; Pa",
+        "charge": "elementary charge mol per apparent feed mol",
+        "energy": "W",
+        "interface": "holdup fraction; mol/m/s; mol/m2/s; mol/m2/s; W/m2",
+        "material": "mol/s"
+      },
+      "scaled_residual_inf": {
+        "boundary": 5.019273885409348e-13,
+        "charge": 2.3622012481380565e-15,
+        "energy": 1.0011595315011076e-12,
+        "interface": 5.11404398109903e-12,
+        "material": 2.5740644312691978e-11
+      },
+      "scope": "Native-grid material/energy invariants, bulk/film-quadrature charge, interface, boundary, original bounds, and CO2 capture direction; between-node accuracy still requires refinement",
+      "sources": [
+        [
+          -0.280860852592525,
+          -0.25645582220344704
+        ],
+        [
+          16.122902797439682,
+          -15.774234806136073
+        ],
+        [
+          -0.280860852592525,
+          -0.25645582220344704
+        ],
+        [
+          16.122902797439682,
+          -15.774234806136073
+        ],
+        [
+          -3688458.3131861724,
+          3818012.388545608
+        ],
+        [
+          -3688458.3131861724,
+          3818012.388545608
+        ],
+        [
+          -128.74066413205983,
+          -121.71576039971104
+        ]
+      ]
+    },
+    "solver_failure": null
+  },
+  "engine": {
+    "actual_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "archive_hash_status": "verified_from_installed_contents",
+    "commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "commit_evidence": "not_available_from_installed_distribution",
+    "declared_archive_sha256": null,
+    "declared_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "declared_wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
+    "expected_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "expected_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "installed_artifact_members": 14,
+    "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/.venv/lib/python3.13/site-packages",
+    "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "loaded_version": "0.2.0.dev0",
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/.venv/bin/python3",
+    "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/.venv",
+    "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+    "python_implementation": "cpython",
+    "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/.venv",
+    "python_version": "3.13.13",
+    "required": true,
+    "status": "verified",
+    "verified_commit": null,
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "execution": {
+    "runtime_s": 299.39248140399286,
+    "started_at_utc": "2026-09-25T23:50:17Z",
+    "status": "completed"
+  },
+  "failure": null,
+  "formulation": "twelve_state_conserved",
+  "initial_profile": [
+    [
+      2.4323205276203805,
+      2.4323205276203805
+    ],
+    [
+      76.97519250729157,
+      76.97519250729157
+    ],
+    [
+      1.6540435157308098,
+      1.6540435157308098
+    ],
+    [
+      1.5624169375299577,
+      1.5624169375299577
+    ],
+    [
+      318.15,
+      318.15
+    ],
+    [
+      316.75,
+      316.75
+    ],
+    [
+      110900.0,
+      110900.0
+    ],
+    [
+      0.05271513518893747,
+      0.05271513518893747
+    ],
+    [
+      0.01870295984847483,
+      0.01870295984847483
+    ],
+    [
+      0.014962150656002149,
+      0.014962150656002149
+    ],
+    [
+      -11089.95564674784,
+      -11089.95564674784
+    ],
+    [
+      0.7743394431198521,
+      0.7743394431198521
+    ]
+  ],
+  "initialization": {
+    "accepted": true,
+    "algebraic_residual": [
+      0.0,
+      0.0,
+      -2.9976021664879227e-14,
+      0.0,
+      0.0
+    ],
+    "state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.05271513518893747,
+      0.01870295984847483,
+      0.014962150656002149,
+      -11089.95564674784,
+      0.7743394431198521
+    ]
+  },
+  "limitations": [
+    "exploratory numerical attempt only; no solution-verification, validation, or scientific-promotion claim",
+    "species mobilities are case-estimated and use the declared harmonic-mean closure",
+    "native vapor caloric reference remains provisional for thermal interpretation",
+    "physical certification is limited to the native grid and configured film quadrature",
+    "the case-declared 3C policy does not establish continuous-profile or peak behavior"
+  ],
+  "native_calls": {
+    "liquid_actions": {
+      "failed": 0,
+      "returned": 9506,
+      "started": 9506,
+      "wall_s": 292.75897385067947
+    },
+    "liquid_solve": {
+      "failed": 0,
+      "returned": 9506,
+      "started": 9506,
+      "wall_s": 38.35227515945735
+    },
+    "vapor_actions": {
+      "failed": 4,
+      "returned": 2192,
+      "started": 2196,
+      "wall_s": 4.487103503284743
+    }
+  },
+  "native_layout": "twelve_conserved",
+  "native_profile": {
+    "available": true,
+    "grid": [
+      0.0,
+      6.0
+    ],
+    "state_matrix": [
+      [
+        4.044270552010099,
+        2.43232052761959
+      ],
+      [
+        75.9291885353492,
+        76.97519250727882
+      ],
+      [
+        1.6540435157305333,
+        0.042093491343517996
+      ],
+      [
+        1.5624169375298196,
+        2.6084209114408274
+      ],
+      [
+        330.59511141471216,
+        318.15000000005017
+      ],
+      [
+        316.7500000000134,
+        330.8039238650043
+      ],
+      [
+        110899.9999999761,
+        110148.6307263852
+      ],
+      [
+        0.05169516153229787,
+        0.052715145177942686
+      ],
+      [
+        0.0038698981598162437,
+        0.0035278482888605987
+      ],
+      [
+        -0.22215268269241373,
+        0.21699295726952098
+      ],
+      [
+        50822.17014938303,
+        -52521.20367575008
+      ],
+      [
+        0.1578416037923389,
+        0.19649586268587266
+      ]
+    ]
+  },
+  "numerical_acceptance": "accepted",
+  "physical_acceptance": "accepted",
+  "physical_certification": {
+    "accepted": true,
+    "capture": {
+      "accepted": true,
+      "criterion": "0 <= outlet_vapor_co2_mol_s <= inlet_vapor_co2_mol_s",
+      "inlet_vapor_co2_mol_s": 1.6540435157305333,
+      "outlet_vapor_co2_mol_s": 0.042093491343517996
+    },
+    "conserved": [
+      [
+        4.044270552010099,
+        2.43232052761959
+      ],
+      [
+        75.9291885353492,
+        76.97519250727882
+      ],
+      [
+        1.6540435157305333,
+        0.042093491343517996
+      ],
+      [
+        1.5624169375298196,
+        2.6084209114408274
+      ],
+      [
+        -24026260.13726264,
+        -23637597.911184806
+      ],
+      [
+        -1018201.2993283545,
+        -629539.0732498782
+      ],
+      [
+        110899.9999999761,
+        110148.6307263852
+      ]
+    ],
+    "criteria": {
+      "boundary": 1e-07,
+      "charge": 1e-07,
+      "energy": 1e-07,
+      "interface": 1e-07,
+      "material": 1e-07
+    },
+    "original_bounds": {
+      "accepted": true,
+      "finite_profile": true,
+      "lower": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        293.15,
+        293.15,
+        1.0,
+        2.1538326677728036e-16,
+        {
+          "value_class": "negative_infinity"
+        },
+        {
+          "value_class": "negative_infinity"
+        },
+        {
+          "value_class": "negative_infinity"
+        },
+        {
+          "value_class": "negative_infinity"
+        }
+      ],
+      "lower_satisfied": true,
+      "scope": "All twelve states at every native grid node",
+      "upper": [
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        393.15,
+        393.15,
+        10000000.0,
+        0.9699999999999998,
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        },
+        {
+          "value_class": "positive_infinity"
+        }
+      ],
+      "upper_satisfied": true
+    },
+    "original_residuals": {
+      "boundary": [
+        -7.904787935331115e-13,
+        -1.2747136679536197e-11,
+        -2.76445533131664e-13,
+        -1.3811174426336947e-13,
+        5.019273885409348e-11,
+        1.3415046851150692e-11,
+        -2.389424480497837e-08
+      ],
+      "charge": [
+        2.3622012481380565e-15,
+        1.7601759690088516e-15,
+        1.5385106230859534e-15,
+        6.085709379873494e-17,
+        7.036987730737565e-16,
+        5.10781407743314e-16,
+        1.2018486961120223e-16,
+        -6.275630048515669e-17,
+        -1.3123282622135848e-16,
+        1.0587911840678754e-19,
+        3.813384680186223e-17,
+        3.953695687898898e-17,
+        -2.5092504029461393e-17,
+        -3.030218017154897e-17,
+        -9.37767116564181e-17,
+        3.275391703737654e-17,
+        -3.805634328718846e-17,
+        1.9870334151401818e-17
+      ],
+      "energy": [
+        0.0,
+        6.444752216339111e-07
+      ],
+      "interface": [
+        [
+          5.306866057708248e-14,
+          5.571931804837504e-15
+        ],
+        [
+          7.603184786747334e-17,
+          9.434035914325663e-17
+        ],
+        [
+          5.2390817378844545e-14,
+          -5.747919501475351e-14
+        ],
+        [
+          1.4246936963502321e-13,
+          2.6256774532384952e-14
+        ],
+        [
+          2.116867108270526e-07,
+          2.0176958059892058e-07
+        ]
+      ],
+      "material": [
+        [
+          0.0,
+          3.4932057246805925e-12
+        ],
+        [
+          0.0,
+          1.981391051231185e-09
+        ]
+      ]
+    },
+    "reason": "physical criteria accepted",
+    "residual_units": {
+      "boundary": "four mol/s; two K; Pa",
+      "charge": "elementary charge mol per apparent feed mol",
+      "energy": "W",
+      "interface": "holdup fraction; mol/m/s; mol/m2/s; mol/m2/s; W/m2",
+      "material": "mol/s"
+    },
+    "scaled_residual_inf": {
+      "boundary": 5.019273885409348e-13,
+      "charge": 2.3622012481380565e-15,
+      "energy": 1.0011595315011076e-12,
+      "interface": 5.11404398109903e-12,
+      "material": 2.5740644312691978e-11
+    },
+    "scope": "Native-grid material/energy invariants, bulk/film-quadrature charge, interface, boundary, original bounds, and CO2 capture direction; between-node accuracy still requires refinement",
+    "sources": [
+      [
+        -0.280860852592525,
+        -0.25645582220344704
+      ],
+      [
+        16.122902797439682,
+        -15.774234806136073
+      ],
+      [
+        -0.280860852592525,
+        -0.25645582220344704
+      ],
+      [
+        16.122902797439682,
+        -15.774234806136073
+      ],
+      [
+        -3688458.3131861724,
+        3818012.388545608
+      ],
+      [
+        -3688458.3131861724,
+        3818012.388545608
+      ],
+      [
+        -128.74066413205983,
+        -121.71576039971104
+      ]
+    ]
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_inputs": {
+    "case_id": "corrected published 2017 3C",
+    "conserved_policy": {
+      "loading_anchor": 0.25,
+      "max_loading_steps": 32,
+      "max_log_loading_step": 0.1,
+      "precedence": "physical_inputs defaults, overridden by initialization.values, then numerics.solver_settings reactive_loading_* values",
+      "species_diffusivity_model": {
+        "co2_activation_j_mol": 15230.0,
+        "co2_prefactor_m2_s": 3.14e-07,
+        "gas_constant_j_mol_k": 8.314462618,
+        "other_species_m2_s": [
+          8.8e-10,
+          8.8e-10,
+          8.4e-10,
+          6.8e-10,
+          6.8e-10,
+          6.8e-10,
+          1.8439088914585774e-09,
+          1.8439088914585774e-09
+        ]
+      }
+    },
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "metadata": {
+      "beds": 1,
+      "case_id": "corrected published 2017 3C",
+      "diameter_m": 0.64,
+      "gas_flow_basis": "reported_total_wet",
+      "intercoolers": 0,
+      "physical_input_basis": "direct_canonical_SI",
+      "single_bed_height_m": 6.0,
+      "total_packed_height_m": 6.0,
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "parameters": [
+      [
+        2.4323205276203805,
+        9.729282110481522,
+        76.97519250729157
+      ],
+      [
+        1.6540435157308098,
+        1.5624169375299577,
+        14.530683358624426,
+        1.6006872732878803
+      ],
+      318.15,
+      316.75,
+      [
+        0.0,
+        0.01,
+        0.02,
+        0.03,
+        0.04,
+        0.05,
+        0.06,
+        0.07,
+        0.08,
+        0.09,
+        0.1,
+        0.11,
+        0.12,
+        0.13,
+        0.14,
+        0.15,
+        0.16,
+        0.17,
+        0.18,
+        0.19,
+        0.2,
+        0.21,
+        0.22,
+        0.23,
+        0.24,
+        0.25,
+        0.26,
+        0.27,
+        0.28,
+        0.29,
+        0.3,
+        0.31,
+        0.32,
+        0.33,
+        0.34,
+        0.35000000000000003,
+        0.36,
+        0.37,
+        0.38,
+        0.39,
+        0.4,
+        0.41000000000000003,
+        0.42,
+        0.43,
+        0.44,
+        0.45,
+        0.46,
+        0.47000000000000003,
+        0.48,
+        0.49,
+        0.5,
+        0.51,
+        0.52,
+        0.53,
+        0.54,
+        0.55,
+        0.56,
+        0.5700000000000001,
+        0.58,
+        0.59,
+        0.6,
+        0.61,
+        0.62,
+        0.63,
+        0.64,
+        0.65,
+        0.66,
+        0.67,
+        0.68,
+        0.6900000000000001,
+        0.7000000000000001,
+        0.71,
+        0.72,
+        0.73,
+        0.74,
+        0.75,
+        0.76,
+        0.77,
+        0.78,
+        0.79,
+        0.8,
+        0.81,
+        0.8200000000000001,
+        0.8300000000000001,
+        0.84,
+        0.85,
+        0.86,
+        0.87,
+        0.88,
+        0.89,
+        0.9,
+        0.91,
+        0.92,
+        0.93,
+        0.9400000000000001,
+        0.9500000000000001,
+        0.96,
+        0.97,
+        0.98,
+        0.99,
+        1.0
+      ],
+      6.0,
+      0.3216990877275948,
+      110900.0,
+      [
+        250.0,
+        0.97,
+        0.203,
+        0.35,
+        0.017,
+        0.292,
+        0.119
+      ]
+    ],
+    "physical_input_sha256": "601f79091ee94d790b247bb91b0c67387e65411b112b760023e9b9050e53d17c",
+    "raw_input": [
+      4.607069120719279,
+      19.347831085173077,
+      0.25,
+      0.2999967360887997,
+      0.08548986749209121,
+      318.15,
+      316.75,
+      110900.0,
+      1.0
+    ],
+    "source_lineage": {
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/analyses/bvp_solution_methods/input/case_3c.json",
+      "physical_input_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/analyses/bvp_solution_methods/input/case_3c.json",
+      "source_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+      "source_row_sha256": "8483a65064aebcece44880142fceccca7fd9a306c73516447a5fda0870bdb936"
+    },
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "result": {
+    "accepted": true,
+    "algebraic_residual": [
+      [
+        5.306866057708248e-14,
+        5.571931804837504e-15
+      ],
+      [
+        7.603184786747334e-17,
+        9.434035914325663e-17
+      ],
+      [
+        5.2390817378844545e-14,
+        -5.747919501475351e-14
+      ],
+      [
+        1.4246936963502321e-13,
+        2.6256774532384952e-14
+      ],
+      [
+        2.116867108270526e-07,
+        2.0176958059892058e-07
+      ]
+    ],
+    "balance_residual_per_length": [
+      [
+        -4.3209880118411093e-13
+      ],
+      [
+        -3.3020075562717466e-10
+      ],
+      [
+        1.5017616779762952e-13
+      ],
+      [
+        3.023507370395843e-14
+      ],
+      [
+        -7.916241884231567e-08
+      ],
+      [
+        2.8172507882118225e-08
+      ],
+      [
+        7.356296312840035e-10
+      ]
+    ],
+    "bound_violation": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0
+      ]
+    ],
+    "boundary_residual": [
+      [
+        -7.904787935331115e-13
+      ],
+      [
+        -1.2747136679536197e-11
+      ],
+      [
+        -2.76445533131664e-13
+      ],
+      [
+        -1.3811174426336947e-13
+      ],
+      [
+        5.019273885409348e-11
+      ],
+      [
+        1.3415046851150692e-11
+      ],
+      [
+        -2.389424480497837e-08
+      ]
+    ],
+    "boundary_slots": null,
+    "defect_units": "B",
+    "defects": [
+      [
+        -2.5925928071046656e-12
+      ],
+      [
+        -1.981204533763048e-09
+      ],
+      [
+        9.01057006785777e-13
+      ],
+      [
+        1.8141044222375058e-13
+      ],
+      [
+        -4.7497451305389404e-07
+      ],
+      [
+        1.6903504729270935e-07
+      ],
+      [
+        4.413777787704021e-09
+      ]
+    ],
+    "failure": null,
+    "grid": [
+      0.0,
+      6.0
+    ],
+    "iterations": 18,
+    "nlp_scaling_method": "none",
+    "profile": [
+      [
+        4.044270552010099,
+        2.43232052761959
+      ],
+      [
+        75.9291885353492,
+        76.97519250727882
+      ],
+      [
+        1.6540435157305333,
+        0.042093491343517996
+      ],
+      [
+        1.5624169375298196,
+        2.6084209114408274
+      ],
+      [
+        330.59511141471216,
+        318.15000000005017
+      ],
+      [
+        316.7500000000134,
+        330.8039238650043
+      ],
+      [
+        110899.9999999761,
+        110148.6307263852
+      ],
+      [
+        0.05169516153229787,
+        0.052715145177942686
+      ],
+      [
+        0.0038698981598162437,
+        0.0035278482888605987
+      ],
+      [
+        -0.22215268269241373,
+        0.21699295726952098
+      ],
+      [
+        50822.17014938303,
+        -52521.20367575008
+      ],
+      [
+        0.1578416037923389,
+        0.19649586268587266
+      ]
+    ],
+    "profile_finite": true,
+    "scaled_bound_violation_inf": 0.0,
+    "scaled_residual_inf": 2.573822122725287e-11,
+    "scheme": "trapezoidal",
+    "solver_statistics": {
+      "iter_count": 18,
+      "iterations": {
+        "alpha_du": [
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          0.0,
+          0.006008601084441503,
+          0.16054035879467704,
+          0.5007205482799406,
+          0.9971520525011182,
+          1.0,
+          1.0,
+          0.8676546930125248,
+          1.0,
+          1.0,
+          0.9209098903784312,
+          1.0,
+          0.9919570917294144,
+          1.0,
+          1.0,
+          0.0
+        ],
+        "alpha_pr": [
+          0.0,
+          0.7549251419845738,
+          0.0247468937262658,
+          0.00027622926364116534,
+          4.207189408352797e-07,
+          0.0013953394191353653,
+          0.02182090501678954,
+          0.1511342885587874,
+          0.5761803771485162,
+          0.6965709753489165,
+          0.4959471716216636,
+          1.0,
+          1.0,
+          0.9777511754770638,
+          1.0,
+          0.9974015230910274,
+          0.9979616455213178,
+          0.9961763812538772,
+          1.0,
+          4.207189408352797e-07
+        ],
+        "d_norm": [
+          0.0,
+          1.3113883018883874,
+          0.521027977316058,
+          0.4783381492417063,
+          0.0,
+          13982.601949711863,
+          44.10844992630604,
+          3.468084572228439,
+          0.2381599847814406,
+          0.19588882947671568,
+          0.848314424477481,
+          0.8674593439585584,
+          0.6373984040118262,
+          0.40400244952821157,
+          0.20256886676953673,
+          0.007984611734378205,
+          0.015700117320582706,
+          0.0001534704514886785,
+          1.6705030818795791e-06,
+          1.0213850634744848
+        ],
+        "inf_du": [
+          1.0,
+          33.28118039293103,
+          97.65664994829082,
+          368802.06030666427,
+          1000.0,
+          1005.2099841068655,
+          868.7971916827519,
+          698.626716941526,
+          246.8550819925931,
+          188.4432239001883,
+          226.48434062925048,
+          110.44411583989665,
+          45.53952233076929,
+          33.480972490405065,
+          16.69819792936437,
+          0.4061988132719989,
+          0.10667037541063074,
+          0.010114663260622448,
+          0.0017824970163283088,
+          2.4063195880330568e-11
+        ],
+        "inf_pr": [
+          81.78467931535539,
+          20.202832515588362,
+          19.70313997741806,
+          19.697697421322758,
+          19.697697421322758,
+          1.0992245502296272,
+          0.6400135646144649,
+          0.31726692698918885,
+          0.14291265158396035,
+          0.0451009291967348,
+          0.04675341623852607,
+          0.33459488091393386,
+          0.15133556823242245,
+          0.10047550880644356,
+          0.02739572501388976,
+          0.00010489578897287274,
+          0.000152732061822866,
+          5.885057946888794e-07,
+          2.573822122725287e-11,
+          2.573822122725287e-11
+        ],
+        "mu": [
+          1.0,
+          0.9455360339497094,
+          0.12595727880931837,
+          0.017493184138927365,
+          19.697697421322758,
+          1313.7218224264022,
+          247.6212707318331,
+          2.5680898542374364,
+          4.874038364879411,
+          2.152578966396788,
+          1.114191362870715,
+          8.82105687987142,
+          6.78241835687129,
+          1.356483671374258,
+          0.4438966706374484,
+          0.05407483052771,
+          0.000712280213960419,
+          1.9351891246955467e-05,
+          1.7290588244217846e-07,
+          0.005228461226664974
+        ],
+        "obj": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "regularization_size": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "n_call_callback_fun": 0,
+      "n_call_nlp_f": 24,
+      "n_call_nlp_g": 25,
+      "n_call_nlp_grad": 0,
+      "n_call_nlp_grad_f": 5,
+      "n_call_nlp_jac_g": 19,
+      "n_call_total": 1,
+      "return_status": "Solve_Succeeded",
+      "success": true,
+      "t_proc_callback_fun": 0.0,
+      "t_proc_nlp_f": 7.7e-05,
+      "t_proc_nlp_g": 40.674686,
+      "t_proc_nlp_grad": 0.0,
+      "t_proc_nlp_grad_f": 2.2e-05,
+      "t_proc_nlp_jac_g": 243.60970299999997,
+      "t_proc_total": 284.313099,
+      "t_wall_callback_fun": 0.0,
+      "t_wall_nlp_f": 7.286699999999999e-05,
+      "t_wall_nlp_g": 40.759134413999995,
+      "t_wall_nlp_grad": 0.0,
+      "t_wall_nlp_grad_f": 2.0398e-05,
+      "t_wall_nlp_jac_g": 244.47529968299995,
+      "t_wall_total": 285.276745251,
+      "unified_return_status": "SOLVER_RET_SUCCESS"
+    },
+    "status": "Solve_Succeeded"
+  },
+  "scaling": {
+    "algebraic_scale": [
+      0.97,
+      1.8447310874120108e-05,
+      0.23489075588377373,
+      0.29100727351695577,
+      171852.2742217299
+    ],
+    "balance_scale": [
+      0.40538675460339674,
+      12.82919875121526,
+      0.2756739192884683,
+      0.2604028229216596,
+      107288.13296911248,
+      9857.357621568704,
+      18483.333333333332
+    ],
+    "boundary_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      100.0,
+      100.0,
+      110900.0
+    ],
+    "capacity_rates_w_k": [
+      6437.287978146749,
+      591.4414572941223
+    ],
+    "policy": "case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds",
+    "state_scale": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      300.0,
+      300.0,
+      110900.0,
+      0.97,
+      0.23489075588377373,
+      0.29100727351695577,
+      171852.2742217299,
+      1.0
+    ]
+  },
+  "schema_version": 1,
+  "scientific_acceptance": "not_evaluated",
+  "solver": {
+    "method": "trapezoidal",
+    "stages": {
+      "outer": {
+        "status": "Solve_Succeeded",
+        "success": true
+      }
+    }
+  },
+  "source_identity": {
+    "commit": "4f2d12e9c0f3081a3336144e4bbe9dcc27c73b93",
+    "dirty": true,
+    "dirty_patch": "diff --git a/src/mea_absorption_column/Thermodynamics/casadi_reactive.py b/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\nindex cbcf640..dc8f6f1 100644\n--- a/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\n+++ b/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\n@@ -67,8 +67,8 @@ class EnginePhase:\n         self.stats = dict(native_solves=0, continuations=0)\n         self._accepted = None\n         self.solve = lru_cache(maxsize=4096)(self._solve)\n-        # Separate callbacks keep H refusals out of Jacobians of H-free, inlined graph slices; any\n-        # Jacobian through H (or a dense e_T column) still refuses, typed and without a value.\n+        # Separate callbacks keep Jacobians of H-free, inlined graph slices from requesting enthalpy\n+        # actions; an unavailable action (e.g. caloric second order) refuses, typed and without a value.\n         self._state = ActionCallback(name + \"_state\", self, self.state_observables)\n         self._molar_enthalpy = ActionCallback(name + \"_enthalpy\", self, (self.enthalpy,))\n \ndiff --git a/src/mea_absorption_column/column.py b/src/mea_absorption_column/column.py\nindex 7334fcf..e69fce4 100644\n--- a/src/mea_absorption_column/column.py\n+++ b/src/mea_absorption_column/column.py\n@@ -676,7 +676,7 @@ def _equilibrium_physical_certification(\n \n \n def _retained_initial_profile(path, config, prepared, scaling, lower, upper):\n-    \"\"\"Admit one accepted public profile and interpolate its physical states.\"\"\"\n+    \"\"\"Admit one accepted public profile (either scheme) and interpolate its physical states as a guess.\"\"\"\n     source_path = Path(path)\n     source = json.loads(source_path.read_text(encoding=\"utf-8\"))\n     if not isinstance(source, Mapping):\n@@ -707,7 +707,6 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):\n         and source_config.get(\"model\") == current_config[\"model\"]\n         and source_config.get(\"dependencies\") == current_config[\"dependencies\"]\n         and source.get(\"config_sha256\") == source_config.get(\"resolved_config_sha256\")\n-        and source_numerics.get(\"method\") == config.numerics.method\n         and {k: v for k, v in source_settings.items() if k != \"nodes\"}\n         == {k: v for k, v in current_settings.items() if k != \"nodes\"}\n         and source_inputs.get(\"case_id\") == current_inputs.get(\"case_id\")\n",
+    "dirty_patch_sha256": "c3921d2b025fa3c809705a1dac64bb65d51f87f3f98c3e0b0d39cf465fb84644",
+    "dirty_paths": [
+      "src/mea_absorption_column/Thermodynamics/casadi_reactive.py",
+      "src/mea_absorption_column/column.py"
+    ],
+    "repository_root": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148",
+    "source_tree_sha256": "42fa0cf539d66aa8072f4f9510b286406956a2dc7becefdeec33c722660dc473"
+  },
+  "transport": {
+    "cause": null,
+    "message": null,
+    "returncode": 0,
+    "stderr": "Traceback (most recent call last):\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 182, in eval\n    return [ca.DM(self.evaluate(arguments[0]))]\n                  ~~~~~~~~~~~~~^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 179, in evaluate\n    return np.concatenate([self.phase.actions(inputs, self.observables, p + extra) for p in prefixes])\n                           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/column.py\", line 810, in observed\n    value = original(*args, **kwargs)\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 131, in actions\n    compiled, central = self.solve(tuple(float(v) for v in np.asarray(inputs).ravel()))\n                        ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 100, in _solve\n    raise RuntimeError(f\"{self.name} equilibrium failed at {inputs}: {result.message}\")\nRuntimeError: column_vapor equilibrium failed at (332.00274559701967, 110340.02678101894, 1.654043515730794e-08, 2.4537605751761458, 14.530683358624426, 1.6006872732878803): infeasible: residual 0.0014219397082280956 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 4.2866346990310805e-17, amplification 0\nFunction column_vapor_enthalpy (0x1c9cc160)\nInput 0 (i0): [332.003, 110340, 1.65404e-08, 2.45376, 14.5307, 1.60069]\nFunction column_balances (0x1c9dd080)\nInput 0 (state): [2.43232, 76.9752, 1.65404e-08, 2.45376, 318.15, 332.003, 110340, 0.0527151]\nInput 1 (transfer): [0.0150241, 0.190542, -50586.9]\nFunction nlp_g (0x1cfdd2a0)\nInput 0 (x): [1.68003, 0.98842, 1, 1, 1.10661, 1.05583, 1, 0.0527594, 0.00635169, -0.644333, 0.251739, -0.0147653, 1, 1, 1e-08, 1.57049, 1.0605, 1.10668, 0.994951, 0.0543455, 0.0639621, 0.654767, -0.294363, 0.646848]\nInput 1 (p): NULL\nCasADi - 2026-09-25 17:51:27 WARNING(\"IpoptUserClass::eval_g failed:.../casadi/core/oracle_function.cpp:367: Error in conservative_column:nlp_g:Error in Function::operator() for 'nlp_g' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_balances' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_vapor_enthalpy' [CallbackInternal] at .../casadi/core/function.cpp:1547:\n.../casadi/core/function_internal.cpp:3807: Failed to evaluate 'eval_dm' for column_vapor_enthalpy:\n.../casadi/core/callback_internal.cpp:116: Error calling \"eval\" for object column_vapor_enthalpy:\n/work/swig/python/target3/source/casadiPYTHON_wrap_gil_release.cxx:3856: column_vapor equilibrium failed at (332.00274559701967, 110340.02678101894, 1.654043515730794e-08, 2.4537605751761458, 14.530683358624426, 1.6006872732878803): infeasible: residual 0.0014219397082280956 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 4.2866346990310805e-17, amplification 0\") [.../casadi/interfaces/ipopt/ipopt_nlp.cpp:136]\nTraceback (most recent call last):\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 182, in eval\n    return [ca.DM(self.evaluate(arguments[0]))]\n                  ~~~~~~~~~~~~~^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 179, in evaluate\n    return np.concatenate([self.phase.actions(inputs, self.observables, p + extra) for p in prefixes])\n                           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/column.py\", line 810, in observed\n    value = original(*args, **kwargs)\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 131, in actions\n    compiled, central = self.solve(tuple(float(v) for v in np.asarray(inputs).ravel()))\n                        ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 100, in _solve\n    raise RuntimeError(f\"{self.name} equilibrium failed at {inputs}: {result.message}\")\nRuntimeError: column_vapor equilibrium failed at (332.00274559701967, 110340.02678101894, 1.654043515730794e-08, 2.4537605751761458, 14.530683358624426, 1.6006872732878803): infeasible: residual 0.0014219397082280956 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 4.2866346990310805e-17, amplification 0\nFunction column_vapor_enthalpy (0x1c9cc160)\nInput 0 (i0): [332.003, 110340, 1.65404e-08, 2.45376, 14.5307, 1.60069]\nFunction column_balances (0x1c9dd080)\nInput 0 (state): [2.43232, 76.9752, 1.65404e-08, 2.45376, 318.15, 332.003, 110340, 0.0527151]\nInput 1 (transfer): [0.0150241, 0.190542, -50586.9]\nFunction nlp_g (0x1cfdd2a0)\nInput 0 (x): [1.68003, 0.98842, 1, 1, 1.10661, 1.05583, 1, 0.0527594, 0.00635169, -0.644333, 0.251739, -0.0147653, 1, 1, 1e-08, 1.57049, 1.0605, 1.10668, 0.994951, 0.0543455, 0.0639621, 0.654767, -0.294363, 0.646848]\nInput 1 (p): NULL\nCasADi - 2026-09-25 17:51:31 WARNING(\"IpoptUserClass::eval_g failed:.../casadi/core/oracle_function.cpp:367: Error in conservative_column:nlp_g:Error in Function::operator() for 'nlp_g' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_balances' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_vapor_enthalpy' [CallbackInternal] at .../casadi/core/function.cpp:1547:\n.../casadi/core/function_internal.cpp:3807: Failed to evaluate 'eval_dm' for column_vapor_enthalpy:\n.../casadi/core/callback_internal.cpp:116: Error calling \"eval\" for object column_vapor_enthalpy:\n/work/swig/python/target3/source/casadiPYTHON_wrap_gil_release.cxx:3856: column_vapor equilibrium failed at (332.00274559701967, 110340.02678101894, 1.654043515730794e-08, 2.4537605751761458, 14.530683358624426, 1.6006872732878803): infeasible: residual 0.0014219397082280956 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 4.2866346990310805e-17, amplification 0\") [.../casadi/interfaces/ipopt/ipopt_nlp.cpp:136]\nTraceback (most recent call last):\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 182, in eval\n    return [ca.DM(self.evaluate(arguments[0]))]\n                  ~~~~~~~~~~~~~^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 179, in evaluate\n    return np.concatenate([self.phase.actions(inputs, self.observables, p + extra) for p in prefixes])\n                           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/column.py\", line 810, in observed\n    value = original(*args, **kwargs)\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 131, in actions\n    compiled, central = self.solve(tuple(float(v) for v in np.asarray(inputs).ravel()))\n                        ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 100, in _solve\n    raise RuntimeError(f\"{self.name} equilibrium failed at {inputs}: {result.message}\")\nRuntimeError: column_vapor equilibrium failed at (332.00274559701967, 110340.02678101894, 1.654043515730794e-08, 2.4537605751761458, 14.530683358624426, 1.6006872732878803): infeasible: residual 0.0014219397082280956 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 4.2866346990310805e-17, amplification 0\nFunction column_vapor_enthalpy (0x1c9cc160)\nInput 0 (i0): [332.003, 110340, 1.65404e-08, 2.45376, 14.5307, 1.60069]\nFunction column_balances (0x1c9dd080)\nInput 0 (state): [2.43232, 76.9752, 1.65404e-08, 2.45376, 318.15, 332.003, 110340, 0.0527151]\nInput 1 (transfer): [0.0150241, 0.190542, -50586.9]\nFunction nlp_g (0x1cfdd2a0)\nInput 0 (x): [1.68003, 0.98842, 1, 1, 1.10661, 1.05583, 1, 0.0527594, 0.00635169, -0.644333, 0.251739, -0.0147653, 1, 1, 1e-08, 1.57049, 1.0605, 1.10668, 0.994951, 0.0543455, 0.0639621, 0.654767, -0.294363, 0.646848]\nInput 1 (p): NULL\nCasADi - 2026-09-25 17:51:31 WARNING(\"IpoptUserClass::eval_g failed:.../casadi/core/oracle_function.cpp:367: Error in conservative_column:nlp_g:Error in Function::operator() for 'nlp_g' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_balances' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_vapor_enthalpy' [CallbackInternal] at .../casadi/core/function.cpp:1547:\n.../casadi/core/function_internal.cpp:3807: Failed to evaluate 'eval_dm' for column_vapor_enthalpy:\n.../casadi/core/callback_internal.cpp:116: Error calling \"eval\" for object column_vapor_enthalpy:\n/work/swig/python/target3/source/casadiPYTHON_wrap_gil_release.cxx:3856: column_vapor equilibrium failed at (332.00274559701967, 110340.02678101894, 1.654043515730794e-08, 2.4537605751761458, 14.530683358624426, 1.6006872732878803): infeasible: residual 0.0014219397082280956 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 4.2866346990310805e-17, amplification 0\") [.../casadi/interfaces/ipopt/ipopt_nlp.cpp:136]\nTraceback (most recent call last):\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 182, in eval\n    return [ca.DM(self.evaluate(arguments[0]))]\n                  ~~~~~~~~~~~~~^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 179, in evaluate\n    return np.concatenate([self.phase.actions(inputs, self.observables, p + extra) for p in prefixes])\n                           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/column.py\", line 810, in observed\n    value = original(*args, **kwargs)\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 131, in actions\n    compiled, central = self.solve(tuple(float(v) for v in np.asarray(inputs).ravel()))\n                        ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-greenfield/downstream/.worktrees/MEA-Absorption-Column-148/src/mea_absorption_column/Thermodynamics/casadi_reactive.py\", line 100, in _solve\n    raise RuntimeError(f\"{self.name} equilibrium failed at {inputs}: {result.message}\")\nRuntimeError: column_vapor equilibrium failed at (332.00274559701967, 110340.02678101894, 1.654043515730794e-08, 2.4537605751761458, 14.530683358624426, 1.6006872732878803): infeasible: residual 0.0014219397082280956 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 4.2866346990310805e-17, amplification 0\nFunction column_vapor_enthalpy (0x1c9cc160)\nInput 0 (i0): [332.003, 110340, 1.65404e-08, 2.45376, 14.5307, 1.60069]\nFunction column_balances (0x1c9dd080)\nInput 0 (state): [2.43232, 76.9752, 1.65404e-08, 2.45376, 318.15, 332.003, 110340, 0.0527151]\nInput 1 (transfer): [0.0150241, 0.190542, -50586.9]\nFunction nlp_g (0x1cfdd2a0)\nInput 0 (x): [1.68003, 0.98842, 1, 1, 1.10661, 1.05583, 1, 0.0527594, 0.00635169, -0.644333, 0.251739, -0.0147653, 1, 1, 1e-08, 1.57049, 1.0605, 1.10668, 0.994951, 0.0543455, 0.0639621, 0.654767, -0.294363, 0.646848]\nInput 1 (p): NULL\nCasADi - 2026-09-25 17:51:31 WARNING(\"IpoptUserClass::eval_g failed:.../casadi/core/oracle_function.cpp:367: Error in conservative_column:nlp_g:Error in Function::operator() for 'nlp_g' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_balances' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_vapor_enthalpy' [CallbackInternal] at .../casadi/core/function.cpp:1547:\n.../casadi/core/function_internal.cpp:3807: Failed to evaluate 'eval_dm' for column_vapor_enthalpy:\n.../casadi/core/callback_internal.cpp:116: Error calling \"eval\" for object column_vapor_enthalpy:\n/work/swig/python/target3/source/casadiPYTHON_wrap_gil_release.cxx:3856: column_vapor equilibrium failed at (332.00274559701967, 110340.02678101894, 1.654043515730794e-08, 2.4537605751761458, 14.530683358624426, 1.6006872732878803): infeasible: residual 0.0014219397082280956 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 4.2866346990310805e-17, amplification 0\") [.../casadi/interfaces/ipopt/ipopt_nlp.cpp:136]\n",
+    "stdout": "\n******************************************************************************\nThis program contains Ipopt, a library for large-scale nonlinear optimization.\n Ipopt is released as open source code under the Eclipse Public License (EPL).\n         For more information visit http://projects.coin-or.org/Ipopt\n******************************************************************************\n\n\n******************************************************************************\nThis program contains Ipopt, a library for large-scale nonlinear optimization.\n Ipopt is released as open source code under the Eclipse Public License (EPL).\n         For more information visit https://github.com/coin-or/Ipopt\n******************************************************************************\n\n"
+  }
+}

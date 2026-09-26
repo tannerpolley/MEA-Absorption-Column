@@ -124,6 +124,9 @@ constraint Jacobian with common-expression sharing reduces repeated value work.
 before shared-loading callback adoption:
 liquid value/tangent callback leaves fall from 42 to 28 per Jacobian evaluation;
 derivative callback counts stay unchanged. This is not a measured speedup.
+On the current interface (`results/k1_k2_148/solver_graph_callbacks.json`) the
+value callback leaves in the constraint Jacobian fall from 90 to 60 with shared
+expressions; the 30 derivative callback leaves are unchanged.
 The solver also disables IPOPT's additional gradient-based NLP scaling because
 the variables and equations already use the declared physical scales. The
 installed-IPOPT zero-iteration check in `results/solver_startup_shared_evaluation.json`
@@ -179,6 +182,48 @@ It was recovered from the repository's archived source review; this task did
 not independently reacquire or re-read the paper. Legacy `C_cases_data.csv`
 and the intermediate campaign CSV do not contain the selected gas composition.
 
+## K1–K2 on the current interface (Engine #148, wheel `48a639e7…`)
+
+Five predeclared attempts on case 3C through the public twelve-state path, nine-point
+film quadrature, each ≤ 20 IPOPT iterations, tolerance 1e-7 and ≤ 1200 s, seeded by
+the accepted two-node profile (`results/k1_k2_148/summary.json`, one `attempt.json`
+per directory).
+
+| Attempt | Iterations | Wall s | Scaled residual | K1 (≤ 1e-7) | Capture % |
+|---|---|---|---|---|---|
+| trapezoidal 2 (replay) | 18 | 299 | 2.6e-11 | accepted; largest 2.6e-11 (material) | 97.46 |
+| trapezoidal 3 | 20 (limit) | 487 | 9.6e-3 | rejected | 97.30 |
+| trapezoidal 5 | 20 (limit) | 827 | 1.4e-1 | rejected | 93.86 |
+| central 3 | 10 | 261 | 2.2e-10 | rejected: material 1.4, energy 24 | 76.01 |
+| central 5 | 20 (limit) | 806 | 6.1e-1 | rejected | 97.81 |
+
+K1 passes on the two-node replay (material 2.6e-11, energy 1.0e-12, interface 5.1e-12,
+boundary 5.0e-13, charge 2.4e-15). The 17-point quadrature control at that solution
+changes the film integral by at most 1.0e-4 relative (criterion 1e-3). K2 capture
+refinement has no pair of accepted refinements, so it is not established.
+
+Diagnosis (`run_case.py diagnose`; `results/k1_k2_148/diagnosis_trapezoidal_n2.json`,
+`diagnosis_trapezoidal_n3.json`). Every resolved node-Jacobian entry agrees with
+Richardson-extrapolated centred differences to 4.6e-8 or better at all nodes of the
+accepted two-node solution and of the stalled three-node iterate, so the Engine actions
+and the CasADi chain are exact there. The three-node collocation Jacobian at the stall
+is nearly singular (condition 4.9e9; smallest singular value 2.3e-7 against 1.2e-2
+for the next), with the null vector in the interior vapor water flow and the
+alternating interface water and heat fluxes, and full IPOPT steps no longer reduce
+the residual: a fold of the discrete equations, consistent with the 2026-09-16 source
+homotopy that turned back between multipliers 0.28 and 0.31. The five-node iterates
+alternate node to node (liquid temperature 310, 353, 332, 357, 318 K). On the manifold
+of the interface equations, the stiffest mode of dB/dz = R has eigenvalue −10.4 m⁻¹
+(gas inlet) and −12.6 m⁻¹ (top) on the accepted two-node states and +14.6 m⁻¹ at the
+hot interior node of the stalled iterate: a gas-side relaxation length of 7–10 cm.
+The trapezoidal amplification (1 + λh/2)/(1 − λh/2) of that mode is −0.88 to −1.10
+at h = 3 m and −0.77 to −1.20 at h = 1.5 m, an undamped sawtooth; a non-oscillating
+trapezoidal mesh needs h ≤ 2/|λ| ≈ 0.14 m. The central scheme converges at three nodes
+but does not conserve the native-grid invariants. The predeclared 2 → 3 → 5 ladder
+therefore lies in the oscillatory range of this column's stiff gas-side relaxation;
+completing K2 needs a new mesh or discretization design, which the frozen budget
+does not include.
+
 ## Running and interpreting the study
 
 Run one native attempt at a time. The runner retains a new directory per attempt,
@@ -189,24 +234,26 @@ precedes multiplying an unsuccessful baseline. Refinements and comparisons are
 authorized work, not a new review or permission gate.
 
 ```bash
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_solution_methods/scripts/run_case.py --stage reduction --method shooting --nodes 2 --film-points 3 --initial-record analyses/bvp_solution_methods/input/consistent_3c_interface.json --wall-limit 600 --output NEW_REDUCTION_DIRECTORY
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run python analyses/bvp_solution_methods/scripts/run_case.py --method trapezoidal --nodes 2 --film-points 3 --initial-record analyses/bvp_solution_methods/input/consistent_3c_interface.json --wall-limit 600 --output NEW_BASELINE_DIRECTORY
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run pytest -q -p no:cacheprovider tests/test_conserved_methods.py analyses/bvp_solution_methods/tests
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
+R=analyses/bvp_solution_methods/results/k1_k2_148
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt --method trapezoidal --nodes 2 --output $R/trapezoidal_n2
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt --method trapezoidal --nodes 3 --initial-profile $R/trapezoidal_n2/attempt.json --output $R/trapezoidal_n3
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py film-control $R/trapezoidal_n2/attempt.json --output $R/film_control_17.json
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py summarize $R/*/attempt.json --film-control $R/film_control_17.json --output $R/summary.json
 ```
 
-A supplied interface state is an initial guess only. Feeds, geometry and bulk
-variables must match; every original algebraic equation is reevaluated under
-the installed wheel. Its source Engine identity is retained separately when
-it differs from the current wheel. Every new run independently hashes the installed
-wheel and native library through the repository integration resolver. `--initial-profile` accepts a retained twelve-state outer profile and interpolates
-it to the requested grid; it remains an uncertified numerical guess.
+`run_case.py` drives the public twelve-state path (`mea_absorption_column.column.run_column`
+on the current Engine interface): one verified worker per attempt with its wall limit,
+the case-owned scaling and interface initialization, and the K1 native-grid physical
+certification. `--initial-profile` admits one accepted attempt with matching model,
+inputs, Engine identity and solver settings and interpolates its twelve states; it
+remains an uncertified numerical guess. The reduced shooting/collocation methods and
+the earlier `--stage` probes used the retired Engine callbacks and are not migrated;
+the public path refuses them with a typed capability refusal.
 `input/initial_3c_newton_predictor.json` is a half-step Newton predictor derived
 from the retained two-node Jacobian, not a column result. The undamped step
 predicts negative outlet CO2 and is retained as rejected initialization evidence.
 `make_initial_predictor.py` reproduces the bounded step and linearization check.
-Use identical initialization policy for cost
-comparisons. `--stage initialize` rechecks this state; `--stage central` checks
-only central A1; `--stage reduction` verifies the local implicit chart.
 
 Global numerical success remains separate from physical certification. Original
 native-grid material and energy invariants, bulk/film-quadrature charge,

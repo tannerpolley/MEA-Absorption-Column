@@ -1,0 +1,77 @@
+{
+  "scope": "Static physical callback leaves and scalar analytic startup; no thermodynamic evaluation or column solve. No measured native speedup claim.",
+  "source_sha256": {
+    "analyses/bvp_solution_methods/scripts/inspect_solver_graph.py": "6a2bf0034484f94eb8d869bfd07e25605358d7c06a2cac9ecc6b9bf9ec3c6b1b",
+    "analyses/bvp_solution_methods/input/case_3c.json": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+    "src/mea_absorption_column/BVP/Coupled_Column.py": "79eecaf936a3b1fb30ff9420eb32aea8111334ff3468847edb9835d81984a489",
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "300c6acacfaaf7da8fa277ccc1ffefd905d8171b15bd34c94e399aa2322e9528"
+  },
+  "graphs": {
+    "default": {
+      "nlp_g": {
+        "column_liquid_state": 8,
+        "column_liquid_enthalpy": 8,
+        "column_vapor_enthalpy": 4,
+        "column_vapor_state": 2,
+        "column_liquid_loading_slope": 6,
+        "column_vapor_caloric": 2
+      },
+      "nlp_jac_g": {
+        "column_liquid_state": 24,
+        "column_liquid_enthalpy": 24,
+        "column_vapor_enthalpy": 12,
+        "column_vapor_state": 6,
+        "column_liquid_loading_slope": 18,
+        "column_vapor_caloric": 6,
+        "jac_column_liquid_state": 8,
+        "jac_column_liquid_enthalpy": 8,
+        "jac_column_vapor_enthalpy": 4,
+        "jac_column_vapor_state": 2,
+        "jac_column_liquid_loading_slope": 6,
+        "jac_column_vapor_caloric": 2
+      }
+    },
+    "inline_cse_jacobian": {
+      "nlp_g": {
+        "column_liquid_state": 8,
+        "column_liquid_enthalpy": 8,
+        "column_vapor_enthalpy": 4,
+        "column_vapor_state": 2,
+        "column_liquid_loading_slope": 6,
+        "column_vapor_caloric": 2
+      },
+      "nlp_jac_g": {
+        "column_liquid_state": 16,
+        "column_liquid_enthalpy": 16,
+        "column_vapor_enthalpy": 8,
+        "column_vapor_state": 4,
+        "column_liquid_loading_slope": 12,
+        "column_vapor_caloric": 4,
+        "jac_column_liquid_state": 8,
+        "jac_column_liquid_enthalpy": 8,
+        "jac_column_vapor_enthalpy": 4,
+        "jac_column_vapor_state": 2,
+        "jac_column_liquid_loading_slope": 6,
+        "jac_column_vapor_caloric": 2
+      }
+    }
+  },
+  "startup_problem": "x^2-1=0, x0=.5, bounds [0,10], constant zero objective, max_iter=0",
+  "startup": [
+    {
+      "scaling": "gradient-based",
+      "jacobian_calls": 2,
+      "constraint_calls": 1,
+      "iterations": 0,
+      "status": "Maximum_Iterations_Exceeded"
+    },
+    {
+      "scaling": "none",
+      "jacobian_calls": 1,
+      "constraint_calls": 1,
+      "iterations": 0,
+      "status": "Maximum_Iterations_Exceeded"
+    }
+  ],
+  "ipopt_option_source": "https://coin-or.github.io/Ipopt/OPTIONS.html#OPT_nlp_scaling_method"
+}

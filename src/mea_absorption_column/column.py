@@ -676,7 +676,7 @@ def _equilibrium_physical_certification(
 
 
 def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
-    """Admit one accepted public profile and interpolate its physical states."""
+    """Admit one accepted public profile (either scheme) and interpolate its physical states as a guess."""
     source_path = Path(path)
     source = json.loads(source_path.read_text(encoding="utf-8"))
     if not isinstance(source, Mapping):
@@ -707,7 +707,6 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         and source_config.get("model") == current_config["model"]
         and source_config.get("dependencies") == current_config["dependencies"]
         and source.get("config_sha256") == source_config.get("resolved_config_sha256")
-        and source_numerics.get("method") == config.numerics.method
         and {k: v for k, v in source_settings.items() if k != "nodes"}
         == {k: v for k, v in current_settings.items() if k != "nodes"}
         and source_inputs.get("case_id") == current_inputs.get("case_id")
