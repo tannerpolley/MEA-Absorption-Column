@@ -8,7 +8,7 @@
   "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
  },
  "producer_sha256": "e2fa8d31087029149de5ed103f9bfc449ac3e5710e30395f375caf1662165f4b",
- "csv_sha256": "de9684ed2d866622b8fc9e3805026ae082d91638c0554775a1cd079fd026fc56",
+ "csv_sha256": "9dff002ec9a2bc6cfd7f70f2a3b97eb103638a84a9453a99e618fda97704d061",
  "status_counts": {
   "N1": {
    "pass": 20
@@ -66,9 +66,9 @@
   "start": 0.0,
   "S3": null,
   "N6": 6.104605440621123e-08,
-  "budget": 57.532678973002476
+  "budget": 53.15626760899613
  },
- "elapsed_s": 57.532678973002476,
+ "elapsed_s": 53.15626760899613,
  "native_solves": {
   "native_solves": 294,
   "continuations": 0
