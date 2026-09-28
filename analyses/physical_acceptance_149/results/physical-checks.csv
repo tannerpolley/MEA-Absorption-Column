@@ -1,0 +1,32 @@
+check,state,quantity,model,reference,error,limit,status,note
+C3,V1,action Cp_V vs state ideal + residual Cp,30.568876385183543,30.568876385183536,2.324399257620388e-16,1e-08,pass,"consistency, not physical"
+C3,V1,Cp_V J/(mol K) vs sum y_i Cp_JANAF + EOS residual,30.568876385183543,30.566261960422178,8.553302215201508e-05,0.02,pass,EOS residual 0.2809 J/(mol K)
+C3,V2,action Cp_V vs state ideal + residual Cp,30.231676472387388,30.231676472387534,-4.818166831199785e-15,1e-08,pass,"consistency, not physical"
+C3,V2,Cp_V J/(mol K) vs sum y_i Cp_JANAF + EOS residual,30.231676472387388,30.232436192600865,-2.5129308423472213e-05,0.02,pass,EOS residual 0.4251 J/(mol K)
+C5,"318.15 K, loading 0",Cp kJ/(kg K) vs Hilliard 2008 G.2,3.3541376619827172,3.7195,-0.09822888506984347,0.03,fail,EOS residual Cp at the equilibrium speciation 1.6108
+C5,"318.15 K, loading 0.358",Cp kJ/(kg K) vs Hilliard 2008 G.2,3.025384708717117,3.3675,-0.10159325650568175,0.03,fail,EOS residual Cp at the equilibrium speciation 1.2584
+C5,"353.15 K, loading 0.358",Cp kJ/(kg K) vs Hilliard 2008 G.2,2.962942474981859,3.4707,-0.14629830438186556,0.03,fail,EOS residual Cp at the equilibrium speciation 1.3291
+C5 diagnosis,pure water 318.15 K,liquid Cp J/(mol K) vs IAPWS-95,64.7093412605543,75.3064,-0.1407192315586152,,diagnostic,ideal record 33.683 (JANAF 33.692); EOS residual 31.026 (IAPWS-95 minus JANAF 41.615)
+C5 diagnosis,pure water 353.15 K,liquid Cp J/(mol K) vs IAPWS-95,66.18513438705628,75.6056,-0.124600103867223,,diagnostic,ideal record 33.899 (JANAF 33.907); EOS residual 32.286 (IAPWS-95 minus JANAF 41.699)
+C6,"353.15 K, loading 0.047 -> 0.09",released heat kJ/mol CO2 vs Kim-Svendsen 2007,88.35302988686765,90.904,-2.550970113132351,10.0,pass,absolute kJ/mol; MEA #116 evaluator gives 88.3492 on the same record
+C6 cross-check,same interval,absorber chain minus MEA #116 evaluator kJ/mol,88.35302988686765,88.34924122546846,0.0037886613991844342,,diagnostic,"MEA wheel b66c7b96, bubble-point pressure; here 101325 Pa"
+capture,3C,CO2 capture % vs 89.5 % observed,88.83982259064892,89.5,-0.6601774093510784,5.0,pass,absolute percentage points
+taps,z = 0.0 m,liquid T K,324.2882268971291,330.15,-5.86177310287087,,residual,
+taps,z = 1.2 m,liquid T K,338.0322713989106,333.95,4.0822713989106205,,residual,
+taps,z = 2.4 m,liquid T K,342.59994222799764,341.84999999999997,0.7499422279976784,,residual,
+taps,z = 3.6 m,liquid T K,345.42900992631496,346.84999999999997,-1.4209900736850045,,residual,
+taps,z = 4.8 m,liquid T K,347.2317434670495,348.04999999999995,-0.8182565329504428,,residual,
+taps,3C,RMSE K,3.2947380342742143,0.0,3.2947380342742143,6.0,pass,
+taps,3C,profile peak K vs peak tap,347.5905082069737,348.04999999999995,-0.45949179302624543,5.0,pass,model peak z = 5.32 m; peak tap z = 4.8 m
+density diagnosis,"323.15 K, loading 0.0001",volume-matched ion segment counts g/cm3,0.9937958959446045,0.9981,-0.004312297420494437,,diagnostic,"protonated-monoethanolamine m = 2.966, carbamate-anion m = 4.329; record m = 1; not refit; record density 0.9941"
+density,"323.15 K, loading 0.3",mass density g/cm3 vs Amundsen 2009,1.1928633542734206,1.058,0.12747008910531243,0.016,fail,matched to the 65-node liquid T and loading range
+density diagnosis,"323.15 K, loading 0.3",volume-matched ion segment counts g/cm3,1.0478139721373336,1.058,-0.009627625579079795,,diagnostic,"protonated-monoethanolamine m = 2.966, carbamate-anion m = 4.329; record m = 1; not refit; record density 1.1929"
+density,"323.15 K, loading 0.4",mass density g/cm3 vs Amundsen 2009,1.2650142115619123,1.083,0.16806483062041766,0.016,fail,matched to the 65-node liquid T and loading range
+density diagnosis,"323.15 K, loading 0.4",volume-matched ion segment counts g/cm3,1.0656332354766218,1.083,-0.01603579365039534,,diagnostic,"protonated-monoethanolamine m = 2.966, carbamate-anion m = 4.329; record m = 1; not refit; record density 1.2650"
+density,"343.15 K, loading 0.3",mass density g/cm3 vs Amundsen 2009,1.1774692783568677,1.0464,0.12525733787926954,0.016,fail,matched to the 65-node liquid T and loading range
+density diagnosis,"343.15 K, loading 0.3",volume-matched ion segment counts g/cm3,1.0336125235264655,1.0464,-0.012220447700243223,,diagnostic,"protonated-monoethanolamine m = 2.966, carbamate-anion m = 4.329; record m = 1; not refit; record density 1.1775"
+density,"343.15 K, loading 0.4",mass density g/cm3 vs Amundsen 2009,1.2465188995398289,1.0719,0.16290596094768986,0.016,fail,matched to the 65-node liquid T and loading range
+density diagnosis,"343.15 K, loading 0.4",volume-matched ion segment counts g/cm3,1.0495320046287184,1.0719,-0.020867613929733787,,diagnostic,"protonated-monoethanolamine m = 2.966, carbamate-anion m = 4.329; record m = 1; not refit; record density 1.2465"
+density,node z = 0.00 m,column-state mass density g/cm3,1.269853820007845,,,,diagnostic,"T 324.29 K, loading 0.4010; unmatched"
+density,node z = 5.32 m,column-state mass density g/cm3,1.143399789534353,,,,diagnostic,"T 347.59 K, loading 0.2658; unmatched"
+density,node z = 6.00 m,column-state mass density g/cm3,1.1603386677038023,,,,diagnostic,"T 318.15 K, loading 0.2500; unmatched"

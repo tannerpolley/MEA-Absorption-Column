@@ -300,6 +300,14 @@ the cosine 65-node grid. The charge certificate and the film control are evaluat
 the node states; the cell states are retained in `cell_profile`. K2 establishes mesh convergence of capture
 for this formulation and these inputs only; it is not a physical comparison.
 
+**Replay on the adopted record (Engine #149, absorber source after the #176 review
+corrections).** `results/replay_149/` repeats the cosine ladder with the same seeds,
+one attempt at a time on one thread. Every native profile is bitwise identical to
+#176's. Wall times rose with host load (1630 / 2661 / 5562 s); iterations,
+K1 residuals, capture (89.415 / 89.008 / 88.840 %), K2 changes (−0.407, −0.168 pp)
+and the film control (2.5e-4) are unchanged. The physical comparisons are in
+`analyses/physical_acceptance_149/`.
+
 ## Running and interpreting the study
 
 Run one native attempt at a time. The runner retains a new directory per attempt,
@@ -323,6 +331,13 @@ uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py linear-
 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py linear-scheme $U/upwind_n17/attempt.json --nodes 5 17 65 --output $U/linear_scheme_n17.json
 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py film-control $U/upwind_cos_n65/attempt.json --output $U/film_control_17.json
 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py summarize $U/upwind_*/attempt.json --film-control $U/film_control_17.json --output $U/summary.json
+# #149 replay: the same ladder into results/replay_149 (wall limits 7200 / 14400 / 28800 s)
+P=analyses/bvp_solution_methods/results/replay_149
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt --method upwind --nodes 17 --end-clustering 1 --initial-profile $U/upwind_n17/attempt.json --wall-limit 7200 --output $P/upwind_cos_n17
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt --method upwind --nodes 33 --end-clustering 1 --initial-profile $P/upwind_cos_n17/attempt.json --wall-limit 14400 --output $P/upwind_cos_n33
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt --method upwind --nodes 65 --end-clustering 1 --initial-profile $P/upwind_cos_n33/attempt.json --wall-limit 28800 --output $P/upwind_cos_n65
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py film-control $P/upwind_cos_n65/attempt.json --output $P/film_control_17.json
+uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py summarize $P/upwind_cos_n*/attempt.json --film-control $P/film_control_17.json --output $P/summary.json
 ```
 
 `run_case.py` drives the public twelve-state path (`mea_absorption_column.column.run_column`

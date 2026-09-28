@@ -1,7 +1,7 @@
 """Numerical node qualification of the absorber's Engine quantities (Engine #148; contract N1-N6, C1, C2, C4).
 
-Numerical verification only (not physical validation) on the MEA exploratory record
-868a5018, the physical ideal-gas records and one pinned wheel. Criteria are frozen by
+Numerical verification only (not physical validation) on the MEA record 868a5018
+(adopted by Engine #61), the physical ideal-gas records and one pinned wheel. Criteria are frozen by
 Engine #91 (absorber docs/coordination/greenfield-migration.md at b67fb11).
 
   OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
@@ -317,9 +317,9 @@ def main():
         "producer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "csv_sha256": hashlib.sha256((OUT / "node-checks.csv").read_bytes()).hexdigest(),
         "status_counts": counts, "largest_passing_defect": worst, "elapsed_s": elapsed, "native_solves": liquid.stats,
-        "claim_limits": "Numerical verification of consumed node quantities on the exploratory MEA record 868a5018 "
-                        "(not adopted) at S1/S2/V1/V2 and the 3C/S2 node; C4 is the pure-water EOS residual only. "
-                        "K1-K2 are in analyses/bvp_solution_methods; physical checks (C3, C5, C6) belong to #149.",
+        "claim_limits": "Numerical verification of consumed node quantities on the MEA record 868a5018 "
+                        "(adopted by #61) at S1/S2/V1/V2 and the 3C/S2 node; C4 is the pure-water EOS residual only. "
+                        "K1-K2 are in analyses/bvp_solution_methods; physical checks (C3, C5, C6) are in analyses/physical_acceptance_149.",
     }
     (OUT / "summary.json").write_text(json.dumps(summary, indent=1, default=float) + "\n")
     print(json.dumps(summary, indent=1, default=float))

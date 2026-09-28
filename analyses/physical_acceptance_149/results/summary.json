@@ -1,0 +1,65 @@
+{
+ "engine_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+ "engine_wheel_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+ "inputs_sha256": {
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/parameters.json": "868a501831b87e95dedf18ce40e9e7ac949f7c6a4aaf137f717cc493ecfcb7be",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/engine-reactions.json": "bcd964a0b9798d9f25169a3f49407d339e5714c2ee7ee00f794a80ac54c0d8d3",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55",
+  "src/mea_absorption_column/data/NCCC_2017_absorber_temperature_profiles.csv": "90cdb46f87e4a2fc40328e8592f6286f2794147d0ce119b62748a3eced20960f",
+  "analyses/bvp_solution_methods/results/replay_149/upwind_cos_n65/attempt.json": "c26176c83d964a6acc3c5f45debb2af02fef69ecba65f9bb7d0bc09afce471bf"
+ },
+ "producer_sha256": "dac919ee025ce80a4dc0e66b5c62caa5238dcf5b26857018054a7b321e3f883d",
+ "csv_sha256": "392640d1599f4d620dc3fb4f1e0654eb69f340da58297fc5beb11da57c619c4b",
+ "column": {
+  "attempt_id": "20260928T220309-58347b26d04e",
+  "capture_pct": 88.83982259064892,
+  "liquid_temperature_range_k": [
+   318.15,
+   347.5905082069737
+  ],
+  "loading_range": [
+   0.2500000002693293,
+   0.40103368495891023
+  ],
+  "matched_amundsen_states": [
+   [
+    323.15,
+    0.3
+   ],
+   [
+    323.15,
+    0.4
+   ],
+   [
+    343.15,
+    0.3
+   ],
+   [
+    343.15,
+    0.4
+   ]
+  ]
+ },
+ "outcomes": {
+  "C3 V1: action Cp_V vs state ideal + residual Cp": "pass",
+  "C3 V1: Cp_V J/(mol K) vs sum y_i Cp_JANAF + EOS residual": "pass",
+  "C3 V2: action Cp_V vs state ideal + residual Cp": "pass",
+  "C3 V2: Cp_V J/(mol K) vs sum y_i Cp_JANAF + EOS residual": "pass",
+  "C5 318.15 K, loading 0: Cp kJ/(kg K) vs Hilliard 2008 G.2": "fail",
+  "C5 318.15 K, loading 0.358: Cp kJ/(kg K) vs Hilliard 2008 G.2": "fail",
+  "C5 353.15 K, loading 0.358: Cp kJ/(kg K) vs Hilliard 2008 G.2": "fail",
+  "C6 353.15 K, loading 0.047 -> 0.09: released heat kJ/mol CO2 vs Kim-Svendsen 2007": "pass",
+  "capture 3C: CO2 capture % vs 89.5 % observed": "pass",
+  "taps 3C: RMSE K": "pass",
+  "taps 3C: profile peak K vs peak tap": "pass",
+  "density 323.15 K, loading 0.3: mass density g/cm3 vs Amundsen 2009": "fail",
+  "density 323.15 K, loading 0.4: mass density g/cm3 vs Amundsen 2009": "fail",
+  "density 343.15 K, loading 0.3: mass density g/cm3 vs Amundsen 2009": "fail",
+  "density 343.15 K, loading 0.4: mass density g/cm3 vs Amundsen 2009": "fail"
+ },
+ "native_solves": {
+  "native_solves": 13,
+  "continuations": 0
+ }
+}
