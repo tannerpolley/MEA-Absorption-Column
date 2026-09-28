@@ -4,7 +4,7 @@ Question: do the twelve-state column's Engine-derived node quantities and exact
 actions satisfy the frozen #91 numerical criteria on the current Engine
 interface? This is numerical verification, not physical validation.
 
-Inputs: MEA exploratory record `868a5018…` (not adopted) with its Engine
+Inputs: MEA record `868a5018…` (adopted by Engine #61) with its Engine
 reaction and neutral-reference records, the shared physical ideal-gas records
 (`src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/`),
 the four-gas vapor record, case 3C, and the wheel pinned in
@@ -17,6 +17,9 @@ OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
 ```
 
 ## Result (wheel `48a639e7…`, 58 s against the 600 s node budget)
+
+Replayed under Engine #149 on the adopted record: all 915 rows unchanged; only the
+wall time differs (`results/summary.json`).
 
 | Check | States | Criterion | Largest passing defect | Outcome |
 |---|---|---|---|---|
@@ -55,8 +58,8 @@ as harmless. Continuation from S1 to S2 still reproduces the cold-solved S2 amou
 ## Claim limits
 
 Numerical verification only, at S1/S2/V1/V2, their loadings and the 3C/S2 node, on
-an exploratory record. The CO2 ideal-gas Shomate record is extrapolated below 298 K
+the adopted record. The CO2 ideal-gas Shomate record is extrapolated below 298 K
 and water's below 500 K; both reproduce JANAF Cp within 0.03 % over 298–400 K. C4
 tests the pure-water EOS residual; the ideal parts cancel. The K1–K2 column checks
 are in `analyses/bvp_solution_methods/results/k1_k2_148/`; the physical checks C3,
-C5 and C6 belong to Engine #149.
+C5 and C6 are in `analyses/physical_acceptance_149/`.

@@ -1,4 +1,4 @@
-# Nine-species liquid on the greenfield Engine (exploratory)
+# Nine-species liquid on the greenfield Engine (adopted MEA record)
 
 Inputs for the twelve-state callbacks (`reactive_bundle.engine_liquid`,
 `engine_vapor`); numerical qualification is in
@@ -6,7 +6,8 @@ Inputs for the twelve-state callbacks (`reactive_bundle.engine_liquid`,
 
 - `parameters.json`: byte copy of MEA-Thermodynamics
   `analyses/mea_parameter_bundle/results/selected-current-best-parameters.json`
-  at `04a9328`, SHA-256 `868a5018…`. Exploratory, not the adopted record (#61).
+  at `04a9328`, SHA-256 `868a5018…`, the record adopted by Engine #61
+  (unchanged at MEA-Thermodynamics `5452ca1`).
 - `engine-reactions.json`: R1–R5 source-basis `ReactionLogPolynomial` and
   `ReactionReference` records, the neutral reference and the Born runtime
   defaults, as produced by that commit's `shared_evaluation.py`

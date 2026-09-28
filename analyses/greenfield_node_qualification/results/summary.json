@@ -7,8 +7,8 @@
   "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
   "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
  },
- "producer_sha256": "e2fa8d31087029149de5ed103f9bfc449ac3e5710e30395f375caf1662165f4b",
- "csv_sha256": "9dff002ec9a2bc6cfd7f70f2a3b97eb103638a84a9453a99e618fda97704d061",
+ "producer_sha256": "04bd00861be59467c90bd494f8eb2d44561d00b1e7b04e9db4f9bcd015c25b08",
+ "csv_sha256": "edb6997ffb6d4f8a2f7fe3568b07e0fc1d52ee3fb890436d64a6d21319e69766",
  "status_counts": {
   "N1": {
    "pass": 20
@@ -66,12 +66,12 @@
   "start": 0.0,
   "S3": null,
   "N6": 6.104605440621123e-08,
-  "budget": 53.15626760899613
+  "budget": 56.86918886800049
  },
- "elapsed_s": 53.15626760899613,
+ "elapsed_s": 56.86918886800049,
  "native_solves": {
   "native_solves": 294,
   "continuations": 0
  },
- "claim_limits": "Numerical verification of consumed node quantities on the exploratory MEA record 868a5018 (not adopted) at S1/S2/V1/V2 and the 3C/S2 node; C4 is the pure-water EOS residual only. K1-K2 are in analyses/bvp_solution_methods; physical checks (C3, C5, C6) belong to #149."
+ "claim_limits": "Numerical verification of consumed node quantities on the MEA record 868a5018 (adopted by #61) at S1/S2/V1/V2 and the 3C/S2 node; C4 is the pure-water EOS residual only. K1-K2 are in analyses/bvp_solution_methods; physical checks (C3, C5, C6) are in analyses/physical_acceptance_149."
 }
