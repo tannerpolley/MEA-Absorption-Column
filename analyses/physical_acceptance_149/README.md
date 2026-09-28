@@ -52,8 +52,11 @@ OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   stalls on this wheel in the trace-inventory regime fixed later by Engine #172).
 - **C6.** The absorber's own caloric chain gives 88.353 kJ/mol CO2; MEA #116's
   evaluator gives 88.349 on the same record (different wheel, bubble-point pressure
-  instead of 101325 Pa). The limit is #82's calibration-lineage paired-heat limit
-  (10 kJ/mol); the Kim–Svendsen 80 °C pair is calibration data.
+  instead of 101325 Pa). #82's paired-heat limit is a cohort median (10 kJ/mol for
+  calibration data, 15 for later comparisons), and #91 keeps C6 diagnostic until that
+  review is complete. The pass here means that this single Kim–Svendsen pair, a
+  calibration row, lies inside the calibration median limit; it is not a pass of
+  #82's cohort criterion (MEA #116: calibration median 6.5 kJ/mol, bias +0.4).
 - **Capture and temperatures** use the replayed cosine 65-node solution. Capture
   lies 0.12–0.17 pp above the Richardson limit of the #176 ladder (88.67–88.72 %), so
   the comparison does not depend on the remaining mesh error. Morgan 2020 Appendix C
@@ -63,18 +66,19 @@ OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   temperature 318.15 K is imputed.
 - **Density cause: the ion volumes of the record.** Matched states are the Amundsen
   2009 30 mass % rows whose T and loading lie inside the 65-node liquid range
-  (318.15–347.59 K, α 0.25–0.401). Unloaded solution (0.994 vs 0.998 g/cm³) and pure
-  water (0.988 vs IAPWS 0.988) are right. The record models MEAH⁺ and MEACOO⁻ as
+  (318.15–347.59 K, α 0.25–0.401). At 323.15 K the unloaded solution (0.9941 vs
+  Amundsen 0.9981 g/cm³) and pure water (0.9878 vs IAPWS-95 0.9880 at 0.101325 MPa,
+  NIST WebBook) are right. The record models MEAH⁺ and MEACOO⁻ as
   single segments (m = 1, packing diameter 3.07 and 3.11 Å, about 29–30 Å³ each),
   while MEA has m σ³ = 86 Å³ and CO2 45 Å³. Each absorbed CO2 (2 MEA + CO2 →
   MEAH⁺ + MEACOO⁻) therefore removes about 157 Å³, about 95 cm³/mol, of hard-core
-  volume. The model's apparent volume change is −77 cm³/mol CO2 against Amundsen's
-  +3. Falsifying probe (diagnostic, record not refit, VLE not claimed): segment
+  volume. At 50 °C the model's volume change per absorbed CO2 is −77 cm³/mol over
+  α 0 → 0.3 and −69 over 0.3 → 0.4, against Amundsen's +3.1 and −6.7. Falsifying probe (diagnostic, record not refit, VLE not claimed): segment
   counts that give MEAH⁺ the MEA volume (m = 2.97) and MEACOO⁻ the MEA + CO2 volume
   (m = 4.33) reduce the errors to −1.0, −1.6, −1.2 and −2.1 %.
   Column-state EOS densities (1.14–1.27 g/cm³) are reported as diagnostics. The
   column uses the EOS density for liquid volume, velocity and holdup, so its liquid
-  volumetric flow is 12–17 % low; the effect on capture is not evaluated here (a new
+  volumetric flow (∝ 1/ρ) is about 11–14 % low; the effect on capture is not evaluated here (a new
   column campaign is a non-goal).
 
 ## Claim limits
