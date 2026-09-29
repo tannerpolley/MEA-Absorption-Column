@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 
-SCRIPT = Path(__file__).parents[2] / "docs" / "latex" / "scripts" / "latex_workflows.py"
+SCRIPT = Path(__file__).parents[2] / "docs" / "scientific" / "latex" / "scripts" / "latex_workflows.py"
 SPEC = importlib.util.spec_from_file_location("latex_workflows", SCRIPT)
 assert SPEC and SPEC.loader
 latex_workflows = importlib.util.module_from_spec(SPEC)
@@ -20,7 +20,7 @@ def _write(path: Path, text: str = "content") -> None:
 
 def test_sync_figures_copies_required_outputs_and_validates_references(tmp_path: Path) -> None:
     repo = tmp_path / "repo"
-    latex = repo / "docs" / "latex"
+    latex = repo / "docs" / "scientific" / "latex"
     for source, _destination in latex_workflows.FIGURE_COPIES:
         _write(repo / source, str(source))
     _write(
@@ -42,6 +42,7 @@ def test_sync_projection_replaces_mirror_and_preserves_git(tmp_path: Path) -> No
     _write(source / "sections" / "body.tex", "body")
     _write(source / "scripts" / "ignored.py", "ignored")
     _write(source / "builds" / "ignored.pdf", "ignored")
+    _write(source / "mdea-companion" / "README.md", "private companion")
     _write(source / "QA_REPORT.md", "private QA")
     _write(source / "main.log", "build log")
     _write(mirror / "stale.txt", "stale")
@@ -61,6 +62,7 @@ def test_sync_projection_replaces_mirror_and_preserves_git(tmp_path: Path) -> No
     assert not (mirror / "stale.txt").exists()
     assert not (mirror / "scripts").exists()
     assert not (mirror / "builds").exists()
+    assert not (mirror / "mdea-companion").exists()
     assert not (mirror / "QA_REPORT.md").exists()
     assert not (mirror / "main.log").exists()
     latex_workflows.audit_projection(source, mirror)
@@ -94,7 +96,7 @@ def test_bibliography_sync_updates_clean_snapshot_and_protects_dirty_edits(
     tmp_path: Path,
 ) -> None:
     repo = tmp_path / "repo"
-    latex = repo / "docs" / "latex"
+    latex = repo / "docs" / "scientific" / "latex"
     central = tmp_path / "Papers" / "references.bib"
     target = latex / "references.bib"
     _write(central, "@article{current}\n")
@@ -102,7 +104,7 @@ def test_bibliography_sync_updates_clean_snapshot_and_protects_dirty_edits(
     repo.mkdir(exist_ok=True)
     for command in (
         ["git", "init"],
-        ["git", "add", "docs/latex/references.bib"],
+        ["git", "add", "docs/scientific/latex/references.bib"],
         [
             "git",
             "-c",

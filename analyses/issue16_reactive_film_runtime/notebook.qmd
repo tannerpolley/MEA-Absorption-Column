@@ -4,25 +4,22 @@ subtitle: "Numerical reachability and manuscript-adoption decision"
 author: "MEA Absorption Column project"
 date: 2026-09-01
 format:
+  html: {}
   pdf:
-    pdf-engine: lualatex
     documentclass: scrartcl
-    classoption:
-      - 10pt
-      - oneside
+    classoption: [10pt, oneside]
     toc: true
     number-sections: true
     colorlinks: true
     fig-pos: H
-    include-in-header:
-      text: |
-        \usepackage{booktabs}
-        \usepackage{xurl}
-        \usepackage[left=0.68in,right=0.68in,top=0.60in,bottom=0.60in]{geometry}
-        \setlength{\tabcolsep}{4pt}
-        \renewcommand{\arraystretch}{1.08}
-execute:
-  enabled: false
+    geometry:
+      - left=0.68in
+      - right=0.68in
+      - top=0.60in
+      - bottom=0.60in
+    header-includes:
+      - "\\setlength{\\tabcolsep}{4pt}"
+      - "\\renewcommand{\\arraystretch}{1.08}"
 ---
 
 # Question
@@ -113,18 +110,22 @@ The numerical values should **not** be adopted as manuscript-level physical or p
 
 The only defensible near-term use is internal method-development evidence: the intended nonlinear reactive-film formulation was numerically reachable in this retained run. Future campaign timeouts must be chosen from their own runtime evidence rather than this single observation. Manuscript promotion should wait until admitted kinetics, diffusivities, and concentration-basis mapping are supplied; the same formulation passes repeated runs and multiple declared positions; and column-level outputs are compared with independent rate or capture evidence.
 
-An independent CSE Review on 2026-09-01 checked this working-tree analysis against repository base commit \nolinkurl{700f6212fb20ab4b2b9045c1b9da9d23a5acb88a}. It passed for internal numerical-reachability use after provenance, units, and runtime wording were corrected. The review does not admit the provisional scientific inputs or promote this notebook into the manuscript; investigator promotion remains required after the stated scientific gates pass.
+An independent CSE Review on 2026-09-01 checked this working-tree analysis against repository base commit `700f6212fb20ab4b2b9045c1b9da9d23a5acb88a`. It passed for internal numerical-reachability use after provenance, units, and runtime wording were corrected. The review does not admit the provisional scientific inputs or promote this notebook into the manuscript; investigator promotion remains required after the stated scientific gates pass.
 
 # Provenance
 
 The QMD is hand-authored from the retained Position 1 CSV, summary, and identity manifest. The figure script reads only the retained CSV. Rendering does not run the film, column, chemistry, or ePC-SAFT calculation.
 
-- Probe CSV SHA-256: \nolinkurl{0e070f1731faefcecbbe683b5b583203f3829d299937650e1aa1381882637be0}
-- Probe summary SHA-256: \nolinkurl{0f93215d233692ecb6d369eb425fbd8c88bacf0c0d9e0afa96d2ccc2fa4eb601}
+The four-panel figure is generated from
+`analyses/nccc_validation/results/final/tables/issue16_provisional_reactive_film_probe.csv`
+(SHA-256 `0e070f1731faefcecbbe683b5b583203f3829d299937650e1aa1381882637be0`).
+
+- Probe CSV SHA-256: `0e070f1731faefcecbbe683b5b583203f3829d299937650e1aa1381882637be0`
+- Probe summary SHA-256: `0f93215d233692ecb6d369eb425fbd8c88bacf0c0d9e0afa96d2ccc2fa4eb601`
 - Identity manifest: `analyses/nccc_validation/inputs/issue16_provisional_reactive_film_identity.json`
-- Identity-manifest SHA-256: \nolinkurl{62779445ba2ba37debb12ba8b27af8711bb05c58e52f0848c71f9f1351c548a0}
-- ePC-SAFT Engine commit: \nolinkurl{9d7bebe5760bb425a08a9211d5dfd353e8693832}
-- Wheel SHA-256: \nolinkurl{7c4be78427cd9d5f70fd60dc63f40d93b7e37945ae7a124dd8d698d94190c9f7}
-- Engine core SHA-256: \nolinkurl{edbac80c39a17db588adccedd4c45e578daccba583bf18f0917d2bc00911b899}
-- Parameter-document SHA-256: \nolinkurl{66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b}
-- Reactive-speciation table SHA-256: \nolinkurl{36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4}
+- Identity-manifest SHA-256: `62779445ba2ba37debb12ba8b27af8711bb05c58e52f0848c71f9f1351c548a0`
+- ePC-SAFT Engine commit: `9d7bebe5760bb425a08a9211d5dfd353e8693832`
+- Wheel SHA-256: `7c4be78427cd9d5f70fd60dc63f40d93b7e37945ae7a124dd8d698d94190c9f7`
+- Engine core SHA-256: `edbac80c39a17db588adccedd4c45e578daccba583bf18f0917d2bc00911b899`
+- Parameter-document SHA-256: `66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b`
+- Reactive-speciation table SHA-256: `36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4`

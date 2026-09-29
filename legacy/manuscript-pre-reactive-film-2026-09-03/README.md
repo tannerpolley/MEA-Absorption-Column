@@ -4,7 +4,7 @@ This archive preserves the complete `docs/latex` directory before the
 ePC-SAFT/reactive-film manuscript rewrite, including sources, figures,
 bibliographies, submission packages, compiled PDFs, and generated build files.
 It is historical material, not an active manuscript edition or build target.
-The authoritative editable manuscript remains `docs/latex/main.tex`.
+The authoritative editable manuscript remains `docs/scientific/latex/main.tex`.
 
 - Source branch: `codex/reactive-film-overhaul`
 - Source commit: `4cd362c83e0a6b439655a18819a862da25e782cf`

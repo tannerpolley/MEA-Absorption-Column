@@ -65,8 +65,8 @@ Use `analyses/transport_sensitivity/figures/response/scripts/render_figure.py --
 runs, check their identities and numerical evidence, retain `summary.csv` and
 `profiles.csv`, and write the two-panel SVG/PNG/PDF figure. It never runs a column.
 
-From this analysis directory, `bash render.sh notebook.qmd` renders the living
-HTML notebook without executing scientific code. The notebook must be updated
+From the repository root, `bash analyses/render.sh --to html` renders the registered
+HTML site without executing scientific code. The notebook must be updated
 from retained values before that render; rendering does not approve results.
 
 Each column was bounded to 1800 s. Runs used one BLAS/OpenMP thread each and up

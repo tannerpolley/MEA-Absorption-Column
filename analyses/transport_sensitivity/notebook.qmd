@@ -1,8 +1,15 @@
 ---
 title: "Transport sensitivity of the reactive MEA absorber"
 subtitle: "Case 3C — one-at-a-time correlation multipliers"
-execute:
-  enabled: false
+resources:
+  - figures/response/input/*
+  - figures/response/output/*.csv
+  - figures/response/output/*.json
+  - figures/response/output/diffusivity_090_diagnostic/*.json
+  - figures/response/output/diffusivity_090_reinitialized/*.json
+  - figures/response/output/diffusivity_090_seeded/*.json
+  - figures/response/output/baseline/*.json
+  - figures/response/scripts/*.py
 ---
 
 All seven study points and an additional initialization control converged.

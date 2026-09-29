@@ -175,7 +175,7 @@ Change only the three approved script labels/notes. Regenerate the affected figu
 Parent should complete these checks after all batches, without new numerical work:
 
 1. Rebuild with `uv run ... sync-figures && bash build_main.sh` from the repository's documented LaTeX workflow.
-2. Confirm the PDF is fresh with `uv run python docs/latex/scripts/check_main_pdf_fresh.py` or the repository's equivalent invocation, and verify page count, nonempty pages, resolved cross-references and absence of overfull/clipped layout.
+2. Confirm the PDF is fresh with `uv run python docs/scientific/latex/scripts/check_main_pdf_fresh.py` or the repository's equivalent invocation, and verify page count, nonempty pages, resolved cross-references and absence of overfull/clipped layout.
 3. Extract page-separated text and scan case-insensitively for whole words `local`, `locally`, `history`, `historical` and `histories`.
 4. Run the removed-phrase scan from the batch plan, supplemented by a normalized text scan for variants that differ only by capitalization or TeX escaping.
 5. Compare numerical tokens and table rows against retained source records. Explicitly permit only the approved rounded narrative values, new Case 3C dense-grid values, Table S1 additions and wording changes. Check that no source result or figure data changed.

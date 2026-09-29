@@ -1,7 +1,19 @@
 # Analysis notebooks
 
 Research is active; manuscript revision work is complete. Start at
-`research_options/notebook.qmd` for selectable formulations and retained findings.
+[`index.qmd`](index.qmd), then use the root Quarto website to browse registered
+analysis pages:
+
+```bash
+python3 analyses/manuscript.py validate analyses
+bash analyses/render.sh --to html
+```
+
+The site renders with execution disabled. Start a calculation separately from
+an explicit configuration; rendering never runs a model or changes retained
+results. `_cse-manuscript.json` owns site membership and sidebar order.
+An optional PDF page can be rendered with
+`bash analyses/render.sh bvp_solution_methods/notebook.qmd --to pdf`.
 
 | Analysis | Purpose |
 |---|---|

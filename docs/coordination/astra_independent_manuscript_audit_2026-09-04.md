@@ -31,32 +31,32 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 |---|---|
 | `docs/latex/builds/main.pdf` | `a2d6f00c9cce124d47fb579cd20a4a6b61d5f2b70a4bddfe3dfc0bb0c949b532` |
 | `docs/latex/builds/main_before_reviewer_quick_revisions_2026-08-12.pdf` | `09b8ce8226c7e9e083339deb2231adff9eca5b37171f1b9c03d178ea07c16f62` |
-| `docs/latex/main.tex` | `3a472827cd629156a00ebb500bc9f5a5e04069a75ec81f179177a185165bfd5e` |
-| `docs/latex/sections/introduction.tex` | `87c49c66d50891341970ea7efe19e4cbdccebdc92301d9170136acf5043d6ca2` |
-| `docs/latex/sections/model_framework.tex` | `5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e` |
-| `docs/latex/sections/methods.tex` | `153e898c8980c064246ef81996b030ced7e548d0a23da4724963090084f93389` |
-| `docs/latex/sections/results.tex` | `82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7` |
-| `docs/latex/sections/conclusion.tex` | `be612db3153e5c0070ce4e6b64c789e64f822595d6cb0e83133dbbf4861042cc` |
-| `docs/latex/sections/data_availability.tex` | `df25983acc5bfeac607e6c1cfac5eb66a4b408e1db0e53d0417a208bfa380e46` |
-| `docs/latex/sections/code_availability.tex` | `664f3cf4882121452757ece5c4fcb683f8c75f031d7b88333a6caa04efe49048` |
-| `docs/latex/sections/declaration_competing_interest.tex` | `12aabfb34902d7e719d820b573ed0eb3ca0ec0d836c22963c38c91bb98123b6a` |
-| `docs/latex/sections/generative_ai_disclosure.tex` | `60a7aea8e4835b6db1209617d8ba2f3b9b1ea350d7e244767c5de59c0004d251` |
-| `docs/latex/appendices/appendix_properties.tex` | `1c450d81c0c0f72ad0d0e374e22196a635db3c147bdfb839e16b1a984f46eb4b` |
-| `docs/latex/appendices/appendix_reactive_inputs.tex` | `3f03e44a497ddf3f47b21042425d5b3f0b5962f7931344a5b85c87ccd4df1771` |
-| `docs/latex/tables/absorber_literature_comparison.tex` | `e776c522a2ac50d9034e391ab322227db4b8c9627c11c3e021b830d505cb60c4` |
-| `docs/latex/tables/epcsaft_parameter_summary.tex` | `ba8868500e49f287b07d90212eda9870c9874995bd8f1ad86703b1a3ff33099c` |
-| `docs/latex/tables/nccc_one_bed_case_scope.tex` | `010172a76c6c93f77b2cc42d56bd7927b7acd65eaf52641840b66b624ce2b48a` |
-| `docs/latex/tables/reactive_numerical_verification.tex` | `ed08df5e4f9623ff50239cf9b3c0e55b95430560197fcb67dda1cf4faf609391` |
-| `docs/latex/tables/transport_applicability.tex` | `32708c2c74a911a63f21d8d2e9f82c6936fe966646665505c7ff0e9601e144e5` |
-| `docs/latex/figures/tikz/model-framework-flowchart.tex` | `4b8142097e5533328f129663bd907baa6b3c6cb415b73bfdacc4ca1efb98168c` |
-| `docs/latex/figures/reactive-case3c-profiles.pdf` | `833770d769759da4a920811ddafc2b79ca7f06ca379eceae6a698f9627f803f5` |
-| `docs/latex/figures/reactive-seven-case-capture.pdf` | `1c098e07e7fda15094a6b0b36dda31d8d92d7b5efbd5be637b0feb5e4fffad62` |
-| `docs/latex/figures/reactive-seven-case-temperatures.pdf` | `59d58450b72de11f6e34c4679dbbacee6703362cded9f6c9076f6bb61f8c52ed` |
-| `docs/latex/figures/reactive-parameter-sensitivity.pdf` | `b5f7f0ff69cbad50ba97f000e3ea29b7aa16bdd91f447edbe2d0ed6359027343` |
-| `docs/latex/figures/transport-sensitivity.pdf` | `9c1ed0c7c67be8825cc30aefe840c1a18ac58967a90f6e6c7c38989ddd24bd1c` |
-| `docs/latex/figures/reactive-operating-response.pdf` | `a6ae0054ae5ef0db81758d95344daa192f9b3f1f8e02dbb17913d105889051bd` |
-| `docs/latex/references.bib` | `217b58678d85d584d9d52a10200af93c67f1df369a67fc95e1d2d87b0736e870` |
-| `docs/latex/software_references.bib` | `08efded58037b202f5d2aafddce29185f9724bbeb4b50d338d5fba1ba7e4961e` |
+| `docs/scientific/latex/main.tex` | `3a472827cd629156a00ebb500bc9f5a5e04069a75ec81f179177a185165bfd5e` |
+| `docs/scientific/latex/sections/introduction.tex` | `87c49c66d50891341970ea7efe19e4cbdccebdc92301d9170136acf5043d6ca2` |
+| `docs/scientific/latex/sections/model_framework.tex` | `5d90313b2670cb309f7367d2d4628972b43aeb4dd7690bb99f70df445ecf9b0e` |
+| `docs/scientific/latex/sections/methods.tex` | `153e898c8980c064246ef81996b030ced7e548d0a23da4724963090084f93389` |
+| `docs/scientific/latex/sections/results.tex` | `82e626064a632d1dd980bbba1c119770fd8e4ada985df3c7a4a4e354a1d4fea7` |
+| `docs/scientific/latex/sections/conclusion.tex` | `be612db3153e5c0070ce4e6b64c789e64f822595d6cb0e83133dbbf4861042cc` |
+| `docs/scientific/latex/sections/data_availability.tex` | `df25983acc5bfeac607e6c1cfac5eb66a4b408e1db0e53d0417a208bfa380e46` |
+| `docs/scientific/latex/sections/code_availability.tex` | `664f3cf4882121452757ece5c4fcb683f8c75f031d7b88333a6caa04efe49048` |
+| `docs/scientific/latex/sections/declaration_competing_interest.tex` | `12aabfb34902d7e719d820b573ed0eb3ca0ec0d836c22963c38c91bb98123b6a` |
+| `docs/scientific/latex/sections/generative_ai_disclosure.tex` | `60a7aea8e4835b6db1209617d8ba2f3b9b1ea350d7e244767c5de59c0004d251` |
+| `docs/scientific/latex/appendices/appendix_properties.tex` | `1c450d81c0c0f72ad0d0e374e22196a635db3c147bdfb839e16b1a984f46eb4b` |
+| `docs/scientific/latex/appendices/appendix_reactive_inputs.tex` | `3f03e44a497ddf3f47b21042425d5b3f0b5962f7931344a5b85c87ccd4df1771` |
+| `docs/scientific/latex/tables/absorber_literature_comparison.tex` | `e776c522a2ac50d9034e391ab322227db4b8c9627c11c3e021b830d505cb60c4` |
+| `docs/scientific/latex/tables/epcsaft_parameter_summary.tex` | `ba8868500e49f287b07d90212eda9870c9874995bd8f1ad86703b1a3ff33099c` |
+| `docs/scientific/latex/tables/nccc_one_bed_case_scope.tex` | `010172a76c6c93f77b2cc42d56bd7927b7acd65eaf52641840b66b624ce2b48a` |
+| `docs/scientific/latex/tables/reactive_numerical_verification.tex` | `ed08df5e4f9623ff50239cf9b3c0e55b95430560197fcb67dda1cf4faf609391` |
+| `docs/scientific/latex/tables/transport_applicability.tex` | `32708c2c74a911a63f21d8d2e9f82c6936fe966646665505c7ff0e9601e144e5` |
+| `docs/scientific/latex/figures/tikz/model-framework-flowchart.tex` | `4b8142097e5533328f129663bd907baa6b3c6cb415b73bfdacc4ca1efb98168c` |
+| `docs/scientific/latex/figures/reactive-case3c-profiles.pdf` | `833770d769759da4a920811ddafc2b79ca7f06ca379eceae6a698f9627f803f5` |
+| `docs/scientific/latex/figures/reactive-seven-case-capture.pdf` | `1c098e07e7fda15094a6b0b36dda31d8d92d7b5efbd5be637b0feb5e4fffad62` |
+| `docs/scientific/latex/figures/reactive-seven-case-temperatures.pdf` | `59d58450b72de11f6e34c4679dbbacee6703362cded9f6c9076f6bb61f8c52ed` |
+| `docs/scientific/latex/figures/reactive-parameter-sensitivity.pdf` | `b5f7f0ff69cbad50ba97f000e3ea29b7aa16bdd91f447edbe2d0ed6359027343` |
+| `docs/scientific/latex/figures/transport-sensitivity.pdf` | `9c1ed0c7c67be8825cc30aefe840c1a18ac58967a90f6e6c7c38989ddd24bd1c` |
+| `docs/scientific/latex/figures/reactive-operating-response.pdf` | `a6ae0054ae5ef0db81758d95344daa192f9b3f1f8e02dbb17913d105889051bd` |
+| `docs/scientific/latex/references.bib` | `217b58678d85d584d9d52a10200af93c67f1df369a67fc95e1d2d87b0736e870` |
+| `docs/scientific/latex/software_references.bib` | `08efded58037b202f5d2aafddce29185f9724bbeb4b50d338d5fba1ba7e4961e` |
 | `REPRODUCE.md` | `d425236972bfdd2102af22f116810f0ab794343072b9c36690166620d74b75e` |
 | `docs/reviewer_comments.txt` | `dde6c21b58cc4f052153cf9940cb2b71b6a5f78f8ca7fd465abf1e63a5897c5d` |
 | `docs/fallback_reviewer_response.md` | `a3cb7f6ae4ba1943c46e9556be868d25892121bd8f4473b9bc5ff53e0a8faa96` |
@@ -74,7 +74,7 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 
 ### A1 — Major: the reactive ePC-SAFT theory is described, but its chemical-absorption accuracy is not evidenced
 
-**Locations:** PDF pp. 1, 3–7; `docs/latex/sections/introduction.tex:17–20,23–29,49–52`; `docs/latex/sections/model_framework.tex:39–90,93–143`; `docs/latex/appendices/appendix_reactive_inputs.tex:7–38`; `REPRODUCE.md:74–85`.
+**Locations:** PDF pp. 1, 3–7; `docs/scientific/latex/sections/introduction.tex:17–20,23–29,49–52`; `docs/scientific/latex/sections/model_framework.tex:39–90,93–143`; `docs/scientific/latex/appendices/appendix_reactive_inputs.tex:7–38`; `REPRODUCE.md:74–85`.
 
 **Observed evidence:** The equations and responsibility table correctly separate molecular nonideality, reaction equilibrium, fugacity, enhancement and empirical calorics (**verified**). The five reactions and nine species are explicit, the activity convention and EOS conversion are stated, and the appendix supplies the selected coefficients (**verified**). The NCCC cases were not used to fit the thermodynamic inputs, but the appendix says that some thermodynamic measurements used for model selection are not independent evaluation data (**verified**). The reproduction record calls the selected input a working parameter set and says it is not an independently validated column model (**verified**).
 
@@ -86,7 +86,7 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 
 ### A2 — Major: energy conservation is a stated continuous property but not an accepted numerical property
 
-**Locations:** PDF pp. 7, 9–11; `docs/latex/sections/model_framework.tex:312–373`; `docs/latex/sections/methods.tex:62–71`; `docs/latex/sections/results.tex:19–24,62–68,109–114,137–146`; `docs/latex/tables/reactive_numerical_verification.tex:21–28`; retained `reactive_refinement_confirmation_20260904/result.json` and `figures/reactive_column/output/summary.csv`.
+**Locations:** PDF pp. 7, 9–11; `docs/scientific/latex/sections/model_framework.tex:312–373`; `docs/scientific/latex/sections/methods.tex:62–71`; `docs/scientific/latex/sections/results.tex:19–24,62–68,109–114,137–146`; `docs/scientific/latex/tables/reactive_numerical_verification.tex:21–28`; retained `reactive_refinement_confirmation_20260904/result.json` and `figures/reactive_column/output/summary.csv`.
 
 **Observed evidence:** The displayed balance signs and temperature chain rule are consistent with the implementation, and the continuous equations imply zero variation in signed net enthalpy flow (**verified**). The refined retained run reports 273.006483 W axial net-enthalpy-flow range; the seven-case runs report 106.49–325.13 W, and operating runs report 160.21–390.32 W (**verified**). The text explicitly says no energy-error threshold is asserted (**verified**).
 
@@ -98,7 +98,7 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 
 ### A3 — Major: the seven-case process comparison is numerically complete but physically uneven and only one case is refined
 
-**Locations:** PDF pp. 1, 7–9, 13; `docs/latex/sections/methods.tex:4–22,24–71`; `docs/latex/sections/results.tex:33–68,149–153`; `docs/latex/tables/nccc_one_bed_case_scope.tex:30–43`; retained `analyses/nccc_validation/figures/reactive_parallel/README.md:24–38,74–86` and `output/summary.csv`.
+**Locations:** PDF pp. 1, 7–9, 13; `docs/scientific/latex/sections/methods.tex:4–22,24–71`; `docs/scientific/latex/sections/results.tex:33–68,149–153`; `docs/scientific/latex/tables/nccc_one_bed_case_scope.tex:30–43`; retained `analyses/nccc_validation/figures/reactive_parallel/README.md:24–38,74–86` and `output/summary.csv`.
 
 **Observed evidence:** The seven retained captures are 99.1020, 97.3889, 91.5433, 91.4949, 92.2754, 71.6467 and 64.4674 percent, giving 5.85483 percentage-point MAE; the largest signed errors are +11.44669 and -11.93263 points (**reference-backed/verified**). All seven pass the stated numerical inclusion checks, but only Case 3C has a paired 21/41-node refinement (**verified**). Cases 1C–3C use an imposed 318.15 K lean-liquid inlet because the source entry is blank, and all cases reconstruct wet feed from dry gas data (**assumption**). The 35 temperature taps have no source phase designation, and no quantitative temperature error metric is reported (**reference-backed/verified**).
 
@@ -110,7 +110,7 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 
 ### A4 — Major: the public reproducibility route does not identify the exact numerical package
 
-**Locations:** PDF p. 23; `docs/latex/sections/data_availability.tex:1–5`; `docs/latex/sections/code_availability.tex:1–6`; `REPRODUCE.md:5–48,63–85,104–126`.
+**Locations:** PDF p. 23; `docs/scientific/latex/sections/data_availability.tex:1–5`; `docs/scientific/latex/sections/code_availability.tex:1–6`; `REPRODUCE.md:5–48,63–85,104–126`.
 
 **Observed evidence:** The PDF points to the project repository and the reproduction guide, while explicitly stating that the numerical records have no public archival identifier (**verified**). The guide identifies selected parameter JSON hashes, run settings, result identities and several wheel hashes (**verified**). It also says the measured fast timing wheel came from a source with uncommitted Engine optimizations and is distinct from the restored pinned wheel (**verified**). The current article source and retained result package are uncommitted on the observed branch (**verified from checkout state**).
 
@@ -122,7 +122,7 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 
 ### A5 — Medium: the conclusion does not carry the limitations needed to read its headline claims
 
-**Locations:** PDF p. 13; `docs/latex/sections/conclusion.tex:1–21`; contrast with `docs/latex/sections/results.tex:117–153` and `docs/latex/appendices/appendix_properties.tex:227–279`.
+**Locations:** PDF p. 13; `docs/scientific/latex/sections/conclusion.tex:1–21`; contrast with `docs/scientific/latex/sections/results.tex:117–153` and `docs/scientific/latex/appendices/appendix_properties.tex:227–279`.
 
 **Observed evidence:** The Results and Appendix disclose the +11.45/-11.93 point case errors, coarse campaign settings, imputed temperatures, one missing operating condition, nonzero energy ranges and transport ranges exceeded by the calculated state (**verified**). The conclusion repeats the 5.85-point MAE, 91.55% Case 3C result, sensitivity magnitudes and optimization directions but contains no corresponding limitation sentence (**verified**).
 
@@ -132,7 +132,7 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 
 ### A6 — Medium: the abstract's final sentence reaches beyond the completed study
 
-**Locations:** PDF p. 1; `docs/latex/main.tex:92–100`; `docs/latex/sections/results.tex:155–173`; `docs/latex/sections/conclusion.tex:18–21`.
+**Locations:** PDF p. 1; `docs/scientific/latex/main.tex:92–100`; `docs/scientific/latex/sections/results.tex:155–173`; `docs/scientific/latex/sections/conclusion.tex:18–21`.
 
 **Observed evidence:** The completed work is a selected MEA parameterization with conventional reaction enhancement, empirical calorics, seven-case evaluation, Case 3C refinement, bounded perturbations and discrete operating changes (**verified**). Predictive liquid-film development, a matched ePC-SAFT/eNRTL comparison, other-amine testing and constrained optimization are described as programs or work already underway, without completed results (**verified**).
 
@@ -142,7 +142,7 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 
 ### A7 — Medium: two reviewer requests are integrated as proposals, but their response status is not uniformly represented
 
-**Locations:** `docs/reviewer_comments.txt:14–16,19–24`; `docs/fallback_reviewer_response.md:99–121,147–169`; PDF pp. 12–13; `docs/latex/sections/results.tex:160–173`.
+**Locations:** `docs/reviewer_comments.txt:14–16,19–24`; `docs/fallback_reviewer_response.md:99–121,147–169`; PDF pp. 12–13; `docs/scientific/latex/sections/results.tex:160–173`.
 
 **Observed evidence:** The response correctly marks Reviewer 2 item 5 as partial because the lower-flow condition has no result and no optimum is established (**verified**). Item 6 is marked complete, although the article only proposes DEA/MDEA/AMP/PZ/blend tests and does not report a new-amine fit or validation (**verified**). The conclusion also presents these as future studies (**verified**).
 
@@ -152,7 +152,7 @@ Hashes are SHA-256 and were recorded before this report was written. The first t
 
 ### A8 — Low/Medium: reader-facing numerical precision is higher than the physical evidence warrants
 
-**Locations:** PDF pp. 1, 7–13; `docs/latex/main.tex:95–100`; `docs/latex/sections/results.tex:19–31,73–114,124–146`; `docs/latex/tables/reactive_numerical_verification.tex:14–23`.
+**Locations:** PDF pp. 1, 7–13; `docs/scientific/latex/main.tex:95–100`; `docs/scientific/latex/sections/results.tex:19–31,73–114,124–146`; `docs/scientific/latex/tables/reactive_numerical_verification.tex:14–23`.
 
 **Observed evidence:** The article reports calculated capture and temperature values to five decimal places, refinement changes of 0.00510 percentage points and 0.04493 K, and energy ranges to 0.001 W, while the reported capture is 89.50% and source temperatures are tabulated at much coarser precision (**verified**). The retained CSVs support the printed numerical digits (**verified**).
 

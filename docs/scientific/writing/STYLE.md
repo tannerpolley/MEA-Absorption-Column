@@ -20,6 +20,6 @@ from paragraph ID and order only when reviewing. Equations, captions, figures,
 and tables retain their semantic commands and labels.
 
 Paragraph comments never change rendered headings. Keep generated cohesion or
-sentence reports under `docs/latex/builds/`; do not create a second prose map.
+sentence reports under `docs/scientific/latex/builds/`; do not create a second prose map.
 Separate substantive wording edits from source-only reflow and verify that the
 reflow preserves the rendered text. Do not create commits unless requested.

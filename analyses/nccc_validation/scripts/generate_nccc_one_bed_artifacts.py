@@ -10,8 +10,8 @@ ROOT = Path(__file__).resolve().parents[3]
 ANALYSIS = Path(__file__).resolve().parents[1]
 TABLES = ANALYSIS / "results" / "final" / "tables"
 FIGURES = ANALYSIS / "results" / "final" / "figures"
-LATEX_TABLES = ROOT / "docs" / "latex" / "tables"
-LATEX_FIGURES = ROOT / "docs" / "latex" / "figures"
+LATEX_TABLES = ROOT / "docs" / "scientific" / "latex" / "tables"
+LATEX_FIGURES = ROOT / "docs" / "scientific" / "latex" / "figures"
 
 SOURCE_2014 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2014_cases.csv"
 SOURCE_2017 = ROOT / "src" / "mea_absorption_column" / "data" / "NCCC_2017_cases.csv"

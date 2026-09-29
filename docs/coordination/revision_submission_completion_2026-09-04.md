@@ -2,7 +2,7 @@
 
 The author authorized completing the language polish, reviewer-response reconciliation, cover letter and original-manuscript bundle, with a later Fable editorial check. Fable's language audit governed the polish; Astra's bounded wording corrections were included without adding scientific studies.
 
-Canonical manuscript: `docs/latex/main.tex`; final PDF: `docs/latex/builds/main.pdf` (33 pages). Canonical response: `docs/fallback_reviewer_response.md`; canonical cover letter: `docs/revision_cover_letter.md`. The delivery package is `docs/latex/builds/revision_submission_2026-09-04.zip`.
+Canonical manuscript: `docs/scientific/latex/main.tex`; final PDF: `docs/latex/builds/main.pdf` (33 pages). Canonical response: `docs/fallback_reviewer_response.md`; canonical cover letter: `docs/revision_cover_letter.md`. The delivery package is `docs/latex/builds/revision_submission_2026-09-04.zip`.
 
 The response reproduces all 20 numbered comments verbatim, gives direct responses without internal checklist labels, and identifies final manuscript pages. It distinguishes the completed operating study from a constrained optimum and the other-amine discussion from completed fitting or validation. The cover letter is addressed to Next Chemical Engineering; no manuscript ID was supplied.
 

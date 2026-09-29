@@ -1,6 +1,11 @@
 ---
 title: "Case 3C operating response"
 date: 2026-09-04
+resources:
+  - output/*.csv
+  - output/*.json
+  - output/*.pdf
+  - output/*.svg
 ---
 
 ## Question and conditions
@@ -82,7 +87,7 @@ uv run --frozen python scripts/check_epcsaft_integration.py --mode final
 uv run --frozen python analyses/nccc_validation/figures/reactive_operating/scripts/generate_data.py
 uv run --frozen python analyses/nccc_validation/figures/reactive_operating/scripts/generate_data.py --initial-profile analyses/nccc_validation/results/runs/reactive_native_21/solution_scaled.csv --scenarios LG_low LG_high temperature_low
 uv run --frozen python analyses/nccc_validation/figures/reactive_operating/scripts/render.py
-bash analyses/nccc_validation/figures/reactive_operating/render.sh analyses/nccc_validation/figures/reactive_operating/notebook.qmd
+bash analyses/render.sh --to html
 ```
 
 Rendering reads retained results and does not run the model.

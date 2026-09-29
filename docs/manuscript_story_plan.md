@@ -676,8 +676,8 @@ Update the existing response/checklist only after the manuscript content is stab
 
 ## Source documents used for this plan
 
-- `docs/latex/main.tex`, the five current section sources, `appendices/appendix_properties.tex` and the current table sources.
-- `docs/reviewer_comments.txt`, `docs/fallback_reviewer_response.md` and `docs/latex/scripts/reviewer_checklist.json`.
+- `docs/scientific/latex/main.tex`, the five current section sources, `appendices/appendix_properties.tex` and the current table sources.
+- `docs/reviewer_comments.txt`, `docs/fallback_reviewer_response.md` and `docs/scientific/latex/scripts/reviewer_checklist.json`.
 - `docs/code_to_paper_traceability.md`, `docs/selected-reactive-parameters.md` and `REPRODUCE.md` for numerical source assignments.
 - The completed section-by-section editorial audit and its current-result follow-up.
 - The main chat's consolidated three-Sol review of this plan, checked against `Thermodynamics/thermo_models.py`, `Thermodynamics/reactive_bundle.py`, current model energy/film equations and the transport-applicability table; source modules are under `src/mea_absorption_column/`.

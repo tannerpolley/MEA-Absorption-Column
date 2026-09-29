@@ -1,0 +1,32 @@
+---
+title: "MEA absorption-column research"
+subtitle: "Model choices, retained evidence and numerical methods"
+---
+
+## Research focus
+
+This project studies when thermodynamic and film-model detail changes predicted
+carbon-dioxide capture and axial temperature, and what numerical effort resolves
+those differences. Research is active; the submitted manuscript revision is
+preserved separately under `docs/scientific/latex/`.
+
+## Ownership
+
+This repository owns absorber integration, transport and film closures, and
+numerical comparisons on explicitly stated common input bases. The ePC-SAFT
+Engine owns generic thermodynamic equations; MEA-Thermodynamics owns fitting
+and parameter adoption. The submitted revision remains unchanged while new
+research proceeds in this repository.
+
+## Reading the analyses
+
+Use the sidebar to move between retained analyses. Each page states its question,
+conditions, retained evidence and limits. Exploratory calculations and numerical
+completion do not by themselves establish physical accuracy or manuscript
+promotion.
+
+## Rendering boundary
+
+The site renders registered Quarto sources and retained files with execution
+disabled. Model calculations are run separately into new result directories;
+rendering does not execute them or replace retained results.

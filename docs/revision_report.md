@@ -42,7 +42,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 - Added the `generate_nccc_one_bed_artifacts.py` and `sync_latex_figures.ps1` commands to the curated artifact refresh chain.
 - Added `docs/code_to_paper_traceability.md` mapping manuscript claims and figures/tables to source artifacts and scripts.
 - Updated `README.md`, `analyses/README.md`, `analyses/nccc_validation/README.md`, `analyses/nccc_validation/analysis.yaml`, and `docs/workflow_map.md` to remove local machine paths and distinguish routine ePC-SAFT from full activity-coupled ePC-SAFT.
-- Left `references.bib` untouched; the non-Zotero software citation now lives in `docs/latex/software_references.bib` with repository URL, package version, commit hash, and no-DOI status.
+- Left `references.bib` untouched; the non-Zotero software citation now lives in `docs/scientific/latex/software_references.bib` with repository URL, package version, commit hash, and no-DOI status.
 
 ## Context / Voice / Metadata Sweep
 
@@ -77,15 +77,15 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ### Files Changed
 
-- `docs/latex/main.tex`
-- `docs/latex/sections/model_framework.tex`
-- `docs/latex/sections/methods.tex`
-- `docs/latex/sections/results.tex`
-- `docs/latex/sections/conclusion.tex`
-- `docs/latex/sections/data_availability.tex`
-- `docs/latex/sections/code_availability.tex`
+- `docs/scientific/latex/main.tex`
+- `docs/scientific/latex/sections/model_framework.tex`
+- `docs/scientific/latex/sections/methods.tex`
+- `docs/scientific/latex/sections/results.tex`
+- `docs/scientific/latex/sections/conclusion.tex`
+- `docs/scientific/latex/sections/data_availability.tex`
+- `docs/scientific/latex/sections/code_availability.tex`
 - `docs/latex/tables/appendix_parameter_scope.tex`
-- `docs/latex/tables/epcsaft_parameter_summary.tex`
+- `docs/scientific/latex/tables/epcsaft_parameter_summary.tex`
 - `README.md`
 - `analyses/nccc_validation/scripts/generate_accuracy_credibility_artifacts.py`
 - `analyses/nccc_validation/scripts/run_full_species_ionic_2017_c_case_sweep.py`
@@ -158,13 +158,13 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ### Files Changed
 
-- `docs/latex/main.tex`
-- `docs/latex/sections/declaration_competing_interest.tex`
-- `docs/latex/sections/data_availability.tex`
-- `docs/latex/sections/code_availability.tex`
-- `docs/latex/sections/results.tex`
-- `docs/latex/software_references.bib`
-- `docs/latex/thumbnails/cas-email.jpeg`
+- `docs/scientific/latex/main.tex`
+- `docs/scientific/latex/sections/declaration_competing_interest.tex`
+- `docs/scientific/latex/sections/data_availability.tex`
+- `docs/scientific/latex/sections/code_availability.tex`
+- `docs/scientific/latex/sections/results.tex`
+- `docs/scientific/latex/software_references.bib`
+- `docs/scientific/latex/thumbnails/cas-email.jpeg`
 - `analyses/nccc_validation/scripts/generate_nccc_one_bed_artifacts.py`
 - `analyses/nccc_validation/results/final/figures/nccc_one_bed_thermo_benchmark.pdf`
 - `analyses/nccc_validation/results/final/figures/nccc_one_bed_thermo_benchmark.png`
@@ -176,7 +176,7 @@ Implemented the submission-readiness plan around the current committed evidence 
 - Added Tanner W. Polley's ORCID identifier: `0009-0008-5957-4152`.
 - Added BYU author emails for Tanner W. Polley and John D. Hedengren.
 - Marked John D. Hedengren as corresponding author.
-- Added the CAS template email thumbnail required by the `cas-sc` front matter under `docs/latex/thumbnails/cas-email.jpeg`.
+- Added the CAS template email thumbnail required by the `cas-sc` front matter under `docs/scientific/latex/thumbnails/cas-email.jpeg`.
 
 ### Declarations Added Or Updated
 
@@ -188,9 +188,9 @@ Implemented the submission-readiness plan around the current committed evidence 
 
 ### Software Citation Update
 
-- Updated `docs/latex/software_references.bib` for the `epcsaft` software citation.
+- Updated `docs/scientific/latex/software_references.bib` for the `epcsaft` software citation.
 - The citation now points to the public `ePC-SAFT` GitHub release `v1.5.0`, includes package version 1.5.0, and records commit `e4ee304721ac6670120e69ef260a596ea3c3fe9c`.
-- `docs/latex/references.bib` remained untouched because it is Zotero-owned.
+- `docs/scientific/latex/references.bib` remained untouched because it is Zotero-owned.
 
 ### Figure 4 Correction
 

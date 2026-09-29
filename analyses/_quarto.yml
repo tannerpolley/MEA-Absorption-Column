@@ -1,0 +1,50 @@
+{
+  "project": {
+    "type": "website",
+    "output-dir": "_site"
+  },
+  "metadata-files": [
+    "_cse-manuscript.json"
+  ],
+  "website": {
+    "title": "Analyses",
+    "search": true,
+    "reader-mode": true,
+    "page-navigation": false
+  },
+  "format": {
+    "html": {
+      "embed-resources": true,
+      "page-layout": "full",
+      "theme": "cosmo",
+      "css": "site.css",
+      "fontsize": "16px",
+      "toc": false,
+      "notebook-links": false,
+      "html-math-method": "mathjax",
+      "self-contained-math": true,
+      "format-links": false
+    },
+    "pdf": {
+      "pdf-engine": "lualatex",
+      "latex-auto-install": false,
+      "keep-tex": true,
+      "documentclass": "scrartcl",
+      "classoption": [
+        "oneside",
+        "10pt"
+      ],
+      "fontsize": "10pt",
+      "header-includes": [
+        "\\usepackage[version=4]{mhchem}",
+        "\\usepackage{siunitx}",
+        "\\usepackage{booktabs}",
+        "\\usepackage{xurl}",
+        "\\usepackage{microtype}"
+      ]
+    }
+  },
+  "execute": {
+    "enabled": false
+  }
+}

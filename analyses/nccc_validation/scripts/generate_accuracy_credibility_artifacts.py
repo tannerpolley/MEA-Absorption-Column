@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[3]
 ANALYSIS = Path(__file__).resolve().parents[1]
 TABLES = ANALYSIS / "results" / "final" / "tables"
 FIGURES = ANALYSIS / "results" / "final" / "figures"
-DOC_FIGURES = ROOT / "docs" / "latex" / "figures"
+DOC_FIGURES = ROOT / "docs" / "scientific" / "latex" / "figures"
 
 
 def main() -> None:

@@ -90,7 +90,7 @@ validation claim.
   packaged input data.
 - `analyses/`: study inputs, scripts, retained attempts and Quarto notebooks.
 - `tests/`: focused behavior and independent analytic checks.
-- `docs/latex/`: preserved submitted manuscript; no ongoing editorial work.
+- `docs/scientific/latex/`: preserved submitted manuscript; no ongoing editorial work.
 - `ePC-SAFT-project`: generic Engine equations, equilibrium and derivatives.
 - `MEA-Thermodynamics`: parameter fitting and thermodynamic parameter adoption.
 
@@ -105,14 +105,22 @@ hashes, species, charges and units. Do not import a mutable sibling source tree.
 ## Notebook and validation workflow
 
 ```bash
-cd analyses/research_options
-bash render.sh notebook.qmd --to html
+python3 analyses/manuscript.py validate analyses
+bash analyses/render.sh --to html
 ```
 
-Rendering is explicitly non-executing. Run studies separately into new output
-folders, then describe their observations, numerical checks, uncertainty and next
-questions in the notebook. Promotion is a later investigator decision; a failed
-or preliminary calculation may still be useful research evidence.
+The registered analysis pages appear in the root Quarto website. Rendering is
+explicitly non-executing. Run studies separately into new output folders, then
+describe their observations, numerical checks, uncertainty and next questions in
+the notebook. Promotion is a later investigator decision; a failed or preliminary
+calculation may still be useful research evidence.
+
+For an optional native PDF of one retained page, use the same root renderer
+with that page and `--to pdf`; its layout settings remain with the source page:
+
+```bash
+bash analyses/render.sh bvp_solution_methods/notebook.qmd --to pdf
+```
 
 Focused configuration and method checks:
 

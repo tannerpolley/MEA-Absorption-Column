@@ -13,7 +13,7 @@ RUNS = ANALYSIS / "results" / "runs" / "c_case_campaign_temperature_gallery"
 FINAL = ANALYSIS / "results" / "final"
 TABLES = FINAL / "tables"
 FIGURES = FINAL / "figures"
-DOC_FIGURES = ROOT / "docs" / "latex" / "figures"
+DOC_FIGURES = ROOT / "docs" / "scientific" / "latex" / "figures"
 
 
 THERMO_STYLE = {
@@ -185,9 +185,9 @@ def _plot_recommended_profiles(metrics: pd.DataFrame, recommended_cases: list[st
     plt.close(fig)
 
     # This legacy diagnostic figure is intentionally not copied into
-    # docs/latex/figures. The manuscript-facing C-case overlay is generated
+    # docs/scientific/latex/figures. The manuscript-facing C-case overlay is generated
     # from corrected campaign inputs by render_c_case_campaign_temperature_gallery.py
-    # and synced through docs/latex/scripts/latex_workflows.py sync-figures.
+    # and synced through docs/scientific/latex/scripts/latex_workflows.py sync-figures.
 
 
 def _write_recommendation_report(metrics: pd.DataFrame, recommendations: list[str]) -> None:

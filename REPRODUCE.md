@@ -13,11 +13,11 @@ The current source is `docs/latex` on `codex/fallback-manuscript`, transferred t
 Build the current article from retained figures; no column calculation is needed:
 
 ```bash
-uv run python docs/latex/scripts/latex_workflows.py sync-figures
-bash docs/latex/scripts/build_main.sh
-python3 docs/latex/scripts/check_main_pdf_fresh.py
-python3 docs/latex/scripts/test_reviewer_checklist.py
-python3 docs/latex/scripts/reviewer_checklist.py --serve --port 0
+uv run python docs/scientific/latex/scripts/latex_workflows.py sync-figures
+bash docs/scientific/latex/scripts/build_main.sh
+python3 docs/scientific/latex/scripts/check_main_pdf_fresh.py
+python3 docs/scientific/latex/scripts/test_reviewer_checklist.py
+python3 docs/scientific/latex/scripts/reviewer_checklist.py --serve --port 0
 ```
 
 The build projects the existing Zotero-owned bibliography snapshot and compiles with XeLaTeX. It does not publish, synchronize Overleaf or rerun a study. The reviewer server prints its selected port and reads this checkout only; a server attached to the old detached checkout does not reflect these edits.
@@ -183,7 +183,7 @@ uv run python analyses/nccc_validation/figures/reactive_column/scripts/render_se
 Copy the combined retained plot into the manuscript before rebuilding its PDF:
 
 ```bash
-cp analyses/nccc_validation/figures/reactive_column/output/sensitivity/comparison.pdf docs/latex/figures/reactive-parameter-sensitivity.pdf
+cp analyses/nccc_validation/figures/reactive_column/output/sensitivity/comparison.pdf docs/scientific/latex/figures/reactive-parameter-sensitivity.pdf
 ```
 
 The figure-owned `output/sensitivity/` contains plotted values, profiles, evaluated parameters and reactions,
@@ -201,15 +201,15 @@ The package includes the seven completed points, an initialization control, both
 Manuscript builds need only the retained publication figure, without rerunning a column:
 
 ```bash
-cp analyses/transport_sensitivity/figures/response/output/transport_sensitivity.pdf docs/latex/figures/transport-sensitivity.pdf
+cp analyses/transport_sensitivity/figures/response/output/transport_sensitivity.pdf docs/scientific/latex/figures/transport-sensitivity.pdf
 ```
 
-Both thermodynamic and transport figures are self-contained under `docs/latex/figures`. The article distinguishes their ±5% and ±10% input ranges and compares changes with the retained refinement difference, not a certified error interval. The working reviewer record links the supplied HTML notebook and numerical evidence. No bibliography refresh or Overleaf synchronization accompanies this integration.
+Both thermodynamic and transport figures are self-contained under `docs/scientific/latex/figures`. The article distinguishes their ±5% and ±10% input ranges and compares changes with the retained refinement difference, not a certified error interval. The working reviewer record links the supplied HTML notebook and numerical evidence. No bibliography refresh or Overleaf synchronization accompanies this integration.
 
 ## Refresh current figures only
 
 ```bash
-python3 docs/latex/scripts/latex_workflows.py sync-figures
+python3 docs/scientific/latex/scripts/latex_workflows.py sync-figures
 ```
 
 This copies retained current figures into the self-contained manuscript tree without recalculation. Legacy aggregate and activity-rebased scripts are not current-manuscript reproduction commands.
@@ -217,16 +217,16 @@ This copies retained current figures into the self-contained manuscript tree wit
 ## LaTeX Build
 
 ```bash
-docs/latex/scripts/build_main.sh
-uv run python docs/latex/scripts/check_main_pdf_fresh.py
+docs/scientific/latex/scripts/build_main.sh
+uv run python docs/scientific/latex/scripts/check_main_pdf_fresh.py
 ```
 
 The build first projects the Zotero-owned Better BibTeX auto-export at
 `/home/tnnrpolley21/Documents/Papers/references.bib` into the Git-tracked
-`docs/latex/references.bib` snapshot. Edit article metadata in Zotero, never in
+`docs/scientific/latex/references.bib` snapshot. Edit article metadata in Zotero, never in
 either `.bib` file. The repository snapshot keeps Overleaf self-contained.
 
-The source of truth is `docs/latex`, except for the Zotero-owned central
+The source of truth is `docs/scientific/latex`, except for the Zotero-owned central
 bibliography. Overleaf synchronization and publication require separate authorization.
 
 ## Operating-response rerun — 2026-09-04

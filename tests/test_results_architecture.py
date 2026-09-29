@@ -58,8 +58,8 @@ def test_clean_profile_generator_defaults_to_sixty_second_case_timeout():
 def test_old_docs_benchmark_gallery_is_removed():
     assert not (ROOT / "docs" / "benchmark_figures").exists()
 
-    checked_files = [ROOT / "README.md", ROOT / "docs" / "latex" / "main.tex"]
-    checked_files.extend((ROOT / "docs" / "latex" / "sections").glob("*.tex"))
+    checked_files = [ROOT / "README.md", ROOT / "docs" / "scientific" / "latex" / "main.tex"]
+    checked_files.extend((ROOT / "docs" / "scientific" / "latex" / "sections").glob("*.tex"))
     for path in checked_files:
         text = path.read_text(encoding="utf-8")
         assert "docs/benchmark_figures" not in text
