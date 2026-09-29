@@ -1,4 +1,4 @@
-"""Run directly: python3 docs/latex/scripts/test_manuscript_checklist.py."""
+"""Run directly: python3 docs/scientific/latex/scripts/test_manuscript_checklist.py."""
 
 import hashlib
 import json
@@ -77,7 +77,7 @@ class ChecklistTest(unittest.TestCase):
     def test_reviewer_score_updates_and_evidence_changes(self):
         with tempfile.TemporaryDirectory() as folder:
             repo = Path(folder)
-            root = repo / "docs/latex"
+            root = repo / "docs/scientific/latex"
             root.mkdir(parents=True)
             evidence = repo / "finding.txt"
             evidence.write_text("Reviewed finding")

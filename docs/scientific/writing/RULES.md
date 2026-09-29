@@ -1,6 +1,6 @@
 # Manuscript writing rules
 
-- Use one current manuscript: `docs/latex/main.tex`, with its existing section,
+- Use one current manuscript: `docs/scientific/latex/main.tex`, with its existing section,
   appendix, table, and figure files. Preserve CHECKLIST and equation labels.
 - Cite source-dependent claims and identify parameter definitions, units,
   conventions, domains, and exact source locators in the established source
@@ -19,4 +19,4 @@
   only at the numerical accuracy demonstrated by their matching runs.
 - Rebuild through the existing manuscript command. Check references, labels,
   figure paths, prose, and the complete PDF. Document review in the existing
-  `docs/latex/QA_REPORT.md`; add no parallel review database.
+  `docs/scientific/latex/QA_REPORT.md`; add no parallel review database.

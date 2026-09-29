@@ -11,10 +11,10 @@ from urllib.parse import urlsplit
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-ROOT = SCRIPT_DIR.parents[2]
+ROOT = SCRIPT_DIR.parents[3]
 FILES = {
-    "/manuscript": "docs/latex/builds/main.pdf",
-    "/qa": "docs/latex/QA_REPORT.md",
+    "/manuscript": "docs/scientific/latex/builds/main.pdf",
+    "/qa": "docs/scientific/latex/QA_REPORT.md",
     "/reviewer-notes": "docs/fallback_reviewer_response.md",
     "/reviewer-comments": "docs/reviewer_comments.txt",
     "/reviewer-original-assessment": "docs/reviewer_assessment_original.md",
@@ -23,7 +23,7 @@ FILES = {
 
 def snapshot(root=ROOT, spec=None):
     if spec is None:
-        spec = json.loads((root / "docs/latex/scripts/reviewer_checklist.json").read_text())
+        spec = json.loads((root / "docs/scientific/latex/scripts/reviewer_checklist.json").read_text())
     rows, ids = [], set()
     for item in spec["items"]:
         scores = [item["score"]]

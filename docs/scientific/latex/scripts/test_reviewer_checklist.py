@@ -1,4 +1,4 @@
-"""Run directly: python3 docs/latex/scripts/test_reviewer_checklist.py."""
+"""Run directly: python3 docs/scientific/latex/scripts/test_reviewer_checklist.py."""
 
 from copy import deepcopy
 import hashlib

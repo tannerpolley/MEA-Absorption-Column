@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 LATEX_DIR = Path(__file__).resolve().parents[1]
-ROOT = LATEX_DIR.parents[1]
+ROOT = LATEX_DIR.parents[2]
 
 
 def main() -> int:
@@ -15,7 +15,7 @@ def main() -> int:
     tex = LATEX_DIR / args.tex
     pdf = LATEX_DIR / args.pdf
     if not pdf.exists():
-        print(f"Missing {pdf}. Run: uv run python docs/latex/scripts/latex_workflows.py build")
+        print(f"Missing {pdf}. Run: uv run python docs/scientific/latex/scripts/latex_workflows.py build")
         return 1
 
     sources = _latex_sources(tex)
@@ -24,7 +24,7 @@ def main() -> int:
         print(f"{pdf} is stale. Newer inputs:")
         for path in stale_sources:
             print(f"  {path.relative_to(ROOT)}")
-        print(f"Run `uv run python docs/latex/scripts/latex_workflows.py build` to refresh {args.pdf}.")
+        print(f"Run `uv run python docs/scientific/latex/scripts/latex_workflows.py build` to refresh {args.pdf}.")
         return 1
 
     print(f"{pdf} is current.")

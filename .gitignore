@@ -176,7 +176,7 @@ analyses/**/tmp/
 !analyses/transport_sensitivity/figures/response/output/**
 
 # LaTeX manuscript build outputs
-docs/latex/builds/
+docs/scientific/latex/builds/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

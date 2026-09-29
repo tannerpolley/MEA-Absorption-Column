@@ -40,13 +40,13 @@ Use 30.33 and 0.134 W for the two dense-sampling table values, and 16.40 and 0.0
 - Edit only the files named in the batch. Replacements are exact `OLD` → `NEW` strings in LaTeX source under `docs/latex/`.
   If an `OLD` string is not found verbatim, stop and report; do not guess.
 - Never change a numeral, unit macro, citation key, label, or equation unless the batch says so.
-- Build: `cd <root> && uv run python docs/latex/scripts/latex_workflows.py sync-figures && bash docs/latex/scripts/build_main.sh`.
+- Build: `cd <root> && uv run python docs/scientific/latex/scripts/latex_workflows.py sync-figures && bash docs/scientific/latex/scripts/build_main.sh`.
   The build must succeed; report new LaTeX warnings about undefined references or citations.
 - Checks after building (report the raw output of each):
   1. `pdftotext docs/latex/builds/main.pdf /tmp/new.txt; diff <(pdftotext <previous-batch-pdf> -) /tmp/new.txt` — only the intended lines may differ.
   2. `pdftotext docs/latex/builds/main.pdf - | grep -inE '\b(local|locally|history|historical|histories)\b'` must print nothing.
   3. Numeric-token diff: `grep -oE '[0-9]+(\.[0-9]+)?' old.txt | sort | uniq -c` vs new; explain every count change through the explicit rounding list, approved additions/deletions (including the added convergence rows), cross-reference renumbering or pagination. Flag any unexplained change.
-  4. `grep -rn -F -f <(printf '%s\n' <batch removed phrases>) docs/latex/sections docs/latex/appendices docs/latex/tables docs/latex/main.tex` must print nothing.
+  4. `grep -rn -F -f <(printf '%s\n' <batch removed phrases>) docs/latex/sections docs/latex/appendices docs/latex/tables docs/scientific/latex/main.tex` must print nothing.
 - Copy the previous batch's `builds/main.pdf` to `builds/main_before_batch<N>.pdf` before building (the `builds/` directory is the scratch location already used for the pre-revision copy).
 - Report: files changed, `git diff --stat`, check outputs, anything not applied and why. Do not commit; the orchestrator commits.
 
@@ -247,4 +247,4 @@ Then rerun each script exactly as its figure README states (read the README firs
 
 ## Close-out (orchestrator)
 
-After approval and execution of the consolidated plan: read the complete final PDF against both independent reviews and the consolidated decisions; review the full checkpoint-to-HEAD diff; run the prohibited-word and batch checks. Keep `docs/latex/scripts/reviewer_checklist.json` unchanged unless the author separately requests an update.
+After approval and execution of the consolidated plan: read the complete final PDF against both independent reviews and the consolidated decisions; review the full checkpoint-to-HEAD diff; run the prohibited-word and batch checks. Keep `docs/scientific/latex/scripts/reviewer_checklist.json` unchanged unless the author separately requests an update.

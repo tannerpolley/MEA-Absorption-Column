@@ -90,7 +90,7 @@ validation claim.
   packaged input data.
 - `analyses/`: study inputs, scripts, retained attempts and Quarto notebooks.
 - `tests/`: focused behavior and independent analytic checks.
-- `docs/latex/`: preserved submitted manuscript; no ongoing editorial work.
+- `docs/scientific/latex/`: preserved submitted manuscript; no ongoing editorial work.
 - `ePC-SAFT-project`: generic Engine equations, equilibrium and derivatives.
 - `MEA-Thermodynamics`: parameter fitting and thermodynamic parameter adoption.
 

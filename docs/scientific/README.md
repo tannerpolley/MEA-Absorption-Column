@@ -34,15 +34,15 @@ history. The current manuscript author notes belong in SOURCE_MAP.md.
 Run from the repository root:
 
 ```bash
-TEXMFHOME="$HOME/texmf" bash docs/latex/scripts/build_main.sh
-python3 docs/latex/scripts/check_main_pdf_fresh.py
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s docs/latex/scripts -p test_manuscript_checklist.py
-python3 docs/latex/scripts/manuscript_checklist.py --json
+TEXMFHOME="$HOME/texmf" bash docs/scientific/latex/scripts/build_main.sh
+python3 docs/scientific/latex/scripts/check_main_pdf_fresh.py
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s docs/scientific/latex/scripts -p test_manuscript_checklist.py
+python3 docs/scientific/latex/scripts/manuscript_checklist.py --json
 ```
 
 The existing server is at `http://127.0.0.1:37543/`.
 Reuse its listener; if absent, run
-`python3 docs/latex/scripts/manuscript_checklist.py --serve --port 37543`.
+`python3 docs/scientific/latex/scripts/manuscript_checklist.py --serve --port 37543`.
 The page reads the LaTeX sources and checklist definitions on each refresh.
 Checked means scoped content exists; scientific review notes remain separate.
 

@@ -57,7 +57,7 @@ FINAL = ANALYSIS / "results" / "final"
 TABLES = FINAL / "tables"
 FIGURES = FINAL / "figures"
 PROFILES = FINAL / "profiles"
-DOCS_LATEX = ROOT / "docs" / "latex"
+DOCS_LATEX = ROOT / "docs" / "scientific" / "latex"
 ISSUE17_INPUTS = ANALYSIS / "inputs" / "issue17_enhancement_comparison"
 ISSUE17_TABLES = [
     TABLES / "issue17_fugacity_only_enhancement_formulations.csv",
@@ -1186,7 +1186,7 @@ def _check_latex_pdf_is_current() -> None:
     _check_one_latex_pdf_is_current(
         "main.tex",
         "builds/main.pdf",
-        "uv run python docs/latex/scripts/latex_workflows.py build",
+        "uv run python docs/scientific/latex/scripts/latex_workflows.py build",
     )
 
 
@@ -1196,7 +1196,7 @@ def _check_one_latex_pdf_is_current(
     root_tex = DOCS_LATEX / tex_name
     pdf = DOCS_LATEX / pdf_name
     if not pdf.exists():
-        raise AssertionError(f"Missing docs/latex/{pdf_name}. Run {build_command}.")
+        raise AssertionError(f"Missing docs/scientific/latex/{pdf_name}. Run {build_command}.")
     sources = set()
     for pattern in ("*.bib", "*.bst", "*.cls", "*.sty"):
         sources.update(DOCS_LATEX.glob(pattern))
@@ -1217,7 +1217,7 @@ def _check_one_latex_pdf_is_current(
     if newer:
         names = "\n".join(str(path.relative_to(ROOT)) for path in sorted(newer))
         raise AssertionError(
-            f"docs/latex/{pdf_name} is older than manuscript inputs. Run {build_command}.\n{names}"
+            f"docs/scientific/latex/{pdf_name} is older than manuscript inputs. Run {build_command}.\n{names}"
         )
 
 

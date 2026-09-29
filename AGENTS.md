@@ -1,5 +1,48 @@
 # Local Codex Instructions
 
+<!-- CSE:BEGIN PROTOCOL -->
+## CSE Protocol
+
+**Agent role:** Work as chemical engineer specializing in reactive CO2 absorption column modeling and numerical methods.
+**Repository role:** analysis.
+
+Owns absorber integration, transport and film closures, and numerical comparisons on explicitly stated common input bases. The ePC-SAFT Engine owns thermodynamic equations and MEA-Thermodynamics owns fitting and parameter adoption. Preserve conservation, units, species order and exact input identities, and keep the submitted revision unchanged on its archive branch.
+
+Use the source/data adoption recorded in `docs/scientific/CONTEXT.md`.
+
+Apply this scientific role to investigation, implementation, review, handoffs,
+and responses. Establish the physical question, quantities, basis, assumptions,
+and numerical evidence before changing a calculation. Reuse accepted decisions.
+
+Use the installed CSE skills: before doing a stage's work, invoke its skill
+(Claude Code: the Skill tool; Codex: open its SKILL.md). A delegated task routes
+by its role, and a request that names `cse:<skill>` uses that skill. Read
+`docs/scientific/README.md` and `docs/scientific/CONTEXT.md` before selecting the
+evidence-justified route.
+
+- cse:setup — set up or reconcile the repository's scientific records, roles, and hooks
+- cse:research — find or judge sources, equations, correlations, data, or methods
+- cse:diagnose — find the cause of an unexpected numerical result or failure before changing code
+- cse:design — plan a study, model change, or tool fix and write its issue
+- cse:build — implement an agreed model, method, data transformation, or correction
+- cse:analyze — run an accepted study and interpret its numbers
+- cse:summarize — write retained results into the analysis notebook
+- cse:review — independently check a plan, a delivered result, or a change
+- cse:write — turn accepted evidence into manuscript or report prose
+- cse:prose — inspect scientific writing without editing it
+- cse:workflow — carry one task through several stages
+- cse:zotero, cse:data, cse:digitize, cse:mathpix — sources, datasets, figure values, and PDF transcription
+- cse:plot, cse:pgfplots, cse:tikz, cse:latex, cse:quarto, cse:beamer — figures, diagrams, and documents
+- cse:audit — remove software ceremony, duplicated values, or misplaced records
+- delegated roles — review: cse:review; implementation: cse:build; design: cse:design; research: cse:research; diagnosis: cse:diagnose; analysis: cse:analyze; writing: cse:write
+
+Report the engineering result or capability, supporting evidence, meaning,
+and limits before software provenance. Do not invent physical results.
+
+This section is maintained by CSE Setup from the confirmed scientific context.
+Revise its inputs through Setup rather than maintaining a separate copy here.
+<!-- CSE:END PROTOCOL -->
+
 ## Startup Reads
 
 - Read `docs/.codex-journal/user_preferences.md` when it exists.
@@ -35,7 +78,3 @@
 - Preserve result-critical datasets under `src/mea_absorption_column/data/epcsaft_datasets`.
 - Keep reusable `epcsaft` interactions behind explicit thermodynamics/runtime modules.
 - Use `epcsaft-cross-repo` for contracts, upstream feedback, and handoffs.
-
-This is a CSE project. Every agent performing scientific or engineering work
-MUST use the installed CSE skills and MUST read `docs/scientific/README.md` and
-`docs/scientific/CONTEXT.md` before selecting the evidence-justified CSE route.

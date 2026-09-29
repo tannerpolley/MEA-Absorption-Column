@@ -15,10 +15,10 @@ from urllib.parse import parse_qs, urlsplit
 SCRIPT_DIR = Path(__file__).resolve().parent
 LATEX_ROOT = SCRIPT_DIR.parent
 REVIEWER_FILES = {
-    "/reviewer-scorecard": LATEX_ROOT.parents[1] / "output/pdf/reviewer_comment_progress_summary_updated.pdf",
-    "/reviewer-notes": LATEX_ROOT.parent / "reviewer_response.md",
-    "/reviewer-comments": LATEX_ROOT.parent / "reviewer_comments.txt",
-    "/reviewer-original-assessment": LATEX_ROOT.parent / "reviewer_assessment_original.md",
+    "/reviewer-scorecard": LATEX_ROOT.parents[2] / "output/pdf/reviewer_comment_progress_summary_updated.pdf",
+    "/reviewer-notes": LATEX_ROOT.parents[1] / "reviewer_response.md",
+    "/reviewer-comments": LATEX_ROOT.parents[1] / "reviewer_comments.txt",
+    "/reviewer-original-assessment": LATEX_ROOT.parents[1] / "reviewer_assessment_original.md",
 }
 INPUT = re.compile(r"\\(?:input|include)\{([^}]+)\}")
 GRAPHIC = re.compile(r"\\includegraphics\*?(?:\[[^\]]*\])?\{([^}]+)\}")
@@ -174,7 +174,7 @@ def reviewer_snapshot(root=LATEX_ROOT, spec=None, manuscript=None):
         ids.add(item["id"])
         changed = []
         for name, expected in item["evidence"].items():
-            path = inside(root.parents[1], name)
+            path = inside(root.parents[2], name)
             if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
                 changed.append(name)
         checks = [content[key] for key in item["checks"]]

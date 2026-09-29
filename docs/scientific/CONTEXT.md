@@ -1,9 +1,17 @@
 # Scientific context
 
+repository role: analysis
+
 Updated 2026-09-08. This project studies when thermodynamic and film detail
 changes predicted capture and axial temperature, and what numerical effort
 resolves those differences. The manuscript revision is submitted; the active
 objective is exploratory analysis and research, with possible later promotion.
+
+## Agent role
+
+agent role: chemical engineer specializing in reactive CO2 absorption column modeling and numerical methods
+
+Owns absorber integration, transport and film closures, and numerical comparisons on explicitly stated common input bases. The ePC-SAFT Engine owns thermodynamic equations and MEA-Thermodynamics owns fitting and parameter adoption. Preserve conservation, units, species order and exact input identities, and keep the submitted revision unchanged on its archive branch.
 
 ## Terms
 
@@ -40,3 +48,7 @@ closure comparison must hold its other equations and inputs fixed. Capture and
 axial temperature assess different aspects of the response. Estimated mobilities,
 uncertain thermal references, incomplete convergence and observation ambiguities
 remain visible. No selected manuscript case constrains the research program.
+
+## Source/data adoption
+
+source/data adoption: zotero
