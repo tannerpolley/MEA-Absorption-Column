@@ -5,7 +5,7 @@ Create a flat Elsevier Editorial Manager LaTeX source package.
 .DESCRIPTION
 Elsevier's LaTeX instructions state that Editorial Manager cannot process
 LaTeX submissions that rely on subfolders. This script keeps the repository
-source organized, but writes a flat copy under docs\latex\builds for upload.
+source organized, but writes a flat copy under docs\scientific\latex\mdea-companion\manuscript\builds for upload.
 
 The copied TeX files rewrite figures/<name>, tables/<name>, sections/<name>,
 and appendices/<name> references to bare filenames. Referenced figure files,
@@ -45,7 +45,7 @@ function Copy-TextWithFlatFigurePaths {
 }
 
 $latexRoot = (Resolve-Path -LiteralPath (Join-Path $scriptRoot '..')).Path
-$repoRoot = (Resolve-Path -LiteralPath (Join-Path $latexRoot '..\..')).Path
+$repoRoot = (Resolve-Path -LiteralPath (Join-Path $latexRoot '..\..\..\..\..')).Path
 $python = Join-Path $repoRoot '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python)) {
     $python = 'python'
@@ -60,7 +60,7 @@ $fullOutputRoot = [System.IO.Path]::GetFullPath($OutputRoot)
 $fullBuildsParent = [System.IO.Path]::GetFullPath($buildsRootParent)
 
 if (-not $fullOutputRoot.StartsWith($fullBuildsParent, [System.StringComparison]::OrdinalIgnoreCase)) {
-    throw "OutputRoot must be inside docs\latex\builds: $fullOutputRoot"
+    throw "OutputRoot must be inside docs\scientific\latex\mdea-companion\manuscript\builds: $fullOutputRoot"
 }
 
 if (Test-Path -LiteralPath $fullOutputRoot) {

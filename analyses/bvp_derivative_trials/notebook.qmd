@@ -4,26 +4,23 @@ subtitle: "Retained fixed-chemistry evidence for Issue 19"
 author: "MEA Absorption Column project"
 date: 2026-08-31
 format:
+  html: {}
   pdf:
-    pdf-engine: lualatex
     documentclass: scrartcl
-    classoption:
-      - 10pt
-      - oneside
+    classoption: [10pt, oneside]
     toc: true
     number-sections: true
     colorlinks: true
     code-overflow: wrap
     fig-pos: H
-    include-in-header:
-      text: |
-        \usepackage{booktabs}
-        \usepackage{xurl}
-        \usepackage[left=0.66in,right=0.66in,top=0.58in,bottom=0.58in]{geometry}
-        \setlength{\tabcolsep}{4pt}
-        \renewcommand{\arraystretch}{1.05}
-execute:
-  enabled: false
+    geometry:
+      - left=0.66in
+      - right=0.66in
+      - top=0.58in
+      - bottom=0.58in
+    header-includes:
+      - "\\setlength{\\tabcolsep}{4pt}"
+      - "\\renewcommand{\\arraystretch}{1.05}"
 ---
 
 # Decision addressed
@@ -48,35 +45,35 @@ the 21-state reactive-film campaign, or final numerical-method selection.
 The notebook uses only:
 
 - `results/final/tables/issue19_scipy_bvp_candidate_rows.csv`, SHA-256
-  \nolinkurl{559472867bfbad275ad57615b02de68a76908b155a9fcbb8a1b2b95072d91585};
+  `559472867bfbad275ad57615b02de68a76908b155a9fcbb8a1b2b95072d91585`;
 - `results/final/tables/issue19_scipy_bvp_summary.json`, SHA-256
-  \nolinkurl{607fa15b499b021840a92c696ecce8764ca0529ec767791455d384324878ac56}.
+  `607fa15b499b021840a92c696ecce8764ca0529ec767791455d384324878ac56`.
 
 An independent CSE Review passed these retained files at pull-request head
-\nolinkurl{30a1d678604e09f10784c9194f7ce92fed54e1e3}. The candidate table contains
+`30a1d678604e09f10784c9194f7ce92fed54e1e3`. The candidate table contains
 12 declared attempts and one row per immutable run identifier. The summary
 records 9 validated rows, 1 certificate failure, and 2 campaign timeouts.
 
 ## Exact calculation identity
 
 - Repository calculation commit:
-  \nolinkurl{2c05d6238d4498b2cf698421aebd14692b2962f8}
+  `2c05d6238d4498b2cf698421aebd14692b2962f8`
 - Repository base commit:
-  \nolinkurl{771f4ffd9f4780d1de607ae94651a0ae83787770}
+  `771f4ffd9f4780d1de607ae94651a0ae83787770`
 - Generator SHA-256:
-  \nolinkurl{4e9cbda018add96f6cb57d7f6e258a32cfd1c701ee76c44fdfc760e22ebdd0f1}
+  `4e9cbda018add96f6cb57d7f6e258a32cfd1c701ee76c44fdfc760e22ebdd0f1`
 - ePC-SAFT Engine commit and version:
-  \nolinkurl{41e7dc1984d00f82785900b314a0135beebe56cd}, `0.2.0.dev0`
+  `41e7dc1984d00f82785900b314a0135beebe56cd`, `0.2.0.dev0`
 - Wheel and SHA-256:
   `epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl`,
-  \nolinkurl{2d089d5bdeda5b1655c5e6cf5df7308507233381175745889f8430c22ffe1edb}
+  `2d089d5bdeda5b1655c5e6cf5df7308507233381175745889f8430c22ffe1edb`
 - Engine core SHA-256:
-  \nolinkurl{fc1f1a78b2fe5c68a54b8678ce6bc844a2eba11edec91d49e6f9a51c62e1132f}
+  `fc1f1a78b2fe5c68a54b8678ce6bc844a2eba11edec91d49e6f9a51c62e1132f`
 - Dataset and content SHA-256:
   `MEA_CO2_H2O_ionic_fit`,
-  \nolinkurl{f7ad460743352cfc4e6683bee4f7718d1628f94bf80fc6e9c15f2d0e14675b1c}
+  `f7ad460743352cfc4e6683bee4f7718d1628f94bf80fc6e9c15f2d0e14675b1c`
 - Parameter-document SHA-256:
-  \nolinkurl{1d03e802c493f063e97e9b15fa5107b50fe69fa4cca2da9dd478554768ec1998}
+  `1d03e802c493f063e97e9b15fa5107b50fe69fa4cca2da9dd478554768ec1998`
 
 The retained run command fixes the per-case watchdog explicitly:
 
@@ -192,10 +189,10 @@ Regenerating the figure reads the admitted CSV only:
 uv run python analyses/bvp_derivative_trials/scripts/render_issue19_summary.py
 ```
 
-Rendering this notebook uses the analysis wrapper and disables execution:
+Rendering this retained page through the root website disables execution:
 
 ```text
-bash analyses/bvp_derivative_trials/render.sh
+bash analyses/render.sh --to html
 ```
 
 Neither command invokes the scientific model. Regenerating the model evidence

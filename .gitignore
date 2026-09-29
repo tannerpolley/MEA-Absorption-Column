@@ -186,3 +186,6 @@ docs/scientific/latex/builds/
 
 # Local Codex configuration is machine-specific.
 .codex/
+
+/.quarto/
+**/*.quarto_ipynb

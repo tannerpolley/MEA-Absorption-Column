@@ -6,25 +6,22 @@ date: 2026-08-26
 bibliography: ../../docs/scientific/latex/references.bib
 link-citations: true
 format:
+  html: {}
   pdf:
-    pdf-engine: lualatex
     documentclass: scrartcl
-    classoption:
-      - 10pt
-      - oneside
+    classoption: [10pt, oneside]
     toc: true
     number-sections: true
     colorlinks: true
     code-overflow: wrap
-    include-in-header:
-      text: |
-        \usepackage[version=4]{mhchem}
-        \usepackage{siunitx}
-        \usepackage{booktabs}
-        \usepackage{xurl}
-        \usepackage[left=0.62in,right=0.62in,top=0.55in,bottom=0.55in]{geometry}
-        \setlength{\tabcolsep}{4pt}
-        \renewcommand{\arraystretch}{1.05}
+    geometry:
+      - left=0.62in
+      - right=0.62in
+      - top=0.55in
+      - bottom=0.55in
+    header-includes:
+      - "\\setlength{\\tabcolsep}{4pt}"
+      - "\\renewcommand{\\arraystretch}{1.05}"
 ---
 
 # Decision addressed
@@ -47,30 +44,30 @@ wetted-wall-column agreement, or Maxwell--Stefan transport accuracy.
 
 The analysis reads the following retained files:
 
-- \nolinkurl{inputs/retained_reactive_case3c/film_states.csv}
-  (SHA-256 \nolinkurl{2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a})
-- \nolinkurl{inputs/retained_reactive_case3c/speciation_table.csv}
-  (SHA-256 \nolinkurl{36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4})
-- \nolinkurl{inputs/retained_reactive_case3c/speciation_table_summary.json}
-  (SHA-256 \nolinkurl{fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a})
-- \nolinkurl{results/final/tables/retained_reactive_case3c_diagnosis_summary.json}
-  (SHA-256 \nolinkurl{e41140224e1898ffb221d4eae1e5cb6c95a6d2fe24502469b6e455fc8d67cdb7})
-- \nolinkurl{results/final/tables/retained_reactive_case3c_enhancement_summary.json}
-  (SHA-256 \nolinkurl{f76fb4ee4a81a43bdb667a94878c1b4676cb30a48ba7192a96df0ab7e9986626})
-- \nolinkurl{results/final/tables/retained_reactive_case3c_film_summary.json}
-  (SHA-256 \nolinkurl{368238c97be50cddf84ff79b3ef990398d5222351c219c2ad0b3492a453677b4})
-- \nolinkurl{results/final/tables/retained_reactive_case3c_film_runs.csv}
-  (SHA-256 \nolinkurl{a6e8cffe9f8e0a11ae6f1996796875c28d539f33b00f2dcb9aeda43b02d062df})
-- \nolinkurl{results/final/tables/retained_reactive_case3c_film_numerical_gate.csv}
-  (SHA-256 \nolinkurl{09707b58eff441fa292280c1030ead160d6cac5601613d9474de60b714306651})
-- \nolinkurl{results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv}
-  (SHA-256 \nolinkurl{30d4c2a35227f9e43fafa6a5f98b59c26d81f1c2f8c2fc20dad70403294275a8})
+- `inputs/retained_reactive_case3c/film_states.csv`
+  (SHA-256 `2c6172cbd84d11b851168c8d5526c46f62e28ed9dd7d06e6de1bb24bc68d074a`)
+- `inputs/retained_reactive_case3c/speciation_table.csv`
+  (SHA-256 `36ae5bf625f076e5f31f8a3f26cccd40f9d3d33526190fac97e46e887507bdb4`)
+- `inputs/retained_reactive_case3c/speciation_table_summary.json`
+  (SHA-256 `fbcbf40414a75d3d325048f740db7a4043dd84ad823ed0ec9e108dd61b2af43a`)
+- `results/final/tables/retained_reactive_case3c_diagnosis_summary.json`
+  (SHA-256 `e41140224e1898ffb221d4eae1e5cb6c95a6d2fe24502469b6e455fc8d67cdb7`)
+- `results/final/tables/retained_reactive_case3c_enhancement_summary.json`
+  (SHA-256 `f76fb4ee4a81a43bdb667a94878c1b4676cb30a48ba7192a96df0ab7e9986626`)
+- `results/final/tables/retained_reactive_case3c_film_summary.json`
+  (SHA-256 `368238c97be50cddf84ff79b3ef990398d5222351c219c2ad0b3492a453677b4`)
+- `results/final/tables/retained_reactive_case3c_film_runs.csv`
+  (SHA-256 `a6e8cffe9f8e0a11ae6f1996796875c28d539f33b00f2dcb9aeda43b02d062df`)
+- `results/final/tables/retained_reactive_case3c_film_numerical_gate.csv`
+  (SHA-256 `09707b58eff441fa292280c1030ead160d6cac5601613d9474de60b714306651`)
+- `results/final/tables/retained_reactive_case3c_enhancement_film_comparison.csv`
+  (SHA-256 `30d4c2a35227f9e43fafa6a5f98b59c26d81f1c2f8c2fc20dad70403294275a8`)
 
 The retained calculation uses ePC-SAFT package commit
-\nolinkurl{d88f703974fa8d6e7be54ca3cbd51b6f0f78a372}, wheel SHA-256
-\nolinkurl{81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80},
+`d88f703974fa8d6e7be54ca3cbd51b6f0f78a372`, wheel SHA-256
+`81f21a6226de1fb68ca992c17f25e1a4ff7b791d3806220fefca31f7ad615f80`,
 and parameter-document SHA-256
-\nolinkurl{66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b}.
+`66837ab1c9625f28cf143a8adfea5855db70d3e070d44258d7e6f5f3e133c63b`.
 These identities prevent results from different package or parameter revisions
 from being combined under one label.
 

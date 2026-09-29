@@ -60,5 +60,5 @@ After independent review admits the retained rows, regenerate the summary figure
 
 ```bash
 uv run python analyses/bvp_derivative_trials/scripts/render_issue19_summary.py
-bash analyses/bvp_derivative_trials/render.sh
+bash analyses/render.sh --to html
 ```

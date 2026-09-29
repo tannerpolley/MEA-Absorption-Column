@@ -1,7 +1,8 @@
 # Research options
 
-`notebook.qmd` is the research index. Render HTML with `bash render.sh notebook.qmd --to html`.
-Execution is disabled; no model calculation occurs during preview or rendering.
+`notebook.qmd` is the research-options page in the root site at
+[`../index.qmd`](../index.qmd). Render the registered site from the repository
+root with `bash analyses/render.sh --to html`; execution is disabled.
 
 From the repository root:
 

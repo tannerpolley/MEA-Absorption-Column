@@ -3,9 +3,9 @@
 Refresh manuscript figures from project-generated outputs.
 
 .DESCRIPTION
-Copies generated figure files referenced by docs\latex\main.tex and
-docs\latex\sections\*.tex into docs\latex\figures. Static manuscript figures
-already live in docs\latex\figures. This keeps the LaTeX source
+Copies generated figure files referenced by docs\scientific\latex\main.tex and
+docs\scientific\latex\sections\*.tex into docs\scientific\latex\figures. Static manuscript figures
+already live in docs\scientific\latex\figures. This keeps the LaTeX source
 folder self-contained before it is mirrored to Overleaf.
 #>
 
@@ -28,8 +28,7 @@ function Resolve-RequiredPath {
 }
 
 $latexSourcePath = Resolve-RequiredPath -Path (Join-Path $PSScriptRoot '..') -Label 'LaTeX source folder'
-$docsRootPath = Resolve-RequiredPath -Path (Split-Path -Parent $latexSourcePath) -Label 'Docs root'
-$repoRootPath = Resolve-RequiredPath -Path (Split-Path -Parent $docsRootPath) -Label 'Repository root'
+$repoRootPath = Resolve-RequiredPath -Path (Join-Path $PSScriptRoot '..\..\..\..') -Label 'Repository root'
 $figureRootPath = Join-Path $latexSourcePath 'figures'
 
 if (-not (Test-Path -LiteralPath $figureRootPath)) {

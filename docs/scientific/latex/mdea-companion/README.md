@@ -15,12 +15,12 @@ never edited for MDEA exploration.
 Build the candidate with:
 
 ```bash
-bash docs/scientific/mdea-companion/manuscript/scripts/build_main.sh
+bash docs/scientific/latex/mdea-companion/manuscript/scripts/build_main.sh
 ```
 
 Build the research journal with:
 
 ```bash
-cd docs/scientific/mdea-companion/research-journal
+cd docs/scientific/latex/mdea-companion/research-journal
 latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=builds main.tex
 ```

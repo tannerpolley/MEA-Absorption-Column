@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-Validate that docs\latex, the local Overleaf mirror, and the pushed Overleaf
+Validate that docs\scientific\latex\mdea-companion\manuscript, the local Overleaf mirror, and the pushed Overleaf
 remote are in strict sync.
 
 .DESCRIPTION
-The source tree is docs\latex. The mirror tree is the Overleaf-connected Git
+The source tree is docs\scientific\latex\mdea-companion\manuscript. The mirror tree is the Overleaf-connected Git
 checkout whose root should contain the projected source files directly. This
 test compares exact root entries, exact relative file paths, SHA-256 file
 content hashes, referenced manuscript figures, and optionally the pushed remote

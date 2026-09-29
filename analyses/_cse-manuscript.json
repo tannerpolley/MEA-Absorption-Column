@@ -1,0 +1,336 @@
+{
+  "project": {
+    "render": [
+      "index.qmd",
+      "research_options/notebook.qmd",
+      "nccc_validation/notebook.qmd",
+      "nccc_validation/figures/reactive_operating/notebook.qmd",
+      "transport_sensitivity/notebook.qmd",
+      "reactive_film_evidence/notebook.qmd",
+      "bvp_derivative_trials/notebook.qmd",
+      "bvp_solution_methods/notebook.qmd",
+      "issue16_reactive_film_runtime/notebook.qmd"
+    ]
+  },
+  "website": {
+    "sidebar": {
+      "style": "docked",
+      "collapse-level": 1,
+      "contents": [
+        {
+          "section": "Home",
+          "contents": [
+            {
+              "text": "Overview",
+              "href": "index.qmd"
+            },
+            {
+              "text": "Research focus",
+              "href": "index.qmd#research-focus"
+            },
+            {
+              "text": "Ownership",
+              "href": "index.qmd#ownership"
+            },
+            {
+              "text": "Reading the analyses",
+              "href": "index.qmd#reading-the-analyses"
+            },
+            {
+              "text": "Rendering boundary",
+              "href": "index.qmd#rendering-boundary"
+            }
+          ]
+        },
+        {
+          "section": "Research overview",
+          "contents": [
+            {
+              "section": "Research options",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "research_options/notebook.qmd"
+                },
+                {
+                  "text": "Research question",
+                  "href": "research_options/notebook.qmd#research-question"
+                },
+                {
+                  "text": "Select the calculation explicitly",
+                  "href": "research_options/notebook.qmd#select-the-calculation-explicitly"
+                },
+                {
+                  "text": "Retained findings and potential promotions",
+                  "href": "research_options/notebook.qmd#retained-findings-and-potential-promotions"
+                },
+                {
+                  "text": "Comparison design",
+                  "href": "research_options/notebook.qmd#comparison-design"
+                },
+                {
+                  "text": "Evidence preservation",
+                  "href": "research_options/notebook.qmd#evidence-preservation"
+                },
+                {
+                  "text": "Working practice",
+                  "href": "research_options/notebook.qmd#working-practice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "section": "Column studies",
+          "contents": [
+            {
+              "section": "NCCC validation",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "nccc_validation/notebook.qmd"
+                },
+                {
+                  "text": "Decision addressed",
+                  "href": "nccc_validation/notebook.qmd#decision-addressed"
+                },
+                {
+                  "text": "Retained evidence and identity",
+                  "href": "nccc_validation/notebook.qmd#retained-evidence-and-identity"
+                },
+                {
+                  "text": "Calculations compared",
+                  "href": "nccc_validation/notebook.qmd#calculations-compared"
+                },
+                {
+                  "text": "Results",
+                  "href": "nccc_validation/notebook.qmd#results"
+                },
+                {
+                  "text": "Numerical acceptance evidence",
+                  "href": "nccc_validation/notebook.qmd#numerical-acceptance-evidence"
+                },
+                {
+                  "text": "Interpretation",
+                  "href": "nccc_validation/notebook.qmd#interpretation"
+                },
+                {
+                  "text": "Claim boundary and manuscript use",
+                  "href": "nccc_validation/notebook.qmd#claim-boundary-and-manuscript-use"
+                },
+                {
+                  "text": "Next scientific checks",
+                  "href": "nccc_validation/notebook.qmd#next-scientific-checks"
+                }
+              ]
+            },
+            {
+              "section": "Case 3C operating response",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd"
+                },
+                {
+                  "text": "Question and conditions",
+                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd#question-and-conditions"
+                },
+                {
+                  "text": "Results",
+                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd#results"
+                },
+                {
+                  "text": "Numerical checks and failures",
+                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd#numerical-checks-and-failures"
+                },
+                {
+                  "text": "Reproduction and provenance",
+                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd#reproduction-and-provenance"
+                }
+              ]
+            },
+            {
+              "section": "Transport sensitivity",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "transport_sensitivity/notebook.qmd"
+                },
+                {
+                  "text": "Question and conditions",
+                  "href": "transport_sensitivity/notebook.qmd#question-and-conditions"
+                },
+                {
+                  "text": "Baseline verification",
+                  "href": "transport_sensitivity/notebook.qmd#baseline-verification"
+                },
+                {
+                  "text": "Column response",
+                  "href": "transport_sensitivity/notebook.qmd#column-response"
+                },
+                {
+                  "text": "Diagnosed initialization failure",
+                  "href": "transport_sensitivity/notebook.qmd#diagnosed-initialization-failure"
+                },
+                {
+                  "text": "Interpretation limits",
+                  "href": "transport_sensitivity/notebook.qmd#interpretation-limits"
+                },
+                {
+                  "text": "Retained evidence and reproduction",
+                  "href": "transport_sensitivity/notebook.qmd#retained-evidence-and-reproduction"
+                }
+              ]
+            },
+            {
+              "section": "Reactive-film evidence",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "reactive_film_evidence/notebook.qmd"
+                },
+                {
+                  "text": "Decision",
+                  "href": "reactive_film_evidence/notebook.qmd#decision"
+                },
+                {
+                  "text": "Formulation",
+                  "href": "reactive_film_evidence/notebook.qmd#formulation"
+                },
+                {
+                  "text": "Retained campaign",
+                  "href": "reactive_film_evidence/notebook.qmd#retained-campaign"
+                },
+                {
+                  "text": "Temperature-profile comparison",
+                  "href": "reactive_film_evidence/notebook.qmd#temperature-profile-comparison"
+                },
+                {
+                  "text": "Numerical status",
+                  "href": "reactive_film_evidence/notebook.qmd#numerical-status"
+                },
+                {
+                  "text": "Claim boundary",
+                  "href": "reactive_film_evidence/notebook.qmd#claim-boundary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "section": "Numerical methods",
+          "contents": [
+            {
+              "section": "BVP derivative trials",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "bvp_derivative_trials/notebook.qmd"
+                },
+                {
+                  "text": "Decision addressed",
+                  "href": "bvp_derivative_trials/notebook.qmd#decision-addressed"
+                },
+                {
+                  "text": "Retained evidence and admission",
+                  "href": "bvp_derivative_trials/notebook.qmd#retained-evidence-and-admission"
+                },
+                {
+                  "text": "Quantities and checks",
+                  "href": "bvp_derivative_trials/notebook.qmd#quantities-and-checks"
+                },
+                {
+                  "text": "Results",
+                  "href": "bvp_derivative_trials/notebook.qmd#results"
+                },
+                {
+                  "text": "Claim boundary and remaining gates",
+                  "href": "bvp_derivative_trials/notebook.qmd#claim-boundary-and-remaining-gates"
+                },
+                {
+                  "text": "Reproduction boundary",
+                  "href": "bvp_derivative_trials/notebook.qmd#reproduction-boundary"
+                }
+              ]
+            },
+            {
+              "section": "Conserved full-column BVP",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "bvp_solution_methods/notebook.qmd"
+                },
+                {
+                  "text": "Question",
+                  "href": "bvp_solution_methods/notebook.qmd#question"
+                },
+                {
+                  "text": "Conditions",
+                  "href": "bvp_solution_methods/notebook.qmd#conditions"
+                },
+                {
+                  "text": "Results",
+                  "href": "bvp_solution_methods/notebook.qmd#results"
+                },
+                {
+                  "text": "Interpretation",
+                  "href": "bvp_solution_methods/notebook.qmd#interpretation"
+                },
+                {
+                  "text": "Limitations",
+                  "href": "bvp_solution_methods/notebook.qmd#limitations"
+                },
+                {
+                  "text": "Conclusion and next steps",
+                  "href": "bvp_solution_methods/notebook.qmd#conclusion-and-next-steps"
+                },
+                {
+                  "text": "Provenance",
+                  "href": "bvp_solution_methods/notebook.qmd#provenance"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "section": "Reactive-film methods",
+          "contents": [
+            {
+              "section": "Reactive-film runtime",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "issue16_reactive_film_runtime/notebook.qmd"
+                },
+                {
+                  "text": "Question",
+                  "href": "issue16_reactive_film_runtime/notebook.qmd#question"
+                },
+                {
+                  "text": "Retained calculation",
+                  "href": "issue16_reactive_film_runtime/notebook.qmd#retained-calculation"
+                },
+                {
+                  "text": "Numerical results",
+                  "href": "issue16_reactive_film_runtime/notebook.qmd#numerical-results"
+                },
+                {
+                  "text": "Scientific limitations",
+                  "href": "issue16_reactive_film_runtime/notebook.qmd#scientific-limitations"
+                },
+                {
+                  "text": "Conclusion and manuscript-adoption decision",
+                  "href": "issue16_reactive_film_runtime/notebook.qmd#conclusion-and-manuscript-adoption-decision"
+                },
+                {
+                  "text": "Provenance",
+                  "href": "issue16_reactive_film_runtime/notebook.qmd#provenance"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

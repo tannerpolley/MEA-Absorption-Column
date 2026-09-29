@@ -3,7 +3,7 @@
 Sync this LaTeX manuscript folder into the flat Overleaf mirror checkout.
 
 .DESCRIPTION
-The source manuscript lives in docs\latex inside the MEA repository. The mirror
+The source manuscript lives in docs\scientific\latex inside the MEA repository. The mirror
 checkout is a separate Git repository connected to Overleaf, and its root should
 contain the manuscript files directly, not a nested latex folder.
 
@@ -14,7 +14,7 @@ project. Use -WhatIf to preview the sync without writing to the mirror.
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [string]$MirrorRoot = 'C:\Users\Tanner\Documents\git\Publications\MEA-Absorption-Column-LaTeX',
-    [string[]]$ExcludedSourceEntries = @('scripts', 'builds'),
+    [string[]]$ExcludedSourceEntries = @('scripts', 'builds', 'mdea-companion'),
     [switch]$CleanBuildFiles
 )
 
@@ -73,7 +73,7 @@ function Get-ExactMirrorChildPath {
 
 $latexSourcePath = Resolve-RequiredPath -Path (Join-Path $PSScriptRoot '..') -Label 'LaTeX source folder'
 $mirrorRootPath = Resolve-RequiredPath -Path $MirrorRoot -Label 'Mirror checkout root'
-$repoRootPath = Resolve-RequiredPath -Path (Join-Path $latexSourcePath '..\..') -Label 'repository root'
+$repoRootPath = Resolve-RequiredPath -Path (Join-Path $latexSourcePath '..\..\..') -Label 'repository root'
 $python = Join-Path $repoRootPath '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python)) {
     $python = 'python'
@@ -149,7 +149,7 @@ foreach ($mirrorEntry in Get-ChildItem -LiteralPath $mirrorRootPath -Force) {
         continue
     }
 
-    if ($PSCmdlet.ShouldProcess($mirrorEntry.FullName, 'Remove mirror item outside docs\latex projection')) {
+    if ($PSCmdlet.ShouldProcess($mirrorEntry.FullName, 'Remove mirror item outside docs\scientific\latex projection')) {
         Remove-Item -LiteralPath $mirrorEntry.FullName -Recurse -Force
     }
 }

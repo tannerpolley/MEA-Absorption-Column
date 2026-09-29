@@ -43,6 +43,8 @@ This section is maintained by CSE Setup from the confirmed scientific context.
 Revise its inputs through Setup rather than maintaining a separate copy here.
 <!-- CSE:END PROTOCOL -->
 
+CSE execution mode: direct.
+
 ## Startup Reads
 
 - Read `docs/.codex-journal/user_preferences.md` when it exists.

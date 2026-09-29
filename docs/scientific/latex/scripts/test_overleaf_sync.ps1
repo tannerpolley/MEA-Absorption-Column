@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-Validate that docs\latex, the local Overleaf mirror, and the pushed Overleaf
+Validate that docs\scientific\latex, the local Overleaf mirror, and the pushed Overleaf
 remote are in strict sync.
 
 .DESCRIPTION
-The source tree is docs\latex. The mirror tree is the Overleaf-connected Git
+The source tree is docs\scientific\latex. The mirror tree is the Overleaf-connected Git
 checkout whose root should contain the projected source files directly. This
 test compares exact root entries, exact relative file paths, SHA-256 file
 content hashes, referenced manuscript figures, and optionally the pushed remote
@@ -15,7 +15,7 @@ Git tree.
 param(
     [string]$SourceRoot = '',
     [string]$MirrorRoot = 'C:\Users\Tanner\Documents\git\Publications\MEA-Absorption-Column-LaTeX',
-    [string[]]$ExcludedSourceEntries = @('scripts', 'builds'),
+    [string[]]$ExcludedSourceEntries = @('scripts', 'builds', 'mdea-companion'),
     [switch]$RequireCleanMirrorGit,
     [switch]$VerifyRemote,
     [string]$RemoteName = 'origin',

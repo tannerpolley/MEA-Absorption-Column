@@ -52,3 +52,21 @@ remain visible. No selected manuscript case constrains the research program.
 ## Source/data adoption
 
 source/data adoption: zotero
+
+## Reproducible workflow adoption
+
+Snakemake adoption is deferred for the populated analysis sets below. No
+Snakemake workflow code or configuration is installed in this repository.
+
+| Analysis set | Snakemake status |
+|---|---|
+| `bvp_derivative_trials` | Deferred |
+| `bvp_solution_methods` | Deferred |
+| `greenfield_node_qualification` | Deferred |
+| `issue16_reactive_film_runtime` | Deferred |
+| `legacy_srp_lhc_probe` | Deferred |
+| `nccc_validation` | Deferred |
+| `physical_acceptance_149` | Deferred |
+| `reactive_film_evidence` | Deferred |
+| `research_options` | Deferred |
+| `transport_sensitivity` | Deferred |

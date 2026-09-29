@@ -43,7 +43,7 @@ DEFAULT_MIRROR = Path(
     "/home/tnnrpolley21/Workspaces/Engineering/Publications/MEA-Absorption-Column-LaTeX"
 )
 DEFAULT_BIBLIOGRAPHY_SOURCE = Path.home() / "Documents" / "Papers" / "references.bib"
-PROJECTION_EXCLUDES = frozenset({"scripts", "builds", "QA_REPORT.md", "main.log"})
+PROJECTION_EXCLUDES = frozenset({"scripts", "builds", "mdea-companion", "QA_REPORT.md", "main.log"})
 BUILD_SUFFIXES = {
     ".abs",
     ".aux",

@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $LatexDir = Resolve-Path (Join-Path $ScriptDir '..')
-$RepoRoot = Resolve-Path (Join-Path $LatexDir '..\..')
+$RepoRoot = Resolve-Path (Join-Path $LatexDir '..\..\..\..\..')
 $Python = Join-Path $RepoRoot '.venv\Scripts\python.exe'
 $OutDir = Join-Path $LatexDir 'builds'
 if (-not (Test-Path -LiteralPath $Python)) {

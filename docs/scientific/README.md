@@ -10,16 +10,17 @@ for an unresolved source and Diagnose for an unexplained numerical result.
 | Content | Authoritative location |
 |---|---|
 | Current question, boundaries, and terminology | [CONTEXT.md](CONTEXT.md) |
-| Article formulation and numbered equations | [model_framework.tex](../latex/sections/model_framework.tex) |
-| Article methods and comparison design | [methods.tex](../latex/sections/methods.tex) |
-| Scientific evidence and result-insertion requirements | [SOURCE_MAP.md](../latex/SOURCE_MAP.md), with exact values in the named analysis files |
-| Manuscript and PDF | [main.tex](../latex/main.tex), [builds/main.pdf](../latex/builds/main.pdf) |
-| Missing manuscript content | [Existing checklist definitions](../latex/scripts/manuscript_checklist.json) |
-| Reviewer assessments and additional revision work | [Live assessment definitions](../latex/scripts/reviewer_checklist.json); `/reviewers` on the existing checklist server  [Original comments](../reviewer_comments.txt) and [individual prior scores](../reviewer_assessment_original.md). |
+| Article formulation and numbered equations | [model_framework.tex](latex/sections/model_framework.tex) |
+| Article methods and comparison design | [methods.tex](latex/sections/methods.tex) |
+| Scientific evidence and result-insertion requirements | [SOURCE_MAP.md](latex/SOURCE_MAP.md), with exact values in the named analysis files |
+| Manuscript and PDF | [main.tex](latex/main.tex), [builds/main.pdf](latex/builds/main.pdf) |
+| Missing manuscript content | [Existing checklist definitions](latex/scripts/manuscript_checklist.json) |
+| Reviewer assessments and additional revision work | [Live assessment definitions](latex/scripts/reviewer_checklist.json); `/reviewers` on the existing checklist server  [Original comments](../reviewer_comments.txt) and [individual prior scores](../reviewer_assessment_original.md). |
 | Writing style and source organization | [writing/STYLE.md](writing/STYLE.md), [writing/RULES.md](writing/RULES.md) |
 | Reusable absorber implementation and inputs | `src/mea_absorption_column/` |
 | NCCC comparisons | `analyses/nccc_validation/` |
 | Reactive-film study | `analyses/reactive_film_evidence/` |
+| Root analysis website and ordered notebook membership | `analyses/index.qmd`, `analyses/_cse-manuscript.json` |
 
 The existing article sections supply the formulation and methods records.
 Do not create a competing manuscript, duplicate equation documents, a new
@@ -50,7 +51,10 @@ The build renders the manuscript without executing the absorber model.
 It verifies/projects the existing Zotero bibliography through the prescribed
 repository command; source metadata changes require the approved CSE Sources
 workflow. The raw-LaTeX CAS/XeLaTeX format is the investigator's selected
-format. Quarto remains available for existing analysis notebooks only.
+manuscript format. The root Quarto site at `analyses/` renders only registered
+analysis pages with execution disabled. Existing retained PDFs remain with
+their result files. An optional page PDF uses the same root renderer with
+`bash analyses/render.sh <analysis>/notebook.qmd --to pdf`.
 
 Repository CSE hooks are registered in `.codex/hooks.json` and call the stable
 runtime under `$HOME/.codex/hooks/`. Runtime maintenance is shared across

@@ -1,8 +1,20 @@
 ---
 title: "Conserved full-column BVP: corrected 3C baseline"
 subtitle: "Working analysis view of the first physically certified two-node result"
-execute:
-  enabled: false
+format:
+  html: {}
+  pdf:
+    pdf-engine: lualatex
+    latex-auto-install: false
+    keep-tex: true
+    documentclass: scrartcl
+    classoption: [oneside, headings=normal]
+    fontsize: 10pt
+    geometry:
+      - left=0.62in
+      - right=0.62in
+      - top=0.55in
+      - bottom=0.55in
 ---
 
 This working analysis notebook has not been independently reviewed or promoted
