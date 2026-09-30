@@ -86,6 +86,6 @@ OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
 Case 3C, one record, one wheel. C5 and density fail because of physical-parameter
 limits of the adopted record (water's EOS residual Cp; single-segment ion volumes).
 Both remain failures; neither is waived. Fixing them means re-parameterizing the MEA
-record (MEA-Thermodynamics owns it) and then replaying this study. Capture and
+record (Amine-Thermodynamics owns it) and then replaying this study. Capture and
 temperature agreement is a conditional prediction with the assumed mobilities and
 imputed liquid inlet temperature; no capture fitting was done.

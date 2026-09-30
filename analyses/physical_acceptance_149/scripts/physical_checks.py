@@ -45,7 +45,7 @@ HILLIARD = ((318.15, 0.0, 3.7195), (318.15, 0.358, 3.3675), (353.15, 0.358, 3.47
 IAPWS_WATER_CP = {318.15: 75.3064, 353.15: 75.6056}
 # Kim and Svendsen 2007 via #82: 353.15 K, 30 mass % MEA, loading 0.047 -> 0.090, released 90.904 kJ/mol CO2.
 HEAT_PAIR, HEAT_TARGET, HEAT_LIMIT, MEA_116_HEAT = (353.15, 0.047, 0.090), 90.904, 10.0, 88.34924122546846
-# Amundsen 2009 Table 3, 30 mass % MEA (CO2-free), g/cm3; MEA-Thermodynamics data/reference/MEA/observations/
+# Amundsen 2009 Table 3, 30 mass % MEA (CO2-free), g/cm3; Amine-Thermodynamics data/reference/MEA/observations/
 # density_viscosity/Amundsen_2009_density_viscosity.csv at d46727f.
 AMUNDSEN = {(313.15, 0.1): 1.0210, (313.15, 0.2): 1.0410, (313.15, 0.3): 1.0629, (313.15, 0.4): 1.0885,
             (313.15, 0.5): 1.1140, (323.15, 0.1): 1.0160, (323.15, 0.2): 1.0355, (323.15, 0.3): 1.0580,

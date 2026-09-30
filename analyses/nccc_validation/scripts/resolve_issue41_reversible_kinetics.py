@@ -351,7 +351,7 @@ Regenerate with:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Retain Issue 41 source-rate and packet-bound evidence.")
-    parser.add_argument("--bundle", type=Path, default=Path("/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip"))
+    parser.add_argument("--bundle", type=Path, default=Path("/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip"))
     args = parser.parse_args()
     config = load_json(INPUT)
     revision, dirty = git_revision()

@@ -6,7 +6,7 @@
 **Agent role:** Work as chemical engineer specializing in reactive CO2 absorption column modeling and numerical methods.
 **Repository role:** analysis.
 
-Owns absorber integration, transport and film closures, and numerical comparisons on explicitly stated common input bases. The ePC-SAFT Engine owns thermodynamic equations and MEA-Thermodynamics owns fitting and parameter adoption. Preserve conservation, units, species order and exact input identities, and keep the submitted revision unchanged on its archive branch.
+Owns absorber integration, transport and film closures, and numerical comparisons on explicitly stated common input bases. The ePC-SAFT Engine owns thermodynamic equations and Amine-Thermodynamics owns fitting and parameter adoption. Preserve conservation, units, species order and exact input identities, and keep the submitted revision unchanged on its archive branch.
 
 Use the source/data adoption recorded in `docs/scientific/CONTEXT.md`.
 
@@ -74,7 +74,7 @@ CSE execution mode: direct.
 - This is an official downstream application under ePC-SAFT Governance D-038.
 - Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project`; do not use the retired `/ePC-SAFT` path or a sibling source import.
 - Normal and final work uses one non-editable `epcsaft` wheel identified by Engine commit and wheel SHA-256. Intentional co-development uses an explicitly supplied candidate wheel with the same recorded identity.
-- Keep absorber integration, column validation, process analyses, and this repository's manuscript here. Thermodynamic parameter adoption remains owned by MEA-Thermodynamics; generic equations and solvers remain owned by ePC-SAFT-project.
+- Keep absorber integration, column validation, process analyses, and this repository's manuscript here. Thermodynamic parameter adoption remains owned by Amine-Thermodynamics; generic equations and solvers remain owned by ePC-SAFT-project.
 - Do not create nested repositories, submodules, mutable Git package dependencies, or dictionary compatibility copies of Engine behavior.
 - Final manuscript, report, or archive results must pass `uv run python scripts/check_epcsaft_integration.py --mode final` without mutable package state.
 - Preserve result-critical datasets under `src/mea_absorption_column/data/epcsaft_datasets`.

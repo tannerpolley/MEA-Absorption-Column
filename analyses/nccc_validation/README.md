@@ -212,7 +212,7 @@ Resolve the Issue 36 packet-bound film-input release decision:
 
 ```bash
 uv run python analyses/nccc_validation/scripts/resolve_issue36_film_input_release.py \
-  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
 uv run python analyses/nccc_validation/scripts/validate_results.py --issue36-only
 ```
 
@@ -270,7 +270,7 @@ Resolve the Issue 40 apparent-to-true species mapping with the supplied immutabl
 
 ```bash
 python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py \
-  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
 ```
 
 After committing the generated result artifacts separately from the source
@@ -304,7 +304,7 @@ kinetics record:
 
 ```bash
 uv run python analyses/nccc_validation/scripts/resolve_issue41_reversible_kinetics.py \
-  --bundle /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
+  --bundle /home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
 uv run python analyses/nccc_validation/scripts/validate_results.py --issue41-only
 ```
 

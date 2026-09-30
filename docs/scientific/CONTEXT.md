@@ -11,7 +11,7 @@ objective is exploratory analysis and research, with possible later promotion.
 
 agent role: chemical engineer specializing in reactive CO2 absorption column modeling and numerical methods
 
-Owns absorber integration, transport and film closures, and numerical comparisons on explicitly stated common input bases. The ePC-SAFT Engine owns thermodynamic equations and MEA-Thermodynamics owns fitting and parameter adoption. Preserve conservation, units, species order and exact input identities, and keep the submitted revision unchanged on its archive branch.
+Owns absorber integration, transport and film closures, and numerical comparisons on explicitly stated common input bases. The ePC-SAFT Engine owns thermodynamic equations and Amine-Thermodynamics owns fitting and parameter adoption. Preserve conservation, units, species order and exact input identities, and keep the submitted revision unchanged on its archive branch.
 
 ## Terms
 
@@ -37,7 +37,7 @@ Owns absorber integration, transport and film closures, and numerical comparison
 ## Ownership and scientific comparisons
 
 The Engine owns generic thermodynamic equations, equilibrium and derivatives;
-MEA-Thermodynamics owns fitting and parameter adoption; this repository owns
+Amine-Thermodynamics owns fitting and parameter adoption; this repository owns
 absorber integration, transport/column studies and numerical comparisons.
 Identified candidate inputs may be explored without claiming prior validation.
 Preserve units, species order, charge, conservation, finite-domain requirements,
