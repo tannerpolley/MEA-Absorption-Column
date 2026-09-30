@@ -77,7 +77,7 @@ Henry-law checks do not evaluate ePC-SAFT. Wheel identity is not inferred from i
 
 The readable [selected parameter supporting record](docs/selected-reactive-parameters.md) tabulates the exact retained component, pair, association and reaction inputs, source distinctions, standard state and domains. The manuscript appendix prints these selected inputs for the current studies.
 
-Source: `/home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics/analyses/mea_parameter_bundle/notebook.html#parameter-change-history`.
+Source: `/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/analyses/mea_parameter_bundle/notebook.html#parameter-change-history`.
 The user selected its current `results/selected-current-best-parameters.json`, SHA-256 `a9186c93759f2e2c02a6c913350ad06a244fff3f82503820c9962b3df8dd40d9`.
 An exact copy is retained as `src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json`, alongside the matching source `reaction-system.json` (SHA-256 `810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29`), `anchored-reference-thermochemistry.json` (SHA-256 `a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185`), `adoption-receipt.json`, and `bundle.json` inventory from the verified Orchestrator handoff. All inventory hashes are checked before use. Its export-time wheel identity is provenance, not the separately pinned installed build.
 No upstream fitting or publication files were edited.

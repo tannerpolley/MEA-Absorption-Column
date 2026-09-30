@@ -92,7 +92,7 @@ validation claim.
 - `tests/`: focused behavior and independent analytic checks.
 - `docs/scientific/latex/`: preserved submitted manuscript; no ongoing editorial work.
 - `ePC-SAFT-project`: generic Engine equations, equilibrium and derivatives.
-- `MEA-Thermodynamics`: parameter fitting and thermodynamic parameter adoption.
+- `Amine-Thermodynamics`: parameter fitting and thermodynamic parameter adoption.
 
 Use identified, non-editable Engine wheels. The pinned dependency is a convenient
 starting environment, not an assertion that all experiments must use its inputs.
