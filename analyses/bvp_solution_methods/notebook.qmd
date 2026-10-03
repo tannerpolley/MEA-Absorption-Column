@@ -174,3 +174,153 @@ corrected case is Morgan et al. (2020), DOI
 `input/case_3c_source.md`. This notebook is a working view
 and its values have not been independently reviewed or promoted for manuscript
 use.
+
+## Issue #160 candidate: density translation and heat capacity
+
+This addendum records the bounded Stage 5 absorber check for the unpromoted
+F1-double-prime candidate in Amine-Thermodynamics issue #160. It uses the
+corrected published 3C case, the candidate-owned reaction and ideal-gas records,
+and the existing density-correction workflow. It is a conditional numerical
+candidate check, not a parameter promotion or physical validation.
+
+### Candidate property checks
+
+The liquid phase applies the candidate density translation
+`rho = n_total / (n_total/rho_native + c*(n_protonated-MEA + n_carbamate))`
+with `c = 39.514295278 cm3/mol` (`3.951429528e-5 m3/mol`) to the candidate's
+protonated-MEA and carbamate ions.
+Equilibrium, activities, enthalpy, and heat-capacity calculations remain on the
+native Engine model. At the liquid-feed state (`318.15 K`, `110900 Pa`, and
+`2.43232053`, `9.72928211`, and `76.97519251 mol/s` of CO2, MEA, and water),
+native molar density is `48316.1833 mol/m3` and translated density is
+`43690.4047 mol/m3`. The implemented equation has zero relative defect; every
+non-density output is unchanged. The exact CasADi density derivative with
+respect to CO2 feed is `-25.47084066 mol/m3/(mol/s)`, within `1.34e-8` relative
+of the centered-Richardson value. The derivative tolerance is `5e-6`. This is a
+single-state equation and derivative check, not a column result. Its retained
+probe also timed one `19 x 12` node Jacobian at `6.855 s` on the accepted #149
+profile state; that timing is only one evaluation point.
+
+At the four Amundsen density-fit states, candidate mass-density errors are
+`+0.2018%`, `-0.1550%`, `+0.2282%`, and `-0.1689%`, all inside the existing
+`1.6%` criterion. Candidate vapor heat-capacity checks pass: the two values are
+`30.56888` and `30.23168 J/(mol K)`, with relative errors `+0.00855%` and
+`-0.00251%` against JANAF ideal heat capacity plus the EOS residual.
+
+The Hilliard comparison uses equilibrium `dH/dT` at fixed pressure and apparent
+feed, divided by solution mass. Frozen-composition heat capacity is retained as
+a diagnostic only. At the nominal zero-loading point, the reactive solver uses
+the positive loading proxy `alpha = 1e-5`; it returns `3.86866 kJ/(kg K)` versus
+`3.7195`, a `+4.0103%` error and a failure of the existing `3%` criterion.
+At `318.15 K` and loading `0.358`, equilibrium heat capacity is `3.38377` versus
+`3.3675 kJ/(kg K)`, a `+0.4831%` pass. At `353.15 K` and loading `0.358`, it is
+`3.31477` versus `3.4707 kJ/(kg K)`, a `-4.4927%` failure. The corresponding
+frozen-composition values are `3.86862`, `3.35801`, and `3.29295 kJ/(kg K)`;
+the equilibrium-minus-frozen shifts are `0.0000394`, `0.0257588`, and
+`0.0218278 kJ/(kg K)`. The failures are retained as model limits; they do not
+change the numerical solver acceptance below.
+
+The `0.358` loading is `7 mol MEA/kg H2O`, equivalent to `29.95147 wt%` on a
+CO2-free MEA/water basis. On the same selected Engine wheel, changing to exactly
+`30 wt%` gives `3.382508 kJ/(kg K)`, `0.001259` below the 7 mol/kg result. A
+separate retained Amine D1 result records `3.380584 kJ/(kg K)` from parameter
+artifact SHA-256
+`a9492f95aa17a8a26d0d15d244eb0b293721cd14d27f072d5dba9bdaeb43f0cf`, evaluated
+on Engine wheel SHA-256
+`28181e72e429c6e87fc6361082af1a7b21c8747e76bda65a1c30abb4a97402f2`. That
+result is not part of this downstream retained analysis; its `0.001924`
+difference from the selected-wheel 30 wt% result remains unreconciled across
+producer and input identities and is not attributed to the wheel. The candidate
+released heat is `85.2250 kJ/mol CO2` versus `90.904`, within the existing
+absolute `10.0 kJ/mol` criterion. Pure-water heat-capacity comparisons to
+IAPWS-95 are diagnostics, with relative differences of `0.4955%` at `318.15 K`
+and `0.5616%` at `353.15 K`.
+
+### Candidate 3C column result
+
+The 65-node upwind/cosine solve used nine film-quadrature points, end-clustering
+`1`, the fixed `1e-7` tolerance, and a 7000 s inner wall limit. The candidate
+run completed in `5520.755 s` with IPOPT `Solve_Succeeded` after five
+iterations. Its maximum scaled residual is `5.6617e-8` and the scaled bound
+violation is zero. The group maxima are material `3.6923e-16`, energy
+`6.3935e-13`, charge `2.0730e-14`, interface `5.6617e-8`, and boundary zero;
+each is below the fixed `1e-7` limit. Numerical acceptance and the native-grid
+physical certificate both pass, including the original bounds and capture
+direction. Physical certification covers the 65 native nodes and configured
+film quadrature only; it does not establish between-node accuracy.
+
+The candidate captures `90.6093%` of inlet vapor CO2 (`1.65404` to `0.155326
+mol/s`), within the existing 5 percentage-point criterion around the measured
+`89.5%`. Liquid temperature spans `318.15` to `348.328 K`; the native-grid peak
+is at `z = 5.223 m`, `0.278 K` above the peak measurement at `z = 4.8 m`. The
+five temperature-tap residuals have `3.442 K` RMSE, below the existing `6 K`
+criterion. The four matched Amundsen density checks pass. These criteria support
+this case-specific candidate comparison, not absorber validation across
+conditions.
+
+The accepted #149 65-node profile was admitted through explicit
+`parameter_transfer` mode as an initial guess only. Its source attempt file has
+SHA-256 `c26176c83d964a6acc3c5f45debb2af02fef69ecba65f9bb7d0bc09afce471bf`,
+with the same cosine grid and Engine wheel. The candidate dependencies and their
+scales were resolved for this run; the source profile supplies no candidate
+parameters or property values. Strict retained-profile matching remains the
+default. The result still uses the case-estimated mobility closure and
+provisional vapor caloric reference, and assumes a `318.15 K` liquid inlet.
+Those limits and the two failed C5 checks preclude broad predictive claims or
+promotion. The case uses the `reported_total_wet` gas-flow basis and
+`legacy_ratio` vapor composition. Source temperature taps have a phase
+ambiguity, so their residuals are comparisons against the retained source
+values rather than an unqualified phase validation.
+
+This is a numerical verification plus conditional comparison for one fixed
+65-node 3C case with held estimated mobilities, assumed liquid-inlet
+temperature, and the recorded gas basis. It is not mesh-independent evidence,
+global physical validation, or evidence that the full #149 property set passes;
+the two C5 failures above remain.
+
+### Candidate provenance
+
+The candidate parameter record comes from Amine-Thermodynamics commit
+`083083c55c3c5490100063c251507fe3879128d9` and has SHA-256
+`756fec502d3a1433d538abb073c4caeabf91902013ab7e27d5459ce70396543b`. The
+materialized candidate dataset retains reaction-record SHA-256
+`5d905a3b09cc7025f2f19782993b9ac617c270c0d6bafebe69b0ef50c82266ba` and
+ideal-gas thermochemistry SHA-256
+`b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607`, derived
+from corrected source packet
+`3fca278be8790d58ab30e5474b2b3892c47225d8230ac40fd4f87c066e8eaf2d`. The
+common Engine wheel is commit `464a9897615e513e5cc404ce5b49f46a72466d3d`,
+SHA-256 `48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060`.
+The case input SHA-256 is
+`0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385`.
+
+The retained run is
+`results/amine_160_candidate/upwind_cos_n65_parameter_transfer/attempt.json`
+(attempt `20261003T025113-def8060e09c1`, SHA-256
+`ecbe8b276f2a782fce51a22f1540ae9be7dde2626a87e72bb1dc7492898a4e1c`); its
+resolved-config SHA-256 is
+`b74398e65000dc4d044507fadb3ced36de9978c90201dbc355f249e92ce65706`. The
+launch-time runtime source-tree and dirty-patch SHA-256 values are
+`1c553f5ec75cf8c0914e03c95d49c3b96d7697377826f31453dc1c7e7db83b45` and
+`c57fe374d8a2574a3b682147addd2f65d1d9e34e9ce5128a21260c56d2696b23`.
+The current runner script is SHA-256
+`a7e100d5620eec8cbc8d9d0a693493f5ca3af8f978d3c6300564ae6fa404502e`; the
+physical-check producer script is SHA-256
+`a7c7f93a84adb5ab0a564379d1cc852c142ebe3f3cf3f8557aedf2d8c44926e8`.
+The earlier strict preparation refusal remains separately retained at
+`results/amine_160_candidate/upwind_cos_n65/attempt.json`; the successful
+parameter-transfer attempt did not replace it.
+The property-only and column checks are retained under
+`../physical_acceptance_149/results/amine_160_candidate/` and
+`../physical_acceptance_149/results/amine_160_candidate_column/`. Their CSV
+SHA-256 values are respectively
+`933f5dbb83652df82d2eda3fc3085d6179aa44db0b658b08c4cc6100c74d7d20` and
+`3129154d10df689c6fc8dac00ca529fd6886511b1fbc7e25843f0c88aad2a2f0`; the
+column summary also records its input and Engine hashes. The density translation
+probe is `../greenfield_node_qualification/results/amine_160_candidate/` and was
+produced before the later `parameter_transfer` CLI addition. Its equation and
+derivative results remain scoped to that probe and its own recorded hashes; its
+recorded runner SHA-256 (`f3849efd4baaaef9c2740e12477c2284a7c9ba97d75078308c48caffd1c3c47f`)
+predates the current runner SHA above, so it is not the final run producer.
+Nothing in this addendum
+promotes the candidate or supplies manuscript-ready evidence.

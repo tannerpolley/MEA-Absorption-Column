@@ -1,0 +1,100 @@
+{
+  "engine_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+  "engine_wheel_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+  "inputs_sha256": {
+    "dataset_parameters.json": "756fec502d3a1433d538abb073c4caeabf91902013ab7e27d5459ce70396543b",
+    "dataset_engine-reactions.json": "5d905a3b09cc7025f2f19782993b9ac617c270c0d6bafebe69b0ef50c82266ba",
+    "dataset_ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+    "case_3c.json": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+    "retained_profile_used_only_for_node_state.json": "c26176c83d964a6acc3c5f45debb2af02fef69ecba65f9bb7d0bc09afce471bf",
+    "casadi_reactive.py": "34fdc6ef39c82410a0ffe6c76a1c589449e1dc9195dd255e7dc950d34ef6bb47",
+    "reactive_bundle.py": "105d7c1e0b1f4231ecb58c7f432a2bd2ca5082ccc7601237d7dead0c08626279",
+    "Coupled_Column.py": "79eecaf936a3b1fb30ff9420eb32aea8111334ff3468847edb9835d81984a489",
+    "run_case.py": "f3849efd4baaaef9c2740e12477c2284a7c9ba97d75078308c48caffd1c3c47f"
+  },
+  "density_translation": {
+    "c_cm3_mol": 39.51429527803833,
+    "c_m3_per_mol": 3.951429527803833e-05,
+    "input_state": [
+      318.15,
+      110900.0,
+      2.4323205276203805,
+      9.729282110481522,
+      76.97519250729157
+    ],
+    "component_ids": [
+      "protonated-monoethanolamine",
+      "carbamate-anion"
+    ],
+    "native_molar_density_mol_m3": 48316.18328071615,
+    "translated_molar_density_mol_m3": 43690.40468929041,
+    "equation_density_mol_m3": 43690.40468929041,
+    "relative_equation_defect": 0.0,
+    "criterion": 1e-12,
+    "passed": true,
+    "non_density_outputs_max_relative_difference": 0.0,
+    "non_density_outputs_max_absolute_difference": 0.0,
+    "non_density_outputs_equal_within_1e-12": true
+  },
+  "probe_wall_s": 7.942534570000134,
+  "thread_limits": {
+    "OMP_NUM_THREADS": 1,
+    "OPENBLAS_NUM_THREADS": 1,
+    "MKL_NUM_THREADS": 1
+  },
+  "external_timeout_s": 900,
+  "density_feed_derivative": {
+    "input_direction": "CO2 apparent feed at fixed T, P, MEA feed and water feed",
+    "casadi_exact_mol_m3_per_mol_s": -25.47084065950071,
+    "centred_differences_mol_m3_per_mol_s": [
+      -25.47041375062152,
+      -25.470734082399446,
+      -25.470814270116474
+    ],
+    "richardson_fine_mol_m3_per_mol_s": -25.470840999355485,
+    "richardson_resolved": true,
+    "relative_defect": 1.3342895723057126e-08,
+    "criterion": 5e-06,
+    "passed": true
+  },
+  "node_jacobian": {
+    "status": "completed",
+    "state_source": "nearest 3 m node of accepted #149 upwind cosine 65-node profile; used only as an evaluation point",
+    "height_m": 2.9999999999999996,
+    "jacobian_shape": [
+      19,
+      12
+    ],
+    "wall_s": 6.854634470997553,
+    "failure": null,
+    "method": "existing trapezoidal twelve-state node, 11-node request and nine film points"
+  },
+  "historical_full_attempt": {
+    "path": "analyses/bvp_solution_methods/results/replay_149/upwind_cos_n65/attempt.json",
+    "wall_s": 5562.133053778001,
+    "nlp_jac_g_calls": 5,
+    "nlp_jac_g_wall_s": 4741.661109847,
+    "native_liquid_actions": {
+      "failed": 0,
+      "returned": 156850,
+      "started": 156850,
+      "wall_s": 5479.065813290745
+    }
+  },
+  "claim_limit": "One candidate density evaluation, one exact feed derivative and one node Jacobian timing; no candidate column profile was solved.",
+  "command": [
+    "timeout",
+    "900",
+    "env",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "PYTHONPATH=src",
+    "uv",
+    "run",
+    "--frozen",
+    "--no-sync",
+    "python",
+    "analyses/greenfield_node_qualification/scripts/check_density_translation.py"
+  ]
+}

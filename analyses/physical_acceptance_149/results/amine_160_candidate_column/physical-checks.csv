@@ -1,0 +1,36 @@
+check,state,quantity,model,reference,error,limit,status,note
+C3,V1,action Cp_V vs state ideal + residual Cp,30.568876385183543,30.568876385183536,2.324399257620388e-16,1e-08,pass,"consistency, not physical"
+C3,V1,Cp_V J/(mol K) vs sum y_i Cp_JANAF + EOS residual,30.568876385183543,30.566261960422178,8.553302215201508e-05,0.02,pass,EOS residual 0.2809 J/(mol K)
+C3,V2,action Cp_V vs state ideal + residual Cp,30.231676472387388,30.231676472387534,-4.818166831199785e-15,1e-08,pass,"consistency, not physical"
+C3,V2,Cp_V J/(mol K) vs sum y_i Cp_JANAF + EOS residual,30.231676472387388,30.232436192600865,-2.5129308423472213e-05,0.02,pass,EOS residual 0.4251 J/(mol K)
+C5,"318.15 K, loading 0",Cp kJ/(kg K) vs Hilliard 2008 G.2,3.8686640376805776,3.7195,0.040103249813302225,0.03,fail,EOS residual Cp at the equilibrium speciation 2.1250
+C5 convention,"318.15 K, loading 0",frozen-composition Cp kJ/(kg K) vs Hilliard 2008 G.2,3.868624640181929,3.7195,0.04009265766418313,,diagnostic,Hilliard criterion is compared with equilibrium dH/dT at fixed pressure and feed
+C5 convention,"318.15 K, loading 0",reaction-shift contribution equilibrium minus frozen Cp kJ/(kg K),3.93974986487855e-05,,,,diagnostic,
+C5,"318.15 K, loading 0.358",Cp kJ/(kg K) vs Hilliard 2008 G.2,3.3837670993708326,3.3675,0.004830615997277648,0.03,pass,EOS residual Cp at the equilibrium speciation 1.6979
+C5 convention,"318.15 K, loading 0.358",frozen-composition Cp kJ/(kg K) vs Hilliard 2008 G.2,3.358008261935787,3.3675,-0.0028186304570788634,,diagnostic,Hilliard criterion is compared with equilibrium dH/dT at fixed pressure and feed
+C5 convention,"318.15 K, loading 0.358",reaction-shift contribution equilibrium minus frozen Cp kJ/(kg K),0.02575883743504548,,,,diagnostic,
+C5,"353.15 K, loading 0.358",Cp kJ/(kg K) vs Hilliard 2008 G.2,3.314773369015388,3.4707,-0.04492656552989647,0.03,fail,EOS residual Cp at the equilibrium speciation 1.6953
+C5 convention,"353.15 K, loading 0.358",frozen-composition Cp kJ/(kg K) vs Hilliard 2008 G.2,3.2929455608542577,3.4707,-0.05121573145064173,,diagnostic,Hilliard criterion is compared with equilibrium dH/dT at fixed pressure and feed
+C5 convention,"353.15 K, loading 0.358",reaction-shift contribution equilibrium minus frozen Cp kJ/(kg K),0.021827808161130502,,,,diagnostic,
+C5 diagnosis,pure water 318.15 K,liquid Cp J/(mol K) vs IAPWS-95,75.67951261423414,75.3064,0.0049545936897016085,,diagnostic,ideal record 33.683 (JANAF 33.692); EOS residual 41.996 (IAPWS-95 minus JANAF 41.615)
+C5 diagnosis,pure water 353.15 K,liquid Cp J/(mol K) vs IAPWS-95,76.03021408807368,75.6056,0.005616172453808735,,diagnostic,ideal record 33.899 (JANAF 33.907); EOS residual 42.131 (IAPWS-95 minus JANAF 41.699)
+density target,"323.15 K, loading 0.3",mass density g/cm3 vs Amundsen 2009,1.060135335939986,1.058,0.0020182759357146025,0.016,pass,one of the four fitted states
+density target,"323.15 K, loading 0.4",mass density g/cm3 vs Amundsen 2009,1.081321431290359,1.083,-0.0015499249396500499,0.016,pass,one of the four fitted states
+density target,"343.15 K, loading 0.3",mass density g/cm3 vs Amundsen 2009,1.0487880411794046,1.0464,0.002282149445149665,0.016,pass,one of the four fitted states
+density target,"343.15 K, loading 0.4",mass density g/cm3 vs Amundsen 2009,1.0700894081055154,1.0719,-0.0016891425454656456,0.016,pass,one of the four fitted states
+C6,"353.15 K, loading 0.047 -> 0.09",released heat kJ/mol CO2 vs Kim-Svendsen 2007,85.22500229629932,90.904,-5.678997703700674,10.0,pass,absolute kJ/mol; alternate input record evaluated at 101325 Pa
+capture,3C,CO2 capture % vs 89.5 % observed,90.60931237736999,89.5,1.1093123773699887,5.0,pass,absolute percentage points
+taps,z = 0.0 m,liquid T K,323.88193678630057,330.15,-6.268063213699406,,residual,
+taps,z = 1.2 m,liquid T K,338.18342568494353,333.95,4.2334256849435405,,residual,
+taps,z = 2.4 m,liquid T K,343.033399298876,341.84999999999997,1.1833992988760542,,residual,
+taps,z = 3.6 m,liquid T K,346.07156554115363,346.84999999999997,-0.7784344588463341,,residual,
+taps,z = 4.8 m,liquid T K,347.99598258386953,348.04999999999995,-0.05401741613042077,,residual,
+taps,3C,RMSE K,3.4415061083605982,0.0,3.4415061083605982,6.0,pass,
+taps,3C,profile peak K vs peak tap,348.32812478714783,348.04999999999995,0.27812478714787403,5.0,pass,model peak z = 5.22 m; peak tap z = 4.8 m
+density,"323.15 K, loading 0.3",mass density g/cm3 vs Amundsen 2009,1.060135335939986,1.058,0.0020182759357146025,0.016,pass,matched to the 65-node liquid T and loading range
+density,"323.15 K, loading 0.4",mass density g/cm3 vs Amundsen 2009,1.081321431290359,1.083,-0.0015499249396500499,0.016,pass,matched to the 65-node liquid T and loading range
+density,"343.15 K, loading 0.3",mass density g/cm3 vs Amundsen 2009,1.0487880411794046,1.0464,0.002282149445149665,0.016,pass,matched to the 65-node liquid T and loading range
+density,"343.15 K, loading 0.4",mass density g/cm3 vs Amundsen 2009,1.0700894081055154,1.0719,-0.0016891425454656456,0.016,pass,matched to the 65-node liquid T and loading range
+density,node z = 0.00 m,column-state mass density g/cm3,1.0832887893395744,,,,diagnostic,"T 323.88 K, loading 0.4040; unmatched"
+density,node z = 5.22 m,column-state mass density g/cm3,1.036052664532504,,,,diagnostic,"T 348.33 K, loading 0.2676; unmatched"
+density,node z = 6.00 m,column-state mass density g/cm3,1.0521712630934972,,,,diagnostic,"T 318.15 K, loading 0.2500; unmatched"

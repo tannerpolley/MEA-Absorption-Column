@@ -431,6 +431,7 @@ def test_retained_profile_reaches_solver_and_rejection_does_not(tmp_path, monkey
         column_runner._run_conserved_column_in_process(config, {})
     assert len(calls) == 1
 
+
     homotopy = resolve_column_config({
         "preset": "twelve_state_conserved",
         "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
@@ -470,6 +471,76 @@ def test_retained_profile_reaches_solver_and_rejection_does_not(tmp_path, monkey
     assert [stage["result"]["source_multiplier"] for stage in result["continuation"]["stages"][1:]] == [.5, .25]
     np.testing.assert_array_equal(result["continuation"]["last_accepted_profile"], incomplete["initial_profile"])
 
+
+
+def test_parameter_transfer_uses_exact_149_profile_only_as_candidate_seed():
+    source_path = Path("analyses/bvp_solution_methods/results/replay_149/upwind_cos_n65/attempt.json").resolve()
+    failed_path = Path("analyses/bvp_solution_methods/results/amine_160_candidate/upwind_cos_n65/attempt.json")
+    source = json.loads(source_path.read_text())
+    failed = json.loads(failed_path.read_text())
+    checkpoint = failed["failure"]["last_checkpoint"]
+    assert hashlib.sha256(source_path.read_bytes()).hexdigest() == (
+        "c26176c83d964a6acc3c5f45debb2af02fef69ecba65f9bb7d0bc09afce471bf"
+    )
+
+    dataset = Path("src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate").resolve()
+    thermal_reference = str(dataset / "ideal-gas-thermochemistry.json")
+    neutral_vapor = "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json"
+
+    def config(*, transfer):
+        values = {"retained_profile": str(source_path)}
+        if transfer:
+            values["retained_profile_mode"] = "parameter_transfer"
+        return resolve_column_config({
+            "preset": "twelve_state_conserved",
+            "case": {"physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"},
+            "numerics": {"method": "upwind", "solver_settings": {
+                "nodes": 65, "quadrature_points": 9, "max_iterations": 20,
+                "tolerance": 1e-7, "end_clustering": 1.0}},
+            "initialization": {"policy": "case_declared_native_inputs", "values": values},
+            "dependencies": {"dataset": str(dataset), "thermal_reference": thermal_reference,
+                             "references": [neutral_vapor, thermal_reference]},
+        })
+
+    grid = column_runner._column_grid(6.0, 65, 1.0)
+    prepared = {
+        "resolved_inputs": checkpoint["resolved_inputs"],
+        "engine": checkpoint["engine"],
+        "assembly": {"coordinate": grid, "height_m": 6.0},
+    }
+    scaling = {key: np.asarray(value) for key, value in checkpoint["scaling"].items()
+               if key in ("state_scale", "balance_scale", "algebraic_scale", "boundary_scale")}
+    margin = .97 * np.finfo(float).eps
+    lower = np.r_[[0.] * 4, 293.15, 293.15, 1., margin, [-np.inf] * 4]
+    upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97-margin, [np.inf] * 4]
+
+    with pytest.raises(ConfigurationError, match="Retained profile model, physical inputs, or solver settings"):
+        column_runner._retained_initial_profile(str(source_path), config(transfer=False), prepared,
+                                                scaling, lower, upper)
+
+    transferred, provenance = column_runner._retained_initial_profile(
+        str(source_path), config(transfer=True), prepared, scaling, lower, upper,
+    )
+    source_grid = np.asarray(source["native_profile"]["grid"])
+    source_profile = np.asarray(source["native_profile"]["state_matrix"])
+    np.testing.assert_array_equal(source_grid, grid)
+    np.testing.assert_array_equal(transferred, source_profile)
+    assert np.all(transferred >= lower[:, None])
+    assert np.all(transferred <= upper[:, None])
+    assert any(not np.array_equal(np.asarray(source["scaling"][key]), scaling[key])
+               for key in ("state_scale", "balance_scale", "algebraic_scale"))
+    assert provenance["source_file_sha256"] == "c26176c83d964a6acc3c5f45debb2af02fef69ecba65f9bb7d0bc09afce471bf"
+    assert provenance["source_resolved_config_sha256"] == source["config"]["resolved_config_sha256"]
+    assert provenance["source_dataset"] == source["config"]["dependencies"]["dataset"]
+    assert provenance["source_dependencies"] == source["config"]["dependencies"]
+    assert provenance["mode"] == "parameter_transfer"
+    assert provenance["used_only_as_initial_guess"] is True
+
+    bad_dependencies = dict(config(transfer=True).as_dict()["dependencies"])
+    bad_dependencies["mobility_law"] = "different"
+    assert not column_runner._retained_dependencies_match(
+        source["config"]["dependencies"], bad_dependencies, parameter_transfer=True,
+    )
 
 def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch, tmp_path):
     original_run = column_runner.subprocess.run

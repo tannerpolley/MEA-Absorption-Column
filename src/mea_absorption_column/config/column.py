@@ -678,13 +678,22 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     if preset == TWELVE_PRESET:
         if policy != "case_declared_native_inputs":
             raise ConfigurationError("Only case_declared_native_inputs is implemented for twelve_state_conserved")
-        unknown_init = set(init_payload) - {"interface_bracket", "loading_anchor", "max_log_loading_step", "max_loading_steps", "retained_profile"}
+        unknown_init = set(init_payload) - {
+            "interface_bracket", "loading_anchor", "max_log_loading_step", "max_loading_steps",
+            "retained_profile", "retained_profile_mode",
+        }
     else:
         if policy != "legacy_capture_temperature_guesses":
             raise ConfigurationError("Only legacy_capture_temperature_guesses is implemented")
         unknown_init = set(init_payload) - {"co2_capture_guess_pct", "h2o_capture_guess_pct"}
     if unknown_init:
         raise ConfigurationError(f"Unknown initialization values: {sorted(unknown_init)}")
+    if "retained_profile_mode" in init_payload:
+        mode = init_payload["retained_profile_mode"]
+        if not isinstance(mode, str) or mode not in ("strict", "parameter_transfer"):
+            raise ConfigurationError("initialization.values.retained_profile_mode must be 'strict' or 'parameter_transfer'")
+        if "retained_profile" not in init_payload:
+            raise ConfigurationError("initialization.values.retained_profile_mode requires retained_profile")
     for key, value in init_payload.items():
         if key == "retained_profile":
             if not isinstance(value, str) or not value:
@@ -694,6 +703,8 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             if not path.is_file():
                 raise ConfigurationError("initialization.values.retained_profile must be an existing file path")
             init_payload[key] = str(path)
+            continue
+        if key == "retained_profile_mode":
             continue
         if key == "interface_bracket":
             if not isinstance(value, (list, tuple)) or len(value) != 2 or any(isinstance(item, bool) or not isinstance(item, (int, float)) or not math.isfinite(item) for item in value) or value[0] >= value[1]:

@@ -406,7 +406,7 @@ def _record(path: Path | None, name: str, value: Any) -> None:
 def _settings(config: ColumnConfig, output_dir: Path | None, resolved_inputs: dict[str, Any] | None = None) -> BenchmarkSettings:
     solver = dict(config.numerics.as_dict()["solver_settings"])
     init_values = dict(config.initialization.as_dict()["values"])
-    solver.update(init_values)
+    solver.update({key: value for key, value in init_values.items() if key != "retained_profile_mode"})
     if config.acceptance.boundary_residual_max is not None:
         solver["success_boundary_residual_max"] = config.acceptance.boundary_residual_max
     solver["vapor_composition_mode"] = config.case.vapor_composition_mode
@@ -686,6 +686,37 @@ def _equilibrium_physical_certification(
     }
 
 
+def _retained_dependencies_match(source, current, *, parameter_transfer):
+    if not parameter_transfer:
+        return source == current
+    if not isinstance(source, Mapping) or not isinstance(current, Mapping) or set(source) != set(current):
+        return False
+    source_references, current_references = source.get("references"), current.get("references")
+    if (not isinstance(source_references, (list, tuple)) or not isinstance(current_references, (list, tuple))
+            or len(source_references) != len(current_references) or len(source_references) < 2
+            or source_references[0] != current_references[0]
+            or source_references[2:] != current_references[2:]):
+        return False
+
+    def reference_matches_dataset(dependencies):
+        dataset, thermal_reference = dependencies.get("dataset"), dependencies.get("thermal_reference")
+        references = dependencies.get("references")
+        return (
+            isinstance(dataset, str) and isinstance(thermal_reference, str)
+            and isinstance(references, (list, tuple)) and len(references) >= 2
+            and thermal_reference == str(Path(dataset) / "ideal-gas-thermochemistry.json")
+            and references[1] == thermal_reference
+        )
+
+    if not reference_matches_dataset(source) or not reference_matches_dataset(current):
+        return False
+    return all(
+        source[key] == current[key]
+        for key in source
+        if key not in {"dataset", "thermal_reference", "references"}
+    )
+
+
 def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
     """Admit one accepted public profile (either scheme) and interpolate its physical states as a guess."""
     source_path = Path(path)
@@ -697,6 +728,14 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         raise ConfigurationError("Retained profile source record is incomplete")
     source_config, source_inputs, source_execution, source_engine, native, source_scaling, source_certificate = records
     current_config, current_inputs = config.as_dict(), prepared["resolved_inputs"]
+    initialization = config.initialization.as_dict()["values"]
+    profile_mode = initialization.get("retained_profile_mode", "strict")
+    if not isinstance(profile_mode, str) or profile_mode not in ("strict", "parameter_transfer"):
+        raise ConfigurationError("Retained profile mode must be 'strict' or 'parameter_transfer'")
+    dependencies_match = _retained_dependencies_match(
+        source_config.get("dependencies"), current_config.get("dependencies"),
+        parameter_transfer=profile_mode == "parameter_transfer",
+    )
     accepted = {
         "execution": source_execution.get("status"),
         "numerical_acceptance": source.get("numerical_acceptance"),
@@ -716,7 +755,7 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         and source.get("native_layout") == config.model.layout
         and source.get("coordinate") == config.model.coordinate
         and source_config.get("model") == current_config["model"]
-        and source_config.get("dependencies") == current_config["dependencies"]
+        and dependencies_match
         and source.get("config_sha256") == source_config.get("resolved_config_sha256")
         and {k: v for k, v in source_settings.items() if k not in ("nodes", "end_clustering")}
         == {k: v for k, v in current_settings.items() if k not in ("nodes", "end_clustering")}
@@ -746,18 +785,27 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
             or target_grid[0] != 0.0 or target_grid[-1] != height):
         raise ConfigurationError("Retained profile grid or state matrix is invalid for the current domain")
     scale_keys = ("state_scale", "balance_scale", "algebraic_scale", "boundary_scale")
-    if any(not np.array_equal(np.asarray(source_scaling.get(key)), scaling[key]) for key in scale_keys):
+    if profile_mode == "strict" and any(
+        not np.array_equal(np.asarray(source_scaling.get(key)), scaling[key]) for key in scale_keys
+    ):
         raise ConfigurationError("Retained profile scales do not match")
+    if np.any(profile < lower[:, None]) or np.any(profile > upper[:, None]):
+        raise ConfigurationError("Retained profile physical states violate current candidate bounds")
     initial = np.array([np.interp(target_grid, source_grid, row) for row in profile])
     if (initial.shape != (12, len(target_grid)) or np.any(~np.isfinite(initial))
             or np.any(initial < lower[:, None]) or np.any(initial > upper[:, None])):
         raise ConfigurationError("Retained profile interpolation violates current bounds")
     provenance = {
         "attempt_id": source.get("attempt_id"), "config_sha256": source.get("config_sha256"),
+        "source_resolved_config_sha256": source_config.get("resolved_config_sha256"),
         "source_file": str(source_path), "source_file_sha256": hashlib.sha256(source_path.read_bytes()).hexdigest(),
+        "source_dependencies": source_config.get("dependencies"),
+        "source_dataset": (source_config.get("dependencies") or {}).get("dataset"),
+        "source_thermal_reference": (source_config.get("dependencies") or {}).get("thermal_reference"),
         "engine_identity": {key: source_engine[key] for key in engine_keys},
         "source_grid": source_grid.tolist(), "target_grid": target_grid.tolist(),
         "interpolation": "numpy.interp row-wise in physical state basis", "accepted_source": accepted,
+        "mode": profile_mode, "used_only_as_initial_guess": True,
     }
     return initial, provenance
 

@@ -1,0 +1,88 @@
+{
+ "engine_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+ "engine_wheel_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+ "inputs_sha256": {
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/parameters.json": "756fec502d3a1433d538abb073c4caeabf91902013ab7e27d5459ce70396543b",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/engine-reactions.json": "5d905a3b09cc7025f2f19782993b9ac617c270c0d6bafebe69b0ef50c82266ba",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55",
+  "src/mea_absorption_column/data/NCCC_2017_absorber_temperature_profiles.csv": "90cdb46f87e4a2fc40328e8592f6286f2794147d0ce119b62748a3eced20960f",
+  "analyses/bvp_solution_methods/input/case_3c.json": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+  "analyses/bvp_solution_methods/results/amine_160_candidate/upwind_cos_n65_parameter_transfer/attempt.json": "ecbe8b276f2a782fce51a22f1540ae9be7dde2626a87e72bb1dc7492898a4e1c"
+ },
+ "producer_sha256": "a7c7f93a84adb5ab0a564379d1cc852c142ebe3f3cf3f8557aedf2d8c44926e8",
+ "csv_sha256": "3129154d10df689c6fc8dac00ca529fd6886511b1fbc7e25843f0c88aad2a2f0",
+ "column": {
+  "attempt_id": "20261003T025113-def8060e09c1",
+  "capture_pct": 90.60931237736999,
+  "liquid_temperature_range_k": [
+   318.15,
+   348.32812478714783
+  ],
+  "loading_range": [
+   0.2500000002693293,
+   0.4040419368297012
+  ],
+  "matched_amundsen_states": [
+   [
+    323.15,
+    0.3
+   ],
+   [
+    323.15,
+    0.4
+   ],
+   [
+    343.15,
+    0.3
+   ],
+   [
+    343.15,
+    0.4
+   ]
+  ]
+ },
+ "property_only": false,
+ "record_document_id": "mea-issue160-f1-double-prime-unpromoted-candidate",
+ "legacy_record_diagnostics": false,
+ "caloric_conventions": {
+  "equilibrium": "d(nH)/dT at fixed pressure and apparent feed, divided by solution mass",
+  "frozen_composition": "Engine TotalIsobaricHeatCapacity at the equilibrium composition, multiplied by phase amount per solution mass",
+  "hilliard_comparison": "the 3 percent C5 limit applies to equilibrium dH/dT; frozen composition Cp is diagnostic",
+  "unloaded_loading_proxy": 1e-05
+ },
+ "command": [
+  "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT/downstream/.worktrees/MEA-Absorption-Column-160-density-cp/.venv/bin/python3",
+  "analyses/physical_acceptance_149/scripts/physical_checks.py",
+  "analyses/bvp_solution_methods/results/amine_160_candidate/upwind_cos_n65_parameter_transfer/attempt.json",
+  "--liquid-data",
+  "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate",
+  "--output-dir",
+  "analyses/physical_acceptance_149/results/amine_160_candidate_column"
+ ],
+ "outcomes": {
+  "C3 V1: action Cp_V vs state ideal + residual Cp": "pass",
+  "C3 V1: Cp_V J/(mol K) vs sum y_i Cp_JANAF + EOS residual": "pass",
+  "C3 V2: action Cp_V vs state ideal + residual Cp": "pass",
+  "C3 V2: Cp_V J/(mol K) vs sum y_i Cp_JANAF + EOS residual": "pass",
+  "C5 318.15 K, loading 0: Cp kJ/(kg K) vs Hilliard 2008 G.2": "fail",
+  "C5 318.15 K, loading 0.358: Cp kJ/(kg K) vs Hilliard 2008 G.2": "pass",
+  "C5 353.15 K, loading 0.358: Cp kJ/(kg K) vs Hilliard 2008 G.2": "fail",
+  "density target 323.15 K, loading 0.3: mass density g/cm3 vs Amundsen 2009": "pass",
+  "density target 323.15 K, loading 0.4: mass density g/cm3 vs Amundsen 2009": "pass",
+  "density target 343.15 K, loading 0.3: mass density g/cm3 vs Amundsen 2009": "pass",
+  "density target 343.15 K, loading 0.4: mass density g/cm3 vs Amundsen 2009": "pass",
+  "C6 353.15 K, loading 0.047 -> 0.09: released heat kJ/mol CO2 vs Kim-Svendsen 2007": "pass",
+  "capture 3C: CO2 capture % vs 89.5 % observed": "pass",
+  "taps 3C: RMSE K": "pass",
+  "taps 3C: profile peak K vs peak tap": "pass",
+  "density 323.15 K, loading 0.3: mass density g/cm3 vs Amundsen 2009": "pass",
+  "density 323.15 K, loading 0.4: mass density g/cm3 vs Amundsen 2009": "pass",
+  "density 343.15 K, loading 0.3: mass density g/cm3 vs Amundsen 2009": "pass",
+  "density 343.15 K, loading 0.4: mass density g/cm3 vs Amundsen 2009": "pass"
+ },
+ "native_solves": {
+  "native_solves": 12,
+  "continuations": 0
+ }
+}

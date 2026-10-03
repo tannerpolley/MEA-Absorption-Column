@@ -43,14 +43,31 @@ def save(path, record):
     temporary.replace(path)
 
 
-def request(method, nodes, points, *, output=None, wall=1200.0, profile=None, clustering=None):
+def request(method, nodes, points, *, output=None, wall=1200.0, profile=None, profile_mode="strict",
+            clustering=None, dataset=None):
     values = {"retained_profile": str(profile)} if profile else {}
+    if profile_mode not in ("strict", "parameter_transfer"):
+        raise ValueError("profile_mode must be 'strict' or 'parameter_transfer'")
+    if profile_mode == "parameter_transfer":
+        if not profile:
+            raise ValueError("parameter-transfer mode requires an initial profile")
+        values["retained_profile_mode"] = profile_mode
     extra = {"end_clustering": clustering} if clustering else {}
-    return {"preset": "twelve_state_conserved", "case": {"physical_input_file": CASE},
-            "numerics": {"method": method, "solver_settings": {"nodes": nodes, "quadrature_points": points,
-                                                               "max_iterations": 20, "tolerance": 1e-7, **extra}},
-            "initialization": {"policy": "case_declared_native_inputs", "values": values},
-            "execution": {"wall_limit_s": wall, **({"output_dir": str(output)} if output else {})}}
+    request = {"preset": "twelve_state_conserved", "case": {"physical_input_file": CASE},
+               "numerics": {"method": method, "solver_settings": {"nodes": nodes, "quadrature_points": points,
+                                                                  "max_iterations": 20, "tolerance": 1e-7, **extra}},
+               "initialization": {"policy": "case_declared_native_inputs", "values": values},
+               "execution": {"wall_limit_s": wall, **({"output_dir": str(output)} if output else {})}}
+    if dataset is not None:
+        dataset = Path(dataset).resolve()
+        reference = dataset / "ideal-gas-thermochemistry.json"
+        request["dependencies"] = {
+            "dataset": str(dataset),
+            "thermal_reference": str(reference),
+            "references": ["src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+                           str(reference)],
+        }
+    return request
 
 
 def outcome(attempt):
@@ -262,7 +279,10 @@ def main():
     attempt.add_argument("--nodes", type=int, required=True)
     attempt.add_argument("--film-points", type=int, default=9)
     attempt.add_argument("--end-clustering", type=float, help="0 < c <= 1 blend toward cosine nodes")
-    attempt.add_argument("--initial-profile", type=Path, help="Accepted attempt.json interpolated as the initial guess")
+    attempt.add_argument("--initial-profile", type=Path, help="Accepted attempt.json used as the initial guess (strict by default)")
+    attempt.add_argument("--initial-profile-mode", choices=("strict", "parameter_transfer"), default="strict",
+                         help="parameter_transfer imports only physical state values across the allowed dataset change")
+    attempt.add_argument("--reactive-dataset", type=Path, help="Local nine-species liquid input directory")
     attempt.add_argument("--wall-limit", type=float, default=1200.0)
     attempt.add_argument("--output", type=Path, required=True)
     control = commands.add_parser("film-control")
@@ -282,11 +302,14 @@ def main():
     summary.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "attempt":
+        if args.initial_profile_mode == "parameter_transfer" and args.initial_profile is None:
+            parser.error("--initial-profile-mode parameter_transfer requires --initial-profile")
         from mea_absorption_column.column import run_column
 
         record = run_column(request(args.method, args.nodes, args.film_points, output=args.output.resolve(),
                                     wall=args.wall_limit, profile=args.initial_profile and args.initial_profile.resolve(),
-                                    clustering=args.end_clustering))
+                                    profile_mode=args.initial_profile_mode,
+                                    clustering=args.end_clustering, dataset=args.reactive_dataset))
         print(json.dumps(clean(outcome(record)), indent=1))
     elif args.command == "film-control":
         result = film_control(args.attempt, args.film_points)

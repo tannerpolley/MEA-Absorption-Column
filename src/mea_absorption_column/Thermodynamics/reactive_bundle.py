@@ -67,6 +67,26 @@ def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="r
     record, mapping = _json(dataset / "engine-reactions.json"), _json(dataset / "parameters.json")
     if hashlib.sha256((dataset / "parameters.json").read_bytes()).hexdigest() != record["parameter_sha256"]:
         raise ValueError("Engine reaction records do not belong to this parameter record")
+    density_correction = mapping.get("empirical_density_correction")
+    density_translation = None
+    density_components = ()
+    if density_correction is not None:
+        if not isinstance(density_correction, dict):
+            raise ValueError("Candidate density correction metadata must be a mapping")
+        component_ids = density_correction.get("component_ids", ())
+        if not isinstance(component_ids, (list, tuple)):
+            raise ValueError("Candidate density correction component IDs must be a sequence")
+        density_components = tuple(component_ids)
+        coefficient = density_correction.get("c_cm3_mol")
+        if (density_correction.get("kind") != "density-only-volume-translation"
+                or density_correction.get("equilibrium_unchanged") is not True
+                or density_correction.get("applied_to_chemical_potentials") is not False
+                or density_correction.get("applied_to_enthalpy_or_heat_capacity") is not False
+                or density_components != ("protonated-monoethanolamine", "carbamate-anion")
+                or isinstance(coefficient, bool) or not isinstance(coefficient, (int, float))
+                or not math.isfinite(coefficient) or coefficient <= 0.):
+            raise ValueError("Candidate density correction metadata is invalid")
+        density_translation = 1e-6 * coefficient
     for family in mapping["model_families"]:
         if family.get("kind") == "electrolyte" and family.get("choice") == "born":
             for key, value in record["born_runtime_defaults"].items():
@@ -81,7 +101,8 @@ def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="r
     # Formula masses (checked against the declared ones) conserve mass exactly through the reactions.
     return EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="liquid", feed_ids=ids[:3],
                        molar_masses=_molar_masses(dataset, ids), reactions=reactions, neutral_reference=q.NeutralReference(**record["neutral_reference"]),
-                       loading_policy=loading_policy)
+                       loading_policy=loading_policy, density_translation_m3_per_mol=density_translation,
+                       density_translation_component_ids=density_components)
 
 
 def engine_vapor(parameters_path: str | Path, thermochemistry_path: str | Path, name="neutral_vapor"):

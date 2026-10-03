@@ -10,6 +10,7 @@ matched Amundsen states. Column quantities come from one accepted cosine 65-node
 """
 from __future__ import annotations
 
+import argparse
 import copy
 import csv
 import hashlib
@@ -144,8 +145,17 @@ def liquid_cp(liquid, vapor):
         amounts = liquid.actions(u, liquid.state_observables[:9])
         state = liquid.model.state(temperature, P=P_REF, x=list(amounts / amounts.sum()), phase="liquid")
         residual = state.residual_isobaric_heat_capacity * amounts.sum() / mass(liquid, u) / 1000.0
+        frozen_molar_cp = liquid.actions(u, (liquid.frozen_composition_isobaric_heat_capacity,))[0]
+        frozen = frozen_molar_cp * amounts.sum() / mass(liquid, u) / 1000.0
         relative("C5", f"{temperature:g} K, loading {loading:g}", "Cp kJ/(kg K) vs Hilliard 2008 G.2",
                  model, observed, 0.03, f"EOS residual Cp at the equilibrium speciation {residual:.4f}")
+        record("C5 convention", f"{temperature:g} K, loading {loading:g}",
+               "frozen-composition Cp kJ/(kg K) vs Hilliard 2008 G.2", frozen, observed,
+               frozen / observed - 1.0, None, "diagnostic",
+               "Hilliard criterion is compared with equilibrium dH/dT at fixed pressure and feed")
+        record("C5 convention", f"{temperature:g} K, loading {loading:g}",
+               "reaction-shift contribution equilibrium minus frozen Cp kJ/(kg K)", model - frozen,
+               None, None, None, "diagnostic")
     water = [float(c == "water") for c in liquid.component_ids]
     for temperature, reference in IAPWS_WATER_CP.items():
         # The nine-species mixture completes ion records only inside reacting problems, so the pure-water
@@ -160,7 +170,16 @@ def liquid_cp(liquid, vapor):
                f"{reference - janaf:.3f})")
 
 
-def absorption_heat(liquid, vapor):
+def density_targets(liquid):
+    """Evaluate the four Amundsen states used to fit Amine #160's density translation."""
+    for temperature, loading in ((323.15, 0.3), (323.15, 0.4), (343.15, 0.3), (343.15, 0.4)):
+        u = liquid_feed(liquid, loading, temperature)
+        relative("density target", f"{temperature:g} K, loading {loading:g}",
+                 "mass density g/cm3 vs Amundsen 2009", mass_density(liquid, u),
+                 AMUNDSEN[(temperature, loading)], 0.016, "one of the four fitted states")
+
+
+def absorption_heat(liquid, vapor, *, legacy_record):
     temperature, a, b = HEAT_PAIR
     co2 = vapor.model.state(temperature, P=1.0, x=[1., 0., 0., 0.], phase="vapor").ideal_enthalpy
     enthalpy = []
@@ -173,12 +192,14 @@ def absorption_heat(liquid, vapor):
     error = q - HEAT_TARGET
     record("C6", f"{temperature:g} K, loading {a:g} -> {b:g}", "released heat kJ/mol CO2 vs Kim-Svendsen 2007",
            q, HEAT_TARGET, error, HEAT_LIMIT, "pass" if abs(error) <= HEAT_LIMIT else "fail",
-           f"absolute kJ/mol; MEA #116 evaluator gives {MEA_116_HEAT:.4f} on the same record")
-    record("C6 cross-check", "same interval", "absorber chain minus MEA #116 evaluator kJ/mol", q, MEA_116_HEAT,
-           q - MEA_116_HEAT, None, "diagnostic", "MEA wheel b66c7b96, bubble-point pressure; here 101325 Pa")
+           (f"absolute kJ/mol; historical #116 value {MEA_116_HEAT:.4f} belongs to the adopted record"
+            if legacy_record else "absolute kJ/mol; alternate input record evaluated at 101325 Pa"))
+    if legacy_record:
+        record("C6 cross-check", "same interval", "absorber chain minus MEA #116 evaluator kJ/mol", q, MEA_116_HEAT,
+               q - MEA_116_HEAT, None, "diagnostic", "MEA wheel b66c7b96, bubble-point pressure; here 101325 Pa")
 
 
-def column(liquid, attempt_path):
+def column(liquid, attempt_path, *, legacy_record):
     attempt = json.loads(attempt_path.read_text())
     grid = np.asarray(attempt["native_profile"]["grid"])
     state = np.asarray(attempt["native_profile"]["state_matrix"])
@@ -205,17 +226,19 @@ def column(liquid, attempt_path):
     loading = state[0] / F_MEA
     bounds = (state[4].min(), state[4].max(), loading.min(), loading.max())
     matched = [(t, a) for t, a in AMUNDSEN if bounds[0] <= t <= bounds[1] and bounds[2] <= a <= bounds[3]]
-    probe, update = volume_matched_liquid(liquid)
-    counts = ", ".join(f"{k.split('/')[1]} m = {v:.3f}" for k, v in update.items())
+    if legacy_record:
+        probe, update = volume_matched_liquid(liquid)
+        counts = ", ".join(f"{k.split('/')[1]} m = {v:.3f}" for k, v in update.items())
     for t, a in [(323.15, 1e-4), *matched]:
         u = liquid_feed(liquid, a, t)
         if a > 1e-3:
             relative("density", f"{t:g} K, loading {a:g}", "mass density g/cm3 vs Amundsen 2009", mass_density(liquid, u),
                      AMUNDSEN[(t, a)], 0.016, "matched to the 65-node liquid T and loading range")
-        reference = AMUNDSEN.get((t, a), 0.9981)  # Amundsen Table 1, 50 C unloaded
-        record("density diagnosis", f"{t:g} K, loading {a:g}", "volume-matched ion segment counts g/cm3",
-               mass_density(probe, u), reference, (mass_density(probe, u) - reference) / reference, None, "diagnostic",
-               f"{counts}; record m = 1; not refit; record density {mass_density(liquid, u):.4f}")
+        if legacy_record:
+            reference = AMUNDSEN.get((t, a), 0.9981)  # Amundsen Table 1, 50 C unloaded
+            record("density diagnosis", f"{t:g} K, loading {a:g}", "volume-matched ion segment counts g/cm3",
+                   mass_density(probe, u), reference, (mass_density(probe, u) - reference) / reference, None, "diagnostic",
+                   f"{counts}; record m = 1; not refit; record density {mass_density(liquid, u):.4f}")
     for index in (0, peak, len(grid) - 1):
         u = (state[4, index], state[6, index], state[0, index], F_MEA, state[1, index])
         density = mass_density(liquid, u)
@@ -226,33 +249,62 @@ def column(liquid, attempt_path):
 
 
 def main():
-    attempt_path = Path(sys.argv[1]).resolve()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("attempt", nargs="?", type=Path)
+    parser.add_argument("--liquid-data", type=Path, default=LIQUID_DATA)
+    parser.add_argument("--output-dir", type=Path, default=OUT)
+    parser.add_argument("--property-only", action="store_true",
+                        help="run C3, C5, C6 and the four density targets without a column attempt")
+    args = parser.parse_args()
+    if args.property_only == (args.attempt is not None):
+        parser.error("provide one column attempt, or select --property-only")
+    liquid_data = args.liquid_data if args.liquid_data.is_absolute() else ROOT / args.liquid_data
+    liquid_data = liquid_data.resolve()
+    record_document_id = json.loads((liquid_data / "parameters.json").read_text())["document_id"]
+    legacy_record = liquid_data == LIQUID_DATA.resolve()
+    ideal = liquid_data / "ideal-gas-thermochemistry.json"
+    output = args.output_dir if args.output_dir.is_absolute() else ROOT / args.output_dir
+    output = output.resolve()
     case = json.loads(CASE.read_text())
-    liquid = engine_liquid(LIQUID_DATA, IDEAL, "physical_liquid", loading_policy=case["physical_inputs"]["liquid_branch_policy"])
-    vapor = engine_vapor(VAPOR_PARAMETERS, IDEAL, "physical_vapor")
+    liquid = engine_liquid(liquid_data, ideal, "physical_liquid", loading_policy=case["physical_inputs"]["liquid_branch_policy"])
+    vapor = engine_vapor(VAPOR_PARAMETERS, ideal, "physical_vapor")
     vapor_cp(vapor)
     liquid_cp(liquid, vapor)
-    absorption_heat(liquid, vapor)
-    profile = column(liquid, attempt_path)
-    OUT.mkdir(parents=True, exist_ok=True)
-    with (OUT / "physical-checks.csv").open("w", newline="") as stream:
+    density_targets(liquid)
+    absorption_heat(liquid, vapor, legacy_record=legacy_record)
+    attempt_path = args.attempt.resolve() if args.attempt else None
+    profile = column(liquid, attempt_path, legacy_record=legacy_record) if attempt_path else None
+    output.mkdir(parents=True, exist_ok=True)
+    with (output / "physical-checks.csv").open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
     contract = json.loads((ROOT / "integration/epcsaft_contract.json").read_text())["final_identity"]
+    inputs = [liquid_data / "parameters.json", liquid_data / "engine-reactions.json", ideal,
+              VAPOR_PARAMETERS, TAPS, CASE]
+    if attempt_path:
+        inputs.append(attempt_path)
     summary = {
         "engine_commit": contract["engine_commit"], "engine_wheel_sha256": contract["wheel_sha256"],
-        "inputs_sha256": {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in
-                          (LIQUID_DATA / "parameters.json", LIQUID_DATA / "engine-reactions.json", IDEAL,
-                           VAPOR_PARAMETERS, TAPS, attempt_path)},
+        "inputs_sha256": {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs},
         "producer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-        "csv_sha256": hashlib.sha256((OUT / "physical-checks.csv").read_bytes()).hexdigest(),
+        "csv_sha256": hashlib.sha256((output / "physical-checks.csv").read_bytes()).hexdigest(),
         "column": profile,
+        "property_only": args.property_only,
+        "record_document_id": record_document_id,
+        "legacy_record_diagnostics": legacy_record,
+        "caloric_conventions": {
+            "equilibrium": "d(nH)/dT at fixed pressure and apparent feed, divided by solution mass",
+            "frozen_composition": "Engine TotalIsobaricHeatCapacity at the equilibrium composition, multiplied by phase amount per solution mass",
+            "hilliard_comparison": "the 3 percent C5 limit applies to equilibrium dH/dT; frozen composition Cp is diagnostic",
+            "unloaded_loading_proxy": 1e-5,
+        },
+        "command": [sys.executable, *sys.argv],
         "outcomes": {r["check"] + " " + r["state"] + ": " + r["quantity"]: r["status"] for r in rows
                      if r["status"] in ("pass", "fail")},
         "native_solves": liquid.stats,
     }
-    (OUT / "summary.json").write_text(json.dumps(summary, indent=1, default=float) + "\n")
+    (output / "summary.json").write_text(json.dumps(summary, indent=1, default=float) + "\n")
     for r in rows:
         print(f"{r['check']:14s} {r['state']:28s} {r['quantity'][:52]:52s} model={r['model']!s:.10s} "
               f"ref={r['reference']!s:.10s} err={r['error']!s:.9s} {r['status']} {r['note']}")

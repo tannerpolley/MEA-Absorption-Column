@@ -36,7 +36,8 @@ class EnginePhase:
     """
 
     def __init__(self, name, mapping, thermochemistry, *, kind, feed_ids=None, molar_masses=None,
-                 reactions=(), neutral_reference=None, loading_policy=None):
+                 reactions=(), neutral_reference=None, loading_policy=None,
+                 density_translation_m3_per_mol=None, density_translation_component_ids=()):
         import epcsaft
         from epcsaft import equilibrium
 
@@ -53,12 +54,31 @@ class EnginePhase:
         self.charges = tuple(float(fixed[c]["charge_number"]["value"]["magnitude"]) for c in self.component_ids)
         self.reactions, self.neutral_reference = tuple(reactions), neutral_reference
         self.loading_policy = loading_policy
+        if density_translation_m3_per_mol is None:
+            if density_translation_component_ids:
+                raise ValueError("Density translation component IDs require a translation value")
+            self._density_translation_m3_per_mol = None
+            self._density_translation_indices = ()
+        else:
+            if (kind != "liquid" or not math.isfinite(density_translation_m3_per_mol)
+                    or density_translation_m3_per_mol <= 0.):
+                raise ValueError("Liquid density translation must be finite and positive")
+            if (not density_translation_component_ids
+                    or len(set(density_translation_component_ids)) != len(density_translation_component_ids)
+                    or any(component not in self.component_ids for component in density_translation_component_ids)):
+                raise ValueError("Density translation requires distinct component IDs in the liquid")
+            self._density_translation_m3_per_mol = density_translation_m3_per_mol
+            self._density_translation_indices = tuple(self.component_ids.index(component)
+                                                       for component in density_translation_component_ids)
         self.output_ids = (tuple(f"amount:{c}" for c in self.component_ids) if kind == "liquid" else ()) + OUTPUT_IDS
         kinds, index = equilibrium.SolvedStateObservableKind, self.component_ids.index
         enthalpy = epcsaft.PropertyObservable.TotalEnthalpy
+        isobaric_heat_capacity = epcsaft.PropertyObservable.TotalIsobaricHeatCapacity
         self.log_activities = tuple(equilibrium.SolvedStateObservable(kinds.PhaseLogActivity, 0, i)
                                     for i in range(len(self.component_ids)))
         self.enthalpy = equilibrium.SolvedStateObservable(kinds.PhaseProperty, 0, 0, enthalpy)
+        self.frozen_composition_isobaric_heat_capacity = equilibrium.SolvedStateObservable(
+            kinds.PhaseProperty, 0, 0, isobaric_heat_capacity)
         self.state_observables = (
             tuple(equilibrium.SolvedStateObservable(kinds.PhaseComponentAmount, 0, i)
                   for i in range(len(self.component_ids)) if kind == "liquid")
@@ -77,8 +97,13 @@ class EnginePhase:
         y, count = self._state(inputs), len(self.state_observables) - 3
         amounts = y[:count]
         total = ca.sum1(amounts) if count else ca.sum1(inputs[2:])
+        molar_density = y[count + 2]
+        if self._density_translation_m3_per_mol is not None:
+            translated_components = ca.sum1(ca.vertcat(*(amounts[i] for i in self._density_translation_indices)))
+            molar_density = total / (total / molar_density
+                                     + self._density_translation_m3_per_mol * translated_components)
         return ca.vertcat(amounts, ca.exp(y[count:count + 2]) * self._gas_constant * inputs[0],
-                          y[count + 2], total * self._molar_enthalpy(inputs))
+                          molar_density, total * self._molar_enthalpy(inputs))
 
     def _problem(self, temperature, pressure, feed):
         q = self._q
