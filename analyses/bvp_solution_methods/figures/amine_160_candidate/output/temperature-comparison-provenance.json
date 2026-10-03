@@ -1,0 +1,83 @@
+{
+  "question": "How do the candidate's retained liquid-temperature nodes compare with the reported 3C source taps?",
+  "intended_use": "Display the fixed-grid candidate values and the source tap values without implying a continuous model curve or resolving tap phase.",
+  "axes": {
+    "x": "height from gas inlet, m",
+    "y": "temperature, K"
+  },
+  "series": {
+    "candidate_liquid_temperature_native_node": {
+      "role": "model prediction",
+      "rows": 65,
+      "support": "65 retained native grid nodes; shown as points without a connecting line",
+      "state_row": 4
+    },
+    "source_reported_tap_phase_ambiguous": {
+      "role": "source-reported observation",
+      "rows": 5,
+      "phase": "not resolved by the source record",
+      "uncertainty": "no intervals retained in the source row"
+    }
+  },
+  "coordinate_transform": "source position fraction x is measured from the top; z=(1-x)*6.0 m from the gas inlet",
+  "temperature_transform": "source tap Celsius values converted to kelvin by adding 273.15; model temperatures are retained in kelvin",
+  "inputs": {
+    "attempt_path": "analyses/bvp_solution_methods/results/amine_160_candidate/upwind_cos_n65_parameter_transfer/attempt.json",
+    "attempt_sha256": "ecbe8b276f2a782fce51a22f1540ae9be7dde2626a87e72bb1dc7492898a4e1c",
+    "attempt_id": "20261003T025113-def8060e09c1",
+    "source_taps_path": "src/mea_absorption_column/data/NCCC_2017_absorber_temperature_profiles.csv",
+    "source_taps_sha256": "90cdb46f87e4a2fc40328e8592f6286f2794147d0ce119b62748a3eced20960f",
+    "candidate_parameters_path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/parameters.json",
+    "candidate_parameters_sha256": "756fec502d3a1433d538abb073c4caeabf91902013ab7e27d5459ce70396543b",
+    "candidate_document_id": "mea-issue160-f1-double-prime-unpromoted-candidate",
+    "engine_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "engine_wheel_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "case": "corrected published 2017 3C"
+  },
+  "source_tap_rows": [
+    {
+      "series": "source_reported_tap_phase_ambiguous",
+      "position_m": 0.0,
+      "temperature_K": 330.15,
+      "tap_source_field": "position_1.00_C",
+      "fraction_from_top": 1.0,
+      "source_temperature_C": 57.0
+    },
+    {
+      "series": "source_reported_tap_phase_ambiguous",
+      "position_m": 1.1999999999999997,
+      "temperature_K": 333.95,
+      "tap_source_field": "position_0.80_C",
+      "fraction_from_top": 0.8,
+      "source_temperature_C": 60.8
+    },
+    {
+      "series": "source_reported_tap_phase_ambiguous",
+      "position_m": 2.4000000000000004,
+      "temperature_K": 341.84999999999997,
+      "tap_source_field": "position_0.60_C",
+      "fraction_from_top": 0.6,
+      "source_temperature_C": 68.7
+    },
+    {
+      "series": "source_reported_tap_phase_ambiguous",
+      "position_m": 3.5999999999999996,
+      "temperature_K": 346.84999999999997,
+      "tap_source_field": "position_0.40_C",
+      "fraction_from_top": 0.4,
+      "source_temperature_C": 73.7
+    },
+    {
+      "series": "source_reported_tap_phase_ambiguous",
+      "position_m": 4.800000000000001,
+      "temperature_K": 348.04999999999995,
+      "tap_source_field": "position_0.20_C",
+      "fraction_from_top": 0.2,
+      "source_temperature_C": 74.9
+    }
+  ],
+  "data_path": "analyses/bvp_solution_methods/figures/amine_160_candidate/output/temperature-comparison.csv",
+  "data_sha256": "e3431ece4c7211b4a98a36dc47f8207abdb9e85e56d65bbee1cfcd993b04263b",
+  "producer_path": "analyses/bvp_solution_methods/figures/amine_160_candidate/scripts/prepare_temperature_comparison.py",
+  "producer_sha256": "b92b860cbb440087ba7154ee7a22a1dd25767836c7cca3ca6437163f5f764d01"
+}

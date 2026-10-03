@@ -217,12 +217,15 @@ At `318.15 K` and loading `0.358`, equilibrium heat capacity is `3.38377` versus
 `3.31477` versus `3.4707 kJ/(kg K)`, a `-4.4927%` failure. The corresponding
 frozen-composition values are `3.86862`, `3.35801`, and `3.29295 kJ/(kg K)`;
 the equilibrium-minus-frozen shifts are `0.0000394`, `0.0257588`, and
-`0.0218278 kJ/(kg K)`. The failures are retained as model limits; they do not
-change the numerical solver acceptance below.
+`0.0218278 kJ/(kg K)`. The two failures are retained as candidate property
+discrepancies; issue #160 requests the solution Cp and does not make the `3%`
+comparison a new completion gate. They do not change numerical solver
+acceptance below.
 
-The `0.358` loading is `7 mol MEA/kg H2O`, equivalent to `29.95147 wt%` on a
-CO2-free MEA/water basis. On the same selected Engine wheel, changing to exactly
-`30 wt%` gives `3.382508 kJ/(kg K)`, `0.001259` below the 7 mol/kg result. A
+The Hilliard solution concentration for the `0.358` loading row is `7 mol MEA/kg
+water`, equivalent to `29.95147 wt%` on a CO2-free MEA/water basis. On the same
+selected Engine wheel, changing to exactly `30 wt%` gives `3.382508 kJ/(kg K)`,
+`0.001259` below the 7 mol/kg result. A
 separate retained Amine D1 result records `3.380584 kJ/(kg K)` from parameter
 artifact SHA-256
 `a9492f95aa17a8a26d0d15d244eb0b293721cd14d27f072d5dba9bdaeb43f0cf`, evaluated
@@ -258,6 +261,8 @@ criterion. The four matched Amundsen density checks pass. These criteria support
 this case-specific candidate comparison, not absorber validation across
 conditions.
 
+![Accepted candidate liquid-temperature values at the 65 native nodes and the five reported 3C source tap temperatures. Native-node predictions and source taps are discrete points with no interpolating curve; the source does not resolve the phase measured at each tap, and no tap uncertainty intervals are retained.](figures/amine_160_candidate/output/temperature-comparison.svg){#fig-amine160-temperature-comparison fig-alt="Candidate liquid-temperature values at 65 axial nodes and five source-reported case 3C temperature taps, displayed as unconnected points. The maximum model value occurs near the liquid inlet; source tap phase is ambiguous."}
+
 The accepted #149 65-node profile was admitted through explicit
 `parameter_transfer` mode as an initial guess only. Its source attempt file has
 SHA-256 `c26176c83d964a6acc3c5f45debb2af02fef69ecba65f9bb7d0bc09afce471bf`,
@@ -266,8 +271,8 @@ scales were resolved for this run; the source profile supplies no candidate
 parameters or property values. Strict retained-profile matching remains the
 default. The result still uses the case-estimated mobility closure and
 provisional vapor caloric reference, and assumes a `318.15 K` liquid inlet.
-Those limits and the two failed C5 checks preclude broad predictive claims or
-promotion. The case uses the `reported_total_wet` gas-flow basis and
+The candidate remains unpromoted; the C5 discrepancies and experimental
+assumptions limit its supported use. The case uses the `reported_total_wet` gas-flow basis and
 `legacy_ratio` vapor composition. Source temperature taps have a phase
 ambiguity, so their residuals are comparisons against the retained source
 values rather than an unqualified phase validation.
@@ -324,3 +329,13 @@ recorded runner SHA-256 (`f3849efd4baaaef9c2740e12477c2284a7c9ba97d75078308c48ca
 predates the current runner SHA above, so it is not the final run producer.
 Nothing in this addendum
 promotes the candidate or supplies manuscript-ready evidence.
+
+The claim-led temperature comparison is retained as
+`figures/amine_160_candidate/output/temperature-comparison.svg`; its plotted
+table contains the 65 native-node liquid temperatures and the five source tap
+values at the exact transformed positions. Data-table SHA-256 is
+`e3431ece4c7211b4a98a36dc47f8207abdb9e85e56d65bbee1cfcd993b04263b`; SVG
+SHA-256 is `8a54871b69c58859f0edf6a942666af888a3c9d8d835bcea4d8add75321c68a0`.
+The provenance records the candidate attempt and source tap file hashes. Model
+predictions are rendered as unconnected native-node points; no new solver,
+interpolation, curve fit, uncertainty estimate, or phase assignment is added.

@@ -1,0 +1,16 @@
+{
+  "figure_path": "analyses/bvp_solution_methods/figures/amine_160_candidate/output/temperature-comparison.svg",
+  "figure_sha256": "8a54871b69c58859f0edf6a942666af888a3c9d8d835bcea4d8add75321c68a0",
+  "preview_path": "analyses/bvp_solution_methods/figures/amine_160_candidate/output/temperature-comparison.png",
+  "preview_sha256": "bfa5d6d8862d251571913b4b10031471422553a84f25381aa2b877131312209a",
+  "data_path": "analyses/bvp_solution_methods/figures/amine_160_candidate/output/temperature-comparison.csv",
+  "data_sha256": "e3431ece4c7211b4a98a36dc47f8207abdb9e85e56d65bbee1cfcd993b04263b",
+  "provenance_path": "analyses/bvp_solution_methods/figures/amine_160_candidate/output/temperature-comparison-provenance.json",
+  "provenance_sha256": "2987629b8fcbce9134e74d8a3205bb348f4ca94e285a9cd774f4f161de381da8",
+  "renderer_path": "analyses/bvp_solution_methods/figures/amine_160_candidate/scripts/render_temperature_comparison.py",
+  "renderer_sha256": "36d0ae58a31b800aeebc2f9809a0bc3d9bd3d5bfabbdf82047e55105d6f99529",
+  "claim": "The accepted candidate has a sampled liquid-temperature maximum of 348.328 K at z=5.223 m; the retained source tap values are shown without assigning a phase.",
+  "model_series": "65 unconnected native-node points; no curve, fit, or new model evaluation",
+  "source_series": "Five reported 3C temperatures; source tap phase is ambiguous",
+  "uncertainty": "No tap uncertainty intervals were retained; none are inferred here."
+}
