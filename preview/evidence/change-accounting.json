@@ -1,0 +1,68 @@
+{
+  "base": "d26d368b4674ea8d5d390523c970eeaab44b2820",
+  "preview_runtime_additions": 297,
+  "preview_runtime_removals": 0,
+  "previous_runtime_additions": 162,
+  "combined_runtime_additions": 459,
+  "preview_ceiling": 750,
+  "combined_ceiling": 912,
+  "classification_note": "Final accounting after the provenance-download correction. CSS, HTML and MJS runtime manually included from raw other category. Public data/icons/fonts are assets. Pre-existing docs/latex is outside this task; all prior scientific file hashes unchanged.",
+  "runtime_files": [
+    {
+      "additions": 12,
+      "binary": false,
+      "category": "other",
+      "path": "preview/index.html",
+      "removals": 0,
+      "untracked": true
+    },
+    {
+      "additions": 21,
+      "binary": false,
+      "category": "other",
+      "path": "preview/scripts/prepare-sites-build.mjs",
+      "removals": 0,
+      "untracked": true
+    },
+    {
+      "additions": 136,
+      "binary": false,
+      "category": "executable",
+      "path": "preview/src/App.jsx",
+      "removals": 0,
+      "untracked": true
+    },
+    {
+      "additions": 10,
+      "binary": false,
+      "category": "executable",
+      "path": "preview/src/main.jsx",
+      "removals": 0,
+      "untracked": true
+    },
+    {
+      "additions": 84,
+      "binary": false,
+      "category": "other",
+      "path": "preview/src/styles.css",
+      "removals": 0,
+      "untracked": true
+    },
+    {
+      "additions": 19,
+      "binary": false,
+      "category": "other",
+      "path": "preview/vite.config.mjs",
+      "removals": 0,
+      "untracked": true
+    },
+    {
+      "additions": 15,
+      "binary": false,
+      "category": "executable",
+      "path": "preview/worker/index.js",
+      "removals": 0,
+      "untracked": true
+    }
+  ]
+}
