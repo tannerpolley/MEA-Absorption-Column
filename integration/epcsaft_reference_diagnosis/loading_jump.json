@@ -1,0 +1,104 @@
+{
+  "basis": {
+    "temperature_k": 326.2714274736848,
+    "pressure_pa": 109500.0,
+    "source_reference_pressure_pa": 100000.0,
+    "apparent_amounts": [
+      3.979265359040124,
+      9.729875260332735,
+      75.6233916590782
+    ],
+    "feed_basis": "normalized to one mole"
+  },
+  "engine_wheel": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+  "source_parameter_sha256": "8d6540525d8b27b056bda36b5be55e845e61ff3fafefbef942a4a5150a620009",
+  "test_reference": {
+    "density_mol_m3": 50951.5005892302,
+    "co2_fugacity_pa": null
+  },
+  "current_reference": {
+    "density_mol_m3": 50951.50163755171,
+    "co2_fugacity_pa": 1490.1391933780758,
+    "mole_fractions": [
+      1.2147396188141419e-05,
+      0.02633113904961865,
+      0.8775909916954159,
+      0.049456430829108465,
+      0.038206392143497,
+      0.00555487905009932,
+      0.0028471404695946533,
+      3.3507899130502253e-10,
+      8.790313989214333e-07
+    ],
+    "log_fugacity_coefficients": [
+      7.021340701359321,
+      -6.653234461354671,
+      -2.0250910039895924,
+      -133.9675436777445,
+      -139.28768787712826,
+      -153.7459088948256,
+      -660.1753591288427,
+      -398.12036750273387,
+      -161.0829456281058
+    ],
+    "helmholtz_terms": {
+      "hard_chain": 4.3254363751823135,
+      "dispersion": -8.131719395615391,
+      "association": -4.043945930355157,
+      "debye_huckel": -0.07019686134700241,
+      "born": -14.854375999153358
+    }
+  },
+  "reconstructed_finite_reference": {
+    "density_mol_m3": 50951.50058923385,
+    "co2_fugacity_pa": 1490.144388488976,
+    "mole_fractions": [
+      1.214743529038612e-05,
+      0.026331142859756282,
+      0.8775910176526572,
+      0.049456401066142554,
+      0.0382064180918678,
+      0.005554882780254201,
+      0.0028471107501437357,
+      3.3507872503863523e-10,
+      8.790288088871739e-07
+    ],
+    "log_fugacity_coefficients": [
+      7.021340968702758,
+      -6.653234481057968,
+      -2.0250910693486475,
+      -133.9675434490735,
+      -139.28768692544287,
+      -153.74590809626656,
+      -660.1753571230483,
+      -398.12036724200635,
+      -161.08294469794578
+    ],
+    "helmholtz_terms": {
+      "hard_chain": 4.325436453430942,
+      "dispersion": -8.131719595962613,
+      "association": -4.043946080759907,
+      "debye_huckel": -0.07019674959801299,
+      "born": -14.854356475528164
+    }
+  },
+  "finite_minus_current_reference_contractions": [
+    -2.4786563699308317e-06,
+    -2.478656597304507e-06,
+    -1.040080860548187e-05,
+    -1.3073986337985843e-12,
+    -1.1368683772161603e-12
+  ],
+  "method": "Engine 9e1bef97 electrolyte_reference.hpp terminal 1e-12 mol/kg; eos_source_reference.cpp neutral/ion-pair contractions; applied only as a diagnostic to unchanged 1.0.0 EOS",
+  "claim": "Numerical reconstruction isolates the test-reference discrepancy; not physical validation.",
+  "case": "loading_jump",
+  "producing_reference_wheel": {
+    "engine_commit": "9e1bef97fbea5c6f465612ae27b054192f91f19c",
+    "wheel_sha256": "b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b",
+    "availability": "Absent from the cache and retained wheel directories; original ePC-SAFT-project path no longer exists. Exact old-wheel speciation and derivative replay unavailable."
+  },
+  "engine_reference_changes": [
+    "bd7b6e388f97f24893f74346ae31e4c35d951d04 (#353): sqrt(m) Richardson limit",
+    "3b893fc2ce027c60f8b3d73521878fb7a5091acb (#823): analytic solvent insertion"
+  ]
+}

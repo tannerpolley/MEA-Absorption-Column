@@ -16,7 +16,6 @@ from ..Properties.Thermophysical_Properties import (
     thermal_conductivity_expression, surface_tension, vapor_pressure,
 )
 from ..Properties.Transport_Properties import viscosity, diffusivity
-from ..Thermodynamics.reactive_bundle import state_input_jacobian
 from ..Thermodynamics.thermo_models import COMPOSITION_FLOOR
 from ..Transport.Hydraulic_Variables_Correlations import (
     velocity_expression, interfacial_area_expression, raw_holdup_expression,
@@ -112,21 +111,15 @@ class ReactiveColumnJacobian:
             rhs, direct, thermo = self.algebra(physical, values)
             # A value mismatch exposes an omitted term before any derivative reaches SciPy.
             np.testing.assert_allclose(np.asarray(rhs).ravel()/self.scales, scaled_rhs, rtol=2e-11, atol=1e-11)
-            block = liquid['state_input_derivatives']
-            feed_map = np.zeros((9, 3))
-            feed_map[:3] = (np.eye(3)-liquid['feed_amounts_mol'][:3, None])/sum(apparent)
-            output_ids = [f'amount:{s}' for s in block.component_ids]+['liquid-molar-density', 'fugacity:carbon-dioxide']
-            expected_units = ['mole']*9+['mole / meter**3', 'pascal']
-            if [block.output_units[block.output_identities.index(s)] for s in output_ids] != expected_units:
-                raise ValueError('Liquid native output units changed')
-            liquid_jac = state_input_jacobian(block, feed_map, output_ids)
+            feed_map = (np.eye(3)-liquid['feed_amounts_mol'][:3, None])/sum(apparent)
+            liquid_jac = liquid['amount_density_fugacity_jacobian'].copy()
+            liquid_jac[:, 2:] = liquid_jac[:, 2:] @ feed_map
             inputs = np.zeros((5, 7))
             inputs[[0,1,2,4], [4,6,0,1]] = 1.
             _, vapor_map = self.vapor_map(physical)
-            vapor_jac = state_input_jacobian(vapor_block, np.asarray(vapor_map), ['fugacity:carbon-dioxide'])
-            vapor_row = vapor_jac[0, 2:].copy()
-            vapor_row[5] += vapor_jac[0, 0]
-            vapor_row[6] += vapor_jac[0, 1]
+            vapor_row = vapor_block[2:] @ np.asarray(vapor_map)
+            vapor_row[5] += vapor_block[0]
+            vapor_row[6] += vapor_block[1]
             native_jac = np.vstack((liquid_jac @ inputs, vapor_row))
             jac = np.asarray(direct)+np.asarray(thermo) @ native_jac
             return jac*self.scales[None, :]/self.scales[:, None]

@@ -9,7 +9,8 @@
       "reactive_film_evidence/notebook.qmd",
       "bvp_derivative_trials/notebook.qmd",
       "bvp_solution_methods/notebook.qmd",
-      "issue16_reactive_film_runtime/notebook.qmd"
+      "issue16_reactive_film_runtime/notebook.qmd",
+      "engine_wheel_adoption/notebook.qmd"
     ]
   },
   "website": {
@@ -325,6 +326,40 @@
                 {
                   "text": "Provenance",
                   "href": "issue16_reactive_film_runtime/notebook.qmd#provenance"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "section": "Thermodynamic integration",
+          "contents": [
+            {
+              "section": "Engine wheel adoption",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "engine_wheel_adoption/notebook.qmd"
+                },
+                {
+                  "text": "Question and basis",
+                  "href": "engine_wheel_adoption/notebook.qmd#question-and-basis"
+                },
+                {
+                  "text": "Reaction reference and unchanged inputs",
+                  "href": "engine_wheel_adoption/notebook.qmd#reaction-reference-and-unchanged-inputs"
+                },
+                {
+                  "text": "Diagnosed reference correction",
+                  "href": "engine_wheel_adoption/notebook.qmd#diagnosed-reference-correction"
+                },
+                {
+                  "text": "Bounded reactive 3C calculation",
+                  "href": "engine_wheel_adoption/notebook.qmd#bounded-reactive-3c-calculation"
+                },
+                {
+                  "text": "Remaining gate",
+                  "href": "engine_wheel_adoption/notebook.qmd#remaining-gate"
                 }
               ]
             }

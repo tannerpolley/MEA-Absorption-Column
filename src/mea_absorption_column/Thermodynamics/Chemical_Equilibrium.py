@@ -386,7 +386,7 @@ def record_coupled_result(diagnostics, result, elapsed):
     if diagnostics is not None:
         _increment_diagnostic(diagnostics, "epcsaft_chemistry_solve_s", elapsed)
         diagnostics['epcsaft_chemistry_last_native_success'] = True
-        diagnostics['epcsaft_chemistry_last_iterations'] = result['evidence']['optimizer_iterations']
+        diagnostics['epcsaft_chemistry_last_iterations'] = result['evidence']['iterations']
         diagnostics['epcsaft_chemistry_last_evidence'] = {
             'parameter_fingerprint': result['parameter_fingerprint'], **result['evidence']}
         for name, value in result['evidence'].items():

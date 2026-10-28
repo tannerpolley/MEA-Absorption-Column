@@ -1196,7 +1196,7 @@
     }
   ],
   "document_id": "mea-nine-species-retained-diagnostic-v1",
-  "document_version": 2,
+  "document_version": 3,
   "domains": [
     {
       "domain_id": "mea-diagnostic-293-15-to-393-15-k",
@@ -1263,9 +1263,10 @@
       "kind": "electrolyte",
       "provenance": {
         "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-        "locator": "data/reference/MEA/manifests/reactive_vle_model_configurations.json:diagnostic-explicit-model-switches",
+        "locator": "data/reference/MEA/manifests/reactive_vle_model_configurations.json:diagnostic-explicit-model-switches; explicit prior implicit behavior: Engine 8438ce5f records.py:285-289 exclusion and _resolve.py:1076-1091 extended Born; Figiel et al. (2025), doi:10.1021/acs.iecr.5c00475",
         "source_id": "mea-retained-phase-two-artifact"
-      }
+      },
+      "ionic_dispersion": "exclude-same-sign-ion-pairs"
     },
     {
       "choice": "ion-specific-suppression",
@@ -1293,25 +1294,6 @@
       "coefficients": [
         {
           "family": "k_ij",
-          "identity": "pair/bicarbonate-anion/carbonate-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=HCO3-:column=CO3^2-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
-          },
-          "value": {
-            "magnitude": 0.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "bicarbonate-anion",
-      "component_id_b": "carbonate-anion"
-    },
-    {
-      "coefficients": [
-        {
-          "family": "k_ij",
           "identity": "pair/bicarbonate-anion/hydronium-cation/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
@@ -1331,63 +1313,6 @@
       "coefficients": [
         {
           "family": "k_ij",
-          "identity": "pair/bicarbonate-anion/hydroxide-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=HCO3-:column=OH-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
-          },
-          "value": {
-            "magnitude": 0.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "bicarbonate-anion",
-      "component_id_b": "hydroxide-anion"
-    },
-    {
-      "coefficients": [
-        {
-          "family": "k_ij",
-          "identity": "pair/bicarbonate-anion/carbamate-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=MEACOO-:column=HCO3-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
-          },
-          "value": {
-            "magnitude": 0.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "bicarbonate-anion",
-      "component_id_b": "carbamate-anion"
-    },
-    {
-      "coefficients": [
-        {
-          "family": "k_ij",
-          "identity": "pair/carbamate-anion/carbonate-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=MEACOO-:column=CO3^2-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
-          },
-          "value": {
-            "magnitude": 0.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "carbamate-anion",
-      "component_id_b": "carbonate-anion"
-    },
-    {
-      "coefficients": [
-        {
-          "family": "k_ij",
           "identity": "pair/carbamate-anion/hydronium-cation/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
@@ -1402,25 +1327,6 @@
       ],
       "component_id_a": "carbamate-anion",
       "component_id_b": "hydronium-cation"
-    },
-    {
-      "coefficients": [
-        {
-          "family": "k_ij",
-          "identity": "pair/carbamate-anion/hydroxide-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=MEACOO-:column=OH-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
-          },
-          "value": {
-            "magnitude": 0.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "carbamate-anion",
-      "component_id_b": "hydroxide-anion"
     },
     {
       "coefficients": [
@@ -1592,25 +1498,6 @@
       ],
       "component_id_a": "carbonate-anion",
       "component_id_b": "hydronium-cation"
-    },
-    {
-      "coefficients": [
-        {
-          "family": "k_ij",
-          "identity": "pair/carbonate-anion/hydroxide-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=CO3^2-:column=OH-:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
-          },
-          "value": {
-            "magnitude": 0.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "carbonate-anion",
-      "component_id_b": "hydroxide-anion"
     },
     {
       "coefficients": [
@@ -1819,25 +1706,6 @@
         }
       ],
       "component_id_a": "carbonate-anion",
-      "component_id_b": "protonated-monoethanolamine"
-    },
-    {
-      "coefficients": [
-        {
-          "family": "k_ij",
-          "identity": "pair/hydronium-cation/protonated-monoethanolamine/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=MEAH+:column=H3O+:status=explicit-diagnostic",
-            "source_id": "mea-retained-phase-two-artifact"
-          },
-          "value": {
-            "magnitude": 0.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "hydronium-cation",
       "component_id_b": "protonated-monoethanolamine"
     },
     {

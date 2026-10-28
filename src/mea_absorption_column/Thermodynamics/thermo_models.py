@@ -17,6 +17,8 @@ from mea_absorption_column.BVP.robust_core import record_guard_penalty, record_i
 from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
     fugacity_coefficients as _v02_fugacity_coefficients,
     mixture as _v02_mixture,
+    parameter_document as _v02_parameter_document,
+    parameter_fingerprint as _v02_parameter_fingerprint,
     molar_density_value as _v02_molar_density_value,
     pressure_value as _v02_pressure_value,
     state as _v02_state,
@@ -334,7 +336,7 @@ def epcsaft_state_contribution_diagnostics(
         "pressure_Pa": float(P),
         "composition": composition_arr.tolist(),
         "density_mol_m3": _v02_molar_density_value(state),
-        "parameter_fingerprint": str(mixture.parameter_fingerprint),
+        "parameter_fingerprint": _v02_parameter_fingerprint(_v02_parameter_document(str(MEA_THERMODYNAMICS_EPCSAFT_DATASET)), mixture.component_ids),
         "phi_co2": float(phi[CO2_INDEX]),
         "lnfugcoef_co2_terms": {},
         "ares_terms": ares_terms,

@@ -1327,7 +1327,7 @@
     }
   ],
   "document_id": "mea-co2-h2o-nine-species-estimation-candidate-v1",
-  "document_version": 3,
+  "document_version": 4,
   "domains": [
     {
       "domain_id": "mea-diagnostic-293-15-to-393-15-k",
@@ -1446,11 +1446,14 @@
       "kind": "electrolyte",
       "provenance": {
         "domain_id": "mea-provider-source-qualified-313-15-k",
-        "locator": "data/reference/MEA/manifests/reactive_vle_model_configurations.json:diagnostic-explicit-model-switches",
+        "locator": "data/reference/MEA/manifests/reactive_vle_model_configurations.json:diagnostic-explicit-model-switches; explicit prior implicit behavior: Engine 8438ce5f records.py:285-289 exclusion and _resolve.py:1076-1091 extended Born; Figiel et al. (2025), doi:10.1021/acs.iecr.5c00475",
         "source_id": "mea-retained-phase-two-artifact"
       },
       "qualification": "candidate_extrapolation",
-      "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
+      "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+      "ionic_dispersion": "exclude-same-sign-ion-pairs",
+      "c_shell": 1.0,
+      "c_dielectric": 1.0
     },
     {
       "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
@@ -1467,28 +1470,6 @@
     }
   ],
   "pairs": [
-    {
-      "coefficients": [
-        {
-          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
-          "family": "k_ij",
-          "identity": "pair/bicarbonate-anion/carbonate-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
-            "source_id": "figiel-2025"
-          },
-          "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
-          "value": {
-            "magnitude": 1.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "bicarbonate-anion",
-      "component_id_b": "carbonate-anion"
-    },
     {
       "coefficients": [
         {
@@ -1516,72 +1497,6 @@
         {
           "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
           "family": "k_ij",
-          "identity": "pair/bicarbonate-anion/hydroxide-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
-            "source_id": "figiel-2025"
-          },
-          "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
-          "value": {
-            "magnitude": 1.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "bicarbonate-anion",
-      "component_id_b": "hydroxide-anion"
-    },
-    {
-      "coefficients": [
-        {
-          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
-          "family": "k_ij",
-          "identity": "pair/bicarbonate-anion/carbamate-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
-            "source_id": "figiel-2025"
-          },
-          "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
-          "value": {
-            "magnitude": 1.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "bicarbonate-anion",
-      "component_id_b": "carbamate-anion"
-    },
-    {
-      "coefficients": [
-        {
-          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
-          "family": "k_ij",
-          "identity": "pair/carbamate-anion/carbonate-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
-            "source_id": "figiel-2025"
-          },
-          "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
-          "value": {
-            "magnitude": 1.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "carbamate-anion",
-      "component_id_b": "carbonate-anion"
-    },
-    {
-      "coefficients": [
-        {
-          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
-          "family": "k_ij",
           "identity": "pair/carbamate-anion/hydronium-cation/k_ij",
           "provenance": {
             "domain_id": "mea-diagnostic-293-15-to-393-15-k",
@@ -1598,28 +1513,6 @@
       ],
       "component_id_a": "carbamate-anion",
       "component_id_b": "hydronium-cation"
-    },
-    {
-      "coefficients": [
-        {
-          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
-          "family": "k_ij",
-          "identity": "pair/carbamate-anion/hydroxide-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
-            "source_id": "figiel-2025"
-          },
-          "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
-          "value": {
-            "magnitude": 1.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "carbamate-anion",
-      "component_id_b": "hydroxide-anion"
     },
     {
       "coefficients": [
@@ -1838,28 +1731,6 @@
       ],
       "component_id_a": "carbonate-anion",
       "component_id_b": "hydronium-cation"
-    },
-    {
-      "coefficients": [
-        {
-          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
-          "family": "k_ij",
-          "identity": "pair/carbonate-anion/hydroxide-anion/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
-            "source_id": "figiel-2025"
-          },
-          "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
-          "value": {
-            "magnitude": 1.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "carbonate-anion",
-      "component_id_b": "hydroxide-anion"
     },
     {
       "coefficients": [
@@ -2101,28 +1972,6 @@
         }
       ],
       "component_id_a": "carbonate-anion",
-      "component_id_b": "protonated-monoethanolamine"
-    },
-    {
-      "coefficients": [
-        {
-          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
-          "family": "k_ij",
-          "identity": "pair/hydronium-cation/protonated-monoethanolamine/k_ij",
-          "provenance": {
-            "domain_id": "mea-diagnostic-293-15-to-393-15-k",
-            "locator": "Figiel et al. 2025, Eqs. 3-4: like-charge dispersion energy is zero; with u_ij=sqrt(u_i*u_j)*(1-k_ij), k_ij=1",
-            "source_id": "figiel-2025"
-          },
-          "qualification": "candidate_extrapolation",
-          "source_sha256": "sha256:a3c940895c530f72f47f22f8c0f4796b5ad37918a4edd274f85497c6dd81ad1f",
-          "value": {
-            "magnitude": 1.0,
-            "unit": "dimensionless"
-          }
-        }
-      ],
-      "component_id_a": "hydronium-cation",
       "component_id_b": "protonated-monoethanolamine"
     },
     {

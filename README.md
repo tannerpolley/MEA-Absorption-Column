@@ -149,13 +149,17 @@ with that page and `--to pdf`; its layout settings remain with the source page:
 bash analyses/render.sh bvp_solution_methods/notebook.qmd --to pdf
 ```
 
-Engine 1.0.0 `main-f4566b3d` passes the integration check and the 69 focused
-configuration/assembly tests. The full suite has 256 passes and 33 known failures:
-16 on the retired reactive route (`epcsaft.records`), 15 missing
-`ionic_dispersion` declarations, and two segmented BVP convergence assertions.
-The same 33 cases fail on the preceding wheel. No test has been removed or
-loosened; see `integration/epcsaft_adoption.json` for every failure and its cause.
-The full suite becomes a regression gate once these defects are resolved.
+Engine 1.0.0 `main-f4566b3d` passes the integration check and 287 tests in the
+full suite. The two remaining failures already occurred with the preceding wheel:
+
+- `tests/test_segmented_bvp.py::test_positive_flow_pressure_transform_reproduces_case_3c_scipy_bvp`
+- `tests/test_segmented_bvp.py::test_case_bounded_transform_routes_to_positive_transform_for_one_bed_scipy_bvp`
+
+Both fail with a singular collocation Jacobian in ideal-Henry 3C and boundary
+residual norm 9958.17. They do not call the Engine and remain active for separate
+solver work. No test tolerance was loosened. See
+`analyses/engine_wheel_adoption/notebook.qmd` and `integration/epcsaft_adoption.json`
+for the numerical evidence and the approved infinite-dilution reference updates.
 
 Focused configuration and method checks:
 

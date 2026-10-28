@@ -1,0 +1,134 @@
+---
+title: "Engine wheel adoption: reactive liquid and bounded 3C column"
+subtitle: "Numerical verification of the current Engine interface"
+format: html
+---
+
+This analysis has not been independently reviewed or promoted for manuscript
+use. It reads retained values and never runs the absorber during rendering.
+
+## Question and basis
+
+Does the self-contained Engine 1.0.0 wheel preserve the selected absorber model
+when its removed equilibrium interface is replaced with native declared
+problems and exact solved-state actions? The verification quantities are
+speciation, CO₂ fugacity, liquid density, first derivatives, conserved elements
+and charge. Agreement here supports numerical integration; it does not establish
+physical accuracy or qualify another parameter set.
+
+The wheel is `main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e`, SHA-256
+`57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a`.
+Its ignored path, release verification and smoke-state comparison are retained in
+[the adoption record](../../integration/epcsaft_adoption.json).
+
+## Reaction reference and unchanged inputs
+
+The packaged reactive bundle uses a fixed source-reference pressure of 100000 Pa.
+The first migration probe accidentally used system pressure, 110900 Pa. That
+probe gave 53023.89629802781 mol/m³ and 8712.07241134674 Pa; it is excluded from
+acceptance. Preserving the declared pressure gives the corrected values below.
+The input identities, stoichiometry and fitted coefficients are unchanged.
+
+The earlier Engine resolved omitted same-sign dispersion choices to
+`exclude-same-sign-ion-pairs` (`8438ce5f`, `records.py:285–289`,
+`_resolve.py:752–759`). Its `_resolve.py:1076–1091` enabled both Born factors
+when an explicit Born diameter and a neutral solvation factor different from
+one were present. This bundle has explicit ionic Born diameters and water's
+factor is 1.5, so both factors were 1.0. Current documents state those choices
+explicitly with their Figiel (2025) lineage. Entries for excluded pairs are
+removed because the current Engine refuses unconsumed coefficients. The
+CO₂/MEA omission is declared explicitly, with provenance, in each current input.
+These declarations preserve prior implicit behavior; they are not a new fit.
+
+The test references were produced with Engine `9e1bef97` and wheel SHA-256
+`b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b`.
+That wheel could not be found in the cache or retained wheel directories, and its
+original path no longer exists. Exact speciation and derivative replay on that
+wheel is unavailable. The retained test values supply the earlier scalar
+reference; conservation checks and independent centered differences verify the
+current derivatives without loosening their tolerances.
+
+## Diagnosed reference correction
+
+At 318.15 K and 110900 Pa, the apparent CO₂/MEA/water amounts are
+5.277293318431409, 9.729282110481522 and 76.97519250729157, normalized to one
+mole of apparent feed. The source-reference pressure remains 100000 Pa.
+
+| Quantity | Earlier test reference | Current exact reference | Finite-endpoint reconstruction using the current EOS |
+|---|---:|---:|---:|
+| Liquid density (mol/m³) | 53024.00899976211 | 53024.01128806487 | 53024.00899975503 |
+| CO₂ fugacity (Pa) | 8710.019674586 | 8709.996035851034 | 8710.019674617202 |
+
+Engine `bd7b6e388` (#353) replaced the 10⁻¹² mol/kg endpoint with a square-root
+molality Richardson limit; `3b893fc2c` (#823) replaced extrapolation with analytic
+infinite-dilution insertion. The diagnostic keeps the current EOS and parameters
+fixed and changes only the reference evaluation. It reproduces the earlier
+scalar references within 4×10⁻¹² relative. The first differing quantities are the
+reference contractions: finite minus current is −2.437687×10⁻⁶ for R1/R2 and
+−1.022890×10⁻⁵ for R3, in dimensionless logarithmic units. The R4/R5 differences
+are at rounding scale.
+
+The loading-jump check at 326.2714274736848 K, 109500 Pa and apparent amounts
+3.979265359040124, 9.729875260332735 and 75.6233916590782 multiplies only
+CO₂/water `k_ij` by 1.05. Its density reference changes from
+50951.5005892302 to 50951.50163755171 mol/m³. The finite-endpoint reconstruction
+gives 50951.50058923385 mol/m³. Both test references retain their 10⁻⁸ relative
+tolerances. The owner approved these reference corrections after diagnosis.
+
+The [retained diagnostic](../../integration/epcsaft_reference_diagnosis/reconstruct.py)
+and its [reference](../../integration/epcsaft_reference_diagnosis/reference.json)
+and [loading-jump](../../integration/epcsaft_reference_diagnosis/loading_jump.json)
+records contain speciation, fugacity coefficients and Helmholtz contributions.
+The migration uses `solve_equilibrium` and `solved_state_first_actions`.
+The independent column directional check retains relative tolerance 2×10⁻⁵ and
+absolute tolerance 2×10⁻⁸; element and charge checks retain their original bounds.
+
+## Bounded reactive 3C calculation
+
+The new [run](results/runs/reactive_3c_final/result.json) uses the NCCC 2017 mass-input
+3C basis with dry saturated vapor and reported dry gas mass. It solves the
+seven-state, temperature-coordinate, single-bed column with the conventional
+explicit enhancement factor and empirical energy balance. The initial mesh has
+21 points, collocation tolerance is 0.5, boundary tolerance is 0.001, and the
+maximum is 1000 nodes. A same-case Henry solution supplies only the starting
+profile; the accepted equations use nine-species reactive thermodynamics.
+The process has a 180 s external wall limit and a [log](results/runs/reactive_3c_final.log).
+
+| Quantity | Result |
+|---|---:|
+| Predicted CO₂ capture (%) | 91.54332138374535 |
+| Final nodes / iterations | 22 / 2 |
+| Maximum normalized RMS residual | 0.12534032558542918 |
+| Maximum scaled boundary residual | 0 |
+| Separate boundary residual norm | 3.121835483529044×10⁻¹⁴ |
+| Solver wall time (s) | 5.001354455947876 |
+| Total wall time including initialization and output (s) | 12.48500128699925 |
+| Guard penalties / invalid-state evaluations | 0 / 0 |
+
+The [independent conservation check](scripts/check_conservation.py) reads the
+101 retained profile positions and compares true-species flows against the
+apparent flows using independent C/H/N/O counts. Maximum element residuals are
+7.71×10⁻¹³, 5.92×10⁻¹¹, 3.55×10⁻¹⁵ and 3.22×10⁻¹¹ mol/s, respectively.
+The maximum charge residual is 2.07×10⁻¹² mol/s. Net CO₂ and water flow ranges
+are 1.78×10⁻¹⁵ and 2.84×10⁻¹⁴ mol/s. Exact values are in
+[conservation.json](results/runs/reactive_3c_final/conservation.json).
+
+The solve used MA57. HSL, a collection of Fortran codes for large-scale
+scientific computation. https://www.hsl.rl.ac.uk/
+
+This is one bounded prediction and numerical verification, with no new mesh
+refinement or physical-validation claim. The observation and parameter
+uncertainties have not been assessed here. The empirical caloric closure remains
+separate from the Engine thermodynamic reference.
+
+## Remaining gate
+
+The full suite gives 287 passes and two failures, both already present on the
+old wheel. The two `test_segmented_bvp.py` checks for `positive_flow_pressure`
+and its `case_bounded` alias fail on the ideal-Henry 3C calculation with a
+singular collocation Jacobian and boundary residual norm 9958.17. They do not
+call the Engine. A linear initial-guess probe also failed; removing duplicate
+boundary scaling also failed (boundary residual norm 10503.3) within its 90 s
+wall limit. Neither
+probe changed retained implementation or tolerances. The owner assigned the
+solver defect to separate work; both tests remain active.

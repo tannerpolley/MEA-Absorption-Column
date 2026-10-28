@@ -6,7 +6,7 @@ import pytest
 from mea_absorption_column.BVP.ABS_Column import abs_column
 from mea_absorption_column.BVP.reactive_jacobian import ReactiveColumnJacobian
 from mea_absorption_column.Thermodynamics.reactive_bundle import (
-    DATASET, ReactiveLiquid, parameter_set, reaction_system, homogeneous_reactive_request,
+    DATASET, ReactiveLiquid, parameter_document, reaction_system, _native_reactions,
 )
 from mea_absorption_column.misc.Convert_Data import convert_data
 from mea_absorption_column.Transport.Enhancement_Factor import film_resistance_expression
@@ -67,7 +67,10 @@ def test_large_loading_jump_uses_declared_path_and_retains_liquid_root():
     before = runtime.stats['warm_starts']
     result = runtime.solve(*inputs, state_input_derivatives=True)
     assert runtime.stats['warm_starts'] == before
-    assert result['density_mol_m3'] == pytest.approx(50951.5005892302, rel=1e-8)
+    # Previous 50951.5005892302; Engine bd7b6e388 (#353), 3b893fc2c (#823)
+    # exact dilution limit. Finite-endpoint reconstruction agrees within 4e-12 relative;
+    # see integration/epcsaft_reference_diagnosis/.
+    assert result['density_mol_m3'] == pytest.approx(50951.50163755171, rel=1e-8)
     assert np.all(result['amounts_mol'] > 0.)
     # Nearby queries still reuse accepted liquid states.
     runtime.solve(inputs[0]+.01, *inputs[1:], state_input_derivatives=True)
@@ -75,31 +78,32 @@ def test_large_loading_jump_uses_declared_path_and_retains_liquid_root():
 
 
 def test_interaction_screen_changes_one_coefficient_without_changing_chemistry():
-    baseline = parameter_set(str(DATASET))
-    original = baseline.to_mapping()
+    baseline = parameter_document(str(DATASET))
+    original = baseline
     values = lambda doc: {c['identity']: c['value']['magnitude']
                           for p in doc['pairs'] for c in p['coefficients']}
     for identity in ('pair/monoethanolamine/water/k_ij', 'pair/carbon-dioxide/water/k_ij'):
         for factor in (.95, 1.05):
-            changed = parameter_set(str(DATASET), (identity, factor))
+            changed = parameter_document(str(DATASET), (identity, factor))
             expected = values(original)
             expected[identity] *= factor
-            assert values(changed.to_mapping()) == expected
+            assert values(changed) == expected
             for key in original.keys()-{'sources','pairs'}:
-                assert changed.to_mapping()[key] == original[key]
-            assert changed.fingerprint != baseline.fingerprint
-    assert parameter_set(str(DATASET)).to_mapping() == original
+                assert changed[key] == original[key]
+            assert changed != baseline
+    assert parameter_document(str(DATASET)) == original
     with pytest.raises(ValueError):
-        parameter_set(str(DATASET), ('absent', .95))
+        parameter_document(str(DATASET), ('absent', .95))
     with pytest.raises(ValueError):
-        parameter_set(str(DATASET), ('pair/monoethanolamine/water/k_ij', float('nan')))
+        parameter_document(str(DATASET), ('pair/monoethanolamine/water/k_ij', float('nan')))
 
 
 def test_reaction_multipliers_preserve_temperature_slope_and_other_equilibria():
     baseline = reaction_system(str(DATASET))
     def log_constants(reactions, temperature):
-        request = homogeneous_reactive_request(str(DATASET), temperature, 109500., [.3, 1., 8.], reactions=reactions)
-        return np.array([row[0] for row in request['reaction_system']['equilibrium_constants']])
+        correlations = [row.correlation for row in _native_reactions(reactions)]
+        return np.array([c.a+c.b/temperature+c.c*np.log(temperature/c.reference_temperature)+c.d*temperature
+                         for c in correlations])
     for identity, index in [('R4', 3), ('R5', 4)]:
         for factor in (.95, 1.05):
             changed = reaction_system(str(DATASET), (identity, factor))

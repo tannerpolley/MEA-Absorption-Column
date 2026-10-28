@@ -41,12 +41,25 @@
     "uv lock": "resolved 24 packages; epcsaft 0.2.0.dev0 -> 1.0.0",
     "uv sync --locked --group test": "passed",
     "uv run --frozen python scripts/check_epcsaft_integration.py --mode final": "passed",
-    "uv run --frozen pytest -q": "33 failed, 256 passed, 1 warning in 76.63 s",
+    "uv run --frozen pytest -q": "287 passed, 2 failed, 1 warning in 75.41 s",
     "focused_config_and_conserved_assembly": "69 passed in 20.63 s",
     "old_wheel_comparison": "33 matching failures plus one archive-only artifact: test_run_column_retains_legacy_and_acceptance_outcomes lacks dirty_patch_sha256 outside a Git checkout.",
-    "newly_failing_tests": []
+    "newly_failing_tests": [],
+    "initial_new_wheel_full_suite": "33 failed, 256 passed, 1 warning in 76.63 s",
+    "focused_final_tree": "153 passed in 22.13 s",
+    "post_cleanup_reactive_tests": "23 passed in 2.22 s"
   },
-  "remaining_failures": [
+  "segmented_probe": {
+    "basis": "3C ideal_henry, scipy-bvp, one bed, positive_flow_pressure; 90 s wall limit",
+    "success": false,
+    "cause": "A singular Jacobian encountered when solving the collocation system; strict boundary residual gate rejected 9958.17.",
+    "boundary_residual_norm": 9958.166302460762,
+    "max_scaled_boundary_residual": 2.298953948823593,
+    "max_rms_residual": 361257901938.89703
+  },
+  "retained_analyses": "Previously retained results unchanged; new bounded evidence is in analyses/engine_wheel_adoption/.",
+  "research_stdout_redirect": "Already absent on base 1d425be; no removal required.",
+  "initial_remaining_failures": [
     {
       "test": "tests/test_column_energy.py::test_countercurrent_energy_and_temperature_state_equivalence[epcsaft_reactive_nine]",
       "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
@@ -213,14 +226,37 @@
       "failed_on_previous_wheel": true
     }
   ],
-  "segmented_probe": {
-    "basis": "3C ideal_henry, scipy-bvp, one bed, positive_flow_pressure; 90 s wall limit",
-    "success": false,
-    "cause": "A singular Jacobian encountered when solving the collocation system; strict boundary residual gate rejected 9958.17.",
-    "boundary_residual_norm": 9958.166302460762,
-    "max_scaled_boundary_residual": 2.298953948823593,
-    "max_rms_residual": 361257901938.89703
-  },
-  "retained_analyses": "No files changed under analyses/.",
-  "research_stdout_redirect": "Already absent on base 1d425be; no removal required."
+  "remaining_failures": [
+    {
+      "test": "tests/test_segmented_bvp.py::test_positive_flow_pressure_transform_reproduces_case_3c_scipy_bvp",
+      "cause": "assert False is True",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_segmented_bvp.py::test_case_bounded_transform_routes_to_positive_transform_for_one_bed_scipy_bvp",
+      "cause": "assert False is True",
+      "failed_on_previous_wheel": true
+    }
+  ],
+  "reference_migration": "Owner approved current infinite-dilution references after the finite-endpoint reconstruction; see integration/epcsaft_reference_diagnosis/.",
+  "segmented_probes": [
+    {
+      "probe": "linear initialization",
+      "outcome": "singular collocation Jacobian",
+      "boundary_residual_norm": 10502.8
+    },
+    {
+      "probe": "remove double boundary scaling",
+      "outcome": "singular collocation Jacobian within 90 s wall limit",
+      "boundary_residual_norm": 10503.3
+    }
+  ],
+  "reactive_column": {
+    "result": "analyses/engine_wheel_adoption/results/runs/reactive_3c_final/result.json",
+    "conservation": "analyses/engine_wheel_adoption/results/runs/reactive_3c_final/conservation.json",
+    "wall_limit_s": 180,
+    "capture_pct": 91.54332138374535,
+    "wall_s": 12.48500128699925,
+    "claim": "One bounded numerical verification with empirical energy closure; no new physical validation."
+  }
 }

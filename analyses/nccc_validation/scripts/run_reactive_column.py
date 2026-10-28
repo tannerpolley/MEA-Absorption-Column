@@ -14,7 +14,7 @@ import time
 import pandas as pd
 
 from mea_absorption_column.Run_Model import run_model
-from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET, parameter_set, reaction_system
+from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET, parameter_document, reaction_system
 
 
 def main():
@@ -42,9 +42,9 @@ def main():
         settings['reactive_kij_scale'] = (args.kij, args.factor)
     if args.reaction is not None:
         settings['reactive_reaction_scale'] = (args.reaction, args.factor)
-    parameters = parameter_set(str(DATASET), settings.get('reactive_kij_scale'))
+    parameters = parameter_document(str(DATASET), settings.get('reactive_kij_scale'))
     parameter_path = args.output/'evaluated_parameters.json'
-    parameter_path.write_text(json.dumps(parameters.to_mapping(), indent=2)+'\n')
+    parameter_path.write_text(json.dumps(parameters, indent=2)+'\n')
     reaction_path = args.output/'evaluated_reactions.json'
     reaction_path.write_text(json.dumps(reaction_system(str(DATASET), settings.get('reactive_reaction_scale')), indent=2)+'\n')
     paths = [inputs, Path(__file__), Path('uv.lock'), Path('integration/epcsaft_contract.json'), parameter_path, reaction_path]
@@ -53,7 +53,7 @@ def main():
     if args.initial_profile:
         paths.append(args.initial_profile)
     identity = dict(command=sys.argv, settings=settings, pid=os.getpid(),
-                    evaluated_parameter_fingerprint=parameters.fingerprint,
+                    evaluated_parameter_fingerprint=hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest(),
                     engine_identity=json.loads(Path('integration/epcsaft_contract.json').read_text())['final_identity'],
                     input_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
     (args.output/'identity.json').write_text(json.dumps(identity, indent=2)+'\n')

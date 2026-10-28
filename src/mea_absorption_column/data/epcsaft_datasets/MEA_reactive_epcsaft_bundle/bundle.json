@@ -5,15 +5,15 @@
   "owner": "MEA-Thermodynamics",
   "qualification": "adopted_as_exploratory_incumbent; not final column validation",
   "source_results": "analyses/mea_parameter_bundle/results",
-  "parameter_document_sha256": "ecae9943c0d5e05e9eafa7114fe2db1f99672fae64bffeb92c86dd5b2b931d4b",
+  "parameter_document_sha256": "8d6540525d8b27b056bda36b5be55e845e61ff3fafefbef942a4a5150a620009",
   "reference_scientific_fingerprint": "sha256:6919acbc3f1125b89363dd6997fcfd936036854768cd4c47d845d0133c8b0648",
   "engine_source_commit": "8438ce5f94a547189c91c4ec180a7782d60879d6",
   "engine_wheel_sha256": "40fba7cfb9c8414152f3e49636c49ae2e3f7099e30040d54d464ccb38355f805",
   "reaction_adoption": "Use the typed R2/R4/R5 correlations in parameters.json, including the already converted R2 a. R1/R3 retain the source reaction-system correlations. Do not infer additional changes from the five proposed shifts in the adoption receipt.",
   "files": [
-    {"path": "parameters/parameters.json", "sha256": "ecae9943c0d5e05e9eafa7114fe2db1f99672fae64bffeb92c86dd5b2b931d4b"},
+    {"path": "parameters/parameters.json", "sha256": "8d6540525d8b27b056bda36b5be55e845e61ff3fafefbef942a4a5150a620009"},
     {"path": "chemistry/reaction-system.json", "sha256": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29"},
     {"path": "anchored-reference-thermochemistry.json", "sha256": "a24a6b3c8b506fc659fc1bbd8a470b55919ba93da23eea27ffdf882645706185"},
-    {"path": "adoption-receipt.json", "sha256": "d1ae9e450232537051e5b89c5ddfd6d5c0948cbf44749ca48f7562b1c5b71a7b"}
+    {"path": "adoption-receipt.json", "sha256": "372d810098899cf2b85829d116228b57fcfb9445204f211233657fde2fa17552"}
   ]
 }

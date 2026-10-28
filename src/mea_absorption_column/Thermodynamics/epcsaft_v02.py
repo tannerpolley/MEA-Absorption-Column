@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import csv
+import hashlib
+import json
 import math
 from functools import lru_cache
 from pathlib import Path
@@ -194,10 +196,12 @@ def _model_families(dataset: Path) -> list[dict[str, object]]:
             "family_id": "model/electrolyte",
             "kind": "electrolyte",
             "choice": "born",
+            "ionic_dispersion": "exclude-same-sign-ion-pairs",
             "c_shell": 1.0,
             "c_dielectric": 1.0,
             "provenance": _model_provenance(
-                f"{base}/user_options.json:solvation-shell and dielectric-saturation enabled"
+                f"{base}/user_options.json:solvation-shell and dielectric-saturation enabled; "
+                "prior implicit same-sign exclusion: Engine 8438ce5f records.py:285; Figiel 2025 doi:10.1021/acs.iecr.5c00475"
             ),
         },
         {
@@ -352,7 +356,9 @@ def _association_topology(dataset: Path, rows: list[dict[str, str]]) -> dict[str
                     },
                 }
             )
-    return {"presets": [], "sites": sites, "edges": edges}
+    return {"presets": [], "sites": sites, "edges": edges, "no_cross_association": [
+        dict(component_id_a="carbon-dioxide", component_id_b="monoethanolamine",
+             provenance=_model_provenance("Selected CSV input omits the CO2/MEA association edge; issue #75"))]}
 
 
 def _pair_records(dataset: Path) -> list[dict[str, object]]:
@@ -367,7 +373,7 @@ def _pair_records(dataset: Path) -> list[dict[str, object]]:
             if right == "component" or not raw_value:
                 continue
             endpoints = tuple(sorted((left, right)))
-            if left == right or endpoints in seen:
+            if left == right or endpoints in seen or ("+" in left and "+" in right) or ("-" in left and "-" in right):
                 continue
             seen.add(endpoints)
             value = float(raw_value)
@@ -486,3 +492,9 @@ def fugacity_coefficients(state_value) -> tuple[float, ...]:
     if any(not math.isfinite(value) or value <= 0.0 for value in coefficients):
         raise RuntimeError("ePC-SAFT returned a nonpositive or nonfinite fugacity coefficient")
     return coefficients
+
+
+def parameter_fingerprint(document, components=None):
+    """Identify the exact source document and ordered component selection."""
+    components = tuple(c['component_id'] for c in document['components']) if components is None else tuple(components)
+    return 'sha256:' + hashlib.sha256(json.dumps((document, components), sort_keys=True).encode()).hexdigest()

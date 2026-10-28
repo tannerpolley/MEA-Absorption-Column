@@ -20,7 +20,7 @@ import numpy as np
 import scipy.integrate._bvp as bvp
 
 # Use the existing validated wheel loader; private counters are diagnostic-only.
-epcsaft, equilibrium, _core = epcsaft_diagnostic_modules()
+epcsaft, equilibrium, _ = epcsaft_diagnostic_modules()
 
 run_module = importlib.import_module('mea_absorption_column.Run_Model')
 solver_module = importlib.import_module('mea_absorption_column.BVP.Methods.Scipy_BVP_Solve')
@@ -62,21 +62,17 @@ def observe(owner, attribute, name=None):
 
 
 def install_observers():
-    original = equilibrium.solve
+    original = equilibrium.solve_equilibrium
     @functools.wraps(original)
     def solve(*args, **kwargs):
-        before = _core._instrumentation()
-        with measured('equilibrium.solve') as row:
+        with measured('equilibrium.solve_equilibrium') as row:
             result = original(*args, **kwargs)
-            row['evidence'] = dict(result.evidence)
+            row['iterations'] = result.iterations
             row['outputs'] = len(result.rows)
-            row['status'] = [result.status, result.numerical_status, result.physical_status]
-            row['native'] = {k: v-before[k] for k,v in _core._instrumentation().items()}
+            row['status'] = result.solver_status
             return result
-    equilibrium.solve = solve
+    equilibrium.solve_equilibrium = solve
     observe(epcsaft.Mixture, 'state', 'Mixture.state')
-    observe(bundle, '_require_liquid_pressure_root', 'liquid_root_certification')
-    observe(bundle, '_solve_homogeneous_reactive_result', 'reactive_request')
     observe(bundle.ReactiveLiquid, 'solve', 'ReactiveLiquid.solve')
     observe(run_module, 'save_run_outputs', 'profile_calculation')
     observe(run_module, 'scipy_BVP_solve', 'column_solver')
@@ -120,7 +116,6 @@ def main():
     parser.add_argument('label')
     parser.add_argument('--wheel', type=Path, required=True)
     parser.add_argument('--plain', action='store_true', help='No passive call observers.')
-    parser.add_argument('--native-trace', action='store_true', help='Retain every enabled native scope; no runtime plot.')
     args = parser.parse_args()
     output = ROOT/'results/runs/runtime_diagnostics_20260904'/args.label
     output.mkdir(parents=True,exist_ok=False)
@@ -141,8 +136,8 @@ def main():
         return_internal_profile=True,return_profiles=True,verbose=0)
     dump(output/'identity.json',dict(label=args.label,pid=os.getpid(),wheel=str(wheel),
         wheel_sha256=hashlib.sha256(wheel.read_bytes()).hexdigest(),source_sha256=hashes,
-        parameters=bundle.parameter_set(str(bundle.DATASET)).fingerprint,
-        settings=settings.copy(),observers=not args.plain,native_trace=args.native_trace,platform=platform.platform(),
+        parameters=bundle.parameter_fingerprint(bundle.parameter_document(str(bundle.DATASET))),
+        settings=settings.copy(),observers=not args.plain,platform=platform.platform(),
         affinity=sorted(os.sched_getaffinity(0)),cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],
         versions={n:importlib.metadata.version(n) for n in ('epcsaft','scipy','numpy','pandas')},
         threads={n:os.environ.get(n) for n in ('OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','MKL_NUM_THREADS')}))
@@ -151,9 +146,6 @@ def main():
     data = pd.read_csv(runtime/'src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv',index_col=0)
     proc_before = Path('/proc/stat').read_text().splitlines()[0]
     usage_before = resource.getrusage(resource.RUSAGE_SELF)
-    _core._instrumentation_reset()
-    if args.native_trace:
-        _core._trace_start()
     experiment_begin_ns = time.perf_counter_ns()
     start = time.perf_counter()
     try:
@@ -188,10 +180,7 @@ def main():
     finally:
         usage = resource.getrusage(resource.RUSAGE_SELF)
         proc_after = Path('/proc/stat').read_text().splitlines()[0]
-        if args.native_trace:
-            labels, native_events = _core._trace_stop()
-            np.savez_compressed(output/'native_trace.npz', labels=np.asarray(labels), events=native_events)
-        dump(output/'diagnostics.json',dict(events=events,native=_core._instrumentation(),
+        dump(output/'diagnostics.json',dict(events=events,
             proc_stat_before=proc_before,proc_stat_after=proc_after,
             usage={k:getattr(usage,k)-getattr(usage_before,k) for k in
                    ('ru_utime','ru_stime','ru_nvcsw','ru_nivcsw')},max_rss_kb=usage.ru_maxrss))

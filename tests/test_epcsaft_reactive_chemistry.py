@@ -42,8 +42,12 @@ def test_legacy_reactive_modes_fail_closed_until_constants_meet_v02_contract(mod
 
 
 @pytest.mark.parametrize('Tl,P,Fl,reference_density,reference_fugacity', [
+    # Previous: density 53024.00899976211, fugacity 8710.019674586 Pa.
+    # Engine bd7b6e388 (#353) and 3b893fc2c (#823): exact infinite-dilution
+    # reference replaces the 1e-12 mol/kg endpoint. Reconstructing that endpoint
+    # recovers the old values within 4e-12 relative (integration/epcsaft_reference_diagnosis/).
     (318.15, 110900., [5.277293318431409, 9.729282110481522, 76.97519250729157],
-     53024.00899976211, 8710.019674586),
+     53024.01128806487, 8709.996035851034),
     (325., 109500., [4.087096190146402, 9.729875260332735, 75.2853477794609],
      None, None),
 ])
@@ -67,9 +71,8 @@ def test_coupled_nine_species_conserves_elements_and_charge(Tl, P, Fl, reference
     assert abs(np.dot([0, 0, 0, 1, -1, -1, -2, 1, -1], amounts)) < 1e-10
     assert np.all(x > 0) and x.sum() == pytest.approx(1, abs=1e-12)
     assert result['density_mol_m3'] > 0
-    assert result['evidence']['equilibrium_value_valid'] == 1
-    assert result['evidence']['local_stability_status'] == 'passed'
-    assert result['evidence']['reaction_affinity_inf_norm'] < 1e-8
+    assert result['evidence']['reduced_hessian_minimum'] > 0
+    assert result['evidence']['maximum_residual'] < 1e-8
     if reference_density is not None:
         # Independent Orchestrator handoff on the identical wheel and input set;
         # tolerance admits floating-point replay, not a physical-data fit.
@@ -111,7 +114,7 @@ def test_coupled_column_retains_nine_species_and_legacy_flux():
     assert rhs[0] == pytest.approx((-Nl + 1e-10) * H)
     diagnostics = options['solver_diagnostics']
     assert diagnostics['epcsaft_chemistry_last_native_success'] is True
-    assert diagnostics['epcsaft_chemistry_last_evidence']['equilibrium_value_valid'] == 1
+    assert diagnostics['epcsaft_chemistry_last_evidence']['maximum_residual'] < 1e-8
     assert diagnostics['epcsaft_chemistry_last_evidence']['parameter_fingerprint']
     # A domain error must escape the shared RHS guard, never become a zero RHS.
     from mea_absorption_column.BVP.robust_core import guard_column_rhs
