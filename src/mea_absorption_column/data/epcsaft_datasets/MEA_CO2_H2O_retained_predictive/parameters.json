@@ -1196,7 +1196,7 @@
     }
   ],
   "document_id": "mea-nine-species-retained-diagnostic-v1",
-  "document_version": 1,
+  "document_version": 2,
   "domains": [
     {
       "domain_id": "mea-diagnostic-293-15-to-393-15-k",
@@ -2283,6 +2283,16 @@
         },
         "site_id": "b",
         "site_role": "acceptor"
+      }
+    ],
+    "no_cross_association": [
+      {
+        "component_id_a": "carbon-dioxide",
+        "component_id_b": "monoethanolamine",
+        "provenance": {
+          "source_id": "mea-nine-species-retained-diagnostic-v1",
+          "locator": "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive/parameters.json: no CO2/MEA edge; omission preserved under issue #75"
+        }
       }
     ]
   }

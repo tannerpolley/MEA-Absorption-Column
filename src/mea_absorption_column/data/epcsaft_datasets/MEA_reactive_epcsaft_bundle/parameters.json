@@ -1327,7 +1327,7 @@
     }
   ],
   "document_id": "mea-co2-h2o-nine-species-estimation-candidate-v1",
-  "document_version": 2,
+  "document_version": 3,
   "domains": [
     {
       "domain_id": "mea-diagnostic-293-15-to-393-15-k",
@@ -2836,6 +2836,16 @@
         "site_id": "b",
         "site_role": "acceptor",
         "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c"
+      }
+    ],
+    "no_cross_association": [
+      {
+        "component_id_a": "carbon-dioxide",
+        "component_id_b": "monoethanolamine",
+        "provenance": {
+          "source_id": "mea-co2-h2o-nine-species-estimation-candidate-v1",
+          "locator": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/parameters.json: no CO2/MEA edge; omission preserved under issue #75"
+        }
       }
     ]
   }
