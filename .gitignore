@@ -189,3 +189,6 @@ docs/scientific/latex/builds/
 
 /.quarto/
 **/*.quarto_ipynb
+
+# Quarto render output
+analyses/index.tex
