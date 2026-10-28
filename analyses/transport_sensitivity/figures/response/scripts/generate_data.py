@@ -107,22 +107,24 @@ def main():
     import numpy as np
     import pandas as pd
     from mea_absorption_column.Run_Model import run_model
-    from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET, parameter_set, reaction_system
+    from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET, parameter_document, parameter_fingerprint, reaction_system, validate_reactive_bundle
     assert Path(importlib.import_module('mea_absorption_column').__file__).is_relative_to(root)
     self_check()
-    if args.check_only:
-        return
-    if args.output is None:
-        parser.error('--output is required for a column run')
-    output = args.output.resolve()
-    output.mkdir(parents=True, exist_ok=False)
     inputs = root/'src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv'
     prior = json.loads((reference/'identity.json').read_text())
     contract = json.loads((root/'integration/epcsaft_contract.json').read_text())['final_identity']
     assert prior['engine_identity'] == contract, 'Reference and current wheel/bundle declarations differ'
     assert sha(inputs) == prior['input_sha256'][str(inputs.relative_to(root))]
-    for name, digest in contract['reactive_inputs_sha256'].items():
-        assert sha(DATASET/name) == digest, f'Bundle changed: {name}'
+    validate_reactive_bundle(str(DATASET))
+    parameters = parameter_document(str(DATASET))
+    fingerprint = parameter_fingerprint(parameters)
+    if args.check_only:
+        print('Reference wheel identity and reactive bundle hashes passed', flush=True)
+        return
+    if args.output is None:
+        parser.error('--output is required for a column run')
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=False)
     settings = dict(prior['settings'])
     assert not any(k.startswith('reactive_') for k in settings), 'Expected unperturbed reference'
     paths = sorted((root/'src/mea_absorption_column').rglob('*.py'))
@@ -136,10 +138,10 @@ def main():
     identity = dict(model_root=str(root), settings=settings.copy(), engine_identity=contract,
                     quantity=args.quantity, factor=args.factor, input_sha256=hashes,
                     source_changes_since_reference=changed,
-                    parameter_fingerprint=parameter_set(str(DATASET)).fingerprint,
+                    parameter_fingerprint=fingerprint,
                     command=sys.argv, scope='OAT exploratory ±10% transport correlation sensitivity, not confidence intervals')
     (output/'identity.json').write_text(json.dumps(identity, indent=2)+'\n')
-    (output/'evaluated_parameters.json').write_text(json.dumps(parameter_set(str(DATASET)).to_mapping(), indent=2)+'\n')
+    (output/'evaluated_parameters.json').write_text(json.dumps(parameters, indent=2)+'\n')
     (output/'evaluated_reactions.json').write_text(json.dumps(reaction_system(str(DATASET)), indent=2)+'\n')
     seed = pd.read_csv(reference/'solution_scaled.csv').to_numpy().T
     settings.update(initial_guess_scaled=seed, jacobian_mode='native', reactive_reuse_states=True)

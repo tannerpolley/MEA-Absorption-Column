@@ -4,6 +4,10 @@ The [research notebook](notebook.qmd) owns the scientific interpretation. The
 study uses the manuscript's Case 3C model and parameter set, read-only, and
 retains all outputs here. It does not edit the manuscript or its model defaults.
 
+`figures/response/scripts/generate_data.py` now consumes Engine 1.0.0 through the current parameter-document API; use `--model-root . --reference analyses/engine_wheel_adoption/results/runs/reactive_3c_verified --check-only` for the current input and transport checks; retained screen values below remain tied to their recorded wheel.
+
+`figures/response/scripts/capture_failure.py` reproduces only the retained initialization experiment with Engine `9e1bef97fbea5c6f465612ae27b054192f91f19c`, wheel SHA-256 `b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b`; it does not run on Engine 1.0.0.
+
 ## Reproduce one column
 
 From the checkout containing this analysis, select the manuscript model checkout

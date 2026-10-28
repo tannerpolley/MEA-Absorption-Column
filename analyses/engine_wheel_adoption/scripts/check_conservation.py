@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-run = Path(__file__).resolve().parents[1] / 'results/runs/reactive_3c_final'
+run = Path(__file__).resolve().parents[1] / 'results/runs/reactive_3c_verified'
 liquid, vapor = (pd.read_csv(run / f'{name}.csv', index_col=0) for name in ('Fl', 'Fv'))
 elements = np.array([[1, 2, 0, 2, 3, 1, 1, 0, 0], [0, 7, 2, 8, 6, 1, 0, 3, 1],
                      [0, 1, 0, 1, 1, 0, 0, 0, 0], [2, 1, 1, 1, 3, 3, 3, 1, 1]])

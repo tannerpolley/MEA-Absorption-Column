@@ -1,5 +1,7 @@
 # NCCC Validation Analysis
 
+`scripts/resolve_issue40_apparent_true_species.py` reproduces its retained packet-bound result only with the handoff wheel SHA-256 `d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a` recorded in `inputs/issue40_apparent_true_species.json`; it does not run on Engine 1.0.0.
+
 This analysis owns the reviewer-response validation evidence for the MEA absorber model. It separates disposable benchmark runs from curated final evidence so completed results can be inspected without digging through temporary solver folders.
 
 ## Layout

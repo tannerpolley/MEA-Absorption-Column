@@ -2,6 +2,8 @@
 
 This analysis identifies what can presently support a physical, chemical-potential-driven MEA film model and preserves one exact aggregate comparison figure. It reuses the retained Issue 34/35/41/42 records; source coefficients are not copied into a second executable model.
 
+`scripts/evaluate_onsager_closure.py` and `scripts/run_column_film_comparison.py` reproduce retained reactive-film evidence with recorded Engine `8007a70815efcd277f06eddc4df9fffdd8cdca48`, wheel SHA-256 `f6e5b51dad79741c759393688f7daa547c9eb73f5944d5f877b3b32b1e56714a` (`results/final/tables/column_film_run_provenance.json`); they do not run on Engine 1.0.0.
+
 ## Evidence now available
 
 - Putta2016 provides reversible F1/F2 concentration- and activity-form rate laws and Arrhenius fits over its reported temperature, MEA-label, loading, and pressure-driving-force domain. The retained record preserves the printed unit discrepancy rather than silently correcting source metadata. **[verified]**
