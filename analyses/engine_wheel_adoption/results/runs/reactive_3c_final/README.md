@@ -1,0 +1,1 @@
+Superseded as final-source evidence by `../reactive_3c_verified/`: this run records an earlier reactive_bundle.py hash (3ac9dbf6…), while the delivered source is f191c153…. Retained for the existing review and comparison citations; its numerical results and recorded hashes are unchanged.

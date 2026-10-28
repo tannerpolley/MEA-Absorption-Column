@@ -252,11 +252,36 @@
     }
   ],
   "reactive_column": {
-    "result": "analyses/engine_wheel_adoption/results/runs/reactive_3c_final/result.json",
-    "conservation": "analyses/engine_wheel_adoption/results/runs/reactive_3c_final/conservation.json",
+    "result": "analyses/engine_wheel_adoption/results/runs/reactive_3c_verified/result.json",
+    "conservation": "analyses/engine_wheel_adoption/results/runs/reactive_3c_verified/conservation.json",
     "wall_limit_s": 180,
     "capture_pct": 91.54332138374535,
-    "wall_s": 12.48500128699925,
-    "claim": "One bounded numerical verification with empirical energy closure; no new physical validation."
-  }
+    "wall_s": 12.074213412999597,
+    "claim": "One bounded numerical verification with empirical energy closure; no new physical validation.",
+    "source_verification": "analyses/engine_wheel_adoption/results/runs/reactive_3c_verified/source_verification.json",
+    "capture_difference_percentage_points": 0.0
+  },
+  "caller_review": [
+    {
+      "caller": "analyses/transport_sensitivity/figures/response/scripts/generate_data.py",
+      "disposition": "Current: migrated parameter_set/fingerprint/to_mapping to parameter_document and parameter_fingerprint; verifies selected reactive bundle rather than the greenfield smoke input hashes; both old and new reference --check-only commands pass."
+    },
+    {
+      "caller": "analyses/transport_sensitivity/figures/response/scripts/capture_failure.py",
+      "disposition": "Retained Engine 9e1bef97 experiment: byte-unchanged; README declares wheel b011d0f9d492e9db197f67cc0ae6781ac636fa3278805ddf1d6a05ecd167074b and Engine 1.0.0 unavailability."
+    },
+    {
+      "caller": "analyses/reactive_film_evidence/scripts/evaluate_onsager_closure.py",
+      "disposition": "Retained film evidence: byte-unchanged; README declares recorded Engine 8007a708, wheel f6e5b51dad79741c759393688f7daa547c9eb73f5944d5f877b3b32b1e56714a and Engine 1.0.0 unavailability."
+    },
+    {
+      "caller": "analyses/reactive_film_evidence/scripts/run_column_film_comparison.py",
+      "disposition": "Retained film evidence: byte-unchanged; same recorded wheel and README limitation."
+    },
+    {
+      "caller": "analyses/nccc_validation/scripts/resolve_issue40_apparent_true_species.py",
+      "disposition": "Additional old direct-GREPE/fingerprint caller found in whole-repository sweep: byte-unchanged; README declares handoff wheel d7b4fc5ba5cbf0e979b65af83442d565496d11b771bb559233ad9dc3a4f8414a and Engine 1.0.0 unavailability."
+    }
+  ],
+  "caller_sweep": "Compared module-level removed functions against all tracked Python files and searched analysis scripts for retired Engine names. Remaining references belong only to the explicitly documented retained experiments; no compatibility shims added."
 }

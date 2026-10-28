@@ -85,14 +85,14 @@ absolute tolerance 2×10⁻⁸; element and charge checks retain their original 
 
 ## Bounded reactive 3C calculation
 
-The new [run](results/runs/reactive_3c_final/result.json) uses the NCCC 2017 mass-input
+The new [run](results/runs/reactive_3c_verified/result.json) uses the NCCC 2017 mass-input
 3C basis with dry saturated vapor and reported dry gas mass. It solves the
 seven-state, temperature-coordinate, single-bed column with the conventional
 explicit enhancement factor and empirical energy balance. The initial mesh has
 21 points, collocation tolerance is 0.5, boundary tolerance is 0.001, and the
 maximum is 1000 nodes. A same-case Henry solution supplies only the starting
 profile; the accepted equations use nine-species reactive thermodynamics.
-The process has a 180 s external wall limit and a [log](results/runs/reactive_3c_final.log).
+The process has a 180 s external wall limit and a [log](results/runs/reactive_3c_verified.log).
 
 | Quantity | Result |
 |---|---:|
@@ -101,8 +101,8 @@ The process has a 180 s external wall limit and a [log](results/runs/reactive_3c
 | Maximum normalized RMS residual | 0.12534032558542918 |
 | Maximum scaled boundary residual | 0 |
 | Separate boundary residual norm | 3.121835483529044×10⁻¹⁴ |
-| Solver wall time (s) | 5.001354455947876 |
-| Total wall time including initialization and output (s) | 12.48500128699925 |
+| Solver wall time (s) | 4.945443868637085 |
+| Total wall time including initialization and output (s) | 12.074213412999597 |
 | Guard penalties / invalid-state evaluations | 0 / 0 |
 
 The [independent conservation check](scripts/check_conservation.py) reads the
@@ -111,7 +111,17 @@ apparent flows using independent C/H/N/O counts. Maximum element residuals are
 7.71×10⁻¹³, 5.92×10⁻¹¹, 3.55×10⁻¹⁵ and 3.22×10⁻¹¹ mol/s, respectively.
 The maximum charge residual is 2.07×10⁻¹² mol/s. Net CO₂ and water flow ranges
 are 1.78×10⁻¹⁵ and 2.84×10⁻¹⁴ mol/s. Exact values are in
-[conservation.json](results/runs/reactive_3c_final/conservation.json).
+[conservation.json](results/runs/reactive_3c_verified/conservation.json).
+
+The new run was executed from committed source `b1e46801fdec4c49685ba9a3b529d75074e37be5`.
+All 70 recorded files under `src/` match the delivered tree, including
+`reactive_bundle.py` SHA-256 `f191c15341f0d19ab54cf1b80d64c7d93a230b77912b4619dc996e34bd34db60`.
+The [source verification](results/runs/reactive_3c_verified/source_verification.json)
+also checks equal numerical settings. Capture differs from the earlier
+91.54332138374535% result by **0 percentage points**; the maximum RMS residual,
+scaled boundary residual and separate boundary residual norm each differ by zero.
+The earlier `reactive_3c_final` run is retained and labeled superseded because
+its source hashes predate the final implementation. Its recorded hashes are unchanged.
 
 The solve used MA57. HSL, a collection of Fortran codes for large-scale
 scientific computation. https://www.hsl.rl.ac.uk/
