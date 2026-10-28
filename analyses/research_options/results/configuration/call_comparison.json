@@ -1,0 +1,103 @@
+{
+  "question": "Do the Python and JSON-file calling paths return and retain the same attempt, while preserving the accepted Henry reference and truthful unavailability?",
+  "evidence_type": "numerical verification; not physical validation or a speed comparison",
+  "conditions": {
+    "case": "C_cases_data / 3C",
+    "data_type": "mole",
+    "vapor_composition_mode": "legacy_ratio",
+    "gas_flow_basis": "reported_total_wet",
+    "thermodynamics": "ideal_henry",
+    "film_model": "enhancement_factor, explicit",
+    "thermal_state_mode": "enthalpy",
+    "transform_mode": "raw",
+    "method": "scipy-bvp",
+    "settings": {
+      "mesh_points": 21,
+      "tol": 0.5,
+      "bc_tol": 0.001,
+      "max_nodes": 1000
+    }
+  },
+  "numerical_comparison": {
+    "capture_percent": 91.4830870059853,
+    "capture_reference_percent": 91.4830870059853,
+    "capture_difference_percentage_points": 0.0,
+    "native_grid_nodes": 22,
+    "native_grid_exact": true,
+    "scaled_state_shape": [
+      7,
+      22
+    ],
+    "maximum_scaled_state_absolute_difference": 0.0,
+    "maximum_scaled_state_tolerance_ratio": 0.0,
+    "scaled_state_tolerance": {
+      "rtol": 1e-10,
+      "atol": 1e-12
+    },
+    "maximum_sampled_temperature_difference_K": 0.0,
+    "sampled_temperature_tolerance_K": 1e-08,
+    "native_layout_exact": true,
+    "outer_stage_exact": true,
+    "physical_input_fingerprint": "b7dae09cc592a2cd1ff71f5f7387b63121b6625059928f4ae051cd5f7fbf9f51",
+    "physical_input_fingerprint_matches_reference_and_previous_attempt": true
+  },
+  "calling_paths": {
+    "json_command": {
+      "exit_code": 0,
+      "stdout_is_strict_json": true,
+      "parsed_return_equals_retained_attempt": true,
+      "stderr_contains_solver_messages": true
+    },
+    "python_run_research": {
+      "returned_value_is_strict_json": true,
+      "returned_value_equals_retained_attempt": true,
+      "verification_process_exit_code": 0
+    },
+    "unavailable_json_command": {
+      "exit_code": 1,
+      "parsed_return_equals_retained_attempt": true,
+      "failure_kind": "capability_refusal",
+      "cause": "epcsaft_reactive_nine: ModuleNotFoundError: No module named 'epcsaft.records'",
+      "outer_solver_stages": {},
+      "observables": {},
+      "profile_available": false
+    },
+    "repeat_overwrite": {
+      "exit_code": 2,
+      "error_kind": "FileExistsError",
+      "existing_attempt_sha256_unchanged": true
+    },
+    "invalid_method_request": {
+      "exit_code": 2,
+      "error": {
+        "kind": "TypeError",
+        "cause": "unhashable type: 'list'"
+      },
+      "attempt_fabricated": false
+    }
+  },
+  "retained_records": [
+    "henry_reference.json",
+    "python_return_before/attempt.json",
+    "json_command_return_final/request.json",
+    "json_command_return_final/stderr.txt",
+    "json_command_return_final/attempt.json",
+    "python_return_after_final/request.json",
+    "python_return_after_final/attempt.json",
+    "json_command_unavailable_final/request.json",
+    "json_command_unavailable_final/stderr.txt",
+    "json_command_unavailable_final/attempt.json",
+    "invalid_method_request.json",
+    "invalid_method_response.json"
+  ],
+  "source_files_unchanged_sha256": {
+    "src/mea_absorption_column/research.py": "bc95be02e5d6c1bd30dde4d882af2b60652134156299d836c6170a9b0fa16d58",
+    "src/mea_absorption_column/column.py": "1cd9618547596ec8dc65580763b914c5331139ee408f94cf2a8df5b316884047"
+  },
+  "decision": "The existing model can be called as an app-facing Python function or JSON-file command with identical retained results and explicit failure output on this verified domain case.",
+  "limits": [
+    "Only the stated Henry Case 3C configuration was numerically compared.",
+    "The nine-species seven-state request remains unavailable because epcsaft.records is missing from the prepared Engine interface.",
+    "No speed improvement or physical validity is established."
+  ]
+}

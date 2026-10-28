@@ -1,0 +1,75 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "solver_termination_and_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "3C",
+    "physical_input_file": null,
+    "source": "C_cases_data",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": null,
+    "mobility_law": null,
+    "references": [],
+    "thermal_reference": null
+  },
+  "engine": {
+    "commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "required": false,
+    "sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "wheel": "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/research_options/results/configuration/henry_candidate_final",
+    "process_isolation": true,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 120.0
+  },
+  "initialization": {
+    "policy": "legacy_capture_temperature_guesses",
+    "values": {}
+  },
+  "model": {
+    "coordinate": "normalized_height",
+    "energy_model": "empirical_enthalpy",
+    "film_model": "enhancement_factor",
+    "formulation": "seven_state",
+    "layout": "seven_enthalpy",
+    "parameters": {
+      "enhancement_type": "explicit",
+      "staged_beds": false
+    },
+    "pressure_model": "constant",
+    "thermo_model": "ideal_henry"
+  },
+  "numerics": {
+    "method": "scipy-bvp",
+    "solver_settings": {
+      "bc_tol": 0.001,
+      "jacobian_mode": "numerical",
+      "max_nodes": 1000,
+      "mesh_points": 21,
+      "profile_csvs": false,
+      "profile_pngs": false,
+      "return_profiles": true,
+      "thermal_state_mode": "enthalpy",
+      "tol": 0.5,
+      "transform_mode": "raw",
+      "use_finite_jacobian": false,
+      "verbose": 0
+    }
+  },
+  "preset": "seven_state_legacy",
+  "resolved_config_sha256": "0fec2f35ea61c586300cbaede9963dcfae4ec4af51d64be2c22629d83137268f",
+  "schema_version": 1
+}

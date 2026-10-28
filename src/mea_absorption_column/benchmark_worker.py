@@ -16,7 +16,7 @@ from mea_absorption_column.benchmark import (
     load_case_data,
     settings_from_payload,
 )
-from mea_absorption_column.config.column import CapabilityRefusal, ConfigurationError, verify_worker_identity
+from mea_absorption_column.config.column import CapabilityRefusal, ConfigurationError, verify_worker_identity, verify_seven_state_capability
 
 
 def main(argv=None):
@@ -30,6 +30,8 @@ def main(argv=None):
     try:
         if payload.get("runtime_identity") is not None:
             worker_identity = verify_worker_identity(payload["runtime_identity"])
+        if payload.get("task") not in {"conserved_preparation", "conserved_execution"}:
+            verify_seven_state_capability(payload["thermo_model"])
     except CapabilityRefusal as exc:
         output_path.write_text(json.dumps(_json_clean({
             "case_id": str((payload.get("resolved_case") or {}).get("case_id", payload.get("run", "unknown"))),

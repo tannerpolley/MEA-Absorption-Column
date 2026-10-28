@@ -21,44 +21,72 @@ python3 src/mea_absorption_column/research.py --list-options
 python3 src/mea_absorption_column/research.py analyses/research_options/options.toml
 ```
 
-Edit the TOML selections, case IDs, output directory and numerical settings.
-Then explicitly run a new calculation in the uv environment:
+Edit the TOML or JSON case, physical choices, output directory and numerical settings.
+Then explicitly run it in the prepared uv environment:
 
 ```bash
 uv sync --frozen --group test
 uv run python -m mea_absorption_column.research analyses/research_options/options.toml --run
 ```
 
-Existing output directories are refused. The resolved selection and benchmark
-settings are saved beside each new result. Presets are starting points, not
-scientific admission rules. An unknown or incompatible implemented option fails
-explicitly; numerical completion and physical agreement remain separate questions.
+The direct script above provides runtime-free preview; module invocation imports
+the package runtime. One immutable configuration owner resolves ordinary runs,
+and `run_column` executes them. Existing output directories are refused. The
+attempt retains resolved physical inputs, model and numerical selections,
+wheel identity, native states, raw solver stages and failures. Model parameters
+belong in `[model.parameters]`; numerical controls belong in
+`[numerics.solver_settings]`. The example selects a Henry Case 3C calculation.
 
-| Formulation | Thermodynamics / film | Methods |
+Python callers pass the same request mapping to `run_column`. Its returned attempt
+is safe for `json.dumps(attempt, allow_nan=False)` and equals retained `attempt.json`:
+
+```python
+import json
+from mea_absorption_column import run_column
+
+request = json.load(open("case.json"))
+attempt = run_column(request)
+capture = attempt.get("observables", {}).get("capture")
+failure = attempt["failure"]
+```
+
+The command accepts the same JSON file:
+
+```bash
+python3 src/mea_absorption_column/research.py case.json
+uv run --no-sync python src/mea_absorption_column/research.py case.json --run > attempt.json
+```
+
+Execution prints one attempt JSON object to stdout; Python solver messages go
+to stderr. Exit 0 means execution completed without a retained failure, exit 1
+returns a failed, timed-out or interrupted attempt, and exit 2 returns a separate
+error JSON for loading, invalid requests or overwrite refusal. Numerical, physical
+and scientific acceptance remain separate fields; inspect them before using values.
+This supplies a configured calculation for a caller without a graphical app or server.
+
+| Preset | Thermodynamics / film | Methods |
 |---|---|---|
-| `seven_state` | Henry, neutral/ionic ePC-SAFT, or nine-species reactive ePC-SAFT; explicit/implicit enhancement or a supplied frozen film linearization | `single`, `scipy-bvp`, `finite` |
-| `conserved` | A user-supplied `problem_factory` builds compatible balances and boundary equations, interpreting the selected thermo/film labels | `trapezoidal`, `central`, `shooting`, `collocation` |
+| `seven_state_legacy` | Henry, neutral/ionic ePC-SAFT or nine-species reactive ePC-SAFT; enhancement or supplied frozen film | `single`, `scipy-bvp`, `finite` |
+| `twelve_state_conserved` | Existing reactive ePC-SAFT with `equilibrium_manifold` or `enhancement_reference` film and identified physical inputs | `trapezoidal`, `central`, `upwind` |
 
-The immutable `twelve_state_conserved` configuration connects trapezoidal and
-central methods to a bounded worker. Always supply `execution.wall_limit_s` for
-an actual run. `prepare_conserved_column` provides graph preparation separately.
-Set `model.film_model` to `equilibrium_manifold` (the default) or
-`enhancement_reference`; unsupported finite-rate choices fail before assembly.
-The first retained native attempt is a numerically accepted two-node
-trapezoidal result. An independent final-tree capability review found no
-remaining blocker in the bounded execution path; physical certification,
-refinement, and notebook review remain open. The solver connection is
-bounded to its retained coarse result and establishes no resolved profile or
-physical-accuracy claim.
-Reduced shooting and collocation remain explicit unavailable choices.
-Their existing generic research interface remains available. The earlier experiment remains under
-`archive/coupled-solver-2026-09-08`. Built-in eNRTL and MDEA column paths are not implemented by a menu
-label. Their future implementation can use the same explicit problem selection.
-See `analyses/research_options/README.md` and its rendered notebook for evidence,
-compatibility and candidate studies.
+Seven-state temperature and enthalpy representations retain distinct resolved
+layouts. Coupled chemistry follows the selected thermodynamics. The old
+seven-state ePC-SAFT adapters need interfaces absent from the current Engine pin;
+the selected prepared runtime is checked before the outer solve, and exact
+missing-interface failures are retained without substituting a model.
 
-For a reproducible single case, the same preview/run command also accepts an
-immutable preset configuration:
+The twelve-state selection retains its existing fixed case policy, explicit
+worker wall limit, exploratory mobility assumptions and caloric limitations.
+Reduced shooting and collocation are disclosed as unavailable and refused before
+outer assembly. Existing coarse numerical evidence does not establish a resolved
+profile or physical accuracy. The separate `research.run_conserved` utility
+accepts already constructed numerical equations; ordinary TOML runs use the two
+column presets. Built-in eNRTL and MDEA columns remain unavailable.
+See `analyses/research_options/README.md` and its notebook for selections,
+retained evidence and limitations.
+
+For a reproducible single case, the preview/run command accepts this
+immutable configuration:
 
 ```toml
 preset = "seven_state_legacy"
@@ -83,6 +111,8 @@ identified physical-input JSON, such as
 `analyses/bvp_solution_methods/input/case_3c.json`. Estimated mobilities and
 provisional caloric references permit exploratory calculations, not a thermal
 validation claim.
+For a seven-state multistart, the configured wall limit applies separately to
+each candidate worker; it is not an aggregate deadline for the parent call.
 
 ## Organization and ownership
 

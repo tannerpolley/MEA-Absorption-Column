@@ -1,0 +1,18 @@
+{
+  "boundary_percentage_norm": 6.69501755457092e-14,
+  "candidate": "henry_candidate_final/attempt.json",
+  "capture_difference_percentage_points": 0.0,
+  "capture_percent": 91.4830870059853,
+  "engine_wheel_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+  "evidence_type": "numerical verification; no physical validation or speed comparison",
+  "maximum_scaled_state_difference": 0.0,
+  "maximum_temperature_difference_K": 0.0,
+  "native_nodes": 22,
+  "reference": "henry_reference.json",
+  "same_layout_and_stage_termination": true,
+  "same_native_grid": true,
+  "same_physical_input_identity": true,
+  "unavailable_attempt": "reactive_nine_unavailable_final/attempt.json",
+  "unavailable_cause": "epcsaft_reactive_nine: ModuleNotFoundError: No module named 'epcsaft.records'",
+  "unavailable_has_no_outer_stage_or_computed_observables": true
+}

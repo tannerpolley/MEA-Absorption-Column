@@ -1,0 +1,10 @@
+{
+  "capture_percent": 91.4830870059853,
+  "native_nodes": 22,
+  "physical_input_sha256": "b7dae09cc592a2cd1ff71f5f7387b63121b6625059928f4ae051cd5f7fbf9f51",
+  "execution": "completed",
+  "json_encoding": {
+    "error": "TypeError",
+    "cause": "Object of type ndarray is not JSON serializable"
+  }
+}

@@ -8,31 +8,144 @@ date: 2026-09-08
 When do thermodynamic and interphase-model choices change predicted capture and
 axial temperature, and which numerical methods resolve those changes efficiently?
 The submitted revision is preserved separately. This notebook organizes retained
-findings and possible next studies; no new column calculation was performed during
-branch consolidation.
+findings, numerical preservation checks and possible next studies.
 
 # Select the calculation explicitly
 
-A study TOML file selects a formulation, thermodynamic model, film closure,
-method, cases and numerical settings. Preview prints the selection without
-importing the model. Execution requires `--run` and a new output directory.
+One TOML or JSON file declares a single case, physical model choices, numerical method,
+initialization and execution settings. Its immutable selection is resolved by
+`resolve_column_config` and executed by `run_column`. Direct-script preview
+prints it without importing thermodynamics or a solver; execution requires
+`--run` and a new output directory.
+
+Python callers pass the same mapping to `run_column` and receive the JSON-safe
+attempt that is retained in `attempt.json`. The command accepts JSON requests
+through the same resolver. Execution prints one attempt JSON to stdout, with
+Python solver messages on stderr. Its exit code distinguishes completed
+execution (0), a returned failed/timed-out/interrupted attempt (1), and a separate
+load, request or overwrite error (2). Each result's numerical, physical and
+scientific acceptance retains its own meaning. This is a configured calculation
+for a caller; no graphical app or server is required.
 
 ```bash
 python3 src/mea_absorption_column/research.py --list-options
 python3 src/mea_absorption_column/research.py analyses/research_options/options.toml
+uv run --no-sync python src/mea_absorption_column/research.py case.json --run > attempt.json
 ```
 
-| Formulation | Implemented selections | Meaning |
+| Preset | Selectable calculations | Present limits |
 |---|---|---|
-| Seven-state column | Henry, neutral/ionic ePC-SAFT or nine-species reactive ePC-SAFT; explicit/implicit enhancement or supplied film linearization; shooting, SciPy BVP or finite differences | Existing column balances and empirical calorics, with explicitly selected closures |
-| Conserved balances supplied by a study | Trapezoidal, centered, shooting or adaptive collocation | The builder supplies compatible thermodynamics, film, balances and boundaries; a method change need not change those equations |
-| Twelve-state coupled-column experiment | Preserved source and numerical evidence at `archive/coupled-solver-2026-09-08` | Not yet integrated with the shared seven-state derivative/caloric interface |
+| `seven_state_legacy` | Henry, neutral/ionic or nine-species ePC-SAFT; enhancement or supplied frozen film; shooting, SciPy BVP or finite differences; temperature or empirical enthalpy states | Current Engine pin lacks interfaces required by the old ePC-SAFT adapters; selected unavailable calculations retain the cause before the outer solve |
+| `twelve_state_conserved` | Reactive ePC-SAFT, equilibrium-manifold or enhancement-reference film; trapezoidal, centered or upwind differences | Existing fixed case policy and exploratory physical limits; reduced shooting/collocation remain unavailable |
 
-A linearized film profile is a frozen input to an outer iteration. It is not a
-solved film at every new column state. Native derivatives currently cover the
-explicit-enhancement seven-state path; unsupported derivative combinations fail
-rather than masquerade as an exact Jacobian. Estimated parameters and preliminary
-methods remain usable research topics without being labelled validated.
+Physical overrides belong in `model.parameters`; numerical resolution and state
+representation belong in `numerics.solver_settings`. Coupled chemistry follows
+the selected thermodynamics, and conflicting declarations are refused. A frozen
+film remains an outer-iteration input. Each native numerical owner retains its
+existing compatibility checks, returned grid, equations and failures. The
+low-level `research.run_conserved` utility remains available for already
+constructed numerical equations, outside ordinary TOML column execution.
+For seven-state multistart requests, the existing worker launcher applies process
+isolation and the wall limit separately to each candidate; the parent selects
+among their retained records. One candidate's wall limit is not a total deadline
+for that parent calculation.
+
+# Configuration preservation
+
+The consolidated command reproduces the direct Henry calculation for
+`C_cases_data/3C` on the same converted feeds and prepared Engine wheel. This is
+numerical verification of configuration transport and execution, with unchanged
+column equations. It does not validate the physical prediction or establish a
+speed improvement.
+
+The reference uses molar input conversion, `legacy_ratio` vapor composition,
+`reported_total_wet` gas flow, one bed, explicit enhancement, empirical enthalpy
+states, raw transformation and a numerical Jacobian. The SciPy boundary-value
+method starts with 21 nodes, tolerance 0.5, boundary tolerance 0.001 and a
+1000-node limit. The final command uses an isolated worker with a 120 s wall
+limit. Its native normalized-height grid contains 22 nodes; outer solution
+terminates after two iterations. Feed conversion and physical-input fingerprints
+agree exactly.
+
+| Quantity | Direct reference | Consolidated command | Absolute difference |
+|---|---:|---:|---:|
+| Capture, percent of specified inlet vapor CO2 | 91.4830870059853 | 91.4830870059853 | 0 percentage points |
+| Boundary percentage-norm | 6.69501755457092e-14 | 6.69501755457092e-14 | 0 |
+| Maximum difference in scaled native states | — | — | 0 |
+| Maximum difference in sampled liquid/vapor temperature | — | — | 0 K |
+
+The native grid, state layout and solver-stage termination also agree exactly.
+The checks require capture difference at most `1e-8` percentage points, scaled
+states within `rtol=1e-10, atol=1e-12`, and sampled temperatures within `1e-8 K`.
+Two direct repeats were identical. These tolerances protect numerical
+preservation on this case; they make no physical-accuracy statement. The table
+is sufficient because the question is exact preservation of one calculation;
+overlaying identical profiles would add no distinction.
+
+An isolated request for the existing nine-species seven-state adapter retains
+`ModuleNotFoundError: No module named 'epcsaft.records'` before the outer solver.
+It contains no outer solver stages, computed capture or temperature values, or
+native profile. Numerical and physical acceptance remain unevaluated. The
+prepared wheel lacks the retired interface used by that adapter; replacing the
+adapter is a separate thermodynamic integration change. This finding identifies
+an execution boundary and says nothing about whether the physical equations
+have a solution. The twelve-state formulation retains its separate numerical
+owners and fixed input policy; no new twelve-state column calculation is claimed.
+
+Exact values and identities are retained in
+[the reference](results/configuration/henry_reference.json),
+[the final command attempt](results/configuration/henry_candidate_final/attempt.json),
+[the unavailable attempt](results/configuration/reactive_nine_unavailable_final/attempt.json)
+and [their comparison](results/configuration/comparison.json). The wheel SHA-256
+is `48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060`,
+from Engine commit `464a9897615e513e5cc404ce5b49f46a72466d3d`.
+The retained values have not been promoted for manuscript use.
+
+# Python and JSON calling verification
+
+The same Henry reference also verifies the two calling paths on its stated
+feed basis and numerical settings. Before the return change, the configured
+in-process calculation returned 91.4830870059853 percent capture and 22 nodes,
+but standard JSON encoding failed because its return contained a NumPy array.
+Its saved attempt already used the existing array and tabulated-profile
+representation. The public return now uses that same representation.
+
+| Calling path | Capture, percent | Maximum scaled-state difference from reference | Maximum sampled-temperature difference |
+|---|---:|---:|---:|
+| Python configured call | 91.4830870059853 | 0 | 0 K |
+| JSON-file command | 91.4830870059853 | 0 | 0 K |
+
+Both paths preserve the exact 22-node native grid, state layout, solver-stage
+termination and converted-feed fingerprint. Strict JSON encoding succeeds, and
+each returned attempt equals its own retained `attempt.json`. The command was
+also exercised with Python solver messages enabled: its complete stdout parses
+as one JSON object while those messages appear on stderr. These are numerical
+and calling-behavior checks, not physical validation or a speed comparison;
+the existing scalar preservation table is sufficient for this equality question.
+
+The completed command returned exit 0. A nine-species seven-state request
+returned exit 1 and the precise missing `epcsaft.records` cause, with no outer
+solver stages, computed capture or native profile. A repeated request to the
+existing output directory returned exit 2 with `FileExistsError` and left the
+retained attempt unchanged. Exit codes describe execution or request handling;
+numerical, physical and scientific acceptance remain separate returned fields.
+The malformed request `numerics.method=[]` also returns exit 2 with the original
+`TypeError: unhashable type: 'list'` before any model calculation. This error
+handling applies to request loading and resolution; execution defects retain
+their separate meaning.
+Python stdout redirection does not promise capture of arbitrary future native
+library writes. The prepared interpreter and wheel requirements still apply.
+
+The [calling comparison](results/configuration/call_comparison.json) links the
+exact requests, numerical attempts and diagnostic output. The
+[pre-change encoding failure](results/configuration/python_return_before/encoding.json),
+[Python attempt](results/configuration/python_return_after_final/attempt.json),
+[JSON-command attempt](results/configuration/json_command_return_final/attempt.json)
+and [unavailable request](results/configuration/json_command_unavailable_final/attempt.json)
+retain their own source and input identities. This evidence supports calling
+the existing configured calculation from a host application without another
+numerical implementation. It adds no availability or accuracy claim for other
+thermodynamic selections and has not been promoted for manuscript use.
 
 # Retained findings and potential promotions
 

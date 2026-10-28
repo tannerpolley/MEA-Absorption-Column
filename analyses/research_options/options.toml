@@ -1,33 +1,36 @@
-# Editable research example; preview never runs a column.
-formulation = "seven_state"
-thermo_model = "epcsaft_reactive_nine"
+# One editable absorber request; preview never runs a column.
+preset = "seven_state_legacy"
+
+[case]
+source = "C_cases_data"
+id = "3C"
+data_type = "mole"
+vapor_composition_mode = "legacy_ratio"
+gas_flow_basis = "reported_total_wet"
+
+[model]
+thermo_model = "ideal_henry"
 film_model = "enhancement_factor"
-method = "scipy-bvp"
-output_dir = "analyses/research_options/results/runs/nine_species_3c"
 
-[cases]
-c_case_limit = 0
-nccc_dataset = "2017"
-nccc_case_ids = ["3C"]
-srp_case_limit = 0
-
-[settings]
-data_type = "mass"
+[model.parameters]
 staged_beds = false
-profile_csvs = true
-profile_pngs = false
-subprocess_timeout_s = 1200.0
+enhancement_type = "explicit"
 
-[solver_settings]
+[numerics]
+method = "scipy-bvp"
+
+[numerics.solver_settings]
 mesh_points = 21
 tol = 0.5
 bc_tol = 0.001
 max_nodes = 1000
-thermal_state_mode = "temperature"
+thermal_state_mode = "enthalpy"
 transform_mode = "raw"
-vapor_composition_mode = "dry_saturated"
-gas_flow_basis = "reported_dry_mass"
-jacobian_mode = "native"
-enhancement_type = "explicit"
-reactive_reuse_states = true
-reactive_loading_anchor = 0.25
+jacobian_mode = "numerical"
+profile_csvs = true
+profile_pngs = false
+
+[execution]
+output_dir = "analyses/research_options/results/runs/henry_3c"
+process_isolation = true
+wall_limit_s = 120.0

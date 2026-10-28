@@ -24,6 +24,7 @@ from .config.column import (
     resolve_column_config,
     TWELVE_PRESET,
     verify_engine,
+    verify_seven_state_capability,
     verify_worker_identity,
 )
 from .misc.Convert_Data import convert_data, physical_input_fingerprint
@@ -405,6 +406,13 @@ def _record(path: Path | None, name: str, value: Any) -> None:
 
 def _settings(config: ColumnConfig, output_dir: Path | None, resolved_inputs: dict[str, Any] | None = None) -> BenchmarkSettings:
     solver = dict(config.numerics.as_dict()["solver_settings"])
+    parameters = dict(config.model.as_dict().get("parameters", {}))
+    staged_beds = parameters.pop("staged_beds", "auto")
+    solver.update(parameters)
+    solver["co2_mass_transfer_model"] = config.model.film_model
+    from .Run_Model import _default_chemical_equilibrium_model
+
+    solver.setdefault("chemical_equilibrium_model", _default_chemical_equilibrium_model(config.model.thermo_model))
     init_values = dict(config.initialization.as_dict()["values"])
     solver.update(init_values)
     if config.acceptance.boundary_residual_max is not None:
@@ -420,7 +428,7 @@ def _settings(config: ColumnConfig, output_dir: Path | None, resolved_inputs: di
         output_dir=output_dir or Path(".tmp_column_runs"),
         write_artifacts=output_dir is not None,
         data_type=config.case.data_type,
-        staged_beds="auto",
+        staged_beds=staged_beds,
         solver_settings=solver,
         profile_csvs=bool(solver.get("profile_csvs", False)),
         profile_pngs=bool(solver.get("profile_pngs", False)),
@@ -1176,7 +1184,7 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
     return base
 
 def run_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
-    """Run one resolved seven-state case and retain stage/failure provenance."""
+    """Run one resolved column and return the JSON-safe retained attempt."""
     if not isinstance(config, ColumnConfig):
         if hasattr(config, "as_dict"):
             config = config.as_dict()
@@ -1188,7 +1196,7 @@ def run_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
         # the same wire-level validation used for TOML/JSON configurations.
         config = resolve_column_config(config.as_dict())
     if config.preset == "twelve_state_conserved":
-        return _run_conserved_preparation(config)
+        return _safe(_run_conserved_preparation(config))
     if config.preset != "seven_state_legacy":
         raise ConfigurationError(f"Unsupported column preset: {config.preset}")
 
@@ -1266,8 +1274,9 @@ def run_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
     started = time.perf_counter()
 
     def finish() -> dict[str, Any]:
-        _record(output_dir, "attempt.json", base)
-        return base
+        attempt = _safe(base)
+        _record(output_dir, "attempt.json", attempt)
+        return attempt
 
     try:
         if prepared is None:
@@ -1280,6 +1289,9 @@ def run_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
         base["engine"] = engine
         _record(output_dir, "attempt.json", base)
 
+        if not config.execution.process_isolation:
+            base["engine"]["worker"] = verify_worker_identity(config.engine.as_dict())
+            verify_seven_state_capability(config.model.thermo_model)
         from . import benchmark
 
         result = benchmark._run_one_case(
@@ -1340,7 +1352,9 @@ def run_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
         else:
             base["observation_agreement"] = "accepted" if all(observation_criteria) else "rejected"
         base["observation_agreement_scope"] = "capture agreement only"
-        if execution_status != "completed":
+        if failure_kind == "capability_refusal":
+            base["numerical_acceptance"] = "not_evaluated"
+        elif execution_status != "completed":
             base["numerical_acceptance"] = "rejected"
         elif numerical_criteria:
             if not stage_status:
@@ -1411,6 +1425,10 @@ def run_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
                 "cause": result.get("message"),
                 "diagnostics": base["diagnostics"],
             }
+    except CapabilityRefusal as exc:
+        base["execution"].update({"status": "failed", "runtime_s": time.perf_counter() - started})
+        base["failure"] = {"kind": "capability_refusal", "phase": "worker_preparation", "cause": str(exc), "diagnostics": base["diagnostics"]}
+        base["result"] = None
     except KeyboardInterrupt as exc:
         base["execution"].update({"status": "interrupted", "runtime_s": time.perf_counter() - started})
         base["failure"] = {"kind": "interrupted", "cause": str(exc), "diagnostics": base["diagnostics"]}

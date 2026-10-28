@@ -38,22 +38,29 @@ _METHOD_DEFAULTS = {
     "finite": {"maxfev": 500, "tol": 1e-4},
 }
 _COMMON_NUMERIC_KEYS = {
-    "co2_mass_transfer_model", "enhancement_type", "chemical_equilibrium_model",
-    "co2_capture_guess_pct", "h2o_capture_guess_pct", "mass_transfer_factor",
-    "heat_transfer_factor", "eta_psi", "co2_flux_mode", "epcsaft_fugacity_blend",
+    "co2_mass_transfer_model",
+    "co2_capture_guess_pct", "h2o_capture_guess_pct",
     "guard_rhs", "strict_domain_guards", "transform_mode", "thermal_state_mode",
-    "gas_velocity_area_exponent", "gas_velocity_area_reference_m_s", "gas_velocity_area_bounds",
     "jacobian_mode", "shooting_seed_jacobian_mode", "continuation_stage", "continuation_path",
     "return_profiles", "return_internal_profile", "profile_pngs", "profile_csvs", "profile_csv_dir",
-    "reactive_dataset", "reactive_loading_anchor", "reactive_reuse_states", "reactive_kij_scale",
-    "reactive_reaction_scale", "reactive_max_log_loading_step", "reactive_max_loading_steps",
+    "reactive_loading_anchor", "reactive_reuse_states",
+    "reactive_max_log_loading_step", "reactive_max_loading_steps",
     "success_boundary_residual_max", "success_capture_error_max_pct",
-    "intercooler_strength", "intercooler_model", "max_runtime_s",
-    "capture_correction_model", "seed_from_shooting", "seed_from_collapsed",
+    "max_runtime_s",
+    "seed_from_shooting", "seed_from_collapsed",
     "seed_from_henry", "use_finite_jacobian", "seed_jacobian_mode",
-    "multistart_capture_guesses", "multistart_mass_transfer_factors",
-    "multistart_intercooler_strengths", "multistart_co2_flux_modes",
+    "multistart_capture_guesses",
     "initial_guess_scaled", "initial_guess_z", "case_source",
+}
+
+_MODEL_PARAMETER_KEYS = {
+    "enhancement_type", "chemical_equilibrium_model", "mass_transfer_factor",
+    "heat_transfer_factor", "eta_psi", "co2_flux_mode", "epcsaft_fugacity_blend",
+    "gas_velocity_area_exponent", "gas_velocity_area_reference_m_s", "gas_velocity_area_bounds",
+    "reactive_dataset", "reactive_kij_scale", "reactive_reaction_scale",
+    "intercooler_strength", "intercooler_model", "capture_correction_model",
+    "reactive_film_linearization", "staged_beds",
+    "multistart_mass_transfer_factors", "multistart_intercooler_strengths", "multistart_co2_flux_modes",
 }
 
 
@@ -138,8 +145,9 @@ class ModelConfig:
     pressure_model: str
     layout: str
     coordinate: str
+    parameters: tuple[tuple[str, Any], ...] = ()
 
-    def as_dict(self) -> dict[str, str]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "formulation": self.formulation,
             "thermo_model": self.thermo_model,
@@ -148,6 +156,7 @@ class ModelConfig:
             "pressure_model": self.pressure_model,
             "layout": self.layout,
             "coordinate": self.coordinate,
+            **({"parameters": _thaw(self.parameters)} if self.parameters else {}),
         }
 
 
@@ -376,7 +385,7 @@ def _case(request: Mapping[str, Any]) -> CaseRequest:
     return CaseRequest(source, case_id.strip(), data_type, vapor_mode, gas_basis, physical)
 
 
-def _numeric(request: Mapping[str, Any]) -> NumericConfig:
+def _numeric(request: Mapping[str, Any], parameters: Mapping[str, Any], film_model: str) -> NumericConfig:
     values = dict(request)
     settings = values.pop("solver_settings", values.pop("settings", {}))
     method = values.pop("method", "single")
@@ -389,18 +398,28 @@ def _numeric(request: Mapping[str, Any]) -> NumericConfig:
     if not isinstance(settings, Mapping):
         raise ConfigurationError("numerics.solver_settings must be a table/mapping")
     settings = dict(settings)
-    unknown = set(settings) - set(_METHOD_DEFAULTS[method]) - _COMMON_NUMERIC_KEYS
+    misplaced = set(settings) & _MODEL_PARAMETER_KEYS
+    if misplaced:
+        raise ConfigurationError(f"Physical choices belong in model.parameters: {sorted(misplaced)}")
+    settings.update(parameters)
+    unknown = set(settings) - set(_METHOD_DEFAULTS[method]) - _COMMON_NUMERIC_KEYS - _MODEL_PARAMETER_KEYS
     if unknown:
         raise ConfigurationError(f"Unknown or irrelevant solver settings: {sorted(unknown)}")
-    if settings.get("co2_mass_transfer_model", "enhancement_factor") != "enhancement_factor":
-        raise ConfigurationError("seven_state_legacy requires co2_mass_transfer_model='enhancement_factor'")
-    settings.setdefault("co2_mass_transfer_model", "enhancement_factor")
+    if "co2_mass_transfer_model" in settings:
+        raise ConfigurationError("Select the film only through model.film_model")
     if settings.get("jacobian_mode") == "native" and method != "scipy-bvp":
         raise ConfigurationError("native seven-state Jacobian is supported only by unstaged scipy-bvp")
-    if settings.get("thermal_state_mode", "enthalpy") != "enthalpy":
-        raise ConfigurationError("seven_state_legacy uses its enthalpy state layout")
-    if settings.get("transform_mode") not in {None, "raw", "bounded_guarded_raw_state"}:
+    settings.setdefault("thermal_state_mode", "enthalpy")
+    if settings["thermal_state_mode"] not in {"enthalpy", "temperature"}:
+        raise ConfigurationError("thermal_state_mode must be 'enthalpy' or 'temperature'")
+    if settings.get("transform_mode") not in {None, "raw", "bounded_guarded_raw_state", "positive_flow_pressure", "case_bounded_flow_pressure"}:
         raise ConfigurationError("Unsupported seven-state transform_mode")
+    if not (isinstance(parameters.get("staged_beds", "auto"), bool) or parameters.get("staged_beds", "auto") == "auto"):
+        raise ConfigurationError("model.parameters.staged_beds must be boolean or 'auto'")
+    if film_model == "reactive_film_linearization" and "reactive_film_linearization" not in parameters:
+        raise ConfigurationError("Frozen film requires model.parameters.reactive_film_linearization")
+    if film_model != "reactive_film_linearization" and "reactive_film_linearization" in parameters:
+        raise ConfigurationError("Frozen-film input conflicts with model.film_model")
     if settings.get("co2_flux_mode") not in {None, "bidirectional", "forward_only", "absorption_only"}:
         raise ConfigurationError("Unsupported co2_flux_mode")
     if settings.get("enhancement_type") not in {None, "explicit", "implicit"}:
@@ -455,7 +474,7 @@ def _numeric(request: Mapping[str, Any]) -> NumericConfig:
                     raise ConfigurationError(f"Unsupported values in {key}")
             elif any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) for value in values):
                 raise ConfigurationError(f"{key} must contain finite numeric values")
-    return NumericConfig(method, _freeze(resolved))
+    return NumericConfig(method, _freeze({key: value for key, value in resolved.items() if key not in parameters}))
 
 
 def _conserved_numeric(request: Mapping[str, Any]) -> NumericConfig:
@@ -612,8 +631,16 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
         raise ConfigurationError(f"Unknown absorber preset: {preset!r}")
     case = _case(_section(request, "case"))
     model_values = dict(_section(request, "model"))
+    parameters = model_values.pop("parameters", {})
+    if not isinstance(parameters, Mapping):
+        raise ConfigurationError("model.parameters must be a table/mapping")
+    parameters = dict(parameters)
+    numerics_request = _section(request, "numerics")
     dependencies = _dependencies(_section(request, "dependencies"))
     if preset == TWELVE_PRESET:
+        if parameters:
+            raise ConfigurationError("The twelve-state physical parameters belong in its identified physical-input file")
+        numerics = _conserved_numeric(numerics_request)
         film_model = model_values.get("film_model", "equilibrium_manifold")
         if film_model not in {"equilibrium_manifold", "enhancement_reference"}:
             raise ConfigurationError(
@@ -649,13 +676,27 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             "coordinate": "physical_height",
         }
     else:
+        unknown_parameters = set(parameters) - _MODEL_PARAMETER_KEYS
+        if unknown_parameters:
+            raise ConfigurationError(f"Unknown model.parameters: {sorted(unknown_parameters)}")
+        thermo_model = model_values.get("thermo_model", "ideal_henry")
+        if thermo_model not in {"ideal_henry", "epcsaft_neutral", "epcsaft_ionic", "epcsaft_reactive_nine"}:
+            raise ConfigurationError(f"Unsupported seven-state thermodynamic model: {thermo_model!r}")
+        chemistry = "epcsaft_reactive_nine" if thermo_model == "epcsaft_reactive_nine" else "legacy"
+        if parameters.get("chemical_equilibrium_model", chemistry) != chemistry:
+            raise ConfigurationError("Coupled chemistry and thermodynamic selection conflict")
+        film_model = model_values.get("film_model", "enhancement_factor")
+        if film_model not in {"enhancement_factor", "reactive_film_linearization"}:
+            raise ConfigurationError(f"Unsupported seven-state film model: {film_model!r}")
+        numerics = _numeric(numerics_request, parameters, film_model)
+        thermal = numerics.as_dict()["solver_settings"]["thermal_state_mode"]
         expected = {
             "formulation": "seven_state",
-            "thermo_model": "ideal_henry",
-            "film_model": "enhancement_factor",
+            "thermo_model": thermo_model,
+            "film_model": film_model,
             "energy_model": "empirical_enthalpy",
             "pressure_model": "constant",
-            "layout": "seven_enthalpy",
+            "layout": f"seven_{thermal}",
             "coordinate": "normalized_height",
         }
     for name, value in model_values.items():
@@ -663,9 +704,7 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             raise ConfigurationError(f"Unknown model key: {name}")
         if value != expected[name]:
             raise ConfigurationError(f"{preset} fixes model.{name}={expected[name]!r}; got {value!r}")
-    model = ModelConfig(**expected)
-    numerics_request = _section(request, "numerics")
-    numerics = _conserved_numeric(numerics_request) if preset == TWELVE_PRESET else _numeric(numerics_request)
+    model = ModelConfig(**expected, parameters=_freeze(parameters))
     init_values = _section(request, "initialization")
     if set(init_values) - {"policy", "values"}:
         raise ConfigurationError(f"Unknown initialization keys: {sorted(set(init_values) - {'policy', 'values'})}")
@@ -711,12 +750,12 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     default_engine_record = _default_engine().as_dict()
     wire_roundtrip_default = (
         request.get("resolved_config_sha256") is not None
-        and engine_request.get("required", False) in {False, True if preset == TWELVE_PRESET else False}
+        and engine_request.get("required", False) in {False, True if (preset == TWELVE_PRESET or model.thermo_model != "ideal_henry") else False}
         and all(engine_request.get(key, default_engine_record[key]) == default_engine_record[key]
                 for key in ("wheel", "sha256", "commit", "python"))
     )
     engine_explicit = any(key in engine_request for key in ("wheel", "sha256", "commit", "python")) and not wire_roundtrip_default
-    engine_required = bool(engine_request.get("required", engine_explicit or preset == TWELVE_PRESET))
+    engine_required = bool(engine_explicit or preset == TWELVE_PRESET or model.thermo_model != "ideal_henry" or engine_request.get("required", False))
     engine = _engine(engine_request, required=engine_required)
     if engine_explicit and not execution.process_isolation:
         raise ConfigurationError("explicit Engine selection requires execution.process_isolation=true")
@@ -898,3 +937,21 @@ def verify_worker_identity(expected: Mapping[str, Any]) -> dict[str, Any]:
         "python_exec_prefix": str(Path(sys.exec_prefix).resolve()),
     })
     return identity
+
+
+def verify_seven_state_capability(thermo_model: str) -> None:
+    """Refuse missing interfaces used by the selected existing adapter."""
+    if thermo_model not in {"epcsaft_neutral", "epcsaft_ionic", "epcsaft_reactive_nine"}:
+        return
+    try:
+        module = importlib.import_module("epcsaft")
+        if thermo_model == "epcsaft_reactive_nine":
+            records = importlib.import_module("epcsaft.records")
+            if not hasattr(records, "ReactionCorrelationRecord"):
+                raise AttributeError("epcsaft.records.ReactionCorrelationRecord is unavailable")
+        if not hasattr(module.Parameters, "from_mapping"):
+            raise AttributeError("epcsaft.Parameters.from_mapping is unavailable")
+        if not hasattr(module, "unit_registry"):
+            raise AttributeError("epcsaft.unit_registry is unavailable")
+    except (ImportError, AttributeError) as exc:
+        raise CapabilityRefusal(f"{thermo_model}: {type(exc).__name__}: {exc}") from exc

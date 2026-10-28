@@ -1,0 +1,38 @@
+{
+  "preset": "seven_state_legacy",
+  "case": {
+    "source": "C_cases_data",
+    "id": "3C",
+    "data_type": "mole",
+    "vapor_composition_mode": "legacy_ratio",
+    "gas_flow_basis": "reported_total_wet"
+  },
+  "model": {
+    "thermo_model": "epcsaft_reactive_nine",
+    "film_model": "enhancement_factor",
+    "parameters": {
+      "staged_beds": false,
+      "enhancement_type": "explicit"
+    }
+  },
+  "numerics": {
+    "method": "scipy-bvp",
+    "solver_settings": {
+      "mesh_points": 21,
+      "tol": 0.5,
+      "bc_tol": 0.001,
+      "max_nodes": 1000,
+      "thermal_state_mode": "enthalpy",
+      "transform_mode": "raw",
+      "jacobian_mode": "numerical",
+      "profile_csvs": false,
+      "profile_pngs": false,
+      "return_profiles": true,
+      "verbose": 1
+    }
+  },
+  "execution": {
+    "output_dir": "analyses/research_options/results/configuration/json_command_unavailable_final",
+    "process_isolation": false
+  }
+}

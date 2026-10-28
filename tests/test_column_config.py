@@ -104,8 +104,8 @@ def test_twelve_state_run_column_retains_conserved_execution(monkeypatch):
         "result": {"accepted": False, "status": "maximum iterations", "profile": None,
                    "solver_statistics": {"success": True}},
         "physical_certification": {"accepted": False},
-        "initialization": {"accepted": True}, "scaling": {"state_scale": [1]},
-        "initial_profile": [[1]], "native_calls": {"liquid_value_A1": {"started": 1}},
+        "initialization": {"accepted": True}, "scaling": {"state_scale": np.array([1.0])},
+        "initial_profile": np.array([[1.0]]), "native_calls": {"liquid_value_A1": {"started": 1}},
     })
     result = run_column({
         "preset": "twelve_state_conserved",
@@ -126,6 +126,8 @@ def test_twelve_state_run_column_retains_conserved_execution(monkeypatch):
     assert result["solver"]["stages"]["outer"]["success"] is True
     assert result["initialization"]["accepted"] is True
     assert result["native_calls"]["liquid_value_A1"]["started"] == 1
+    assert result == json.loads(json.dumps(result, allow_nan=False))
+    assert result["initial_profile"] == [[1.0]]
 
 
 class _ChargeState:
@@ -494,6 +496,7 @@ def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch, 
     assert result["execution"]["status"] == "timed_out"
     assert result["failure"]["kind"] == "timed_out"
     retained = json.loads((tmp_path / "attempt" / "attempt.json").read_text())
+    assert json.loads(json.dumps(result, allow_nan=False)) == retained
     assert retained["failure"]["phase"] == "global_solve"
     assert retained["failure"]["last_checkpoint"]["result"]["profile"] == [[1.0, 2.0]]
     assert retained["physical_acceptance"] == "not_evaluated"
@@ -569,6 +572,7 @@ def test_conserved_worker_retains_preparation_failure_kind(tmp_path):
     assert result["execution"]["status"] == "failed"
     assert result["failure"]["kind"] == "preparation_failed"
     assert "Conserved loading policy" in result["failure"]["message"]
+    assert result == json.loads(json.dumps(result, allow_nan=False))
 
 
 @pytest.mark.parametrize(
@@ -590,13 +594,12 @@ def test_new_config_rejects_ambiguous_controls(extra, message):
 
 
 @pytest.mark.parametrize("transform_mode", ["positive_flow_pressure", "case_bounded_flow_pressure"])
-def test_new_config_rejects_unvalidated_flow_transforms(transform_mode):
-    with pytest.raises(ConfigurationError, match="Unsupported seven-state transform_mode"):
-        resolve_column_config({
-            "preset": "seven_state_legacy",
-            "case": {"source": "C_cases_data", "id": "3C"},
-            "numerics": {"solver_settings": {"transform_mode": transform_mode}},
-        })
+def test_selected_flow_transform_reaches_existing_numerical_owner(transform_mode):
+    config = resolve_column_config({
+        "case": {"source": "C_cases_data", "id": "3C"},
+        "numerics": {"solver_settings": {"transform_mode": transform_mode}},
+    })
+    assert column_runner._settings(config, None).solver_settings["transform_mode"] == transform_mode
 
 
 def test_direct_physical_inputs_reject_fractional_intercoolers():
@@ -764,7 +767,8 @@ def test_resume_reuses_matching_retained_attempt(tmp_path, monkeypatch):
 
     def fake_run(*args, **kwargs):
         calls.append(True)
-        return {"success": True, "message": "solver terminated", "boundary_residual_norm": 0.1}
+        return {"success": True, "message": "solver terminated", "boundary_residual_norm": 0.1,
+                "max_rms_residual": np.array([np.nan])}
 
     monkeypatch.setattr(benchmark, "_run_one_case", fake_run)
     output = tmp_path / "resume"
@@ -775,6 +779,9 @@ def test_resume_reuses_matching_retained_attempt(tmp_path, monkeypatch):
     }
     first = run_column(request)
     second = run_column({**request, "execution": {"output_dir": str(output), "resume": True}})
+    assert first == second == json.loads((output / "attempt.json").read_text())
+    assert json.loads(json.dumps(first, allow_nan=False)) == second
+    assert first["diagnostics"]["max_rms_residual"] == [{"value_class": "nan"}]
     assert first["attempt_id"] == second["attempt_id"]
     assert len(calls) == 1
 
