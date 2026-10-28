@@ -7,10 +7,15 @@ revision has been submitted; new work belongs in `analyses/` and Quarto notebook
 ## Submitted revision
 
 The clean remote branch `codex/fallback-manuscript` at `eef9dce` preserves the
-submitted document, source, supporting results and reproduction instructions.
-Retrieve its `docs/submitted_revision/revision_submission_2026-09-04.zip` for the
-exact PDF, letters, bibliography and source. Its checksum list is for that archive
-commit, not for this evolving research checkout. Do not edit manuscript prose here.
+submitted document, source, supporting results, reviewer records and reproduction
+instructions (`REPRODUCE.md`). The exact PDF, letters, bibliography and source are
+in that branch's `docs/submitted_revision/revision_submission_2026-09-04.zip`:
+
+```bash
+git show eef9dce:docs/submitted_revision/revision_submission_2026-09-04.zip > revision_submission_2026-09-04.zip
+```
+
+Its checksum list covers that archive commit only. Do not edit manuscript prose here.
 
 ## Select a research calculation
 
@@ -91,7 +96,7 @@ validation claim.
 - `analyses/`: study inputs, scripts, retained attempts and Quarto notebooks.
 - `tests/`: focused behavior and independent analytic checks.
 - `docs/scientific/latex/`: preserved submitted manuscript; no ongoing editorial work.
-- `ePC-SAFT-project`: generic Engine equations, equilibrium and derivatives.
+- Engine (`../ePC-SAFT`, GitHub `tannerpolley/ePC-SAFT`): generic equations, equilibrium and derivatives.
 - `Amine-Thermodynamics`: parameter fitting and thermodynamic parameter adoption.
 
 Use identified, non-editable Engine wheels. The pinned dependency is a convenient
@@ -122,7 +127,8 @@ with that page and `--to pdf`; its layout settings remain with the source page:
 bash analyses/render.sh bvp_solution_methods/notebook.qmd --to pdf
 ```
 
-Focused configuration and method checks:
+Focused configuration and method checks (the regression baseline for agents; the
+full suite has 33 known failures on the pinned wheel until the Engine repin, #76):
 
 ```bash
 uv run --frozen pytest -q -p no:cacheprovider tests/test_research_options.py tests/test_research_model_dispatch.py tests/test_epcsaft_contract.py

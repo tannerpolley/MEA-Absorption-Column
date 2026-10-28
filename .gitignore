@@ -157,6 +157,7 @@ cython_debug/
 benchmark_artifacts/
 temp_benchmark_probe/
 .tmp_local/
+.tmp_column_runs/
 .worktrees/
 out/
 analyses/**/results/runs/

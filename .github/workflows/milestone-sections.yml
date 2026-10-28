@@ -34,7 +34,7 @@ jobs:
           section "Column Solver" "02 - CasADi Column Solver Migration" "CasADi/IPOPT column solving: src/mea_absorption_column/BVP, column.py, continuation.py, initialization, scaling, exact derivatives, evaluation cost, and the BVP analyses. Excludes thermodynamics and film closures."
           section "Film and Transport Physics" "Research - Configurable Physics" "Reactive-film closures, mass and heat transfer, and solvent contracts: src/mea_absorption_column/Transport, Properties, research.py, and the reactive-film and transport-sensitivity analyses. Exploratory; not an Engine acceptance gate."
           section "Validation and Calibration" - "Checking and tuning against pilot data: analyses/nccc_validation, physical_acceptance_149, calibration.py, uq.py, and the benchmarks. Excludes model and solver changes."
-          section "Manuscript" - "Paper, reviewer responses, and reproducibility: the reviewer and revision files in docs/, analyses/manuscript.py, REPRODUCE.md."
+          section "Manuscript" - "Paper source and notebook site: docs/scientific/latex and analyses/manuscript.py. The submitted revision and its reviewer records live on branch codex/fallback-manuscript."
           section "Tooling" "Tooling - Research Infrastructure" "Repo hygiene and research tooling: the Zotero project library and Companion knowledge base, scripts/, .github, pyproject.toml, and agent docs. Excludes model, method, and analysis work."
           move 69 "Engine Integration"
           move 71 "Engine Integration"

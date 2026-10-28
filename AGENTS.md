@@ -45,24 +45,20 @@ Revise its inputs through Setup rather than maintaining a separate copy here.
 
 CSE execution mode: direct.
 
-## Startup Reads
-
-- Read `docs/.codex-journal/user_preferences.md` when it exists.
-- Read `docs/.codex-journal/project_memory.md` when it exists.
-
-## Memory Policy
-
-- Keep user preferences and durable project facts concise, date-stamped, and deduplicated.
-- Do not update memory for routine Q&A or small one-off work.
-- Do not store secrets, add placeholder entries, or create new agent memory, including `.codex`, `$HOME/.codex/projects`, or Claude auto memory.
-
 ## Repository Workflow
 
-- Prefer `Local` for foreground solver inspection and `Worktree` for isolated background implementation.
-- Prefer uv-managed commands. Use `.venv/bin/python` only for interpreter-specific debugging.
-- Use `.codex/environments/environment.toml` actions when available.
-- For LaTeX/manuscript work, apply the `cse:latex` skill plus repository-local policy.
-- Preserve the user's existing dirty worktree and inspect overlapping files before editing.
+- A new worktree needs only `uv sync --frozen --group test` (about 2 s); run everything through `uv run --frozen`.
+- Regression baseline: the focused tests listed in `README.md`. Until the Engine repin (#76), the full suite has 33 known failures on the pinned wheel (missing `epcsaft.records` and `ionic_dispersion`).
+- Tests write scratch under `.tmp_local/` and column runs default to `.tmp_column_runs/`; both are git-ignored. A new study result goes in a new `analyses/<study>/results/runs/<label>/` directory.
+- Do not accept slow or broken solver runs as normal: give each case a wall limit (`execution.wall_limit_s`) and a log, stop stale runs you started, and report the root cause with a faster bounded alternative.
+- Preserve existing dirty work and inspect overlapping files before editing.
+- Record durable rules in this file. Do not keep local journals or agent memory for this repository.
+
+## Standing Decisions
+
+- The submitted revision stays unchanged on `codex/fallback-manuscript`. Do not edit its manuscript prose here or rerun its results for consolidation (2026-09-08).
+- `$HOME/Documents/Papers/references.bib` is owned by Zotero/Better BibTeX. Never hand-edit it or its snapshot `docs/scientific/latex/references.bib` (2026-08-12).
+- Manuscript prose: keep `local`, `history`, `historical` and `histories` out of it, and keep software-build chronology outside the article (2026-09-04). For LaTeX, apply `cse:latex` and run the build loop until the edit adds no warnings (2026-05-06).
 
 ## Commit Discipline
 
@@ -72,9 +68,9 @@ CSE execution mode: direct.
 ## ePC-SAFT Cross-Repo Integration
 
 - This is an official downstream application under ePC-SAFT Governance D-038.
-- Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT-project`; do not use the retired `/ePC-SAFT` path or a sibling source import.
+- Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT` (GitHub `tannerpolley/ePC-SAFT`); never import its source tree directly.
 - Normal and final work uses one non-editable `epcsaft` wheel identified by Engine commit and wheel SHA-256. Intentional co-development uses an explicitly supplied candidate wheel with the same recorded identity.
-- Keep absorber integration, column validation, process analyses, and this repository's manuscript here. Thermodynamic parameter adoption remains owned by Amine-Thermodynamics; generic equations and solvers remain owned by ePC-SAFT-project.
+- Keep absorber integration, column validation and process analyses here. Thermodynamic parameter adoption remains owned by Amine-Thermodynamics; generic equations and solvers remain owned by the Engine.
 - Do not create nested repositories, submodules, mutable Git package dependencies, or dictionary compatibility copies of Engine behavior.
 - Final manuscript, report, or archive results must pass `uv run python scripts/check_epcsaft_integration.py --mode final` without mutable package state.
 - Preserve result-critical datasets under `src/mea_absorption_column/data/epcsaft_datasets`.
