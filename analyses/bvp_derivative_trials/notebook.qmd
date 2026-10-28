@@ -241,7 +241,7 @@ profile or capture error: this is empirical scaled-profile agreement at a
 coarse stopping tolerance, rather than exact equality or physical validation.
 The 1C runs each had a 90 s wall limit; the corrected 3C probe had a 60 s limit.
 
-Both unchanged 3C regressions pass. The complete suite returns **289 passed,
+Both unchanged 3C previous-failure checks pass. The complete suite returns **289 passed,
 1 warning in 29.68 s**, and the final Engine integration check passes.
 All 1226 pre-existing tracked result files remain byte-unchanged. Exact formulas,
 join and derivative checks, caller consequences, solver logs, and before/after
