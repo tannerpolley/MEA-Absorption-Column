@@ -77,10 +77,10 @@ wheels = [
 
 [[package]]
 name = "epcsaft"
-version = "0.2.0.dev0"
-source = { path = "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl" }
+version = "1.0.0"
+source = { path = "build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl" }
 wheels = [
-    { filename = "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl", hash = "sha256:48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060" },
+    { filename = "epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl", hash = "sha256:57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a" },
 ]
 
 [[package]]
@@ -213,7 +213,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "casadi", specifier = "==3.7.2" },
-    { name = "epcsaft", path = "/home/tnnrpolley21/.cache/epcsaft/wheels/8d9d3fcc30f47f36905a90d3f95754e41c4e1712ce160267c2de26e85b16d969/epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl" },
+    { name = "epcsaft", path = "build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl" },
     { name = "matplotlib", specifier = ">=3.8" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "openpyxl", specifier = ">=3.1" },

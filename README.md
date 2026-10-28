@@ -26,6 +26,28 @@ python3 src/mea_absorption_column/research.py --list-options
 python3 src/mea_absorption_column/research.py analyses/research_options/options.toml
 ```
 
+Obtain the private Engine wheel before the first environment sync. The exact tag,
+filename and SHA-256 are recorded in `integration/epcsaft_contract.json`; the
+relative destination is in `[tool.uv.sources]` in `pyproject.toml`.
+
+```bash
+tag=main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e
+wheel_dir="build/engine-wheels/$tag"
+mkdir -p "$wheel_dir"
+gh release download "$tag" --repo tannerpolley/ePC-SAFT --dir "$wheel_dir" \
+    --pattern '*.whl' --pattern '*.sha256' --pattern release.json
+(cd "$wheel_dir" && sha256sum --check --strict ./*.sha256)
+gh api "repos/tannerpolley/ePC-SAFT/releases/tags/$tag" \
+    --jq '.assets[] | select(.name | endswith(".whl")) | .digest'
+gh api "repos/tannerpolley/ePC-SAFT/git/ref/tags/$tag" --jq .object.sha
+```
+
+Require the digest to match the contract SHA-256 and the tag target to match its
+Engine commit. Check `release.json` against the same commit, filename and hash.
+Keep the wheel in this ignored directory after installation: Engine provenance
+reads it. The wheel requires glibc 2.39 or newer and is for the owner's own use;
+do not add it to Git or redistribute it.
+
 Edit the TOML selections, case IDs, output directory and numerical settings.
 Then explicitly run a new calculation in the uv environment:
 
@@ -127,8 +149,15 @@ with that page and `--to pdf`; its layout settings remain with the source page:
 bash analyses/render.sh bvp_solution_methods/notebook.qmd --to pdf
 ```
 
-Focused configuration and method checks (the regression baseline for agents; the
-full suite has 33 known failures on the pinned wheel until the Engine repin, #76):
+Engine 1.0.0 `main-f4566b3d` passes the integration check and the 69 focused
+configuration/assembly tests. The full suite has 256 passes and 33 known failures:
+16 on the retired reactive route (`epcsaft.records`), 15 missing
+`ionic_dispersion` declarations, and two segmented BVP convergence assertions.
+The same 33 cases fail on the preceding wheel. No test has been removed or
+loosened; see `integration/epcsaft_adoption.json` for every failure and its cause.
+The full suite becomes a regression gate once these defects are resolved.
+
+Focused configuration and method checks:
 
 ```bash
 uv run --frozen pytest -q -p no:cacheprovider tests/test_research_options.py tests/test_research_model_dispatch.py tests/test_epcsaft_contract.py

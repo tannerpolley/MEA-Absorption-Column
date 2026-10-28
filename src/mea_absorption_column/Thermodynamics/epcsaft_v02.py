@@ -449,44 +449,40 @@ def mixture(dataset_text: str, species: tuple[str, ...]):
 
 
 def state(mixture_model, *, temperature_k: float, pressure_pa: float, composition, phase: str):
-    import epcsaft
-
     normalized_phase = {"liq": "liquid", "liquid": "liquid", "vap": "vapor", "vapor": "vapor"}.get(
         str(phase).lower()
     )
     if normalized_phase is None:
         raise ValueError("phase must be liquid/liq or vapor/vap")
     return mixture_model.state(
-        T=float(temperature_k) * epcsaft.unit_registry.kelvin,
-        P=float(pressure_pa) * epcsaft.unit_registry.pascal,
+        T=float(temperature_k),
+        P=float(pressure_pa),
         x=tuple(float(value) for value in composition),
         phase=normalized_phase,
     )
 
 
 def state_at_density(mixture_model, *, temperature_k: float, density_mol_m3: float, composition):
-    import epcsaft
-
     return mixture_model.state(
-        T=float(temperature_k) * epcsaft.unit_registry.kelvin,
-        rho=float(density_mol_m3) * epcsaft.unit_registry.mole / epcsaft.unit_registry.meter**3,
+        T=float(temperature_k),
+        rho=float(density_mol_m3),
         x=tuple(float(value) for value in composition),
     )
 
 
 def molar_density_value(state_value) -> float:
-    return float(state_value.molar_density.to("mole / meter ** 3").magnitude)
+    return float(state_value.molar_density)
 
 
 def pressure_value(state_value) -> float:
-    return float(state_value.pressure.to("pascal").magnitude)
+    return float(state_value.pressure)
 
 
 def fugacity_coefficients(state_value) -> tuple[float, ...]:
-    fugacity = state_value.fugacity
-    if fugacity is None:
+    log_coefficients = state_value.log_fugacity_coefficient
+    if log_coefficients is None:
         raise RuntimeError("ePC-SAFT state did not expose fugacity coefficients")
-    coefficients = tuple(float(value) for value in fugacity.coefficient)
+    coefficients = tuple(math.exp(value) for value in log_coefficients)
     if any(not math.isfinite(value) or value <= 0.0 for value in coefficients):
         raise RuntimeError("ePC-SAFT returned a nonpositive or nonfinite fugacity coefficient")
     return coefficients

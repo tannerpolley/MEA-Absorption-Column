@@ -10,7 +10,6 @@ import re
 import sys
 from pathlib import Path
 from typing import Any
-from urllib.parse import unquote, urlparse
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -42,27 +41,15 @@ def _direct_url_payload(dist) -> dict[str, Any] | None:
     return json.loads(text)
 
 
-def _local_wheel_identity(direct_url: dict[str, Any] | None) -> dict[str, str] | None:
-    if not direct_url or not str(direct_url.get("url", "")).startswith("file:"):
-        return None
-    parsed = urlparse(str(direct_url["url"]))
-    wheel_path = Path(unquote(parsed.path)).resolve()
-    if not wheel_path.is_file():
-        raise RuntimeError(f"Installed ePC-SAFT wheel source no longer exists: {wheel_path}")
-    digest = hashlib.sha256()
-    with wheel_path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return {"wheel_path": str(wheel_path), "wheel_sha256": digest.hexdigest()}
-
-
 def resolve_epcsaft(contract: dict[str, Any]) -> dict[str, Any]:
     thermo_models = importlib.import_module("mea_absorption_column.Thermodynamics.thermo_models")
     thermo_models.ensure_epcsaft_importable()
     epcsaft = importlib.import_module("epcsaft")
     dist = _distribution(contract["package"]["name"])
     direct_url = _direct_url_payload(dist)
-    local_wheel = _local_wheel_identity(direct_url)
+    wheel_path, wheel_sha256 = epcsaft.provenance()
+    if not isinstance(wheel_path, Path):
+        raise RuntimeError("ePC-SAFT must be installed from an immutable wheel")
     module_path = Path(epcsaft.__file__).resolve()
     version = importlib.metadata.version(contract["package"]["name"])
 
@@ -81,8 +68,7 @@ def resolve_epcsaft(contract: dict[str, Any]) -> dict[str, Any]:
         "source_kind": source_kind,
         "source_detail": source_detail,
     }
-    if local_wheel is not None:
-        resolved.update(local_wheel)
+    resolved.update(wheel_path=str(wheel_path), wheel_sha256=wheel_sha256)
     return resolved
 
 

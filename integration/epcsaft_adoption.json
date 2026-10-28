@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-28",
+  "base_commit": "1d425be3efcbd082652d1bbcdd17be882bd26391",
+  "release_tag": "main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+  "wheel_path": "build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+  "release_verification": "Checksum file, GitHub asset digest, release.json and tag target agree. Wheel ignored by Git.",
+  "basis": {
+    "temperature_k": 313.15,
+    "pressure_pa": 109500.0,
+    "apparent_mole_fractions": {
+      "co2": 0.03,
+      "mea": 0.11,
+      "water": 0.86
+    },
+    "dataset": "MEA_greenfield_exploratory"
+  },
+  "previous_wheel": {
+    "engine_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
+    "wheel_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "co2_fugacity_pa": 35.32895375688829,
+    "density_mol_m3": 48710.83562634027
+  },
+  "adopted_wheel": {
+    "engine_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "wheel_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "co2_fugacity_pa": 35.32894361914214,
+    "density_mol_m3": 48710.83565411655
+  },
+  "differences": {
+    "co2_fugacity_pa": {
+      "absolute": -1.0137746151883675e-05,
+      "relative": -2.869529118140687e-07
+    },
+    "density_mol_m3": {
+      "absolute": 2.7776281058322638e-05,
+      "relative": 5.702279729174401e-10
+    }
+  },
+  "claim": "Numerical agreement between wheels; not physical validation.",
+  "validation": {
+    "uv lock": "resolved 24 packages; epcsaft 0.2.0.dev0 -> 1.0.0",
+    "uv sync --locked --group test": "passed",
+    "uv run --frozen python scripts/check_epcsaft_integration.py --mode final": "passed",
+    "uv run --frozen pytest -q": "33 failed, 256 passed, 1 warning in 76.63 s",
+    "focused_config_and_conserved_assembly": "69 passed in 20.63 s",
+    "old_wheel_comparison": "33 matching failures plus one archive-only artifact: test_run_column_retains_legacy_and_acceptance_outcomes lacks dirty_patch_sha256 outside a Git checkout.",
+    "newly_failing_tests": []
+  },
+  "remaining_failures": [
+    {
+      "test": "tests/test_column_energy.py::test_countercurrent_energy_and_temperature_state_equivalence[epcsaft_reactive_nine]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_electrolyte_option_matrix.py::test_neutral_path_has_no_electrolyte_contributions",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_electrolyte_option_matrix.py::test_fixed_electrolyte_model_runs_and_reports_terms",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_electrolyte_option_matrix.py::test_fixed_ionic_fugacity_is_cache_stable",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_electrolyte_option_matrix.py::test_electrolyte_aliases_route_to_ionic_fugacity[epcsaft_electrolyte]",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_electrolyte_option_matrix.py::test_electrolyte_aliases_route_to_ionic_fugacity[epcsaft_full_ionic]",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_reactive_chemistry.py::test_coupled_nine_species_conserves_elements_and_charge[318.15-110900.0-Fl0-53024.00899976211-8710.019674586]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_reactive_chemistry.py::test_coupled_nine_species_conserves_elements_and_charge[325.0-109500.0-Fl1-None-None]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_reactive_chemistry.py::test_loading_path_budget_fails_without_changing_anchor",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_reactive_chemistry.py::test_coupled_column_retains_nine_species_and_legacy_flux",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_reactive_chemistry.py::test_coupled_run_reports_selected_dataset_and_unavailable_legacy_metrics[epcsaft_reactive_nine]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_epcsaft_reactive_chemistry.py::test_coupled_run_reports_selected_dataset_and_unavailable_legacy_metrics[EPCSAFT_REACTIVE_NINE]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_native_column_direction_and_exact_reuse[False-None-None]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_native_column_direction_and_exact_reuse[True-None-None]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_native_column_direction_and_exact_reuse[True-kij_scale2-None]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_native_column_direction_and_exact_reuse[False-kij_scale3-None]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_native_column_direction_and_exact_reuse[False-None-reaction_scale4]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_native_column_direction_and_exact_reuse[True-None-reaction_scale5]",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_large_loading_jump_uses_declared_path_and_retains_liquid_root",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_interaction_screen_changes_one_coefficient_without_changing_chemistry",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_reactive_column_jacobian.py::test_reaction_multipliers_preserve_temperature_slope_and_other_equilibria",
+      "cause": "ModuleNotFoundError: No module named 'epcsaft.records'",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_robust_convergence.py::test_epcsaft_phi_cache_records_hit_after_repeated_call",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_robust_convergence.py::test_epcsaft_phi_cache_uses_coarse_bvp_quantization",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_robust_convergence.py::test_epcsaft_phi_batch_deduplicates_near_duplicate_states",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_robust_convergence.py::test_epcsaft_pressure_state_reuses_density_guess_after_first_miss",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_robust_convergence.py::test_epcsaft_ionic_fugacity_uses_six_species_liquid_state",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_segmented_bvp.py::test_positive_flow_pressure_transform_reproduces_case_3c_scipy_bvp",
+      "cause": "assert False is True",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_segmented_bvp.py::test_case_bounded_transform_routes_to_positive_transform_for_one_bed_scipy_bvp",
+      "cause": "assert False is True",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_thermodynamics_adapter.py::test_epcsaft_neutral_fugacity_returns_positive_finite_values",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_thermodynamics_adapter.py::test_epcsaft_fugacity_blend_interpolates_between_henry_and_epcsaft",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_thermodynamics_adapter.py::test_epcsaft_fugacity_blend_is_clipped_to_valid_range",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_thermodynamics_adapter.py::test_ionic_epcsaft_state_uses_ion_and_born_contribution_terms",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    },
+    {
+      "test": "tests/test_thermodynamics_adapter.py::test_full_species_ionic_epcsaft_state_uses_all_nine_species",
+      "cause": "epcsaft._core.ParameterError: missing model/electrolyte/ionic_dispersion",
+      "failed_on_previous_wheel": true
+    }
+  ],
+  "segmented_probe": {
+    "basis": "3C ideal_henry, scipy-bvp, one bed, positive_flow_pressure; 90 s wall limit",
+    "success": false,
+    "cause": "A singular Jacobian encountered when solving the collocation system; strict boundary residual gate rejected 9958.17.",
+    "boundary_residual_norm": 9958.166302460762,
+    "max_scaled_boundary_residual": 2.298953948823593,
+    "max_rms_residual": 361257901938.89703
+  },
+  "retained_analyses": "No files changed under analyses/.",
+  "research_stdout_redirect": "Already absent on base 1d425be; no removal required."
+}

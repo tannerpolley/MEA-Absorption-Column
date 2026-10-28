@@ -439,7 +439,7 @@ def _state_from_density_newton(mixture, *, T, P, composition, rho_guess):
         )
         residual = _v02_pressure_value(current) - target
         if abs(residual) <= max(1.0e-5 * target, 1.0e-2):
-            if current.fugacity is None:
+            if current.log_fugacity_coefficient is None:
                 raise RuntimeError("Density-closed ePC-SAFT state has no stable fugacity value.")
             return current
 

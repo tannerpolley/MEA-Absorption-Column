@@ -16,14 +16,15 @@
     }
   },
   "final_identity": {
-    "engine_commit": "464a9897615e513e5cc404ce5b49f46a72466d3d",
-    "wheel_filename": "epcsaft-0.2.0.dev0-cp313-cp313-linux_x86_64.whl",
-    "wheel_sha256": "48a639e78d00ef88a2f7e66ed1e3d89831ca0ad5267322330d44f48c34926060",
+    "engine_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "wheel_filename": "epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "wheel_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
     "reactive_inputs_sha256": {
-      "parameters.json": "868a501831b87e95dedf18ce40e9e7ac949f7c6a4aaf137f717cc493ecfcb7be",
-      "engine-reactions.json": "bcd964a0b9798d9f25169a3f49407d339e5714c2ee7ee00f794a80ac54c0d8d3",
+      "parameters.json": "40d46b3e3b5444978a17838de166ce6ef8186ee19485d33482c0449e14c79fff",
+      "engine-reactions.json": "da9224bad44e88e5852e02b75f55b859c687dd261c7234d138fbbe006b6b414a",
       "ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607"
-    }
+    },
+    "release_tag": "main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e"
   },
   "required_public_symbols": [
     "Parameters",

@@ -48,7 +48,7 @@ CSE execution mode: direct.
 ## Repository Workflow
 
 - A new worktree needs only `uv sync --frozen --group test` (about 2 s); run everything through `uv run --frozen`.
-- Regression baseline: the focused tests listed in `README.md`. Until the Engine repin (#76), the full suite has 33 known failures on the pinned wheel (missing `epcsaft.records` and `ionic_dispersion`).
+- Regression checks: see `README.md`. On Engine 1.0.0 main-f4566b3d, the full suite has 33 known failures: 16 on the retired reactive route (`epcsaft.records`), 15 missing `ionic_dispersion` declarations, and two segmented BVP convergence assertions. These match the previous wheel; adoption evidence is in `integration/epcsaft_adoption.json`.
 - Tests write scratch under `.tmp_local/` and column runs default to `.tmp_column_runs/`; both are git-ignored. A new study result goes in a new `analyses/<study>/results/runs/<label>/` directory.
 - Do not accept slow or broken solver runs as normal: give each case a wall limit (`execution.wall_limit_s`) and a log, stop stale runs you started, and report the root cause with a faster bounded alternative.
 - Preserve existing dirty work and inspect overlapping files before editing.

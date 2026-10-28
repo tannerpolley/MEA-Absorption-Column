@@ -288,10 +288,8 @@ def _default_engine() -> EngineConfig:
     pyproject = _ROOT / "pyproject.toml"
     if pyproject.exists():
         with pyproject.open("rb") as stream:
-            for dependency in tomllib.load(stream)["project"]["dependencies"]:
-                if dependency.startswith("epcsaft @ file:"):
-                    wheel = unquote(urlparse(dependency.split("@", 1)[1].strip()).path)
-                    break
+            source = tomllib.load(stream)["tool"]["uv"]["sources"]["epcsaft"]["path"]
+            wheel = str((_ROOT / source).resolve())
     contract = _ROOT / "integration" / "epcsaft_contract.json"
     sha256 = commit = None
     if contract.exists():
