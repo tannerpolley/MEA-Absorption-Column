@@ -26,27 +26,19 @@ python3 src/mea_absorption_column/research.py --list-options
 python3 src/mea_absorption_column/research.py analyses/research_options/options.toml
 ```
 
-Obtain the private Engine wheel before the first environment sync. The exact tag,
-filename and SHA-256 are recorded in `integration/epcsaft_contract.json`; the
-relative destination is in `[tool.uv.sources]` in `pyproject.toml`.
+Set up a fresh checkout or worktree with one command. It downloads the private
+Engine wheel named in `integration/epcsaft_contract.json` into the ignored
+`build/engine-wheels/<tag>/` (the relative path pinned in `pyproject.toml`),
+checks the release digest, tag target and SHA-256 against the contract, and runs
+`uv sync --frozen --group test`. Rerunning it only re-verifies the hash:
 
 ```bash
-tag=main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e
-wheel_dir="build/engine-wheels/$tag"
-mkdir -p "$wheel_dir"
-gh release download "$tag" --repo tannerpolley/ePC-SAFT --dir "$wheel_dir" \
-    --pattern '*.whl' --pattern '*.sha256' --pattern release.json
-(cd "$wheel_dir" && sha256sum --check --strict ./*.sha256)
-gh api "repos/tannerpolley/ePC-SAFT/releases/tags/$tag" \
-    --jq '.assets[] | select(.name | endswith(".whl")) | .digest'
-gh api "repos/tannerpolley/ePC-SAFT/git/ref/tags/$tag" --jq .object.sha
+bash scripts/setup_environment.sh
 ```
 
-Require the digest to match the contract SHA-256 and the tag target to match its
-Engine commit. Check `release.json` against the same commit, filename and hash.
-Keep the wheel in this ignored directory after installation: Engine provenance
-reads it. The wheel requires glibc 2.39 or newer and is for the owner's own use;
-do not add it to Git or redistribute it.
+Keep the wheel in that ignored directory: Engine provenance reads it. The wheel
+requires glibc 2.39 or newer and is for the owner's own use; do not add it to Git
+or redistribute it.
 
 Edit the TOML selections, case IDs, output directory and numerical settings.
 Then explicitly run a new calculation in the uv environment:
