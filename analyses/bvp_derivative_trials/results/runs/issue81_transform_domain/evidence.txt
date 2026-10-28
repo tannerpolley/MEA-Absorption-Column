@@ -1,0 +1,121 @@
+Issue #81: reciprocal-tail coordinate-map domain check
+Base: 6ab17c1440ead20b1cdbceef254e35149ef310fa
+Production code and tests unchanged. NumPy float64 disposable evaluation.
+
+Definitions:
+f = 1e-12, c = 100, d = sqrt(f*c) = 1e-5;
+a = f+d, b = c-d, u = w+1.
+g(w) = f+d/(1+(a-u)/d) for u<a;
+       u for a<=u<=b;
+       c-d/(1+(u-b)/d) for u>b.
+g'(w) = 1/(1+(a-u)/d)^2 in the lower tail;
+        1 in the interior;
+        1/(1+(u-b)/d)^2 in the upper tail.
+The inverse uses u=a-d*(d/(y-f)-1) below a,
+u=y in the interior, and u=b+d*(d/(c-y)-1) above b;
+w=u-1.
+At each join the values coincide and both first derivatives equal 1.
+For every finite real w, the exact derivative is positive and f<g(w)<c.
+The inverse is continuous on (f,c).
+
+Observed float64 outputs:
+w=-1e8: g=1.00000100000001e-12, derivative=1.0000000199996002e-26
+w=+1e8: g=100.0, derivative=1.0000019800025404e-26
+w=-1e200: g=1e-12, derivative=0.0
+w=+1e200: g=100.0, derivative=0.0
+
+The owner approved analytic guarantees and explicit rejection of unrepresentable
+floating-point values or derivatives. Production rejects the endpoint/underflow
+examples above, rather than clipping or substituting slopes. The inverse rejects
+endpoints, nonfinite values and unrepresentable results. map_verification.log
+records adjacent representable join samples, 3002 sampled positive derivatives
+and interior values, rejection checks, and agreement with CasADi automatic derivatives.
+
+Cause: numerical verification, not physical validation.
+The original sigmoid distorts the small initial vapor-CO2 coordinate. The raw
+and sigmoid 51-node initial Jacobians both have rank 357/357; after row/column
+equilibration their condition numbers are approximately 868 and 122713.
+The sigmoid iteration deteriorates until liquid-water boundary row 2374
+(zero-based) of a 2380-square Jacobian is exactly zero. The corresponding
+boundary coordinate is approximately -103.28; its computed value is the floor
+and finite-difference slope is zero. The old routine substitutes a slope of
+1e-12, which cannot restore the boundary row and misrepresents the differential
+chain rule. The solve returns boundary_residual_norm=9958.166302460762.
+A boundary-coordinate-only probe reached its 120 s timeout without convergence;
+it is not the correction. The affine interior restores scaled-state geometry
+and converges in one iteration on 51 nodes; its initial equilibrated condition
+number is approximately 868. The physical model, mesh and tolerances are unchanged.
+
+Basis: legacy C_cases_data.csv rows 3C and 1C, mole input basis, ideal_henry,
+scipy-bvp, staged_beds=False, transform_mode=positive_flow_pressure.
+mesh_points=51, max_nodes=1000, tol=0.5, bc_tol=0.001, enthalpy thermal states,
+polynomial initial profile, guarded RHS, SciPy numerical Jacobian.
+Both sides supplied identical inputs and settings except the replaced map.
+Wall bounds: original regressions 180 s; old 3C rank probe 180 s; new 3C probe
+60 s; 1C before/after 90 s each. All completed within those limits.
+3C raw capture_pct=91.47102378596664;
+3C reciprocal capture_pct=91.47102378703961;
+both boundary_residual_norm=5.6616491335583666e-14.
+Both unchanged 3C tests pass, including capture difference <0.5 percentage point.
+
+Additional already-converged 1C:
+Sigmoid capture_pct=86.09531679759385, boundary_residual_norm=1.1446960617601317e-13,
+max_rms_residual=0.29586758994882256, iterations=1, nodes=51.
+Reciprocal capture_pct=85.45448662103415, boundary_residual_norm=2.0100604252564532e-13,
+max_rms_residual=0.056176004635235796, iterations=1, nodes=51.
+Both residuals meet tol=0.5. Maximum absolute scaled-profile difference is
+0.0607990081; maximum |new-old|/(1+|old|) is 0.0343179212; both are below 0.5.
+Capture changes by -0.6408301766 percentage point. Residual tolerance is not a
+certified bound on profile or capture error; this is empirical scaled-profile
+agreement, not exact equality or physical accuracy. Two 7-by-101 scaled profiles
+are retained as NPZ files. All 1226 pre-existing tracked result files were
+SHA-256 checked byte-unchanged.
+
+Callers (searched src, tests, analyses Python scripts):
+robust_core.scaled_physical_to_solver -> bounded_to_unbounded_positive:
+  initial positive flow/pressure states now use the reciprocal inverse.
+robust_core.solver_to_scaled_physical -> unbounded_to_positive:
+  RHS, boundary and profile values now use the reciprocal forward map.
+robust_core.solver_to_scaled_physical_derivative -> _bounded_positive_derivative:
+  true slope, no artificial floor; rejects unrepresentable trials.
+robust_core.solver_profile_to_scaled_physical -> solver_to_scaled_physical:
+  maps profile columns consistently; raw modes remain identities.
+Scipy_BVP_Solve.scipy_BVP_solve: initial profile, boundary_conditions, native and
+  sampled output profiles use the shared maps; _column_rhs maps each state;
+  _physical_rhs_to_solver_rhs divides by the true shared derivative.
+Segmented_Scipy_BVP_Solve._scaled_physical_to_solver, _vector_to_scaled_physical,
+  _vector_derivative and _profile_to_scaled_physical delegate to the replacement
+  for positive_flow_pressure. The existing case-specific multi-bed bounded
+  transform is a distinct owner and unchanged.
+Run_Model.run_model routes the one-bed case_bounded alias to this same positive
+  map. continuation policies can request it; routing remains unchanged.
+tests/test_robust_convergence.py:
+  test_positive_transform_round_trips_and_rejects_nonpositive_values;
+  test_positive_flow_pressure_solver_transform_round_trips_scaled_state;
+  test_positive_flow_pressure_transform_stays_finite_for_large_newton_trials;
+  test_positive_flow_pressure_transform_rejects_nonpositive_flow;
+  test_scipy_bvp_positive_transform_clips_initial_profile_before_solving.
+  All unchanged assertions exercise the replacement map, inverse and derivative.
+tests/test_segmented_bvp.py: both named 3C regressions exercise the replacement
+  directly or through the one-bed alias. Case-specific helper tests remain unchanged.
+analyses/bvp_derivative_trials/scripts/run_issue22_casadi_probe.py:
+  _diagnostic_fd_ipopt initializes solver coordinates with the shared inverse;
+  _solver_to_scaled_physical_casadi now calls the shared expression using
+  ca.if_else, removing its duplicate sigmoid; _LiveColumnRhs uses the guarded
+  forward map and true derivative through the shared SciPy RHS helpers.
+  The unused solver_to_scaled_physical import was removed.
+No other Python callers were found. No new switch or alternate shared map.
+
+Git evidence: -S searches find map and regressions introduced in eda8d5d;
+-p inspection shows no intervening shared-map formula change. Later edits add
+diagnostics and reactive-state guards. No last-passing revision was verified.
+These ideal-Henry failures do not invoke the Engine.
+
+Focused: 54 passed in 10.75 s.
+Full suite: 289 passed, 1 warning in 29.68 s.
+Warning: legacy timing-probe test deliberately exercises an invalid hydraulic
+logarithm (test_transport_domain_guards.py); see full_suite.log.
+Final integration: exit 0; Engine 1.0.0, commit f4566b3d0c64d05822b41fe363de47ab5cfa6a0e;
+wheel SHA-256 57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a.
+No tests, tolerances, reference values, Engine inputs or thermodynamic equations changed.
+Evidence has not been independently reviewed or promoted for manuscript use.

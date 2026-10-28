@@ -198,3 +198,54 @@ bash analyses/render.sh --to html
 Neither command invokes the scientific model. Regenerating the model evidence
 is a separate governed action identified by the retained command and immutable
 calculation identity above.
+
+# Issue 81: positive-flow coordinate correction
+
+The shared positive-flow pressure map now uses an affine interior and reciprocal
+tails. This section records numerical verification on the legacy
+`src/mea_absorption_column/data/C_cases_data.csv` mole-input basis, with ideal
+Henry thermodynamics and the single-bed seven-state SciPy BVP. It is separate
+from the Issue 19 evidence above and has not been independently reviewed or
+promoted for manuscript use.
+
+The original sigmoid starts with a full-rank 357-by-357 collocation Jacobian,
+but its equilibrated condition number is approximately 123,000, versus 868 in
+raw coordinates. Newton iteration eventually saturates the liquid-water inlet
+coordinate, giving an exactly zero boundary row and boundary residual norm
+9958.1663. The derivative routine incorrectly substituted a positive slope
+of $10^{-12}$ even when the computed map was flat. The correction removes
+that derivative floor and the shared sigmoid, including its duplicate in the
+CasADi analysis script.
+
+The replacement is continuous and has a continuous inverse; its first derivative
+is positive and equals 1 on both sides of each join. These guarantees hold in
+real arithmetic. Following the owner's decision, floating-point evaluations
+that reach an endpoint or produce an unrepresentable derivative are rejected
+explicitly. The bounds remain $10^{-12}$ and 100 in scaled units, with reciprocal
+tail width $10^{-5}$. Enthalpy coordinates remain unchanged.
+
+| Case and coordinates | Capture (%) | Boundary residual norm | Maximum RMS collocation residual |
+|---|---:|---:|---:|
+| 3C, raw reference | 91.47102378597 | $5.66\times10^{-14}$ | — |
+| 3C, reciprocal tails | 91.47102378704 | $5.66\times10^{-14}$ | 0.04164381 |
+| 1C, original sigmoid | 86.09531679759 | $1.14\times10^{-13}$ | 0.29586759 |
+| 1C, reciprocal tails | 85.45448662103 | $2.01\times10^{-13}$ | 0.05617600 |
+
+The 3C and 1C reciprocal solves each take one iteration on 51 nodes with unchanged
+`tol=0.5`, `bc_tol=0.001` and `max_nodes=1000`. The 3C capture difference is
+$1.07\times10^{-9}$ percentage points. For the already-converged 1C comparison,
+the maximum absolute scaled-profile difference is 0.06080 and the maximum
+$|y_{new}-y_{old}|/(1+|y_{old}|)$ is 0.03432, below 0.5. Capture moves by
+−0.64083 percentage points. Residual tolerance is not a certified bound on
+profile or capture error: this is empirical scaled-profile agreement at a
+coarse stopping tolerance, rather than exact equality or physical validation.
+The 1C runs each had a 90 s wall limit; the corrected 3C probe had a 60 s limit.
+
+Both unchanged 3C regressions pass. The complete suite returns **289 passed,
+1 warning in 29.68 s**, and the final Engine integration check passes.
+All 1226 pre-existing tracked result files remain byte-unchanged. Exact formulas,
+join and derivative checks, caller consequences, solver logs, and before/after
+1C scaled profiles are retained under
+[results/runs/issue81_transform_domain/](results/runs/issue81_transform_domain/evidence.txt).
+The correction supports using the shared positive-flow coordinates for these
+numerical cases; it establishes no new physical accuracy or broad convergence domain.

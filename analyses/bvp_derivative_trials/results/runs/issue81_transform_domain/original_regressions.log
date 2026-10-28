@@ -1,0 +1,60 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_positive_flow_pressure_transform_reproduces_case_3c_scipy_bvp ______
+
+    def test_positive_flow_pressure_transform_reproduces_case_3c_scipy_bvp():
+        df = pd.read_csv(
+            "src/mea_absorption_column/data/C_cases_data.csv",
+            index_col=0,
+        )
+        run = list(df.index).index("3C")
+    
+        baseline = run_model(
+            df,
+            method="scipy-bvp",
+            run=run,
+            thermo_model="ideal_henry",
+            return_details=True,
+            staged_beds=False,
+        )
+        transformed = run_model(
+            df,
+            method="scipy-bvp",
+            run=run,
+            thermo_model="ideal_henry",
+            return_details=True,
+            staged_beds=False,
+            solver_settings={"transform_mode": "positive_flow_pressure"},
+        )
+    
+>       assert transformed["success"] is True
+E       assert False is True
+
+tests/test_segmented_bvp.py:306: AssertionError
+_ test_case_bounded_transform_routes_to_positive_transform_for_one_bed_scipy_bvp _
+
+    def test_case_bounded_transform_routes_to_positive_transform_for_one_bed_scipy_bvp():
+        df = pd.read_csv(
+            "src/mea_absorption_column/data/C_cases_data.csv",
+            index_col=0,
+        )
+        run = list(df.index).index("3C")
+    
+        result = run_model(
+            df,
+            method="scipy-bvp",
+            run=run,
+            thermo_model="ideal_henry",
+            return_details=True,
+            staged_beds=False,
+            solver_settings={"transform_mode": "case_bounded_flow_pressure"},
+        )
+    
+>       assert result["success"] is True
+E       assert False is True
+
+tests/test_segmented_bvp.py:328: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_segmented_bvp.py::test_positive_flow_pressure_transform_reproduces_case_3c_scipy_bvp
+FAILED tests/test_segmented_bvp.py::test_case_bounded_transform_routes_to_positive_transform_for_one_bed_scipy_bvp
+2 failed, 12 deselected in 50.52s

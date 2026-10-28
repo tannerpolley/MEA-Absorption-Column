@@ -37,35 +37,57 @@ def make_solver_diagnostics() -> dict:
     }
 
 
+# Reciprocal tails join the affine interior with unit slope.
+POSITIVE_TRANSFORM_TAIL_WIDTH = np.sqrt(POSITIVE_TRANSFORM_FLOOR * POSITIVE_TRANSFORM_CEILING)
+
+
 def bounded_to_unbounded_positive(values):
     arr = np.asarray(values, dtype=float)
-    if np.any(~np.isfinite(arr)) or np.any(arr <= 0.0):
-        raise ValueError("Positive bounded variables must be finite and greater than zero.")
-    if np.any(arr >= POSITIVE_TRANSFORM_CEILING):
-        raise ValueError("Positive bounded variables must be below the transform ceiling.")
-    ratio = (arr - POSITIVE_TRANSFORM_FLOOR) / (POSITIVE_TRANSFORM_CEILING - POSITIVE_TRANSFORM_FLOOR)
-    ratio = np.clip(ratio, 1.0e-15, 1.0 - 1.0e-15)
-    return np.log(ratio / (1.0 - ratio))
+    floor, ceiling, width = POSITIVE_TRANSFORM_FLOOR, POSITIVE_TRANSFORM_CEILING, POSITIVE_TRANSFORM_TAIL_WIDTH
+    if np.any(~np.isfinite(arr)) or np.any(arr <= floor) or np.any(arr >= ceiling):
+        raise ValueError("Positive bounded variables must lie strictly inside the transform bounds.")
+    lower, upper = floor + width, ceiling - width
+    solver = arr.copy()
+    below, above = arr < lower, arr > upper
+    solver[below] = lower - width * (width / (arr[below] - floor) - 1.0)
+    solver[above] = upper + width * (width / (ceiling - arr[above]) - 1.0)
+    solver -= 1.0
+    _positive_transform_values(solver)
+    return solver
+
+
+def _positive_transform_expression(values, select=np.where):
+    # This expression also supplies the existing CasADi analysis caller.
+    shifted = values + 1.0
+    floor, ceiling, width = POSITIVE_TRANSFORM_FLOOR, POSITIVE_TRANSFORM_CEILING, POSITIVE_TRANSFORM_TAIL_WIDTH
+    lower, upper = floor + width, ceiling - width
+    lower_ratio = width / (width + lower - shifted)
+    upper_ratio = width / (width + shifted - upper)
+    physical = select(shifted < lower, floor + width * lower_ratio,
+                      select(shifted > upper, ceiling - width * upper_ratio, shifted))
+    derivative = select(shifted < lower, lower_ratio ** 2,
+                        select(shifted > upper, upper_ratio ** 2, 1.0))
+    return physical, derivative
+
+
+def _positive_transform_values(values):
+    arr = np.asarray(values, dtype=float)
+    with np.errstate(over="ignore", under="ignore", divide="ignore", invalid="ignore"):
+        physical, derivative = _positive_transform_expression(arr)
+    if (np.any(~np.isfinite(arr)) or np.any(~np.isfinite(physical))
+            or np.any(physical <= POSITIVE_TRANSFORM_FLOOR)
+            or np.any(physical >= POSITIVE_TRANSFORM_CEILING)
+            or np.any(~np.isfinite(derivative)) or np.any(derivative <= 0.0)):
+        raise ValueError("Positive transform value or derivative is not representable inside its bounds.")
+    return physical, derivative
 
 
 def unbounded_to_positive(values):
-    sigmoid = _stable_sigmoid(np.asarray(values, dtype=float))
-    return POSITIVE_TRANSFORM_FLOOR + (POSITIVE_TRANSFORM_CEILING - POSITIVE_TRANSFORM_FLOOR) * sigmoid
-
-
-def _stable_sigmoid(values):
-    arr = np.asarray(values, dtype=float)
-    out = np.empty_like(arr, dtype=float)
-    positive = arr >= 0.0
-    out[positive] = 1.0 / (1.0 + np.exp(-arr[positive]))
-    exp_values = np.exp(arr[~positive])
-    out[~positive] = exp_values / (1.0 + exp_values)
-    return out
+    return _positive_transform_values(values)[0]
 
 
 def _bounded_positive_derivative(values):
-    sigmoid = _stable_sigmoid(values)
-    return (POSITIVE_TRANSFORM_CEILING - POSITIVE_TRANSFORM_FLOOR) * sigmoid * (1.0 - sigmoid)
+    return _positive_transform_values(values)[1]
 
 
 def scaled_physical_to_solver(y_scaled, transform_mode="bounded_guarded_raw_state"):
@@ -96,10 +118,7 @@ def solver_to_scaled_physical_derivative(y_solver, transform_mode="bounded_guard
     if transform_mode in {None, "", "none", "bounded_guarded_raw_state", "raw"}:
         return derivative
     if transform_mode == "positive_flow_pressure":
-        derivative[POSITIVE_SOLVER_IDXS] = np.maximum(
-            _bounded_positive_derivative(y_solver[POSITIVE_SOLVER_IDXS]),
-            POSITIVE_TRANSFORM_FLOOR,
-        )
+        derivative[POSITIVE_SOLVER_IDXS] = _bounded_positive_derivative(y_solver[POSITIVE_SOLVER_IDXS])
         return derivative
     raise ValueError(f"Unknown transform_mode: {transform_mode}")
 

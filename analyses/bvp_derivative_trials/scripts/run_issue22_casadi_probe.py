@@ -29,10 +29,8 @@ from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import (
 )
 from mea_absorption_column.BVP.robust_core import (
     POSITIVE_SOLVER_IDXS,
-    POSITIVE_TRANSFORM_CEILING,
-    POSITIVE_TRANSFORM_FLOOR,
+    _positive_transform_expression,
     scaled_physical_to_solver,
-    solver_to_scaled_physical,
 )
 from mea_absorption_column.Thermodynamics import thermo_models
 
@@ -91,9 +89,7 @@ def _solver_to_scaled_physical_casadi(y_solver, transform_mode: str):
         raise ValueError(f"Unknown transform_mode: {transform_mode}")
     values = [y_solver[index] for index in range(7)]
     for index in POSITIVE_SOLVER_IDXS:
-        values[int(index)] = POSITIVE_TRANSFORM_FLOOR + (
-            POSITIVE_TRANSFORM_CEILING - POSITIVE_TRANSFORM_FLOOR
-        ) / (1.0 + ca.exp(-y_solver[int(index)]))
+        values[int(index)] = _positive_transform_expression(y_solver[int(index)], select=ca.if_else)[0]
     return ca.vertcat(*values)
 
 
