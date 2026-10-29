@@ -224,11 +224,11 @@ single-threaded runs and is not a solver-speed comparison.
 Chinen et al. (2018), supporting information, Table S3, PDF page 3
 (Zotero parent `KJ688HMG`, attachment `6WCMFD9H`, SHA-256
 `f9591338c28337502f8525c4b72b26fcd99ad7b3aaa05aa20c2e6db51be74081`),
-reports regressed Tsai-form $A_1=1.42$ and $A_2=0.12$. The table also
+reports fitted Tsai-form coefficients $A_1=1.42$ and $A_2=0.12$. The table also
 lists typical literature values of 1.34 and 0.12; Tsai's 2010 dissertation
 (`KQSWX5T9`, printed p. 142, Eq. 6.10) gives 1.34 and 0.116. Chinen's
 article, sections 2 and 3.2.5, describes a simultaneous mass-transfer and
-kinetics regression using Dugas wetted-wall data and Tobiesen packed-tower data
+kinetics parameter regression using Dugas wetted-wall data and Tobiesen packed-tower data
 for Mellapak 250Y, selected as structurally similar to the intended
 MellapakPlus 252Y. It is not a standalone area-only fit.
 The 3C input tuple uses 250 m²/m³ and 0.97 void fraction, matching the
