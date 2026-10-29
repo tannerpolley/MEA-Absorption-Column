@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import argparse
+import csv
+import io
 import json
 import platform
 import subprocess
@@ -59,9 +61,35 @@ def replay(stage: str) -> None:
         metadata['input_sha256'] = release.sha256_path(release.INPUT)
         owner = release.validate_work_package_a(config)
         guard = release.validate_release_guard(config)
-        bundle = release.validate_bundle(config)
-        # Resolve the newly retained transport evidence; the pinned source-only
-        # report remains a declared archive dependency, not a new film result.
+        bundle_path = Path(config['bundle']['path'])
+        bundle = (release.validate_bundle(config) if bundle_path.is_file() else {
+            'verification_status': 'not_run_missing_archive',
+            'path': str(bundle_path), 'expected_sha256': config['bundle']['outer_sha256'],
+        })
+        input_bytes = subprocess.check_output(['git', '-C', owner['local_checkout'], 'show',
+            f"{owner['owner_revision']}:{owner['files'][0]['path']}"])
+        properties = json.loads(input_bytes)['property_inputs']
+        observation = properties[0]
+        observation_bytes = subprocess.check_output(['git', '-C', owner['local_checkout'], 'show',
+            f"{owner['owner_revision']}:{observation['data_path']}"])
+        release.require(release.sha256_bytes(observation_bytes) == observation['data_sha256'],
+                        'Bundle-3 property observation hash changed')
+        observations = list(csv.DictReader(io.StringIO(observation_bytes.decode())))
+        correction = []
+        for prop in properties:
+            name = 'density' if 'density' in prop['input_id'] else 'viscosity'
+            loaded = prop['loading_state'] == 'loaded'
+            selected = [row for row in observations if row['property'] == name
+                        and (float(row['co2_loading_mol_per_mol_mea'] or 0) > 0) == loaded]
+            release.require(not loaded or prop['applicable_uncertainty'] is None,
+                            'Loaded row-level uncertainty was admitted')
+            correction.append({'property': name, 'loading_state': prop['loading_state'],
+                'source_rows': len(selected), 'bundle1_admitted_rows': len(selected),
+                'bundle3_admitted_rows': 0 if loaded else len(selected),
+                'bundle3_row_uncertainty': prop['applicable_uncertainty'],
+                'bundle3_admission_status': prop['admission_status']})
+        save(output / 'property_admission.json', {'observation_path': observation['data_path'],
+            'observation_sha256': observation['data_sha256'], 'comparison': correction})
         dependencies = release.validate_dependency_files(config)
         rows = release.build_rows(config, dependencies, metadata)
         transport.write_csv(output / 'release_states.csv', rows, release.RESULT_FIELDS)
