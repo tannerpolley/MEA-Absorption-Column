@@ -22,16 +22,16 @@ def save(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, indent=2) + '\n')
 
 
-def replay(stage: str) -> None:
+def replay(stage: str, run: Path) -> None:
     revision, dirty = release.git_revision()
     metadata = {
         'source_revision': revision,
         'generator_sha256': release.sha256_path(Path(__file__)),
-        'exact_command': f'uv run --frozen python {Path(__file__).relative_to(ROOT)} --stage {stage}',
+        'exact_command': f'uv run --frozen python {Path(__file__).relative_to(ROOT)} --stage {stage} --output-dir {run.relative_to(ROOT)}',
         'machine': platform.platform(), 'workers': 1,
         'run_id': f'issue78_bundle3_{stage}_{revision[:12]}',
     }
-    output = RUN / stage
+    output = run / stage
     output.mkdir(parents=True, exist_ok=True)
     if stage == 'transport':
         config = transport.load_json(transport.INPUT)
@@ -61,11 +61,21 @@ def replay(stage: str) -> None:
         metadata['input_sha256'] = release.sha256_path(release.INPUT)
         owner = release.validate_work_package_a(config)
         guard = release.validate_release_guard(config)
-        bundle_path = Path(config['bundle']['path'])
-        bundle = (release.validate_bundle(config) if bundle_path.is_file() else {
-            'verification_status': 'not_run_missing_archive',
-            'path': str(bundle_path), 'expected_sha256': config['bundle']['outer_sha256'],
-        })
+        archive_relative_path = 'analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip'
+        archive_revision = release.git_output(Path(owner['local_checkout']), 'rev-parse', '97e9c15')
+        scratch = ROOT / '.tmp_local/issue78_parameter_archive'
+        scratch.mkdir(parents=True, exist_ok=True)
+        archive_path = scratch / 'mea-reactive-epcsaft-parameter-bundle.zip'
+        with archive_path.open('wb') as archive:
+            subprocess.run(['git', '-C', owner['local_checkout'], 'show',
+                f'{archive_revision}:{archive_relative_path}'], stdout=archive, check=True)
+        bundle = release.validate_bundle({**config, 'bundle': {**config['bundle'], 'path': str(archive_path)}})
+        bundle['acquisition'] = {
+            'repository': owner['repository'], 'revision': archive_revision,
+            'path': archive_relative_path,
+            'blob': release.git_output(Path(owner['local_checkout']), 'rev-parse', f'{archive_revision}:{archive_relative_path}'),
+            'method': 'git show into ignored scratch; existing validate_bundle checks outer and member hashes',
+        }
         input_bytes = subprocess.check_output(['git', '-C', owner['local_checkout'], 'show',
             f"{owner['owner_revision']}:{owner['files'][0]['path']}"])
         properties = json.loads(input_bytes)['property_inputs']
@@ -118,22 +128,29 @@ def replay(stage: str) -> None:
     summary['source_worktree_dirty'] = dirty
     save(output / 'summary.json', summary)
     print(json.dumps(summary['row_counts'], indent=2))
+    if stage == 'release':
+        print(json.dumps({'archive_sha256': bundle['outer_sha256'],
+            'member_count': len(bundle['manifest_members']),
+            'outer_and_member_hashes_verified': bundle['outer_and_member_hashes_verified'],
+            'extracted_wheel_member_verified': bundle['extracted_wheel_member_verified'],
+            'acquisition': bundle['acquisition']}, indent=2))
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--stage', choices=['transport', 'release'], required=True)
+    parser.add_argument('--output-dir', type=Path, default=RUN)
     parser.add_argument('--execute', action='store_true', help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.execute:
-        replay(args.stage)
+        replay(args.stage, args.output_dir.resolve())
     else:
         execution = {'wall_limit_s': 120}
-        directory = RUN / args.stage
+        directory = args.output_dir / args.stage
         directory.mkdir(parents=True, exist_ok=True)
         save(directory / 'execution.json', {'execution': execution})
         with (directory / 'run.log').open('w') as log:
-            subprocess.run([sys.executable, str(Path(__file__)), '--stage', args.stage, '--execute'], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, timeout=execution['wall_limit_s'], check=True)
+            subprocess.run([sys.executable, str(Path(__file__)), '--stage', args.stage, '--output-dir', str(args.output_dir), '--execute'], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, timeout=execution['wall_limit_s'], check=True)
         print((directory / 'run.log').read_text())
     return 0
 

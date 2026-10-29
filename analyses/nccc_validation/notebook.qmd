@@ -72,16 +72,29 @@ A table is sufficient for this categorical admission decision; a trend plot
 would not clarify it.
 
 The transport and release checks each have `execution.wall_limit_s = 120` and
-a retained log under `results/runs/issue78_bundle3/`. Full parameter-archive
-verification was not run because its pinned ZIP is missing from the renamed
-Amine-Thermodynamics checkout. Its expected SHA-256 remains recorded; replacing
-it was not attempted. Verification itself fits the 120 s limit, but acquisition
-cost is unknown. The issue33 concentration replay failed before calculation
-in less than one second because its imported
-`tabulated_epcsaft_reactive_chemical_equilibrium` function is absent from the
-current thermodynamics module. Runtime restoration cost is unknown. The earlier
-Position 1 value, 4.889309897097635 mol/L, is retained evidence only, not a
-bundle-3 calculation. The density-source choice remains under issue #83.
+a retained log under `results/runs/issue78_bundle3/`. The
+[correction run](results/runs/issue78_bundle3_correction/release/summary.json)
+recovers the exact parameter archive from Amine-Thermodynamics commit
+`97e9c15ca6b6ed78a0e9453ae80c5c3fd0ab8411` into ignored scratch. It was deleted
+from the upstream checkout by `ca21408`. The existing `validate_bundle` check
+verifies outer SHA-256
+`4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b`,
+all 12 manifest members, and the wheel member. The correction run retains its
+120 s wall limit, acquisition identity and verification log.
+
+The issue33 input now makes loaded row-level combined density uncertainty
+unavailable (`null`). Its general 0.2% loaded-system estimate is retained
+separately as non-row-level, and no absolute loaded row uncertainty is
+calculated from it. The density values and interpolation model are unchanged;
+the density-source choice remains under issue #83.
+
+The issue33 concentration replay remains a pre-existing runtime gap: it failed
+before calculation in less than one second because its imported
+`tabulated_epcsaft_reactive_chemical_equilibrium` function is absent. That
+function disappeared in the 2026-09-08 reconciliation
+(`f4f5bb9`/`783570a`/`26fa66c`), not in issue #76. Runtime restoration cost is
+unknown. The earlier Position 1 value, 4.889309897097635 mol/L, is retained
+evidence only, not a bundle-3 calculation.
 
 All 1,013 previously retained NCCC result files remain byte-unchanged. Their
 [superseded-source note](results/final/SUPERSEDED.md) disallows their use as

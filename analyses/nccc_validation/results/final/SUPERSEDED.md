@@ -24,5 +24,7 @@ The issue33 density-source choice belongs to #83 and remains outside #78.
 The original result validators replay the original source-stage protocol;
 they do not validate the repinned inputs against the archived result bytes.
 Use `check_issue78_bundle3.py` for the current bounded transport and release
-checks. Its release summary reports the missing parameter-bundle ZIP
-explicitly; successful guard checks do not imply archive verification.
+checks. The first release summary reports the missing checkout ZIP. The correction
+run in `../runs/issue78_bundle3_correction/` recovers the exact archive from
+Amine-Thermodynamics commit `97e9c15` and verifies its outer hash, 12 members
+and wheel through the existing archive check. Earlier run bytes are retained.

@@ -140,7 +140,7 @@
         "instrument_density_uncertainty_g_cm3": 0.00005,
         "combined_density_relative_percent": {
           "unloaded": 0.05,
-          "loaded": 0.2
+          "loaded": null
         },
         "temperature_K": 0.03,
         "mea_mass_fraction_percent": 0.5,
@@ -177,7 +177,15 @@
     "instrument_density_uncertainty_g_cm3": 0.00005,
     "combined_density_relative_uncertainty_percent": {
       "unloaded": 0.05,
-      "loaded": 0.2
+      "loaded": null
+    },
+    "loaded_density_uncertainty_status": "unavailable_row_level",
+    "loaded_density_uncertainty_reason": "Bundle 3 (Amine-Thermodynamics #152/#194): Amundsen2009 pp. 3096-3100 excludes unnamed highest temperatures and CO2 loadings from its general estimate, so no loaded row has a usable row-level uncertainty.",
+    "source_general_loaded_density_relative_uncertainty_percent": {
+      "value": 0.2,
+      "unit": "percent",
+      "scope": "general_loaded_system_estimate_not_row_level",
+      "limitation": "Except for unnamed highest temperatures and CO2 loadings; not assigned or converted to row uncertainties."
     },
     "unloaded": [
       {"temperature_K": 298.15, "loading": 0.0, "density_kg_m3": 1010.6},

@@ -106,16 +106,10 @@
       "calculation": "issue33 concentration mapping",
       "elapsed_wall_limit_s": 120,
       "status": "failed_before_calculation",
-      "reason": "ImportError: removed tabulated_epcsaft_reactive_chemical_equilibrium import",
+      "reason": "Pre-existing runtime gap: tabulated_epcsaft_reactive_chemical_equilibrium disappeared in the 2026-09-08 reconciliation (f4f5bb9/783570a/26fa66c), not in #76.",
       "observed_cost": "less than one second; runtime restoration cost unknown",
       "retained_position_1_mol_L": 4.889309897097635,
       "note": "Retained value only, not a bundle-3 rerun. Density-source changes belong to #83."
-    },
-    {
-      "calculation": "issue36 parameter archive verification",
-      "status": "not_run_missing_archive",
-      "expected_archive_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
-      "cost": "Hash verification is bounded by the 120 s release check; replacement archive acquisition cost unknown."
     }
   ],
   "transport_states_same_except_provenance": true,
@@ -125,5 +119,20 @@
     "manifest_sha256": "6556324c249267b8190574e3a6651b2ad3d634e5b83f67e5fa639b5ffb3064bb",
     "comparison_base_commit": "e8946b28ec0cb778fc8ac4e472cc6d6043935074",
     "scope": "Every tracked pre-existing analyses/nccc_validation/results file; byte identity checked against Git objects."
+  },
+  "parameter_archive_verification": {
+    "status": "verified",
+    "acquisition": {
+      "repository": "tannerpolley/Amine-Thermodynamics",
+      "revision": "97e9c15ca6b6ed78a0e9453ae80c5c3fd0ab8411",
+      "path": "analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+      "blob": "81a014fb196fead7cbc40d52d36886083b611548",
+      "method": "git show into ignored scratch; existing validate_bundle checks outer and member hashes"
+    },
+    "outer_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+    "member_count": 12,
+    "extracted_wheel_member_verified": true,
+    "evidence": "analyses/nccc_validation/results/runs/issue78_bundle3_correction/release/summary.json",
+    "note": "Initial run could not find the checkout ZIP; correction recovered the exact Git blob into ignored scratch and ran existing validate_bundle. All earlier logs remain unchanged."
   }
 }

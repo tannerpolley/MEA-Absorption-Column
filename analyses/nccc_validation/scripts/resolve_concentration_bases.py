@@ -327,7 +327,7 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
         "loaded_density_kg_m3": loaded_density_kg_m3,
         "loaded_density_instrument_uncertainty_g_cm3": config["density_observations"]["instrument_density_uncertainty_g_cm3"],
         "loaded_density_combined_relative_uncertainty_percent": config["density_observations"]["combined_density_relative_uncertainty_percent"]["loaded"],
-        "loaded_density_combined_uncertainty_kg_m3": loaded_density_kg_m3 * config["density_observations"]["combined_density_relative_uncertainty_percent"]["loaded"] / 100.0,
+        "loaded_density_combined_uncertainty_kg_m3": None,
         "loaded_density_source": "Amundsen2009 30 wt% loaded density; bilinear source interpolation",
         "loaded_analytical_concentration_mol_L": analytical_mol_L,
         "free_MEA_concentration_mol_L": concentrations_mol_m3["MEA"] / 1000.0,
@@ -353,8 +353,8 @@ def _state_row(config: dict, source: pd.Series, identity: dict) -> dict[str, obj
         "within_campaign_composition_uncertainty": "not_assessed_basis_unresolved",
         "admission_decision": "basis_unresolved",
         "admission_reasons": "; ".join(reasons),
-        "source_uncertainties": "Morgan2018: nominal amine composition +/- 7.3% expanded (approximately 95%, k=2), applied only to the diagnostic unloaded concentration at local state temperature; it is not a prepared-concentration result or a loaded-versus-5 M admission basis; Amundsen2009: instrument density uncertainty +/- 0.00005 g/cm3 and combined relative estimates +/- 0.05% unloaded and +/- 0.2% loaded, converted row-wise from each interpolated density; NCCC Case 3C-specific preparation-temperature and volume uncertainty unavailable",
-        "source_locators": "Morgan2018 printed p. 10468 Section 2.2 and printed pp. 10469-10470 Section 2.4/Table 4; Amundsen2009 printed pp. 3096-3099; retained profile",
+        "source_uncertainties": "Morgan2018: nominal amine composition +/- 7.3% expanded (approximately 95%, k=2), applied only to the diagnostic unloaded concentration at local state temperature; it is not a prepared-concentration result or a loaded-versus-5 M admission basis; Amundsen2009: instrument density uncertainty +/- 0.00005 g/cm3 and combined relative estimate +/- 0.05% unloaded, converted from the interpolated unloaded density; " + config["density_observations"]["loaded_density_uncertainty_reason"] + " The general +/- 0.2% loaded-system estimate is non-row-level and is not converted; NCCC Case 3C-specific preparation-temperature and volume uncertainty unavailable",
+        "source_locators": "Morgan2018 printed p. 10468 Section 2.2 and printed pp. 10469-10470 Section 2.4/Table 4; Amundsen2009 printed pp. 3096-3100; retained profile",
         "source_identities": "Morgan2018; Amundsen2009; retained Case 3C profile; speciation-table generation identity; Issue 16 downstream derivative/runtime identity",
         "source_attachment_sha256": "Morgan2018=bf9cfa2877c31a1ed8346951e149b6af7fc7e8413e3f62fde22a76e6c31b5ddb; Amundsen2009=a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
     }
@@ -428,7 +428,7 @@ def main() -> int:
         "limitations": [
             "Putta/Luo do not report all source-local preparation temperatures, loaded analytical concentrations, or paired volume bases needed to admit exact 1 M/5 M literature inputs.",
             "NCCC Case 3C preparation temperature and prepared-to-loaded solution-volume ratio are absent from the retained case record.",
-            "Amundsen density values are used as source-backed interpolation evidence; instrument and combined uncertainties are retained separately, and the retained ePC-SAFT profile density does not redefine a literature label.",
+            "Amundsen density values are used as source-backed interpolation evidence; instrument uncertainty and unloaded combined uncertainty are retained separately; loaded combined row uncertainty is unavailable under bundle 3, and the retained ePC-SAFT profile density does not redefine a literature label.",
             "All source and retained state rows are reported, but every mapping row remains basis_unresolved for exact discrete absorber admission.",
         ],
         "immutable_inputs": config["immutable_inputs"],
