@@ -228,18 +228,58 @@ tail width $10^{-5}$. Enthalpy coordinates remain unchanged.
 |---|---:|---:|---:|
 | 3C, raw reference | 91.47102378597 | $5.66\times10^{-14}$ | — |
 | 3C, reciprocal tails | 91.47102378704 | $5.66\times10^{-14}$ | 0.04164381 |
-| 1C, original sigmoid | 86.09531679759 | $1.14\times10^{-13}$ | 0.29586759 |
-| 1C, reciprocal tails | 85.45448662103 | $2.01\times10^{-13}$ | 0.05617600 |
 
-The 3C and 1C reciprocal solves each take one iteration on 51 nodes with unchanged
-`tol=0.5`, `bc_tol=0.001` and `max_nodes=1000`. The 3C capture difference is
-$1.07\times10^{-9}$ percentage points. For the already-converged 1C comparison,
-the maximum absolute scaled-profile difference is 0.06080 and the maximum
-$|y_{new}-y_{old}|/(1+|y_{old}|)$ is 0.03432, below 0.5. Capture moves by
-−0.64083 percentage points. Residual tolerance is not a certified bound on
-profile or capture error: this is empirical scaled-profile agreement at a
-coarse stopping tolerance, rather than exact equality or physical validation.
-The 1C runs each had a 90 s wall limit; the corrected 3C probe had a 60 s limit.
+The 3C reciprocal solve takes one iteration on 51 nodes with unchanged
+`tol=0.5`, `bc_tol=0.001` and `max_nodes=1000`. Its capture difference from the
+raw reference is $1.07\times10^{-9}$ percentage points.
+
+The independent check did not support condition 4 from the initial 1C comparison:
+scaled-profile agreement below 0.5 cannot certify capture agreement at a
+residual tolerance of 0.5. A subsequent bounded diagnosis holds the 1C inputs,
+initial profile, `bc_tol=0.001`, 51 starting nodes and `max_nodes=1000` fixed,
+and varies only coordinates and the requested probe tolerance. Each attempt
+has a 120 s wall limit; all nine converge in 4.76–18.07 s. The old sigmoid
+is evaluated from commit `6ab17c1` in a disposable process; neither production
+map nor test settings are changed.
+
+| Coordinates | Probe tolerance | Capture (%) | Final nodes | Maximum RMS collocation residual | Boundary-error norm (%) |
+|---|---:|---:|---:|---:|---:|
+| raw | 0.5 | 85.45448669486 | 51 | 0.056176033 | 7.50347e-14 |
+| sigmoid | 0.5 | 86.09531679759 | 51 | 0.29586759 | 1.14470e-13 |
+| reciprocal | 0.5 | 85.45448662103 | 51 | 0.056176005 | 2.01006e-13 |
+| raw | 0.01 | 85.39674417148 | 54 | 0.0072682395 | 6.79597e-14 |
+| sigmoid | 0.01 | 85.39661078094 | 100 | 0.0082486044 | 2.42644e-13 |
+| reciprocal | 0.01 | 85.39674417143 | 54 | 0.0072682396 | 6.17979e-14 |
+| raw | 0.001 | 85.39674497261 | 61 | 0.00084386946 | 6.05049e-14 |
+| sigmoid | 0.001 | 85.39678432853 | 147 | 0.00085662143 | 1.46575e-13 |
+| reciprocal | 0.001 | 85.39674497260 | 61 | 0.00084386947 | 6.17979e-14 |
+
+Boundary-error norm denotes the Euclidean norm of six relative inlet errors
+expressed in percent, as returned by `Run_Model.py`; each log also retains
+SciPy's maximum scaled boundary residual.
+
+All three representations approach **85.396745% capture**. The capture spread
+falls from 0.6408302 percentage points at `tol=0.5`, to 0.00013339 at `tol=0.01`,
+and 0.000039356 at `tol=0.001`. Raw and reciprocal coordinates agree within
+$5.83\times10^{-12}$ percentage points at the tightest probed tolerance.
+Relative to the tight raw value, the loose sigmoid differs by **+0.6985718
+percentage points**, versus **+0.05774165** for the reciprocal map. At
+`tol=0.5`, raw and reciprocal differ by only $7.38\times10^{-8}$ percentage
+points. The reciprocal map is closer to the common tight result.
+
+![Case 1C capture approaches the same value as the requested residual tolerance tightens. Points are evaluated attempts; the dotted line is the raw result at tolerance 0.001, not an acceptance limit.](results/runs/issue81_transform_domain/1C_capture_tolerance.png)
+
+This supports coordinate-dependent numerical error at the original loose
+stopping tolerance, rather than a reciprocal-map defect on 1C. Mesh refinement
+and nonlinear stopping change together, so these probes do not isolate spatial
+discretization error from nonlinear iteration error or certify an exact
+capture-error bound. The two loose-tolerance results are not equal. This is
+numerical solution verification on one ideal-Henry case, not physical
+validation or a general convergence guarantee. The new evidence returns
+condition 4 to independent acceptance review; it does not replace that decision.
+Exact inputs, solver identities, settings, logs and results are retained in
+[the tolerance diagnosis](results/runs/issue81_transform_domain/1C_tolerance_diagnosis.txt)
+and [the result table](results/runs/issue81_transform_domain/1C_tolerance_results.csv).
 
 Both unchanged 3C previous-failure checks pass. The complete suite returns **289 passed,
 1 warning in 29.68 s**, and the final Engine integration check passes.

@@ -1,0 +1,54 @@
+{"case": "1C", "coordinates": "sigmoid", "tol": 0.01, "head": "64d66c94a9805bedd477e3fc5caf11cf620d0617", "original_map_commit": "6ab17c1440ead20b1cdbceef254e35149ef310fa", "input": "src/mea_absorption_column/data/C_cases_data.csv", "input_sha256": "c24eecf75d572e7144221a189ee5978ec40c7f1c1eeb865d8f043e41809a3f0f", "case_input": {"L/G": 3.114752977, "G": 24.13594414, "alpha": 0.25, "w_MEA": 0.3, "y_CO2": 0.076, "Tl": 318.15, "Tv": 316.75, "P": 109100.0, "beds": 1.0, "y_O2": 0.114, "CO2 %": 97.1, "0": 328.35, "0.2": 333.45, "0.4": 342.55, "0.6": 346.75, "0.8": 346.65}, "wall_limit_s": 120, "settings": {"mesh_points": 51, "max_nodes": 1000, "tol": 0.01, "bc_tol": 0.001, "verbose": 0, "use_finite_jacobian": false, "transform_mode": "positive_flow_pressure"}, "thermo_model": "ideal_henry", "staged_beds": false}
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/.tmp_local/issue81_tolerance/probe.py", line 39, in <module>
+    result = run_model(frame, method='scipy-bvp', run=list(frame.index).index('1C'),
+        thermo_model='ideal_henry', return_details=True, staged_beds=False, solver_settings=settings)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/src/mea_absorption_column/Run_Model.py", line 350, in run_model
+    Y_scaled, z_new, solving_type, success, message = solving_function(
+                                                      ~~~~~~~~~~~~~~~~^
+        Y_a_scaled, Y_b_scaled, z, parameters, settings=solver_settings_for_run
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 181, in scipy_BVP_solve
+    sol = solve_bvp(column_odes, boundary_conditions, z_2, w_guess_solver,
+                    max_nodes=int(settings['max_nodes']),
+    ...<3 lines>...
+                    **jacobian_kwargs,
+                    )
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 1090, in solve_bvp
+    y, p, singular = solve_newton(n, m, h, col_fun, bc_wrapped, jac_sys,
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  y, p, B, tol, bc_tol)
+                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 441, in solve_newton
+    col_res, y_middle, f, f_middle = col_fun(y, p)
+                                     ~~~~~~~^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 324, in col_fun
+    return collocation_fun(fun, y, p, x, h)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 311, in collocation_fun
+    f_middle = fun(x[:-1] + 0.5 * h, y_middle, p)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 649, in fun_p
+    return np.asarray(fun(x, y), dtype)
+                      ~~~^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 101, in column_odes
+    _physical_rhs_to_solver_rhs(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        w[:, i],
+        ^^^^^^^^
+    ...<7 lines>...
+        transform_mode,
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 229, in _physical_rhs_to_solver_rhs
+    derivative = solver_to_scaled_physical_derivative(y_solver, transform_mode=transform_mode)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/src/mea_absorption_column/BVP/robust_core.py", line 121, in solver_to_scaled_physical_derivative
+    derivative[POSITIVE_SOLVER_IDXS] = _bounded_positive_derivative(y_solver[POSITIVE_SOLVER_IDXS])
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/src/mea_absorption_column/BVP/robust_core.py", line 90, in _bounded_positive_derivative
+    return _positive_transform_values(values)[1]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-81-diagnose-the-singular-collocation/src/mea_absorption_column/BVP/robust_core.py", line 81, in _positive_transform_values
+    raise ValueError("Positive transform value or derivative is not representable inside its bounds.")
+ValueError: Positive transform value or derivative is not representable inside its bounds.

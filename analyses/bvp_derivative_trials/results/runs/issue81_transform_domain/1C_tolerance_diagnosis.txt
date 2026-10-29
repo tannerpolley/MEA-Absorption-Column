@@ -1,0 +1,136 @@
+Issue #81: 1C tolerance diagnosis, 2026-10-29
+
+Question: does the -0.64083 percentage-point capture difference at tol=0.5
+indicate a defect in the reciprocal map or loose-tolerance numerical error?
+
+Inputs: legacy C_cases_data.csv, row 1C, mole basis, ideal_henry, single bed,
+enthalpy state coordinates, guarded RHS, same polynomial initial profile,
+51 starting nodes, max_nodes=1000, bc_tol=0.001, numerical Jacobian.
+Only the probe tolerance and coordinate representation vary. Production
+settings, map implementation, tests and reference data remain unchanged.
+Each completed attempt has its own 120 s timeout and log with exact inputs,
+settings, executable HEAD and original-map commit. Maximum observed solver
+wall time: 18.0683 s. All nine final attempts converged.
+
+The original sigmoid functions were loaded from immutable commit 6ab17c1
+in an isolated process and assigned to the shared module and its already
+imported SciPy callers. The initial adapter missed those imported bindings;
+its three setup-error logs are retained separately and excluded from the
+numerical comparison. The corrected tol=0.5 attempt exactly reproduces the
+previously retained sigmoid capture, residual, iteration and node count.
+No baseline sigmoid implementation is added to production code.
+
+Numerical findings:
+Capture spread across coordinates: 0.64083017656 pp at tol=0.5,
+0.0001333905373 pp at tol=0.01, 0.00003935592576 pp at tol=0.001.
+Tight raw reference is 85.3967449726076 percent; tight reciprocal differs by
+-5.83e-12 pp and tight sigmoid by +3.9355926e-5 pp.
+Loose raw error relative to tight raw: +0.05774172226 pp.
+Loose reciprocal error relative to tight raw: +0.05774164843 pp.
+Loose sigmoid error relative to tight raw: +0.69857182499 pp.
+Thus the reciprocal representation is closer to the common tight solution
+at tol=0.5. The loose raw and reciprocal results differ by only 7.38e-8 pp.
+At tol=0.001 the sigmoid uses 147 nodes, raw and reciprocal use 61.
+Boundary residual norms remain below 2.43e-13 in all nine attempts.
+
+Interpretation: these results support coordinate-dependent numerical error
+at loose stopping tolerance in the original sigmoid representation, rather
+than a reciprocal-map defect on 1C. The probes combine mesh refinement and
+nonlinear stopping; they do not isolate spatial discretization error from
+nonlinear iteration error. The 0.5 residual tolerance is not an output-error
+bound. Earlier scaled-profile agreement below 0.5 did not establish capture
+agreement and does not meet condition 4 by itself.
+
+This is numerical solution verification for one ideal-Henry input case,
+not physical validation, a universal map guarantee or an exact error bound.
+The data support retaining the map correction for review; they do not make
+the two loose-tolerance captures numerically equal. Independent acceptance
+of condition 4 remains with the owner/reviewer.
+
+The CSV and JSON preserve all requested quantities. boundary_residual_norm
+is the Euclidean norm of six relative inlet errors expressed in percent
+(Run_Model.py), not the SciPy scaled boundary residual. Both are retained.
+The PNG/SVG show capture at discrete evaluated tolerance values; the dotted
+horizontal line is the tight raw numerical reference, not an acceptance limit.
+
+Reproduction: from HEAD 64d66c94a9805bedd477e3fc5caf11cf620d0617, execute the
+following disposable driver in a fresh interpreter for every pair:
+mode in [raw, sigmoid, reciprocal], tolerance in [0.5, 0.01, 0.001].
+Command: timeout 120s nice -n 10 uv run --frozen python <driver.py> <mode> <tolerance>
+The agent-heavy wrapper used by the host executes the command directly.
+
+Disposable numerical driver (not a production module):
+import importlib
+import hashlib
+import json
+import subprocess
+import sys
+import time
+import types
+from pathlib import Path
+
+mode, tolerance = sys.argv[1], float(sys.argv[2])
+source_commit = '6ab17c1440ead20b1cdbceef254e35149ef310fa'
+source_path = 'src/mea_absorption_column/BVP/robust_core.py'
+if mode == 'sigmoid':
+    import mea_absorption_column.BVP.robust_core as current
+    source = subprocess.check_output(['git', 'show', f'{source_commit}:{source_path}'], text=True)
+    original = types.ModuleType('issue81_original_transform')
+    sys.modules[original.__name__] = original
+    exec(compile(source, f'{source_commit}:{source_path}', 'exec'), original.__dict__)
+    for name in ('bounded_to_unbounded_positive', 'unbounded_to_positive',
+                 'scaled_physical_to_solver', 'solver_to_scaled_physical',
+                 'solver_to_scaled_physical_derivative', 'solver_profile_to_scaled_physical'):
+        setattr(current, name, getattr(original, name))
+    scipy_module = importlib.import_module('mea_absorption_column.BVP.Methods.Scipy_BVP_Solve')
+    for name in ('scaled_physical_to_solver', 'solver_to_scaled_physical',
+                 'solver_to_scaled_physical_derivative', 'solver_profile_to_scaled_physical'):
+        setattr(scipy_module, name, getattr(original, name))
+
+import pandas as pd
+from mea_absorption_column.Run_Model import run_model
+from mea_absorption_column.BVP.Methods.Scipy_BVP_Solve import DEFAULT_SCIPY_BVP_SETTINGS
+
+input_path = Path('src/mea_absorption_column/data/C_cases_data.csv')
+frame = pd.read_csv(input_path, index_col=0)
+settings = {'transform_mode': 'raw' if mode == 'raw' else 'positive_flow_pressure',
+            'tol': tolerance}
+print(json.dumps({'case': '1C', 'coordinates': mode, 'tol': tolerance,
+    'head': subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+    'original_map_commit': source_commit if mode == 'sigmoid' else None,
+    'input': str(input_path), 'input_sha256': hashlib.sha256(input_path.read_bytes()).hexdigest(),
+    'case_input': frame.loc['1C'].to_dict(), 'wall_limit_s': 120,
+    'settings': DEFAULT_SCIPY_BVP_SETTINGS | settings,
+    'thermo_model': 'ideal_henry', 'staged_beds': False}), flush=True)
+start = time.perf_counter()
+result = run_model(frame, method='scipy-bvp', run=list(frame.index).index('1C'),
+    thermo_model='ideal_henry', return_details=True, staged_beds=False, solver_settings=settings)
+keys = ('success','capture_pct','boundary_residual_norm','solver_iterations',
+        'final_mesh_nodes','max_rms_residual','max_scaled_boundary_residual','message')
+output = {'coordinates': mode, 'tol': tolerance, 'elapsed_s': time.perf_counter()-start,
+          **{key: result[key] for key in keys}}
+print('RESULT '+json.dumps(output), flush=True)
+if not result['success']:
+    sys.exit(1)
+
+Presentation-only plot driver (reads retained JSON):
+import json
+from pathlib import Path
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+root=Path('analyses/bvp_derivative_trials/results/runs/issue81_transform_domain')
+rows=json.loads((root/'1C_tolerance_results.json').read_text())
+fig,ax=plt.subplots(figsize=(7.2,3.4),layout='constrained')
+for mode,color,marker in [('raw','#0072B2','o'),('sigmoid','#D55E00','^'),('reciprocal','#009E73','x')]:
+ group=[r for r in rows if r['coordinates']==mode]
+ ax.scatter([r['tol'] for r in group],[r['capture_pct'] for r in group],label=mode,
+            marker=marker,s=62,color=color,facecolors='none' if mode=='raw' else color,linewidths=1.6)
+reference=next(r['capture_pct'] for r in rows if r['coordinates']=='raw' and r['tol']==.001)
+ax.axhline(reference,color='#666666',lw=.9,ls=':',label='raw at tolerance 0.001')
+ax.set(xscale='log',xlabel='Requested RMS residual tolerance (dimensionless)',ylabel='CO₂ capture (%)',
+       xlim=(.8,.0007),ylim=(85.33,86.17))
+ax.set_xticks([.5,.01,.001],['0.5','0.01','0.001'])
+ax.grid(axis='y',alpha=.25);ax.spines[['top','right']].set_visible(False)
+ax.legend(frameon=False,loc='upper right',fontsize=9)
+for suffix in ['svg','png']:fig.savefig(root/f'1C_capture_tolerance.{suffix}',dpi=160)

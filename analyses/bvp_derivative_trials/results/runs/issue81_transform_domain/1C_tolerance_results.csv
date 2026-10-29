@@ -1,0 +1,10 @@
+coordinates,tol,elapsed_s,success,capture_pct,boundary_residual_norm,solver_iterations,final_mesh_nodes,max_rms_residual,max_scaled_boundary_residual,message,log
+raw,0.5,4.761553489000107,True,85.4544866948629,7.503470301170893e-14,1,51,0.056176032707160525,3.469446951953614e-18,The algorithm converged to the desired accuracy.,1C_raw_tol_0.5.log
+sigmoid,0.5,6.121597958000166,True,86.09531679759385,1.1446960617601317e-13,1,51,0.29586758994882256,1.1102230246251565e-16,The algorithm converged to the desired accuracy.,1C_sigmoid_tol_0.5.log
+reciprocal,0.5,4.847263267000017,True,85.45448662103415,2.0100604252564532e-13,1,51,0.056176004635235796,3.469446951953614e-18,The algorithm converged to the desired accuracy.,1C_reciprocal_tol_0.5.log
+raw,0.01,7.283611475999351,True,85.3967441714758,6.795965793713749e-14,2,54,0.007268239511901023,0.0,The algorithm converged to the desired accuracy.,1C_raw_tol_0.01.log
+sigmoid,0.01,9.781191828999908,True,85.3966107809385,2.42644286006653e-13,2,100,0.008248604389405632,1.1102230246251565e-16,The algorithm converged to the desired accuracy.,1C_sigmoid_tol_0.01.log
+reciprocal,0.01,7.64544898099939,True,85.39674417143326,6.179787532622391e-14,2,54,0.007268239561928547,2.7755575615628914e-17,The algorithm converged to the desired accuracy.,1C_reciprocal_tol_0.01.log
+raw,0.001,10.62583989399991,True,85.3967449726076,6.050488344832952e-14,3,61,0.0008438694616424608,0.0,The algorithm converged to the desired accuracy.,1C_raw_tol_0.001.log
+sigmoid,0.001,18.068317996999212,True,85.39678432852754,1.4657522248561276e-13,3,147,0.0008566214345989482,1.1102230246251565e-16,The algorithm converged to the desired accuracy.,1C_sigmoid_tol_0.001.log
+reciprocal,0.001,11.147617558000093,True,85.39674497260178,6.179787532622391e-14,3,61,0.0008438694746422853,2.7755575615628914e-17,The algorithm converged to the desired accuracy.,1C_reciprocal_tol_0.001.log
