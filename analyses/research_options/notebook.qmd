@@ -80,3 +80,77 @@ results and failures, then update an analysis notebook. Render with execution
 disabled. Candidate promotions should state the scientific question, exact inputs,
 method, checks, uncertainty and what remains unexplained. Manuscript editing is
 outside this research phase.
+
+# Seven-state Engine calculation: numerical verification
+
+Case 3C with ionic ePC-SAFT fugacity returns **92.08186315973761% CO2
+capture**, using the pinned Engine 1.0.0 wheel from commit
+`f4566b3d0c64d05822b41fe363de47ab5cfa6a0e`, SHA-256
+`57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a`.
+This is numerical verification of the existing seven-state equations, not
+physical validation or an isolated thermodynamic-model comparison.
+
+The input is `C_cases_data/3C`, molar conversion, `legacy_ratio` vapor
+composition and `reported_total_wet` gas flow: liquid CO2/MEA/water feeds
+2.5639189042486694/10.255675616994678/81.1120360118802 mol/s; vapor
+CO2/water/N2/O2 feeds 1.53499705118/1.47758972194387/15.133559109341697/
+1.2841965375344333 mol/s. Liquid and vapor enter at 318.15 and 316.75 K;
+packed height is 6 m, area 0.3216990877275948 m², and constant pressure
+109500 Pa. The equations use legacy chemical equilibrium, empirical enthalpy
+states, explicit enhancement, raw states and numerical derivatives. No
+thermodynamic parameters or transport equations changed.
+
+SciPy boundary-value collocation used 21 starting nodes, tolerance 0.5,
+boundary tolerance 0.001 and at most 1000 nodes. It returned 22 nodes after
+two iterations in 4.178 s within `execution.wall_limit_s = 600`.
+Maximum collocation RMS residual is 0.22481082656001908; maximum scaled
+boundary residual is 1.6940658945086007e-21. The separate boundary residual
+percent norm is 6.915441663935132e-14. The loose collocation tolerance does
+not establish profile refinement or capture accuracy.
+
+With both stream flows represented as positive magnitudes and liquid flowing
+toward decreasing height, the conserved differences are liquid minus vapor.
+Maximum drift from the bottom native node is:
+
+| Quantity | Absolute drift | Relative drift and normalization |
+|---|---:|---:|
+| CO2 flow difference | 4.440892098500626e-16 mol/s | 2.893094872779576e-16 / inlet vapor CO2 |
+| Water flow difference | 9.242739906767383e-11 mol/s | 6.255281672241147e-11 / inlet vapor water |
+| Enthalpy-flow difference | 2.905726432800293e-7 W | 6.171416760085979e-14 / maximum inlet enthalpy-flow magnitude |
+| Pressure | 0 Pa | 0 / specified pressure |
+
+The retained seven-state ionic row for 3C in
+`analyses/nccc_validation/results/final/tables/raw_c_case_thermo_benchmark.csv`
+reports 88.74708790292281% capture: the new result is higher by
+3.334775256814794 percentage points. That row points to
+`c_case_campaign_temperature_overlay_metrics.csv`; its complete numerical
+settings and wheel identity are absent from the table. This comparison does
+not isolate an Engine effect or establish numerical preservation. Capture
+and conservation here are a few scalar quantities, so a table states the
+comparison without implying a resolved trend.
+
+Reproduce with `uv run --frozen python src/mea_absorption_column/research.py
+analyses/research_options/inputs/engine_ionic_3c.toml --run`, choosing a new
+output directory. The retained result is
+[attempt.json](results/runs/engine_ionic_3c_verified_20261029/attempt.json), with
+[conservation and comparison values](results/runs/engine_ionic_3c_verified_20261029/conservation_comparison.json)
+and [run log](results/runs/engine_ionic_3c_verified_20261029/run.log).
+The balance-report command in `scripts/check_seven_state_balances.py` reads
+this retained native profile without running the model. A preceding repeat
+in `results/runs/engine_ionic_3c_20261029/attempt.json` returned the identical
+capture and residuals in 5.372 s.
+
+The three distinct persistent checks use both ionic and nine-species reactive
+Engine fugacity: extensive-enthalpy directional differences test temperature
+inversion and chain factors; prescribed fluxes test the smooth-cap derivative
+across absorption and desorption; and nonzero area factors, including both
+clipped limits, test material and energy scaling and conservation. These
+checks establish neither native derivatives for those optional closures nor
+physical accuracy. The calculation and notebook have not been independently
+reviewed or promoted for manuscript use.
+
+All 18 new checks pass. Disposable mutations (a 1 K liquid-temperature
+inversion error, replacing the smooth cap by a hard cap, and ignoring the
+area factor) fail the corresponding checks; the retained source was not
+modified for those probes. These checks expose distinct numerical errors
+rather than merely exercising the selected functions.

@@ -650,9 +650,12 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             "coordinate": "physical_height",
         }
     else:
+        thermo_model = model_values.get("thermo_model", "ideal_henry")
+        if thermo_model not in {"ideal_henry", "epcsaft_neutral", "epcsaft_ionic", "epcsaft_reactive_nine"}:
+            raise ConfigurationError(f"Unsupported seven-state thermodynamic model: {thermo_model!r}")
         expected = {
             "formulation": "seven_state",
-            "thermo_model": "ideal_henry",
+            "thermo_model": thermo_model,
             "film_model": "enhancement_factor",
             "energy_model": "empirical_enthalpy",
             "pressure_model": "constant",
@@ -712,12 +715,13 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     default_engine_record = _default_engine().as_dict()
     wire_roundtrip_default = (
         request.get("resolved_config_sha256") is not None
-        and engine_request.get("required", False) in {False, True if preset == TWELVE_PRESET else False}
+        and engine_request.get("required", False) in {False, True if model.thermo_model != "ideal_henry" else False}
         and all(engine_request.get(key, default_engine_record[key]) == default_engine_record[key]
                 for key in ("wheel", "sha256", "commit", "python"))
     )
     engine_explicit = any(key in engine_request for key in ("wheel", "sha256", "commit", "python")) and not wire_roundtrip_default
-    engine_required = bool(engine_request.get("required", engine_explicit or preset == TWELVE_PRESET))
+    engine_required = bool(engine_request.get("required", False) or engine_explicit
+                           or model.thermo_model != "ideal_henry")
     engine = _engine(engine_request, required=engine_required)
     if engine_explicit and not execution.process_isolation:
         raise ConfigurationError("explicit Engine selection requires execution.process_isolation=true")

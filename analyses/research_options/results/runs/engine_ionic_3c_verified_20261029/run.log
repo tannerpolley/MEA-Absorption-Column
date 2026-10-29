@@ -1,0 +1,135 @@
+{
+  "selection": {
+    "schema_version": 1,
+    "preset": "seven_state_legacy",
+    "case": {
+      "source": "C_cases_data",
+      "id": "3C",
+      "data_type": "mole",
+      "vapor_composition_mode": "legacy_ratio",
+      "gas_flow_basis": "reported_total_wet",
+      "physical_input_file": null
+    },
+    "model": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "enhancement_factor",
+      "energy_model": "empirical_enthalpy",
+      "pressure_model": "constant",
+      "layout": "seven_enthalpy",
+      "coordinate": "normalized_height"
+    },
+    "numerics": {
+      "method": "scipy-bvp",
+      "solver_settings": {
+        "bc_tol": 0.001,
+        "co2_mass_transfer_model": "enhancement_factor",
+        "jacobian_mode": "numerical",
+        "max_nodes": 1000,
+        "mesh_points": 21,
+        "thermal_state_mode": "enthalpy",
+        "tol": 0.5,
+        "transform_mode": "raw",
+        "use_finite_jacobian": false,
+        "verbose": 0
+      }
+    },
+    "initialization": {
+      "policy": "legacy_capture_temperature_guesses",
+      "values": {}
+    },
+    "acceptance": {
+      "numerical": "solver_termination_and_original_equations",
+      "physical": "not_evaluated",
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null
+    },
+    "execution": {
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-52-design-selectable-seven-state-and/analyses/research_options/results/runs/engine_ionic_3c_verified_20261029",
+      "wall_limit_s": 600.0,
+      "threads": 1,
+      "process_isolation": true,
+      "cache_policy": "legacy_explicit",
+      "resume": false,
+      "retry": false
+    },
+    "dependencies": {
+      "dataset": null,
+      "mobility_law": null,
+      "thermal_reference": null,
+      "references": []
+    },
+    "engine": {
+      "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-52-design-selectable-seven-state-and/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+      "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-52-design-selectable-seven-state-and/.venv/bin/python3",
+      "required": true
+    },
+    "resolved_config_sha256": "5dea39de59a1b959853c85c1cc1db79bdd5da870b2588dc3e9bbfd7edf140ef1"
+  },
+  "limitations": "Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Conserved formulation requires a user problem_factory owning the physics; the twelve-state column is not integrated. Built-in eNRTL and MDEA are unavailable."
+}
+
+Native conservation report:
+{
+  "evidence_kind": "numerical verification, not physical validation",
+  "native_nodes": 22,
+  "conserved_quantities": [
+    "F_L_CO2-F_V_CO2",
+    "F_L_H2O-F_V_H2O",
+    "H_L-H_V",
+    "P"
+  ],
+  "units": [
+    "mol/s",
+    "mol/s",
+    "W",
+    "Pa"
+  ],
+  "maximum_absolute_native_drift": [
+    4.440892098500626e-16,
+    9.242739906767383e-11,
+    2.905726432800293e-07,
+    0.0
+  ],
+  "normalization_values": [
+    1.53499705118,
+    1.47758972194387,
+    4708362.027327759,
+    109500.0
+  ],
+  "maximum_relative_native_drift": [
+    2.893094872779576e-16,
+    6.255281672241147e-11,
+    6.171416760085979e-14,
+    0.0
+  ],
+  "normalization_basis": [
+    "inlet vapor CO2",
+    "inlet vapor water",
+    "maximum inlet enthalpy flow magnitude",
+    "specified pressure"
+  ],
+  "capture_percent": 92.08186315973761,
+  "boundary_residual_percent_norm": 6.915441663935132e-14,
+  "max_rms_residual": 0.22481082656001908,
+  "max_scaled_boundary_residual": 1.6940658945086007e-21,
+  "reference_file": "analyses/nccc_validation/results/final/tables/raw_c_case_thermo_benchmark.csv",
+  "reference_row": {
+    "artifact": "analyses/nccc_validation/results/final/tables/c_case_campaign_temperature_overlay_metrics.csv",
+    "case_id": "3C",
+    "thermo_model": "epcsaft_ionic",
+    "success": true,
+    "runtime_s": 21.1308703423,
+    "capture_pct": 88.7470879029,
+    "capture_error_pct": -0.7529120971,
+    "temperature_rmse_K": 4.2099525362,
+    "boundary_residual_norm": null,
+    "boundary_residual_components": null,
+    "co2_vapor_upper_factor": null,
+    "success_boundary_residual_max": null
+  },
+  "capture_difference_percentage_points": 3.334775256814794,
+  "comparison_limit": "Different executable/wheel and incompletely recorded earlier settings; not an isolated Engine or same-physics preservation comparison."
+}

@@ -1,0 +1,20 @@
+preset = "seven_state_legacy"
+[case]
+source = "C_cases_data"
+id = "3C"
+[model]
+thermo_model = "epcsaft_ionic"
+[numerics]
+method = "scipy-bvp"
+[numerics.solver_settings]
+mesh_points = 21
+tol = 0.5
+bc_tol = 0.001
+max_nodes = 1000
+thermal_state_mode = "enthalpy"
+transform_mode = "raw"
+jacobian_mode = "numerical"
+[execution]
+output_dir = "analyses/research_options/results/runs/engine_ionic_3c_verified_20261029"
+process_isolation = true
+wall_limit_s = 600

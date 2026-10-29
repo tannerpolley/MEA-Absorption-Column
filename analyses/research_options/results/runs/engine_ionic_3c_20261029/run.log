@@ -1,0 +1,72 @@
+{
+  "selection": {
+    "schema_version": 1,
+    "preset": "seven_state_legacy",
+    "case": {
+      "source": "C_cases_data",
+      "id": "3C",
+      "data_type": "mole",
+      "vapor_composition_mode": "legacy_ratio",
+      "gas_flow_basis": "reported_total_wet",
+      "physical_input_file": null
+    },
+    "model": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "enhancement_factor",
+      "energy_model": "empirical_enthalpy",
+      "pressure_model": "constant",
+      "layout": "seven_enthalpy",
+      "coordinate": "normalized_height"
+    },
+    "numerics": {
+      "method": "scipy-bvp",
+      "solver_settings": {
+        "bc_tol": 0.001,
+        "co2_mass_transfer_model": "enhancement_factor",
+        "jacobian_mode": "numerical",
+        "max_nodes": 1000,
+        "mesh_points": 21,
+        "thermal_state_mode": "enthalpy",
+        "tol": 0.5,
+        "transform_mode": "raw",
+        "use_finite_jacobian": false,
+        "verbose": 0
+      }
+    },
+    "initialization": {
+      "policy": "legacy_capture_temperature_guesses",
+      "values": {}
+    },
+    "acceptance": {
+      "numerical": "solver_termination_and_original_equations",
+      "physical": "not_evaluated",
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null
+    },
+    "execution": {
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-52-design-selectable-seven-state-and/analyses/research_options/results/runs/engine_ionic_3c_20261029",
+      "wall_limit_s": 600.0,
+      "threads": 1,
+      "process_isolation": true,
+      "cache_policy": "legacy_explicit",
+      "resume": false,
+      "retry": false
+    },
+    "dependencies": {
+      "dataset": null,
+      "mobility_law": null,
+      "thermal_reference": null,
+      "references": []
+    },
+    "engine": {
+      "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-52-design-selectable-seven-state-and/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+      "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-52-design-selectable-seven-state-and/.venv/bin/python3",
+      "required": false
+    },
+    "resolved_config_sha256": "a487587c04686b26c55a33e504dfacdea2ca5300d947f7fed8beaa9d8162f7cf"
+  },
+  "limitations": "Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Conserved formulation requires a user problem_factory owning the physics; the twelve-state column is not integrated. Built-in eNRTL and MDEA are unavailable."
+}

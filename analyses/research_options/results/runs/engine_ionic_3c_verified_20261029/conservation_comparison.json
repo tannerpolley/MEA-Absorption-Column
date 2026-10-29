@@ -1,0 +1,61 @@
+{
+  "evidence_kind": "numerical verification, not physical validation",
+  "native_nodes": 22,
+  "conserved_quantities": [
+    "F_L_CO2-F_V_CO2",
+    "F_L_H2O-F_V_H2O",
+    "H_L-H_V",
+    "P"
+  ],
+  "units": [
+    "mol/s",
+    "mol/s",
+    "W",
+    "Pa"
+  ],
+  "maximum_absolute_native_drift": [
+    4.440892098500626e-16,
+    9.242739906767383e-11,
+    2.905726432800293e-07,
+    0.0
+  ],
+  "normalization_values": [
+    1.53499705118,
+    1.47758972194387,
+    4708362.027327759,
+    109500.0
+  ],
+  "maximum_relative_native_drift": [
+    2.893094872779576e-16,
+    6.255281672241147e-11,
+    6.171416760085979e-14,
+    0.0
+  ],
+  "normalization_basis": [
+    "inlet vapor CO2",
+    "inlet vapor water",
+    "maximum inlet enthalpy flow magnitude",
+    "specified pressure"
+  ],
+  "capture_percent": 92.08186315973761,
+  "boundary_residual_percent_norm": 6.915441663935132e-14,
+  "max_rms_residual": 0.22481082656001908,
+  "max_scaled_boundary_residual": 1.6940658945086007e-21,
+  "reference_file": "analyses/nccc_validation/results/final/tables/raw_c_case_thermo_benchmark.csv",
+  "reference_row": {
+    "artifact": "analyses/nccc_validation/results/final/tables/c_case_campaign_temperature_overlay_metrics.csv",
+    "case_id": "3C",
+    "thermo_model": "epcsaft_ionic",
+    "success": true,
+    "runtime_s": 21.1308703423,
+    "capture_pct": 88.7470879029,
+    "capture_error_pct": -0.7529120971,
+    "temperature_rmse_K": 4.2099525362,
+    "boundary_residual_norm": null,
+    "boundary_residual_components": null,
+    "co2_vapor_upper_factor": null,
+    "success_boundary_residual_max": null
+  },
+  "capture_difference_percentage_points": 3.334775256814794,
+  "comparison_limit": "Different executable/wheel and incompletely recorded earlier settings; not an isolated Engine or same-physics preservation comparison."
+}
