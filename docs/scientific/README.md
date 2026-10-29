@@ -6,6 +6,8 @@ Active work is research in `analyses/`; the submitted manuscript is not edited
 here. Use Research for an unresolved source and Diagnose for an unexplained
 numerical result.
 
+For source discovery, use `cse-zotero wiki-context mea-absorption-column --query "<terms>" --json`; repeat with `--global` if the project view is incomplete. Use `cse-zotero wiki-evidence <KEY>` to inspect exact source passages.
+
 ## Established owners
 
 | Content | Authoritative location |
