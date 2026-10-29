@@ -1,0 +1,60 @@
+
+pandoc 
+  to: html
+  output-file: notebook.html
+  standalone: true
+  embed-resources: false
+  title-prefix: Analyses
+  section-divs: true
+  html-math-method: mathjax
+  wrap: none
+  default-image-extension: png
+  css:
+    - ../site.css
+  toc: false
+  
+metadata
+  document-css: false
+  link-citations: true
+  date-format: long
+  lang: en
+  page-layout: full
+  theme: cosmo
+  fontsize: 16px
+  title: Reactive ePC-SAFT fugacity and liquid-film consistency
+  subtitle: Retained NCCC Case 3C analysis research notebook
+  author: MEA Absorption Column project
+  date: '2026-08-26'
+  bibliography:
+    - ../../docs/scientific/latex/references.bib
+  
+Output created: ../_site/nccc_validation/notebook.html
+
+
+pandoc 
+  to: html
+  output-file: index.html
+  standalone: true
+  embed-resources: false
+  title-prefix: Analyses
+  section-divs: true
+  html-math-method: mathjax
+  wrap: none
+  default-image-extension: png
+  css:
+    - site.css
+  toc: false
+  
+metadata
+  document-css: false
+  link-citations: true
+  date-format: long
+  lang: en
+  page-layout: full
+  theme: cosmo
+  fontsize: 16px
+  title: MEA absorption-column research
+  subtitle: Model choices, retained evidence and numerical methods
+  
+Output created: _site/index.html
+

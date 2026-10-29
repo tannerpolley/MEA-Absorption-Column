@@ -1,0 +1,19 @@
+{
+  "declared_states": 5,
+  "blocked_states": 5,
+  "admitted_states": 0,
+  "release_files_created": 0
+}
+{
+  "archive_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+  "member_count": 12,
+  "outer_and_member_hashes_verified": true,
+  "extracted_wheel_member_verified": true,
+  "acquisition": {
+    "repository": "tannerpolley/Amine-Thermodynamics",
+    "revision": "97e9c15ca6b6ed78a0e9453ae80c5c3fd0ab8411",
+    "path": "analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip",
+    "blob": "81a014fb196fead7cbc40d52d36886083b611548",
+    "method": "git show into ignored scratch; existing validate_bundle checks outer and member hashes"
+  }
+}
