@@ -1,0 +1,50 @@
+{
+  "observation_path": "data/reference/MEA/observations/density_viscosity/Amundsen_2009_density_viscosity.csv",
+  "observation_sha256": "7322b7dc7f0c961d09dbfb356dccde00851c0de20ba589d150d9c3834900f70c",
+  "comparison": [
+    {
+      "property": "density",
+      "loading_state": "unloaded",
+      "source_rows": 35,
+      "bundle1_admitted_rows": 35,
+      "bundle3_admitted_rows": 35,
+      "bundle3_row_uncertainty": {
+        "value": 0.0005,
+        "unit": "g cm^-3",
+        "type": "combined_absolute"
+      },
+      "bundle3_admission_status": "admitted_observation_source_not_interpolator"
+    },
+    {
+      "property": "density",
+      "loading_state": "loaded",
+      "source_rows": 68,
+      "bundle1_admitted_rows": 68,
+      "bundle3_admitted_rows": 0,
+      "bundle3_row_uncertainty": null,
+      "bundle3_admission_status": "not_admitted_row_uncertainty_unbound"
+    },
+    {
+      "property": "dynamic_viscosity",
+      "loading_state": "unloaded",
+      "source_rows": 35,
+      "bundle1_admitted_rows": 35,
+      "bundle3_admitted_rows": 35,
+      "bundle3_row_uncertainty": {
+        "value": 1.0,
+        "unit": "percent",
+        "type": "combined_relative"
+      },
+      "bundle3_admission_status": "admitted_observation_source_not_interpolator"
+    },
+    {
+      "property": "dynamic_viscosity",
+      "loading_state": "loaded",
+      "source_rows": 75,
+      "bundle1_admitted_rows": 75,
+      "bundle3_admitted_rows": 0,
+      "bundle3_row_uncertainty": null,
+      "bundle3_admission_status": "not_admitted_row_uncertainty_unbound"
+    }
+  ]
+}

@@ -40,6 +40,56 @@ transport and a forward concentration-basis carbamate rate. It does not
 establish column-wide capture, reversible absorption/desorption behavior,
 wetted-wall-column agreement, or Maxwell--Stefan transport accuracy.
 
+# Work Package A property admission after the source correction
+
+The owner selected Amine-Thermodynamics film-input bundle 3 for the current
+Work Package A identity (issue #78, 2026-10-29). The bundle is pinned at
+`a6de0317333e9b4bbd65537d285bfe3a384101c7` by input, schema and receipt
+SHA-256. Amundsen2009 pp. 3096–3100 provides general loaded-system uncertainty
+estimates with unnamed exceptions at the highest temperatures and loadings;
+these estimates cannot be assigned to individual loaded rows. Bundle 3 splits
+viscosity admission by loading state. Version 2 remains reserved for the
+Work Package B release.
+
+| Quantity and loading state | Bundle-1 admitted rows | Bundle-3 admitted rows | Bundle-3 row uncertainty |
+|---|---:|---:|---|
+| Unloaded density | 35 | 35 | 0.0005 g/cm³ |
+| Loaded density | 68 | 0 | unavailable |
+| Unloaded dynamic viscosity | 35 | 35 | 1% |
+| Loaded dynamic viscosity | 75 | 0 | unavailable |
+
+The [retained comparison](results/runs/issue78_bundle3/comparison.json) records
+source hashes and before/after results. The 322-row source reconstruction
+replays exactly, including 23 Amundsen density-model evaluations. These are
+source reconstructions, not admitted physical film inputs. The 13 transport
+records still describe five comparison states, with zero evaluated or admitted
+states. All five release states remain blocked, with zero admitted states and
+zero release files created. Their state values and decisions are unchanged
+apart from provenance. No flux, propagated uncertainty or capture difference
+can be inferred. The absent-file guard passes and an existing-file sentinel is
+rejected; the pinned upstream revision also contains no version-2 release file.
+A table is sufficient for this categorical admission decision; a trend plot
+would not clarify it.
+
+The transport and release checks each have `execution.wall_limit_s = 120` and
+a retained log under `results/runs/issue78_bundle3/`. Full parameter-archive
+verification was not run because its pinned ZIP is missing from the renamed
+Amine-Thermodynamics checkout. Its expected SHA-256 remains recorded; replacing
+it was not attempted. Verification itself fits the 120 s limit, but acquisition
+cost is unknown. The issue33 concentration replay failed before calculation
+in less than one second because its imported
+`tabulated_epcsaft_reactive_chemical_equilibrium` function is absent from the
+current thermodynamics module. Runtime restoration cost is unknown. The earlier
+Position 1 value, 4.889309897097635 mol/L, is retained evidence only, not a
+bundle-3 calculation. The density-source choice remains under issue #83.
+
+All 1,013 previously retained NCCC result files remain byte-unchanged. Their
+[superseded-source note](results/final/SUPERSEDED.md) disallows their use as
+current loaded-row uncertainty or admission evidence. Earlier notebook results
+below retain their stated input basis. The bundle-3 checks verify source
+identity and admission decisions; they do not provide physical validation.
+They have not been independently reviewed or promoted for manuscript use.
+
 # Retained evidence and identity
 
 The analysis reads the following retained files:

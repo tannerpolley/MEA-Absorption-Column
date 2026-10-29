@@ -1,0 +1,1 @@
+Bundle 3 source correction: loaded density and viscosity are not admitted; no loaded row-level uncertainty. All five transport states remain blocked; no flux or uncertainty interval is calculated. Amundsen2009 pp. 3096-3100.

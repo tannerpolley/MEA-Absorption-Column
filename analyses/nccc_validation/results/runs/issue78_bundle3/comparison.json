@@ -1,0 +1,129 @@
+{
+  "transport": {
+    "before": {
+      "transport_records": 13,
+      "ionic_diffusivity_records": 6,
+      "declared_comparison_states": 5,
+      "evaluated_comparison_states": 0,
+      "scientifically_admitted_states": 0,
+      "candidate_A_evaluated_states": 0,
+      "candidate_B_evaluated_states": 0
+    },
+    "after": {
+      "transport_records": 13,
+      "declared_comparison_states": 5,
+      "evaluated_comparison_states": 0,
+      "scientifically_admitted_states": 0
+    }
+  },
+  "release": {
+    "before": {
+      "declared_states": 5,
+      "blocked_states": 5,
+      "admitted_states": 0,
+      "release_files_created": 0
+    },
+    "after": {
+      "declared_states": 5,
+      "blocked_states": 5,
+      "admitted_states": 0,
+      "release_files_created": 0
+    }
+  },
+  "source_reconstruction": {
+    "row_count": 322,
+    "replay_sha256": "8e3b447676f0d37c1d83c01db9fc97fbd8a5366c9e6e6d961c7471d5ceecbbaf",
+    "diagnostics": {
+      "snijder_max_relative_residual": 0.05475741057031899,
+      "snijder_max_absolute_residual_m2_s": 6.401227067369358e-11,
+      "snijder_row_count": 16,
+      "positive_evaluated_values": true,
+      "source_observation_counts": {
+        "amundsen_weiland_unloaded_density": 5,
+        "amundsen_weiland_density": 23,
+        "hartono_density": 48,
+        "hartono_viscosity": 48
+      },
+      "source_model_evaluation_counts": {
+        "weiland_density": 23,
+        "hartono_density": 48,
+        "hartono_viscosity": 48
+      }
+    }
+  },
+  "property_admission": {
+    "observation_path": "data/reference/MEA/observations/density_viscosity/Amundsen_2009_density_viscosity.csv",
+    "observation_sha256": "7322b7dc7f0c961d09dbfb356dccde00851c0de20ba589d150d9c3834900f70c",
+    "comparison": [
+      {
+        "property": "density",
+        "loading_state": "unloaded",
+        "source_rows": 35,
+        "bundle1_admitted_rows": 35,
+        "bundle3_admitted_rows": 35,
+        "bundle3_row_uncertainty": {
+          "value": 0.0005,
+          "unit": "g cm^-3",
+          "type": "combined_absolute"
+        },
+        "bundle3_admission_status": "admitted_observation_source_not_interpolator"
+      },
+      {
+        "property": "density",
+        "loading_state": "loaded",
+        "source_rows": 68,
+        "bundle1_admitted_rows": 68,
+        "bundle3_admitted_rows": 0,
+        "bundle3_row_uncertainty": null,
+        "bundle3_admission_status": "not_admitted_row_uncertainty_unbound"
+      },
+      {
+        "property": "dynamic_viscosity",
+        "loading_state": "unloaded",
+        "source_rows": 35,
+        "bundle1_admitted_rows": 35,
+        "bundle3_admitted_rows": 35,
+        "bundle3_row_uncertainty": {
+          "value": 1.0,
+          "unit": "percent",
+          "type": "combined_relative"
+        },
+        "bundle3_admission_status": "admitted_observation_source_not_interpolator"
+      },
+      {
+        "property": "dynamic_viscosity",
+        "loading_state": "loaded",
+        "source_rows": 75,
+        "bundle1_admitted_rows": 75,
+        "bundle3_admitted_rows": 0,
+        "bundle3_row_uncertainty": null,
+        "bundle3_admission_status": "not_admitted_row_uncertainty_unbound"
+      }
+    ]
+  },
+  "not_run": [
+    {
+      "calculation": "issue33 concentration mapping",
+      "elapsed_wall_limit_s": 120,
+      "status": "failed_before_calculation",
+      "reason": "ImportError: removed tabulated_epcsaft_reactive_chemical_equilibrium import",
+      "observed_cost": "less than one second; runtime restoration cost unknown",
+      "retained_position_1_mol_L": 4.889309897097635,
+      "note": "Retained value only, not a bundle-3 rerun. Density-source changes belong to #83."
+    },
+    {
+      "calculation": "issue36 parameter archive verification",
+      "status": "not_run_missing_archive",
+      "expected_archive_sha256": "4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b",
+      "cost": "Hash verification is bounded by the 120 s release check; replacement archive acquisition cost unknown."
+    }
+  ],
+  "transport_states_same_except_provenance": true,
+  "release_states_same_except_provenance": true,
+  "unchanged_result_files": {
+    "count": 1013,
+    "manifest_sha256": "6556324c249267b8190574e3a6651b2ad3d634e5b83f67e5fa639b5ffb3064bb",
+    "comparison_base_commit": "e8946b28ec0cb778fc8ac4e472cc6d6043935074",
+    "scope": "Every tracked pre-existing analyses/nccc_validation/results file; byte identity checked against Git objects."
+  }
+}

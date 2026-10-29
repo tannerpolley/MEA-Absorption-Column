@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-78-amine-thermodynamics-film-input-bundle-3/analyses/nccc_validation/scripts/resolve_concentration_bases.py", line 17, in <module>
+    from mea_absorption_column.Thermodynamics.Chemical_Equilibrium import (  # noqa: E402
+    ...<2 lines>...
+    )
+ImportError: cannot import name 'tabulated_epcsaft_reactive_chemical_equilibrium' from 'mea_absorption_column.Thermodynamics.Chemical_Equilibrium' (/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-78-amine-thermodynamics-film-input-bundle-3/src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py)
