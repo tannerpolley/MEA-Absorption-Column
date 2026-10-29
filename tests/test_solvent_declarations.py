@@ -9,7 +9,7 @@ import pytest
 
 from mea_absorption_column.column import _prepare_conserved_column_in_process, run_column
 from mea_absorption_column.config.column import resolve_column_config
-from mea_absorption_column.Thermodynamics.solvent_inputs import ROOT, SolventRefusal
+from mea_absorption_column.Thermodynamics.solvent_inputs import ROOT, SolventRefusal, StateDomainFailure, NativeEvaluationFailure
 
 INPUT = ROOT / 'analyses/bvp_solution_methods/input/issue85'
 BASELINE = ROOT / 'analyses/bvp_solution_methods/results/runs/issue85_current_pin_20261029/cosine_repeat_1/attempt.json'
@@ -87,10 +87,11 @@ def test_mea_declared_reproduction_and_permutation(tmp_path):
     attempts, assemblies = [], []
     for label, (thermo, transport) in zip(('declared', 'permuted'), pairs):
         seed = output / (label + '_seed')
-        assert run_column(request(thermo, transport, seed))['physical_acceptance'] == 'accepted'
+        seeded = run_column(request(thermo, transport, seed))
+        assert seeded['physical_acceptance'] == seeded['numerical_acceptance'] == 'accepted'
         req = request(thermo, transport, output / (label + '_cosine'), seed / 'attempt.json')
         attempt = run_column(req)
-        assert attempt['physical_acceptance'] == 'accepted', attempt.get('failure')
+        assert attempt['physical_acceptance'] == attempt['numerical_acceptance'] == 'accepted', attempt.get('failure')
         attempts.append(attempt)
         assemblies.append(_prepare_conserved_column_in_process(resolve_column_config(req))['assembly'])
     from runpy import run_path
@@ -98,14 +99,61 @@ def test_mea_declared_reproduction_and_permutation(tmp_path):
     compare(attempts, assemblies, read(BASELINE), output)
 
 
-def test_missing_law_refuses_before_native_construction(tmp_path, monkeypatch):
+@pytest.mark.parametrize('defect, message', [
+    ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+    ('policy', 'Only the retained 3C'), ('domain_field', 'unsupported fields in domain'),
+    ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+    ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
     t, u = permuted_inputs(tmp_path)
     implicit_case = request(t, u, tmp_path / 'never_run')
     implicit_case.pop('case')
     assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
-    record = read(u)
-    del record['property_laws']['gas_conductivity']
-    save(u, record)
+    thermo, transport = read(t), read(u)
+    req = request(t, u, tmp_path / 'never_run')
+    if defect == 'missing_law':
+        del transport['property_laws']['gas_conductivity']
+    elif defect == 'hash':
+        thermo['parameters']['sha256'] = '0' * 64
+    elif defect == 'policy':
+        transport['execution_policy']['id'] = 'invented_policy'
+    elif defect == 'domain_field':
+        transport['domain']['invented_policy'] = True
+    elif defect == 'dependent_row':
+        rows, order = thermo['components']['rows'], thermo['components']['order']
+        rows[order.index('water')] = rows[order.index('amine:monoethanolamine')][:]
+    elif defect == 'duplicate_id':
+        thermo['components']['order'].append('co2')
+        thermo['components']['rows'].append(thermo['components']['rows'][-1][:])
+    else:
+        req['numerics']['solver_settings'].update({'quadrature_points': 5} if defect == 'quadrature'
+                                                else {'liquid_density_source': 'correlation'})
+    transport['thermodynamic_input_sha256'] = save(t, thermo)['sha256']
+    save(u, transport)
     monkeypatch.setattr('epcsaft.Mixture', lambda *_a, **_k: pytest.fail('Native construction before preflight'))
-    with pytest.raises(SolventRefusal, match='Incomplete property laws'):
-        resolve_column_config(request(t, u, tmp_path / 'never_run'))
+    monkeypatch.setattr('mea_absorption_column.column._build_conserved_assembly', lambda *_a: pytest.fail('Assembly before preflight'))
+    with pytest.raises(SolventRefusal, match=message):
+        run_column(req)
+
+
+@pytest.mark.parametrize('failure', [StateDomainFailure, NativeEvaluationFailure])
+def test_terminal_interface_callback_keeps_failure_class(tmp_path, monkeypatch, failure):
+    from mea_absorption_column import benchmark_worker
+    from mea_absorption_column.Thermodynamics.casadi_reactive import EnginePhase
+    original = EnginePhase.actions
+    def forced(self, inputs, *args):
+        if self.kind == 'liquid' and float(np.asarray(inputs).ravel()[self.co2_input]) > 2.6:
+            raise failure('forced interface evaluation failure')
+        return original(self, inputs, *args)
+    monkeypatch.setattr(EnginePhase, 'actions', forced)
+    directory = Path(os.environ['ISSUE85_RUN_ROOT']) / failure.kind if 'ISSUE85_RUN_ROOT' in os.environ else tmp_path
+    directory.mkdir(parents=True, exist_ok=True)
+    payload, output = directory / 'payload.json', directory / 'worker.json'
+    save(payload, {'task': 'conserved_execution', 'output_path': str(output),
+                   'config': resolve_column_config(request(INPUT / 'thermodynamics.json', INPUT / 'transport.json', tmp_path / 'unused')).as_dict()})
+    assert benchmark_worker.main([str(payload)]) == 0
+    result = read(output)
+    assert result['failure_kind'] == failure.kind
+    assert result['last_checkpoint']['stage'] == 'interface_initialization'
+    assert result['last_checkpoint']['evaluation_failure']['kind'] == failure.kind
+    assert 'forced interface evaluation failure' in result['message']

@@ -7,7 +7,6 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_INPUT = ROOT / 'analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
 
 
 class SolventRefusal(ValueError):
@@ -71,6 +70,9 @@ class SolventInputs:
             self.species = self.thermo['species_order']
             self.feeds = self.thermo['liquid_feed_order']
             self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
             self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
             self.validate()
         except (KeyError, TypeError, ValueError, OSError) as error:
@@ -93,6 +95,25 @@ class SolventInputs:
         transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
         if set(t) != set(fields) or set(u) != set(transport_fields):
             raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
         mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
                            'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
                            'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',

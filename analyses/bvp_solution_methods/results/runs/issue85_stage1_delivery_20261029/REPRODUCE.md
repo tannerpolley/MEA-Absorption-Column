@@ -64,8 +64,10 @@ permuted-minus-declared vectors at 306 phase/film-state comparisons. Its
 layout names the raw quantities, observables, derivative directions and units;
 derivative units divide the observable unit by each direction unit. Native
 Engine amounts use the same one-second extensive basis as the column flows.
-Native values and all first/second input-direction actions are checked; no
-finite-difference or unavailable-action substitution is used.
+Native values and first/second input-direction actions of log activities and
+molar enthalpy are checked; amount and density derivatives were absent from
+this earlier comparison. The corrected run supersedes that coverage claim.
+No finite-difference or unavailable-action substitution is used.
 
 Capture tolerance is 1e-6 percentage point. Profile checks preserve the
 accepted flow/temperature/pressure/holdup/flux tolerances. Film differences

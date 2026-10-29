@@ -63,8 +63,7 @@ def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="r
 
     from .casadi_reactive import EnginePhase
 
-    from .solvent_inputs import DEFAULT_INPUT, read_json, formula_masses
-    declarations = declarations or read_json(DEFAULT_INPUT)
+    from .solvent_inputs import formula_masses
     dataset = Path(dataset)
     parameter_path = Path(parameter_path or dataset / "parameters.json")
     record, mapping = _json(reaction_path or dataset / "engine-reactions.json"), _json(parameter_path)
@@ -77,9 +76,19 @@ def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="r
                                       reference_pressure_pa=row["reference"]["reference_pressure_pa"]),
     ) for row in record["reactions"]]
     ids = [c["component_id"] for c in mapping["components"]]
+    masses = formula_masses(declarations, ids, mapping) if declarations is not None else _molar_masses(dataset, ids)
+    if declarations is None:
+        # Undeclared callers retain the original fixed MEA basis, independent of analysis examples.
+        declarations = {"liquid_feed_order": ids[:3], "liquid_support": ids,
+                        "roles": {"co2": "carbon-dioxide", "water": "water", "amines": ["monoethanolamine"],
+                                  "inert_gases": ["nitrogen", "oxygen"]},
+                        "components": {"order": ["co2", "amine:monoethanolamine", "water"],
+                                       "rows": [[1, 0, 0, 0, 1, 1, 1, 0, 0],
+                                                [0, 1, 0, 1, 1, 0, 0, 0, 0],
+                                                [0, 0, 1, 0, 0, 1, 1, 1, 1]]}}
     # Formula masses (checked against the declared ones) conserve mass exactly through the reactions.
     phase = EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="liquid",
-                        feed_ids=declarations["liquid_feed_order"], molar_masses=formula_masses(declarations, ids, mapping),
+                        feed_ids=declarations["liquid_feed_order"], molar_masses=masses,
                         reactions=reactions, neutral_reference=q.NeutralReference(**record["neutral_reference"]),
                         loading_policy=loading_policy, roles=declarations["roles"], support=declarations["liquid_support"], domain=domain)
     phase.components = dict(zip(declarations["components"]["order"], declarations["components"]["rows"], strict=True))

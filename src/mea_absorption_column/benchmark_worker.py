@@ -82,7 +82,8 @@ def main(argv=None):
             }))
         except (OSError, RuntimeError, ValueError) as exc:
             _record(output_path.parent, output_path.name, _json_clean({
-                "failure_kind": getattr(exc, "kind", "outer_solve_failure") if payload["config"]["dependencies"].get("thermodynamics_input") else "execution_failed",
+                "failure_kind": getattr(exc, "kind", checkpoint.get("evaluation_failure", {}).get("kind", "outer_solve_failure"))
+                if payload["config"]["dependencies"].get("thermodynamics_input") else "execution_failed",
                 "message": str(exc), "last_checkpoint": checkpoint,
             }))
         return 0

@@ -501,9 +501,6 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         )
 
     settings = dict(config.numerics.as_dict()["solver_settings"])
-    if solvent and (settings["quadrature_points"] != solvent.transport["quadrature_points"]
-                    or settings.get("liquid_density_source", "solved_state") != solvent.transport["hydraulic_density"]):
-        raise SolventRefusal("Numerical quadrature/density selection disagrees with declared inputs")
     node, boundary, diagnostics = build_coupled_column_functions(
         liquid,
         vapor,

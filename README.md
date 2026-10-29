@@ -179,6 +179,9 @@ nice -n 10 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case
   --output .tmp_column_runs/mea-declared-seed
 ```
 
+Without the two explicit declarations, the route retains its built-in MEA
+inputs and does not read the analysis example files.
+
 A cosine-grid replay supplies `--end-clustering 1` and `--initial-profile`
 pointing to that accepted seed's `attempt.json`, with a new output directory.
 The two records retain parameter/reaction/caloric hashes, explicit phase

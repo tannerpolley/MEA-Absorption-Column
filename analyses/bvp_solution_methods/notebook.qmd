@@ -270,8 +270,11 @@ temperature and pressure differences between the two runs are
 $5.51382\times10^{-12}$ K and $4.36558\times10^{-11}$ Pa.
 
 At the reference profile, 306 phase/film-state comparisons check native
-values and every first and second input-direction action after mapping
-species and feed directions back by identity. The greatest difference scaled
+values and first and second input-direction actions of log activities and
+molar enthalpy after mapping species and feed directions back by identity.
+This earlier record did not compare amount or density derivatives; the
+corrected verification below supersedes its action-coverage claim.
+The greatest difference scaled
 by $\max(1, |\text{reference SI value}|)$ is $4.45672\times10^{-12}$ against
 $10^{-7}$. The greatest similarly scaled film-diagnostic difference is
 $5.43046\times10^{-13}$; each film quantity also passes relative $10^{-7}$
@@ -305,3 +308,65 @@ Stationary analytical amine/water film constraints, the provisional caloric
 reference, wet-gas basis, inlet-temperature imputation and solved-density
 limitations stated above remain. Repeatability does not bound discretization
 error or experimental uncertainty. Delivered independent review remains open.
+
+## Corrected stage-1 admission and native-action verification
+
+The independent check confirmed capture reproduction, the genuine native
+permutation and unchanged seven-state behavior, but found incomplete input
+refusals, a lost terminal callback failure class and missing amount/density
+action comparisons. The corrected records under
+`results/runs/issue85_stage1_corrected_20261029/` supersede those parts of the
+earlier stage-1 record. They preserve the same corrected 3C physical basis,
+phase-specific masses, selected numerical policy, Engine pin, fresh uniform
+seed chains and 17-node cosine-upwind discretization.
+
+| Corrected input path | Capture (%) | Scaled equation residual infinity norm |
+|---|---:|---:|
+| Declared MEA | 89.41488041587351 | 1.7860244e-12 |
+| Permuted declarations | 89.41488041586858 | 2.1447162e-12 |
+
+The declared result matches the retained baseline exactly. The permutation
+difference remains $-4.93117\times10^{-12}$ percentage point, within
+$10^{-6}$ percentage point. Numerical acceptance and the original-equation
+physical certificate are required for both seed and cosine solves. Profiles
+and all certificate criteria retain their earlier tolerances and pass.
+
+The expanded comparison covers **species log activities, species amounts,
+molar density and molar enthalpy**, in both phases, with every first and second
+T/P/feed-direction action for that specified observable set. Liquid has 20
+observables and 31 value/action direction combinations; vapor has 10 and 43.
+Species and feed directions map back by identity. The raw column values also
+compare CO2/water fugacities and total enthalpy. Units, raw differences and
+direction encodings are retained in `comparison.json`; extensive native
+amounts use the column's one-second basis.
+
+Across 306 phase/film-state comparisons the maximum native difference, scaled
+by $\max(1, |\text{reference SI entry}|)$, is $2.69069\times10^{-11}$ against
+$10^{-7}$. The film-diagnostic maximum remains $5.43046\times10^{-13}$,
+with its relative $10^{-7}$ and absolute SI $10^{-10}$ checks also passing.
+The larger native maximum reflects the expanded observable set, not a change
+in capture or the physical model. These are numerical invariance checks, so
+the scalar table does not imply a response trend or a mesh-error bound.
+
+Eight preflight cases reject missing conductivity, a bad hash, an unsupported
+execution policy, an unknown nested domain field, dependent film rows,
+duplicate analytical-component IDs, quadrature disagreement and density
+disagreement before assembly or native construction. Two forced terminal
+interface cases retain state-domain and native-evaluation failure classes
+through CasADi wrapping; their worker inputs and outputs are retained in the
+respective named failure directories. Those deliberately forced checks are
+not evidence of physical nonconvergence. Undeclared calculations now retain
+their built-in MEA basis without reading the analysis examples implicitly.
+
+The corrected complete suite reports **322 passed, 1 warning in 601.86 s**.
+The warning is the existing deliberately invalid logarithm timing probe.
+Final Engine integration passes on the immutable wheel recorded above.
+`pytest.log`, `integration.log`, the full attempt records and `comparison.json`
+retain these checks. The retained comparison source-tree hash matches the
+tested package bytes.
+
+The calculation enabled remains input-driven MEA reproduction and ordering
+invariance. Variable-count blend verification and qualified second-solvent
+prediction remain unavailable. The stationary analytical amine/water film,
+thermal-reference, wet-gas, imputed inlet-temperature and solved-density limits
+stated above remain. Independent review of the corrected delivery is pending.

@@ -45,14 +45,17 @@ def compare(attempts, assemblies, baseline, output):
                     flows = owner.flow(state[0] * np.exp(fraction * state[11]), state[1], feed) if phase == 'liquid' else owner.flow(state[2], state[3], feed)
                     inputs = np.r_[state[4 if phase == 'liquid' else 5], state[6], np.asarray(flows).ravel()]
                     order = sorted(owner.component_ids)
-                    observables = tuple(owner.log_activities[owner.component_ids.index(s)] for s in order) + (owner.enthalpy,)
+                    q = owner._q
+                    amounts = tuple(q.SolvedStateObservable(q.SolvedStateObservableKind.PhaseComponentAmount, 0,
+                                    owner.component_ids.index(s)) for s in order)
+                    observables = tuple(owner.log_activities[owner.component_ids.index(s)] for s in order) + amounts + (owner.state_observables[-1], owner.enthalpy)
                     axes = [0, 1, *[2 + owner.feed_index[s] for s in sorted(owner.feed_ids)]]
                     labels = ['T_K', 'P_Pa', *sorted(owner.feed_ids)]
                     layouts.setdefault(phase, {'raw_value_ids':
                         ([f'amount:{s}' for s in order] if phase == 'liquid' else []) + list(owner.output_ids[-4:]),
                         'raw_value_units': (['mol'] * len(order) if phase == 'liquid' else []) + ['Pa', 'Pa', 'mol/m3', 'J'],
-                        'action_observables': [f'ln_activity:{s}' for s in order] + ['molar_enthalpy'],
-                        'observable_units': ['1'] * len(order) + ['J/mol'],
+                        'action_observables': [f'ln_activity:{s}' for s in order] + [f'amount:{s}' for s in order] + ['molar-density', 'molar_enthalpy'],
+                        'observable_units': ['1'] * len(order) + ['mol'] * len(order) + ['mol/m3', 'J/mol'],
                         'directions': [[], *[[d] for d in labels], *[[a, d] for a in labels for d in labels]],
                         'input_direction_units': ['K', 'Pa', *['mol'] * len(owner.feed_ids)],
                         'encoding': 'raw values followed by direction-major, observable-minor native actions; derivative units divide observable units by direction units'})
