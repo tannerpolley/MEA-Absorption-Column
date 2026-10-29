@@ -77,10 +77,11 @@ def replay(stage: str) -> None:
         observations = list(csv.DictReader(io.StringIO(observation_bytes.decode())))
         correction = []
         for prop in properties:
-            name = 'density' if 'density' in prop['input_id'] else 'viscosity'
+            name = 'density' if 'density' in prop['input_id'] else 'dynamic_viscosity'
             loaded = prop['loading_state'] == 'loaded'
             selected = [row for row in observations if row['property'] == name
                         and (float(row['co2_loading_mol_per_mol_mea'] or 0) > 0) == loaded]
+            release.require(bool(selected), f'No source rows found for {name}')
             release.require(not loaded or prop['applicable_uncertainty'] is None,
                             'Loaded row-level uncertainty was admitted')
             correction.append({'property': name, 'loading_state': prop['loading_state'],
