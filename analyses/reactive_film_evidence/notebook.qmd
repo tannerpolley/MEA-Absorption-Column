@@ -24,7 +24,7 @@ the scalar film; it is not a third independently selectable column closure.
 | Enhancement factor | `Transport/Enhancement_Factor.py:10` native expression, `:31` conventional expression; `BVP/Coupled_Column.py:214`; twelve-state `model.film_model=enhancement_reference`; seven-state `enhancement_factor` fixed by `config/column.py:659` | Native: $j=E k_L(C_i-C_b)=k_G(f_g-f_i)$. Conventional seven-state: $j=k_G\Psi_H(f_g-f_b)$, $\Psi_H=E k_L/(E k_L+k_G H_b)$ at unit `eta_psi`. Bulk pseudo-second-order kinetics summarized below. | Native nine-species equilibrium; conventional route supports ideal-Henry, neutral, ionic and nine-species thermodynamics. Bulk concentrations, $k_L$, $k_G$, three correlation diffusivities, empirical $E$ bounds and fixed CO2 divisor. Correlations have individual source domains; no combined independently validated loaded-film domain is established. | Twelve-state 3C returned a converged profile; seven-state capability is selected in existing dispatcher, not rerun here. |
 | Scalar equilibrium manifold | `Transport/Reactive_Film.py:186` standalone; `BVP/Coupled_Column.py:190` native integral; twelve-state `model.film_model=equilibrium_manifold`. Older `research.py:21` also exposes a frozen `reactive_film_linearization` in the legacy research runner, not the twelve-state closure. | All reactions remain at homogeneous equilibrium. $\delta j=\int_0^{q_i} b_C^T L\,\partial_q(\mu/RT)\,dq$ and $j=k_G(f_g-f_i)$, $q=\ln(\alpha/\alpha_b)$, $\delta=D_{CO2}/k_L$. | Nine species, exact Engine equilibrium loading tangent; estimated species diffusivities and harmonic pair closure. Nonvolatile MEA, stationary water component, zero total molar flux and current constraints. Requires positive compositions, positive conductance, admissible equilibrium branch and exact actions. R5 source ceiling 323.15 K limits physical claims above it. | Twelve-state 3C converged; binary ideal no-reaction reference and signed Engine inlet sentinels pass. |
 | Differential finite-rate | Absent from current `src/`; former `solve_reactive_film` and runner are absent. Archive tag contains effective-Fick mode at `Reactive_Film.py:134`. No current column selector. | $N_i=-D_i\,dC_i/ds$, $dN_i/ds=\sum_r\nu_{ir}r_r$; bulk concentrations fixed and gas-film interface closure. Earlier forward-only Luo model differs from subsequent reversible manufactured-rate probes. | Nine true species; finite rates require a reversible activity/concentration partition, coefficient units and standard states; F1/F2 source-unit and basis concerns, F3 missing coefficient, ionic transport missing. Provisional execution does not admit these inputs. | Not executable on main. Archive was inspected, not restored or tested against this wheel. |
-| Multicomponent chemical potential | Constrained mobility implemented at `Reactive_Film.py:97,147`, used by the scalar film. Independent differential constrained-Onsager solver only in archive `Reactive_Film.py:134,492`; not selectable on main. | $N=-L\,d(\mu/RT)/ds$ with zero-current and stationary-component projection; differential version also satisfies $dN/ds=\nu r$. | Same nine species, exact thermodynamic composition tangent, electrical constraint and pair mobility. Complete measured Maxwell–Stefan/Onsager matrix is missing; harmonic pairs are estimates, not measured cross coefficients. | Mobility invariant tests and scalar column pass. No separate differential column result or Engine-1.0.0 archive result. |
+| Multicomponent chemical potential | Constrained mobility implemented at `Reactive_Film.py:97,147`, used by the scalar film. Independent differential constrained-Onsager solver only in archive `Reactive_Film.py:134,492`; not selectable on main. | $N=-L\,d(\mu/RT)/ds$. The current scalar model projects stationary MEA and water components, as well as enforcing zero total molar flux and electrical current. The archived differential model projects total molar flux and electrical current and imposes a different interfacial counterflux condition (`77038167:Reactive_Film.py:274,719`); it also satisfies $dN/ds=\nu r$. Restoring it would not give identical transport equations. | Same nine species, exact thermodynamic composition tangent, electrical constraint and pair mobility. Complete measured Maxwell–Stefan/Onsager matrix is missing; harmonic pairs are estimates, not measured cross coefficients. | Mobility invariant tests and scalar column pass. No separate differential column result or Engine-1.0.0 archive result. |
 
 Paths in the table are relative to `src/mea_absorption_column/`, except archive
 paths which refer to the same path under the tag. Configuration and dispatch are
@@ -53,9 +53,11 @@ is [issue 17's source inventory](../nccc_validation/scripts/analyze_issue17_enha
 which separates the current explicit approximation from the complete
 [Gaspar and Fosbøl 2015 model](https://doi.org/10.1016/j.ces.2015.08.023).
 Luo kinetics are the conventional coefficient choice, not coefficients refitted
-in this study. The CO2 divisor has an undocumented calibration basis
-(`docs/scientific/latex/sections/model_framework.tex:264`). It is explicitly
-retained here; no additional multiplier is applied to either returned flux.
+in this study. The enhancement divisor `CO2_CONCENTRATION_DIVISOR = 1.04542981654115`
+(`Enhancement_Factor.py:8`) entered in commit `9522f6d` (2024-12-16) with no
+derivation or calibration record. It is an empirical modifier in the legacy
+comparator, explicitly retained here; no additional multiplier is applied to
+either returned flux.
 Removing it, changing bounds, or exposing a different kinetic law requires an
 approved formulation change. No present result establishes validity of that divisor.
 
@@ -146,7 +148,7 @@ Both runs use the same 6 m bed, 0.3216991 m$^2$ area, published 3C conversion,
 318.15 K liquid inlet (imputed), 316.75 K vapor inlet, 110900 Pa bottom pressure,
 packing, Engine dataset, thermal reference, equilibrium branch, solved-state
 hydraulic density, area/transfer correlations and initialization policy.
-Only `model.film_model` changes. The two closures consume their own declared
+Only the requested film choice changes, together with its associated mobility dependency (`null` versus `harmonic_mean_onsager_v1`). The two closures consume their own declared
 transport approximations above; this is not a comparison at identical effective
 liquid-film mobility. Each uses upwind balances on 11 cosine-clustered nodes,
 five film quadrature points, 20 maximum iterations, tolerance 1e-7 and
@@ -193,8 +195,10 @@ The hydraulic model is held fixed, not calibrated in this study.
 These describe evidence, not a request to check every GitHub box as complete.
 #31 should use this common-basis pair to specify the adoption comparison and
 resolve the enhancement divisor explicitly before changing its baseline.
-Restoring a differential alternative and admitting its kinetic/transport inputs
-must precede a differential column comparison. #18 should retain the current
+A differential column comparison requires a compatible restored implementation
+and an explicit provisional input basis. Issue #16 permits exploratory runs with
+identified provisional inputs; physical admission is required only for predictive
+claims. #18 should retain the current
 fixed physical problem for method comparisons, distinguish scalar quadrature
 from differential finite-rate equations, and use the per-run native call counts
 when measuring costs; it should not infer a solver defect from the absence of
