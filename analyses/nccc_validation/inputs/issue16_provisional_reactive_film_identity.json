@@ -30,23 +30,30 @@
     "dependent_component_ids": ["water", "protonated-monoethanolamine"]
   },
   "work_package_a": {
-    "repository": "tannerpolley/MEA-Thermodynamics",
-    "merge_commit": "d3ee9d12398c770e6c41871153f55a59fcc806ff",
-    "path": "data/reference/MEA/film_chemistry_inputs/1/input.json",
-    "sha256": "f62df1eec0176fb9196d84c6523371beab576f7154c07498f16a0d977626abe5",
-    "schema_sha256": "d6cd1f51275b9c12681d9a901300dd8ab89d585e48f8de15302d8ff8b352eed9",
-    "receipt_sha256": "6b8a6fda622d1711d392834bddb121f518db77d7f9017158c29d65cc41dabdd3",
+    "repository": "tannerpolley/Amine-Thermodynamics",
+    "path": "data/reference/MEA/film_chemistry_inputs/3/input.json",
+    "sha256": "5ceab9845b1fc73395c0ff8c3a4f1700eb052befd418225a4fd16e3b8ab58e25",
+    "schema_sha256": "6bfe487cd1c3a69cadfa1efc58fef825e9b1d570c002484733b6a2aaded1eaf8",
+    "receipt_sha256": "3bca07aa9e38154fb6c8323c3e582f022585514e1ba5e44498f66abf3bc1fbc2",
     "status": "source_validated_deferred_inputs",
     "finite_rate_status": "F1/F2 rejected_source_unit_inconsistency; F3 rejected_primary_coefficient_source_unavailable",
     "f1_f2_coefficient_status": "rejected_source_unit_inconsistency",
     "f3_coefficient_status": "rejected_primary_coefficient_source_unavailable",
     "transport_status": "all numeric diffusion candidates rejected",
     "domain": {
-      "temperature_K": [293.15, 323.15],
-      "mea_molarity_mol_L_exact": [1.0, 5.0],
+      "temperature_K": [
+        293.15,
+        323.15
+      ],
+      "mea_molarity_mol_L_exact": [
+        1.0,
+        5.0
+      ],
       "loading_min_inclusive": 0.0,
       "loading_max_exclusive": 0.5
-    }
+    },
+    "owner_revision": "a6de0317333e9b4bbd65537d285bfe3a384101c7",
+    "source_correction": "Amine-Thermodynamics #152/#194: loaded density and viscosity rows are not admitted; no row-level uncertainty is assigned. Unloaded density (35 rows, 0.0005 g/cm3) and viscosity (35 rows, 1%) remain admitted. Amundsen2009 pp. 3096-3100."
   },
   "provisional_parameter_input": {
     "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive/parameters.json",

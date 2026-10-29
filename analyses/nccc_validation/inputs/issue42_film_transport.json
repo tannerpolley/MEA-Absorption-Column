@@ -11,7 +11,8 @@
     "No species-resolved ionic diffusivities or source-defined equal-ion lump are retained.",
     "No complete primary unequal-ion mobility/friction law is retained; scalar diffusivities are not promoted to a matrix.",
     "Issue 40 has zero scientifically admitted true-species rows and Issue 41 has zero admitted packet/kinetic rows.",
-    "Density and viscosity reconstructions remain source-labeled and cannot become film inputs without an admitted concentration basis."
+    "Density and viscosity reconstructions remain source-labeled and cannot become film inputs without an admitted concentration basis.",
+    "Bundle 3 replaces bundle 1: loaded Amundsen2009 density and viscosity rows are not admitted and have no row-level uncertainty. General estimates remain source summaries only; unloaded and loaded viscosity are distinguished."
   ],
   "package_parameter_identity": {"used": false, "package": null, "parameter": null},
   "species_order": ["CO2", "MEA", "H2O", "MEAH+", "MEACOO-", "HCO3-", "CO3^2-", "H3O+", "OH-"],
@@ -31,7 +32,10 @@
       "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/YPM9CEQV/Putta et al. - 2017 - CO2 absorption into loaded aqueous MEA solutions Impact of different model parameter correlations a.pdf",
       "source_pdf_sha256": "fb96a6909f2ddf099e19c60f9a0873dc622f6f6894c0c8ed0de5a5a27afeef1a",
       "role": "CO2 diffusivity correlation and transport-correlation context",
-      "locators": ["PDF p. 14, Section 2.3, Eqs. 12--13", "PDF pp. 14--15, Table 4"]
+      "locators": [
+        "PDF p. 14, Section 2.3, Eqs. 12--13",
+        "PDF pp. 14--15, Table 4"
+      ]
     },
     {
       "id": "Putta2016",
@@ -39,7 +43,10 @@
       "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/BSUB8BSF/Putta et al. - 2016 - CO2 absorption into loaded aqueous MEA solutions Kinetics assessment using penetration theory.pdf",
       "source_pdf_sha256": "fac3789d1ff6baa53e226638a2505ee3f3ff10433e4af89ef0a8e27785771e99",
       "role": "film boundary and liquid-property source inventory",
-      "locators": ["printed p. 343, Eqs. 31--37 and Table 3", "printed p. 353, reference 29"]
+      "locators": [
+        "printed p. 343, Eqs. 31--37 and Table 3",
+        "printed p. 353, reference 29"
+      ]
     },
     {
       "id": "Luo2015",
@@ -47,7 +54,9 @@
       "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/MFRDNYCS/Luo et al. - 2015 - Mass transfer and kinetics of carbon dioxide absorption into loaded aqueous monoethanolamine solutio.pdf",
       "source_pdf_sha256": "16f655236141fb72b4a68992e7f5c4c97ca5c5946304dafe03011fc3da60ee44",
       "role": "CO2, MEA, density, viscosity, and source-basis transport relationships",
-      "locators": ["printed p. 61, Eqs. 15--24"]
+      "locators": [
+        "printed p. 61, Eqs. 15--24"
+      ]
     },
     {
       "id": "Snijder1993",
@@ -55,15 +64,22 @@
       "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/ANNK86SA/Snijder et al. - 1993 - Diffusion coefficients of several aqueous alkanolamine solutions.pdf",
       "source_pdf_sha256": "4fafdd7e728d72876d69c56a25e9d696fa804994326b2d5bb5759c1d718569b8",
       "role": "free-MEA diffusivity correlation and Table III source states",
-      "locators": ["printed p. 477, Table III and Eq. 8", "printed p. 479, concentration-extension discussion"]
+      "locators": [
+        "printed p. 477, Table III and Eq. 8",
+        "printed p. 479, concentration-extension discussion"
+      ]
     },
     {
       "id": "Amundsen2009",
       "citation": "Amundsen et al. (2009), Density and viscosity of monoethanolamine + water + carbon dioxide from (25 to 80) deg C",
-      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/NGQVTDX7/Amundsen et al. - 2009 - Density and Viscosity of Monoethanolamine + Water + Carbon Dioxide from (25 to 80) °C.pdf",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/NGQVTDX7/Amundsen et al. - 2009 - Density and Viscosity of Monoethanolamine + Water + Carbon Dioxide from (25 to 80) \u00b0C.pdf",
       "source_pdf_sha256": "a6525dde4e8b0e74902ebbe1d8c6e3f246cee36be9ae5409e32669750f409d4e",
       "role": "Weiland density and viscosity source reconstruction",
-      "locators": ["printed p. 3098, Eqs. 4--6 and Table 10", "printed p. 3099, Eqs. 9--10 and Table 12"]
+      "locators": [
+        "printed p. 3098, Eqs. 4--6 and Table 10",
+        "printed p. 3099, Eqs. 9--10 and Table 12",
+        "printed pp. 3096-3100; pp. 3099-3100 general uncertainty estimates exclude unnamed highest-temperature/loading rows"
+      ]
     },
     {
       "id": "Hartono2014",
@@ -71,15 +87,21 @@
       "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/L7SKR73P/Hartono et al. - 2014 - Physical Properties of Partially CO2 Loaded Aqueous Monoethanolamine (MEA).pdf",
       "source_pdf_sha256": "c085678a27172f0f9875d194cda6de18403753743fdf97a76b49384857bec196",
       "role": "loaded density and viscosity source reconstruction",
-      "locators": ["printed p. 1810, Table 3 and Eqs. 3--5", "printed pp. 1811--1812, Eqs. 6--9 and Table 7"]
+      "locators": [
+        "printed p. 1810, Table 3 and Eqs. 3--5",
+        "printed pp. 1811--1812, Eqs. 6--9 and Table 7"
+      ]
     },
     {
       "id": "Gaspar2015",
       "citation": "Gaspar and Fosbol (2015), A general enhancement factor model for absorption and desorption systems",
-      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/PW5C8YSL/Gaspar and Fosbøl - 2015 - A general enhancement factor model for absorption and desorption systems A CO2 capture case-study.pdf",
+      "local_pdf_path": "/home/tnnrpolley21/Zotero/storage/PW5C8YSL/Gaspar and Fosb\u00f8l - 2015 - A general enhancement factor model for absorption and desorption systems A CO2 capture case-study.pdf",
       "source_pdf_sha256": "1af00f78519bcb56bf4d754fd01297b555cb0c6e8ff6afe11b2a5ea034d4cdf7",
       "role": "equal/unequal diffusivity comparison context only",
-      "locators": ["printed p. 204, introduction", "printed p. 209, equal-diffusivity comparison"]
+      "locators": [
+        "printed p. 204, introduction",
+        "printed p. 209, equal-diffusivity comparison"
+      ]
     }
   ],
   "unrecovered_source_records": [
@@ -157,7 +179,7 @@
       "conversion": "viscosity input mPa s to Pa s where emitted by issue35; no thermodynamic-factor correction",
       "standard_state_basis": "source loaded MEA correlation; no admitted absorber true-species basis",
       "domain": "298--353 K, 20--40 mass% MEA, loading 0--0.5",
-      "uncertainty_status": "viscosity uncertainty is reported by Amundsen; propagated diffusivity uncertainty not calculated",
+      "uncertainty_status": "Unloaded viscosity: 1% for the 35 admitted Work Package A rows. Loaded viscosity: no usable row-level uncertainty; rows not admitted. The general 3% estimate excludes unnamed highest temperatures/loadings and is not assigned to rows. Propagated diffusivity uncertainty is not calculated (Amundsen2009 pp. 3096-3100; bundle 3).",
       "value_status": "positive source reconstruction retained in issue35_transport_correlations.csv",
       "admission_decision": "source_reconstruction_only_not_physical_admission"
     },

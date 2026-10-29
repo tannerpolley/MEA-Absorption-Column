@@ -35,23 +35,28 @@
     ]
   },
   "work_package_a": {
-    "repository": "tannerpolley/MEA-Thermodynamics",
-    "pr_head_commit": "3d7fa12f397678898321f40eec9b31bff9ec5914",
-    "declared_base_commit": "9f7c83d80900a10fbff7007c2137d126e92d9b3d",
-    "path": "data/reference/MEA/film_chemistry_inputs/1/input.json",
-    "sha256": "dd145293305f69c117d1384d99ebb5baaf0277527fc438c0cadecf0edfa759bd",
-    "schema_sha256": "1a7db95c5cee19a3be9cf2c05811f65812e0789ee7362524e708010a10f02601",
-    "receipt_sha256": "88d3714aa0399c63a3367d0aa4ddb3b8708fc4c1e881a329ff522f277bbc1abc",
-    "validation_report_sha256": "d1f24d7566826a8b7a809519164f3954118f0f68bb26aba98c8c4eb215a71383",
+    "repository": "tannerpolley/Amine-Thermodynamics",
+    "path": "data/reference/MEA/film_chemistry_inputs/3/input.json",
+    "sha256": "5ceab9845b1fc73395c0ff8c3a4f1700eb052befd418225a4fd16e3b8ab58e25",
+    "schema_sha256": "6bfe487cd1c3a69cadfa1efc58fef825e9b1d570c002484733b6a2aaded1eaf8",
+    "receipt_sha256": "3bca07aa9e38154fb6c8323c3e582f022585514e1ba5e44498f66abf3bc1fbc2",
     "status": "source_validated_deferred_inputs",
     "finite_rate_status": "F1/F2 rejected_source_unit_inconsistency; F3 rejected_primary_coefficient_source_unavailable",
     "transport_status": "all numeric diffusion candidates rejected",
     "domain": {
-      "temperature_K": [293.15, 323.15],
-      "mea_molarity_mol_L_exact": [1.0, 5.0],
+      "temperature_K": [
+        293.15,
+        323.15
+      ],
+      "mea_molarity_mol_L_exact": [
+        1.0,
+        5.0
+      ],
       "loading_min_inclusive": 0.0,
       "loading_max_exclusive": 0.5
-    }
+    },
+    "owner_revision": "a6de0317333e9b4bbd65537d285bfe3a384101c7",
+    "source_correction": "Amine-Thermodynamics #152/#194: loaded density and viscosity rows are not admitted; no row-level uncertainty is assigned. Unloaded density (35 rows, 0.0005 g/cm3) and viscosity (35 rows, 1%) remain admitted. Amundsen2009 pp. 3096-3100."
   },
   "downstream_placeholder_parameter_input": {
     "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_CO2_H2O_retained_predictive/parameters.json",
