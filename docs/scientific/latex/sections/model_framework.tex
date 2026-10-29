@@ -93,7 +93,7 @@ The empirical liquid-density correlation instead supplies hydraulics and apparen
 The residual Helmholtz-energy model represents the physical interactions entering activities and fugacity coefficients.
 For the liquid phase, the MEA electrolyte state activates the ionic terms.
 For the vapor phase, the same ePC-SAFT machinery is used but the electrolyte terms vanish because the vapor composition contains only neutral species.
-For each phase state $(T,P,\mathbf{x})$, the equation of state solves for the phase density and evaluates the residual Helmholtz energy as $\tilde{a}^{res}=\tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}+\tilde{a}^{DH}+\tilde{a}^{Born}$.
+For each phase state $(T,P,\mathbf{x})$, the EOS solves for the phase density and evaluates the residual Helmholtz energy as $\tilde{a}^{res}=\tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}+\tilde{a}^{DH}+\tilde{a}^{Born}$.
 The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, the association term accounts for site-specific association such as hydrogen bonding, the Debye--H\"uckel term accounts for long-range ionic screening, and the Born term accounts for ion-solvation work.
 The five residual-Helmholtz contribution terms evaluated by the ePC-SAFT calculation are summarized as
 \begin{align}
