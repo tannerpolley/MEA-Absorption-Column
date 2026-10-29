@@ -134,23 +134,23 @@
     },
     {
       "id": "issue42_transport_inputs",
-      "path": "analyses/nccc_validation/results/final/tables/issue42_transport_inputs.csv",
-      "sha256": "fad87d02ed2b31ec3932ee748e9cee91baa0f57824654c728accf0bb0d8bf124"
+      "path": "analyses/nccc_validation/results/runs/issue78_bundle3/transport/transport_inputs.csv",
+      "sha256": "8a9a6ba04d3f5fd68468109be931943336d45fc533bd2c414060a8aebf1aea58"
     },
     {
       "id": "issue42_comparison",
-      "path": "analyses/nccc_validation/results/final/tables/issue42_transport_comparison.csv",
-      "sha256": "c1a5951f5c19333817141b980623e950854cf659025e3e9ff9d2d23e6271836e"
+      "path": "analyses/nccc_validation/results/runs/issue78_bundle3/transport/transport_comparison.csv",
+      "sha256": "2ee14baaa2c173f5242b047cf3157bc20e6dc28e6c1c2fe5c87dbe192db483ff"
     },
     {
       "id": "issue42_summary",
-      "path": "analyses/nccc_validation/results/final/tables/issue42_film_transport_summary.json",
-      "sha256": "6aac0180b874160aeddd61e916ba4e16a63d8f0090cfdc04c509901ec2275bbd"
+      "path": "analyses/nccc_validation/results/runs/issue78_bundle3/transport/summary.json",
+      "sha256": "44b4f135b1b402c764ea32a3dd4eae33e8e5466b36cc9c3a164d988bdc47771f"
     },
     {
       "id": "issue42_report",
-      "path": "analyses/nccc_validation/results/final/reports/issue42_film_transport.md",
-      "sha256": "c6caeb6572688d50fafb3b59cb0cfeac3ec32a3d1250a37589c138ce66850ddb"
+      "path": "analyses/nccc_validation/results/runs/issue78_bundle3/transport/transport.md",
+      "sha256": "abab431f95e3b2946cfc3db671883c9e08933b6d953fb4120a36e05d467bda21"
     }
   ],
   "required_state_ids": ["Putta2016_1M", "Putta2016_5M", "Case3C_position_0", "Case3C_position_0.5", "Case3C_position_1"],
