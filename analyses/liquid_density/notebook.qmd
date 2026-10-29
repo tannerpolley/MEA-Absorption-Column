@@ -15,10 +15,12 @@ weighted validation score.
 
 The older column path uses `density_expression` in
 `src/mea_absorption_column/Properties/Thermophysical_Properties.py`.
-It is the apparent-component additive molar-volume correlation attributed to
-Morgan et al. (2015) in `docs/scientific/latex/appendices/appendix_properties.tex`,
-with composition-dependent CO2 and MEA volumes and temperature-dependent pure
-MEA and water volumes. This is not the Amundsen observation table itself.
+It is a modified Morgan-form correlation that uses the apparent-component mean
+molar mass of CO2, MEA and water. Only its additive-volume denominator matches
+Morgan et al. (2015, *AIChE Journal*, [doi:10.1002/aic.14762](https://doi.org/10.1002/aic.14762),
+p. 1830, Eqs. 20 and 24, Table 5); Morgan uses the true-species mean molar mass.
+The implemented volume terms depend on composition for CO2 and MEA and on
+temperature for pure MEA and water. This is not the Amundsen observation table itself.
 The twelve-state path already uses the native solved ePC-SAFT density.
 This distinction corrects the premise that every column path currently uses the correlation.
 
@@ -49,9 +51,9 @@ Pressure is unreported; all property comparisons assume 101325 Pa. This is an
 input assumption, not a pressure validation. Apparent feeds use elemental formula
 molar masses (CO2 0.044009, MEA 0.061084, water 0.018015 kg/mol).
 CO2 loading is mol CO2/mol MEA; MEA mass fraction is on the CO2-free solvent basis.
-Unloaded EOS calculations use the exact zero-CO2 neutral binary pressure root,
+The unloaded ePC-SAFT points use an exact zero-CO2 neutral liquid root on the binary MEA/water basis,
 including the pure-MEA endpoint; no positive loading proxy is substituted.
-Loaded EOS calculations solve nine-species reactive equilibrium. The legacy
+The loaded ePC-SAFT points use nine-species reactive equilibrium. The legacy
 correlation retains its implemented rounded molar masses. For the controlled
 column, volume is conserved solution mass flow divided by correlation mass
 density, avoiding a mismatch between apparent and true mole counts.
