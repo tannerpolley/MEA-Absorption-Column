@@ -30,6 +30,8 @@ def interfacial_area(rho_mass_l, sigma, ul, A, packing, diagnostics=None):
 def interfacial_area_expression(rho_mass_l, sigma, ul, A, packing):
     a_p, ϵ, *_ = packing
     Lp = A * a_p / ϵ
+    # Tsai form with Chinen et al. (2018) fitted A1 = 1.42, A2 = 0.12 (SI Table S3,
+    # Mellapak 250Y); Tsai's published pair is 1.34, 0.116 (issue 84).
 
     # Keep the positive-domain expression shared; retain NaN (not complex) for
     # legacy diagnostics when a deliberately invalid numeric probe is supplied.
