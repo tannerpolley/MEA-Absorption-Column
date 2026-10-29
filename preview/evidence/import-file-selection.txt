@@ -1,0 +1,206 @@
+Import from fe070d2796e0409d078afc2fad3b9569dcddeda0
+Onto 471fdac; no files outside preview/ imported.
+
+README.md
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=7aefeed28e0796cce73ce42da007ce4448a1b77363e0db5ba5054e1fc326cdb8; current=SHA256=587e20a0ef3f8e44f96dcd4b1258ec674a9e0f0a66b1c5e1c309516df002a631
+
+analyses/_cse-manuscript.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=f2adf401cc0356910b3e3c1d5fd74386e6f5d55da427d7df31ecf8597d7139da; current=SHA256=8accb3bd525f0ab262408816cce660b5344c36822a32c969cfb8f5d39eada6d7
+
+analyses/research_options/README.md
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=a22b41354ef6ca200ab20be9457eb9c2cc74779b73614d3650382225bbafc4f8; current=SHA256=663a309e1fc90f7df6c30bcaeb73a0d39b76c0dc930f4d3dd1d00964620e6a37
+
+analyses/research_options/notebook.qmd
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=6552885f22fa363dbb04733b476c53e674da1ea4dd3f904c820e0c6f2ea949aa; current=SHA256=b7013d2ad4379a64a12ed32a7716745e62aa792b626448073f3306f5cd60cfcc
+
+analyses/research_options/options.toml
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=4c966f52112581bdaf771ee72c1a13f1161ce7e293ed659c8039f2ed0b05c85e; current=SHA256=767b74927a167e633001c026e51bc1bb3a2423129d872bf564e1b2d8128df362
+
+analyses/research_options/results/configuration/call_comparison.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=b7a2a8c086a152535c564f2568a718cb737f2e0bcb6cfd77b48797be676a257f; current=absent
+
+analyses/research_options/results/configuration/comparison.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=46972ebafe58135c53f202b7719f0b123c9a066a16640b2172297400e4832e37; current=absent
+
+analyses/research_options/results/configuration/henry_candidate/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=474bdce288975519998a3d0fb55e3d680f890c2a1429e7e2aa1c068b521fc4ab; current=absent
+
+analyses/research_options/results/configuration/henry_candidate/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=19ac9999ac143f4923bdda716897ec895ba58067ad88ad9c12d515c787adfed6; current=absent
+
+analyses/research_options/results/configuration/henry_candidate_final/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=ba150e86b9dfad47a038a2c66c0594e27b4dea781cccbae8a3dc82aabe2dda2b; current=absent
+
+analyses/research_options/results/configuration/henry_candidate_final/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=2bbd610ee2042dee52f642f820a796942ee79d7a12b4383c28c76b72e394c5d1; current=absent
+
+analyses/research_options/results/configuration/henry_reference.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=871265ffdba6b4619c3898038fb8b4a80b502f40cdd6aada2303561f5d29210b; current=absent
+
+analyses/research_options/results/configuration/invalid_method_request.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=f2355662aff42cda7a3c3dcfa9afd21b999cc1bb5713e235a177e5d4425baf90; current=absent
+
+analyses/research_options/results/configuration/invalid_method_response.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=a7228c54de083c3dbdceffceae612cce5024a50e301d9ea300f79c50eb4c720d; current=absent
+
+analyses/research_options/results/configuration/json_command_return/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=f861a527c5fd356301543ef7ff28c3cab585cb4618c03aada56419de4891863e; current=absent
+
+analyses/research_options/results/configuration/json_command_return/request.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=c90c6cb68c69539c4115ff082dacc28d48f83d291208ccb87164aa68e59c4943; current=absent
+
+analyses/research_options/results/configuration/json_command_return/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=cd882b69e0bc7aac70408041bde511acb6fa6fccdd9e0f10605ffa11ff5f2a82; current=absent
+
+analyses/research_options/results/configuration/json_command_return/stderr.txt
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=042c6fe57af6207afc72307eb6728ab1f0b196a15f2e655be7502b090e9f8a6d; current=absent
+
+analyses/research_options/results/configuration/json_command_return_final/attempt.json
+  Retained record; runtime reads byte-identical packaged copies in preview/public/ instead.
+  source SHA256=dc06e44c0be4c1500e75f116e36ac8eb57c24bd80b9c224651a3d997096cc07c; current=absent
+
+analyses/research_options/results/configuration/json_command_return_final/request.json
+  Retained record; runtime reads byte-identical packaged copies in preview/public/ instead.
+  source SHA256=831de18130cacd17582b8dc3456a32f041245d8075a6c21aa2fe0625543ca6bc; current=absent
+
+analyses/research_options/results/configuration/json_command_return_final/resolved_config.json
+  Retained record; runtime reads byte-identical packaged copies in preview/public/ instead.
+  source SHA256=813eb1732d7a339371c226f01df70a967d898d23839aefde3433a86b5885f879; current=absent
+
+analyses/research_options/results/configuration/json_command_return_final/stderr.txt
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=df3a3d80cfd969c423e73221377c91ab72346fcbca79ba478f65c3c3e512cfd4; current=absent
+
+analyses/research_options/results/configuration/json_command_unavailable/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=6629da724bca8a95a02034b12f32f88775c1fc0b0cca84da5645bdb8ee98b83d; current=absent
+
+analyses/research_options/results/configuration/json_command_unavailable/request.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=d91c0920532b79d0b2795f09edd6c93091943a50f7812b1e2f121227542a7d6d; current=absent
+
+analyses/research_options/results/configuration/json_command_unavailable/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=7adf656ab438fceb799818394d72a0c209f3f81d73525b89a99ace53832d2540; current=absent
+
+analyses/research_options/results/configuration/json_command_unavailable/stderr.txt
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; current=absent
+
+analyses/research_options/results/configuration/json_command_unavailable_final/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=530727feb4c191ca1534982c27a9849380c2cc2594c82cf93d532abbfebb41b8; current=absent
+
+analyses/research_options/results/configuration/json_command_unavailable_final/request.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=5d16e4efdde1dbf6ac6760e347b790e8a8474083ce0d4ee4203936b9c596d35c; current=absent
+
+analyses/research_options/results/configuration/json_command_unavailable_final/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=bbb9958d7da976310b49cecf878d5b571b4453a235a0c3482546ab9617c3db69; current=absent
+
+analyses/research_options/results/configuration/json_command_unavailable_final/stderr.txt
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; current=absent
+
+analyses/research_options/results/configuration/python_return_after/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=b4f6e1768d4cb34f42c6c36b08a87dbaf0205a1c70ee4f58f223526cbf640854; current=absent
+
+analyses/research_options/results/configuration/python_return_after/request.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=0ff15e5bcd563e9ed739dfd23d90885bcc10a945eb01a8f0091f87c2dec121ce; current=absent
+
+analyses/research_options/results/configuration/python_return_after/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=df8bbe255cd3aabdea2df8d3cfdea9b3a1b54d261f9adeb5781a62bd9ac7e1a8; current=absent
+
+analyses/research_options/results/configuration/python_return_after/stderr.txt
+  Parked configuration/docs/navigation; preview is self-contained; preserve current main and 471fdac.
+  source SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; current=absent
+
+analyses/research_options/results/configuration/python_return_after_final/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=8f30368705583ff2355e4b3e23ea9acd8c0e01f64aaef32214160c736c225e86; current=absent
+
+analyses/research_options/results/configuration/python_return_after_final/request.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=a45ab818dfce0a7d62bc233cf1d26c32d338d5095731f4142b26f10b16ec828f; current=absent
+
+analyses/research_options/results/configuration/python_return_after_final/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=1066ee4ce1fd2f102ba93161056ce088dc3abaf35dcc36e95c4796aecf9abfd5; current=absent
+
+analyses/research_options/results/configuration/python_return_before/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=d972df2cdd17811642ec6d91912eecb3e1c026bf4c06b22e29086063c5487ba2; current=absent
+
+analyses/research_options/results/configuration/python_return_before/encoding.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=c1af8cb8e3c300734805daf00c9bc088fffb5756e6f0401b015ac009c4285c47; current=absent
+
+analyses/research_options/results/configuration/python_return_before/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=f005cbf86f321e3806bee4a6f2620a486f58172167e653cdab81cee0a756f83b; current=absent
+
+analyses/research_options/results/configuration/reactive_nine_unavailable/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=410efa21d8664694ffe8e5e63a1d2fc0ff86efa7224a5fc2c8d0f7dab631f0d8; current=absent
+
+analyses/research_options/results/configuration/reactive_nine_unavailable/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=97f4612c68d267f5b99a48f1404f301f73d35a46d9f2046a073b58f17525801b; current=absent
+
+analyses/research_options/results/configuration/reactive_nine_unavailable_final/attempt.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=121ff1a21552f1122c6b1dd6b15aed080a23fb5fc2abbea8eaf92897c32983e9; current=absent
+
+analyses/research_options/results/configuration/reactive_nine_unavailable_final/resolved_config.json
+  Other retained calculation/command evidence; not read by preview.
+  source SHA256=91328ac27cf9016c2a82d7e00fb07fb7d3c31c25b60c66719e4be94b99eb60f8; current=absent
+
+src/mea_absorption_column/benchmark_worker.py
+  Older Python implementation/tests; preserve current main and 471fdac.
+  source SHA256=2a9e25f34de7a1950a3b3a4a460969c8d033697950affffe1adc03829ab6bdc0; current=SHA256=4aa37487c970077918302dfd2ef6ad5426aacee0c37491b6c86b5f368c11c66e
+
+src/mea_absorption_column/column.py
+  Older Python implementation/tests; preserve current main and 471fdac.
+  source SHA256=1cd9618547596ec8dc65580763b914c5331139ee408f94cf2a8df5b316884047; current=SHA256=90431eea33070b9e4716f21ee111f72964ba95021329eba756fac4a556b7fdfc
+
+src/mea_absorption_column/config/column.py
+  Older Python implementation/tests; preserve current main and 471fdac.
+  source SHA256=3d6706c4bc87876c3d1653981268bcefcabbc6761fc73b02c3314e81eda117bf; current=SHA256=9a592c33da5891f511727648f65234ea86b64de4d9459d3c6593f836f18090b2
+
+src/mea_absorption_column/research.py
+  Older Python implementation/tests; preserve current main and 471fdac.
+  source SHA256=bc95be02e5d6c1bd30dde4d882af2b60652134156299d836c6170a9b0fa16d58; current=SHA256=bfbe727636fcc912cff78065682ef7e7726eb02dcef244883c73e9a595d627d4
+
+tests/test_column_config.py
+  Older Python implementation/tests; preserve current main and 471fdac.
+  source SHA256=9c47f4062d5bb56ab865ee9637803cbb659a61c21a01c33415482fc6b8b2bd57; current=SHA256=9f53fd30a99bcb6b09fd73f4fbd98af93a2a0e297ef01b22ff9c8b1c148aebad
+
+tests/test_research_options.py
+  Older Python implementation/tests; preserve current main and 471fdac.
+  source SHA256=c1159ee0a8f0a78e6c851e9db0f846f26b24df2f49de7eb13612b0ba322b0e14; current=SHA256=ab77ee264657cf73e095377e5b537760980fa4677c42d845e5236c5b482786d8
+
+Verified byte-identical reference-attempt.json to source attempt.json.
+Verified byte-identical reference-request.json to source request.json.
+Verified packaged attempt, CSV, and PNG against provenance hashes.

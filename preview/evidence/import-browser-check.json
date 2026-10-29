@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "assertions": 37,
+  "downloadsChecked": 3,
+  "capture": "91.483%",
+  "nativeNodes": 22,
+  "url": "http://127.0.0.1:41552/",
+  "source_commit": "fe070d2796e0409d078afc2fad3b9569dcddeda0",
+  "server_pid": 1615789,
+  "cleanup": "Test tab closed and SIGTERM sent only to the captured Vite PID."
+}
