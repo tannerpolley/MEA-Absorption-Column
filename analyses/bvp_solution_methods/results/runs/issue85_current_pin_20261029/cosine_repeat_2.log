@@ -1,0 +1,22 @@
+{
+ "attempt_id": "20261029T200012-ddf4a6adcdd4",
+ "method": "upwind",
+ "nodes": 17,
+ "end_clustering": 1.0,
+ "quadrature_points": 9,
+ "execution": "completed",
+ "runtime_s": 102.60139376699954,
+ "iterations": 5,
+ "scaled_residual_inf": 1.7860243639219501e-12,
+ "numerical_acceptance": "accepted",
+ "k1_accepted": true,
+ "k1_scaled_residual_inf": {
+  "boundary": 0.0,
+  "charge": 2.1045047723532075e-14,
+  "energy": 4.629639387659467e-14,
+  "interface": 4.3630861713088604e-13,
+  "material": 3.692320669118395e-16
+ },
+ "capture_pct": 89.41488041587351,
+ "failure": null
+}

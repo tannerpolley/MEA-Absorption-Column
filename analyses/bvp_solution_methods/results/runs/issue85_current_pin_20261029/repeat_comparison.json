@@ -1,0 +1,109 @@
+{
+  "records": [
+    {
+      "label": "seed_uniform_n17",
+      "attempt_sha256": "1914fc1cfae664ed7d8f230dea600988dcb28b001a316c62b6f6e6570bd091bb",
+      "attempt_id": "20261029T195611-bf71a928e0c6",
+      "source_head": "91ced24149ce7bbed71b1cfba5c78e26bcd9c57d",
+      "engine_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "engine_wheel_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "capture_percent": 92.67000465461173,
+      "runtime_s": 109.64990199199929,
+      "iterations": 6,
+      "scaled_equation_residual_inf": 9.748563296399556e-08,
+      "scaled_certificate": {
+        "boundary": 0.0,
+        "charge": 2.326758043844795e-14,
+        "energy": 4.774315618523825e-12,
+        "interface": 9.748563296399556e-08,
+        "material": 3.692320669118395e-16
+      },
+      "initialization": {
+        "policy": "case_declared_native_inputs",
+        "values": {}
+      }
+    },
+    {
+      "label": "cosine_repeat_1",
+      "attempt_sha256": "14c9ccdaa18fc53ef52f166e2901ac84b5520080a1663fd23f20520cd6f0ff6a",
+      "attempt_id": "20261029T195811-a08ed574aa71",
+      "source_head": "91ced24149ce7bbed71b1cfba5c78e26bcd9c57d",
+      "engine_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "engine_wheel_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "capture_percent": 89.41488041587351,
+      "runtime_s": 119.98113895400093,
+      "iterations": 5,
+      "scaled_equation_residual_inf": 1.7860243639219501e-12,
+      "scaled_certificate": {
+        "boundary": 0.0,
+        "charge": 2.1045047723532075e-14,
+        "energy": 4.629639387659467e-14,
+        "interface": 4.3630861713088604e-13,
+        "material": 3.692320669118395e-16
+      },
+      "initialization": {
+        "policy": "case_declared_native_inputs",
+        "values": {
+          "retained_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_current_pin_20261029/seed_uniform_n17/attempt.json"
+        }
+      }
+    },
+    {
+      "label": "cosine_repeat_2",
+      "attempt_sha256": "681735842213f271cc56f6cc5c238deba1091e7e86f5571daf1b5e0ff028977f",
+      "attempt_id": "20261029T200012-ddf4a6adcdd4",
+      "source_head": "91ced24149ce7bbed71b1cfba5c78e26bcd9c57d",
+      "engine_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "engine_wheel_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "capture_percent": 89.41488041587351,
+      "runtime_s": 102.60139376699954,
+      "iterations": 5,
+      "scaled_equation_residual_inf": 1.7860243639219501e-12,
+      "scaled_certificate": {
+        "boundary": 0.0,
+        "charge": 2.1045047723532075e-14,
+        "energy": 4.629639387659467e-14,
+        "interface": 4.3630861713088604e-13,
+        "material": 3.692320669118395e-16
+      },
+      "initialization": {
+        "policy": "case_declared_native_inputs",
+        "values": {
+          "retained_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_current_pin_20261029/seed_uniform_n17/attempt.json"
+        }
+      }
+    }
+  ],
+  "cosine_profiles_bit_identical": true,
+  "capture_repeat_difference_percentage_points": 0.0,
+  "max_abs_repeat_difference_by_state": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "state_units": [
+    "mol/s",
+    "mol/s",
+    "mol/s",
+    "mol/s",
+    "K",
+    "K",
+    "Pa",
+    "1",
+    "mol/(m2 s)",
+    "mol/(m2 s)",
+    "W/m2",
+    "1"
+  ],
+  "proposed_capture_tolerance_percentage_points": 1e-06,
+  "evidence_type": "deterministic numerical reproduction, not grid convergence or physical validation"
+}

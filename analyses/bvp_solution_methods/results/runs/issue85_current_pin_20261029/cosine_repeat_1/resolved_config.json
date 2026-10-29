@@ -1,0 +1,69 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "conserved_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "corrected published 2017 3C",
+    "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json",
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory",
+    "mobility_law": "harmonic_mean_onsager_v1",
+    "references": [
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+    ],
+    "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+  },
+  "engine": {
+    "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/bin/python3",
+    "required": true,
+    "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_current_pin_20261029/cosine_repeat_1",
+    "process_isolation": false,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 600.0
+  },
+  "initialization": {
+    "policy": "case_declared_native_inputs",
+    "values": {
+      "retained_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_current_pin_20261029/seed_uniform_n17/attempt.json"
+    }
+  },
+  "model": {
+    "coordinate": "physical_height",
+    "energy_model": "native_total_enthalpy",
+    "film_model": "equilibrium_manifold",
+    "formulation": "twelve_state_conserved",
+    "layout": "twelve_conserved",
+    "pressure_model": "hydraulic_pressure_drop",
+    "thermo_model": "reactive_epcsaft"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "end_clustering": 1.0,
+      "max_iterations": 20,
+      "nodes": 17,
+      "quadrature_points": 9,
+      "tolerance": 1e-07
+    }
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_config_sha256": "e799498dd227e24035d3b41e227b9166fc4484025b6b06f91addddedc70147f0",
+  "schema_version": 1
+}
