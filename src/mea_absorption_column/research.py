@@ -26,8 +26,11 @@ SETTING_KEYS = {"data_type", "staged_beds", "profile_pngs", "profile_csvs", "sub
 LIMITATION = (
     "Selections identify implemented paths, not a validated Cartesian product. "
     "Native derivative, chemistry and numerical compatibility checks still apply. "
-    "Conserved formulation requires a user problem_factory owning the physics; "
-    "the twelve-state column is not integrated. Built-in eNRTL and MDEA are unavailable."
+    "Legacy conserved mappings require a problem_factory owning the physics. "
+    "The twelve_state_conserved preset integrates reactive_epcsaft with native "
+    "enthalpy and hydraulic pressure drop; its methods are trapezoidal, central "
+    "and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. "
+    "Built-in eNRTL and MDEA are unavailable."
 )
 
 _COLUMN_API = None
@@ -85,6 +88,12 @@ def _resolve_legacy_config(config):
         if keys is not None and set(value) - keys:
             raise ValueError(f"Unknown {table} keys: {sorted(set(value) - keys)}")
     solver = resolved["solver_settings"]
+    if not conserved:
+        ignored = set(solver) & {"energy_model", "pressure_model", "liquid_density_source", "density_source"}
+        if ignored:
+            raise ValueError(f"Seven-state solver does not consume these model choices: {sorted(ignored)}; use a compatible column preset")
+        if solver.get("enhancement_type", "explicit") not in {"explicit", "implicit"}:
+            raise ValueError("enhancement_type must be explicit or implicit")
     if not conserved and "co2_mass_transfer_model" in solver and solver["co2_mass_transfer_model"] != resolved["film_model"]:
         raise ValueError("film_model conflicts with solver_settings.co2_mass_transfer_model")
     if not conserved:

@@ -96,9 +96,13 @@ def run_model(df,
         and use_staged_beds
         and intercoolers_count > 0
         and requested_intercooler_model == "pumparound_temperature_approach"
-        and "thermal_state_mode" not in solver_settings_for_run
+        and solver_settings_for_run.get("thermal_state_mode") != "temperature"
     ):
-        solver_settings_for_run["thermal_state_mode"] = "temperature"
+        raise ValueError(
+            "pumparound_temperature_approach requires explicit thermal_state_mode='temperature'; "
+            "thermal_state_mode choices are 'enthalpy' and 'temperature', and 'enthalpy' "
+            "is unsupported with this staged intercooler"
+        )
     thermal_state_mode = solver_settings_for_run.get("thermal_state_mode", "enthalpy")
     if (
         method == "scipy-bvp"

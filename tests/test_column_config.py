@@ -732,12 +732,13 @@ def test_capture_criterion_cannot_change_numerical_acceptance(monkeypatch):
     assert result["observation_agreement"] == "rejected"
 
 
-def test_run_column_retains_worker_capability_refusal(monkeypatch):
+@pytest.mark.parametrize("jacobian_status,phase", [("capability_refusal", "worker_preparation"), (None, "solver")])
+def test_run_column_retains_worker_capability_refusal(monkeypatch, jacobian_status, phase):
     monkeypatch.setattr(benchmark, "_run_one_case", lambda *args, **kwargs: {
         "success": False,
         "message": "Engine identity unavailable in worker",
         "failure_kind": "capability_refusal",
-        "jacobian_status": "capability_refusal",
+        "jacobian_status": jacobian_status,
     })
     result = run_column({
         "preset": "seven_state_legacy",
@@ -745,7 +746,7 @@ def test_run_column_retains_worker_capability_refusal(monkeypatch):
     })
     assert result["execution"]["status"] == "failed"
     assert result["failure"]["kind"] == "capability_refusal"
-    assert result["failure"]["phase"] == "worker_preparation"
+    assert result["failure"]["phase"] == phase
 
 
 def test_timeout_row_is_retained_as_timeout(monkeypatch):
@@ -803,3 +804,16 @@ def test_resume_rejects_changed_source_with_same_dirty_paths(tmp_path, monkeypat
     run_column(request)
     with pytest.raises(ConfigurationError, match="source identity mismatch"):
         run_column({**request, "execution": {"output_dir": str(tmp_path / "resume"), "resume": True}})
+
+
+def test_thermodynamic_choice_preserves_unrelated_resolved_choices():
+    request = {"preset": "seven_state_legacy",
+               "case": {"source": "C_cases_data", "id": "3C"},
+               "numerics": {"method": "scipy-bvp", "solver_settings": {"mesh_points": 11}}}
+    baseline = resolve_column_config(request).as_dict()
+    for thermo in ("epcsaft_neutral", "epcsaft_ionic", "epcsaft_reactive_nine"):
+        changed = resolve_column_config({**request, "model": {"thermo_model": thermo}}).as_dict()
+        for section in ("case", "numerics", "initialization", "acceptance", "execution", "dependencies"):
+            assert changed[section] == baseline[section]
+        assert {k: v for k, v in changed["model"].items() if k != "thermo_model"} == {
+            k: v for k, v in baseline["model"].items() if k != "thermo_model"}

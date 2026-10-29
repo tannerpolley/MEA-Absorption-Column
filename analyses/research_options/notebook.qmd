@@ -26,7 +26,7 @@ python3 src/mea_absorption_column/research.py analyses/research_options/options.
 |---|---|---|
 | Seven-state column | Henry, neutral/ionic ePC-SAFT or nine-species reactive ePC-SAFT; explicit/implicit enhancement or supplied film linearization; shooting, SciPy BVP or finite differences | Existing column balances and empirical calorics, with explicitly selected closures |
 | Conserved balances supplied by a study | Trapezoidal, centered, shooting or adaptive collocation | The builder supplies compatible thermodynamics, film, balances and boundaries; a method change need not change those equations |
-| Twelve-state coupled-column experiment | Preserved source and numerical evidence at `archive/coupled-solver-2026-09-08` | Not yet integrated with the shared seven-state derivative/caloric interface |
+| Twelve-state conserved column | `reactive_epcsaft`, equilibrium-manifold or enhancement reference; trapezoidal, central or upwind CasADi/IPOPT | Integrated preset with native total enthalpy and hydraulic pressure drop; see the bounded capability evidence below |
 
 A linearized film profile is a frozen input to an outer iteration. It is not a
 solved film at every new column state. Native derivatives currently cover the
@@ -174,3 +174,140 @@ inversion error, replacing the smooth cap by a hard cap, and ignoring the
 area factor) fail the corresponding checks; the retained source was not
 modified for those probes. These checks expose distinct numerical errors
 rather than merely exercising the selected functions.
+
+
+# Configuration capability evidence — 29 October 2026
+
+This is issue #18's first-stage capability evidence, **not physical validation**,
+mesh refinement or a solver ranking. The real resolver was attempted on 13,608
+combinations: 13,554 explicitly refuse and 54 resolve for bounded execution.
+[Axis values and counts](results/runs/capability_20261029/resolution_summary.json)
+and [every cell's first refusal reason](results/runs/capability_20261029/capability.csv.gz)
+are retained. Arbitrary strings, numerical settings and study-supplied equations
+are outside this finite product.
+
+| Formulation | Thermodynamics | Film | Energy / pressure | Density | Methods |
+|---|---|---|---|---|---|
+| Seven-state preset | Henry, neutral, ionic, reactive-nine | Explicit or implicit enhancement | Empirical enthalpy / constant pressure | Correlation, fixed | Shooting (`single`), SciPy BVP, finite differences |
+| Twelve-state preset | `reactive_epcsaft`: nine-species liquid and neutral vapor | Equilibrium manifold or enhancement reference | Native total enthalpy / hydraulic pressure drop | Solved state by default; optional correlation | Trapezoidal, central, upwind CasADi/IPOPT; reduced shooting/collocation refuse at execution |
+
+Isothermal energy, other pressure equations, eNRTL and MDEA refuse. Thermodynamic
+labels are formulation-specific; `casadi-ipopt` is not a method token. Density is
+selected with `numerics.solver_settings.liquid_density_source`. The
+[48-cell legacy menu probe](results/runs/capability_20261029/legacy_resolution.json)
+also identifies frozen-film input requirements. That legacy selection requires
+supplied positions, conductances and bulk fugacities; no new film was constructed.
+The seven-state preset does not expose this implemented legacy option. The generic
+conserved factory owns its equations and labels, requires `problem_factory`, and
+exposes trapezoidal, central, shooting and collocation, but not upwind.
+
+All workers run under `nice -n 10` with the pinned Engine 1.0.0 commit
+`f4566b3d0c64d05822b41fe363de47ab5cfa6a0e`, wheel SHA-256
+`57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a`.
+Seven-state SciPy starts at 11 nodes, tolerance 0.5, boundary tolerance 0.001,
+at most 1000 nodes, raw enthalpy states and numerical derivatives. Other
+seven-state methods retain their configured grid; their preset does not expose an
+11-node mesh. The wall limit is 60 s. Twelve-state methods use 11 uniform nodes,
+9 film quadrature points, tolerance 1e-7 and a 180 s wall limit. The
+[execution log](results/runs/capability_20261029/run.log) and numbered directories
+retain requests, returned values, failures, source/wheel identities and residuals.
+Wall times describe budgets on a shared desktop, not a performance comparison.
+
+Seven-state inputs are `C_cases_data/3C`, mole conversion, `legacy_ratio` vapor
+composition and reported-total-wet gas flow, detailed above. Twelve-state inputs
+are `analyses/bvp_solution_methods/input/case_3c.json`: liquid feeds
+2.4323205276/9.7292821105/76.9751925073 mol/s and vapor feeds
+1.6540435157/1.5624169375/14.5306833586/1.6006872733 mol/s, at 318.15/316.75 K,
+with bottom pressure 110900 Pa. These input bases and formulations differ;
+capture differences cannot isolate a solver or film effect. Estimated mobilities,
+provisional calorics and coarse meshes limit physical interpretation. Solved-state
+density is about 11% high against Amundsen 2009, lowering calculated 3C holdup by
+12–16% ([density study](../liquid_density/notebook.qmd)); no hydraulic accuracy is
+claimed. HSL, a collection of Fortran codes for large-scale scientific computation.
+https://www.hsl.rl.ac.uk/
+
+## Corrected refusals and remaining restrictions
+
+The Engine fugacity guard previously substituted Henry fugacities on errors.
+The retained #52 attempt has zero invalid states/penalties. Its instrumented replay
+returned 92.08186315973761% capture with zero substitutions. The instrumented
+307-test suite recorded one substitution: neutral Engine, liquid temperature 50 K,
+and NaN vapor composition. The corrected guard raises `CapabilityRefusal` with
+the state and original error; the outer balance guard preserves it. The final #52
+replay returns the identical capture and boundary residual,
+6.915441663935132e-14 percent-norm. See [counts and conditions](results/runs/capability_20261029/guard_measurement.json).
+Henry remains an explicit selection; refusals do not increment substitution counts.
+
+Rejected implicit-enhancement subsolves previously became balance penalties. The
+initial Henry shooting probe reported completion and 99.99885861038491% capture
+after five penalties: a retained false success. The corrected probe refuses at
+normalized height 0.07, with subsolve residual 219.496 against the unchanged 1e-6
+limit. The refusal names the subsolve and physical state: four component flows
+(mol/s), two enthalpy flows (W) and pressure (Pa). Film equations are unchanged.
+Separately labelled strict attempts supersede affected probes in the matrix.
+
+The legacy menu now refuses unconsumed energy, pressure and density selectors and
+unknown enhancement types. Staged pumparound requires explicit
+`thermal_state_mode = "temperature"`. The calculation test and CLI example now
+select it; no standalone tracked intercooler study was found. None of the 69
+tracked `attempt.json`/`resolved_config.json` files records a pumparound selection
+that would newly refuse replay. The K3 before/after native arrays are identical:
+both fail with a singular Jacobian, 95% initial capture iterate and 1542 penalties.
+This preserves a failed attempt, not a converged intercooler prediction
+([comparison](results/runs/capability_20261029/intercooler_comparison.json)).
+
+One persistent independence check changes thermodynamics while preserving case,
+film, energy, pressure, initialization, numerics and execution choices; only the
+related Engine requirement changes. Existing generic numerical trial-state penalty
+checks remain. The twelve-state feed-matched seed, 0.97 packing void fraction,
+293.15–393.15 K temperature interval and fixed scales remain explicit restrictions
+for #19/#31. General trial-state penalties remain; affected failed cells are
+identified rather than treated as clean model predictions.
+
+The [historical inventory](results/runs/capability_20261029/historical_penalties.json)
+finds positive penalty counts in 12 initializer files and 3 diagnostic logs.
+Their hashes remain unchanged; none was rerun. A seed count alone does not show
+that its later reactive solution used penalties. The [initial matrix inventory](results/runs/capability_20261029/retained_penalties.json)
+also preserves affected new probes. Independent review and investigator promotion
+remain with the issue owner.
+
+## Bounded execution matrix
+
+Run cells report capture (%); unsuccessful final iterates are not labelled runs.
+All failure causes, residuals, guard counts and attempt references accompany the
+summary. A faster legacy finite-difference check exposes an additional resolver
+restriction: its solver supports `mesh_points`, but the preset rejects it.
+At 11 nodes, Henry/neutral/ionic explicit enhancement reaches the unchanged
+500-evaluation limit and fails the boundary check (20.6977/48.2155/34.0100
+percent-norm). Corresponding implicit probes refuse. Both reactive-nine probes
+reach the temperature domain boundary (400.3011/399.1755 K against 293.15–393.15 K).
+See the [log](results/runs/capability_20261029/finite11.log) and
+[source/wheel identity](results/runs/capability_20261029/finite11_identity.json).
+
+| Seven-state thermodynamics | Enhancement | Shooting | SciPy BVP | Finite differences |
+|---|---|---|---|---|
+| `ideal_henry` | explicit | [Timeout](results/runs/capability_20261029/cell_00/attempt.json) | [Runs 91.42846%](results/runs/capability_20261029/cell_01/attempt.json) | [Timeout](results/runs/capability_20261029/cell_02/attempt.json) |
+| `ideal_henry` | implicit | [Refuses](results/runs/capability_20261029/cell_03_strict_final/attempt.json) | [Refuses](results/runs/capability_20261029/cell_04_strict/attempt.json) | [Timeout](results/runs/capability_20261029/cell_05_strict/attempt.json) |
+| `epcsaft_neutral` | explicit | [Fails](results/runs/capability_20261029/cell_06/attempt.json) | [Runs 91.61218%](results/runs/capability_20261029/cell_07/attempt.json) | [Timeout](results/runs/capability_20261029/cell_08/attempt.json) |
+| `epcsaft_neutral` | implicit | [Refuses](results/runs/capability_20261029/cell_09_strict/attempt.json) | [Refuses](results/runs/capability_20261029/cell_10_strict/attempt.json) | [Timeout](results/runs/capability_20261029/cell_11/attempt.json) |
+| `epcsaft_ionic` | explicit | [Fails](results/runs/capability_20261029/cell_12/attempt.json) | [Runs 92.02999%](results/runs/capability_20261029/cell_13/attempt.json) | [Timeout](results/runs/capability_20261029/cell_14/attempt.json) |
+| `epcsaft_ionic` | implicit | [Refuses](results/runs/capability_20261029/cell_15/attempt.json) | [Refuses](results/runs/capability_20261029/cell_16/attempt.json) | [Timeout](results/runs/capability_20261029/cell_17/attempt.json) |
+| `epcsaft_reactive_nine` | explicit | [Fails](results/runs/capability_20261029/cell_18/attempt.json) | [Runs 92.62966%](results/runs/capability_20261029/cell_19/attempt.json) | [Timeout](results/runs/capability_20261029/cell_20/attempt.json) |
+| `epcsaft_reactive_nine` | implicit | [Refuses](results/runs/capability_20261029/cell_21/attempt.json) | [Refuses](results/runs/capability_20261029/cell_22/attempt.json) | [Timeout](results/runs/capability_20261029/cell_23/attempt.json) |
+
+| Twelve-state film | Density | Trapezoidal | Central | Upwind | Reduced shooting | Reduced collocation |
+|---|---|---|---|---|---|---|
+| `equilibrium_manifold` | `default` | [Runs 91.11568%](results/runs/capability_20261029/cell_24/attempt.json) | [Fails](results/runs/capability_20261029/cell_27/attempt.json) | [Runs 93.41932%](results/runs/capability_20261029/cell_30/attempt.json) | [Refuses](results/runs/capability_20261029/cell_33/attempt.json) | [Refuses](results/runs/capability_20261029/cell_36/attempt.json) |
+| `equilibrium_manifold` | `solved_state` | [Runs 91.11568%](results/runs/capability_20261029/cell_25/attempt.json) | [Fails](results/runs/capability_20261029/cell_28/attempt.json) | [Runs 93.41932%](results/runs/capability_20261029/cell_31/attempt.json) | [Refuses](results/runs/capability_20261029/cell_34/attempt.json) | [Refuses](results/runs/capability_20261029/cell_37/attempt.json) |
+| `equilibrium_manifold` | `correlation` | [Runs 91.05272%](results/runs/capability_20261029/cell_26/attempt.json) | [Fails](results/runs/capability_20261029/cell_29/attempt.json) | [Runs 93.36752%](results/runs/capability_20261029/cell_32/attempt.json) | [Refuses](results/runs/capability_20261029/cell_35/attempt.json) | [Refuses](results/runs/capability_20261029/cell_38/attempt.json) |
+| `enhancement_reference` | `default` | [Runs 91.99487%](results/runs/capability_20261029/cell_39/attempt.json) | [Fails](results/runs/capability_20261029/cell_42/attempt.json) | [Runs 94.59822%](results/runs/capability_20261029/cell_45/attempt.json) | [Refuses](results/runs/capability_20261029/cell_48/attempt.json) | [Refuses](results/runs/capability_20261029/cell_51/attempt.json) |
+| `enhancement_reference` | `solved_state` | [Runs 91.99487%](results/runs/capability_20261029/cell_40/attempt.json) | [Fails](results/runs/capability_20261029/cell_43/attempt.json) | [Runs 94.59822%](results/runs/capability_20261029/cell_46/attempt.json) | [Refuses](results/runs/capability_20261029/cell_49/attempt.json) | [Refuses](results/runs/capability_20261029/cell_52/attempt.json) |
+| `enhancement_reference` | `correlation` | [Fails](results/runs/capability_20261029/cell_41/attempt.json) | [Fails](results/runs/capability_20261029/cell_44/attempt.json) | [Runs 94.81566%](results/runs/capability_20261029/cell_47/attempt.json) | [Refuses](results/runs/capability_20261029/cell_50/attempt.json) | [Refuses](results/runs/capability_20261029/cell_53/attempt.json) |
+
+Every summary cell links to its exact attempt. The [outcome table](results/runs/capability_20261029/outcomes.csv) retains each full cause and numerical diagnostic. Default twelve-state density is solved state; both requests were attempted explicitly.
+
+The final source passes 311 tests (307 before this stage, four additional cases),
+the final Engine integration check, and the option-independence check. The only
+suite warning is the existing invalid-logarithm diagnostic in the permissive
+transport timing check. Refusals raised during a solve now retain `phase = "solver"`; earlier attempt
+records retain their original phase fields.

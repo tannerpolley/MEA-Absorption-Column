@@ -1,0 +1,55 @@
+{
+  "axes": {
+    "preset": [
+      "seven_state_legacy",
+      "twelve_state_conserved"
+    ],
+    "thermo": [
+      "ideal_henry",
+      "epcsaft_neutral",
+      "epcsaft_ionic",
+      "epcsaft_reactive_nine",
+      "reactive_epcsaft",
+      "enrtl",
+      "mdea"
+    ],
+    "film": [
+      "explicit",
+      "implicit",
+      "reactive_film_linearization",
+      "equilibrium_manifold",
+      "enhancement_reference",
+      "differential_finite_rate"
+    ],
+    "energy": [
+      "empirical_enthalpy",
+      "native_total_enthalpy",
+      "isothermal"
+    ],
+    "pressure": [
+      "constant",
+      "hydraulic_pressure_drop"
+    ],
+    "method": [
+      "single",
+      "scipy-bvp",
+      "finite",
+      "trapezoidal",
+      "central",
+      "upwind",
+      "shooting",
+      "collocation",
+      "casadi-ipopt"
+    ],
+    "density": [
+      "default",
+      "solved_state",
+      "correlation"
+    ]
+  },
+  "counts": {
+    "resolves": 54,
+    "refuses": 13554
+  },
+  "distinct_attempts": 54
+}

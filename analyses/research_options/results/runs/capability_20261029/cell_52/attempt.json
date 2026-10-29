@@ -1,0 +1,139 @@
+{
+  "attempt_id": "20261029T201950-8b3711f2dd0f",
+  "config": {
+    "acceptance": {
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null,
+      "numerical": "conserved_original_equations",
+      "physical": "not_evaluated"
+    },
+    "case": {
+      "data_type": "mole",
+      "gas_flow_basis": "reported_total_wet",
+      "id": "corrected published 2017 3C",
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/analyses/bvp_solution_methods/input/case_3c.json",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/analyses/bvp_solution_methods/input/case_3c.json",
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "dependencies": {
+      "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory",
+      "mobility_law": null,
+      "references": [
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+      ],
+      "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+    },
+    "engine": {
+      "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/.venv/bin/python3",
+      "required": true,
+      "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+    },
+    "execution": {
+      "cache_policy": "legacy_explicit",
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/analyses/research_options/results/runs/capability_20261029/cell_52",
+      "process_isolation": true,
+      "resume": false,
+      "retry": false,
+      "threads": 1,
+      "wall_limit_s": 180.0
+    },
+    "initialization": {
+      "policy": "case_declared_native_inputs",
+      "values": {}
+    },
+    "model": {
+      "coordinate": "physical_height",
+      "energy_model": "native_total_enthalpy",
+      "film_model": "enhancement_reference",
+      "formulation": "twelve_state_conserved",
+      "layout": "twelve_conserved",
+      "pressure_model": "hydraulic_pressure_drop",
+      "thermo_model": "reactive_epcsaft"
+    },
+    "numerics": {
+      "method": "collocation",
+      "solver_settings": {
+        "boundary_tolerance": 1e-07,
+        "liquid_density_source": "solved_state",
+        "max_nodes": 100,
+        "nodes": 11,
+        "quadrature_points": 9,
+        "tolerance": 1e-07
+      }
+    },
+    "preset": "twelve_state_conserved",
+    "resolved_config_sha256": "c57ac7f8478b9eee0eaf3bad32414c2571e775a0f56d89da0839406b08d9d589",
+    "schema_version": 1
+  },
+  "config_sha256": "c57ac7f8478b9eee0eaf3bad32414c2571e775a0f56d89da0839406b08d9d589",
+  "coordinate": "physical_height",
+  "execution": {
+    "runtime_s": 1.2634232440013875,
+    "started_at_utc": "2026-10-29T20:19:50Z",
+    "status": "failed"
+  },
+  "failure": {
+    "completed_payload": null,
+    "kind": "capability_refusal",
+    "last_checkpoint": {
+      "stage": "prepared"
+    },
+    "message": "Conserved method 'collocation' is configured but unavailable: the reduced-method controls have not been migrated to this execution boundary",
+    "phase": "prepared",
+    "raw_output": null,
+    "transport": {
+      "cause": null,
+      "message": null,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "transport_failure": null,
+    "worker_failure_kind": "capability_refusal"
+  },
+  "formulation": "twelve_state_conserved",
+  "limitations": [
+    "exploratory numerical attempt only; no solution-verification, validation, or scientific-promotion claim",
+    "the enhancement reference retains its declared empirical kinetics and diffusivity basis",
+    "native vapor caloric reference remains provisional for thermal interpretation",
+    "physical certification is limited to the native grid and configured film quadrature",
+    "the case-declared 3C policy does not establish continuous-profile or peak behavior"
+  ],
+  "native_layout": "twelve_conserved",
+  "native_profile": {
+    "available": false,
+    "reason": "worker has not returned a native profile"
+  },
+  "numerical_acceptance": "not_evaluated",
+  "physical_acceptance": "not_evaluated",
+  "physical_certification": {
+    "accepted": null,
+    "reason": "worker has not returned a candidate"
+  },
+  "preset": "twelve_state_conserved",
+  "schema_version": 1,
+  "scientific_acceptance": "not_evaluated",
+  "solver": {
+    "method": "collocation",
+    "stages": {}
+  },
+  "source_identity": {
+    "commit": "91ced24149ce7bbed71b1cfba5c78e26bcd9c57d",
+    "dirty": true,
+    "dirty_patch": "diff --git a/src/mea_absorption_column/BVP/robust_core.py b/src/mea_absorption_column/BVP/robust_core.py\nindex b16f848..5f954b3 100644\n--- a/src/mea_absorption_column/BVP/robust_core.py\n+++ b/src/mea_absorption_column/BVP/robust_core.py\n@@ -5,6 +5,8 @@ from typing import Callable\n \n import numpy as np\n \n+from mea_absorption_column.config.column import CapabilityRefusal\n+\n \n STATE_SIZE = 7\n FLOW_IDXS = np.array([0, 1, 2, 3], dtype=int)\n@@ -242,7 +244,15 @@ def guard_column_rhs(\n         if np.any(~np.isfinite(rhs_arr)):\n             raise FloatingPointError(\"non-finite column RHS\")\n         return rhs\n+    except CapabilityRefusal:\n+        raise\n     except Exception as exc:\n+        if (model_options.get(\"enhancement_type\") == \"implicit\"\n+                and getattr(exc, \"domain\", None) == \"enhancement_factor\"):\n+            raise CapabilityRefusal(\n+                f\"implicit enhancement refused at z={zi!r}, physical_state=\"\n+                f\"{(np.asarray(sanitized_scaled) * scales).tolist()}: {exc}\"\n+            ) from exc\n         record_invalid_state(diagnostics, str(exc))\n         if reactive:\n             raise\ndiff --git a/src/mea_absorption_column/Run_Model.py b/src/mea_absorption_column/Run_Model.py\nindex fc04e22..89be801 100644\n--- a/src/mea_absorption_column/Run_Model.py\n+++ b/src/mea_absorption_column/Run_Model.py\n@@ -96,9 +96,13 @@ def run_model(df,\n         and use_staged_beds\n         and intercoolers_count > 0\n         and requested_intercooler_model == \"pumparound_temperature_approach\"\n-        and \"thermal_state_mode\" not in solver_settings_for_run\n+        and solver_settings_for_run.get(\"thermal_state_mode\") != \"temperature\"\n     ):\n-        solver_settings_for_run[\"thermal_state_mode\"] = \"temperature\"\n+        raise ValueError(\n+            \"pumparound_temperature_approach requires explicit thermal_state_mode='temperature'; \"\n+            \"thermal_state_mode choices are 'enthalpy' and 'temperature', and 'enthalpy' \"\n+            \"is unsupported with this staged intercooler\"\n+        )\n     thermal_state_mode = solver_settings_for_run.get(\"thermal_state_mode\", \"enthalpy\")\n     if (\n         method == \"scipy-bvp\"\ndiff --git a/src/mea_absorption_column/Thermodynamics/thermo_models.py b/src/mea_absorption_column/Thermodynamics/thermo_models.py\nindex e9be282..8af135c 100644\n--- a/src/mea_absorption_column/Thermodynamics/thermo_models.py\n+++ b/src/mea_absorption_column/Thermodynamics/thermo_models.py\n@@ -13,6 +13,8 @@ from pathlib import Path\n import numpy as np\n from mea_absorption_column.Thermodynamics.reactive_bundle import MODEL as REACTIVE_MODEL, reactive_fugacity\n \n+from mea_absorption_column.config.column import CapabilityRefusal\n+\n from mea_absorption_column.BVP.robust_core import record_guard_penalty, record_invalid_state\n from mea_absorption_column.Thermodynamics.epcsaft_v02 import (\n     fugacity_coefficients as _v02_fugacity_coefficients,\n@@ -676,9 +678,13 @@ def guarded_compute_fugacity(\n         return tuple(_positive_finite(value) for value in values)\n     except Exception as exc:\n         record_invalid_state(diagnostics, f\"fugacity guard: {exc}\")\n+        if (model or \"\").lower() != \"ideal_henry\":\n+            raise CapabilityRefusal(\n+                f\"{model} fugacity refused at Tl={Tl!r} K, Tv={Tv!r} K, P={P!r} Pa, \"\n+                f\"y={np.asarray(y).tolist()}, x_true={np.asarray(x_true).tolist()}: \"\n+                f\"{type(exc).__name__}: {exc}\"\n+            ) from exc\n         record_guard_penalty(diagnostics)\n-        if (model or \"\").lower() == REACTIVE_MODEL:\n-            raise\n         return _fallback_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)\n \n \ndiff --git a/src/mea_absorption_column/benchmark.py b/src/mea_absorption_column/benchmark.py\nindex c3b284b..b266ded 100644\n--- a/src/mea_absorption_column/benchmark.py\n+++ b/src/mea_absorption_column/benchmark.py\n@@ -20,7 +20,7 @@ import pandas as pd\n \n from mea_absorption_column.Run_Model import run_model\n from mea_absorption_column.calibration import nccc_linear_capture_prediction, write_calibration_artifacts\n-from mea_absorption_column.config.column import EngineConfig, default_engine\n+from mea_absorption_column.config.column import CapabilityRefusal, EngineConfig, default_engine\n from mea_absorption_column.misc.Save_Run_Outputs import build_profile_coordinate_frame, write_profile_csvs\n \n \n@@ -294,6 +294,7 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting\n             \"thermo_model\": thermo_model,\n             \"success\": False,\n             \"message\": str(exc),\n+            \"failure_kind\": \"capability_refusal\" if isinstance(exc, CapabilityRefusal) else \"solver_failed\",\n             \"runtime_s\": float(time.time() - start),\n             \"python_version\": sys.version.split()[0],\n             \"platform\": platform.platform(),\ndiff --git a/src/mea_absorption_column/column.py b/src/mea_absorption_column/column.py\nindex 62ed481..8f384ea 100644\n--- a/src/mea_absorption_column/column.py\n+++ b/src/mea_absorption_column/column.py\n@@ -1408,7 +1408,7 @@ def run_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:\n         if failure_kind:\n             base[\"failure\"] = {\n                 \"kind\": failure_kind,\n-                \"phase\": \"worker_preparation\" if failure_kind == \"capability_refusal\" else \"solver\",\n+                \"phase\": \"worker_preparation\" if result.get(\"jacobian_status\") == \"capability_refusal\" else \"solver\",\n                 \"cause\": result.get(\"message\"),\n                 \"diagnostics\": base[\"diagnostics\"],\n             }\ndiff --git a/src/mea_absorption_column/research.py b/src/mea_absorption_column/research.py\nindex d53f5b0..f079c44 100644\n--- a/src/mea_absorption_column/research.py\n+++ b/src/mea_absorption_column/research.py\n@@ -26,8 +26,11 @@ SETTING_KEYS = {\"data_type\", \"staged_beds\", \"profile_pngs\", \"profile_csvs\", \"sub\n LIMITATION = (\n     \"Selections identify implemented paths, not a validated Cartesian product. \"\n     \"Native derivative, chemistry and numerical compatibility checks still apply. \"\n-    \"Conserved formulation requires a user problem_factory owning the physics; \"\n-    \"the twelve-state column is not integrated. Built-in eNRTL and MDEA are unavailable.\"\n+    \"Legacy conserved mappings require a problem_factory owning the physics. \"\n+    \"The twelve_state_conserved preset integrates reactive_epcsaft with native \"\n+    \"enthalpy and hydraulic pressure drop; its methods are trapezoidal, central \"\n+    \"and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. \"\n+    \"Built-in eNRTL and MDEA are unavailable.\"\n )\n \n _COLUMN_API = None\n@@ -85,6 +88,12 @@ def _resolve_legacy_config(config):\n         if keys is not None and set(value) - keys:\n             raise ValueError(f\"Unknown {table} keys: {sorted(set(value) - keys)}\")\n     solver = resolved[\"solver_settings\"]\n+    if not conserved:\n+        ignored = set(solver) & {\"energy_model\", \"pressure_model\", \"liquid_density_source\", \"density_source\"}\n+        if ignored:\n+            raise ValueError(f\"Seven-state solver does not consume these model choices: {sorted(ignored)}; use a compatible column preset\")\n+        if solver.get(\"enhancement_type\", \"explicit\") not in {\"explicit\", \"implicit\"}:\n+            raise ValueError(\"enhancement_type must be explicit or implicit\")\n     if not conserved and \"co2_mass_transfer_model\" in solver and solver[\"co2_mass_transfer_model\"] != resolved[\"film_model\"]:\n         raise ValueError(\"film_model conflicts with solver_settings.co2_mass_transfer_model\")\n     if not conserved:\n",
+    "dirty_patch_sha256": "9582bd85827cb3621f57598a749dadaf09d15cdc60643b220bba99ca6f07a89f",
+    "dirty_paths": [
+      "src/mea_absorption_column/BVP/robust_core.py",
+      "src/mea_absorption_column/Run_Model.py",
+      "src/mea_absorption_column/Thermodynamics/thermo_models.py",
+      "src/mea_absorption_column/benchmark.py",
+      "src/mea_absorption_column/column.py",
+      "src/mea_absorption_column/research.py"
+    ],
+    "repository_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber",
+    "source_tree_sha256": "4390c51131a917fef07f1e04b9aa5002f46fd9966b02cfc241d2c706afd384a0"
+  }
+}

@@ -20,7 +20,7 @@ import pandas as pd
 
 from mea_absorption_column.Run_Model import run_model
 from mea_absorption_column.calibration import nccc_linear_capture_prediction, write_calibration_artifacts
-from mea_absorption_column.config.column import EngineConfig, default_engine
+from mea_absorption_column.config.column import CapabilityRefusal, EngineConfig, default_engine
 from mea_absorption_column.misc.Save_Run_Outputs import build_profile_coordinate_frame, write_profile_csvs
 
 
@@ -294,6 +294,7 @@ def _run_one_case_in_process(df, run, case_source, method, thermo_model, setting
             "thermo_model": thermo_model,
             "success": False,
             "message": str(exc),
+            "failure_kind": "capability_refusal" if isinstance(exc, CapabilityRefusal) else "solver_failed",
             "runtime_s": float(time.time() - start),
             "python_version": sys.version.split()[0],
             "platform": platform.platform(),

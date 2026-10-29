@@ -1,0 +1,14 @@
+{
+  "reference_capture_pct": 92.08186315973761,
+  "reference_invalid_state_count": 0,
+  "reference_guard_penalty_count": 0,
+  "pre_capture_pct": 92.08186315973761,
+  "post_capture_pct": 92.08186315973761,
+  "pre_substitutions": 0,
+  "pre_suite_substitutions": 1,
+  "pre_suite_tests_passed": 307,
+  "states_file": "pre_test_substitutions.jsonl",
+  "instrumentation": "Temporary append at the nonreactive exception substitution; records model, T, P, vapor and liquid composition and exception; removed before the correction.",
+  "final_post_attempt": "post_final_ionic21/attempt.json",
+  "post_boundary_residual_norm": 6.915441663935132e-14
+}

@@ -1,0 +1,139 @@
+........................................................................ [ 23%]
+........................................................................ [ 46%]
+....F................................................................... [ 69%]
+........................................................................ [ 93%]
+.....................                                                    [100%]
+=================================== FAILURES ===================================
+_____ test_coupled_fugacity_rejects_invalid_species_without_henry_fallback _____
+
+model = 'epcsaft_reactive_nine', y = [0.1, 0.1, 0.7, 0.1]
+x_true = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+Cl_true = [1000.0, 1000.0, 1000.0, 1000.0, 1000.0, 1000.0], Tl = 313.15
+Tv = 313.15, H_CO2_mix = 1000.0, P = 109500.0, P_sat_H2O = 7000.0
+epcsaft_fugacity_blend = 1.0, diagnostics = None
+
+    def guarded_compute_fugacity(
+        model,
+        y,
+        x_true,
+        Cl_true,
+        Tl,
+        Tv,
+        H_CO2_mix,
+        P,
+        P_sat_H2O,
+        epcsaft_fugacity_blend=1.0,
+        diagnostics=None,
+    ):
+        try:
+            _validate_fugacity_state(y, x_true, Tl, Tv, P)
+>           values = compute_fugacity(
+                model,
+                y,
+                x_true,
+                Cl_true,
+                Tl,
+                Tv,
+                H_CO2_mix,
+                P,
+                P_sat_H2O,
+                epcsaft_fugacity_blend=epcsaft_fugacity_blend,
+            )
+
+src/mea_absorption_column/Thermodynamics/thermo_models.py:662: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/Thermodynamics/thermo_models.py:598: in compute_fugacity
+    return reactive_fugacity(y, x_true, Cl_true, Tl, Tv, P, P_sat_H2O)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+y = [0.1, 0.1, 0.7, 0.1], x_true = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+concentrations = array([1000., 1000., 1000., 1000., 1000., 1000.]), Tl = 313.15
+Tv = 313.15, P = 109500.0, P_sat_H2O = 7000.0
+
+    def reactive_fugacity(y, x_true, concentrations, Tl, Tv, P, P_sat_H2O):
+        """Use the solved liquid density and the selected EOS; retain legacy water closure."""
+        from .epcsaft_v02 import fugacity_coefficients, state, state_at_density
+        from .thermo_models import neutral_vapor_composition
+    
+        composition = np.asarray(x_true, dtype=float)
+        concentrations = np.asarray(concentrations, dtype=float)
+        if (composition.shape != (9,) or concentrations.shape != (9,)
+                or np.any(~np.isfinite(composition)) or np.any(composition <= 0)
+                or np.any(~np.isfinite(concentrations)) or np.any(concentrations <= 0)):
+>           raise ValueError("Reactive fugacity requires nine positive finite species")
+E           ValueError: Reactive fugacity requires nine positive finite species
+
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:445: ValueError
+
+The above exception was the direct cause of the following exception:
+
+    def test_coupled_fugacity_rejects_invalid_species_without_henry_fallback():
+        from mea_absorption_column.Thermodynamics.thermo_models import guarded_compute_fugacity
+        with pytest.raises(ValueError, match='nine positive finite species'):
+>           guarded_compute_fugacity('epcsaft_reactive_nine', [0.1, 0.1, 0.7, 0.1],
+                                     [0.1] * 6, [1000.] * 6, 313.15, 313.15,
+                                     1000., 109500., 7000.)
+
+tests/test_epcsaft_reactive_chemistry.py:132: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = 'epcsaft_reactive_nine', y = [0.1, 0.1, 0.7, 0.1]
+x_true = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+Cl_true = [1000.0, 1000.0, 1000.0, 1000.0, 1000.0, 1000.0], Tl = 313.15
+Tv = 313.15, H_CO2_mix = 1000.0, P = 109500.0, P_sat_H2O = 7000.0
+epcsaft_fugacity_blend = 1.0, diagnostics = None
+
+    def guarded_compute_fugacity(
+        model,
+        y,
+        x_true,
+        Cl_true,
+        Tl,
+        Tv,
+        H_CO2_mix,
+        P,
+        P_sat_H2O,
+        epcsaft_fugacity_blend=1.0,
+        diagnostics=None,
+    ):
+        try:
+            _validate_fugacity_state(y, x_true, Tl, Tv, P)
+            values = compute_fugacity(
+                model,
+                y,
+                x_true,
+                Cl_true,
+                Tl,
+                Tv,
+                H_CO2_mix,
+                P,
+                P_sat_H2O,
+                epcsaft_fugacity_blend=epcsaft_fugacity_blend,
+            )
+            if (model or "").lower() == REACTIVE_MODEL:
+                if any(not math.isfinite(value) or value <= 0 for value in values):
+                    raise ValueError("Nonpositive or nonfinite coupled reactive fugacity")
+                return values
+            return tuple(_positive_finite(value) for value in values)
+        except Exception as exc:
+            record_invalid_state(diagnostics, f"fugacity guard: {exc}")
+            record_guard_penalty(diagnostics)
+            if (model or "").lower() != "ideal_henry":
+>               raise CapabilityRefusal(
+                    f"{model} fugacity refused at Tl={Tl!r} K, Tv={Tv!r} K, P={P!r} Pa, "
+                    f"y={np.asarray(y).tolist()}, x_true={np.asarray(x_true).tolist()}: "
+                    f"{type(exc).__name__}: {exc}"
+                ) from exc
+E               mea_absorption_column.config.column.CapabilityRefusal: epcsaft_reactive_nine fugacity refused at Tl=313.15 K, Tv=313.15 K, P=109500.0 Pa, y=[0.1, 0.1, 0.7, 0.1], x_true=[0.1, 0.1, 0.1, 0.1, 0.1, 0.1]: ValueError: Reactive fugacity requires nine positive finite species
+
+src/mea_absorption_column/Thermodynamics/thermo_models.py:683: CapabilityRefusal
+=============================== warnings summary ===============================
+tests/test_transport_domain_guards.py::test_domain_guards_can_record_without_raising_for_legacy_timing_probe
+  /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py:44: RuntimeWarning: invalid value encountered in log
+    np.log(rho_mass_l) - np.log(sigma) + np.log(g) / 3
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_epcsaft_reactive_chemistry.py::test_coupled_fugacity_rejects_invalid_species_without_henry_fallback
+1 failed, 308 passed, 1 warning in 40.63s

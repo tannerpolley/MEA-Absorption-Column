@@ -206,26 +206,21 @@ def test_guard_column_rhs_records_penalty_instead_of_raising():
     assert "synthetic invalid state" in diagnostics["last_invalid_state"]
 
 
-def test_guarded_epcsaft_invalid_state_returns_structured_penalty():
+def test_guarded_epcsaft_invalid_state_refuses_substitute_physics():
     diagnostics = make_solver_diagnostics()
 
-    result = guarded_compute_fugacity(
-        "epcsaft_neutral",
-        y=[np.nan, 0.05, 0.8, 0.1],
-        x_true=[0.02, 0.24, 0.62, 0.06, 0.05, 0.01],
-        Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
-        Tl=50.0,
-        Tv=320.0,
-        H_CO2_mix=2.5e6,
-        P=109500.0,
-        P_sat_H2O=12000.0,
-        diagnostics=diagnostics,
-    )
+    from mea_absorption_column.config.column import CapabilityRefusal
 
-    assert len(result) == 4
-    assert all(math.isfinite(value) for value in result)
+    with pytest.raises(CapabilityRefusal, match="epcsaft_neutral.*Tl=50.0.*ValueError"):
+        guarded_compute_fugacity(
+            "epcsaft_neutral", y=[np.nan, 0.05, 0.8, 0.1],
+            x_true=[0.02, 0.24, 0.62, 0.06, 0.05, 0.01],
+            Cl_true=[900.0, 9000.0, 30000.0, 1800.0, 1500.0, 200.0],
+            Tl=50.0, Tv=320.0, H_CO2_mix=2.5e6, P=109500.0,
+            P_sat_H2O=12000.0, diagnostics=diagnostics,
+        )
     assert diagnostics["invalid_state_count"] == 1
-    assert diagnostics["guard_penalty_count"] == 1
+    assert diagnostics["guard_penalty_count"] == 0
 
 
 def test_benchmark_schema_contains_convergence_diagnostic_columns():
@@ -783,3 +778,30 @@ def test_research_capture_agreement_is_opt_in(method):
     assert not _apply_method_success_gates(**args, settings={"success_capture_error_max_pct": 10.0})[0]
     args.update(solver_success=False)
     assert not _apply_method_success_gates(**args, settings={})[0]
+
+
+def test_engine_error_is_not_replaced_by_outer_rhs_penalty():
+    from mea_absorption_column.config.column import CapabilityRefusal
+
+    def rejected_engine(*args, **kwargs):
+        raise CapabilityRefusal("selected Engine state failed")
+
+    parameters = (np.ones(7), None, None, None, None, None,
+                  {"thermo_model": "epcsaft_ionic"})
+    with pytest.raises(CapabilityRefusal, match="selected Engine state failed"):
+        guard_column_rhs(0., np.array([1., 1., 1., 1., 1., 1., 1e5]),
+                         parameters, rejected_engine)
+
+
+def test_rejected_implicit_enhancement_cannot_become_a_penalty_solution():
+    from mea_absorption_column.config.column import CapabilityRefusal
+    from mea_absorption_column.Transport.domain_guards import DomainGuardError
+
+    def rejected_subsolve(*args, **kwargs):
+        raise DomainGuardError("enhancement_factor", "implicit subsolve rejected: residual_inf=1")
+
+    parameters = (np.ones(7), None, None, None, None, None,
+                  {"enhancement_type": "implicit"})
+    with pytest.raises(CapabilityRefusal, match="implicit enhancement.*physical_state=.*subsolve rejected"):
+        guard_column_rhs(0., np.array([1., 1., 1., 1., 1., 1., 1e5]),
+                         parameters, rejected_subsolve)

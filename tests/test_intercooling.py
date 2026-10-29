@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 
 from mea_absorption_column.misc.Convert_Data import convert_data
 
@@ -79,7 +80,7 @@ def test_build_bed_stack_spec_accepts_pumparound_temperature_approach():
     assert all(cooler.mode == "pumparound_temperature_approach" for cooler in spec.intercoolers)
 
 
-def test_pumparound_model_selects_temperature_state_for_staged_run(monkeypatch):
+def test_pumparound_model_requires_explicit_temperature_state_for_staged_run(monkeypatch):
     import mea_absorption_column.Run_Model as run_model_module
 
     df = pd.read_csv("src/mea_absorption_column/data/NCCC_Data.csv", index_col=0)
@@ -93,6 +94,11 @@ def test_pumparound_model_selects_temperature_state_for_staged_run(monkeypatch):
     monkeypatch.setattr(run_model_module, "scaling", lambda _z, y: np.maximum(np.abs(y), 1.0))
     monkeypatch.setattr(run_model_module, "segmented_scipy_BVP_solve", fake_solver)
 
+    with pytest.raises(ValueError, match="requires explicit thermal_state_mode='temperature'"):
+        run_model_module.run_model(
+            df, method="scipy-bvp", run=run,
+            intercooler_settings={"model": "pumparound_temperature_approach"})
+
     result = run_model_module.run_model(
         df,
         method="scipy-bvp",
@@ -100,6 +106,7 @@ def test_pumparound_model_selects_temperature_state_for_staged_run(monkeypatch):
         thermo_model="ideal_henry",
         return_details=True,
         intercooler_settings={"model": "pumparound_temperature_approach"},
+        solver_settings={"thermal_state_mode": "temperature"},
     )
 
     assert result["success"] is True

@@ -1,0 +1,24 @@
+{
+  "preset": "seven_state_legacy",
+  "case": {
+    "source": "C_cases_data",
+    "id": "3C"
+  },
+  "model": {
+    "thermo_model": "epcsaft_ionic",
+    "film_model": "enhancement_factor",
+    "energy_model": "empirical_enthalpy",
+    "pressure_model": "constant"
+  },
+  "numerics": {
+    "method": "finite",
+    "solver_settings": {
+      "enhancement_type": "implicit"
+    }
+  },
+  "execution": {
+    "process_isolation": true,
+    "wall_limit_s": 60,
+    "output_dir": "analyses/research_options/results/runs/capability_20261029/cell_17"
+  }
+}

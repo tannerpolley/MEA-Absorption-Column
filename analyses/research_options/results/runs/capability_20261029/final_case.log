@@ -1,0 +1,27 @@
+{
+  "observables": {
+    "capture": {
+      "value": 92.08186315973761,
+      "unit": "percent",
+      "basis": "specified inlet vapor CO2",
+      "model_value": 92.08186315973761,
+      "corrected_value": 92.08186315973761
+    },
+    "temperature_rmse": {
+      "value": null,
+      "unit": "K",
+      "basis": "case temperature taps"
+    },
+    "boundary_residual_norm": {
+      "value": 6.915441663935132e-14,
+      "unit": "percent-norm",
+      "basis": "legacy seven-state boundary equations"
+    }
+  },
+  "execution": {
+    "status": "completed",
+    "started_at_utc": "2026-10-29T20:07:48Z",
+    "runtime_s": 3.256249879999814
+  },
+  "failure": null
+}

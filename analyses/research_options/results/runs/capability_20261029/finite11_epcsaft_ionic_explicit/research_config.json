@@ -1,0 +1,66 @@
+{
+  "selection": {
+    "formulation": "seven_state",
+    "thermo_model": "epcsaft_ionic",
+    "film_model": "enhancement_factor",
+    "method": "finite",
+    "output_dir": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit",
+    "cases": {
+      "c_case_ids": [
+        "3C"
+      ],
+      "nccc_case_limit": 0,
+      "srp_case_limit": 0
+    },
+    "settings": {
+      "subprocess_timeout_s": 60,
+      "data_type": "mole",
+      "staged_beds": false
+    },
+    "solver_settings": {
+      "mesh_points": 11,
+      "enhancement_type": "explicit",
+      "return_internal_profile": true,
+      "co2_mass_transfer_model": "enhancement_factor"
+    }
+  },
+  "benchmark_settings": {
+    "methods": [
+      "finite"
+    ],
+    "thermo_models": [
+      "epcsaft_ionic"
+    ],
+    "output_dir": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit",
+    "c_case_limit": null,
+    "nccc_case_limit": 0,
+    "srp_case_limit": 0,
+    "c_case_ids": [
+      "3C"
+    ],
+    "nccc_case_ids": null,
+    "srp_case_ids": null,
+    "write_artifacts": true,
+    "data_type": "mole",
+    "staged_beds": false,
+    "solver_settings": {
+      "mesh_points": 11,
+      "enhancement_type": "explicit",
+      "return_internal_profile": true,
+      "co2_mass_transfer_model": "enhancement_factor"
+    },
+    "profile_pngs": false,
+    "profile_csvs": false,
+    "subprocess_timeout_s": 60,
+    "c_case_dataset": "legacy",
+    "nccc_dataset": "legacy",
+    "process_isolation": false,
+    "worker_python": null,
+    "engine_wheel": null,
+    "engine_sha256": null,
+    "engine_commit": null,
+    "resolved_inputs": null,
+    "cache_policy": "legacy_explicit"
+  },
+  "limitations": "Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+}

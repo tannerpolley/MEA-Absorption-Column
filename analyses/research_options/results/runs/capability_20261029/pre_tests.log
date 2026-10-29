@@ -1,0 +1,12 @@
+........................................................................ [ 23%]
+........................................................................ [ 46%]
+........................................................................ [ 70%]
+........................................................................ [ 93%]
+...................                                                      [100%]
+=============================== warnings summary ===============================
+tests/test_transport_domain_guards.py::test_domain_guards_can_record_without_raising_for_legacy_timing_probe
+  /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py:44: RuntimeWarning: invalid value encountered in log
+    np.log(rho_mass_l) - np.log(sigma) + np.log(g) / 3
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+307 passed, 1 warning in 28.57s

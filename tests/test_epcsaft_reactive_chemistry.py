@@ -128,7 +128,8 @@ def test_coupled_column_retains_nine_species_and_legacy_flux():
 
 def test_coupled_fugacity_rejects_invalid_species_without_henry_fallback():
     from mea_absorption_column.Thermodynamics.thermo_models import guarded_compute_fugacity
-    with pytest.raises(ValueError, match='nine positive finite species'):
+    from mea_absorption_column.config.column import CapabilityRefusal
+    with pytest.raises(CapabilityRefusal, match='nine positive finite species'):
         guarded_compute_fugacity('epcsaft_reactive_nine', [0.1, 0.1, 0.7, 0.1],
                                  [0.1] * 6, [1000.] * 6, 313.15, 313.15,
                                  1000., 109500., 7000.)

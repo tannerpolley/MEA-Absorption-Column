@@ -5,6 +5,8 @@ from typing import Callable
 
 import numpy as np
 
+from mea_absorption_column.config.column import CapabilityRefusal
+
 
 STATE_SIZE = 7
 FLOW_IDXS = np.array([0, 1, 2, 3], dtype=int)
@@ -242,7 +244,15 @@ def guard_column_rhs(
         if np.any(~np.isfinite(rhs_arr)):
             raise FloatingPointError("non-finite column RHS")
         return rhs
+    except CapabilityRefusal:
+        raise
     except Exception as exc:
+        if (model_options.get("enhancement_type") == "implicit"
+                and getattr(exc, "domain", None) == "enhancement_factor"):
+            raise CapabilityRefusal(
+                f"implicit enhancement refused at z={zi!r}, physical_state="
+                f"{(np.asarray(sanitized_scaled) * scales).tolist()}: {exc}"
+            ) from exc
         record_invalid_state(diagnostics, str(exc))
         if reactive:
             raise

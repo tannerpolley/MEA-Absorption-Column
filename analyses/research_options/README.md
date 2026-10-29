@@ -57,10 +57,26 @@ arguments and signature mismatches are refused. Python callers can directly use
 The result retains arrays and diagnostics; exceptions remain in `failure.json`.
 
 The copied independent method implementations are tested with an analytic DAE.
-The twelve-state MEA builder remains a separate experiment at
-`archive/coupled-solver-2026-09-08`, together with its exact source and retained
-checks. It has a different derivative/caloric interface and is not silently
-substituted into the seven-state model. Built-in eNRTL/MDEA columns remain future
-implementation, with MDEA groundwork preserved on `codex/mdea-support`.
+The integrated `twelve_state_conserved` preset selects `reactive_epcsaft`,
+`equilibrium_manifold` or `enhancement_reference`, native total enthalpy,
+hydraulic pressure drop and trapezoidal, central or upwind CasADi/IPOPT.
+`numerics.solver_settings.liquid_density_source` selects `solved_state` (default)
+or `correlation`. Reduced shooting/collocation preset execution remains unavailable.
+The earlier experiment is preserved at `archive/coupled-solver-2026-09-08`.
+Built-in eNRTL/MDEA column selections remain unavailable.
+
+The seven-state preset fixes empirical enthalpy, constant pressure and correlation
+density. Its legacy mapping additionally accepts a supplied frozen film profile;
+it refuses unconsumed energy, pressure and density selectors. Staged pumparound
+intercoolers require explicit `thermal_state_mode = "temperature"` in the legacy
+solver settings. The seven-state preset itself requires enthalpy states and cannot
+represent that combination. Selected Engine fugacity errors refuse explicitly;
+they cannot substitute ideal-Henry fugacities.
+
+The notebook's October capability section retains the complete resolver product,
+original requests, bounded attempts and failure causes. Reproduce from the root
+with `nice -n 10 agent-heavy uv run --frozen python
+analyses/research_options/scripts/check_capabilities.py`, using a fresh output
+label in the script for an independent repeat.
 
 Observed-capture agreement is diagnostic unless `success_capture_error_max_pct` is explicitly supplied. Failed solver termination is not accepted by default; the older `accept_low_residual_final_iterate` option requires an explicit request and is not a physical validation claim.

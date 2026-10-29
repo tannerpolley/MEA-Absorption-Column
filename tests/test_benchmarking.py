@@ -294,6 +294,8 @@ def test_benchmark_cli_accepts_solver_settings():
         "0.8",
         "--intercooler-model",
         "pumparound_temperature_approach",
+        "--thermal-state-mode",
+        "temperature",
         "--success-boundary-residual-max",
         "0.5",
         "--success-capture-error-max-pct",

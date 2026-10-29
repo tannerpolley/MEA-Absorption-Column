@@ -1,0 +1,67 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "conserved_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "corrected published 2017 3C",
+    "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/analyses/bvp_solution_methods/input/case_3c.json",
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/analyses/bvp_solution_methods/input/case_3c.json",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory",
+    "mobility_law": null,
+    "references": [
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+      "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+    ],
+    "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+  },
+  "engine": {
+    "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/.venv/bin/python3",
+    "required": true,
+    "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/analyses/research_options/results/runs/capability_20261029/cell_46",
+    "process_isolation": true,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 180.0
+  },
+  "initialization": {
+    "policy": "case_declared_native_inputs",
+    "values": {}
+  },
+  "model": {
+    "coordinate": "physical_height",
+    "energy_model": "native_total_enthalpy",
+    "film_model": "enhancement_reference",
+    "formulation": "twelve_state_conserved",
+    "layout": "twelve_conserved",
+    "pressure_model": "hydraulic_pressure_drop",
+    "thermo_model": "reactive_epcsaft"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "liquid_density_source": "solved_state",
+      "max_iterations": 20,
+      "nodes": 11,
+      "quadrature_points": 9,
+      "tolerance": 1e-07
+    }
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_config_sha256": "c284a92d90ada007ceb3c11f6c69e32c7c7812b55e5c823855b5c2bbbc8c60e1",
+  "schema_version": 1
+}

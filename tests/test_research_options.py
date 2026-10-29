@@ -22,7 +22,7 @@ def test_resolve_preserves_choices_and_input():
     result = research.resolve_config(original)
     assert result["solver_settings"] == {"co2_mass_transfer_model": "enhancement_factor"}
     assert original == selection()
-    for patch in ({"method": "typo"}, {"formulation": "coupled"}, {"thermo_model": "enrtl"}, {"settings": {"typo": 1}}, {"cases": {"c_case_limit": -1}}, {"solver_settings": {"co2_mass_transfer_model": "reactive_film_linearization"}}):
+    for patch in ({"solver_settings": {"liquid_density_source": "solved_state"}}, {"solver_settings": {"enhancement_type": "typo"}}, {"method": "typo"}, {"formulation": "coupled"}, {"thermo_model": "enrtl"}, {"settings": {"typo": 1}}, {"cases": {"c_case_limit": -1}}, {"solver_settings": {"co2_mass_transfer_model": "reactive_film_linearization"}}):
         with pytest.raises(ValueError):
             research.resolve_config(original | patch)
 

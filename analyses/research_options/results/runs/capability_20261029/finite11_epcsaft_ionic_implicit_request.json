@@ -1,0 +1,24 @@
+{
+  "formulation": "seven_state",
+  "thermo_model": "epcsaft_ionic",
+  "film_model": "enhancement_factor",
+  "method": "finite",
+  "output_dir": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_implicit",
+  "cases": {
+    "c_case_ids": [
+      "3C"
+    ],
+    "nccc_case_limit": 0,
+    "srp_case_limit": 0
+  },
+  "settings": {
+    "subprocess_timeout_s": 60,
+    "data_type": "mole",
+    "staged_beds": false
+  },
+  "solver_settings": {
+    "mesh_points": 11,
+    "enhancement_type": "implicit",
+    "return_internal_profile": true
+  }
+}

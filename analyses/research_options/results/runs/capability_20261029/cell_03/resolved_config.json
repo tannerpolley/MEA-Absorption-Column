@@ -1,0 +1,70 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "solver_termination_and_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "3C",
+    "physical_input_file": null,
+    "source": "C_cases_data",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": null,
+    "mobility_law": null,
+    "references": [],
+    "thermal_reference": null
+  },
+  "engine": {
+    "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/.venv/bin/python3",
+    "required": false,
+    "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber/analyses/research_options/results/runs/capability_20261029/cell_03",
+    "process_isolation": true,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 60.0
+  },
+  "initialization": {
+    "policy": "legacy_capture_temperature_guesses",
+    "values": {}
+  },
+  "model": {
+    "coordinate": "normalized_height",
+    "energy_model": "empirical_enthalpy",
+    "film_model": "enhancement_factor",
+    "formulation": "seven_state",
+    "layout": "seven_enthalpy",
+    "pressure_model": "constant",
+    "thermo_model": "ideal_henry"
+  },
+  "numerics": {
+    "method": "single",
+    "solver_settings": {
+      "co2_mass_transfer_model": "enhancement_factor",
+      "display": false,
+      "enhancement_type": "implicit",
+      "fatol": 0.1,
+      "integrator": "euler",
+      "ivp_atol": 1e-08,
+      "ivp_method": "BDF",
+      "ivp_rtol": 1e-05,
+      "line_search": "armijo",
+      "maxiter": 50,
+      "root_method": "Krylov"
+    }
+  },
+  "preset": "seven_state_legacy",
+  "resolved_config_sha256": "1ca7cf55811586657043f240e2e0099b7a13e785136d3f0ffae8bbe59d74510d",
+  "schema_version": 1
+}

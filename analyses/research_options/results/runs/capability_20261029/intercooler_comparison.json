@@ -1,0 +1,39 @@
+{
+  "values": {
+    "success": {
+      "before": false,
+      "after": false
+    },
+    "capture_pct": {
+      "before": 95.0,
+      "after": 95.0
+    },
+    "message": {
+      "before": "A singular Jacobian encountered when solving the collocation system.",
+      "after": "A singular Jacobian encountered when solving the collocation system."
+    },
+    "thermal_state_mode": {
+      "before": "temperature",
+      "after": "temperature"
+    },
+    "final_mesh_nodes": {
+      "before": 11,
+      "after": 11
+    },
+    "guard_penalty_count": {
+      "before": 1542,
+      "after": 1542
+    }
+  },
+  "identical_arrays": {
+    "_raw_solution_scaled": true,
+    "_native_grid": true,
+    "_native_state_scaled": true
+  },
+  "callers_changed": [
+    "tests/test_intercooling.py",
+    "tests/test_benchmarking.py"
+  ],
+  "separate_intercooler_study": "No tracked standalone intercooler study found by git ls-files and git grep.",
+  "retained_replay_refusals": []
+}

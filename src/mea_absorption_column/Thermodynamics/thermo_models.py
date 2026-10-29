@@ -13,6 +13,8 @@ from pathlib import Path
 import numpy as np
 from mea_absorption_column.Thermodynamics.reactive_bundle import MODEL as REACTIVE_MODEL, reactive_fugacity
 
+from mea_absorption_column.config.column import CapabilityRefusal
+
 from mea_absorption_column.BVP.robust_core import record_guard_penalty, record_invalid_state
 from mea_absorption_column.Thermodynamics.epcsaft_v02 import (
     fugacity_coefficients as _v02_fugacity_coefficients,
@@ -676,9 +678,13 @@ def guarded_compute_fugacity(
         return tuple(_positive_finite(value) for value in values)
     except Exception as exc:
         record_invalid_state(diagnostics, f"fugacity guard: {exc}")
+        if (model or "").lower() != "ideal_henry":
+            raise CapabilityRefusal(
+                f"{model} fugacity refused at Tl={Tl!r} K, Tv={Tv!r} K, P={P!r} Pa, "
+                f"y={np.asarray(y).tolist()}, x_true={np.asarray(x_true).tolist()}: "
+                f"{type(exc).__name__}: {exc}"
+            ) from exc
         record_guard_penalty(diagnostics)
-        if (model or "").lower() == REACTIVE_MODEL:
-            raise
         return _fallback_fugacity(y, x_true, Cl_true, H_CO2_mix, P, P_sat_H2O)
 
 

@@ -1,0 +1,110 @@
+{
+  "files_scanned": 521,
+  "positive_counts": [
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_native_21/seed_result.json",
+      "counts": [
+        23
+      ],
+      "sha256": "6e6f6cf5069ce91a5506aea86e8f632a7ad2aff990a486c0e15a09a06fc80e84"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_confirmed_20260904/retry/2C/seed_result.json",
+      "counts": [
+        5
+      ],
+      "sha256": "ffd4da2c09ec90e97a5c66df2a517c11745fc563a90eaea69df8c2c6ee87859d"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_confirmed_20260904/retry/4C/seed_result.json",
+      "counts": [
+        10
+      ],
+      "sha256": "3e7c5e0b7e0ab8769d0edf64f1e32d8a8896e7212baf321cd74b375c863b4661"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_operating_budget_probe_20260904/baseline_current/seed_result.json",
+      "counts": [
+        23
+      ],
+      "sha256": "e19fbf46215bd635c9704546fa4e59b244768657c60672e4290d38787bdc4b55"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_operating_budget_probe_20260904/LG_low/seed_result.json",
+      "counts": [
+        2
+      ],
+      "sha256": "397f0ebe848e9ea073c11c704d73cd72acae00472e394b68100dee23eeb9545a"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_operating_rerun_20260904/baseline_current/seed_result.json",
+      "counts": [
+        23
+      ],
+      "sha256": "cf82369809f61ad4f027a1cb49edf72aff59b9e973f6d0031495271809191a41"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_operating_rerun_20260904/LG_low/seed_result.json",
+      "counts": [
+        2
+      ],
+      "sha256": "dbbe11fb553f34d9b73dcb61416a8c47e6d8a5a1dbe91b441fd532df2ce24812"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_operating_rerun_20260904/loading_low/seed_result.json",
+      "counts": [
+        19
+      ],
+      "sha256": "901298cf9d44d5942153614b931567f63f666a9eeb5ccc894d183be131b63a58"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_operating_rerun_20260904/loading_high/seed_result.json",
+      "counts": [
+        15
+      ],
+      "sha256": "0e74ab2d583f4953fd4d951df3f97594fad9691c5a081ff1b9294067e9d09c11"
+    },
+    {
+      "path": "analyses/nccc_validation/results/runs/reactive_operating_rerun_20260904/temperature_low/seed_result.json",
+      "counts": [
+        30718
+      ],
+      "sha256": "5e9352cead435ccaacf8f70debc620393808020c958a65cd7c756ec475c4751f"
+    },
+    {
+      "path": "analyses/engine_wheel_adoption/results/runs/ideal_henry_diagnosis/boundary-scaling.log",
+      "counts": [
+        12637
+      ],
+      "sha256": "3395bacaad432271b02c9124670fa719fe69abab4d68cee1212d924e06933924"
+    },
+    {
+      "path": "analyses/engine_wheel_adoption/results/runs/ideal_henry_diagnosis/transformed-linear-guess.log",
+      "counts": [
+        7927
+      ],
+      "sha256": "417c0da4841186e9e6e305b2892dd9b15e919c29f8b3836f589288d38b2a5e3d"
+    },
+    {
+      "path": "analyses/engine_wheel_adoption/results/runs/ideal_henry_diagnosis/segmented-diagnosis.log",
+      "counts": [
+        13994
+      ],
+      "sha256": "7833fe277a069ae08d4eb8af0b99bfb0963968eae47dcc7657b7fb2b6049e774"
+    },
+    {
+      "path": "analyses/engine_wheel_adoption/results/runs/reactive_3c_final/seed_result.json",
+      "counts": [
+        23
+      ],
+      "sha256": "b258a30b8382f4845782d2969b3877311def333d3c9866ad39ec3f5a663e626e"
+    },
+    {
+      "path": "analyses/engine_wheel_adoption/results/runs/reactive_3c_verified/seed_result.json",
+      "counts": [
+        23
+      ],
+      "sha256": "1c72d5bcbdceaf3ba013819545042c97faacc5286a5dd9ae7c6008ff81e17221"
+    }
+  ]
+}

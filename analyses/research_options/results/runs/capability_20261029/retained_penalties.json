@@ -1,0 +1,40 @@
+{
+  "files_scanned": 151,
+  "positive_counts": [
+    {
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_03/attempt.json",
+      "counts": [
+        5
+      ],
+      "sha256": "a820f774bc97f5792e586af5916eb279e288a71d119a09f8136e529195cd4e30"
+    },
+    {
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_06/attempt.json",
+      "counts": [
+        58782
+      ],
+      "sha256": "97569253e5ecc3595bfa7874bacf4f713e5dad51f1114f79b127c1089de4c2f2"
+    },
+    {
+      "path": "analyses/engine_wheel_adoption/results/runs/ideal_henry_diagnosis/boundary-scaling.log",
+      "counts": [
+        12637
+      ],
+      "sha256": "3395bacaad432271b02c9124670fa719fe69abab4d68cee1212d924e06933924"
+    },
+    {
+      "path": "analyses/engine_wheel_adoption/results/runs/ideal_henry_diagnosis/transformed-linear-guess.log",
+      "counts": [
+        7927
+      ],
+      "sha256": "417c0da4841186e9e6e305b2892dd9b15e919c29f8b3836f589288d38b2a5e3d"
+    },
+    {
+      "path": "analyses/engine_wheel_adoption/results/runs/ideal_henry_diagnosis/segmented-diagnosis.log",
+      "counts": [
+        13994
+      ],
+      "sha256": "7833fe277a069ae08d4eb8af0b99bfb0963968eae47dcc7657b7fb2b6049e774"
+    }
+  ]
+}

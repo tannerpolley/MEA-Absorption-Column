@@ -1,0 +1,482 @@
+[
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "ideal_henry",
+      "film_model": "enhancement_factor",
+      "method": "single"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "ideal_henry",
+      "film_model": "enhancement_factor",
+      "method": "scipy-bvp"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "ideal_henry",
+      "film_model": "enhancement_factor",
+      "method": "finite"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "ideal_henry",
+      "film_model": "enhancement_factor",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "method must explicitly select one of ('single', 'scipy-bvp', 'finite'); got 'casadi-ipopt'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "ideal_henry",
+      "film_model": "reactive_film_linearization",
+      "method": "single"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "ideal_henry",
+      "film_model": "reactive_film_linearization",
+      "method": "scipy-bvp"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "ideal_henry",
+      "film_model": "reactive_film_linearization",
+      "method": "finite"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "ideal_henry",
+      "film_model": "reactive_film_linearization",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "method must explicitly select one of ('single', 'scipy-bvp', 'finite'); got 'casadi-ipopt'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_neutral",
+      "film_model": "enhancement_factor",
+      "method": "single"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_neutral",
+      "film_model": "enhancement_factor",
+      "method": "scipy-bvp"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_neutral",
+      "film_model": "enhancement_factor",
+      "method": "finite"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_neutral",
+      "film_model": "enhancement_factor",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "method must explicitly select one of ('single', 'scipy-bvp', 'finite'); got 'casadi-ipopt'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_neutral",
+      "film_model": "reactive_film_linearization",
+      "method": "single"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_neutral",
+      "film_model": "reactive_film_linearization",
+      "method": "scipy-bvp"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_neutral",
+      "film_model": "reactive_film_linearization",
+      "method": "finite"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_neutral",
+      "film_model": "reactive_film_linearization",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "method must explicitly select one of ('single', 'scipy-bvp', 'finite'); got 'casadi-ipopt'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "enhancement_factor",
+      "method": "single"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "enhancement_factor",
+      "method": "scipy-bvp"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "enhancement_factor",
+      "method": "finite"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "enhancement_factor",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "method must explicitly select one of ('single', 'scipy-bvp', 'finite'); got 'casadi-ipopt'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "reactive_film_linearization",
+      "method": "single"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "reactive_film_linearization",
+      "method": "scipy-bvp"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "reactive_film_linearization",
+      "method": "finite"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_ionic",
+      "film_model": "reactive_film_linearization",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "method must explicitly select one of ('single', 'scipy-bvp', 'finite'); got 'casadi-ipopt'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_reactive_nine",
+      "film_model": "enhancement_factor",
+      "method": "single"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_reactive_nine",
+      "film_model": "enhancement_factor",
+      "method": "scipy-bvp"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_reactive_nine",
+      "film_model": "enhancement_factor",
+      "method": "finite"
+    },
+    "resolves": true,
+    "reason": "same selectable balances as the seven-state preset; bounded preset attempts retain the calculations"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_reactive_nine",
+      "film_model": "enhancement_factor",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "method must explicitly select one of ('single', 'scipy-bvp', 'finite'); got 'casadi-ipopt'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_reactive_nine",
+      "film_model": "reactive_film_linearization",
+      "method": "single"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_reactive_nine",
+      "film_model": "reactive_film_linearization",
+      "method": "scipy-bvp"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_reactive_nine",
+      "film_model": "reactive_film_linearization",
+      "method": "finite"
+    },
+    "resolves": false,
+    "reason": "reactive_film_linearization requires solver_settings.reactive_film_linearization = [positions, conductances, bulk_fugacities]"
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "epcsaft_reactive_nine",
+      "film_model": "reactive_film_linearization",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "method must explicitly select one of ('single', 'scipy-bvp', 'finite'); got 'casadi-ipopt'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "enrtl",
+      "film_model": "enhancement_factor",
+      "method": "single"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'enrtl'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "enrtl",
+      "film_model": "enhancement_factor",
+      "method": "scipy-bvp"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'enrtl'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "enrtl",
+      "film_model": "enhancement_factor",
+      "method": "finite"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'enrtl'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "enrtl",
+      "film_model": "enhancement_factor",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'enrtl'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "enrtl",
+      "film_model": "reactive_film_linearization",
+      "method": "single"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'enrtl'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "enrtl",
+      "film_model": "reactive_film_linearization",
+      "method": "scipy-bvp"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'enrtl'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "enrtl",
+      "film_model": "reactive_film_linearization",
+      "method": "finite"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'enrtl'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "enrtl",
+      "film_model": "reactive_film_linearization",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'enrtl'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "mdea",
+      "film_model": "enhancement_factor",
+      "method": "single"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'mdea'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "mdea",
+      "film_model": "enhancement_factor",
+      "method": "scipy-bvp"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'mdea'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "mdea",
+      "film_model": "enhancement_factor",
+      "method": "finite"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'mdea'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "mdea",
+      "film_model": "enhancement_factor",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'mdea'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "mdea",
+      "film_model": "reactive_film_linearization",
+      "method": "single"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'mdea'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "mdea",
+      "film_model": "reactive_film_linearization",
+      "method": "scipy-bvp"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'mdea'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "mdea",
+      "film_model": "reactive_film_linearization",
+      "method": "finite"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'mdea'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  },
+  {
+    "request": {
+      "formulation": "seven_state",
+      "thermo_model": "mdea",
+      "film_model": "reactive_film_linearization",
+      "method": "casadi-ipopt"
+    },
+    "resolves": false,
+    "reason": "thermo_model must explicitly select one of ('ideal_henry', 'epcsaft_neutral', 'epcsaft_ionic', 'epcsaft_reactive_nine'); got 'mdea'. Selections identify implemented paths, not a validated Cartesian product. Native derivative, chemistry and numerical compatibility checks still apply. Legacy conserved mappings require a problem_factory owning the physics. The twelve_state_conserved preset integrates reactive_epcsaft with native enthalpy and hydraulic pressure drop; its methods are trapezoidal, central and upwind CasADi/IPOPT. Reduced preset methods remain unavailable. Built-in eNRTL and MDEA are unavailable."
+  }
+]

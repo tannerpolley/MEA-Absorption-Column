@@ -1,0 +1,2350 @@
+{
+  "categories": {
+    "documents": {
+      "additions": 183,
+      "binary_files": 0,
+      "files": 10,
+      "removals": 6
+    },
+    "executable": {
+      "additions": 124,
+      "binary_files": 0,
+      "files": 7,
+      "removals": 8
+    },
+    "generated": {
+      "additions": 0,
+      "binary_files": 0,
+      "files": 0,
+      "removals": 0
+    },
+    "other": {
+      "additions": 94928,
+      "binary_files": 2,
+      "files": 265,
+      "removals": 0
+    },
+    "tests": {
+      "additions": 68,
+      "binary_files": 0,
+      "files": 6,
+      "removals": 22
+    }
+  },
+  "files": [
+    {
+      "additions": 4,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/_cse-manuscript.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 21,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/README.md",
+      "removals": 5,
+      "untracked": false
+    },
+    {
+      "additions": 138,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/notebook.qmd",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": null,
+      "binary": true,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/capability.csv.gz",
+      "removals": null,
+      "untracked": false
+    },
+    {
+      "additions": 432,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_00/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_00/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_00_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1599,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_01/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_01/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_01_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 425,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_02/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_02/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_02_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2946,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_03/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_03/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_03_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 486,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_03_strict/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_03_strict/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 487,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_03_strict_final/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_03_strict_final/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 431,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_04/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_04/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_04_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 485,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_04_strict/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_04_strict/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 425,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_05/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_05/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_05_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 426,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_05_strict/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_05_strict/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2972,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_06/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_06/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_06_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1599,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_07/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_07/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_07_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 425,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_08/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_08/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_08_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2947,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_09/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_09/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_09_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 486,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_09_strict/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_09_strict/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 432,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_10/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_10/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_10_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 485,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_10_strict/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_10_strict/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 426,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_11/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_11/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_11_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 486,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_12/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_12/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_12_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1600,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_13/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_13/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_13_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 426,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_14/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_14/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_14_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 486,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_15/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_15/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_15_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 485,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_16/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_16/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_16_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 426,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_17/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_17/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_17_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 486,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_18/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_18/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_18_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1600,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_19/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_19/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_19_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 426,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_20/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_20/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_20_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 486,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_21/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_21/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_21_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 485,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_22/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_22/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_22_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 426,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_23/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 63,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_23/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_23_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2491,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_24/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_24/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_24_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2492,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_25/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_25/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_25_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2492,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_26/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_26/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_26_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2638,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_27/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_27/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_27_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2639,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_28/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_28/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_28_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2639,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_29/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_29/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_29_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2727,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_30/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_30/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_30_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2728,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_31/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_31/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_31_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2728,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_32/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_32/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_32_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 137,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_33/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_33/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_33_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 138,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_34/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_34/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_34_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 138,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_35/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_35/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_35_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 137,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_36/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_36/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_36_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 138,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_37/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_37/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_37_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 138,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_38/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_38/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_38_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1785,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_39/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_39/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_39_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1786,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_40/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_40/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_40_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1874,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_41/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_41/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_41_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1916,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_42/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_42/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_42_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1917,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_43/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_43/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_43_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1917,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_44/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_44/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_44_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2013,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_45/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_45/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_45_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2015,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_46/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_46/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_46_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2023,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_47/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_47/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_47_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 138,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_48/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_48/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_48_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 139,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_49/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_49/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_49_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 139,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_50/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_50/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_50_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 138,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_51/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 67,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_51/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_51_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 139,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_52/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_52/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_52_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 139,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_53/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_53/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/cell_53_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/config_tests.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/final_case.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 12,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/final_tests.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 8,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit/benchmark_results.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit/benchmark_summary.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit/benchmark_summary.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit/calibration_metrics.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit/calibration_split.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit/research_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_explicit_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_implicit/benchmark_results.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_implicit/benchmark_summary.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_implicit/benchmark_summary.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_implicit/calibration_metrics.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_implicit/calibration_split.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_implicit/research_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_ionic_implicit_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_explicit/benchmark_results.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_explicit/benchmark_summary.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_explicit/benchmark_summary.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_explicit/calibration_metrics.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_explicit/calibration_split.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_explicit/research_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_explicit_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_implicit/benchmark_results.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_implicit/benchmark_summary.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_implicit/benchmark_summary.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_implicit/calibration_metrics.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_implicit/calibration_split.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_implicit/research_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_neutral_implicit_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_explicit/benchmark_results.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_explicit/benchmark_summary.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_explicit/benchmark_summary.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_explicit/calibration_metrics.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_explicit/calibration_split.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_explicit/research_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_explicit_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_implicit/benchmark_results.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_implicit/benchmark_summary.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_implicit/benchmark_summary.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_implicit/calibration_metrics.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_implicit/calibration_split.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_implicit/research_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_epcsaft_reactive_nine_implicit_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_explicit/benchmark_results.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_explicit/benchmark_summary.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_explicit/benchmark_summary.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_explicit/calibration_metrics.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_explicit/calibration_split.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_explicit/research_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_explicit_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_implicit/benchmark_results.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_implicit/benchmark_summary.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_implicit/benchmark_summary.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_implicit/calibration_metrics.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_implicit/calibration_split.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 66,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_implicit/research_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 24,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_ideal_henry_implicit_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 31,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/finite11_identity.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 14,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/guard_measurement.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 110,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/historical_penalties.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 12,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/implicit_tests.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 10,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/integration.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2714,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/intercooler_after.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/intercooler_after.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2714,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/intercooler_before.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/intercooler_before.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 39,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/intercooler_comparison.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 482,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/legacy_resolution.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 56,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/notebook_refresh.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/notebook_sync.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/notebook_validation.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 6,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/outcome_counts.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 55,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/outcomes.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/post_case.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1728,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/post_final_ionic21/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/post_final_ionic21/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1727,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/post_ionic21/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/post_ionic21/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 139,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/post_tests.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 27,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/pre_case.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1724,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/pre_ionic21/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/pre_ionic21/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/pre_test_substitutions.jsonl",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 12,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/pre_tests.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/prose.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": null,
+      "binary": true,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/resolution.csv.gz",
+      "removals": null,
+      "untracked": false
+    },
+    {
+      "additions": 55,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/resolution_summary.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 4,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/retained_intercooler_scan.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 40,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/retained_penalties.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 108,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/run.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 8459,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/runs.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 12,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/staged_tests.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 5,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/strict_cases.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/research_options/results/runs/capability_20261029/strict_final.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 86,
+      "binary": false,
+      "category": "executable",
+      "path": "analyses/research_options/scripts/check_capabilities.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 10,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/BVP/robust_core.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 6,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/Run_Model.py",
+      "removals": 2,
+      "untracked": false
+    },
+    {
+      "additions": 8,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/Thermodynamics/thermo_models.py",
+      "removals": 2,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/benchmark.py",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/column.py",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 11,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/research.py",
+      "removals": 2,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "tests",
+      "path": "tests/test_benchmarking.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 17,
+      "binary": false,
+      "category": "tests",
+      "path": "tests/test_column_config.py",
+      "removals": 3,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "tests",
+      "path": "tests/test_epcsaft_reactive_chemistry.py",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 8,
+      "binary": false,
+      "category": "tests",
+      "path": "tests/test_intercooling.py",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "tests",
+      "path": "tests/test_research_options.py",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 38,
+      "binary": false,
+      "category": "tests",
+      "path": "tests/test_robust_convergence.py",
+      "removals": 16,
+      "untracked": false
+    }
+  ],
+  "merge_base": "91ced24149ce7bbed71b1cfba5c78e26bcd9c57d",
+  "repository": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-18-consolidate-configurable-absorber",
+  "requested_base": "91ced24149ce7bbed71b1cfba5c78e26bcd9c57d",
+  "scope": "merge base through HEAD, index, working tree, and untracked files",
+  "totals": {
+    "additions": 95303,
+    "binary_files": 2,
+    "files": 288,
+    "removals": 36
+  }
+}

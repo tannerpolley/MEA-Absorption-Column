@@ -1,0 +1,24 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"
+  },
+  "model": {
+    "thermo_model": "reactive_epcsaft",
+    "film_model": "enhancement_reference",
+    "energy_model": "native_total_enthalpy",
+    "pressure_model": "hydraulic_pressure_drop"
+  },
+  "numerics": {
+    "method": "shooting",
+    "solver_settings": {
+      "liquid_density_source": "solved_state",
+      "nodes": 11
+    }
+  },
+  "execution": {
+    "process_isolation": true,
+    "wall_limit_s": 180,
+    "output_dir": "analyses/research_options/results/runs/capability_20261029/cell_49"
+  }
+}

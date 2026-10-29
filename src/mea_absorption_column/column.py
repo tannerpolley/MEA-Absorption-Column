@@ -1408,7 +1408,7 @@ def run_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
         if failure_kind:
             base["failure"] = {
                 "kind": failure_kind,
-                "phase": "worker_preparation" if failure_kind == "capability_refusal" else "solver",
+                "phase": "worker_preparation" if result.get("jacobian_status") == "capability_refusal" else "solver",
                 "cause": result.get("message"),
                 "diagnostics": base["diagnostics"],
             }
