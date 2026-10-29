@@ -26,7 +26,7 @@ from mea_absorption_column.Thermodynamics.reactive_bundle import engine_liquid, 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "analyses/physical_acceptance_149/results"
 DATA = ROOT / "src/mea_absorption_column/data"
-LIQUID_DATA = DATA / "epcsaft_datasets/MEA_reactive_nine_species"
+LIQUID_DATA = DATA / "epcsaft_datasets/MEA_greenfield_exploratory"
 IDEAL = LIQUID_DATA / "ideal-gas-thermochemistry.json"
 VAPOR_PARAMETERS = DATA / "epcsaft_datasets/MEA_neutral_vapor/parameters.json"
 TAPS = DATA / "NCCC_2017_absorber_temperature_profiles.csv"

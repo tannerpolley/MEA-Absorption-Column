@@ -57,5 +57,5 @@ Matching liquid Cp does not by itself validate vapor Cp.
 For the current Engine schema, nitrogen and oxygen carry an explicit zero
 charge number (neutral molecules); no fitted value changed. The twelve-state
 vapor uses the shared physical ideal-gas records in
-`../MEA_reactive_nine_species/ideal-gas-thermochemistry.json`;
+`../MEA_greenfield_exploratory/ideal-gas-thermochemistry.json`;
 `reference-thermochemistry.json` stays for the retained earlier runs.

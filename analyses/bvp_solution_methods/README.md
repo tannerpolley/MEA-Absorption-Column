@@ -208,7 +208,7 @@ Diagnosis (`run_case.py diagnose`; `results/k1_k2_148/diagnosis_trapezoidal_n2.j
 estimates agree to 10 %, the two-sided change exceeds 1e-8 of the value and the entry
 exceeds 1e-9 of its column's largest entry) agrees with Richardson-extrapolated centred
 differences to 4.6e-8 or better at all nodes of the accepted two-node solution and of
-the stalled three-node iterate; the node check N6 (`analyses/engine_node_qualification/`)
+the stalled three-node iterate; the node check N6 (`analyses/greenfield_node_qualification/`)
 covers every row along the retained direction.
 No derivative defect appears at the stall. The three-node collocation Jacobian there
 is nearly singular (condition 4.9e9; smallest singular value 2.3e-7 against 1.2e-2

@@ -39,7 +39,7 @@ def test_twelve_state_resolves_its_declared_native_dependencies():
     })
     assert config.model.layout == "twelve_conserved"
     assert config.dependencies.mobility_law == "harmonic_mean_onsager_v1"
-    assert config.dependencies.references[-1].endswith("MEA_reactive_nine_species/ideal-gas-thermochemistry.json")
+    assert config.dependencies.references[-1].endswith("MEA_greenfield_exploratory/ideal-gas-thermochemistry.json")
     assert config.engine.required is True
 
 

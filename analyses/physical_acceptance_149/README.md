@@ -3,7 +3,7 @@
 Question: does the twelve-state absorber, on the MEA record `868a5018…` adopted by
 Engine #61, meet the physical criteria frozen by Engine #91
 (`docs/coordination/engine-migration.md`)? Numerical qualification comes first
-and is replayed: node checks in `analyses/engine_node_qualification/`, and the
+and is replayed: node checks in `analyses/greenfield_node_qualification/`, and the
 K1/K2 cosine ladder in `analyses/bvp_solution_methods/results/replay_149/`.
 
 Inputs: the record and its Engine reaction records, the physical ideal-gas records,

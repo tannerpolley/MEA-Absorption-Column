@@ -1,8 +1,10 @@
 # Nine-species liquid on the current Engine (adopted MEA record)
 
+The directory name is a retained input identifier, kept so recorded runs replay.
+
 Inputs for the twelve-state callbacks (`reactive_bundle.engine_liquid`,
 `engine_vapor`); numerical qualification is in
-`analyses/engine_node_qualification/`.
+`analyses/greenfield_node_qualification/`.
 
 - `parameters.json`: byte copy of MEA-Thermodynamics
   `analyses/mea_parameter_bundle/results/selected-current-best-parameters.json`

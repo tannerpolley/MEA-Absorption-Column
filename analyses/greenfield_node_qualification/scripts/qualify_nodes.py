@@ -5,7 +5,7 @@ Numerical verification only (not physical validation) on the MEA record 868a5018
 Engine #91 (consumer specification at b67fb11).
 
   OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-    uv run --frozen python analyses/engine_node_qualification/scripts/qualify_nodes.py
+    uv run --frozen python analyses/greenfield_node_qualification/scripts/qualify_nodes.py
 """
 from __future__ import annotations
 
@@ -28,9 +28,9 @@ from mea_absorption_column.Thermodynamics.reactive_bundle import _FORMULAS, engi
 from mea_absorption_column.Transport.Reactive_Film import binary_diffusivities_from_species, onsager_mobility_expression
 
 ROOT = Path(__file__).resolve().parents[3]
-OUT = ROOT / "analyses/engine_node_qualification/results"
+OUT = ROOT / "analyses/greenfield_node_qualification/results"
 DATA = ROOT / "src/mea_absorption_column/data/epcsaft_datasets"
-LIQUID_DATA, IDEAL = DATA / "MEA_reactive_nine_species", DATA / "MEA_reactive_nine_species/ideal-gas-thermochemistry.json"
+LIQUID_DATA, IDEAL = DATA / "MEA_greenfield_exploratory", DATA / "MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
 VAPOR_PARAMETERS = DATA / "MEA_neutral_vapor/parameters.json"
 CASE = ROOT / "analyses/bvp_solution_methods/input/case_3c.json"
 FIRST, SECOND, ZERO, ROWS, FUGACITY, BUDGET_S = 5e-6, 5e-5, 1e-12, 1e-7, 1e-10, 600.0

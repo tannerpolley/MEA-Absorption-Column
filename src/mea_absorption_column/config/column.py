@@ -21,7 +21,7 @@ SCHEMA_VERSION = 1
 SEVEN_PRESET = "seven_state_legacy"
 TWELVE_PRESET = "twelve_state_conserved"
 _ROOT = Path(__file__).resolve().parents[3]
-_REACTIVE_DATASET = "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_nine_species"
+_REACTIVE_DATASET = "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory"
 _NEUTRAL_VAPOR_DATASET = "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor"
 _CASE_3C_INPUT = "analyses/bvp_solution_methods/input/case_3c.json"
 
