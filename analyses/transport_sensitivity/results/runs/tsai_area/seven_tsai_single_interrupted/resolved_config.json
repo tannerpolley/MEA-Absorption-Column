@@ -1,0 +1,69 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "solver_termination_and_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "corrected published 2017 3C",
+    "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-84-trace-the-source-of-the-tsai-interfacial/analyses/bvp_solution_methods/input/case_3c.json",
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-84-trace-the-source-of-the-tsai-interfacial/analyses/bvp_solution_methods/input/case_3c.json",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": null,
+    "mobility_law": null,
+    "references": [],
+    "thermal_reference": null
+  },
+  "engine": {
+    "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-84-trace-the-source-of-the-tsai-interfacial/.venv/bin/python3",
+    "required": false,
+    "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-84-trace-the-source-of-the-tsai-interfacial/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-84-trace-the-source-of-the-tsai-interfacial/analyses/transport_sensitivity/results/runs/tsai_area/seven_tsai",
+    "process_isolation": false,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 600.0
+  },
+  "initialization": {
+    "policy": "legacy_capture_temperature_guesses",
+    "values": {}
+  },
+  "model": {
+    "coordinate": "normalized_height",
+    "energy_model": "empirical_enthalpy",
+    "film_model": "enhancement_factor",
+    "formulation": "seven_state",
+    "layout": "seven_enthalpy",
+    "pressure_model": "constant",
+    "thermo_model": "ideal_henry"
+  },
+  "numerics": {
+    "method": "single",
+    "solver_settings": {
+      "co2_mass_transfer_model": "enhancement_factor",
+      "display": false,
+      "fatol": 0.1,
+      "integrator": "euler",
+      "ivp_atol": 1e-08,
+      "ivp_method": "BDF",
+      "ivp_rtol": 1e-05,
+      "line_search": "armijo",
+      "maxiter": 50,
+      "root_method": "Krylov"
+    }
+  },
+  "preset": "seven_state_legacy",
+  "resolved_config_sha256": "5ce07edf1ad404f9cced413a524c7faa22d1e12b45d8c3f526ca7c478890f554",
+  "schema_version": 1
+}

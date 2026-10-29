@@ -1,0 +1,21 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"
+  },
+  "execution": {
+    "wall_limit_s": 600,
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-84-trace-the-source-of-the-tsai-interfacial/analyses/transport_sensitivity/results/runs/tsai_area/twelve_tsai"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "nodes": 11,
+      "quadrature_points": 5,
+      "end_clustering": 1.0,
+      "max_iterations": 20,
+      "tolerance": 1e-07,
+      "liquid_density_source": "solved_state"
+    }
+  }
+}
