@@ -6,14 +6,14 @@ interface? This is numerical verification, not physical validation.
 
 Inputs: MEA record `868a5018…` (adopted by Engine #61) with its Engine
 reaction and neutral-reference records, the shared physical ideal-gas records
-(`src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/`),
+(`src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_nine_species/`),
 the four-gas vapor record, case 3C, and the wheel pinned in
 `integration/epcsaft_contract.json`. `results/summary.json` records every
 identity and hash; `results/node-checks.csv` holds one row per check.
 
 ```bash
 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-  uv run --frozen python analyses/greenfield_node_qualification/scripts/qualify_nodes.py
+  uv run --frozen python analyses/engine_node_qualification/scripts/qualify_nodes.py
 ```
 
 ## Result (wheel `48a639e7…`, 58 s against the 600 s node budget)

@@ -62,7 +62,7 @@ Snakemake workflow code or configuration is installed in this repository.
 |---|---|
 | `bvp_derivative_trials` | Deferred |
 | `bvp_solution_methods` | Deferred |
-| `greenfield_node_qualification` | Deferred |
+| `engine_node_qualification` | Deferred |
 | `issue16_reactive_film_runtime` | Deferred |
 | `legacy_srp_lhc_probe` | Deferred |
 | `nccc_validation` | Deferred |

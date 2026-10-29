@@ -1,4 +1,4 @@
-# Greenfield migration consumer specification
+# Engine migration consumer specification
 
 Status: **twelve-state consumer contract drafted 2026-09-21 for Engine #91,
 correction round 2 applied after the Sol Scientific Basis and Execution

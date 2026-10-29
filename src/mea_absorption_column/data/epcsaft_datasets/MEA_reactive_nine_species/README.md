@@ -2,7 +2,7 @@
 
 Inputs for the twelve-state callbacks (`reactive_bundle.engine_liquid`,
 `engine_vapor`); numerical qualification is in
-`analyses/greenfield_node_qualification/`.
+`analyses/engine_node_qualification/`.
 
 - `parameters.json`: byte copy of MEA-Thermodynamics
   `analyses/mea_parameter_bundle/results/selected-current-best-parameters.json`

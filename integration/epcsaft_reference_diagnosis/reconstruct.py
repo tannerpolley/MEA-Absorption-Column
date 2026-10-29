@@ -43,7 +43,7 @@ for row in r['reactions']:
  # Correlation uses ln(T/Tref), whereas this input uses ln(T).
  correlation=q.ReactionLogPolynomial(a+c0*math.log(313.15),b,c0,d0,313.15,lo,hi,'aqueous-mole-fraction-infinite-dilution-water-v1')
  reactions.append(q.Reaction(dict(zip(ids,row['stoichiometry'])),name=row['reaction_id'],correlation=correlation,reference=q.ReactionReference(q.ReferenceSourceBasis.RawMoleFractionInfiniteDilution,reference_pressure_pa=r["source_standard_state"]["reference_pressure_pa"])))
-n=json.loads((root/'MEA_greenfield_exploratory/engine-reactions.json').read_text())['neutral_reference']
+n=json.loads((root/'MEA_reactive_nine_species/engine-reactions.json').read_text())['neutral_reference']
 feed=np.array(apparent);feed/=feed.sum()
 problem=q.Problem(phases=[q.Phase('liquid',kind='liquid')],T=temperature,P=pressure,feed=q.Amounts(dict(zip(ids[:3],feed))),reactions=reactions,neutral_reference=q.NeutralReference(**n))
 result=q.solve_equilibrium(model,problem)

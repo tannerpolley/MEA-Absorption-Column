@@ -24,7 +24,7 @@ An optional PDF page can be rendered with
 | bvp_derivative_trials | BVP verification and supported-negative CasADi comparison |
 | bvp_solution_methods | Preserved coupled-method checks; original twelve-state builder remains at its source checkpoint |
 | issue16_reactive_film_runtime | Single-state numerical-reachability evidence with unresolved physical inputs |
-| greenfield_node_qualification | Engine #148 node checks of the twelve-state Engine quantities (numerical only) |
+| engine_node_qualification | Engine #148 node checks of the twelve-state Engine quantities (numerical only) |
 | physical_acceptance_149 | Engine #149 physical criteria (C3, C5, C6, capture, temperature taps, density) on the adopted record |
 
 Keep each study's inputs, scripts, results and `notebook.qmd` together. Rendering

@@ -42,7 +42,7 @@
     "src/mea_absorption_column/Thermodynamics/casadi_reactive.py",
     "src/mea_absorption_column/Thermodynamics/Chemical_Equilibrium.py",
     "analyses/nccc_validation/scripts/probe_reactive_epcsaft_speciation.py",
-    "analyses/greenfield_node_qualification/scripts/qualify_nodes.py"
+    "analyses/engine_node_qualification/scripts/qualify_nodes.py"
   ],
   "private_import_exception_paths": [
     "src/mea_absorption_column/Thermodynamics/thermo_models.py"
@@ -56,6 +56,6 @@
   "smoke": {
     "kind": "reactive_liquid_state",
     "module": "mea_absorption_column.Thermodynamics.reactive_bundle",
-    "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory"
+    "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_nine_species"
   }
 }
