@@ -1,4 +1,4 @@
-# Greenfield node qualification (Engine #148, contract N1–N6, C1, C2, C4)
+# Engine node qualification (Engine #148, contract N1–N6, C1, C2, C4)
 
 Question: do the twelve-state column's Engine-derived node quantities and exact
 actions satisfy the frozen #91 numerical criteria on the current Engine

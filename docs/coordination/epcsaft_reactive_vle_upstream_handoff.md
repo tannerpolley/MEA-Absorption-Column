@@ -221,7 +221,7 @@ after the owning task finishes and freezes its work:
 ```text
 python3.13 scripts/check_reactive_mea_application_contract.py \
   --mode source \
-  --source-root /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics
+  --source-root /home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics
 ```
 
 Final mode is intentionally fail closed until every upstream capability in the
@@ -230,5 +230,5 @@ contract is accepted and an installed artifact receipt is bound:
 ```text
 python3.13 scripts/check_reactive_mea_application_contract.py \
   --mode final \
-  --source-root /home/tnnrpolley21/Workspaces/Engineering/MEA-Thermodynamics
+  --source-root /home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics
 ```

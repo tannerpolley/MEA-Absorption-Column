@@ -1,4 +1,4 @@
-# Nine-species liquid on the greenfield Engine (adopted MEA record)
+# Nine-species liquid on the current Engine (adopted MEA record)
 
 Inputs for the twelve-state callbacks (`reactive_bundle.engine_liquid`,
 `engine_vapor`); numerical qualification is in
