@@ -9,7 +9,7 @@ import casadi as ca
 import numpy as np
 from scipy.optimize import brentq
 
-from mea_absorption_column.Thermodynamics.casadi_reactive import ActionCallback, build_loading_path_function
+from mea_absorption_column.Thermodynamics.casadi_reactive import build_loading_path_function
 from mea_absorption_column.Transport.Reactive_Film import (
     equilibrium_manifold_conductance_integral, onsager_mobility_expression,
     binary_diffusivities_from_species, ReactiveFilmDomainError,
@@ -19,43 +19,7 @@ ROOT = Path(__file__).resolve().parents[3]
 INPUT = ROOT / 'analyses/bvp_solution_methods/input/issue85/manufactured_film.json'
 
 
-class ManufacturedNeutralPhase:
-    """Fixed-volume mathematical equilibrium; no Engine mixture or physical solvent."""
-    def __init__(self, declaration):
-        self.d = declaration
-        self.name = 'manufactured_neutral'
-        self.component_ids, self.feed_ids = declaration['species_order'], declaration['feed_order']
-        self.co2_input = 2 + self.feed_ids.index('C_total')
-        self.log_activities = tuple(range(len(self.component_ids)))
-        self.u = ca.MX.sym('u', 2 + len(self.feed_ids))
-        feed = dict(zip(self.feed_ids, ca.vertsplit(self.u[2:])))
-        k, volume = declaration['K_per_mol'], declaration['volume_m3']
-        f, a, b = (feed[s] for s in ('C_total', 'A_total', 'B_total'))
-        coefficient = 1 + k * (a + b - f)
-        s = 2 * f / (coefficient + ca.sqrt(coefficient**2 + 4*k*f))
-        amounts = dict(C=s, A=a/(1+k*s), B=b/(1+k*s), W=feed['W_total'],
-                       CA=a*k*s/(1+k*s), CB=b*k*s/(1+k*s))
-        n = ca.vertcat(*[amounts[s] for s in self.component_ids])
-        mu = ca.log(n) - ca.DM([np.log(k) if s in ('CA', 'CB') else 0. for s in self.component_ids])
-        self.chemical_potentials = mu
-        self.action_functions = {}
-        self.callback = ActionCallback(self.name + '_values', self, self.log_activities)
-
-    def __call__(self, inputs):
-        # Values and slopes both traverse the existing exact-action callback interface.
-        mu = self.callback(inputs)
-        n = ca.exp(mu + ca.DM([np.log(self.d['K_per_mol']) if s in ('CA', 'CB') else 0.
-                              for s in self.component_ids]))
-        return ca.vertcat(n, ca.sum1(n)/self.d['volume_m3'],
-                          self.d['henry_pa_m3_mol']*n[self.component_ids.index('C')]/self.d['volume_m3'])
-
-    def actions(self, inputs, observables, directions=()):
-        if directions not in self.action_functions:
-            expr = self.chemical_potentials
-            for direction in directions:
-                expr = ca.jacobian(expr, self.u)[:, direction]
-            self.action_functions[directions] = ca.Function('analytic_action', [self.u], [expr])
-        return np.asarray(self.action_functions[directions](inputs)).ravel()[list(observables)]
+from mea_absorption_column.Thermodynamics.manufactured_neutral import ManufacturedNeutralPhase
 
 
 def verify(declaration):

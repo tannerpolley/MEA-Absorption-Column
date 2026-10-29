@@ -1,0 +1,26 @@
+F.................                                                       [100%]
+=================================== FAILURES ===================================
+________________ test_mea_declared_reproduction_and_permutation ________________
+
+tmp_path = PosixPath('/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_mea_declared_reproduction_and_permutation')
+
+    def test_mea_declared_reproduction_and_permutation(tmp_path):
+        output = Path(os.environ.get('ISSUE85_RUN_ROOT', tmp_path))
+        output.mkdir(parents=True, exist_ok=True)
+        directory = output / 'permuted_inputs'
+        directory.mkdir()
+        pairs = [(INPUT / 'thermodynamics.json', INPUT / 'transport.json'), permuted_inputs(directory)]
+        attempts, assemblies = [], []
+        for label, (thermo, transport) in zip(('declared', 'permuted'), pairs):
+            seed = output / (label + '_seed')
+            seeded = run_column(request(thermo, transport, seed))
+>           assert seeded['physical_acceptance'] == seeded['numerical_acceptance'] == 'accepted'
+E           AssertionError: assert 'not_evaluated' == 'accepted'
+E             
+E             - accepted
+E             + not_evaluated
+
+tests/test_solvent_declarations.py:91: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_solvent_declarations.py::test_mea_declared_reproduction_and_permutation
+1 failed, 17 passed in 6.32s

@@ -61,6 +61,12 @@ class SolventInputs:
             if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
                 raise SolventRefusal('Transport belongs to another thermodynamic input')
             self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
             for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
                 self.paths[key] = self.verify(self.thermo[key])
             self.case_path = self.verify(self.transport['case'])
@@ -248,6 +254,73 @@ class SolventInputs:
                    for k, v in row.items() if k != 'model'):
                 raise SolventRefusal('Diffusivity coefficients must be finite positive')
         self.constraints = constraints
+
+    def validate_mathematical(self):
+        """Fixed S3 equations and complete inputs, without native parameter records."""
+        t, u = self.thermo, self.transport
+        expected_t = set('equations evidence_type species_order liquid_feed_order vapor_feed_order roles components charge_numbers formulas atomic_masses_kg_mol reactions K_per_mol liquid_volume_m3 vapor_volume_m3 henry_pa_m3_mol gas_fugacity_pa_s_mol water_fugacity_pa capacity_j_mol_k reference_temperature_k'.split())
+        expected_u = set('thermodynamic_input thermodynamic_input_sha256 case film hydraulic_density quadrature_points species_diffusivities stationary_film_components execution_policy closures unconsumed_properties'.split())
+        if set(t) != expected_t or set(u) != expected_u or t['evidence_type'] != 'mathematical_numerical_verification_only':
+            raise SolventRefusal('Unsupported mathematical equation or input fields')
+        self.roles, self.species = t['roles'], t['species_order']
+        self.feeds, self.gas = t['liquid_feed_order'], t['vapor_feed_order']
+        if self.roles != dict(co2='C', water='W', amines=['A','B'], inert_gases=['I']):
+            raise SolventRefusal('Mathematical role identities disagree')
+        for ids, required in [(self.species, {'C','A','B','W','CA','CB'}),
+                              (self.feeds, {'C','A','B','W'}), (self.gas, {'C','W','I'})]:
+            if len(ids) != len(set(ids)) or set(ids) != required:
+                raise SolventRefusal('Missing or duplicate mathematical species/feed IDs')
+        rows = t['components']
+        expected_rows = dict(co2=dict(C=1,CA=1,CB=1), water=dict(W=1),
+                             **{'amine:A': dict(A=1,CA=1), 'amine:B': dict(B=1,CB=1)})
+        self.components = {key: [row.get(s, 0) for s in self.species] for key, row in rows.items()}
+        if rows != expected_rows or set(t['charge_numbers']) != set(self.species)|set(self.gas) or any(t['charge_numbers'].values()):
+            raise SolventRefusal('Unsupported mathematical components or charges')
+        atoms = t['atomic_masses_kg_mol']
+        formulas = dict(C=dict(C=1,O=2), A=dict(C=1,H=5,N=1), B=dict(C=2,H=7,N=1),
+                        W=dict(H=2,O=1), CA=dict(C=2,H=5,N=1,O=2), CB=dict(C=3,H=7,N=1,O=2), I=dict(N=2))
+        if t['formulas'] != formulas or atoms != dict(C=.012011,H=.001008,N=.014007,O=.015999):
+            raise SolventRefusal('Mathematical formula/mass convention disagrees')
+        if t['reactions'] != [dict(C=-1,A=-1,CA=1), dict(C=-1,B=-1,CB=1)]:
+            raise SolventRefusal('Mathematical reactions disagree')
+        for key in expected_t - set('equations evidence_type species_order liquid_feed_order vapor_feed_order roles components charge_numbers formulas atomic_masses_kg_mol reactions'.split()):
+            if isinstance(t[key], bool) or not isinstance(t[key], (float,int)) or not math.isfinite(t[key]) or t[key] <= 0:
+                raise SolventRefusal(f'Invalid mathematical constant: {key}')
+        if (u['film'] != 'equilibrium_manifold' or u['hydraulic_density'] != 'solved_state' or
+                set(u['species_diffusivities']) != set(self.species)):
+            raise SolventRefusal('Missing mathematical diffusivity or incompatible film/density')
+        for row in u['species_diffusivities'].values():
+            if set(row) != {'constant_m2_s'} or not math.isfinite(row['constant_m2_s']) or row['constant_m2_s'] <= 0:
+                raise SolventRefusal('Mathematical diffusivity must be finite positive')
+        stationary = u['stationary_film_components']
+        if len(stationary) != 3 or set(stationary) != {'amine:A','amine:B','water'}:
+            raise SolventRefusal('Stationary rows must be independent and complete')
+        self.constraints = np.array([self.components[c] for c in stationary])
+        normalized = self.constraints / np.linalg.norm(self.constraints, axis=1)[:,None]
+        if np.linalg.matrix_rank(normalized-normalized.mean(axis=1,keepdims=True)) != len(stationary):
+            raise SolventRefusal('Film constraints must be independent modulo total flux')
+        unused = dict(liquid_viscosity=dict(value=.001,unit='Pa s'),gas_viscosity=dict(value=1e-5,unit='Pa s'),
+                      surface_tension=dict(value=.05,unit='N/m'),gas_conductivity=dict(value=.02,unit='W/(m K)'))
+        if u['unconsumed_properties'] != dict(status='not_consumed_by_prescribed_closures',values=unused):
+            raise SolventRefusal('Unsupported unconsumed mathematical property declarations')
+        units = dict(area_per_length='m2/m', holdup='1', pressure_gradient='Pa/m', liquid_transfer='m/s',
+                     gas_transfer='mol/(m2 s Pa)', heat_transfer='W/(m2 K)', bulk_diffusivity='m2/s')
+        if set(u['closures']) != set(units):
+            raise SolventRefusal('Incomplete prescribed mathematical closures')
+        for key, unit in units.items():
+            row = u['closures'][key]
+            if (set(row) != {'value','unit'} or row['unit'] != unit or isinstance(row['value'],bool) or
+                    not isinstance(row['value'], (int,float)) or not math.isfinite(row['value']) or row['value'] <= 0):
+                raise SolventRefusal(f'Invalid mathematical closure: {key}')
+        if u['closures']['holdup']['value'] >= .97:
+            raise SolventRefusal('Mathematical holdup must be inside packing void')
+        policy = u['execution_policy']
+        expected_policy = dict(id='retained_3c_only',temperature_bounds_k=[293.15,393.15],void_fraction=.97,
+            temperature_scale_k=300.,temperature_span_k=100.,initial_bulk_state=self.case['initial_bulk_state'],
+            initial_interface_bracket=self.case['initial_interface_bracket'],physical_residual_tolerance=1e-9,branch_policy={})
+        if (policy != expected_policy or self.case['physical_residual_tolerance'] != 1e-9 or
+                isinstance(u['quadrature_points'],bool) or not isinstance(u['quadrature_points'],int) or u['quadrature_points'] < 2):
+            raise SolventRefusal('Unsupported mathematical initialization/numerical policy')
 
     def diffusivities(self, temperature):
         import casadi as ca

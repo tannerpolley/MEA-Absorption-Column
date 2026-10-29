@@ -1,0 +1,801 @@
+{
+  "attempt_id": "20261029T232545-d41221fbbd16",
+  "config": {
+    "acceptance": {
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null,
+      "numerical": "conserved_original_equations",
+      "physical": "not_evaluated"
+    },
+    "case": {
+      "data_type": "mole",
+      "gas_flow_basis": "reported_total_wet",
+      "id": "corrected published 2017 3C",
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json",
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "dependencies": {
+      "dataset": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory",
+      "input_hashes": {
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/issue85/thermodynamics.json": "2214f28b01d3bb3a1f260796d74740325d1c07879d7a8dfece93df4ef3327561",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/issue85/transport.json": "5a1cf88bc90291054a9915db45eafbe94b91e7e86eae8d74bf779b5a30a7516e",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Properties/Thermophysical_Properties.py": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Properties/Transport_Properties.py": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Pressure_Drop.py": "3c5e82117033a744032f7d7d64155e9175143134195fd926432f0e0e4abaa707",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/engine-reactions.json": "2ae0d64d85cb824c355b4896b80e5999bfaf310cb341cd2036e585167b1f0f60",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/parameters.json": "73fd46326c31fdd7c287566b1d8c68b6092e9b12894609fb76e0b8e441304e31",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+      },
+      "mobility_law": "harmonic_mean_onsager_v1",
+      "references": [
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+      ],
+      "thermal_reference": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json",
+      "thermodynamics_input": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+      "transport_input": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/issue85/transport.json"
+    },
+    "engine": {
+      "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/bin/python",
+      "required": true,
+      "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+    },
+    "execution": {
+      "cache_policy": "legacy_explicit",
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_checkpoint1_20261029/mea/declared_seed",
+      "process_isolation": false,
+      "resume": false,
+      "retry": false,
+      "threads": 1,
+      "wall_limit_s": 600.0
+    },
+    "initialization": {
+      "policy": "case_declared_native_inputs",
+      "values": {}
+    },
+    "model": {
+      "coordinate": "physical_height",
+      "energy_model": "native_total_enthalpy",
+      "film_model": "equilibrium_manifold",
+      "formulation": "twelve_state_conserved",
+      "layout": "twelve_conserved",
+      "pressure_model": "hydraulic_pressure_drop",
+      "thermo_model": "reactive_epcsaft"
+    },
+    "numerics": {
+      "method": "upwind",
+      "solver_settings": {
+        "max_iterations": 20,
+        "nodes": 17,
+        "quadrature_points": 9,
+        "tolerance": 1e-07
+      }
+    },
+    "preset": "twelve_state_conserved",
+    "resolved_config_sha256": "2f63f7346f5d26da63d2513b3c9c24d1fc8d06f9f5ec9c591ab1311fe3cdebb5",
+    "schema_version": 1
+  },
+  "config_sha256": "2f63f7346f5d26da63d2513b3c9c24d1fc8d06f9f5ec9c591ab1311fe3cdebb5",
+  "coordinate": "physical_height",
+  "execution": {
+    "runtime_s": 2.548223543999484,
+    "started_at_utc": "2026-10-29T23:25:45Z",
+    "status": "failed"
+  },
+  "failure": {
+    "completed_payload": null,
+    "kind": "nonzero_exit",
+    "last_checkpoint": {
+      "assets": {
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory": "0fdec0f8313e1d58d04b06c0c1455ed552d20d60f70a485bcfcdb0342e0b2262",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+      },
+      "capabilities": {
+        "a1_equilibrium_values": "required_on_evaluation",
+        "a2_equilibrium_actions": "required_on_outer_derivative",
+        "caloric_actions": "required_on_outer_derivative",
+        "evidence_type": "native_Engine_evaluation",
+        "finite_difference_fallback": false
+      },
+      "engine": {
+        "actual_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+        "archive_hash_status": "verified_from_installed_contents",
+        "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+        "commit_evidence": "not_available_from_installed_distribution",
+        "declared_archive_sha256": null,
+        "declared_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+        "declared_wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+        "expected_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+        "expected_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+        "installed_artifact_members": 39,
+        "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages",
+        "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+        "loaded_version": "1.0.0",
+        "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+        "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/bin/python",
+        "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv",
+        "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+        "python_implementation": "cpython",
+        "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv",
+        "python_version": "3.13.13",
+        "required": true,
+        "status": "verified",
+        "verified_commit": null,
+        "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+      },
+      "initial_profile": [
+        [
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805,
+          2.4323205276203805
+        ],
+        [
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098,
+          1.6540435157308098
+        ],
+        [
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577,
+          1.5624169375299577
+        ],
+        [
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15,
+          318.15
+        ],
+        [
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75,
+          316.75
+        ],
+        [
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0,
+          110900.0
+        ],
+        [
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924,
+          0.052715135171357924
+        ],
+        [
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287,
+          0.01870296055836287
+        ],
+        [
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412,
+          0.014962150496118412
+        ],
+        [
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058,
+          -11089.955887019058
+        ],
+        [
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519,
+          0.7743394709352519
+        ]
+      ],
+      "initialization": {
+        "accepted": true,
+        "algebraic_residual": [
+          0.0,
+          -2.117582368135751e-22,
+          -2.880681804207086e-14,
+          0.0,
+          0.0
+        ],
+        "state": [
+          2.4323205276203805,
+          76.97519250729157,
+          1.6540435157308098,
+          1.5624169375299577,
+          318.15,
+          316.75,
+          110900.0,
+          0.052715135171357924,
+          0.01870296055836287,
+          0.014962150496118412,
+          -11089.955887019058,
+          0.7743394709352519
+        ]
+      },
+      "initialization_evaluations": [
+        {
+          "loading": 0.0,
+          "original_co2_residual": -0.23390030447416288
+        },
+        {
+          "loading": 1.0,
+          "original_co2_residual": 0.8062776156483185
+        },
+        {
+          "loading": 0.22486566956412712,
+          "original_co2_residual": -0.22785881238954933
+        },
+        {
+          "loading": 0.6124328347820636,
+          "original_co2_residual": -0.1714352828552433
+        },
+        {
+          "loading": 0.8062164173910318,
+          "original_co2_residual": 0.0658506369074413
+        },
+        {
+          "loading": 0.7524383746408817,
+          "original_co2_residual": -0.03775998762777419
+        },
+        {
+          "loading": 0.7720373128578923,
+          "original_co2_residual": -0.004244608707890191
+        },
+        {
+          "loading": 0.7743691460971287,
+          "original_co2_residual": 5.514753187920926e-05
+        },
+        {
+          "loading": 0.7743392386231402,
+          "original_co2_residual": -4.316789830038914e-07
+        },
+        {
+          "loading": 0.7743394709119359,
+          "original_co2_residual": -4.3325603521493505e-11
+        },
+        {
+          "loading": 0.7743394709352519,
+          "original_co2_residual": -2.880681804207086e-14
+        },
+        {
+          "loading": 0.7743394709362522,
+          "original_co2_residual": 1.8393342404721125e-12
+        }
+      ],
+      "layout": {
+        "algebraic_equations": 5,
+        "boundary_equations": 7,
+        "conserved_balances": 7,
+        "coordinate": "physical_height",
+        "states": 12
+      },
+      "native_calls": {
+        "liquid_actions": {
+          "failed": 0,
+          "returned": 414,
+          "started": 414,
+          "wall_s": 1.2328668009467947
+        },
+        "liquid_solve": {
+          "failed": 0,
+          "returned": 414,
+          "started": 414,
+          "wall_s": 1.0401524040025834
+        },
+        "vapor_actions": {
+          "failed": 0,
+          "returned": 92,
+          "started": 92,
+          "wall_s": 0.02722363700013375
+        }
+      },
+      "resolved_inputs": {
+        "case_id": "corrected published 2017 3C",
+        "conserved_policy": {
+          "loading_anchor": 0.25,
+          "max_loading_steps": 32,
+          "max_log_loading_step": 0.1,
+          "species_diffusivity_model": {
+            "bicarbonate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "carbamate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "carbon-dioxide": {
+              "activation_j_mol": 15230.0,
+              "gas_constant_j_mol_k": 8.314462618,
+              "model": "prefactor_exp_minus_E_over_RT",
+              "prefactor_m2_s": 3.14e-07
+            },
+            "carbonate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "hydronium-cation": {
+              "constant_m2_s": 1.8439088914585774e-09
+            },
+            "hydroxide-anion": {
+              "constant_m2_s": 1.8439088914585774e-09
+            },
+            "monoethanolamine": {
+              "constant_m2_s": 8.8e-10
+            },
+            "protonated-monoethanolamine": {
+              "constant_m2_s": 8.4e-10
+            },
+            "water": {
+              "constant_m2_s": 8.8e-10
+            }
+          }
+        },
+        "data_type": "mole",
+        "feed_ids": {
+          "liquid": [
+            "carbon-dioxide",
+            "monoethanolamine",
+            "water"
+          ],
+          "vapor": [
+            "carbon-dioxide",
+            "water",
+            "nitrogen",
+            "oxygen"
+          ]
+        },
+        "gas_flow_basis": "reported_total_wet",
+        "metadata": {
+          "beds": 1,
+          "case_id": "corrected published 2017 3C",
+          "diameter_m": 0.64,
+          "gas_flow_basis": "reported_total_wet",
+          "intercoolers": 0,
+          "physical_input_basis": "direct_canonical_SI",
+          "single_bed_height_m": 6.0,
+          "total_packed_height_m": 6.0,
+          "vapor_composition_mode": "legacy_ratio"
+        },
+        "parameters": [
+          [
+            2.4323205276203805,
+            9.729282110481522,
+            76.97519250729157
+          ],
+          [
+            1.6540435157308098,
+            1.5624169375299577,
+            14.530683358624426,
+            1.6006872732878803
+          ],
+          318.15,
+          316.75,
+          [
+            0.0,
+            0.01,
+            0.02,
+            0.03,
+            0.04,
+            0.05,
+            0.06,
+            0.07,
+            0.08,
+            0.09,
+            0.1,
+            0.11,
+            0.12,
+            0.13,
+            0.14,
+            0.15,
+            0.16,
+            0.17,
+            0.18,
+            0.19,
+            0.2,
+            0.21,
+            0.22,
+            0.23,
+            0.24,
+            0.25,
+            0.26,
+            0.27,
+            0.28,
+            0.29,
+            0.3,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35000000000000003,
+            0.36,
+            0.37,
+            0.38,
+            0.39,
+            0.4,
+            0.41000000000000003,
+            0.42,
+            0.43,
+            0.44,
+            0.45,
+            0.46,
+            0.47000000000000003,
+            0.48,
+            0.49,
+            0.5,
+            0.51,
+            0.52,
+            0.53,
+            0.54,
+            0.55,
+            0.56,
+            0.5700000000000001,
+            0.58,
+            0.59,
+            0.6,
+            0.61,
+            0.62,
+            0.63,
+            0.64,
+            0.65,
+            0.66,
+            0.67,
+            0.68,
+            0.6900000000000001,
+            0.7000000000000001,
+            0.71,
+            0.72,
+            0.73,
+            0.74,
+            0.75,
+            0.76,
+            0.77,
+            0.78,
+            0.79,
+            0.8,
+            0.81,
+            0.8200000000000001,
+            0.8300000000000001,
+            0.84,
+            0.85,
+            0.86,
+            0.87,
+            0.88,
+            0.89,
+            0.9,
+            0.91,
+            0.92,
+            0.93,
+            0.9400000000000001,
+            0.9500000000000001,
+            0.96,
+            0.97,
+            0.98,
+            0.99,
+            1.0
+          ],
+          6.0,
+          0.3216990877275948,
+          110900.0,
+          [
+            250.0,
+            0.97,
+            0.203,
+            0.35,
+            0.017,
+            0.292,
+            0.119
+          ]
+        ],
+        "physical_input_sha256": "601f79091ee94d790b247bb91b0c67387e65411b112b760023e9b9050e53d17c",
+        "raw_input": [
+          4.607069120719279,
+          19.347831085173077,
+          0.25,
+          0.2999967360887997,
+          0.08548986749209121,
+          318.15,
+          316.75,
+          110900.0,
+          1.0
+        ],
+        "solvent_identity": {
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/issue85/thermodynamics.json": "2214f28b01d3bb3a1f260796d74740325d1c07879d7a8dfece93df4ef3327561",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/issue85/transport.json": "5a1cf88bc90291054a9915db45eafbe94b91e7e86eae8d74bf779b5a30a7516e",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Properties/Thermophysical_Properties.py": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Properties/Transport_Properties.py": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Pressure_Drop.py": "3c5e82117033a744032f7d7d64155e9175143134195fd926432f0e0e4abaa707",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/engine-reactions.json": "2ae0d64d85cb824c355b4896b80e5999bfaf310cb341cd2036e585167b1f0f60",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/parameters.json": "73fd46326c31fdd7c287566b1d8c68b6092e9b12894609fb76e0b8e441304e31",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+        },
+        "source_lineage": {
+          "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json",
+          "physical_input_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+          "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json",
+          "source_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+          "source_row_sha256": "8483a65064aebcece44880142fceccca7fd9a306c73516447a5fda0870bdb936"
+        },
+        "vapor_composition_mode": "legacy_ratio"
+      },
+      "scaling": {
+        "algebraic_scale": [
+          0.97,
+          1.844731087326168e-05,
+          0.23489075588152292,
+          0.2910072735141673,
+          171852.27422008314
+        ],
+        "balance_scale": [
+          0.40538675460339674,
+          12.82919875121526,
+          0.2756739192884683,
+          0.2604028229216596,
+          107288.1344608066,
+          9857.357621568699,
+          18483.333333333332
+        ],
+        "boundary_scale": [
+          2.4323205276203805,
+          76.97519250729157,
+          1.6540435157308098,
+          1.5624169375299577,
+          100.0,
+          100.0,
+          110900.0
+        ],
+        "capacity_rates_w_k": [
+          6437.288067648396,
+          591.441457294122
+        ],
+        "policy": "case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds",
+        "state_scale": [
+          2.4323205276203805,
+          76.97519250729157,
+          1.6540435157308098,
+          1.5624169375299577,
+          300.0,
+          300.0,
+          110900.0,
+          0.97,
+          0.23489075588152292,
+          0.2910072735141673,
+          171852.27422008314,
+          1.0
+        ]
+      },
+      "stage": "global_solve",
+      "support_limits": {
+        "policy": "case_declared_native_inputs: 3C fixed 293.15--393.15 K bounds, 300 K state scale, 100 K span, 0.97 holdup/packing void fraction",
+        "unsupported": "arbitrary packing void fractions, feed-seed mismatches, and temperature policies"
+      }
+    },
+    "message": null,
+    "phase": "global_solve",
+    "raw_output": null,
+    "transport": {
+      "cause": null,
+      "message": null,
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/benchmark_worker.py\", line 161, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/benchmark_worker.py\", line 72, in main\n    result = _run_conserved_column_in_process(resolve_column_config(payload[\"config\"]), checkpoint)\n  File \"/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/column.py\", line 1005, in _run_conserved_column_in_process\n    if homotopy_step is None:\n       ^^^^^^^^^^^^^\nNameError: name 'homotopy_step' is not defined\n",
+      "stdout": ""
+    },
+    "transport_failure": "nonzero_exit",
+    "worker_failure_kind": null
+  },
+  "formulation": "twelve_state_conserved",
+  "limitations": [
+    "exploratory numerical attempt only; no solution-verification, validation, or scientific-promotion claim",
+    "species mobilities are case-estimated and use the declared harmonic-mean closure",
+    "native vapor caloric reference remains provisional for thermal interpretation",
+    "physical certification is limited to the native grid and configured film quadrature",
+    "the case-declared 3C policy does not establish continuous-profile or peak behavior"
+  ],
+  "native_layout": "twelve_conserved",
+  "native_profile": {
+    "available": false,
+    "reason": "worker has not returned a native profile"
+  },
+  "numerical_acceptance": "not_evaluated",
+  "physical_acceptance": "not_evaluated",
+  "physical_certification": {
+    "accepted": null,
+    "reason": "worker has not returned a candidate"
+  },
+  "preset": "twelve_state_conserved",
+  "schema_version": 1,
+  "scientific_acceptance": "not_evaluated",
+  "solver": {
+    "method": "upwind",
+    "stages": {}
+  },
+  "source_identity": {
+    "commit": "3221748d53dbdc92297327428dac078c60ebdbb5",
+    "dirty": true,
+    "dirty_patch": "diff --git a/src/mea_absorption_column/BVP/Coupled_Column.py b/src/mea_absorption_column/BVP/Coupled_Column.py\nindex 7e8c565..500be1e 100644\n--- a/src/mea_absorption_column/BVP/Coupled_Column.py\n+++ b/src/mea_absorption_column/BVP/Coupled_Column.py\n@@ -20,7 +20,7 @@ from ..Transport.Transfer_Coefficients import (\n \n def build_column_balance_functions(\n     liquid, vapor, *, liquid_feed_mol_s, vapor_feed_mol_s,\n-    liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2, packing, liquid_density_source=\"solved_state\",\n+    liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2, packing, liquid_density_source=\"solved_state\", prescribed_closures=None,\n ):\n     \"\"\"Build native balance(state, transfer) and boundary(bottom, top).\n \n@@ -28,7 +28,7 @@ def build_column_balance_functions(\n     Correlation volume uses conserved mass flow, not true-species molar flow.\n \n     State: apparent Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O [mol/s], Tl, Tv [K],\n-    P [Pa], h_L [bed-volume fraction]. MEA/N2/O2 flows are fixed by feeds.\n+    P [Pa], h_L [bed-volume fraction]. Nonvolatile amine/inert flows are fixed by feeds.\n     Feed order and fixed species roles come from the liquid and vapor declarations.\n \n     Transfer: CO2 and water flux [mol/(m\u00b2 s)] and TOTAL interphase energy\n@@ -91,14 +91,19 @@ def build_column_balance_functions(\n         volume_l = ca.dot(liquid_flow, ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])) / mass_density_l\n     mass_density_v = rho_v * ca.dot(vapor_y, ca.DM(vapor.molar_masses))\n     ul, uv = volume_l / area_m2, volume_v / area_m2\n-    apparent_mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])\n-    mass_fraction = apparent_mass / ca.sum1(apparent_mass)\n-    mul, _ = viscosity(state[4], apparent_x[lp], mass_fraction[lf[roles[\"amines\"][0]]], mass_fraction[lf[roles[\"water\"]]])\n-    muv, _ = viscosity(state[5], vapor_y[vp], mass_fraction[lf[roles[\"amines\"][0]]], mass_fraction[lf[roles[\"water\"]]], phase=\"vapor\")\n-    sigma = surface_tension(state[4], apparent_x[lp], mass_fraction[lf[roles[\"amines\"][0]]], mass_fraction[lf[roles[\"water\"]]])\n-    _, area_per_length = interfacial_area_expression(mass_density_l, sigma, ul, area_m2, packing)\n-    raw_holdup, _ = holdup_expression(ul, mul, mass_density_l, packing)\n-    gradient = pressure_drop_expression(state[7], mass_density_l, mass_density_v, mul, muv, area_m2, ul, uv, packing)\n+    if prescribed_closures is not None:\n+        area_per_length = prescribed_closures['area_per_length']['value']\n+        raw_holdup = prescribed_closures['holdup']['value']\n+        gradient = prescribed_closures['pressure_gradient']['value']\n+    else:\n+        apparent_mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])\n+        mass_fraction = apparent_mass / ca.sum1(apparent_mass)\n+        mul, _ = viscosity(state[4], apparent_x[lp], mass_fraction[lf[roles[\"amines\"][0]]], mass_fraction[lf[roles[\"water\"]]])\n+        muv, _ = viscosity(state[5], vapor_y[vp], mass_fraction[lf[roles[\"amines\"][0]]], mass_fraction[lf[roles[\"water\"]]], phase=\"vapor\")\n+        sigma = surface_tension(state[4], apparent_x[lp], mass_fraction[lf[roles[\"amines\"][0]]], mass_fraction[lf[roles[\"water\"]]])\n+        _, area_per_length = interfacial_area_expression(mass_density_l, sigma, ul, area_m2, packing)\n+        raw_holdup, _ = holdup_expression(ul, mul, mass_density_l, packing)\n+        gradient = pressure_drop_expression(state[7], mass_density_l, mass_density_v, mul, muv, area_m2, ul, uv, packing)\n     conserved = ca.vertcat(state[:4], liquid_values[-1], vapor_values[-1], state[6])\n     exchange = transfer * area_per_length\n     sources = -ca.vertcat(exchange[0], exchange[1], exchange[0], exchange[1], exchange[2], exchange[2], gradient)\n@@ -127,7 +132,7 @@ def build_coupled_column_functions(\n     algebraic equations include raw holdup and all four interface equations.\n     Trapezoidal quadrature integrates from zero to the signed interface loading.\n \n-    species_diffusivities(T) must supply nine positive estimates [m\u00b2/s] in\n+    species_diffusivities(T) supplies one positive estimate per declared species [m\u00b2/s] in\n     native liquid species order; no missing ionic mobilities are fabricated.\n     Pair diffusivities use the existing harmonic-mean closure. Film thickness\n     is D_CO2/k_L using the existing bulk correlation on the apparent basis.\n@@ -176,23 +181,35 @@ def build_coupled_column_functions(\n                                          \"Column holdup must satisfy 0 < h_L < epsilon\")\n     conserved, sources, holdup, l, v, hydraulics = balance(bounded_bulk, state[8:11])\n     x, y = liquid_flow / ca.sum1(liquid_flow), vapor_flow / ca.sum1(vapor_flow)\n-    mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])\n-    w = mass / ca.sum1(mass)\n-    mul, _ = viscosity(state[4], x[lp], w[lp[1]], w[lp[2]])\n-    muv, species_viscosities = viscosity(state[5], y[vp], w[lp[1]], w[lp[2]], phase=\"vapor\")\n-    # Apparent concentration = apparent flow / actual reactive liquid volume.\n-    dl, dl_mea, dl_ion = diffusivity(state[4], x[lp], state[6], mul, ca.sum1(liquid_flow) / hydraulics[0])\n-    dl = dl.attachAssert(dl > 0., \"Bulk liquid CO2 diffusivity must be positive\")\n-    dv = diffusivity(state[5], y[vp], state[6], mul, l[li[\"molar-density\"]], phase=\"vapor\")\n-    kl = liquid_mass_transfer_expression(dl, mul, hydraulics[2], hydraulics[0] / area, packing)\n-    kg = ca.vertcat(*[gas_mass_transfer_expression(\n-        d, muv, hydraulics[3], hydraulics[1] / area, packing[1] - state[7], state[5], packing,\n-    ) for d in dv[:2]])\n-    thickness = film_thickness_multiplier * dl / kl\n-    _, cp, partial_h = vapor_caloric(ca.vertcat(state[5], state[6], vapor_flow))\n-    cp = cp.attachAssert(cp > 0., \"Native vapor Cp must be positive for heat transfer\")\n-    heat = heat_transfer_expression(state[6], kg[0],\n-        thermal_conductivity(state[5], y[vp], species_viscosities), cp, v[vi[\"molar-density\"]], dv[0])\n+    prescribed = column_inputs.get('prescribed_closures')\n+    if prescribed is not None:\n+        if co2_model != 'reactive_film':\n+            raise ValueError('Mathematical closures require equilibrium-manifold film')\n+        dl = ca.MX(prescribed['bulk_diffusivity']['value'])\n+        kl = prescribed['liquid_transfer']['value']\n+        kg = ca.DM.ones(2)*prescribed['gas_transfer']['value']\n+        thickness = film_thickness_multiplier*dl/kl\n+        _, cp, partial_h = vapor_caloric(ca.vertcat(state[5], state[6], vapor_flow))\n+        cp = cp.attachAssert(cp > 0., 'Mathematical vapor Cp must be positive')\n+        heat = prescribed['heat_transfer']['value']\n+    else:\n+        mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])\n+        w = mass / ca.sum1(mass)\n+        mul, _ = viscosity(state[4], x[lp], w[lp[1]], w[lp[2]])\n+        muv, species_viscosities = viscosity(state[5], y[vp], w[lp[1]], w[lp[2]], phase=\"vapor\")\n+        # Apparent concentration = apparent flow / actual reactive liquid volume.\n+        dl, dl_mea, dl_ion = diffusivity(state[4], x[lp], state[6], mul, ca.sum1(liquid_flow) / hydraulics[0])\n+        dl = dl.attachAssert(dl > 0., \"Bulk liquid CO2 diffusivity must be positive\")\n+        dv = diffusivity(state[5], y[vp], state[6], mul, l[li[\"molar-density\"]], phase=\"vapor\")\n+        kl = liquid_mass_transfer_expression(dl, mul, hydraulics[2], hydraulics[0] / area, packing)\n+        kg = ca.vertcat(*[gas_mass_transfer_expression(\n+            d, muv, hydraulics[3], hydraulics[1] / area, packing[1] - state[7], state[5], packing,\n+        ) for d in dv[:2]])\n+        thickness = film_thickness_multiplier * dl / kl\n+        _, cp, partial_h = vapor_caloric(ca.vertcat(state[5], state[6], vapor_flow))\n+        cp = cp.attachAssert(cp > 0., \"Native vapor Cp must be positive for heat transfer\")\n+        heat = heat_transfer_expression(state[6], kg[0],\n+            thermal_conductivity(state[5], y[vp], species_viscosities), cp, v[vi[\"molar-density\"]], dv[0])\n     conductances = []\n     if co2_model == \"reactive_film\":\n         integral, conductances, at_loading = equilibrium_manifold_conductance_integral(\ndiff --git a/src/mea_absorption_column/Thermodynamics/solvent_inputs.py b/src/mea_absorption_column/Thermodynamics/solvent_inputs.py\nindex 408771c..4eedff1 100644\n--- a/src/mea_absorption_column/Thermodynamics/solvent_inputs.py\n+++ b/src/mea_absorption_column/Thermodynamics/solvent_inputs.py\n@@ -61,6 +61,12 @@ class SolventInputs:\n             if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:\n                 raise SolventRefusal('Transport belongs to another thermodynamic input')\n             self.paths = {}\n+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'\n+            if self.mathematical:\n+                self.case_path = self.verify(self.transport['case'])\n+                self.case = read_json(self.case_path)\n+                self.validate_mathematical()\n+                return\n             for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):\n                 self.paths[key] = self.verify(self.thermo[key])\n             self.case_path = self.verify(self.transport['case'])\n@@ -249,6 +255,73 @@ class SolventInputs:\n                 raise SolventRefusal('Diffusivity coefficients must be finite positive')\n         self.constraints = constraints\n \n+    def validate_mathematical(self):\n+        \"\"\"Fixed S3 equations and complete inputs, without native parameter records.\"\"\"\n+        t, u = self.thermo, self.transport\n+        expected_t = set('equations evidence_type species_order liquid_feed_order vapor_feed_order roles components charge_numbers formulas atomic_masses_kg_mol reactions K_per_mol liquid_volume_m3 vapor_volume_m3 henry_pa_m3_mol gas_fugacity_pa_s_mol water_fugacity_pa capacity_j_mol_k reference_temperature_k'.split())\n+        expected_u = set('thermodynamic_input thermodynamic_input_sha256 case film hydraulic_density quadrature_points species_diffusivities stationary_film_components execution_policy closures unconsumed_properties'.split())\n+        if set(t) != expected_t or set(u) != expected_u or t['evidence_type'] != 'mathematical_numerical_verification_only':\n+            raise SolventRefusal('Unsupported mathematical equation or input fields')\n+        self.roles, self.species = t['roles'], t['species_order']\n+        self.feeds, self.gas = t['liquid_feed_order'], t['vapor_feed_order']\n+        if self.roles != dict(co2='C', water='W', amines=['A','B'], inert_gases=['I']):\n+            raise SolventRefusal('Mathematical role identities disagree')\n+        for ids, required in [(self.species, {'C','A','B','W','CA','CB'}),\n+                              (self.feeds, {'C','A','B','W'}), (self.gas, {'C','W','I'})]:\n+            if len(ids) != len(set(ids)) or set(ids) != required:\n+                raise SolventRefusal('Missing or duplicate mathematical species/feed IDs')\n+        rows = t['components']\n+        expected_rows = dict(co2=dict(C=1,CA=1,CB=1), water=dict(W=1),\n+                             **{'amine:A': dict(A=1,CA=1), 'amine:B': dict(B=1,CB=1)})\n+        self.components = {key: [row.get(s, 0) for s in self.species] for key, row in rows.items()}\n+        if rows != expected_rows or set(t['charge_numbers']) != set(self.species)|set(self.gas) or any(t['charge_numbers'].values()):\n+            raise SolventRefusal('Unsupported mathematical components or charges')\n+        atoms = t['atomic_masses_kg_mol']\n+        formulas = dict(C=dict(C=1,O=2), A=dict(C=1,H=5,N=1), B=dict(C=2,H=7,N=1),\n+                        W=dict(H=2,O=1), CA=dict(C=2,H=5,N=1,O=2), CB=dict(C=3,H=7,N=1,O=2), I=dict(N=2))\n+        if t['formulas'] != formulas or atoms != dict(C=.012011,H=.001008,N=.014007,O=.015999):\n+            raise SolventRefusal('Mathematical formula/mass convention disagrees')\n+        if t['reactions'] != [dict(C=-1,A=-1,CA=1), dict(C=-1,B=-1,CB=1)]:\n+            raise SolventRefusal('Mathematical reactions disagree')\n+        for key in expected_t - set('equations evidence_type species_order liquid_feed_order vapor_feed_order roles components charge_numbers formulas atomic_masses_kg_mol reactions'.split()):\n+            if isinstance(t[key], bool) or not isinstance(t[key], (float,int)) or not math.isfinite(t[key]) or t[key] <= 0:\n+                raise SolventRefusal(f'Invalid mathematical constant: {key}')\n+        if (u['film'] != 'equilibrium_manifold' or u['hydraulic_density'] != 'solved_state' or\n+                set(u['species_diffusivities']) != set(self.species)):\n+            raise SolventRefusal('Missing mathematical diffusivity or incompatible film/density')\n+        for row in u['species_diffusivities'].values():\n+            if set(row) != {'constant_m2_s'} or not math.isfinite(row['constant_m2_s']) or row['constant_m2_s'] <= 0:\n+                raise SolventRefusal('Mathematical diffusivity must be finite positive')\n+        stationary = u['stationary_film_components']\n+        if len(stationary) != 3 or set(stationary) != {'amine:A','amine:B','water'}:\n+            raise SolventRefusal('Stationary rows must be independent and complete')\n+        self.constraints = np.array([self.components[c] for c in stationary])\n+        normalized = self.constraints / np.linalg.norm(self.constraints, axis=1)[:,None]\n+        if np.linalg.matrix_rank(normalized-normalized.mean(axis=1,keepdims=True)) != len(stationary):\n+            raise SolventRefusal('Film constraints must be independent modulo total flux')\n+        unused = dict(liquid_viscosity=dict(value=.001,unit='Pa s'),gas_viscosity=dict(value=1e-5,unit='Pa s'),\n+                      surface_tension=dict(value=.05,unit='N/m'),gas_conductivity=dict(value=.02,unit='W/(m K)'))\n+        if u['unconsumed_properties'] != dict(status='not_consumed_by_prescribed_closures',values=unused):\n+            raise SolventRefusal('Unsupported unconsumed mathematical property declarations')\n+        units = dict(area_per_length='m2/m', holdup='1', pressure_gradient='Pa/m', liquid_transfer='m/s',\n+                     gas_transfer='mol/(m2 s Pa)', heat_transfer='W/(m2 K)', bulk_diffusivity='m2/s')\n+        if set(u['closures']) != set(units):\n+            raise SolventRefusal('Incomplete prescribed mathematical closures')\n+        for key, unit in units.items():\n+            row = u['closures'][key]\n+            if (set(row) != {'value','unit'} or row['unit'] != unit or isinstance(row['value'],bool) or\n+                    not isinstance(row['value'], (int,float)) or not math.isfinite(row['value']) or row['value'] <= 0):\n+                raise SolventRefusal(f'Invalid mathematical closure: {key}')\n+        if u['closures']['holdup']['value'] >= .97:\n+            raise SolventRefusal('Mathematical holdup must be inside packing void')\n+        policy = u['execution_policy']\n+        expected_policy = dict(id='retained_3c_only',temperature_bounds_k=[293.15,393.15],void_fraction=.97,\n+            temperature_scale_k=300.,temperature_span_k=100.,initial_bulk_state=self.case['initial_bulk_state'],\n+            initial_interface_bracket=self.case['initial_interface_bracket'],physical_residual_tolerance=1e-9,branch_policy={})\n+        if (policy != expected_policy or self.case['physical_residual_tolerance'] != 1e-9 or\n+                isinstance(u['quadrature_points'],bool) or not isinstance(u['quadrature_points'],int) or u['quadrature_points'] < 2):\n+            raise SolventRefusal('Unsupported mathematical initialization/numerical policy')\n+\n     def diffusivities(self, temperature):\n         import casadi as ca\n         values = []\ndiff --git a/src/mea_absorption_column/column.py b/src/mea_absorption_column/column.py\nindex baef0e0..a6687f3 100644\n--- a/src/mea_absorption_column/column.py\n+++ b/src/mea_absorption_column/column.py\n@@ -343,11 +343,18 @@ def _direct_physical_inputs(payload: Mapping[str, Any], config: ColumnConfig):\n     vp = [solvent.gas.index(s) for s in (solvent.roles[\"co2\"], solvent.roles[\"water\"], *solvent.roles[\"inert_gases\"])] if solvent else [0, 1, 2, 3]\n     l, v = liquid[lp], vapor[vp]\n     total_vapor = float(vapor.sum())\n+    mathematical = solvent is not None and solvent.mathematical\n+    if mathematical:\n+        amine = sum(liquid[solvent.feeds.index(s)] for s in solvent.roles['amines'])\n+        masses = payload['liquid_molar_masses_kg_mol']\n+        amine_mass = sum(liquid[solvent.feeds.index(s)]*masses[solvent.feeds.index(s)] for s in solvent.roles['amines'])\n+        water_index = solvent.feeds.index(solvent.roles['water'])\n+        water_mass = liquid[water_index]*masses[water_index]\n     raw = np.asarray([\n         float(liquid.sum()) / total_vapor,\n         total_vapor,\n-        float(l[0] / l[1]),\n-        float(l[1] * 0.061084 / (l[1] * 0.061084 + l[2] * 0.01801528)),\n+        float(l[0] / amine) if mathematical else float(l[0] / l[1]),\n+        float(amine_mass/(amine_mass+water_mass)) if mathematical else float(l[1] * 0.061084 / (l[1] * 0.061084 + l[2] * 0.01801528)),\n         float(v[0] / total_vapor),\n         float(values[\"liquid_temperature_k\"]),\n         float(values[\"vapor_temperature_k\"]),\n@@ -377,6 +384,11 @@ def _direct_physical_inputs(payload: Mapping[str, Any], config: ColumnConfig):\n         \"gas_flow_basis\": config.case.gas_flow_basis,\n         \"physical_input_basis\": \"direct_canonical_SI\",\n     }\n+    if mathematical:\n+        metadata.update(total_amine_flow_mol_s=amine, loading_mol_co2_per_mol_total_amine=float(raw[2]),\n+                        unloaded_total_amine_mass_fraction=float(raw[3]),\n+                        unloaded_amine_mass_fractions={s: liquid[solvent.feeds.index(s)]*masses[solvent.feeds.index(s)]/(amine_mass+water_mass)\n+                                                       for s in solvent.roles['amines']})\n     return parameters, raw, metadata\n \n \n@@ -475,20 +487,25 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str\n     policy = resolved_inputs.get(\"conserved_policy\")\n     if policy is None:\n         raise ConfigurationError(\"Resolved conserved inputs lack their case-owned policy\")\n-    dataset = _dependency_path(config.dependencies.dataset)\n-    liquid_reference_path = _dependency_path(config.dependencies.thermal_reference)\n     solvent = config.solvent\n-    domain = solvent.transport[\"domain\"] if solvent else None\n-    liquid = engine_liquid(dataset, liquid_reference_path, \"column_liquid\", loading_policy=policy,\n-                           declarations=solvent.thermo if solvent else None,\n-                           reaction_path=solvent.paths[\"reactions\"] if solvent else None, domain=domain,\n-                           parameter_path=solvent.paths[\"parameters\"] if solvent else None)\n-    if solvent:\n-        liquid.film_constraints = solvent.constraints\n-    neutral_parameters = _dependency_path(config.dependencies.references[0])\n-    neutral_reference_path = _dependency_path(config.dependencies.references[1])\n-    vapor = engine_vapor(neutral_parameters, neutral_reference_path, \"column_vapor\",\n-                         declarations=solvent.thermo if solvent else None, domain=domain)\n+    domain = solvent.transport.get(\"domain\") if solvent else None\n+    mathematical = solvent is not None and solvent.mathematical\n+    if mathematical:\n+        from .Thermodynamics.manufactured_neutral import ManufacturedColumnPhase\n+        liquid, vapor = (ManufacturedColumnPhase(solvent, kind) for kind in ('liquid','vapor'))\n+    else:\n+        dataset = _dependency_path(config.dependencies.dataset)\n+        liquid_reference_path = _dependency_path(config.dependencies.thermal_reference)\n+        liquid = engine_liquid(dataset, liquid_reference_path, \"column_liquid\", loading_policy=policy,\n+                               declarations=solvent.thermo if solvent else None,\n+                               reaction_path=solvent.paths[\"reactions\"] if solvent else None, domain=domain,\n+                               parameter_path=solvent.paths[\"parameters\"] if solvent else None)\n+        if solvent:\n+            liquid.film_constraints = solvent.constraints\n+        neutral_parameters = _dependency_path(config.dependencies.references[0])\n+        neutral_reference_path = _dependency_path(config.dependencies.references[1])\n+        vapor = engine_vapor(neutral_parameters, neutral_reference_path, \"column_vapor\",\n+                             declarations=solvent.thermo if solvent else None, domain=domain)\n     diffusion = policy[\"species_diffusivity_model\"]\n \n     def species_diffusivities(temperature):\n@@ -506,6 +523,7 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str\n         vapor,\n         species_diffusivities=solvent.diffusivities if solvent else species_diffusivities,\n         quadrature_points=settings[\"quadrature_points\"],\n+        **({\"prescribed_closures\": solvent.transport[\"closures\"]} if mathematical else {}),\n         liquid_density_source=settings.get(\"liquid_density_source\", \"solved_state\"),\n         co2_model={\n             \"equilibrium_manifold\": \"reactive_film\",\n@@ -534,7 +552,7 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str\n         \"height_m\": float(height),\n         \"coordinate\": _column_grid(float(height), settings[\"nodes\"], settings.get(\"end_clustering\")),\n         \"diffusion_model\": diffusion,\n-        \"asset_paths\": [str(dataset), str(liquid_reference_path), str(neutral_parameters), str(neutral_reference_path)],\n+        \"asset_paths\": list(solvent.hashes) if mathematical else [str(dataset), str(liquid_reference_path), str(neutral_parameters), str(neutral_reference_path)],\n     }\n \n \n@@ -575,6 +593,7 @@ def _prepare_conserved_column_in_process(config: ColumnConfig) -> dict[str, Any]\n         elif asset.is_dir():\n             assets[path] = _digest({item.relative_to(asset).as_posix(): hashlib.sha256(item.read_bytes()).hexdigest()\n                                     for item in sorted(asset.rglob(\"*\")) if item.is_file()})\n+    mathematical = config.solvent is not None and config.solvent.mathematical\n     return {\n         \"preset\": config.preset,\n         \"source\": config.case.source,\n@@ -593,13 +612,14 @@ def _prepare_conserved_column_in_process(config: ColumnConfig) -> dict[str, Any]\n         },\n         \"assembly\": assembly,\n         \"capabilities\": {\n-            \"a1_equilibrium_values\": \"required_on_evaluation\",\n+            \"evidence_type\": \"mathematical_numerical_verification_only\" if mathematical else \"native_Engine_evaluation\",\n+            \"a1_equilibrium_values\": \"analytic_mathematical\" if mathematical else \"required_on_evaluation\",\n             \"a2_equilibrium_actions\": (\n-                \"required_on_outer_derivative\"\n+                \"analytic_mathematical_first_and_second\" if mathematical else \"required_on_outer_derivative\"\n                 if config.model.film_model == \"equilibrium_manifold\"\n                 else \"not_required_by_selected_film\"\n             ),\n-            \"caloric_actions\": \"required_on_outer_derivative\",\n+            \"caloric_actions\": \"analytic_mathematical_first_and_second\" if mathematical else \"required_on_outer_derivative\",\n             \"finite_difference_fallback\": False,\n         },\n     }\n@@ -798,6 +818,77 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):\n     return initial, provenance\n \n \n+def _initialize_conserved_column(config, prepared, bulk, bracket, tolerance, checkpoint):\n+    \"\"\"Feed-seeded algebraic state and scales consumed by the column solve.\"\"\"\n+    from scipy.optimize import brentq\n+    payload = _physical_payload(config)\n+    assembly, inputs = prepared['assembly'], prepared['resolved_inputs']\n+    settings = dict(config.numerics.as_dict()['solver_settings'])\n+    liquid, vapor = assembly['liquid'], assembly['vapor']\n+    balance, node, boundary, diagnostics = (assembly[k] for k in ('balance','node','boundary','diagnostics'))\n+    liquid_feed, vapor_feed = (np.asarray(v, dtype=float) for v in inputs['parameters'][:2])\n+    bulk = np.asarray(bulk, dtype=float).copy()\n+    np.testing.assert_array_equal([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids], payload[\"liquid_molar_masses_kg_mol\"])\n+    np.testing.assert_array_equal(vapor.molar_masses, payload[\"vapor_molar_masses_kg_mol\"])\n+    bulk[7] -= float(balance(bulk, [0.0, 0.0, 0.0])[2])\n+    gas = np.asarray(balance(bulk, [0.0, 0.0, 0.0])[4]).ravel()\n+    liquid_water = liquid.output_index[f\"fugacity:{liquid.roles['water']}\"]\n+    gas_flux = [vapor.output_index[f\"fugacity:{vapor.roles[r]}\"] for r in (\"co2\", \"water\")]\n+    evaluations = []\n+\n+    def interface_residual(loading):\n+        value = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])\n+        residual = float(value[1] / value[2] - value[3][0] * (gas[gas_flux[0]] - value[7]))\n+        evaluations.append({\"loading\": float(loading), \"original_co2_residual\": residual})\n+        checkpoint.update(stage=\"interface_initialization\", initialization_evaluations=evaluations)\n+        return residual\n+\n+    loading, root = brentq(interface_residual, *bracket, full_output=True, disp=False)\n+    diagnostic = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])\n+    point = np.r_[bulk, float(diagnostic[1] / diagnostic[2]),\n+                  float(diagnostic[3][1] * (gas[gas_flux[1]] - balance(bulk, [0.0, 0.0, 0.0])[3][liquid_water])), 0.0, loading]\n+    point[10] = float(diagnostic[4]) * (bulk[5] - bulk[4]) + point[8:10] @ np.asarray(diagnostic[6]).ravel()\n+    height, span = assembly[\"height_m\"], 393.15 - 293.15\n+    capacity = np.array([\n+        liquid.enthalpy_temperature_derivative(np.r_[bulk[4], bulk[6], liquid_feed]),\n+        vapor.enthalpy_temperature_derivative(np.r_[bulk[5], bulk[6], vapor_feed]),\n+    ])\n+    if np.any(~np.isfinite(capacity)) or np.any(capacity <= 0):\n+        raise RuntimeError(\"Native capacity scales must be finite positive\")\n+    flux_scale = np.asarray(diagnostic[3]).ravel() * gas[gas_flux]\n+    heat_scale = float(diagnostic[4]) * span + np.abs(np.asarray(diagnostic[6]).ravel()) @ flux_scale\n+    state_scale = np.r_[bulk[:4], 300.0, 300.0, bulk[6], .97, flux_scale, heat_scale, 1.0]\n+    balance_scale = np.r_[bulk[:4] / height, capacity * span / height, bulk[6] / height]\n+    algebraic_scale = np.r_[.97, flux_scale[0] * float(diagnostic[2]), flux_scale, heat_scale]\n+    boundary_scale = np.r_[bulk[:4], span, span, bulk[6]]\n+    if any(np.any(~np.isfinite(scale)) or np.any(scale <= 0) for scale in (state_scale, balance_scale, algebraic_scale, boundary_scale)):\n+        raise RuntimeError(\"Conserved state, balance, algebraic and boundary scales must be finite positive\")\n+    margin = .97 * np.finfo(float).eps\n+    lower = np.r_[[0.0] * 4, 293.15, 293.15, 1.0, margin, [-np.inf] * 4]\n+    upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97-margin, [np.inf] * 4]\n+    algebraic = np.asarray(node(0.0, point)[2]).ravel()\n+    initialized = bool(root.converged and np.max(abs(algebraic / algebraic_scale)) <= tolerance)\n+    checkpoint.update(stage=\"initialized\", initialization={\"state\": point, \"algebraic_residual\": algebraic, \"accepted\": initialized},\n+                      scaling={\"state_scale\": state_scale, \"balance_scale\": balance_scale, \"algebraic_scale\": algebraic_scale,\n+                               \"boundary_scale\": boundary_scale, \"capacity_rates_w_k\": capacity,\n+                               \"policy\": \"case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds\"})\n+    if not initialized:\n+        raise RuntimeError(\"Full original algebraic initialization check failed\")\n+    grid = assembly[\"coordinate\"]\n+    initial = np.tile(point[:, None], (1, len(grid)))\n+    retained = config.initialization.as_dict()[\"values\"].get(\"retained_profile\")\n+    homotopy_step = settings.get(\"source_homotopy_initial_step\")\n+    if retained is not None and homotopy_step is not None:\n+        raise ConfigurationError(\"Retained profiles cannot replace the exact source-homotopy start\")\n+    if retained is not None:\n+        initial, provenance = _retained_initial_profile(\n+            retained, config, prepared, checkpoint[\"scaling\"], lower, upper,\n+        )\n+        checkpoint.update(initialization={**checkpoint[\"initialization\"], \"retained_profile\": provenance})\n+    checkpoint.update(stage=\"global_solve\", initial_profile=initial)\n+    return initial, lower, upper\n+\n+\n def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[str, Any]:\n     \"\"\"Run the case-owned twelve-state collocation path in the verified worker.\"\"\"\n     if config.numerics.method not in {\"trapezoidal\", \"central\", \"upwind\"}:\n@@ -805,8 +896,6 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s\n             f\"Conserved method {config.numerics.method!r} is configured but unavailable: \"\n             \"the reduced-method controls have not been migrated to this execution boundary\"\n         )\n-    from scipy.optimize import brentq\n-\n     payload = _physical_payload(config)\n     physical = payload[\"physical_inputs\"] if payload is not None else None\n     if not isinstance(physical, Mapping):\n@@ -835,7 +924,7 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s\n                           physical.get(\"liquid_temperature_k\"), physical.get(\"vapor_temperature_k\"),\n                           physical.get(\"bottom_pressure_pa\")]\n     packing = np.asarray(physical.get(\"packing\"), dtype=float)\n-    if (liquid_feed.shape != (3,) or vapor_feed.shape != (4,) or packing.shape != (7,)\n+    if (liquid_feed.shape != (len(solvent.feeds) if solvent else 3,) or vapor_feed.shape != (len(solvent.gas) if solvent else 4,) or packing.shape != (7,)\n             or not np.allclose(bulk[:7], expected_seed, rtol=0.0, atol=1e-12)\n             or packing[1] != .97 or not np.all((293.15 <= bulk[4:6]) & (bulk[4:6] <= 393.15))):\n         raise ConfigurationError(\n@@ -880,73 +969,27 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s\n                                     \"message\": accepted[1].message}\n                 checkpoint.update(evaluation_failure={\"kind\": getattr(error, \"kind\", \"native_evaluation_failure\"),\n                                                       \"message\": str(error), \"inputs\": [str(v) for v in args],\n-                                                      \"last_accepted_native_state\": native_state})\n+                                                      \"last_accepted_native_state\": native_state} if not (config.solvent and config.solvent.mathematical) else\n+                                  {\"kind\": getattr(error, \"kind\", \"mathematical_evaluation_failure\"),\n+                                   \"message\": str(error), \"inputs\": [str(v) for v in args]})\n                 raise\n             finally:\n                 counts[\"wall_s\"] += time.perf_counter() - started\n         setattr(owner, name, observed)\n \n-    instrument(liquid, \"solve\", \"liquid_solve\")\n+    mathematical = solvent is not None and solvent.mathematical\n+    if not mathematical:\n+        instrument(liquid, \"solve\", \"liquid_solve\")\n     instrument(liquid, \"actions\", \"liquid_actions\")\n     instrument(vapor, \"actions\", \"vapor_actions\")\n-    np.testing.assert_array_equal([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids], payload[\"liquid_molar_masses_kg_mol\"])\n-    np.testing.assert_array_equal(vapor.molar_masses, payload[\"vapor_molar_masses_kg_mol\"])\n-    bulk[7] -= float(balance(bulk, [0.0, 0.0, 0.0])[2])\n-    gas = np.asarray(balance(bulk, [0.0, 0.0, 0.0])[4]).ravel()\n-    liquid_water = liquid.output_index[f\"fugacity:{liquid.roles['water']}\"]\n-    gas_flux = [vapor.output_index[f\"fugacity:{vapor.roles[r]}\"] for r in (\"co2\", \"water\")]\n-    evaluations = []\n-\n-    def interface_residual(loading):\n-        value = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])\n-        residual = float(value[1] / value[2] - value[3][0] * (gas[gas_flux[0]] - value[7]))\n-        evaluations.append({\"loading\": float(loading), \"original_co2_residual\": residual})\n-        checkpoint.update(stage=\"interface_initialization\", initialization_evaluations=evaluations)\n-        return residual\n-\n-    loading, root = brentq(interface_residual, *bracket, full_output=True, disp=False)\n-    diagnostic = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])\n-    point = np.r_[bulk, float(diagnostic[1] / diagnostic[2]),\n-                  float(diagnostic[3][1] * (gas[gas_flux[1]] - balance(bulk, [0.0, 0.0, 0.0])[3][liquid_water])), 0.0, loading]\n-    point[10] = float(diagnostic[4]) * (bulk[5] - bulk[4]) + point[8:10] @ np.asarray(diagnostic[6]).ravel()\n-    height, span = assembly[\"height_m\"], 393.15 - 293.15\n-    capacity = np.array([\n-        liquid.enthalpy_temperature_derivative(np.r_[bulk[4], bulk[6], liquid_feed]),\n-        vapor.enthalpy_temperature_derivative(np.r_[bulk[5], bulk[6], vapor_feed]),\n-    ])\n-    if np.any(~np.isfinite(capacity)) or np.any(capacity <= 0):\n-        raise RuntimeError(\"Native capacity scales must be finite positive\")\n-    flux_scale = np.asarray(diagnostic[3]).ravel() * gas[gas_flux]\n-    heat_scale = float(diagnostic[4]) * span + np.abs(np.asarray(diagnostic[6]).ravel()) @ flux_scale\n-    state_scale = np.r_[bulk[:4], 300.0, 300.0, bulk[6], .97, flux_scale, heat_scale, 1.0]\n-    balance_scale = np.r_[bulk[:4] / height, capacity * span / height, bulk[6] / height]\n-    algebraic_scale = np.r_[.97, flux_scale[0] * float(diagnostic[2]), flux_scale, heat_scale]\n-    boundary_scale = np.r_[bulk[:4], span, span, bulk[6]]\n-    if any(np.any(~np.isfinite(scale)) or np.any(scale <= 0) for scale in (state_scale, balance_scale, algebraic_scale, boundary_scale)):\n-        raise RuntimeError(\"Conserved state, balance, algebraic and boundary scales must be finite positive\")\n-    margin = .97 * np.finfo(float).eps\n-    lower = np.r_[[0.0] * 4, 293.15, 293.15, 1.0, margin, [-np.inf] * 4]\n-    upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97-margin, [np.inf] * 4]\n-    algebraic = np.asarray(node(0.0, point)[2]).ravel()\n-    initialized = bool(root.converged and np.max(abs(algebraic / algebraic_scale)) <= tolerance)\n-    checkpoint.update(stage=\"initialized\", initialization={\"state\": point, \"algebraic_residual\": algebraic, \"accepted\": initialized},\n-                      scaling={\"state_scale\": state_scale, \"balance_scale\": balance_scale, \"algebraic_scale\": algebraic_scale,\n-                               \"boundary_scale\": boundary_scale, \"capacity_rates_w_k\": capacity,\n-                               \"policy\": \"case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds\"})\n-    if not initialized:\n-        raise RuntimeError(\"Full original algebraic initialization check failed\")\n-    grid = assembly[\"coordinate\"]\n-    initial = np.tile(point[:, None], (1, len(grid)))\n-    retained = config.initialization.as_dict()[\"values\"].get(\"retained_profile\")\n-    homotopy_step = settings.get(\"source_homotopy_initial_step\")\n-    if retained is not None and homotopy_step is not None:\n-        raise ConfigurationError(\"Retained profiles cannot replace the exact source-homotopy start\")\n-    if retained is not None:\n-        initial, provenance = _retained_initial_profile(\n-            retained, config, prepared, checkpoint[\"scaling\"], lower, upper,\n-        )\n-        checkpoint.update(initialization={**checkpoint[\"initialization\"], \"retained_profile\": provenance})\n-    checkpoint.update(stage=\"global_solve\", initial_profile=initial)\n+    if mathematical:\n+        checkpoint['mathematical_calls'], checkpoint['native_calls'] = checkpoint['native_calls'], {}\n+    initial, lower, upper = _initialize_conserved_column(config, prepared, bulk, bracket, tolerance, checkpoint)\n+    state_scale, balance_scale, algebraic_scale, boundary_scale = (checkpoint['scaling'][k] for k in\n+        ('state_scale','balance_scale','algebraic_scale','boundary_scale'))\n+    algebraic = checkpoint['initialization']['algebraic_residual']\n+    height = assembly['height_m']\n+    grid = assembly['coordinate']\n     from .BVP.Methods.Casadi_Collocation import solve_conservative_collocation\n     def solve(profile, multiplier=None):\n         return solve_conservative_collocation(\n@@ -1039,6 +1082,8 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s\n                 ),\n                 \"reason\": \"Subset checks cannot establish physical certification\"}\n     result_record = {key: value for key, value in prepared.items() if key != \"assembly\"}\n+    if mathematical:\n+        result_record['mathematical_calls'] = checkpoint['mathematical_calls']\n     result_record.update(stage=\"finished\", execution_status=\"completed\", initialization=checkpoint[\"initialization\"],\n                          scaling=checkpoint[\"scaling\"], initial_profile=checkpoint[\"initial_profile\"], result=result,\n                          physical_certification=physical, native_calls=checkpoint[\"native_calls\"],\n@@ -1173,6 +1218,9 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:\n         ],\n         \"failure\": None,\n     }\n+    if config.solvent and config.solvent.mathematical:\n+        base['limitations'] = ['Mathematical numerical verification only; no physical validation or real second-solvent prediction',\n+                               'Prescribed mathematical closures and one-second reference amounts; immutable Engine identity identifies environment only']\n     _record(output_dir, \"resolved_config.json\", config.as_dict())\n     _record(output_dir, \"attempt.json\", base)\n     try:\n@@ -1198,6 +1246,7 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:\n             \"result\": prepared.get(\"result\"),\n             \"initialization\": prepared.get(\"initialization\"), \"scaling\": prepared.get(\"scaling\"),\n             \"initial_profile\": prepared.get(\"initial_profile\"), \"native_calls\": prepared.get(\"native_calls\"),\n+            \"mathematical_calls\": prepared.get(\"mathematical_calls\"),\n             \"physical_certification\": prepared.get(\"physical_certification\"),\n             \"diagnostics\": {\"assembly\": \"complete\", \"solver_failure\": prepared.get(\"result\", {}).get(\"failure\"),\n                             \"physical_certification\": prepared.get(\"physical_certification\")},\ndiff --git a/src/mea_absorption_column/config/column.py b/src/mea_absorption_column/config/column.py\nindex 4dfb1ba..93fca1f 100644\n--- a/src/mea_absorption_column/config/column.py\n+++ b/src/mea_absorption_column/config/column.py\n@@ -635,15 +635,23 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:\n         from ..Thermodynamics.solvent_inputs import SolventInputs, SolventRefusal\n         solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)\n         case_values.setdefault('physical_input_file', str(solvent.case_path))\n-        selected = {'dataset': solvent.paths['parameters'].parent, 'thermal_reference': solvent.paths['calorics']}\n-        if any(getattr(dependencies, k) and Path(getattr(dependencies, k)).resolve() != v.resolve() for k, v in selected.items()):\n-            raise SolventRefusal('Conflicting thermodynamic asset selections')\n-        hashes = tuple(sorted(solvent.hashes.items()))\n-        if dependencies.input_hashes and dependencies.input_hashes != hashes:\n-            raise SolventRefusal(\"Resolved solvent inputs changed before execution\")\n-        dependencies = replace(dependencies, input_hashes=hashes, dataset=str(solvent.paths[\"parameters\"].parent),\n-                               thermal_reference=str(solvent.paths[\"calorics\"]),\n-                               references=(str(solvent.paths[\"gas_parameters\"]), str(solvent.paths[\"calorics\"])))\n+        if solvent.mathematical:\n+            if any((dependencies.dataset, dependencies.thermal_reference, dependencies.references)):\n+                raise SolventRefusal('Mathematical phase cannot consume native parameter/caloric dependencies')\n+            hashes = tuple(sorted(solvent.hashes.items()))\n+            if dependencies.input_hashes and dependencies.input_hashes != hashes:\n+                raise SolventRefusal('Resolved mathematical inputs changed before execution')\n+            dependencies = replace(dependencies, input_hashes=hashes)\n+        else:\n+            selected = {'dataset': solvent.paths['parameters'].parent, 'thermal_reference': solvent.paths['calorics']}\n+            if any(getattr(dependencies, k) and Path(getattr(dependencies, k)).resolve() != v.resolve() for k, v in selected.items()):\n+                raise SolventRefusal('Conflicting thermodynamic asset selections')\n+            hashes = tuple(sorted(solvent.hashes.items()))\n+            if dependencies.input_hashes and dependencies.input_hashes != hashes:\n+                raise SolventRefusal(\"Resolved solvent inputs changed before execution\")\n+            dependencies = replace(dependencies, input_hashes=hashes, dataset=str(solvent.paths[\"parameters\"].parent),\n+                                   thermal_reference=str(solvent.paths[\"calorics\"]),\n+                                   references=(str(solvent.paths[\"gas_parameters\"]), str(solvent.paths[\"calorics\"])))\n     case = _case(case_values)\n     if preset == TWELVE_PRESET:\n         film_model = model_values.get(\"film_model\", \"equilibrium_manifold\")\n@@ -656,27 +664,33 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:\n             raise ConfigurationError(\n                 \"enhancement_reference does not consume dependencies.mobility_law\"\n             )\n-        dependencies = replace(\n-            dependencies,\n-            dataset=dependencies.dataset or _REACTIVE_DATASET,\n-            mobility_law=(dependencies.mobility_law or \"harmonic_mean_onsager_v1\")\n-            if film_model == \"equilibrium_manifold\" else None,\n-            thermal_reference=dependencies.thermal_reference or f\"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json\",\n-            references=dependencies.references or (\n-                f\"{_NEUTRAL_VAPOR_DATASET}/parameters.json\",\n-                f\"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json\",\n-            ),\n-        )\n-        if film_model == \"equilibrium_manifold\" and dependencies.mobility_law != \"harmonic_mean_onsager_v1\":\n-            raise ConfigurationError(\"twelve_state_conserved requires mobility_law='harmonic_mean_onsager_v1'\")\n-        if len(dependencies.references) != 2:\n-            raise ConfigurationError(\"twelve_state_conserved requires neutral-vapor parameter and reference assets\")\n+        mathematical = solvent is not None and solvent.mathematical\n+        if mathematical:\n+            if film_model != 'equilibrium_manifold' or dependencies.mobility_law not in (None,'harmonic_mean_onsager_v1'):\n+                raise SolventRefusal('Mathematical phase requires the declared harmonic-mean film')\n+            dependencies = replace(dependencies, mobility_law='harmonic_mean_onsager_v1')\n+        else:\n+            dependencies = replace(\n+                dependencies,\n+                dataset=dependencies.dataset or _REACTIVE_DATASET,\n+                mobility_law=(dependencies.mobility_law or \"harmonic_mean_onsager_v1\")\n+                if film_model == \"equilibrium_manifold\" else None,\n+                thermal_reference=dependencies.thermal_reference or f\"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json\",\n+                references=dependencies.references or (\n+                    f\"{_NEUTRAL_VAPOR_DATASET}/parameters.json\",\n+                    f\"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json\",\n+                ),\n+            )\n+            if film_model == \"equilibrium_manifold\" and dependencies.mobility_law != \"harmonic_mean_onsager_v1\":\n+                raise ConfigurationError(\"twelve_state_conserved requires mobility_law='harmonic_mean_onsager_v1'\")\n+            if len(dependencies.references) != 2:\n+                raise ConfigurationError(\"twelve_state_conserved requires neutral-vapor parameter and reference assets\")\n         expected = {\n             \"formulation\": \"twelve_state_conserved\",\n-            \"thermo_model\": \"reactive_epcsaft\",\n+            \"thermo_model\": \"mathematical_neutral\" if mathematical else \"reactive_epcsaft\",\n             \"film_model\": film_model,\n-            \"energy_model\": \"native_total_enthalpy\",\n-            \"pressure_model\": \"hydraulic_pressure_drop\",\n+            \"energy_model\": \"mathematical_total_enthalpy\" if mathematical else \"native_total_enthalpy\",\n+            \"pressure_model\": \"prescribed_gradient\" if mathematical else \"hydraulic_pressure_drop\",\n             \"layout\": \"twelve_conserved\",\n             \"coordinate\": \"physical_height\",\n         }\ndiff --git a/src/mea_absorption_column/Thermodynamics/manufactured_neutral.py b/src/mea_absorption_column/Thermodynamics/manufactured_neutral.py\nnew file mode 100644\nindex 0000000..5830647\n--- /dev/null\n+++ b/src/mea_absorption_column/Thermodynamics/manufactured_neutral.py\n@@ -0,0 +1,129 @@\n+\"\"\"Mathematical neutral equilibrium and column equations: #85 comment 6510746468.\n+\n+One-second reference amounts map input mol/s to mol and output J to W.\n+These equations supply numerical verification, not an Engine thermodynamic model.\n+\"\"\"\n+import casadi as ca\n+import numpy as np\n+\n+from .casadi_reactive import ActionCallback\n+from .solvent_inputs import StateDomainFailure\n+\n+\n+def neutral_amounts(f, a, b, water, k):\n+    coefficient = 1 + k * (a + b - f)\n+    s = 2 * f / (coefficient + ca.sqrt(coefficient**2 + 4*k*f))\n+    return dict(C=s, A=a/(1+k*s), B=b/(1+k*s), W=water,\n+                CA=a*k*s/(1+k*s), CB=b*k*s/(1+k*s))\n+\n+\n+class ManufacturedNeutralPhase:\n+    \"\"\"Fixed-volume mathematical equilibrium; no Engine mixture or physical solvent.\"\"\"\n+    def __init__(self, declaration):\n+        self.d = declaration\n+        self.name = 'manufactured_neutral'\n+        self.component_ids, self.feed_ids = declaration['species_order'], declaration['feed_order']\n+        self.co2_input = 2 + self.feed_ids.index('C_total')\n+        self.log_activities = tuple(range(len(self.component_ids)))\n+        self.u = ca.MX.sym('u', 2 + len(self.feed_ids))\n+        feed = dict(zip(self.feed_ids, ca.vertsplit(self.u[2:])))\n+        k, volume = declaration['K_per_mol'], declaration['volume_m3']\n+        f, a, b = (feed[s] for s in ('C_total', 'A_total', 'B_total'))\n+        amounts = neutral_amounts(f, a, b, feed['W_total'], k)\n+        n = ca.vertcat(*[amounts[s] for s in self.component_ids])\n+        mu = ca.log(n) - ca.DM([np.log(k) if s in ('CA', 'CB') else 0. for s in self.component_ids])\n+        self.chemical_potentials = mu\n+        self.action_functions = {}\n+        self.callback = ActionCallback(self.name + '_values', self, self.log_activities)\n+\n+    def __call__(self, inputs):\n+        # Values and slopes both traverse the existing exact-action callback interface.\n+        mu = self.callback(inputs)\n+        n = ca.exp(mu + ca.DM([np.log(self.d['K_per_mol']) if s in ('CA', 'CB') else 0.\n+                              for s in self.component_ids]))\n+        return ca.vertcat(n, ca.sum1(n)/self.d['volume_m3'],\n+                          self.d['henry_pa_m3_mol']*n[self.component_ids.index('C')]/self.d['volume_m3'])\n+\n+    def actions(self, inputs, observables, directions=()):\n+        if directions not in self.action_functions:\n+            expr = self.chemical_potentials\n+            for direction in directions:\n+                expr = ca.jacobian(expr, self.u)[:, direction]\n+            self.action_functions[directions] = ca.Function('analytic_action', [self.u], [expr])\n+        return np.asarray(self.action_functions[directions](inputs)).ravel()[list(observables)]\n+\n+\n+class MathematicalActionUnavailable(RuntimeError):\n+    kind = 'mathematical_action_unavailable'\n+\n+\n+class ManufacturedColumnPhase:\n+    \"\"\"Declared S3-1/S3-2 values and exact actions; no native solve or result.\"\"\"\n+    def __init__(self, solvent, kind):\n+        self.kind, self.name = kind, 'mathematical_' + kind\n+        t = solvent.thermo\n+        self.roles = solvent.roles\n+        self.component_ids = tuple(solvent.species if kind == 'liquid' else solvent.gas)\n+        self.feed_ids = tuple(solvent.feeds if kind == 'liquid' else solvent.gas)\n+        self.feed_index = {s: i for i, s in enumerate(self.feed_ids)}\n+        self.co2_input = 2 + self.feed_index[self.roles['co2']]\n+        self.charges = tuple(t['charge_numbers'][s] for s in self.component_ids)\n+        self.molar_masses = tuple(sum(t['atomic_masses_kg_mol'][e]*n for e, n in t['formulas'][s].items())\n+                                  for s in self.component_ids)\n+        self.components, self.film_constraints = solvent.components, solvent.constraints\n+        self.u = ca.MX.sym('phase_input', 2+len(self.feed_ids))\n+        feed = dict(zip(self.feed_ids, ca.vertsplit(self.u[2:])))\n+        if kind == 'liquid':\n+            amounts = neutral_amounts(feed['C'], feed['A'], feed['B'], feed['W'], t['K_per_mol'])\n+            n = ca.vertcat(*[amounts[s] for s in self.component_ids])\n+            mu = ca.log(n) - ca.DM([np.log(t['K_per_mol']) if s in ('CA', 'CB') else 0.\n+                                   for s in self.component_ids])\n+            fugacity = t['henry_pa_m3_mol']*amounts['C']/t['liquid_volume_m3']\n+            capacity = t['capacity_j_mol_k']*(feed['A']+feed['B']+feed['W'])\n+            density = ca.sum1(n)/t['liquid_volume_m3']\n+        else:\n+            n = ca.vertcat(*[feed[s] for s in self.component_ids])\n+            mu = ca.log(n)\n+            fugacity = t['gas_fugacity_pa_s_mol']*feed['C']\n+            capacity = t['capacity_j_mol_k']*feed['I']\n+            density = ca.sum1(n)/t['vapor_volume_m3']\n+        enthalpy = capacity*(self.u[0]-t['reference_temperature_k'])\n+        self.enthalpy = len(self.component_ids)\n+        self.log_activities = tuple(range(self.enthalpy))\n+        self.observables = ca.vertcat(mu, enthalpy/ca.sum1(n))\n+        values = ca.vertcat(n if kind == 'liquid' else ca.MX.zeros(0), fugacity,\n+                            t['water_fugacity_pa'], density, enthalpy)\n+        domain = ca.mmin(self.u) > 0\n+        domain = ca.logic_and(domain, ca.logic_and(self.u[0] >= 293.15, self.u[0] <= 393.15))\n+        domain = ca.logic_and(domain, self.u[1] <= 1e7)\n+        self.values = ca.Function(self.name, [self.u], [values.attachAssert(domain, 'Mathematical phase outside declared domain')])\n+        self.capacity = ca.Function(self.name+'_capacity', [self.u], [ca.jacobian(enthalpy, self.u)[0]])\n+        self.output_ids = (tuple('amount:'+s for s in self.component_ids) if kind == 'liquid' else ()) + (\n+            'fugacity:C', 'fugacity:W', 'molar-density', 'total-enthalpy')\n+        self.output_index = {s: i for i, s in enumerate(self.output_ids)}\n+        self.action_functions = {}\n+\n+    def __call__(self, inputs):\n+        return self.values(inputs)\n+\n+    def flow(self, co2, water, fixed):\n+        return ca.vertcat(*[co2 if s == 'C' else water if s == 'W' else fixed[i]\n+                            for i, s in enumerate(self.feed_ids)])\n+\n+    def enthalpy_temperature_derivative(self, inputs):\n+        return float(self.capacity(inputs))\n+\n+    def actions(self, inputs, observables, directions=()):\n+        inputs = np.asarray(inputs, dtype=float).ravel()\n+        if (not np.isfinite(inputs).all() or np.min(inputs) <= 0 or\n+                not 293.15 <= inputs[0] <= 393.15 or inputs[1] > 1e7):\n+            raise StateDomainFailure(f'{self.name}: invalid T [K], P [Pa], feed [mol/s]: {inputs}')\n+        if directions not in self.action_functions:\n+            expr = self.observables\n+            for direction in directions:\n+                expr = ca.jacobian(expr, self.u)[:, direction]\n+            self.action_functions[directions] = ca.Function(self.name+'_action', [self.u], [expr])\n+        result = np.asarray(self.action_functions[directions](inputs)).ravel()[list(observables)]\n+        if not np.isfinite(result).all():\n+            raise MathematicalActionUnavailable(f'{self.name}: nonfinite actions {observables}, {directions}, inputs={inputs}')\n+        return result\n",
+    "dirty_patch_sha256": "39a4b735824e506b8fd5ceca72818941ad63e4ec3c0b9fda7b47592b3e7b9ead",
+    "dirty_paths": [
+      "src/mea_absorption_column/BVP/Coupled_Column.py",
+      "src/mea_absorption_column/Thermodynamics/solvent_inputs.py",
+      "src/mea_absorption_column/column.py",
+      "src/mea_absorption_column/config/column.py",
+      "src/mea_absorption_column/Thermodynamics/manufactured_neutral.py"
+    ],
+    "repository_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume",
+    "source_tree_sha256": "309ab8591c6b6bc29b4e5559d2a176525b93bd865433e29a0fd615e1139e1afb"
+  }
+}

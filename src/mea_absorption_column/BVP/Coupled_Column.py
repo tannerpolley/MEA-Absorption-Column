@@ -20,7 +20,7 @@ from ..Transport.Transfer_Coefficients import (
 
 def build_column_balance_functions(
     liquid, vapor, *, liquid_feed_mol_s, vapor_feed_mol_s,
-    liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2, packing, liquid_density_source="solved_state",
+    liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2, packing, liquid_density_source="solved_state", prescribed_closures=None,
 ):
     """Build native balance(state, transfer) and boundary(bottom, top).
 
@@ -28,7 +28,7 @@ def build_column_balance_functions(
     Correlation volume uses conserved mass flow, not true-species molar flow.
 
     State: apparent Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O [mol/s], Tl, Tv [K],
-    P [Pa], h_L [bed-volume fraction]. MEA/N2/O2 flows are fixed by feeds.
+    P [Pa], h_L [bed-volume fraction]. Nonvolatile amine/inert flows are fixed by feeds.
     Feed order and fixed species roles come from the liquid and vapor declarations.
 
     Transfer: CO2 and water flux [mol/(m² s)] and TOTAL interphase energy
@@ -91,14 +91,19 @@ def build_column_balance_functions(
         volume_l = ca.dot(liquid_flow, ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])) / mass_density_l
     mass_density_v = rho_v * ca.dot(vapor_y, ca.DM(vapor.molar_masses))
     ul, uv = volume_l / area_m2, volume_v / area_m2
-    apparent_mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])
-    mass_fraction = apparent_mass / ca.sum1(apparent_mass)
-    mul, _ = viscosity(state[4], apparent_x[lp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]])
-    muv, _ = viscosity(state[5], vapor_y[vp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]], phase="vapor")
-    sigma = surface_tension(state[4], apparent_x[lp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]])
-    _, area_per_length = interfacial_area_expression(mass_density_l, sigma, ul, area_m2, packing)
-    raw_holdup, _ = holdup_expression(ul, mul, mass_density_l, packing)
-    gradient = pressure_drop_expression(state[7], mass_density_l, mass_density_v, mul, muv, area_m2, ul, uv, packing)
+    if prescribed_closures is not None:
+        area_per_length = prescribed_closures['area_per_length']['value']
+        raw_holdup = prescribed_closures['holdup']['value']
+        gradient = prescribed_closures['pressure_gradient']['value']
+    else:
+        apparent_mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])
+        mass_fraction = apparent_mass / ca.sum1(apparent_mass)
+        mul, _ = viscosity(state[4], apparent_x[lp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]])
+        muv, _ = viscosity(state[5], vapor_y[vp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]], phase="vapor")
+        sigma = surface_tension(state[4], apparent_x[lp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]])
+        _, area_per_length = interfacial_area_expression(mass_density_l, sigma, ul, area_m2, packing)
+        raw_holdup, _ = holdup_expression(ul, mul, mass_density_l, packing)
+        gradient = pressure_drop_expression(state[7], mass_density_l, mass_density_v, mul, muv, area_m2, ul, uv, packing)
     conserved = ca.vertcat(state[:4], liquid_values[-1], vapor_values[-1], state[6])
     exchange = transfer * area_per_length
     sources = -ca.vertcat(exchange[0], exchange[1], exchange[0], exchange[1], exchange[2], exchange[2], gradient)
@@ -127,7 +132,7 @@ def build_coupled_column_functions(
     algebraic equations include raw holdup and all four interface equations.
     Trapezoidal quadrature integrates from zero to the signed interface loading.
 
-    species_diffusivities(T) must supply nine positive estimates [m²/s] in
+    species_diffusivities(T) supplies one positive estimate per declared species [m²/s] in
     native liquid species order; no missing ionic mobilities are fabricated.
     Pair diffusivities use the existing harmonic-mean closure. Film thickness
     is D_CO2/k_L using the existing bulk correlation on the apparent basis.
@@ -176,23 +181,35 @@ def build_coupled_column_functions(
                                          "Column holdup must satisfy 0 < h_L < epsilon")
     conserved, sources, holdup, l, v, hydraulics = balance(bounded_bulk, state[8:11])
     x, y = liquid_flow / ca.sum1(liquid_flow), vapor_flow / ca.sum1(vapor_flow)
-    mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])
-    w = mass / ca.sum1(mass)
-    mul, _ = viscosity(state[4], x[lp], w[lp[1]], w[lp[2]])
-    muv, species_viscosities = viscosity(state[5], y[vp], w[lp[1]], w[lp[2]], phase="vapor")
-    # Apparent concentration = apparent flow / actual reactive liquid volume.
-    dl, dl_mea, dl_ion = diffusivity(state[4], x[lp], state[6], mul, ca.sum1(liquid_flow) / hydraulics[0])
-    dl = dl.attachAssert(dl > 0., "Bulk liquid CO2 diffusivity must be positive")
-    dv = diffusivity(state[5], y[vp], state[6], mul, l[li["molar-density"]], phase="vapor")
-    kl = liquid_mass_transfer_expression(dl, mul, hydraulics[2], hydraulics[0] / area, packing)
-    kg = ca.vertcat(*[gas_mass_transfer_expression(
-        d, muv, hydraulics[3], hydraulics[1] / area, packing[1] - state[7], state[5], packing,
-    ) for d in dv[:2]])
-    thickness = film_thickness_multiplier * dl / kl
-    _, cp, partial_h = vapor_caloric(ca.vertcat(state[5], state[6], vapor_flow))
-    cp = cp.attachAssert(cp > 0., "Native vapor Cp must be positive for heat transfer")
-    heat = heat_transfer_expression(state[6], kg[0],
-        thermal_conductivity(state[5], y[vp], species_viscosities), cp, v[vi["molar-density"]], dv[0])
+    prescribed = column_inputs.get('prescribed_closures')
+    if prescribed is not None:
+        if co2_model != 'reactive_film':
+            raise ValueError('Mathematical closures require equilibrium-manifold film')
+        dl = ca.MX(prescribed['bulk_diffusivity']['value'])
+        kl = prescribed['liquid_transfer']['value']
+        kg = ca.DM.ones(2)*prescribed['gas_transfer']['value']
+        thickness = film_thickness_multiplier*dl/kl
+        _, cp, partial_h = vapor_caloric(ca.vertcat(state[5], state[6], vapor_flow))
+        cp = cp.attachAssert(cp > 0., 'Mathematical vapor Cp must be positive')
+        heat = prescribed['heat_transfer']['value']
+    else:
+        mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])
+        w = mass / ca.sum1(mass)
+        mul, _ = viscosity(state[4], x[lp], w[lp[1]], w[lp[2]])
+        muv, species_viscosities = viscosity(state[5], y[vp], w[lp[1]], w[lp[2]], phase="vapor")
+        # Apparent concentration = apparent flow / actual reactive liquid volume.
+        dl, dl_mea, dl_ion = diffusivity(state[4], x[lp], state[6], mul, ca.sum1(liquid_flow) / hydraulics[0])
+        dl = dl.attachAssert(dl > 0., "Bulk liquid CO2 diffusivity must be positive")
+        dv = diffusivity(state[5], y[vp], state[6], mul, l[li["molar-density"]], phase="vapor")
+        kl = liquid_mass_transfer_expression(dl, mul, hydraulics[2], hydraulics[0] / area, packing)
+        kg = ca.vertcat(*[gas_mass_transfer_expression(
+            d, muv, hydraulics[3], hydraulics[1] / area, packing[1] - state[7], state[5], packing,
+        ) for d in dv[:2]])
+        thickness = film_thickness_multiplier * dl / kl
+        _, cp, partial_h = vapor_caloric(ca.vertcat(state[5], state[6], vapor_flow))
+        cp = cp.attachAssert(cp > 0., "Native vapor Cp must be positive for heat transfer")
+        heat = heat_transfer_expression(state[6], kg[0],
+            thermal_conductivity(state[5], y[vp], species_viscosities), cp, v[vi["molar-density"]], dv[0])
     conductances = []
     if co2_model == "reactive_film":
         integral, conductances, at_loading = equilibrium_manifold_conductance_integral(

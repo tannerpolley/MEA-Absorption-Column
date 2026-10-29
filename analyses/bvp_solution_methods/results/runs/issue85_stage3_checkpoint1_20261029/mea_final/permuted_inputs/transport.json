@@ -1,0 +1,224 @@
+{
+  "encoding": "issue85-proposed-stage1-json-v1",
+  "thermodynamic_input": "thermodynamics.json",
+  "case": {
+    "repository_path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_checkpoint1_20261029/mea_final/permuted_inputs/case.json",
+    "sha256": "099da9eddfe5ab4a5dc9f771a29b01079779d326cb29a3d9a5ab14f9e61d188e"
+  },
+  "film": "equilibrium_manifold",
+  "kinetics": "not_used_in_instantaneous_equilibrium_film",
+  "enhancement": "not_used",
+  "hydraulic_density": "solved_state",
+  "species_diffusivities": {
+    "hydroxide-anion": {
+      "constant_m2_s": 1.8439088914585774e-09
+    },
+    "water": {
+      "constant_m2_s": 8.8e-10
+    },
+    "carbonate-anion": {
+      "constant_m2_s": 6.8e-10
+    },
+    "carbamate-anion": {
+      "constant_m2_s": 6.8e-10
+    },
+    "monoethanolamine": {
+      "constant_m2_s": 8.8e-10
+    },
+    "carbon-dioxide": {
+      "model": "prefactor_exp_minus_E_over_RT",
+      "prefactor_m2_s": 3.14e-07,
+      "activation_j_mol": 15230.0,
+      "gas_constant_j_mol_k": 8.314462618
+    },
+    "hydronium-cation": {
+      "constant_m2_s": 1.8439088914585774e-09
+    },
+    "protonated-monoethanolamine": {
+      "constant_m2_s": 8.4e-10
+    },
+    "bicarbonate-anion": {
+      "constant_m2_s": 6.8e-10
+    }
+  },
+  "pair_diffusivity": "harmonic_mean",
+  "stationary_film_components": [
+    "water",
+    "amine:monoethanolamine"
+  ],
+  "zero_charge_flux": true,
+  "quadrature_points": 9,
+  "thickness": "bulk_CO2_diffusivity / liquid_mass_transfer_coefficient",
+  "property_laws": {
+    "liquid_viscosity": {
+      "selection": "viscosity:liquid",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Properties/Transport_Properties.py",
+        "sha256": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "Pa s"
+    },
+    "gas_viscosity": {
+      "selection": "viscosity:vapor",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Properties/Transport_Properties.py",
+        "sha256": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "mixture and species vector, Pa s"
+    },
+    "bulk_diffusivity": {
+      "selection": "diffusivity:liquid",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Properties/Transport_Properties.py",
+        "sha256": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "CO2, MEA, ion diffusivities m2/s"
+    },
+    "gas_diffusivity": {
+      "selection": "diffusivity:vapor",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Properties/Transport_Properties.py",
+        "sha256": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "CO2/water/N2/O2 m2/s"
+    },
+    "surface_tension": {
+      "selection": "surface_tension",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Properties/Thermophysical_Properties.py",
+        "sha256": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "N/m"
+    },
+    "gas_conductivity": {
+      "selection": "thermal_conductivity_expression",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Properties/Thermophysical_Properties.py",
+        "sha256": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "W/(m K), consumes gas species viscosities"
+    },
+    "area": {
+      "selection": "interfacial_area_expression",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py",
+        "sha256": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "m2/m3 bed; area per length m2/m"
+    },
+    "holdup": {
+      "selection": "holdup_expression",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py",
+        "sha256": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "bed volume fraction"
+    },
+    "pressure_drop": {
+      "selection": "pressure_drop_expression",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Transport/Pressure_Drop.py",
+        "sha256": "3c5e82117033a744032f7d7d64155e9175143134195fd926432f0e0e4abaa707"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "Pa/m"
+    },
+    "liquid_transfer": {
+      "selection": "liquid_mass_transfer_expression",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Transport/Transfer_Coefficients.py",
+        "sha256": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "m/s"
+    },
+    "gas_transfer": {
+      "selection": "gas_mass_transfer_expression",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Transport/Transfer_Coefficients.py",
+        "sha256": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "mol/(m2 s Pa)"
+    },
+    "heat_transfer": {
+      "selection": "heat_transfer_expression",
+      "source": {
+        "repository_path": "src/mea_absorption_column/Transport/Transfer_Coefficients.py",
+        "sha256": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa"
+      },
+      "coefficient_encoding": "unchanged named implementation, all coefficients fixed by source hash; no overrides in stage 1",
+      "output_units": "W/(m2 K)"
+    }
+  },
+  "execution_policy": {
+    "id": "retained_3c_only",
+    "temperature_bounds_k": [
+      293.15,
+      393.15
+    ],
+    "void_fraction": 0.97,
+    "temperature_scale_k": 300.0,
+    "temperature_span_k": 100.0,
+    "initial_bulk_state": [
+      2.4323205276203805,
+      76.97519250729157,
+      1.6540435157308098,
+      1.5624169375299577,
+      318.15,
+      316.75,
+      110900.0,
+      0.052715134432693156
+    ],
+    "initial_interface_bracket": [
+      0.0,
+      1.0
+    ],
+    "physical_residual_tolerance": 1e-07,
+    "branch_policy": {
+      "loading_anchor": 0.25,
+      "max_log_loading_step": 0.1,
+      "max_loading_steps": 32
+    }
+  },
+  "domain": {
+    "representation": "intersection of explicit closed intervals, fixed-composition equalities, and explicit named algorithmic predicates",
+    "temperature_k": [
+      293.15,
+      393.15
+    ],
+    "pressure_pa": {
+      "minimum_exclusive": 0.0,
+      "maximum_inclusive": 10000000.0
+    },
+    "unloaded_amine_mass_fraction": {
+      "monoethanolamine": {
+        "kind": "fixed_feed_value",
+        "value": 0.3,
+        "source": "retained case basis; exact molar feed has priority over recomputation"
+      }
+    },
+    "loading_mol_co2_per_mol_total_amine": {
+      "minimum_exclusive": 0.0,
+      "maximum_inclusive": null,
+      "status": "no validated loading interval asserted; positive loading states limited by native branch/action/film and retained state evidence"
+    },
+    "status": "numerical policy domain, not physical validation domain",
+    "predicates": [
+      "positive finite feeds and transport properties",
+      "all caloric and reaction T intervals",
+      "0 < holdup < packing void",
+      "finite positive quadrature conductance",
+      "independent stationary component and charge constraints modulo total flux"
+    ]
+  },
+  "thermodynamic_input_sha256": "d514f7b37051c580b1a3863516efda8a26957b270a9cb23bd90fc97cb5f89253"
+}

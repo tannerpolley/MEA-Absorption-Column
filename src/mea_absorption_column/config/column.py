@@ -635,15 +635,23 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
         from ..Thermodynamics.solvent_inputs import SolventInputs, SolventRefusal
         solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
         case_values.setdefault('physical_input_file', str(solvent.case_path))
-        selected = {'dataset': solvent.paths['parameters'].parent, 'thermal_reference': solvent.paths['calorics']}
-        if any(getattr(dependencies, k) and Path(getattr(dependencies, k)).resolve() != v.resolve() for k, v in selected.items()):
-            raise SolventRefusal('Conflicting thermodynamic asset selections')
-        hashes = tuple(sorted(solvent.hashes.items()))
-        if dependencies.input_hashes and dependencies.input_hashes != hashes:
-            raise SolventRefusal("Resolved solvent inputs changed before execution")
-        dependencies = replace(dependencies, input_hashes=hashes, dataset=str(solvent.paths["parameters"].parent),
-                               thermal_reference=str(solvent.paths["calorics"]),
-                               references=(str(solvent.paths["gas_parameters"]), str(solvent.paths["calorics"])))
+        if solvent.mathematical:
+            if any((dependencies.dataset, dependencies.thermal_reference, dependencies.references)):
+                raise SolventRefusal('Mathematical phase cannot consume native parameter/caloric dependencies')
+            hashes = tuple(sorted(solvent.hashes.items()))
+            if dependencies.input_hashes and dependencies.input_hashes != hashes:
+                raise SolventRefusal('Resolved mathematical inputs changed before execution')
+            dependencies = replace(dependencies, input_hashes=hashes)
+        else:
+            selected = {'dataset': solvent.paths['parameters'].parent, 'thermal_reference': solvent.paths['calorics']}
+            if any(getattr(dependencies, k) and Path(getattr(dependencies, k)).resolve() != v.resolve() for k, v in selected.items()):
+                raise SolventRefusal('Conflicting thermodynamic asset selections')
+            hashes = tuple(sorted(solvent.hashes.items()))
+            if dependencies.input_hashes and dependencies.input_hashes != hashes:
+                raise SolventRefusal("Resolved solvent inputs changed before execution")
+            dependencies = replace(dependencies, input_hashes=hashes, dataset=str(solvent.paths["parameters"].parent),
+                                   thermal_reference=str(solvent.paths["calorics"]),
+                                   references=(str(solvent.paths["gas_parameters"]), str(solvent.paths["calorics"])))
     case = _case(case_values)
     if preset == TWELVE_PRESET:
         film_model = model_values.get("film_model", "equilibrium_manifold")
@@ -656,27 +664,33 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             raise ConfigurationError(
                 "enhancement_reference does not consume dependencies.mobility_law"
             )
-        dependencies = replace(
-            dependencies,
-            dataset=dependencies.dataset or _REACTIVE_DATASET,
-            mobility_law=(dependencies.mobility_law or "harmonic_mean_onsager_v1")
-            if film_model == "equilibrium_manifold" else None,
-            thermal_reference=dependencies.thermal_reference or f"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json",
-            references=dependencies.references or (
-                f"{_NEUTRAL_VAPOR_DATASET}/parameters.json",
-                f"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json",
-            ),
-        )
-        if film_model == "equilibrium_manifold" and dependencies.mobility_law != "harmonic_mean_onsager_v1":
-            raise ConfigurationError("twelve_state_conserved requires mobility_law='harmonic_mean_onsager_v1'")
-        if len(dependencies.references) != 2:
-            raise ConfigurationError("twelve_state_conserved requires neutral-vapor parameter and reference assets")
+        mathematical = solvent is not None and solvent.mathematical
+        if mathematical:
+            if film_model != 'equilibrium_manifold' or dependencies.mobility_law not in (None,'harmonic_mean_onsager_v1'):
+                raise SolventRefusal('Mathematical phase requires the declared harmonic-mean film')
+            dependencies = replace(dependencies, mobility_law='harmonic_mean_onsager_v1')
+        else:
+            dependencies = replace(
+                dependencies,
+                dataset=dependencies.dataset or _REACTIVE_DATASET,
+                mobility_law=(dependencies.mobility_law or "harmonic_mean_onsager_v1")
+                if film_model == "equilibrium_manifold" else None,
+                thermal_reference=dependencies.thermal_reference or f"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json",
+                references=dependencies.references or (
+                    f"{_NEUTRAL_VAPOR_DATASET}/parameters.json",
+                    f"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json",
+                ),
+            )
+            if film_model == "equilibrium_manifold" and dependencies.mobility_law != "harmonic_mean_onsager_v1":
+                raise ConfigurationError("twelve_state_conserved requires mobility_law='harmonic_mean_onsager_v1'")
+            if len(dependencies.references) != 2:
+                raise ConfigurationError("twelve_state_conserved requires neutral-vapor parameter and reference assets")
         expected = {
             "formulation": "twelve_state_conserved",
-            "thermo_model": "reactive_epcsaft",
+            "thermo_model": "mathematical_neutral" if mathematical else "reactive_epcsaft",
             "film_model": film_model,
-            "energy_model": "native_total_enthalpy",
-            "pressure_model": "hydraulic_pressure_drop",
+            "energy_model": "mathematical_total_enthalpy" if mathematical else "native_total_enthalpy",
+            "pressure_model": "prescribed_gradient" if mathematical else "hydraulic_pressure_drop",
             "layout": "twelve_conserved",
             "coordinate": "physical_height",
         }
