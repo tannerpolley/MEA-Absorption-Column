@@ -1,0 +1,18 @@
+{
+  "base": "04a9d399bc1c292a10df1fbcddce63ccb53e71cc",
+  "manufactured_exit_code": 0,
+  "pytest_exit_code": 0,
+  "integration_exit_code": 0,
+  "render_exit_code": 0,
+  "pytest_summary": "323 passed, 1 warning in 553.46s (0:09:13)",
+  "mea_comparison": {
+    "capture_percent": [
+      89.41488041587351,
+      89.41488041586858
+    ],
+    "max_native_scaled_difference": 2.690685453529136e-11,
+    "max_film_scaled_difference": 5.430458370518347e-13,
+    "native_state_comparisons": 306
+  },
+  "limits": "neutral manufactured film numerical verification and MEA reproduction only; full-column blend admission and delivered independent review unavailable"
+}

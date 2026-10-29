@@ -1,0 +1,39 @@
+........................................................................ [ 22%]
+..........................................................F............. [ 44%]
+........................................................................ [ 66%]
+........................................................................ [ 89%]
+...................................                                      [100%]
+=================================== FAILURES ===================================
+___________________ test_epcsaft_contract_self_check_passes ____________________
+
+    def test_epcsaft_contract_self_check_passes() -> None:
+        completed = subprocess.run(
+            [sys.executable, "scripts/check_epcsaft_integration.py", "--mode", "stable", "--self-only"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+>       assert completed.returncode == 0, completed.stdout + completed.stderr
+E       AssertionError: contract mode: stable
+E         epcsaft module path: /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume-2/.venv/lib/python3.13/site-packages/epcsaft/__init__.py
+E         epcsaft version: 1.0.0
+E         epcsaft source kind: local_file
+E         epcsaft source detail: {"archive_info": {}, "url": "file:///home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume-2/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"}
+E         epcsaft wheel SHA-256: 57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a
+E         Engine commit: f4566b3d0c64d05822b41fe363de47ab5cfa6a0e
+E         ERROR: tests/test_manufactured_film.py:7: direct epcsaft import outside allowlist
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any...41fe363de47ab5cfa6a0e\nERROR: tests/test_manufactured_film.py:7: direct epcsaft import outside allowlist\n', stderr='').returncode
+
+tests/test_epcsaft_contract.py:21: AssertionError
+=============================== warnings summary ===============================
+tests/test_transport_domain_guards.py::test_domain_guards_can_record_without_raising_for_legacy_timing_probe
+  /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume-2/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py:44: RuntimeWarning: invalid value encountered in log
+    np.log(rho_mass_l) - np.log(sigma) + np.log(g) / 3
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_epcsaft_contract.py::test_epcsaft_contract_self_check_passes
+1 failed, 322 passed, 1 warning in 562.25s (0:09:22)

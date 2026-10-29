@@ -11,7 +11,7 @@ from ..Transport.Hydraulic_Variables_Correlations import holdup_expression, inte
 from ..Transport.Pressure_Drop import pressure_drop_expression
 from ..Transport.Enhancement_Factor import enhancement_reference_expression
 from ..Transport.Reactive_Film import (
-    onsager_mobility_expression, interface_balance_residuals, binary_diffusivities_from_species,
+    equilibrium_manifold_conductance_integral, interface_balance_residuals,
 )
 from ..Transport.Transfer_Coefficients import (
     liquid_mass_transfer_expression, gas_mass_transfer_expression, heat_transfer_expression,
@@ -195,21 +195,9 @@ def build_coupled_column_functions(
         thermal_conductivity(state[5], y[vp], species_viscosities), cp, v[vi["molar-density"]], dv[0])
     conductances = []
     if co2_model == "reactive_film":
-        species_d = ca.reshape(species_diffusivities(state[4]), n, 1)
-        species_d = ca.MX(species_d).attachAssert(
-            ca.logic_and(ca.mmin(species_d) > 0., ca.mmax(species_d) < ca.inf),
-            "Film species diffusivities must be finite positive")
-        pairs = binary_diffusivities_from_species(species_d)
-        co2 = ca.DM(liquid.components["co2"])
-        constraints = np.asarray(liquid.film_constraints, dtype=float)
-        for fraction in np.linspace(0., 1., int(quadrature_points)):
-            at_loading, tangent = loading_path(liquid_inputs, fraction * state[11])
-            mobility = onsager_mobility_expression(at_loading[:n] / ca.sum1(at_loading[:n]),
-                at_loading[li["molar-density"]], pairs, additional_flux_constraints=constraints)
-            conductance = ca.dot(co2, mobility @ tangent)
-            conductances.append(conductance.attachAssert(conductance > 0., "Native loading-path conductance must be positive"))
-        integral = state[11] / (quadrature_points - 1) * (
-            .5 * (conductances[0] + conductances[-1]) + sum(conductances[1:-1]))
+        integral, conductances, at_loading = equilibrium_manifold_conductance_integral(
+            loading_path, liquid_inputs, state[11], species_diffusivities(state[4]),
+            liquid.components["co2"], liquid.film_constraints, li["molar-density"], quadrature_points)
     else:
         at_loading = liquid(ca.vertcat(*[liquid_inputs[j] * ca.exp(state[11]) if j == liquid.co2_input else liquid_inputs[j]
                                         for j in range(liquid_inputs.numel())]))

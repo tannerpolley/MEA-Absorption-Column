@@ -183,6 +183,37 @@ def onsager_mobility_expression(
     return 0.5 * (mobility + mobility.T)
 
 
+def equilibrium_manifold_conductance_integral(
+    loading_path, liquid_inputs, loading, species_diffusivities,
+    co2_component, constraints, density_index, quadrature_points,
+):
+    """Integrate constrained loading conductance [mol/(m s)] by trapezoids.
+
+    Supplied species/component rows set the dimension; the loading path owns
+    its value/action callbacks. This is also the column's film calculation.
+    """
+    if isinstance(quadrature_points, bool) or int(quadrature_points) != quadrature_points or quadrature_points < 2:
+        raise ValueError("Film quadrature requires an integer point count >= 2")
+    n = len(co2_component)
+    species_d = ca.reshape(species_diffusivities, n, 1)
+    species_d = ca.MX(species_d).attachAssert(
+        ca.logic_and(ca.mmin(species_d) > 0., ca.mmax(species_d) < ca.inf),
+        "Film species diffusivities must be finite positive")
+    pairs = binary_diffusivities_from_species(species_d)
+    co2 = ca.DM(co2_component)
+    constraints = np.asarray(constraints, dtype=float)
+    conductances = []
+    for fraction in np.linspace(0., 1., int(quadrature_points)):
+        at_loading, tangent = loading_path(liquid_inputs, fraction * loading)
+        mobility = onsager_mobility_expression(at_loading[:n] / ca.sum1(at_loading[:n]),
+            at_loading[density_index], pairs, additional_flux_constraints=constraints)
+        conductance = ca.dot(co2, mobility @ tangent)
+        conductances.append(conductance.attachAssert(conductance > 0., "Native loading-path conductance must be positive"))
+    integral = loading / (quadrature_points - 1) * (
+        .5 * (conductances[0] + conductances[-1]) + sum(conductances[1:-1]))
+    return integral, conductances, at_loading
+
+
 def solve_equilibrium_manifold_film(
     *,
     state_at_log_loading: Callable[[float], EquilibriumManifoldState],

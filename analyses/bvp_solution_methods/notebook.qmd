@@ -370,3 +370,124 @@ invariance. Variable-count blend verification and qualified second-solvent
 prediction remain unavailable. The stationary analytical amine/water film,
 thermal-reference, wet-gas, imputed inlet-temperature and solved-density limits
 stated above remain. Independent review of the corrected delivery is pending.
+
+## Variable-count two-amine film: numerical verification {#variable-count-two-amine-film}
+
+The shared film calculation reproduces an exact nonzero exchange solution with
+**six true species, four analytical components and two distinct amine totals**.
+This is numerical verification of the film calculation, not a physical solvent
+prediction or admission of blends to the full column. The design and independent
+Ready decision precede this calculation; the equations and numerical limits are
+specified in [the stage-2 design](https://github.com/tannerpolley/MEA-Absorption-Column/issues/85#issuecomment-6509541282).
+
+The mathematical species are CO2 C, amines A and B, water W, and neutral
+complexes CA and CB. The ideal concentration manifold satisfies C+A ⇌ CA and
+C+B ⇌ CB exactly. Analytical A, B and water amounts are fixed at 0.2, 0.3 and
+1 mol, respectively, in a fixed volume of $10^{-3}$ m³. Temperature is 320 K,
+pressure 100000 Pa, both association coefficients are 10 mol⁻¹, and every
+species diffusivity is $10^{-9}$ m²/s. These are mathematical coefficients,
+with no Engine mixture or physical parameter adoption. All charges are zero;
+only the three stationary component rows are projected. The existing MEA
+ionic checks remain necessary for the charged calculation.
+
+At free CO2 amount $s$, the total analytical CO2 is
+$F(s)=s+0.5(10s)/(1+10s)$ mol. The loading coordinate is
+$\lambda=\ln(F/F_{bulk})$, holding the two individual amine amounts and water
+fixed. The exact bulk and interface have $s=0.05$ and $0.1$ mol,
+$F_{bulk}=13/60$ mol, $F_i=7/20$ mol, and
+$\lambda_i=\ln(21/13)$. With film thickness $10^{-4}$ m, Henry coefficient
+100 Pa·m³/mol and gas coefficient $10^{-7}$ mol/(m²·s·Pa), gas bulk fugacity
+$55000/3$ Pa gives the exact interface fugacity 10000 Pa. Eliminating stationary
+A, B and water reduces the full mobility to independent A/CA and B/CB exchange
+blocks. Their closed integral is $I=1/12000000$ mol/(m·s), giving
+$j_{CO2}=1/1200$ mol/(m²·s). Free CO2 and water have zero species flux;
+complexes CA and CB carry the analytical CO2 while the free amines counterdiffuse.
+
+The numerical phase supplies values and exact first/second actions through the
+existing callbacks. Both this case and MEA call the same extracted conductance,
+projection and trapezoidal integral. The numerical scalar gas/liquid equality
+uses Brent root finding on $[0,\ln 2]$, with absolute coordinate tolerance
+$10^{-12}$. Independent block matrices, polynomial roots and closed loading
+derivatives provide references; the reference does not call the projection or
+numerical quadrature. The retained records are in
+`results/runs/issue85_stage2_20261029/`, including complete declarations,
+17 state vectors per ordering, mobility matrices, first/second loading actions,
+quadrature vectors, refusals, source hashes and Engine identity.
+
+| Quadrature points | CO2 flux (mol/(m²·s)) | Relative flux error | Interface fugacity (Pa) |
+|---:|---:|---:|---:|
+| 9 | 0.0008332696780341422 | 7.63864e-5 | 10000.6365530 |
+| 17 | 0.0008333174172733932 | 1.90993e-5 | 10000.1591606 |
+| 33 | 0.0008333293541797543 | 4.77498e-6 | 10000.0397915 |
+| 65 | 0.0008333323385362933 | 1.19376e-6 | 10000.0099480 |
+| 129 | 0.0008333330846335338 | 2.98440e-7 | 10000.0024870 |
+
+![Fixed-quadrature error to the exact reference. Points are discrete numerical evaluations; the dashed line shows the allowed relative flux error at 129 points. The 0.1 Pa interface tolerance divided by its 10000 Pa reference gives the same relative line. No experimental uncertainty is represented.](results/runs/issue85_stage2_20261029/quadrature_errors.png)
+
+At 129 points, the integral is $8.33333084633534\times10^{-8}$ mol/(m·s),
+the interface fugacity error is 0.002487 Pa, and gas/liquid closure is
+$5.42\times10^{-19}$ mol/(m²·s). All meet the frozen limits: relative integral
+and flux error $10^{-5}$, interface error 0.1 Pa, and closure
+$10^{-12}$ mol/(m²·s). Successive refinements reduce flux error by about four,
+consistent with the trapezoidal method on this smooth manufactured manifold.
+This observed refinement applies to this film case alone.
+
+Across both declaration orders, the largest full-matrix difference from the
+independent mobility is $2.32\times10^{-22}$ mol/(m·s). The largest conductance
+and its loading-derivative errors are $3.45\times10^{-22}$ and
+$1.59\times10^{-22}$ mol/(m·s), respectively. Dimensionless loading tangents
+and their derivatives agree to $5.56\times10^{-16}$ and $1.23\times10^{-15}$.
+Analytical component reconstruction differs by at most
+$1.12\times10^{-16}$ mol, reaction affinities by $1.78\times10^{-15}$ in RT
+units, and mass reconstruction by $1.39\times10^{-17}$ kg. Component/element
+reaction invariants pass; state and reaction charge are identically zero.
+All concentrations and conductances remain positive and dissipation nonnegative
+within the stated rounding allowance.
+
+The 129-point species fluxes, in C/A/B/W/CA/CB order, are approximately
+$[0,-0.0003333332338534,-0.0004999998507801,0,
+0.0003333332338534,0.0004999998507801]$ mol/(m²·s).
+Their differences from exact $1/3000$ and $1/2000$ exchange magnitudes inherit
+the scalar flux's quadrature allowance of relative $10^{-5}$. This is separate
+from the invariant residuals: stationary-component flux is below
+$9.76\times10^{-19}$ mol/(m²·s), and total species flux below
+$1.31\times10^{-18}$ mol/(m²·s), against $10^{-12}$ mol/(m²·s) for each.
+Permutation of species, feeds, component rows and stationary rows passes all
+mapped comparisons. A duplicated stationary row refuses with the existing
+independence-modulo-total-flux diagnostic; it is not silently discarded.
+
+The calculation establishes variable-count numerical verification at the film
+input boundary. The complete column still requires the MEA declarations,
+three-liquid/four-vapor property basis and retained 3C policy. It does not
+establish ionic-blend generality, a real second-solvent prediction, finite-rate
+or volatile-amine behavior, physical validation, column grid convergence or
+experimental uncertainty. No fitted export or expression language is added.
+The known MEA density/holdup, area and thermal-reference limitations above
+remain. Delivered independent review and investigator promotion for manuscript
+use remain open.
+
+The unchanged MEA declaration/permutation checks also pass on this shared film
+owner: captures are **89.41488041587351%** and **89.41488041586858%**,
+respectively, with a difference of $-4.93117\times10^{-12}$ percentage point.
+The declared capture equals the retained stage-1 reference, within the unchanged
+$10^{-6}$ percentage-point allowance. Both fresh uniform seeds and cosine
+solves pass numerical acceptance and the original-equation certificates.
+The 306 native state/action comparisons retain maximum scaled difference
+$2.6906855\times10^{-11}$, with film maximum $5.4304584\times10^{-13}$.
+Their full profiles, actions and certificates are retained in the MEA run
+subdirectories. These verify preservation of MEA's numerical calculation;
+they do not qualify a second solvent or bound column discretization error.
+
+The full suite on the final source passes **323 tests, with one warning, in
+553.46 s**. The warning is the existing deliberately invalid logarithm probe.
+Final immutable Engine integration passes with Engine 1.0.0, commit
+`f4566b3d0c64d05822b41fe363de47ab5cfa6a0e`, wheel SHA-256
+`57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a`.
+`pytest.txt`, `integration.txt`, `verification.json`, `mea_final/comparison.json`
+and `REPRODUCE.md` retain final verification and replay details. The extracted
+film owner uses 270 gross executable additions against the stage-2 base,
+below the 350-line ceiling; tests add 10 lines separately. Delivered independent
+review remains open; these findings are not promoted for manuscript use.
+
+MA57 acknowledgement: HSL, a collection of Fortran codes for large-scale
+scientific computation. https://www.hsl.rl.ac.uk/
