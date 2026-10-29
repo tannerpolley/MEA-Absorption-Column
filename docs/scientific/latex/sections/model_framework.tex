@@ -1,5 +1,5 @@
-\section{Absorber and Thermodynamic Model}\label{sec:model-framework}
-\subsection{Physical System and Model Structure}
+\section{Absorber and thermodynamic model}\label{sec:model-framework}
+\subsection{Physical system and model structure}
 % M1: physical domain
 The model describes steady countercurrent absorption in one packed bed.
 Vapor flows upward from $z=0$ to $z=H$, while lean solvent enters at $z=H$ and flows downward; $H$ is packed height and $A$ is column cross-sectional area.
@@ -36,7 +36,7 @@ Empirical properties and balances & Hydraulic density, transport properties and 
 \end{tabularx}
 \end{table}
 
-\subsection{Reactive Equilibrium and Phase Driving Forces}\label{subsec:thermodynamics}
+\subsection{Reactive equilibrium and phase driving forces}\label{subsec:thermodynamics}
 % M3: species and conservation
 Five reactions distribute the conserved apparent MEA--\COtwo--water composition among nine liquid species.
 The liquid EOS and chemical-equilibrium equations are solved together at the liquid temperature and pressure of each axial position.
@@ -94,7 +94,7 @@ The residual Helmholtz-energy model represents the physical interactions enterin
 For the liquid phase, the MEA electrolyte state activates the ionic terms.
 For the vapor phase, the same ePC-SAFT machinery is used but the electrolyte terms vanish because the vapor composition contains only neutral species.
 For each phase state $(T,P,\mathbf{x})$, the equation of state solves for the phase density and evaluates the residual Helmholtz energy as $\tilde{a}^{res}=\tilde{a}^{hc}+\tilde{a}^{disp}+\tilde{a}^{assoc}+\tilde{a}^{DH}+\tilde{a}^{Born}$.
-The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, the association term accounts for site-specific association such as hydrogen bonding, the Debye--Huckel term accounts for long-range ionic screening, and the Born term accounts for ion-solvation work.
+The hard-chain term accounts for excluded-volume and chain-connectivity effects, the dispersion term accounts for attractive interactions, the association term accounts for site-specific association such as hydrogen bonding, the Debye--H\"uckel term accounts for long-range ionic screening, and the Born term accounts for ion-solvation work.
 The five residual-Helmholtz contribution terms evaluated by the ePC-SAFT calculation are summarized as
 \begin{align}
 \tilde{a}^{hc}
@@ -173,7 +173,7 @@ These include component, binary, association, ionic and dielectric quantities to
 No thermodynamic parameter was fitted to the NCCC cases; some of the thermodynamic measurements used in parameter selection are not independent of the parameterization (\cref{sec:selected-reactive-inputs}).
 The remaining constitutive choices determine transport, hydraulics and caloric properties.
 
-\subsection{Hydraulics, Transfer Coefficients and Enhancement}\label{subsec:transport}
+\subsection{Hydraulics, transfer coefficients and enhancement}\label{subsec:transport}
 % M8: hydraulic dependencies
 Flows and mixture properties at each axial position determine phase velocities, liquid holdup and effective interfacial area.
 The correlations below use empirical phase densities, viscosity, surface tension and diffusivity on the bases in \cref{sec:properties}; the EOS density is used separately for true-species concentrations.
@@ -319,8 +319,8 @@ q^{\liq} &= -U_T a_e A \left(T^{\liq}-T^{\vap}\right) && \left(\unit{J\,s^{-1}\,
 
 The liquid-side enthalpy source is written as the negative vapor-side transferred enthalpy plus heat transfer so that interphase enthalpy transfer is conservative.
 
-\subsection{Column Balances and Boundary Conditions}\label{subsec:governing-equations}
-\subsubsection{Material Balance}\label{subsubsec:material-balance}
+\subsection{Column balances and boundary conditions}\label{subsec:governing-equations}
+\subsubsection{Material balance}\label{subsubsec:material-balance}
 % M12: material conservation
 Phase component flows change through the interfacial sources with signs set by the countercurrent coordinate.
 Only \COtwo{} and \HtwoO{} transfer between phases; their component balances are
@@ -343,7 +343,7 @@ y_i &= \frac{\molarflow^{\vap}_{ i}}{\molarflow^{\vap}_{ T}}
 && \text{dimensionless}
 \end{align}
 
-\subsubsection{Energy Balance}\label{subsubsec:energy-balance}
+\subsubsection{Energy balance}\label{subsubsec:energy-balance}
 % M13: continuous energy equations
 Nonisothermal balances use the adopted empirical mixture-enthalpy and heat-transfer expressions.
 Interphase heat and material transfer supply the enthalpy-flow derivatives:
@@ -371,7 +371,7 @@ For the transferring components \(\mathcal T=\{\COtwo,\HtwoO\}\), substitution g
 At fixed composition, the vapor derivative is $C_p^{\vap}$ and the liquid derivative is the composition-weighted solvent heat capacity given in the appendix; the liquid reference offsets and dissolved-\COtwo{} enthalpy are constant in this correlation.
 Numerical variation of the same quantity is measured separately in \cref{eq:energy-range}.
 
-\subsubsection{State Vector and Pressure}
+\subsubsection{State vector and pressure}
 % M14: differential states
 The differential state comprises four transferring component flows, two phase temperatures and pressure.
 The pressure gradient is zero for the reported one-bed calculations:
@@ -418,7 +418,7 @@ The differential state vector used for the coupled calculations and its derivati
 The dimensional coordinate is $z\in[0,H]$.
 For normalized height $\zeta=z/H$, the solver uses $d\mathbf y/d\zeta=H\mathbf f$; figures display this normalized coordinate.
 
-\subsubsection{Boundary Conditions}
+\subsubsection{Boundary conditions}
 % M15: mixed boundaries
 Gas-inlet and liquid-inlet specifications define mixed boundary conditions because the phases enter at opposite ends.
 Let $a=0$ denote the vapor inlet and $b=H$ denote the liquid inlet.

@@ -1,5 +1,5 @@
-\section{Evaluation Methods}\label{sec:methods}
-\subsection{Experimental Cases and Reported Quantities}
+\section{Evaluation methods}\label{sec:methods}
+\subsection{Experimental cases and reported quantities}
 % E1: comparison inputs
 Seven one-bed, no-intercooler cases from the 2017 NCCC C campaign provide the experimental comparison \cite{Morgan2020}.
 The modeled bed has diameter \qty{0.64}{m}, height \qty{6}{m} and MellapakPlus 252Y packing, with specific area \qty{250}{m^{-1}} and void fraction 0.970.
@@ -21,7 +21,7 @@ Capture is in percent, errors are in percentage points, and the mean absolute er
 Packing temperatures from Morgan et al.\ \cite{Morgan2020}, Table C2, are converted from Celsius to kelvin and from their top-to-bottom coordinate $x$ to normalized height $\zeta=1-x=z/H$.
 Both predicted phase temperatures are compared with the taps because the source does not designate a measured phase; the sampled model peak is the maximum liquid temperature at 101 equally spaced exported positions.
 
-\subsection{Numerical Solution and Verification}
+\subsection{Numerical solution and verification}
 % E3: collocation method
 Adaptive residual-controlled collocation in SciPy solves the mixed-boundary-value problem (BVP) in \cref{eq:state-derivative,eq:boundary-residual}.
 The piecewise cubic approximation satisfies collocation conditions, with differential residuals assessed over each interval; it does not satisfy the differential equations exactly everywhere.
@@ -70,7 +70,7 @@ The analogous energy diagnostic is
 evaluated over the 101 exported positions in watts; the additional Case 3C refinements also use 10,001 positions.
 The continuous equations predict zero variation; the nonzero numerical range is reported as a diagnostic, separately from caloric-model accuracy.
 
-\subsection{Thermodynamic, Transport and Operating Perturbations}
+\subsection{Thermodynamic, transport and operating perturbations}
 % E7: thermodynamic design
 One-at-a-time thermodynamic perturbations test two binary interactions and two reaction constants around refined Case 3C.
 The MEA--water and \COtwo--water binary coefficients, \num{-0.07352750} and \num{0.01326288}, are separately multiplied by 0.95 and 1.05 in both EOS phases; scaling the negative coefficient above one makes it more negative.

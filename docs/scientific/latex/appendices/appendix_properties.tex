@@ -1,10 +1,10 @@
-\section{Property and Transport Correlations}\label{sec:properties}
+\section{Property and transport correlations}\label{sec:properties}
 % A1: apparent property basis
 The auxiliary property correlations use apparent liquid components \COtwo, MEA and water and the full wet-gas composition \COtwo, water, nitrogen and oxygen.
 These bases differ from the nine true liquid species and the reduced neutral vapor EOS composition.
 Apparent liquid mass fractions are \(w_i=x_i\mathrm{MW}_i/\sum_jx_j\mathrm{MW}_j\), where \(x_i\) are apparent mole fractions and \(\mathrm{MW}_i\) are component molar masses.
 The property routines use liquid molar masses (0.04401, 0.06108, 0.01802) and vapor molar masses (0.04401, 0.01802, 0.02801, 0.032) in \unit{kg.mol^{-1}}; the separately specified EOS values are listed in \cref{tab:epcsaft-pure-parameters}.
-\subsection{Physical Carbon Dioxide Solubility (Initialization Only)}
+\subsection{Physical carbon dioxide solubility (initialization only)}
 % A2: physical solubility
 The physical solubility correlation used for Henry-profile initialization follows the \NtwoO{} analogy \cite{Jiru2012}.
 Here $\overline w_i=w_i/(w_{\MEA}+w_{\HtwoO})$ is a CO$_2$-free solvent mass fraction, and the resulting concentration-based Henry coefficient differs from the reactive bulk ratio in the main model.
@@ -36,7 +36,7 @@ The adopted mixture coefficients are
 \end{equation}
 with $a_1$ and $b$ dimensionless, $a_2$ in \unit{K^{-1}} and $a_3$ in \unit{K^{-2}}.
 
-\subsection{Density and Surface Tension}
+\subsection{Density and surface tension}
 % A3: density and surface tension
 The phase-mean molar masses are \(\mathrm{MW}_T^\liq=\sum_i x_i\mathrm{MW}_i\) and \(\mathrm{MW}_T^\vap=\sum_i y_i\mathrm{MW}_i\), using apparent phase compositions.
 The density correlations are taken from Morgan et al. \cite{Morgan2015}.
@@ -108,7 +108,7 @@ The adopted composition-dependent coefficients are
 $S_1$--$S_3$ have units \unit{N.m^{-1}}, $S_4$--$S_6$ have units \unit{N.m^{-1}.K^{-1}}, and the remaining coefficients are dimensionless.
 The CO$_2$ contribution depends on solvent composition and is not a pure-component surface tension.
 
-\subsection{Heat Capacity and Enthalpy}
+\subsection{Heat capacity and enthalpy}
 % A4: empirical calorics
 The solvent heat-capacity method follows Hilliard \cite{Hilliard2008}.
 The polynomial argument is Celsius temperature $T_C=T^{\liq}-273.15$, with $T^{\liq}$ in kelvin and molar masses in \unit{kg\,mol^{-1}}.
@@ -159,7 +159,7 @@ The coefficient triples \((A_i,B_i,C_i)\), with \(B_i\) in \unit{K^{-1}} and \(C
 \Otwo &: (3.639,0.506\times10^{-3},-0.227\times10^5).
 \end{align*}
 
-\subsection{Thermal Conductivity}
+\subsection{Thermal conductivity}
 % A5: vapor thermal conductivity
 The vapor heat-transfer calculation uses the following pure-component correlations and viscosity-based mixing rule.
 A source calibration range for these vapor formulas is not documented.
@@ -185,7 +185,7 @@ The pure-component coefficients \((A_i,B_i,C_i,D_i)\), in the displayed SI corre
 \subsection{Viscosity}
 % A6: viscosity
 The liquid correlation follows the form of Morgan et al.\ \cite{Morgan2015a}, with the modified coefficient vector stated below and its source applicability distinguished in \cref{tab:transport-applicability}.
-\textbf{Liquid Viscosity}
+\paragraph{Liquid viscosity.}
 The water-reference coefficients are $A=\qty{1.002e-3}{Pa\,s}$, $B=1.3272$, $C=\qty{0.001053}{K^{-1}}$ and $D=\qty{168.15}{K}$.
 Here \(r=w_{\MEA}/(w_{\MEA}+w_{\HtwoO})\) and $r_\mu=100r$ is the MEA mass percentage on the CO$_2$-free solvent basis, and $\alpha=x_{\COtwo}/x_{\MEA}$ is the apparent loading.
 For temperature in kelvin, the correlation coefficients are
@@ -204,7 +204,7 @@ e&=0.00716025669867574,& f&=0.0106488402285381.
 && \left(\unit{Pa\,s}\right)
 \end{align}
 \vspace{.5cm}
-\textbf{Vapor Viscosity}
+\paragraph{Vapor viscosity.}
 \begin{align}
 \mu ^{\vap}_{\COtwo} &= \frac{2.148 \times 10^{-6} \ (T^{\vap})^{0.46}}{1+\frac{290}{T^{\vap}}}
 && \left(\unit{Pa\,s}\right)\\
@@ -228,7 +228,7 @@ e&=0.00716025669867574,& f&=0.0106488402285381.
 % A7: molecular and ionic diffusion
 The liquid correlations use apparent MEA concentration from the empirical density.
 The MEA source comparison covers \qtyrange{298}{333}{K}; this range does not establish the validity of the separately modified CO$_2$ or ionic expressions \cite{snijderDiffusionCoefficientsSeveral1993,Luo2015}.
-\textbf{Liquid Diffusivity}
+\paragraph{Liquid diffusivity.}
 \begin{align}
 C_{\MEA}^{\mathrm{app}} &= \rho_{\mathrm{mol}}^{\liq}x_{\MEA} && \left(\unit{mol\,m^{-3}}\right)\\
 c_{\MEA,L}^{\mathrm{app}} &= C_{\MEA}^{\mathrm{app}}\times10^{-3}
@@ -247,7 +247,7 @@ The exponentials return diffusivity numerically in \unit{m^2.s^{-1}}, with tempe
 The same ionic diffusivity is used for protonated MEA and carbamate in the enhancement expression.
 The additional CO$_2$ concentration corrections and ionic fit have no documented calibration range.
 
-\textbf{Vapor Diffusivity}
+\paragraph{Vapor diffusivity.}
 In the binary expression below, $T^{\vap}$ is in kelvin, $P$ in pascals, and $\text{MW}_i^{\vap}$ in \unit{kg\,mol^{-1}}.
 The factor $10^{-3}$ inside the square root converts reciprocal molar masses to the gram-per-mole convention of the correlation; $V_{Di}$ are the tabulated diffusion-volume numbers.
 \begin{align}
@@ -261,7 +261,7 @@ D^{\vap}_{ i} &= \frac{1-y_i}{\sum_{\substack{j=1 \\ j \neq i}}^n \frac{y_j}{D_{
 The vapor sums include CO$_2$, water, nitrogen and oxygen, with diffusion-volume numbers 26.7, 13.1, 18.5 and 16.3, respectively.
 The self term is excluded from each binary-diffusion sum.
 
-\subsection{Water Vapor Pressure}
+\subsection{Water vapor pressure}
 % A8: water transfer and wet-feed reconstruction
 Water transfer and saturated wet-feed reconstruction use the vapor-pressure correlation
 \begin{equation}
@@ -273,7 +273,7 @@ where $T$ is numerically in kelvin and the coefficient of $T^2$ has units \unit{
 This pure-water relation supplies the approximate water fugacity in the column and is separate from EOS CO$_2$ fugacity.
 The calibration source and range for this relation are not documented.
 
-\subsection{Correlation Applicability}\label{sec:appendix-properties}
+\subsection{Correlation applicability}\label{sec:appendix-properties}
 % A9: ranges and modifications
 \Cref{tab:transport-applicability} distinguishes documented source ranges and errors from the adopted coefficients and calculated conditions.
 The refined baseline has Hatta numbers approximately 320--698 against the enhancement source comparison range 35--165, and peak temperature \qty{347.86}{K} against the MEA diffusivity source upper limit \qty{333}{K}.

@@ -14,14 +14,14 @@ A comparison must identify which measurements determined its inputs and which as
 \input{tables/absorber_literature_comparison}
 
 % I3: physical nonideality and reaction equilibrium
-A molecular equation of state supplies physical nonideality, whereas reaction equilibrium determines the distribution among molecular and ionic species.
+A molecular equation of state (EOS) supplies physical nonideality, whereas reaction equilibrium determines the distribution among molecular and ionic species.
 Electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) represents molecular and ionic interactions through residual Helmholtz energy \cite{Gross2001,Cameretti2005,Bulow2021a}.
 Coupling its activities to reaction constants gives bulk speciation, and its fugacity coefficients provide a \COtwo{} driving force for interphase transfer.
 This thermodynamic description is distinct from the conventional reaction-enhancement approximation and empirical caloric properties used in the present column model.
 
 % I4: physical parameter reuse and comparative rationale
 Available thermodynamic approaches differ in their physical representation and parameter requirements (\cref{tab:thermodynamic-model-comparison}).
-eNRTL represents liquid excess Gibbs energy, Kent--Eisenberg uses simplified activities with effective reaction constants, and the cubic-plus-association equation of state (CPA) and ePC-SAFT include association contributions.
+eNRTL represents liquid excess Gibbs energy, Kent--Eisenberg uses simplified activities with effective reaction constants, and the cubic-plus-association EOS (CPA) and ePC-SAFT include association contributions.
 An attraction of ePC-SAFT is that component-level segment, association and ionic descriptions enter explicit physical contributions, while combining rules supply cross interactions from reusable component inputs.
 This offers a route to reducing additional mixture-specific binary fitting when extending a thermodynamic description to new solvents.
 Whether this reduces total fitting effort for reactive MEA has not been tested on a common column model; the parameter counts of the present ePC-SAFT set and of a published eNRTL set \cite{Akula2023a} do not by themselves establish an advantage (\cref{sec:selected-reactive-inputs}). A comparison within the same column model would test how much component reuse reduces new data and fitting requirements while retaining capture and temperature accuracy.
