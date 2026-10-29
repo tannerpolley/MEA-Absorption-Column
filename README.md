@@ -29,7 +29,8 @@ python3 src/mea_absorption_column/research.py analyses/research_options/options.
 Set up a fresh checkout or worktree with one command. It downloads the private
 Engine wheel named in `integration/epcsaft_contract.json` into the ignored
 `build/engine-wheels/<tag>/` (the relative path pinned in `pyproject.toml`),
-checks the release digest, tag target and SHA-256 against the contract, and runs
+checks the release digest, tag target and SHA-256 against the values recorded in
+that file, and runs
 `uv sync --frozen --group test`. Rerunning it only re-verifies the hash:
 
 ```bash
@@ -160,3 +161,36 @@ uv run python scripts/check_epcsaft_integration.py --mode final
 ```
 
 These checks do not reproduce the manuscript results.
+
+### Declared MEA inputs for the twelve-state calculation
+
+The equilibrium-manifold route accepts the identified MEA records in
+`analyses/bvp_solution_methods/input/issue85/thermodynamics.json` and
+`transport.json`. Select them with `dependencies.thermodynamics_input` and
+`dependencies.transport_input` in the column request. The transport record
+identifies the physical case and the retained 3C initialization policy.
+For example, the existing case runner accepts:
+
+```bash
+nice -n 10 uv run --frozen python analyses/bvp_solution_methods/scripts/run_case.py attempt \
+  --method upwind --nodes 17 --wall-limit 600 \
+  --thermodynamics-input analyses/bvp_solution_methods/input/issue85/thermodynamics.json \
+  --transport-input analyses/bvp_solution_methods/input/issue85/transport.json \
+  --output .tmp_column_runs/mea-declared-seed
+```
+
+A cosine-grid replay supplies `--end-clustering 1` and `--initial-profile`
+pointing to that accepted seed's `attempt.json`, with a new output directory.
+The two records retain parameter/reaction/caloric hashes, explicit phase
+supports, species/feed/component mappings, species diffusivities and selected
+unchanged MEA property equations. Liquid formula masses and vapor hydraulic
+masses keep their distinct retained conventions. Missing laws, changed hashes,
+unsupported declarations and dependent stationary-film constraints refuse
+before native evaluation. Invalid evaluated states, native evaluation/action
+unavailability and outer-solve failures retain distinct causes.
+
+This is MEA numerical reproduction and declaration-order verification only.
+The selected 3C temperature/packing policy and stationary analytical amine/water
+film approximation remain unchanged. Generalized enhancement, expression
+parsing, seven-state input injection, variable-count blend verification and
+qualified second-solvent prediction remain unavailable.

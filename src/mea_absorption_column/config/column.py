@@ -59,6 +59,7 @@ _COMMON_NUMERIC_KEYS = {
 
 class ConfigurationError(ValueError):
     """A request cannot be resolved without changing its scientific meaning."""
+    kind = "preflight_refusal"
 
 
 class CapabilityRefusal(RuntimeError):
@@ -231,6 +232,9 @@ class DependencyConfig:
     mobility_law: str | None = None
     thermal_reference: str | None = None
     references: tuple[str, ...] = ()
+    thermodynamics_input: str | None = None
+    transport_input: str | None = None
+    input_hashes: tuple[tuple[str, str], ...] = ()
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -238,6 +242,8 @@ class DependencyConfig:
             "mobility_law": self.mobility_law,
             "thermal_reference": self.thermal_reference,
             "references": list(self.references),
+            **({"thermodynamics_input": self.thermodynamics_input, "transport_input": self.transport_input, "input_hashes": dict(self.input_hashes)}
+               if self.thermodynamics_input else {}),
         }
 
 
@@ -253,6 +259,7 @@ class ColumnConfig:
     dependencies: DependencyConfig
     engine: EngineConfig
     schema_version: int = SCHEMA_VERSION
+    solvent: Any = field(default=None, repr=False, compare=False)
     resolved_config_sha256: str = field(init=False)
 
     def __post_init__(self) -> None:
@@ -582,21 +589,28 @@ def _conserved_acceptance(request: Mapping[str, Any]) -> AcceptanceConfig:
 
 def _dependencies(request: Mapping[str, Any]) -> DependencyConfig:
     values = dict(request)
-    unknown = set(values) - {"dataset", "mobility_law", "thermal_reference", "references"}
+    unknown = set(values) - {"dataset", "mobility_law", "thermal_reference", "references", "thermodynamics_input", "transport_input", "input_hashes"}
     if unknown:
         raise ConfigurationError(f"Unknown dependencies keys: {sorted(unknown)}")
     refs = values.get("references", ())
     if not isinstance(refs, (list, tuple)) or any(not isinstance(item, str) for item in refs):
         raise ConfigurationError("dependencies.references must be a sequence of strings")
-    for name in ("dataset", "mobility_law", "thermal_reference"):
+    for name in ("dataset", "mobility_law", "thermal_reference", "thermodynamics_input", "transport_input"):
         value = values.get(name)
         if value is not None and (not isinstance(value, str) or not value.strip()):
             raise ConfigurationError(f"dependencies.{name} must be a nonempty string")
-    return DependencyConfig(values.get("dataset"), values.get("mobility_law"), values.get("thermal_reference"), tuple(refs))
+    if bool(values.get("thermodynamics_input")) != bool(values.get("transport_input")):
+        raise ConfigurationError("Both solvent input documents are required")
+    if values.get("input_hashes") and not values.get("thermodynamics_input"):
+        raise ConfigurationError("Input hashes require both solvent declarations")
+    if not isinstance(values.get("input_hashes", {}), Mapping):
+        raise ConfigurationError("dependencies.input_hashes must map paths to hashes")
+    return DependencyConfig(values.get("dataset"), values.get("mobility_law"), values.get("thermal_reference"), tuple(refs),
+                            values.get("thermodynamics_input"), values.get("transport_input"), tuple(sorted(values.get("input_hashes", {}).items())))
 
 
 def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
-    """Resolve a new preset without importing thermodynamics or building a solver."""
+    """Resolve declarations before native evaluation or solver construction."""
     if not isinstance(request, Mapping):
         raise ConfigurationError("Column configuration must be a mapping")
     allowed = {
@@ -611,9 +625,26 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     preset = request.get("preset", SEVEN_PRESET)
     if preset not in {SEVEN_PRESET, TWELVE_PRESET}:
         raise ConfigurationError(f"Unknown absorber preset: {preset!r}")
-    case = _case(_section(request, "case"))
+    case_values = dict(_section(request, "case"))
     model_values = dict(_section(request, "model"))
     dependencies = _dependencies(_section(request, "dependencies"))
+    solvent = None
+    if dependencies.thermodynamics_input and (preset != TWELVE_PRESET or model_values.get("film_model", "equilibrium_manifold") != "equilibrium_manifold"):
+        raise ConfigurationError("Declared inputs require the twelve-state equilibrium-manifold route")
+    if dependencies.thermodynamics_input:
+        from ..Thermodynamics.solvent_inputs import SolventInputs, SolventRefusal
+        solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+        case_values.setdefault('physical_input_file', str(solvent.case_path))
+        selected = {'dataset': solvent.paths['parameters'].parent, 'thermal_reference': solvent.paths['calorics']}
+        if any(getattr(dependencies, k) and Path(getattr(dependencies, k)).resolve() != v.resolve() for k, v in selected.items()):
+            raise SolventRefusal('Conflicting thermodynamic asset selections')
+        hashes = tuple(sorted(solvent.hashes.items()))
+        if dependencies.input_hashes and dependencies.input_hashes != hashes:
+            raise SolventRefusal("Resolved solvent inputs changed before execution")
+        dependencies = replace(dependencies, input_hashes=hashes, dataset=str(solvent.paths["parameters"].parent),
+                               thermal_reference=str(solvent.paths["calorics"]),
+                               references=(str(solvent.paths["gas_parameters"]), str(solvent.paths["calorics"])))
+    case = _case(case_values)
     if preset == TWELVE_PRESET:
         film_model = model_values.get("film_model", "equilibrium_manifold")
         if film_model not in {"equilibrium_manifold", "enhancement_reference"}:
@@ -677,6 +708,10 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     if not isinstance(init_payload, Mapping):
         raise ConfigurationError("initialization.values must be a table/mapping")
     init_payload = dict(init_payload)
+    if solvent:
+        supplied = numerics.as_dict()['solver_settings']
+        if any(k.startswith('reactive_') for k in supplied) or set(init_payload) - {'retained_profile'}:
+            raise ConfigurationError('Declared continuation/initialization policy cannot be overridden')
     default_policy = "case_declared_native_inputs" if preset == TWELVE_PRESET else "legacy_capture_temperature_guesses"
     policy = init_values.get("policy", default_policy)
     if preset == TWELVE_PRESET:
@@ -736,6 +771,7 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
         execution=execution,
         dependencies=dependencies,
         engine=engine,
+        solvent=solvent,
     )
     expected_fingerprint = request.get("resolved_config_sha256")
     if expected_fingerprint is not None:

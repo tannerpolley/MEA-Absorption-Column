@@ -77,11 +77,13 @@ def main(argv=None):
             }))
         except ConfigurationError as exc:
             _record(output_path.parent, output_path.name, _json_clean({
-                "failure_kind": "preparation_failed", "message": str(exc), "last_checkpoint": checkpoint,
+                "failure_kind": "preflight_refusal" if payload["config"]["dependencies"].get("thermodynamics_input") else "preparation_failed",
+                "message": str(exc), "last_checkpoint": checkpoint,
             }))
         except (OSError, RuntimeError, ValueError) as exc:
             _record(output_path.parent, output_path.name, _json_clean({
-                "failure_kind": "execution_failed", "message": str(exc), "last_checkpoint": checkpoint,
+                "failure_kind": getattr(exc, "kind", "outer_solve_failure") if payload["config"]["dependencies"].get("thermodynamics_input") else "execution_failed",
+                "message": str(exc), "last_checkpoint": checkpoint,
             }))
         return 0
     settings = settings_from_payload(payload["settings"])

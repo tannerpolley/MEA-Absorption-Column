@@ -13,10 +13,10 @@ from functools import lru_cache
 import casadi as ca
 import numpy as np
 
-OUTPUT_IDS = ("fugacity:carbon-dioxide", "fugacity:water", "molar-density", "total-enthalpy")
+from .solvent_inputs import StateDomainFailure, NativeEvaluationFailure
 
 
-class ActionUnavailable(RuntimeError):
+class ActionUnavailable(NativeEvaluationFailure):
     """Typed refusal of a consumed Engine action: no value, never zero or a difference estimate."""
 
     def __init__(self, phase, observable, directions, status, message):
@@ -36,7 +36,7 @@ class EnginePhase:
     """
 
     def __init__(self, name, mapping, thermochemistry, *, kind, feed_ids=None, molar_masses=None,
-                 reactions=(), neutral_reference=None, loading_policy=None):
+                 reactions=(), neutral_reference=None, loading_policy=None, roles=None, support=None, domain=None):
         import epcsaft
         from epcsaft import equilibrium
 
@@ -45,6 +45,11 @@ class EnginePhase:
         self.model = epcsaft.Mixture(epcsaft.Parameters.from_mapping(mapping), thermochemistry=thermochemistry)
         self.component_ids = tuple(self.model.component_ids)
         self.feed_ids = self.component_ids if feed_ids is None else tuple(feed_ids)
+        self.roles = roles or {"co2": "carbon-dioxide", "water": "water", "amines": []}
+        self.support = tuple(self.component_ids if support is None else support)
+        self.domain = domain
+        self.feed_index = {s: i for i, s in enumerate(self.feed_ids)}
+        self.co2_input = 2 + self.feed_index[self.roles["co2"]]
         fixed = {c["component_id"]: c["fixed"] for c in mapping["components"]}
         if any(fixed[c]["molar_mass"]["value"]["unit"] not in ("kilogram / mole", "kg / mol") for c in self.component_ids):
             raise ValueError("Molar masses must be declared in kg/mol")
@@ -53,7 +58,9 @@ class EnginePhase:
         self.charges = tuple(float(fixed[c]["charge_number"]["value"]["magnitude"]) for c in self.component_ids)
         self.reactions, self.neutral_reference = tuple(reactions), neutral_reference
         self.loading_policy = loading_policy
-        self.output_ids = (tuple(f"amount:{c}" for c in self.component_ids) if kind == "liquid" else ()) + OUTPUT_IDS
+        self.output_ids = (tuple(f"amount:{c}" for c in self.component_ids) if kind == "liquid" else ()) + (
+            *(f"fugacity:{self.roles[r]}" for r in ("co2", "water")), "molar-density", "total-enthalpy")
+        self.output_index = {s: i for i, s in enumerate(self.output_ids)}
         kinds, index = equilibrium.SolvedStateObservableKind, self.component_ids.index
         enthalpy = epcsaft.PropertyObservable.TotalEnthalpy
         self.log_activities = tuple(equilibrium.SolvedStateObservable(kinds.PhaseLogActivity, 0, i)
@@ -62,7 +69,7 @@ class EnginePhase:
         self.state_observables = (
             tuple(equilibrium.SolvedStateObservable(kinds.PhaseComponentAmount, 0, i)
                   for i in range(len(self.component_ids)) if kind == "liquid")
-            + (self.log_activities[index("carbon-dioxide")], self.log_activities[index("water")],
+            + (self.log_activities[index(self.roles["co2"])], self.log_activities[index(self.roles["water"])],
                equilibrium.SolvedStateObservable(kinds.PhaseMolarDensity, 0)))
         self.stats = dict(native_solves=0, continuations=0)
         self._accepted = None
@@ -82,22 +89,28 @@ class EnginePhase:
 
     def _problem(self, temperature, pressure, feed):
         q = self._q
-        return q.Problem(phases=[q.Phase(self.kind, kind=self.kind)], T=temperature, P=pressure,
+        return q.Problem(phases=[q.Phase(self.kind, kind=self.kind, support=self.support)], T=temperature, P=pressure,
                          feed=q.Amounts(dict(zip(self.feed_ids, feed))), reactions=self.reactions,
                          neutral_reference=self.neutral_reference)
 
     def _solve(self, inputs):
         temperature, pressure, *feed = inputs
         if len(feed) != len(self.feed_ids) or not all(math.isfinite(v) and v > 0 for v in inputs):
-            raise ValueError(f"{self.name} requires finite positive T, P and {len(self.feed_ids)} feed amounts")
+            raise StateDomainFailure(f"{self.name}: invalid state {inputs}; requires positive T [K], P [Pa], feed [mol]")
+        if self.domain and (not self.domain['temperature_k'][0] <= temperature <= self.domain['temperature_k'][1]
+                            or pressure > self.domain['pressure_pa']['maximum_inclusive']):
+            raise StateDomainFailure(f"{self.name}: T={temperature} K, P={pressure} Pa outside {self.domain}; state={inputs}")
         problem = self._problem(temperature, pressure, feed)
         self.stats["native_solves"] += 1
-        result = self._q.solve_equilibrium(self.model, problem)
-        if not result.success and self.loading_policy is not None:
-            self.stats["continuations"] += 1
-            result = self.continue_to(inputs)
+        try:
+            result = self._q.solve_equilibrium(self.model, problem)
+            if not result.success and self.loading_policy is not None:
+                self.stats["continuations"] += 1
+                result = self.continue_to(inputs)
+        except (ValueError, RuntimeError) as error:
+            raise NativeEvaluationFailure(f"{self.name} at {inputs}: {error}") from error
         if not result.success:
-            raise RuntimeError(f"{self.name} equilibrium failed at {inputs}: {result.message}")
+            raise NativeEvaluationFailure(f"{self.name} equilibrium failed at {inputs}: {result.message}")
         self._accepted = (inputs, result)
         return self._q.compile_problem(self.model, problem), result
 
@@ -109,13 +122,19 @@ class EnginePhase:
         """
         temperature, pressure, *feed = inputs
         anchor, step, steps = (self.loading_policy[k] for k in ("loading_anchor", "max_log_loading_step", "max_loading_steps"))
-        start, start_result = self._accepted or ((temperature, pressure, anchor * feed[1], *feed[1:]), None)
+        anchored = list(feed)
+        anchored[self.co2_input - 2] = anchor * sum(feed[self.feed_index[s]] for s in self.roles["amines"])
+        start, start_result = self._accepted or ((temperature, pressure, *anchored), None)
         distance = max(abs(math.log(a / b)) for a, b in zip(feed, start[2:]))
         options = self._q.Continuation(initial_step=min(1., step / max(distance, step)), minimum_step=1. / steps,
                                        max_steps=steps, max_retries_per_step=4)
         path = self._q.continue_equilibrium(self.model, self._problem(start[0], start[1], start[2:]),
                                             self._problem(temperature, pressure, feed), options, start_result)
         return path.states[-1] if path.success else path
+
+    def flow(self, co2, water, fixed):
+        return ca.vertcat(*[co2 if s == self.roles["co2"] else water if s == self.roles["water"] else fixed[i]
+                            for i, s in enumerate(self.feed_ids)])
 
     def _direction(self, index):
         values = np.zeros(2 + len(self.feed_ids))
@@ -225,10 +244,11 @@ def build_loading_path_function(liquid):
     The tangent's outer derivative consumes second actions D^2 ln a[v, e]. Retain
     the returned function to own its callback.
     """
-    bulk, loading = ca.MX.sym("bulk", 5), ca.MX.sym("loading")
-    inputs = ca.vertcat(bulk[:2], bulk[2] * ca.exp(loading), bulk[3:])
-    slope = ActionCallback(liquid.name + "_loading_slope", liquid, liquid.log_activities, along=(2,))
-    path = ca.Function("native_loading_path", [bulk, loading], [liquid(inputs), inputs[2] * slope(inputs)])
+    bulk, loading = ca.MX.sym("bulk", 2 + len(liquid.feed_ids)), ca.MX.sym("loading")
+    i = liquid.co2_input
+    inputs = ca.vertcat(*[bulk[j] * ca.exp(loading) if j == i else bulk[j] for j in range(bulk.numel())])
+    slope = ActionCallback(liquid.name + "_loading_slope", liquid, liquid.log_activities, along=(i,))
+    path = ca.Function("native_loading_path", [bulk, loading], [liquid(inputs), inputs[i] * slope(inputs)])
     path._thermodynamic_callbacks = (liquid, slope)
     return path
 

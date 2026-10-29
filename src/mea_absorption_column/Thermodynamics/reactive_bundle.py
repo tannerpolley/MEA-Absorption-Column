@@ -57,15 +57,18 @@ def ideal_gas_record(path: str | Path, component_ids):
     return epcsaft.ThermochemistryRecord(pressure, intervals)
 
 
-def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="reactive_liquid", *, loading_policy=None):
+def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="reactive_liquid", *, loading_policy=None, declarations=None, reaction_path=None, domain=None, parameter_path=None):
     """Nine-species reactive liquid: MEA record, its Engine reactions and neutral reference, apparent CO2/MEA/water feed."""
     from epcsaft import equilibrium as q
 
     from .casadi_reactive import EnginePhase
 
+    from .solvent_inputs import DEFAULT_INPUT, read_json, formula_masses
+    declarations = declarations or read_json(DEFAULT_INPUT)
     dataset = Path(dataset)
-    record, mapping = _json(dataset / "engine-reactions.json"), _json(dataset / "parameters.json")
-    if hashlib.sha256((dataset / "parameters.json").read_bytes()).hexdigest() != record["parameter_sha256"]:
+    parameter_path = Path(parameter_path or dataset / "parameters.json")
+    record, mapping = _json(reaction_path or dataset / "engine-reactions.json"), _json(parameter_path)
+    if hashlib.sha256(parameter_path.read_bytes()).hexdigest() != record["parameter_sha256"]:
         raise ValueError("Engine reaction records do not belong to this parameter record")
     reactions = [q.Reaction(
         row["stoichiometry"], name=row["name"],
@@ -75,18 +78,24 @@ def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="r
     ) for row in record["reactions"]]
     ids = [c["component_id"] for c in mapping["components"]]
     # Formula masses (checked against the declared ones) conserve mass exactly through the reactions.
-    return EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="liquid", feed_ids=ids[:3],
-                       molar_masses=_molar_masses(dataset, ids), reactions=reactions, neutral_reference=q.NeutralReference(**record["neutral_reference"]),
-                       loading_policy=loading_policy)
+    phase = EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="liquid",
+                        feed_ids=declarations["liquid_feed_order"], molar_masses=formula_masses(declarations, ids, mapping),
+                        reactions=reactions, neutral_reference=q.NeutralReference(**record["neutral_reference"]),
+                        loading_policy=loading_policy, roles=declarations["roles"], support=declarations["liquid_support"], domain=domain)
+    phase.components = dict(zip(declarations["components"]["order"], declarations["components"]["rows"], strict=True))
+    phase.film_constraints = [phase.charges, *[row for key, row in phase.components.items() if key != "co2"]]
+    return phase
 
 
-def engine_vapor(parameters_path: str | Path, thermochemistry_path: str | Path, name="neutral_vapor"):
+def engine_vapor(parameters_path: str | Path, thermochemistry_path: str | Path, name="neutral_vapor", *, declarations=None, domain=None):
     """Nonreacting vapor at its species feed; the same ideal-gas records as the liquid."""
     from .casadi_reactive import EnginePhase
 
     mapping = _json(Path(parameters_path))
     ids = [c["component_id"] for c in mapping["components"]]
-    return EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="vapor")
+    return EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="vapor",
+                       **({"feed_ids": declarations["vapor_feed_order"], "support": declarations["vapor_support"],
+                           "roles": declarations["roles"], "domain": domain} if declarations else {}))
 
 
 def _native_reactions(reactions):

@@ -29,7 +29,7 @@ def build_column_balance_functions(
 
     State: apparent Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O [mol/s], Tl, Tv [K],
     P [Pa], h_L [bed-volume fraction]. MEA/N2/O2 flows are fixed by feeds.
-    Feed order: CO2/MEA/water liquid; CO2/water/N2/O2 vapor.
+    Feed order and fixed species roles come from the liquid and vapor declarations.
 
     Transfer: CO2 and water flux [mol/(m² s)] and TOTAL interphase energy
     flux [W/m²], positive gas to liquid. Total energy flux includes transported
@@ -57,44 +57,45 @@ def build_column_balance_functions(
     if liquid_density_source not in ("solved_state", "correlation"):
         raise ValueError("liquid_density_source must be solved_state or correlation")
     fl, fv = (np.asarray(v, dtype=float) for v in (liquid_feed_mol_s, vapor_feed_mol_s))
+    roles = liquid.roles
+    lf, vf = liquid.feed_index, vapor.feed_index
+    lp = [lf[s] for s in (roles["co2"], *roles["amines"], roles["water"])]
+    vp = [vf[s] for s in (roles["co2"], roles["water"], *roles["inert_gases"])]
+    n, li, vi = len(liquid.component_ids), liquid.output_index, vapor.output_index
     packing = np.asarray(packing, dtype=float)
-    if (fl.shape != (3,) or fv.shape != (4,) or packing.shape != (7,)
+    if (fl.shape != (len(liquid.feed_ids),) or fv.shape != (len(vapor.feed_ids),) or packing.shape != (7,)
             or any(np.any(~np.isfinite(v)) or np.any(v <= 0.) for v in (fl, fv, packing))
             or not 0. < packing[1] < 1.
             or any(not np.isfinite(v) or v <= 0. for v in
                    (liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2))):
         raise ValueError("Column feeds, temperatures, pressure, area and packing must be finite positive; 0<epsilon<1")
-    if (tuple(liquid.component_ids) != (
-            "carbon-dioxide", "monoethanolamine", "water", "protonated-monoethanolamine",
-            "carbamate-anion", "bicarbonate-anion", "carbonate-anion", "hydronium-cation", "hydroxide-anion")
-            or tuple(vapor.component_ids) != ("carbon-dioxide", "water", "nitrogen", "oxygen")
-            or liquid.output_ids[-1] != "total-enthalpy" or vapor.output_ids[-1] != "total-enthalpy"):
-        raise ValueError("Column requires the caloric nine-species liquid and four-species vapor callbacks")
+    if liquid.output_ids[-1] != "total-enthalpy" or vapor.output_ids[-1] != "total-enthalpy":
+        raise ValueError("Column requires native caloric callbacks")
 
     state, transfer = ca.MX.sym("bulk", 8), ca.MX.sym("transfer", 3)
-    liquid_flow = ca.vertcat(state[0], fl[1], state[1])
-    vapor_flow = ca.vertcat(state[2], state[3], fv[2], fv[3])
+    liquid_flow = liquid.flow(state[0], state[1], fl)
+    vapor_flow = vapor.flow(state[2], state[3], fv)
     total_l, total_v = ca.sum1(liquid_flow), ca.sum1(vapor_flow)
     apparent_x, vapor_y = liquid_flow / total_l, vapor_flow / total_v
     liquid_values = liquid(ca.vertcat(state[4], state[6], liquid_flow))
     vapor_values = vapor(ca.vertcat(state[5], state[6], vapor_flow))
     # Extensive native outputs: [n_i (liquid), f_CO2, f_water, rho, H] (see EnginePhase).
-    true_amounts, rho_l, rho_v = liquid_values[:9], liquid_values[11], vapor_values[2]
+    true_amounts, rho_l, rho_v = liquid_values[:n], liquid_values[li["molar-density"]], vapor_values[vi["molar-density"]]
     true_x = true_amounts / ca.sum1(true_amounts)
     # Reaction changes true mole count, but not mass or conserved components.
     volume_l = ca.sum1(true_amounts) / rho_l
     volume_v = total_v / rho_v
     mass_density_l = rho_l * ca.dot(true_x, ca.DM(liquid.molar_masses))
     if liquid_density_source == "correlation":
-        _, mass_density_l, _ = density_expression(state[4], [apparent_x[i] for i in range(3)], state[6])
-        volume_l = ca.dot(liquid_flow, ca.DM(liquid.molar_masses[:3])) / mass_density_l
+        _, mass_density_l, _ = density_expression(state[4], [apparent_x[i] for i in lp], state[6])
+        volume_l = ca.dot(liquid_flow, ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])) / mass_density_l
     mass_density_v = rho_v * ca.dot(vapor_y, ca.DM(vapor.molar_masses))
     ul, uv = volume_l / area_m2, volume_v / area_m2
-    apparent_mass = liquid_flow * ca.DM(liquid.molar_masses[:3])
+    apparent_mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])
     mass_fraction = apparent_mass / ca.sum1(apparent_mass)
-    mul, _ = viscosity(state[4], apparent_x, mass_fraction[1], mass_fraction[2])
-    muv, _ = viscosity(state[5], vapor_y, mass_fraction[1], mass_fraction[2], phase="vapor")
-    sigma = surface_tension(state[4], apparent_x, mass_fraction[1], mass_fraction[2])
+    mul, _ = viscosity(state[4], apparent_x[lp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]])
+    muv, _ = viscosity(state[5], vapor_y[vp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]], phase="vapor")
+    sigma = surface_tension(state[4], apparent_x[lp], mass_fraction[lf[roles["amines"][0]]], mass_fraction[lf[roles["water"]]])
     _, area_per_length = interfacial_area_expression(mass_density_l, sigma, ul, area_m2, packing)
     raw_holdup, _ = holdup_expression(ul, mul, mass_density_l, packing)
     gradient = pressure_drop_expression(state[7], mass_density_l, mass_density_v, mul, muv, area_m2, ul, uv, packing)
@@ -109,7 +110,7 @@ def build_column_balance_functions(
     balance._thermodynamic_callbacks = (liquid, vapor)
 
     bottom, top = ca.MX.sym("bottom", 8), ca.MX.sym("top", 8)
-    residual = ca.vertcat(top[0] - fl[0], top[1] - fl[2], bottom[2] - fv[0], bottom[3] - fv[1],
+    residual = ca.vertcat(top[0] - fl[lf[roles["co2"]]], top[1] - fl[lf[roles["water"]]], bottom[2] - fv[vf[roles["co2"]]], bottom[3] - fv[vf[roles["water"]]],
                          top[4] - liquid_temperature_k, bottom[5] - vapor_temperature_k, bottom[6] - bottom_pressure_pa)
     boundary = ca.Function("column_inlets", [bottom, top], [residual])
     return balance, boundary
@@ -159,25 +160,30 @@ def build_coupled_column_functions(
         raise ValueError("Film thickness perturbations apply only to reactive_film")
     balance, bulk_boundary = build_column_balance_functions(liquid, vapor, **column_inputs)
     loading_path = build_loading_path_function(liquid) if co2_model == "reactive_film" else None
-    vapor_caloric = build_caloric_flow_function(vapor, partial_enthalpy_indices=(0, 1))
+    roles = liquid.roles
+    lf, vf = liquid.feed_index, vapor.feed_index
+    lp = [lf[s] for s in (roles["co2"], *roles["amines"], roles["water"])]
+    vp = [vf[s] for s in (roles["co2"], roles["water"], *roles["inert_gases"])]
+    n, li, vi = len(liquid.component_ids), liquid.output_index, vapor.output_index
+    vapor_caloric = build_caloric_flow_function(vapor, partial_enthalpy_indices=tuple(vp[:2]))
     state, z = ca.MX.sym("coupled", 12), ca.MX.sym("z")
     fl, fv = column_inputs["liquid_feed_mol_s"], column_inputs["vapor_feed_mol_s"]
     packing, area = column_inputs["packing"], column_inputs["area_m2"]
-    liquid_flow = ca.vertcat(state[0], fl[1], state[1])
-    vapor_flow = ca.vertcat(state[2], state[3], fv[2], fv[3])
+    liquid_flow = liquid.flow(state[0], state[1], fl)
+    vapor_flow = vapor.flow(state[2], state[3], fv)
     liquid_inputs = ca.vertcat(state[4], state[6], liquid_flow)
     bounded_bulk = state[:8].attachAssert(ca.logic_and(state[7] > 0., state[7] < packing[1]),
                                          "Column holdup must satisfy 0 < h_L < epsilon")
     conserved, sources, holdup, l, v, hydraulics = balance(bounded_bulk, state[8:11])
     x, y = liquid_flow / ca.sum1(liquid_flow), vapor_flow / ca.sum1(vapor_flow)
-    mass = liquid_flow * ca.DM(liquid.molar_masses[:3])
+    mass = liquid_flow * ca.DM([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids])
     w = mass / ca.sum1(mass)
-    mul, _ = viscosity(state[4], x, w[1], w[2])
-    muv, species_viscosities = viscosity(state[5], y, w[1], w[2], phase="vapor")
+    mul, _ = viscosity(state[4], x[lp], w[lp[1]], w[lp[2]])
+    muv, species_viscosities = viscosity(state[5], y[vp], w[lp[1]], w[lp[2]], phase="vapor")
     # Apparent concentration = apparent flow / actual reactive liquid volume.
-    dl, dl_mea, dl_ion = diffusivity(state[4], x, state[6], mul, ca.sum1(liquid_flow) / hydraulics[0])
+    dl, dl_mea, dl_ion = diffusivity(state[4], x[lp], state[6], mul, ca.sum1(liquid_flow) / hydraulics[0])
     dl = dl.attachAssert(dl > 0., "Bulk liquid CO2 diffusivity must be positive")
-    dv = diffusivity(state[5], y, state[6], mul, l[11], phase="vapor")
+    dv = diffusivity(state[5], y[vp], state[6], mul, l[li["molar-density"]], phase="vapor")
     kl = liquid_mass_transfer_expression(dl, mul, hydraulics[2], hydraulics[0] / area, packing)
     kg = ca.vertcat(*[gas_mass_transfer_expression(
         d, muv, hydraulics[3], hydraulics[1] / area, packing[1] - state[7], state[5], packing,
@@ -186,41 +192,39 @@ def build_coupled_column_functions(
     _, cp, partial_h = vapor_caloric(ca.vertcat(state[5], state[6], vapor_flow))
     cp = cp.attachAssert(cp > 0., "Native vapor Cp must be positive for heat transfer")
     heat = heat_transfer_expression(state[6], kg[0],
-        thermal_conductivity(state[5], y, species_viscosities), cp, v[2], dv[0])
+        thermal_conductivity(state[5], y[vp], species_viscosities), cp, v[vi["molar-density"]], dv[0])
     conductances = []
     if co2_model == "reactive_film":
-        species_d = ca.reshape(species_diffusivities(state[4]), 9, 1)
+        species_d = ca.reshape(species_diffusivities(state[4]), n, 1)
         species_d = ca.MX(species_d).attachAssert(
             ca.logic_and(ca.mmin(species_d) > 0., ca.mmax(species_d) < ca.inf),
             "Film species diffusivities must be finite positive")
         pairs = binary_diffusivities_from_species(species_d)
-        # Conserved CO2, MEA, water and charge in the verified native species order.
-        co2 = ca.DM([1, 0, 0, 0, 1, 1, 1, 0, 0])
-        constraints = np.array([[0, 0, 0, 1, -1, -1, -2, 1, -1],
-                                [0, 1, 0, 1, 1, 0, 0, 0, 0],
-                                [0, 0, 1, 0, 0, 1, 1, 1, 1]], dtype=float)
+        co2 = ca.DM(liquid.components["co2"])
+        constraints = np.asarray(liquid.film_constraints, dtype=float)
         for fraction in np.linspace(0., 1., int(quadrature_points)):
             at_loading, tangent = loading_path(liquid_inputs, fraction * state[11])
-            mobility = onsager_mobility_expression(at_loading[:9] / ca.sum1(at_loading[:9]),
-                at_loading[11], pairs, additional_flux_constraints=constraints)
+            mobility = onsager_mobility_expression(at_loading[:n] / ca.sum1(at_loading[:n]),
+                at_loading[li["molar-density"]], pairs, additional_flux_constraints=constraints)
             conductance = ca.dot(co2, mobility @ tangent)
             conductances.append(conductance.attachAssert(conductance > 0., "Native loading-path conductance must be positive"))
         integral = state[11] / (quadrature_points - 1) * (
             .5 * (conductances[0] + conductances[-1]) + sum(conductances[1:-1]))
     else:
-        at_loading = liquid(ca.vertcat(liquid_inputs[:2], liquid_inputs[2] * ca.exp(state[11]), liquid_inputs[3:]))
-        bulk_concentrations = l[11] * l[:9] / ca.sum1(l[:9])
-        interface_co2_concentration = at_loading[11] * at_loading[0] / ca.sum1(at_loading[:9])
+        at_loading = liquid(ca.vertcat(*[liquid_inputs[j] * ca.exp(state[11]) if j == liquid.co2_input else liquid_inputs[j]
+                                        for j in range(liquid_inputs.numel())]))
+        bulk_concentrations = l[li["molar-density"]] * l[:n] / ca.sum1(l[:n])
+        interface_co2_concentration = at_loading[li["molar-density"]] * at_loading[liquid.component_ids.index(roles["co2"]) ] / ca.sum1(at_loading[:n])
         enhancement = enhancement_reference_expression(state[4], bulk_concentrations, kl, ca.vertcat(dl, dl_mea, dl_ion))
         integral = thickness * enhancement * kl * (interface_co2_concentration - bulk_concentrations[0])
     interface = interface_balance_residuals(state[8:11], liquid_conductance_integral=integral,
-        film_thickness_m=thickness, vapor_fugacities_pa=v[:2],
-        interface_co2_fugacity_pa=at_loading[9], liquid_water_fugacity_pa=l[10],
+        film_thickness_m=thickness, vapor_fugacities_pa=v[[vi[f"fugacity:{roles[r]}"] for r in ("co2", "water")]],
+        interface_co2_fugacity_pa=at_loading[li[f"fugacity:{roles['co2']}"]], liquid_water_fugacity_pa=l[li[f"fugacity:{roles['water']}"]],
         gas_coefficients_mol_m2_s_pa=kg, heat_coefficient_w_m2_k=heat,
         vapor_temperature_k=state[5], liquid_temperature_k=state[4], transfer_enthalpies_j_mol=partial_h[:2])
     node = ca.Function("coupled_column", [z, state], [conserved, sources, ca.vertcat(holdup, interface)])
     diagnostics = ca.Function("coupled_column_diagnostics", [state],
-        [ca.vertcat(*conductances), integral, thickness, kg, heat, cp, partial_h, at_loading[9]]
+        [ca.vertcat(*conductances), integral, thickness, kg, heat, cp, partial_h, at_loading[li[f"fugacity:{roles['co2']}"]]]
         + ([enhancement] if co2_model == "enhancement_reference" else []),
         ["state"], ["conductances", "integral", "thickness", "gas_coefficients", "heat_coefficient",
                     "vapor_cp", "vapor_partial_enthalpies", "interface_fugacity"]

@@ -1,0 +1,366 @@
+{
+  "categories": {
+    "documents": {
+      "additions": 210,
+      "binary_files": 0,
+      "files": 3,
+      "removals": 5
+    },
+    "executable": {
+      "additions": 580,
+      "binary_files": 0,
+      "files": 9,
+      "removals": 99
+    },
+    "generated": {
+      "additions": 0,
+      "binary_files": 0,
+      "files": 0,
+      "removals": 0
+    },
+    "other": {
+      "additions": 107010,
+      "binary_files": 0,
+      "files": 26,
+      "removals": 3
+    },
+    "tests": {
+      "additions": 121,
+      "binary_files": 0,
+      "files": 2,
+      "removals": 0
+    }
+  },
+  "files": [
+    {
+      "additions": 35,
+      "binary": false,
+      "category": "documents",
+      "path": "README.md",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 4,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/_cse-manuscript.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/input/issue85/transport.json",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 73,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/bvp_solution_methods/notebook.qmd",
+      "removals": 4,
+      "untracked": false
+    },
+    {
+      "additions": 102,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/REPRODUCE.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 85518,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/comparison.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3757,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/declared_cosine/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 85,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/declared_cosine/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3706,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/declared_seed/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 82,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/declared_seed/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 10,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/integration.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3757,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_cosine/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 85,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_cosine/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 98,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_inputs/calorics.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 133,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_inputs/case.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 879,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_inputs/gas_parameters.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2701,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_inputs/parameters.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 139,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_inputs/reactions.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 211,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_inputs/thermodynamics.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 224,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_inputs/transport.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3706,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_seed/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 82,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/permuted_seed/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 12,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/pytest.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 9,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/seven_state.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1730,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/seven_state/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 69,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/seven_state/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 9,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/bvp_solution_methods/results/runs/issue85_stage1_delivery_20261029/seven_state_comparison.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 100,
+      "binary": false,
+      "category": "executable",
+      "path": "analyses/bvp_solution_methods/scripts/compare_solvent_declarations.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 6,
+      "binary": false,
+      "category": "executable",
+      "path": "analyses/bvp_solution_methods/scripts/run_case.py",
+      "removals": 3,
+      "untracked": false
+    },
+    {
+      "additions": 2,
+      "binary": false,
+      "category": "other",
+      "path": "integration/epcsaft_contract.json",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 45,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/BVP/Coupled_Column.py",
+      "removals": 41,
+      "untracked": false
+    },
+    {
+      "additions": 37,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/Thermodynamics/casadi_reactive.py",
+      "removals": 17,
+      "untracked": false
+    },
+    {
+      "additions": 17,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/Thermodynamics/reactive_bundle.py",
+      "removals": 8,
+      "untracked": false
+    },
+    {
+      "additions": 238,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/Thermodynamics/solvent_inputs.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 4,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/benchmark_worker.py",
+      "removals": 2,
+      "untracked": false
+    },
+    {
+      "additions": 92,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/column.py",
+      "removals": 23,
+      "untracked": false
+    },
+    {
+      "additions": 41,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/config/column.py",
+      "removals": 5,
+      "untracked": false
+    },
+    {
+      "additions": 10,
+      "binary": false,
+      "category": "tests",
+      "path": "tests/test_column_config.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 111,
+      "binary": false,
+      "category": "tests",
+      "path": "tests/test_solvent_declarations.py",
+      "removals": 0,
+      "untracked": false
+    }
+  ],
+  "merge_base": "16d5862cdfa52023b381e81da7ad96ce8b80a1be",
+  "repository": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume",
+  "requested_base": "16d5862cdfa52023b381e81da7ad96ce8b80a1be",
+  "scope": "merge base through HEAD, index, working tree, and untracked files",
+  "totals": {
+    "additions": 107921,
+    "binary_files": 0,
+    "files": 40,
+    "removals": 107
+  }
+}

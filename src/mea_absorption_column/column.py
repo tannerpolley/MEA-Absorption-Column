@@ -27,6 +27,7 @@ from .config.column import (
     verify_worker_identity,
 )
 from .misc.Convert_Data import convert_data, physical_input_fingerprint
+from .Thermodynamics.solvent_inputs import SolventRefusal
 
 
 _ROOT = Path(__file__).resolve().parents[2]
@@ -247,7 +248,8 @@ def _resolved_inputs(config: ColumnConfig, frame: pd.DataFrame) -> dict[str, Any
         )
     else:
         parameters, raw, metadata = _direct_physical_inputs(physical_payload, config)
-    _validate_si_inputs(parameters, raw, metadata)
+    solvent = config.solvent
+    _validate_si_inputs(parameters, raw, metadata, solvent)
     payload = {
         "case_id": config.case.case_id,
         "data_type": config.case.data_type,
@@ -262,11 +264,16 @@ def _resolved_inputs(config: ColumnConfig, frame: pd.DataFrame) -> dict[str, Any
             "physical_input_file": config.case.physical_input_file,
         },
     }
+    if solvent:
+        payload["solvent_identity"] = solvent.hashes
+        payload["feed_ids"] = {"liquid": solvent.feeds, "vapor": solvent.gas}
     if config.preset == "twelve_state_conserved":
         physical_payload = _physical_payload(config)
         if physical_payload is None:
             raise ConfigurationError("twelve_state_conserved requires a physical_input_file")
-        payload["conserved_policy"] = _conserved_case_policy(config, physical_payload)
+        payload["conserved_policy"] = (_conserved_case_policy(config, physical_payload) if solvent is None else
+                                       {**solvent.transport["execution_policy"]["branch_policy"],
+                                        "species_diffusivity_model": solvent.transport["species_diffusivities"]})
     source_path = Path(config.case.source)
     alias_files = {
         "C_cases_data": "C_cases_data.csv",
@@ -298,9 +305,19 @@ def _resolved_inputs(config: ColumnConfig, frame: pd.DataFrame) -> dict[str, Any
 
 def _direct_physical_inputs(payload: Mapping[str, Any], config: ColumnConfig):
     values = payload["physical_inputs"]
+    solvent = config.solvent
     row = payload.get("model_input_row") or {}
     liquid = np.asarray(values.get("liquid_feed_mol_s"), dtype=float)
     vapor = np.asarray(values.get("vapor_feed_mol_s"), dtype=float)
+    if solvent:
+        if Path(config.case.physical_input_file).resolve() != solvent.case_path.resolve():
+            raise SolventRefusal("Case input differs from the transport declaration")
+        liquid_ids = values.get("liquid_feed_ids", solvent.feeds)
+        vapor_ids = values.get("vapor_feed_ids", solvent.gas)
+        if set(liquid_ids) != set(solvent.feeds) or set(vapor_ids) != set(solvent.gas):
+            raise SolventRefusal("Case feed IDs disagree with declared analytical feeds")
+        liquid = liquid[[liquid_ids.index(s) for s in solvent.feeds]]
+        vapor = vapor[[vapor_ids.index(s) for s in solvent.gas]]
     beds = row.get("Beds", values.get("beds"))
     intercoolers = row.get("Intercoolers", values.get("intercoolers", 0))
     if (
@@ -320,15 +337,18 @@ def _direct_physical_inputs(payload: Mapping[str, Any], config: ColumnConfig):
         or int(intercoolers) < 0
     ):
         raise ConfigurationError("physical_inputs must declare a nonnegative integer intercooler count")
-    if liquid.shape != (3,) or vapor.shape != (4,):
+    if liquid.shape != (len(solvent.feeds) if solvent else 3,) or vapor.shape != (len(solvent.gas) if solvent else 4,):
         raise ConfigurationError("physical_inputs must provide three liquid and four vapor molar feeds")
+    lp = [solvent.feeds.index(s) for s in (solvent.roles["co2"], *solvent.roles["amines"], solvent.roles["water"])] if solvent else [0, 1, 2]
+    vp = [solvent.gas.index(s) for s in (solvent.roles["co2"], solvent.roles["water"], *solvent.roles["inert_gases"])] if solvent else [0, 1, 2, 3]
+    l, v = liquid[lp], vapor[vp]
     total_vapor = float(vapor.sum())
     raw = np.asarray([
         float(liquid.sum()) / total_vapor,
         total_vapor,
-        float(liquid[0] / liquid[1]),
-        float(liquid[1] * 0.061084 / (liquid[1] * 0.061084 + liquid[2] * 0.01801528)),
-        float(vapor[0] / total_vapor),
+        float(l[0] / l[1]),
+        float(l[1] * 0.061084 / (l[1] * 0.061084 + l[2] * 0.01801528)),
+        float(v[0] / total_vapor),
         float(values["liquid_temperature_k"]),
         float(values["vapor_temperature_k"]),
         float(values["bottom_pressure_pa"]),
@@ -360,7 +380,7 @@ def _direct_physical_inputs(payload: Mapping[str, Any], config: ColumnConfig):
     return parameters, raw, metadata
 
 
-def _validate_si_inputs(inputs, raw, metadata) -> None:
+def _validate_si_inputs(inputs, raw, metadata, solvent=None) -> None:
     if not isinstance(inputs, (list, tuple)) or len(inputs) != 9:
         raise ConfigurationError("Converted case must contain the nine canonical SI input records")
     liquid, vapor, liquid_temperature, vapor_temperature, coordinate, height, area, pressure, packing = inputs
@@ -368,7 +388,7 @@ def _validate_si_inputs(inputs, raw, metadata) -> None:
     vapor = np.asarray(vapor, dtype=float)
     coordinate = np.asarray(coordinate, dtype=float)
     packing = np.asarray(packing, dtype=float)
-    if liquid.shape != (3,) or vapor.shape != (4,) or packing.shape != (7,):
+    if liquid.shape != (len(solvent.feeds) if solvent else 3,) or vapor.shape != (len(solvent.gas) if solvent else 4,) or packing.shape != (7,):
         raise ConfigurationError("Converted case has an invalid SI feed or packing shape")
     if any(not np.all(np.isfinite(values)) or np.any(values <= 0.0) for values in (liquid, vapor, packing)):
         raise ConfigurationError("Converted case contains non-finite or nonpositive SI flows/packing values")
@@ -457,10 +477,18 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         raise ConfigurationError("Resolved conserved inputs lack their case-owned policy")
     dataset = _dependency_path(config.dependencies.dataset)
     liquid_reference_path = _dependency_path(config.dependencies.thermal_reference)
-    liquid = engine_liquid(dataset, liquid_reference_path, "column_liquid", loading_policy=policy)
+    solvent = config.solvent
+    domain = solvent.transport["domain"] if solvent else None
+    liquid = engine_liquid(dataset, liquid_reference_path, "column_liquid", loading_policy=policy,
+                           declarations=solvent.thermo if solvent else None,
+                           reaction_path=solvent.paths["reactions"] if solvent else None, domain=domain,
+                           parameter_path=solvent.paths["parameters"] if solvent else None)
+    if solvent:
+        liquid.film_constraints = solvent.constraints
     neutral_parameters = _dependency_path(config.dependencies.references[0])
     neutral_reference_path = _dependency_path(config.dependencies.references[1])
-    vapor = engine_vapor(neutral_parameters, neutral_reference_path, "column_vapor")
+    vapor = engine_vapor(neutral_parameters, neutral_reference_path, "column_vapor",
+                         declarations=solvent.thermo if solvent else None, domain=domain)
     diffusion = policy["species_diffusivity_model"]
 
     def species_diffusivities(temperature):
@@ -473,10 +501,13 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         )
 
     settings = dict(config.numerics.as_dict()["solver_settings"])
+    if solvent and (settings["quadrature_points"] != solvent.transport["quadrature_points"]
+                    or settings.get("liquid_density_source", "solved_state") != solvent.transport["hydraulic_density"]):
+        raise SolventRefusal("Numerical quadrature/density selection disagrees with declared inputs")
     node, boundary, diagnostics = build_coupled_column_functions(
         liquid,
         vapor,
-        species_diffusivities=species_diffusivities,
+        species_diffusivities=solvent.diffusivities if solvent else species_diffusivities,
         quadrature_points=settings["quadrature_points"],
         liquid_density_source=settings.get("liquid_density_source", "solved_state"),
         co2_model={
@@ -533,7 +564,12 @@ def _prepare_conserved_column_in_process(config: ColumnConfig) -> dict[str, Any]
         "python": config.engine.python,
     })
     engine.update(worker_identity)
-    assembly = _build_conserved_assembly(config, resolved_inputs)
+    try:
+        assembly = _build_conserved_assembly(config, resolved_inputs)
+    except (ValueError, KeyError, TypeError, RuntimeError) as error:
+        if config.solvent:
+            raise SolventRefusal(f"Native declarations/graph construction refused: {error}") from error
+        raise
     assets = {}
     for path in assembly["asset_paths"]:
         asset = Path(path)
@@ -635,8 +671,8 @@ def _equilibrium_physical_certification(
     liquid = assembly["liquid"]
     for state in profile.T:
         for fraction in np.linspace(0.0, 1.0, quadrature_points):
-            inputs = [state[4], state[6], state[0] * np.exp(fraction * state[11]), liquid_feed[1], state[1]]
-            amounts = np.asarray(liquid(inputs)).ravel()[:9] / sum(inputs[2:])
+            inputs = np.r_[state[4], state[6], np.asarray(liquid.flow(state[0] * np.exp(fraction * state[11]), state[1], liquid_feed)).ravel()]
+            amounts = np.asarray(liquid(inputs)).ravel()[:len(liquid.component_ids)] / sum(inputs[2:])
             charges.append(float(amounts @ np.asarray(liquid.charges)))
     boundary = np.asarray(assembly["boundary"](profile[:, 0], profile[:, -1])).ravel()
     residuals = {
@@ -728,6 +764,8 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         and (source_inputs.get("metadata") or {}).get("physical_input_basis")
         == (current_inputs.get("metadata") or {}).get("physical_input_basis")
         and source_inputs.get("conserved_policy") == current_inputs.get("conserved_policy")
+        and source_inputs.get("solvent_identity") == current_inputs.get("solvent_identity")
+        and source_inputs.get("feed_ids") == current_inputs.get("feed_ids")
     )
     if not identity_matches:
         raise ConfigurationError("Retained profile model, physical inputs, or solver settings do not match")
@@ -785,9 +823,18 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
         raise ConfigurationError("Conserved execution needs an increasing initial_interface_bracket")
     if not isinstance(tolerance, (int, float)) or not math.isfinite(tolerance) or tolerance <= 0:
         raise ConfigurationError("Conserved execution needs a positive physical_residual_tolerance")
-    liquid_feed = np.asarray(physical.get("liquid_feed_mol_s"), dtype=float)
-    vapor_feed = np.asarray(physical.get("vapor_feed_mol_s"), dtype=float)
-    expected_seed = np.r_[liquid_feed[0], liquid_feed[2], vapor_feed[:2],
+    solvent = config.solvent
+    if solvent:
+        policy = solvent.transport["execution_policy"]
+        bulk = np.asarray(policy["initial_bulk_state"], dtype=float)
+        bracket, tolerance = np.asarray(policy["initial_interface_bracket"]), policy["physical_residual_tolerance"]
+    canonical = (_resolved_inputs(config, _case_frame(config)[0])["parameters"][:2] if solvent else
+                 (physical.get("liquid_feed_mol_s"), physical.get("vapor_feed_mol_s")))
+    liquid_feed, vapor_feed = (np.asarray(v) for v in canonical)
+    lf = {s: i for i, s in enumerate(solvent.feeds)} if solvent else {"carbon-dioxide": 0, "water": 2}
+    vf = {s: i for i, s in enumerate(solvent.gas)} if solvent else {"carbon-dioxide": 0, "water": 1}
+    co2, water = (solvent.roles[r] for r in ("co2", "water")) if solvent else ("carbon-dioxide", "water")
+    expected_seed = np.r_[liquid_feed[lf[co2]], liquid_feed[lf[water]], vapor_feed[[vf[co2], vf[water]]],
                           physical.get("liquid_temperature_k"), physical.get("vapor_temperature_k"),
                           physical.get("bottom_pressure_pa")]
     packing = np.asarray(physical.get("packing"), dtype=float)
@@ -822,8 +869,21 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
                 value = original(*args, **kwargs)
                 counts["returned"] += 1
                 return value
-            except Exception:
+            except Exception as error:
                 counts["failed"] += 1
+                accepted = getattr(owner, "_accepted", None)
+                native_state = None
+                if accepted:
+                    native_state = {"inputs": accepted[0], "feed_ids": owner.feed_ids,
+                                    "species_ids": owner.component_ids,
+                                    "mole_fractions": list(accepted[1].mole_fractions),
+                                    "phase_amounts_mol": list(accepted[1].amounts),
+                                    "phase_densities_mol_m3": list(accepted[1].molar_densities),
+                                    "native_residuals": list(accepted[1].residuals),
+                                    "message": accepted[1].message}
+                checkpoint.update(evaluation_failure={"kind": getattr(error, "kind", "native_evaluation_failure"),
+                                                      "message": str(error), "inputs": [str(v) for v in args],
+                                                      "last_accepted_native_state": native_state})
                 raise
             finally:
                 counts["wall_s"] += time.perf_counter() - started
@@ -832,15 +892,17 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     instrument(liquid, "solve", "liquid_solve")
     instrument(liquid, "actions", "liquid_actions")
     instrument(vapor, "actions", "vapor_actions")
-    np.testing.assert_array_equal(liquid.molar_masses[:3], payload["liquid_molar_masses_kg_mol"])
+    np.testing.assert_array_equal([liquid.molar_masses[liquid.component_ids.index(s)] for s in liquid.feed_ids], payload["liquid_molar_masses_kg_mol"])
     np.testing.assert_array_equal(vapor.molar_masses, payload["vapor_molar_masses_kg_mol"])
     bulk[7] -= float(balance(bulk, [0.0, 0.0, 0.0])[2])
     gas = np.asarray(balance(bulk, [0.0, 0.0, 0.0])[4]).ravel()
+    liquid_water = liquid.output_index[f"fugacity:{liquid.roles['water']}"]
+    gas_flux = [vapor.output_index[f"fugacity:{vapor.roles[r]}"] for r in ("co2", "water")]
     evaluations = []
 
     def interface_residual(loading):
         value = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])
-        residual = float(value[1] / value[2] - value[3][0] * (gas[0] - value[7]))
+        residual = float(value[1] / value[2] - value[3][0] * (gas[gas_flux[0]] - value[7]))
         evaluations.append({"loading": float(loading), "original_co2_residual": residual})
         checkpoint.update(stage="interface_initialization", initialization_evaluations=evaluations)
         return residual
@@ -848,7 +910,7 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     loading, root = brentq(interface_residual, *bracket, full_output=True, disp=False)
     diagnostic = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])
     point = np.r_[bulk, float(diagnostic[1] / diagnostic[2]),
-                  float(diagnostic[3][1] * (gas[1] - balance(bulk, [0.0, 0.0, 0.0])[3][10])), 0.0, loading]
+                  float(diagnostic[3][1] * (gas[gas_flux[1]] - balance(bulk, [0.0, 0.0, 0.0])[3][liquid_water])), 0.0, loading]
     point[10] = float(diagnostic[4]) * (bulk[5] - bulk[4]) + point[8:10] @ np.asarray(diagnostic[6]).ravel()
     height, span = assembly["height_m"], 393.15 - 293.15
     capacity = np.array([
@@ -857,7 +919,7 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     ])
     if np.any(~np.isfinite(capacity)) or np.any(capacity <= 0):
         raise RuntimeError("Native capacity scales must be finite positive")
-    flux_scale = np.asarray(diagnostic[3]).ravel() * gas[:2]
+    flux_scale = np.asarray(diagnostic[3]).ravel() * gas[gas_flux]
     heat_scale = float(diagnostic[4]) * span + np.abs(np.asarray(diagnostic[6]).ravel()) @ flux_scale
     state_scale = np.r_[bulk[:4], 300.0, 300.0, bulk[6], .97, flux_scale, heat_scale, 1.0]
     balance_scale = np.r_[bulk[:4] / height, capacity * span / height, bulk[6] / height]
@@ -941,6 +1003,8 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
         result["continuation"] = {"last_accepted_source_multiplier": alpha,
             "last_accepted_profile": initial, "initial_step": homotopy_step,
             "minimum_step": settings["source_homotopy_min_step"], "stages": stages}
+    if not result.get("accepted") and solvent:
+        result["failure_kind"] = checkpoint.get("evaluation_failure", {}).get("kind", "outer_solve_failure")
     checkpoint.update(stage="physical_verification", result=result)
     missing_physical_checks = "film-quadrature charge and capture" if config.model.film_model == "equilibrium_manifold" else "capture"
     physical = ({"accepted": None, "reason": "Source homotopy did not reach full physics"}
@@ -980,7 +1044,8 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     result_record = {key: value for key, value in prepared.items() if key != "assembly"}
     result_record.update(stage="finished", execution_status="completed", initialization=checkpoint["initialization"],
                          scaling=checkpoint["scaling"], initial_profile=checkpoint["initial_profile"], result=result,
-                         physical_certification=physical, native_calls=checkpoint["native_calls"])
+                         physical_certification=physical, native_calls=checkpoint["native_calls"],
+                         evaluation_failure=checkpoint.get("evaluation_failure"))
     return result_record
 
 
@@ -1171,6 +1236,10 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
             base["physical_acceptance"] = "rejected"
             reason = certificate.get("reason", "physical certification rejected")
         base["diagnostics"]["physical_acceptance_reason"] = reason
+        if config.dependencies.thermodynamics_input and (base["numerical_acceptance"] != "accepted" or base["physical_acceptance"] != "accepted"):
+            base["failure"] = {"kind": prepared["result"].get("failure_kind", "outer_solve_failure"),
+                               "phase": "solve_or_certification", "message": reason,
+                               "native_cause": prepared.get("evaluation_failure")}
     if output_dir is not None:
         _record(output_dir, "resolved_config.json", config.as_dict())
         _record(output_dir, "attempt.json", base)

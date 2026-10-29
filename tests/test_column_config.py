@@ -129,6 +129,11 @@ def test_twelve_state_run_column_retains_conserved_execution(monkeypatch):
 
 
 class _ChargeState:
+    component_ids = tuple(range(9))
+    feed_ids = ("carbon-dioxide", "monoethanolamine", "water")
+    roles = {"co2": "carbon-dioxide", "water": "water"}
+    from mea_absorption_column.Thermodynamics.casadi_reactive import EnginePhase
+    flow = EnginePhase.flow
     charges = (0, 0, 0, 1, -1, -1, -2, 1, -1)
 
     def __init__(self, charge):
@@ -398,6 +403,10 @@ def test_retained_profile_reaches_solver_and_rejection_does_not(tmp_path, monkey
     }
 
     class Phase:
+        component_ids = ("carbon-dioxide", "monoethanolamine", "water")
+        feed_ids = component_ids
+        roles = {"co2": "carbon-dioxide", "water": "water"}
+        output_index = {"fugacity:carbon-dioxide": 0, "fugacity:water": 1}
         molar_masses = np.ones(4)
         solve = actions = lambda *args: None
         def enthalpy_temperature_derivative(self, *_args):
@@ -406,6 +415,7 @@ def test_retained_profile_reaches_solver_and_rejection_does_not(tmp_path, monkey
     def fake_prepared(_config):
         liquid, vapor = Phase(), Phase()
         liquid.molar_masses = np.ones(3)
+        liquid.output_index = {"fugacity:water": 10}
         def diagnostic(state):
             return None, state[-1] - .5, 1., np.ones(2), 1., None, np.ones(2), 1.
         def balance(*_args):

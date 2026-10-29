@@ -43,10 +43,11 @@ def save(path, record):
     temporary.replace(path)
 
 
-def request(method, nodes, points, *, output=None, wall=1200.0, profile=None, clustering=None):
+def request(method, nodes, points, *, output=None, wall=1200.0, profile=None, clustering=None, thermodynamics=None, transport=None):
     values = {"retained_profile": str(profile)} if profile else {}
     extra = {"end_clustering": clustering} if clustering else {}
-    return {"preset": "twelve_state_conserved", "case": {"physical_input_file": CASE},
+    return {**({"dependencies": {"thermodynamics_input": str(thermodynamics), "transport_input": str(transport)}} if thermodynamics else {}),
+            "preset": "twelve_state_conserved", "case": {} if thermodynamics else {"physical_input_file": CASE},
             "numerics": {"method": method, "solver_settings": {"nodes": nodes, "quadrature_points": points,
                                                                "max_iterations": 20, "tolerance": 1e-7, **extra}},
             "initialization": {"policy": "case_declared_native_inputs", "values": values},
@@ -265,6 +266,8 @@ def main():
     attempt.add_argument("--initial-profile", type=Path, help="Accepted attempt.json interpolated as the initial guess")
     attempt.add_argument("--wall-limit", type=float, default=1200.0)
     attempt.add_argument("--output", type=Path, required=True)
+    attempt.add_argument("--thermodynamics-input", type=Path)
+    attempt.add_argument("--transport-input", type=Path)
     control = commands.add_parser("film-control")
     control.add_argument("attempt", type=Path)
     control.add_argument("--film-points", type=int, default=17)
@@ -286,7 +289,7 @@ def main():
 
         record = run_column(request(args.method, args.nodes, args.film_points, output=args.output.resolve(),
                                     wall=args.wall_limit, profile=args.initial_profile and args.initial_profile.resolve(),
-                                    clustering=args.end_clustering))
+                                    clustering=args.end_clustering, thermodynamics=args.thermodynamics_input, transport=args.transport_input))
         print(json.dumps(clean(outcome(record)), indent=1))
     elif args.command == "film-control":
         result = film_control(args.attempt, args.film_points)
