@@ -1,0 +1,21 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "nodes": 11,
+      "quadrature_points": 5,
+      "end_clustering": 1.0,
+      "max_iterations": 20,
+      "tolerance": 1e-07,
+      "liquid_density_source": "correlation"
+    }
+  },
+  "execution": {
+    "wall_limit_s": 1450,
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/analyses/liquid_density/results/runs/current_pin/correlation"
+  }
+}

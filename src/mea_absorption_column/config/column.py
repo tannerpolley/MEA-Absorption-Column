@@ -484,7 +484,7 @@ def _conserved_numeric(request: Mapping[str, Any]) -> NumericConfig:
         if "nodes" in settings:
             raise ConfigurationError("nodes must be supplied either directly or in solver_settings")
         settings["nodes"] = direct_nodes
-    override_keys = {"reactive_loading_anchor", "reactive_max_log_loading_step", "reactive_max_loading_steps", "end_clustering"}
+    override_keys = {"reactive_loading_anchor", "reactive_max_log_loading_step", "reactive_max_loading_steps", "end_clustering", "liquid_density_source"}
     unknown = set(settings) - set(defaults) - override_keys - homotopy
     if unknown:
         raise ConfigurationError(f"Unknown or irrelevant conserved solver settings: {sorted(unknown)}")
@@ -492,7 +492,10 @@ def _conserved_numeric(request: Mapping[str, Any]) -> NumericConfig:
     resolved.update(settings)
     integer_keys = {"nodes", "quadrature_points", "max_iterations", "max_nodes", "reactive_max_loading_steps"}
     for key, value in resolved.items():
-        if key in integer_keys:
+        if key == "liquid_density_source":
+            if value not in ("solved_state", "correlation"):
+                raise ConfigurationError("liquid_density_source must be solved_state or correlation")
+        elif key in integer_keys:
             if isinstance(value, bool) or not isinstance(value, int) or value < 2:
                 raise ConfigurationError(f"numerics.solver_settings.{key} must be an integer >= 2")
         elif isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:

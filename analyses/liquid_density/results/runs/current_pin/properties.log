@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/analyses/liquid_density/scripts/compare.py", line 119, in <module>
+    properties()
+    ~~~~~~~~~~^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/analyses/liquid_density/scripts/compare.py", line 36, in properties
+    models = {k: engine_liquid(DATA / v, DATA / v / 'ideal-gas-thermochemistry.json', k,
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              loading_policy={'loading_anchor': .25, 'max_log_loading_step': .1, 'max_loading_steps': 256})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 78, in engine_liquid
+    return EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="liquid", feed_ids=ids[:3],
+                       molar_masses=_molar_masses(dataset, ids), reactions=reactions, neutral_reference=q.NeutralReference(**record["neutral_reference"]),
+                       loading_policy=loading_policy)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/src/mea_absorption_column/Thermodynamics/casadi_reactive.py", line 45, in __init__
+    self.model = epcsaft.Mixture(epcsaft.Parameters.from_mapping(mapping), thermochemistry=thermochemistry)
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/.venv/lib/python3.13/site-packages/epcsaft/parameters.py", line 714, in from_mapping
+    result = cls(_core.build_parameters(native_document), selected_ids, tuple(site_ids))
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+epcsaft._core.ParameterError: missing cross association or no_cross_association: carbon-dioxide/monoethanolamine

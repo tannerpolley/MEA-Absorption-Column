@@ -1,0 +1,167 @@
+{
+  "born_runtime_defaults": {
+    "c_dielectric": 1.0,
+    "c_shell": 1.0
+  },
+  "neutral_reference": {
+    "solute_molality_ratios": {
+      "bicarbonate-anion": 0.125,
+      "carbamate-anion": 0.25,
+      "carbon-dioxide": 0.125,
+      "carbonate-anion": 0.125,
+      "hydronium-cation": 0.125,
+      "hydroxide-anion": 0.125,
+      "monoethanolamine": 0.125,
+      "protonated-monoethanolamine": 0.625
+    },
+    "solvent": "water",
+    "standard_molality_mol_per_kg": 1.0
+  },
+  "parameter_sha256": "756fec502d3a1433d538abb073c4caeabf91902013ab7e27d5459ce70396543b",
+  "provenance": {
+    "amine_commit": "083083c55c3c5490100063c251507fe3879128d9",
+    "candidate_path": "analyses/mea_parameter_bundle/results/density-cp-160/D1-evidence/F1-double-prime-candidate-parameters.json",
+    "candidate_sha256": "756fec502d3a1433d538abb073c4caeabf91902013ab7e27d5459ce70396543b",
+    "corrected_packet_path": "analyses/mea_parameter_bundle/results/source-corrections-152/state-packet.json.gz",
+    "corrected_packet_sha256": "3fca278be8790d58ab30e5474b2b3892c47225d8230ac40fd4f87c066e8eaf2d",
+    "neutral_reference_source": "shared._neutral_reference_data(corrected_request)",
+    "physical_parameters_path": "analyses/mea_parameter_bundle/results/density-cp-160/D1-evidence/F1-A/parameters.json",
+    "physical_parameters_sha256": "cd1ad71b551848e04a6841d4a4ccc017371910ae77f6bc0984b34322a3785a94",
+    "producer_path": "analyses/mea_parameter_bundle/scripts/shared_evaluation.py",
+    "producer_sha256": "71953a76516914c4ca8e90925d1f2f04f5daba398ce269bdeba9a29ba9bba641",
+    "reaction_source": "shared.corrected_request(request, shared.reaction_values(candidate))[reaction_system][engine_reactions]",
+    "reaction_values": {
+      "reaction:R2:correlation:a": 232.33141533884407,
+      "reaction:R2:correlation:b_k": -11105.640030520277,
+      "reaction:R2:correlation:c": -36.7816,
+      "reaction:R2:correlation:d_per_k": 0.0,
+      "reaction:R4:correlation:a": 2.151,
+      "reaction:R4:correlation:b_k": -1545.3,
+      "reaction:R5:correlation:a_k": 3037.6399534696106,
+      "reaction:R5:correlation:b": -1.0173150837285996,
+      "reaction:R5:correlation:c_per_k": 0.0004277
+    }
+  },
+  "reactions": [
+    {
+      "correlation": {
+        "a": 3.7290977365566675,
+        "b": -13445.9,
+        "c": -22.4773,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1",
+        "temperature_max": 498.15,
+        "temperature_min": 273.15
+      },
+      "name": "R1",
+      "parameter_role": "candidate",
+      "reference": {
+        "reference_pressure_pa": null,
+        "source_basis": "RawMoleFractionInfiniteDilution"
+      },
+      "stoichiometry": {
+        "hydronium-cation": 1.0,
+        "hydroxide-anion": 1.0,
+        "water": -2.0
+      }
+    },
+    {
+      "correlation": {
+        "a": 20.959245323180852,
+        "b": -11105.640030520277,
+        "c": -36.7816,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-molality-infinite-dilution-water-v1",
+        "temperature_max": 393.15,
+        "temperature_min": 293.15
+      },
+      "name": "R2",
+      "parameter_role": "selected",
+      "reference": {
+        "reference_pressure_pa": null,
+        "source_basis": "CommonMolalityInfiniteDilution"
+      },
+      "stoichiometry": {
+        "bicarbonate-anion": 1.0,
+        "carbon-dioxide": -1.0,
+        "hydronium-cation": 1.0,
+        "water": -2.0
+      }
+    },
+    {
+      "correlation": {
+        "a": 12.145792981306897,
+        "b": -12431.7,
+        "c": -35.4819,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1",
+        "temperature_max": 498.15,
+        "temperature_min": 273.15
+      },
+      "name": "R3",
+      "parameter_role": "candidate",
+      "reference": {
+        "reference_pressure_pa": null,
+        "source_basis": "RawMoleFractionInfiniteDilution"
+      },
+      "stoichiometry": {
+        "bicarbonate-anion": -1.0,
+        "carbonate-anion": 1.0,
+        "hydronium-cation": 1.0,
+        "water": -1.0
+      }
+    },
+    {
+      "correlation": {
+        "a": 2.151,
+        "b": -1545.3,
+        "c": 0.0,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-molality-infinite-dilution-water-v1",
+        "temperature_max": 393.15,
+        "temperature_min": 293.15
+      },
+      "name": "R4",
+      "parameter_role": "selected",
+      "reference": {
+        "reference_pressure_pa": 100000.0,
+        "source_basis": "CommonMolalityInfiniteDilution"
+      },
+      "stoichiometry": {
+        "bicarbonate-anion": 1.0,
+        "carbamate-anion": -1.0,
+        "monoethanolamine": 1.0,
+        "water": -1.0
+      }
+    },
+    {
+      "correlation": {
+        "a": 2.3424545466714632,
+        "b": -6994.424474742253,
+        "c": 0.0,
+        "d": -0.0009848156442735533,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-molality-infinite-dilution-water-v1",
+        "temperature_max": 393.15,
+        "temperature_min": 293.15
+      },
+      "name": "R5",
+      "parameter_role": "selected",
+      "reference": {
+        "reference_pressure_pa": 100000.0,
+        "source_basis": "CommonMolalityInfiniteDilution"
+      },
+      "stoichiometry": {
+        "hydronium-cation": 1.0,
+        "monoethanolamine": 1.0,
+        "protonated-monoethanolamine": -1.0,
+        "water": -1.0
+      }
+    }
+  ],
+  "schema": "absorber-engine-reactions-v1"
+}

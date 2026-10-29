@@ -4,7 +4,7 @@ from __future__ import annotations
 import casadi as ca
 import numpy as np
 
-from ..Properties.Thermophysical_Properties import surface_tension, thermal_conductivity
+from ..Properties.Thermophysical_Properties import surface_tension, thermal_conductivity, density_expression
 from ..Properties.Transport_Properties import viscosity, diffusivity
 from ..Thermodynamics.casadi_reactive import build_loading_path_function, build_caloric_flow_function
 from ..Transport.Hydraulic_Variables_Correlations import holdup_expression, interfacial_area_expression
@@ -20,9 +20,12 @@ from ..Transport.Transfer_Coefficients import (
 
 def build_column_balance_functions(
     liquid, vapor, *, liquid_feed_mol_s, vapor_feed_mol_s,
-    liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2, packing,
+    liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2, packing, liquid_density_source="solved_state",
 ):
     """Build native balance(state, transfer) and boundary(bottom, top).
+
+    liquid_density_source selects hydraulic density only; solved_state preserves the default.
+    Correlation volume uses conserved mass flow, not true-species molar flow.
 
     State: apparent Fl_CO2, Fl_H2O, Fv_CO2, Fv_H2O [mol/s], Tl, Tv [K],
     P [Pa], h_L [bed-volume fraction]. MEA/N2/O2 flows are fixed by feeds.
@@ -51,6 +54,8 @@ def build_column_balance_functions(
     Adding 3 fluxes and an interface loading requires 4 interface equations.
     The seven inlet conditions fix pressure only at the gas inlet (bottom).
     """
+    if liquid_density_source not in ("solved_state", "correlation"):
+        raise ValueError("liquid_density_source must be solved_state or correlation")
     fl, fv = (np.asarray(v, dtype=float) for v in (liquid_feed_mol_s, vapor_feed_mol_s))
     packing = np.asarray(packing, dtype=float)
     if (fl.shape != (3,) or fv.shape != (4,) or packing.shape != (7,)
@@ -80,6 +85,9 @@ def build_column_balance_functions(
     volume_l = ca.sum1(true_amounts) / rho_l
     volume_v = total_v / rho_v
     mass_density_l = rho_l * ca.dot(true_x, ca.DM(liquid.molar_masses))
+    if liquid_density_source == "correlation":
+        _, mass_density_l, _ = density_expression(state[4], [apparent_x[i] for i in range(3)], state[6])
+        volume_l = ca.dot(liquid_flow, ca.DM(liquid.molar_masses[:3])) / mass_density_l
     mass_density_v = rho_v * ca.dot(vapor_y, ca.DM(vapor.molar_masses))
     ul, uv = volume_l / area_m2, volume_v / area_m2
     apparent_mass = liquid_flow * ca.DM(liquid.molar_masses[:3])

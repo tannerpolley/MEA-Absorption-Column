@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/analyses/liquid_density/scripts/compare.py", line 123, in <module>
+    column(args.stage)
+    ~~~~~~^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/analyses/liquid_density/scripts/compare.py", line 83, in column
+    result = run_column(request)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/src/mea_absorption_column/column.py", line 1192, in run_column
+    return _run_conserved_preparation(config)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/src/mea_absorption_column/column.py", line 1081, in _run_conserved_preparation
+    raise FileExistsError(f"Refusing overwrite existing output directory: {output_dir}")
+FileExistsError: Refusing overwrite existing output directory: /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/analyses/liquid_density/results/runs/current_pin/correlation

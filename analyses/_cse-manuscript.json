@@ -10,7 +10,8 @@
       "bvp_derivative_trials/notebook.qmd",
       "bvp_solution_methods/notebook.qmd",
       "issue16_reactive_film_runtime/notebook.qmd",
-      "engine_wheel_adoption/notebook.qmd"
+      "engine_wheel_adoption/notebook.qmd",
+      "liquid_density/notebook.qmd"
     ]
   },
   "website": {
@@ -364,6 +365,44 @@
                 {
                   "text": "Remaining gate",
                   "href": "engine_wheel_adoption/notebook.qmd#remaining-gate"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "section": "Properties",
+          "contents": [
+            {
+              "section": "Liquid density comparison",
+              "contents": [
+                {
+                  "text": "Overview",
+                  "href": "liquid_density/notebook.qmd"
+                },
+                {
+                  "text": "Question and decision",
+                  "href": "liquid_density/notebook.qmd#question-and-decision"
+                },
+                {
+                  "text": "Observation basis and retained identities",
+                  "href": "liquid_density/notebook.qmd#observation-basis-and-retained-identities"
+                },
+                {
+                  "text": "Density comparison",
+                  "href": "liquid_density/notebook.qmd#density-comparison"
+                },
+                {
+                  "text": "Recovered candidate and scope",
+                  "href": "liquid_density/notebook.qmd#recovered-candidate-and-scope"
+                },
+                {
+                  "text": "Controlled case 3C comparison",
+                  "href": "liquid_density/notebook.qmd#controlled-case-3c-comparison"
+                },
+                {
+                  "text": "Evidence and reproduction",
+                  "href": "liquid_density/notebook.qmd#evidence-and-reproduction"
                 }
               ]
             }

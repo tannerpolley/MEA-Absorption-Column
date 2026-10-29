@@ -1,0 +1,13 @@
+{
+  "bundle": "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/data/reference/MEA/film_chemistry_inputs/3/input.json",
+  "source": "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/data/reference/MEA/observations/density_viscosity/Amundsen_2009_density_viscosity.csv",
+  "pressure_assumption_Pa": 101325,
+  "sha256": {
+    "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/data/reference/MEA/film_chemistry_inputs/3/input.json": "5ceab9845b1fc73395c0ff8c3a4f1700eb052befd418225a4fd16e3b8ab58e25",
+    "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/data/reference/MEA/observations/density_viscosity/Amundsen_2009_density_viscosity.csv": "7322b7dc7f0c961d09dbfb356dccde00851c0de20ba589d150d9c3834900f70c",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/parameters.json": "73fd46326c31fdd7c287566b1d8c68b6092e9b12894609fb76e0b8e441304e31",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid/src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/parameters.json": "756fec502d3a1433d538abb073c4caeabf91902013ab7e27d5459ce70396543b"
+  },
+  "unloaded_basis": "exact zero CO2, neutral binary pressure root; no positive loading proxy",
+  "candidate": "native state plus candidate-owned ion-volume translation; no thermodynamic fitting"
+}

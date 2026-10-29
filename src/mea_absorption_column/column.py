@@ -478,6 +478,7 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         vapor,
         species_diffusivities=species_diffusivities,
         quadrature_points=settings["quadrature_points"],
+        liquid_density_source=settings.get("liquid_density_source", "solved_state"),
         co2_model={
             "equilibrium_manifold": "reactive_film",
             "enhancement_reference": "enhancement_reference",

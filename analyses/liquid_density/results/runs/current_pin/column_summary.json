@@ -1,0 +1,32 @@
+{
+  "solved_state": {
+    "capture_percent": 90.0242903006047,
+    "peak_liquid_K": 342.6089156838034,
+    "liquid_flow_m3_s_range": [
+      0.001681279127352809,
+      0.0018460179421418055
+    ],
+    "holdup_range": [
+      0.048326395684146685,
+      0.052715147609219776
+    ],
+    "scaled_residual_inf": 7.289630542923173e-09,
+    "runtime_s": 49.058452706000026
+  },
+  "correlation": {
+    "capture_percent": 89.9538074841804,
+    "peak_liquid_K": 342.60821815710125,
+    "liquid_flow_m3_s_range": [
+      0.0020453818181664497,
+      0.002133761209374314
+    ],
+    "holdup_range": [
+      0.05478338669289887,
+      0.0625389392424689
+    ],
+    "scaled_residual_inf": 6.627460530212274e-09,
+    "runtime_s": 46.704427685000155
+  },
+  "max_abs_liquid_temperature_difference_K": 0.02766313403736831,
+  "max_abs_vapor_temperature_difference_K": 0.019080919918678774
+}

@@ -1,0 +1,12 @@
+{
+ "schema": "absorber-ideal-gas-thermochemistry-v1",
+ "standard_pressure_pa": 100000.0,
+ "claim": "Physical ideal-gas records shared by the liquid and vapor mixtures (#62 owner decision 3). Ions are completed from the reactions by the Engine. Interim copy until MEA-Thermodynamics#112 retains the same records; CO2, water and MEA coefficients equal MEA-Thermodynamics 04a9328 verify_reference_calorics.py; the CO2 interval is extended below 298 K.",
+ "components": {
+  "carbon-dioxide": {"form": "shomate", "coefficients": [24.99735, 55.18696, -33.69137, 7.948387, -0.136638, -403.6075, 228.2431, -393.5224], "formation_enthalpy_j_per_mol": -393510.0, "interval_k": [273.15, 1200.0], "source": "NIST WebBook gas Shomate (Chase 1998), fitted 298-1200 K; extrapolated to 273.15 K to cover the column temperature bounds (293.15 K)"},
+  "water": {"form": "shomate", "coefficients": [30.092, 6.832514, 6.793435, -2.53448, 0.082139, -250.881, 223.3967, -241.8264], "formation_enthalpy_j_per_mol": -241826.0, "interval_k": [273.15, 1700.0], "source": "NIST WebBook gas Shomate (Chase 1998), fitted 500-1700 K; extrapolated below 500 K (33.59 J/mol/K at 298.15 K, JANAF)"},
+  "nitrogen": {"form": "shomate", "coefficients": [28.98641, 1.853978, -9.647459, 16.63537, 0.000117, -8.671914, 226.4168, 0.0], "formation_enthalpy_j_per_mol": 0.0, "interval_k": [100.0, 500.0], "source": "NIST WebBook gas Shomate (Chase 1998)"},
+  "oxygen": {"form": "shomate", "coefficients": [31.32234, -20.23531, 57.86644, -36.50624, -0.007374, -8.903471, 246.7945, 0.0], "formation_enthalpy_j_per_mol": 0.0, "interval_k": [100.0, 700.0], "source": "NIST WebBook gas Shomate (Chase 1998)"},
+  "monoethanolamine": {"form": "polynomial", "coefficients": [13.207, 0.28158, -0.0001513, 3.1287e-08], "reference_temperature_k": 313.15, "interval_k": [283.0, 1000.0], "source": "Zhang, Que and Chen 2011 Table 3 (Aspen), Cp = sum a_k T^k; re-centred at 313.15 K with h = s = 0 there (moiety convention; MEA is conserved)"}
+ }
+}

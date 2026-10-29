@@ -1,0 +1,326 @@
+{
+  "categories": {
+    "documents": {
+      "additions": 235,
+      "binary_files": 0,
+      "files": 2,
+      "removals": 0
+    },
+    "executable": {
+      "additions": 186,
+      "binary_files": 0,
+      "files": 5,
+      "removals": 4
+    },
+    "generated": {
+      "additions": 0,
+      "binary_files": 0,
+      "files": 0,
+      "removals": 0
+    },
+    "other": {
+      "additions": 9214,
+      "binary_files": 2,
+      "files": 28,
+      "removals": 1
+    },
+    "tests": {
+      "additions": 0,
+      "binary_files": 0,
+      "files": 0,
+      "removals": 0
+    }
+  },
+  "files": [
+    {
+      "additions": 40,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/_cse-manuscript.json",
+      "removals": 1,
+      "untracked": false
+    },
+    {
+      "additions": 189,
+      "binary": false,
+      "category": "documents",
+      "path": "analyses/liquid_density/notebook.qmd",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 32,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/column_summary.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": null,
+      "binary": true,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/comparison.png",
+      "removals": null,
+      "untracked": false
+    },
+    {
+      "additions": null,
+      "binary": true,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/comparison.svg",
+      "removals": null,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/correlation.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2643,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/correlation/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/correlation/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 144,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/correlation_expression_refusal/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/correlation_expression_refusal/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/correlation_final.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 21,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/correlation_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 11,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/correlation_retry.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 207,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/density.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 42,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/density_summary.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 10,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/engine_integration.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 13,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/inputs.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 3,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/parameter_load_failures.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 23,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/profiles.csv",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 20,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/properties.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 103,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/properties_retry.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 70,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/pytest.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/solved_state.log",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2643,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/solved_state/attempt.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 68,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/solved_state/resolved_config.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 21,
+      "binary": false,
+      "category": "other",
+      "path": "analyses/liquid_density/results/runs/current_pin/solved_state_request.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 129,
+      "binary": false,
+      "category": "executable",
+      "path": "analyses/liquid_density/scripts/compare.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 41,
+      "binary": false,
+      "category": "executable",
+      "path": "analyses/liquid_density/scripts/render.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 10,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/BVP/Coupled_Column.py",
+      "removals": 2,
+      "untracked": false
+    },
+    {
+      "additions": 1,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/column.py",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 5,
+      "binary": false,
+      "category": "executable",
+      "path": "src/mea_absorption_column/config/column.py",
+      "removals": 2,
+      "untracked": false
+    },
+    {
+      "additions": 46,
+      "binary": false,
+      "category": "documents",
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/README.md",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 167,
+      "binary": false,
+      "category": "other",
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/engine-reactions.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 12,
+      "binary": false,
+      "category": "other",
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/ideal-gas-thermochemistry.json",
+      "removals": 0,
+      "untracked": false
+    },
+    {
+      "additions": 2782,
+      "binary": false,
+      "category": "other",
+      "path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_amine160_density_candidate/parameters.json",
+      "removals": 0,
+      "untracked": false
+    }
+  ],
+  "merge_base": "e8946b28ec0cb778fc8ac4e472cc6d6043935074",
+  "repository": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-83-decide-whether-the-columns-liquid",
+  "requested_base": "e8946b28ec0cb778fc8ac4e472cc6d6043935074",
+  "scope": "merge base through HEAD, index, working tree, and untracked files",
+  "totals": {
+    "additions": 9635,
+    "binary_files": 2,
+    "files": 35,
+    "removals": 5
+  }
+}
