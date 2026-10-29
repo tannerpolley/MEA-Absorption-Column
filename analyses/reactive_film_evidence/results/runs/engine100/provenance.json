@@ -1,0 +1,18 @@
+{
+  "implementation_base": "91ced24149ce7bbed71b1cfba5c78e26bcd9c57d",
+  "issue_body_sha256": "57622b3f001b59f4982dddae21d72735ffa51fb76b0780f02bccc4e11be74cd2",
+  "issue_comment_count": 17,
+  "archive_tag_commit": "77038167211c24948955f12a1ad8e0a94acf3399",
+  "machine": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+  "actual_column_launches": [
+    "nice -n 10 uv run --frozen python analyses/reactive_film_evidence/scripts/compare_closures.py enhancement_reference",
+    "nice -n 10 uv run --frozen python analyses/reactive_film_evidence/scripts/compare_closures.py equilibrium_manifold"
+  ],
+  "launch_note": "Concurrent single-run elapsed measurements; no warmup or timing replication.",
+  "sha256": {
+    "analyses/reactive_film_evidence/scripts/compare_closures.py": "6e9b489b123a1120b0c729a52b2fb82b0f35cc97ed812aaada5e46068fe75e22",
+    "analyses/reactive_film_evidence/scripts/check_closure_limits.py": "1e74f0ca2acadfd40d2dc2eb924931e60cab23a02739c9fb886a4140ef732e50",
+    "analyses/reactive_film_evidence/scripts/render_closure_comparison.py": "df3c01f28e5956de6b1318783d0f06f46b71e2287dbd183846a795c463ad910c",
+    "analyses/bvp_solution_methods/input/case_3c.json": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385"
+  }
+}

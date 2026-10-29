@@ -1,0 +1,60 @@
+{
+  "rows": [
+    {
+      "film": "enhancement_reference",
+      "relative_fugacity_drive": 0.0,
+      "flux_mol_m2_s": -1.463604911521035e-17,
+      "interface_residual_mol_m2_s": -1.2611964706929166e-16,
+      "characteristic_flux_mol_m2_s": 0.0009904514069612633,
+      "bulk_charge_mol_per_mol": 2.3906412500189495e-14
+    },
+    {
+      "film": "enhancement_reference",
+      "relative_fugacity_drive": -0.1,
+      "flux_mol_m2_s": -1.6192596761853194e-05,
+      "interface_residual_mol_m2_s": -3.848612780462529e-16,
+      "characteristic_flux_mol_m2_s": 0.0009904514069612633,
+      "bulk_charge_mol_per_mol": 2.3906412500189495e-14
+    },
+    {
+      "film": "enhancement_reference",
+      "relative_fugacity_drive": 0.1,
+      "flux_mol_m2_s": 1.6240967130625713e-05,
+      "interface_residual_mol_m2_s": -5.163512846462215e-18,
+      "characteristic_flux_mol_m2_s": 0.0009904514069612633,
+      "bulk_charge_mol_per_mol": 2.3906412500189495e-14
+    },
+    {
+      "film": "equilibrium_manifold",
+      "relative_fugacity_drive": 0.0,
+      "flux_mol_m2_s": -4.022067443489659e-17,
+      "interface_residual_mol_m2_s": -1.7252579769238005e-17,
+      "characteristic_flux_mol_m2_s": 0.0009904514069612633,
+      "bulk_charge_mol_per_mol": 2.3906412500189495e-14
+    },
+    {
+      "film": "equilibrium_manifold",
+      "relative_fugacity_drive": -0.1,
+      "flux_mol_m2_s": -7.845786061193996e-05,
+      "interface_residual_mol_m2_s": 1.5449880957918438e-17,
+      "characteristic_flux_mol_m2_s": 0.0009904514069612633,
+      "bulk_charge_mol_per_mol": 2.3906412500189495e-14
+    },
+    {
+      "film": "equilibrium_manifold",
+      "relative_fugacity_drive": 0.1,
+      "flux_mol_m2_s": 7.813496586759609e-05,
+      "interface_residual_mol_m2_s": 1.81996887178848e-16,
+      "characteristic_flux_mol_m2_s": 0.0009904514069612633,
+      "bulk_charge_mol_per_mol": 2.3906412500189495e-14
+    }
+  ],
+  "enhancement_no_reactant_limit_E": 1.0,
+  "limits": {
+    "interface_relative": 1e-07,
+    "zero_drive_relative": 1e-08,
+    "bulk_charge_mol_per_mol": 1e-10,
+    "no_reactant_E_absolute": 1e-12
+  },
+  "scope": "Single 3C inlet state; artificial gas fugacity perturbations; no column or physics change."
+}

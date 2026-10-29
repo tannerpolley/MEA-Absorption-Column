@@ -1,0 +1,24 @@
+[
+  {
+    "film": "enhancement_reference",
+    "numerical_acceptance": "accepted",
+    "runtime_s": 17.455619979000403,
+    "capture_percent": 92.31409079307595,
+    "flux_min_mol_m2_s": 0.0030485189797727266,
+    "flux_max_mol_m2_s": 0.00891306812451533,
+    "scaled_residual_inf": 1.3105374278747257e-09,
+    "physical_certification": false,
+    "failure": null
+  },
+  {
+    "film": "equilibrium_manifold",
+    "numerical_acceptance": "accepted",
+    "runtime_s": 43.134282455001085,
+    "capture_percent": 90.0242903006047,
+    "flux_min_mol_m2_s": 0.0036050391934171633,
+    "flux_max_mol_m2_s": 0.009757265995362837,
+    "scaled_residual_inf": 7.289630542923173e-09,
+    "physical_certification": true,
+    "failure": null
+  }
+]
