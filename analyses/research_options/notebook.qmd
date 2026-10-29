@@ -123,11 +123,30 @@ The retained seven-state ionic row for 3C in
 `analyses/nccc_validation/results/final/tables/raw_c_case_thermo_benchmark.csv`
 reports 88.74708790292281% capture: the new result is higher by
 3.334775256814794 percentage points. That row points to
-`c_case_campaign_temperature_overlay_metrics.csv`; its complete numerical
-settings and wheel identity are absent from the table. This comparison does
-not isolate an Engine effect or establish numerical preservation. Capture
-and conservation here are a few scalar quantities, so a table states the
-comparison without implying a resolved trend.
+`c_case_campaign_temperature_overlay_metrics.csv`. The independent check
+identified that the earlier result uses `C_cases_campaign_inputs` and starts
+from 51 nodes, whereas the new run uses `C_cases_data` and starts from 21.
+The input differences are:
+
+| Quantity | Earlier campaign inputs | New run inputs |
+|---|---:|---:|
+| Gas CO2 mole fraction | 0.093 | 0.079 |
+| Vapor flow (mol/s) | 19.3746 | 19.4303 |
+| Unloaded liquid/gas molar flow ratio (L/G) | 4.7170 | 4.7023 |
+| Inlet vapor CO2 flow (mol/s) | 1.8018 | 1.5350 |
+
+The independent check's current-wheel calculations assign approximately
+−0.00003 percentage points to changing the starting mesh from 21 to 51 nodes.
+Using the campaign inputs gives 89.967% capture, accounting for approximately
+−2.114 percentage points relative to the new result. The remaining 1.220
+percentage points between that current-wheel campaign calculation and the
+earlier 88.747% result cannot be assigned because the earlier run's Engine
+identity is not recorded. These rounded diagnostic values are reported from
+the independent check; no additional column calculation was performed for
+this reporting correction. The comparison does not isolate an Engine effect
+or establish numerical preservation. Capture and conservation here are a few
+scalar quantities, so tables state the comparison without implying a resolved
+trend.
 
 Reproduce with `uv run --frozen python src/mea_absorption_column/research.py
 analyses/research_options/inputs/engine_ionic_3c.toml --run`, choosing a new
@@ -146,8 +165,9 @@ inversion and chain factors; prescribed fluxes test the smooth-cap derivative
 across absorption and desorption; and nonzero area factors, including both
 clipped limits, test material and energy scaling and conservation. These
 checks establish neither native derivatives for those optional closures nor
-physical accuracy. The calculation and notebook have not been independently
-reviewed or promoted for manuscript use.
+physical accuracy. The independent check returned Supported for `471fdac`;
+this reporting correction records its identified input and mesh differences.
+The results have not been promoted for manuscript use.
 
 All 18 new checks pass. Disposable mutations (a 1 K liquid-temperature
 inversion error, replacing the smooth cap by a hard cap, and ignoring the

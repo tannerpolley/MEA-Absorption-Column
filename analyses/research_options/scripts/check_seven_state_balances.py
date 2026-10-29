@@ -39,7 +39,15 @@ report = {
     'reference_file': str(reference),
     'reference_row': json.loads(row.to_json()),
     'capture_difference_percentage_points': capture-float(row.capture_pct),
-    'comparison_limit': 'Different executable/wheel and incompletely recorded earlier settings; not an isolated Engine or same-physics preservation comparison.',
+    'comparison_limit': (
+        'Earlier row: C_cases_campaign_inputs, gas CO2 mole fraction 0.093 vs 0.079, '
+        'vapor flow 19.3746 vs 19.4303 mol/s, unloaded liquid/gas molar ratio 4.7170 vs 4.7023, '
+        'inlet vapor CO2 1.8018 vs 1.5350 mol/s, and 51 vs 21 starting nodes. '
+        'Independent check on current wheel: mesh change contributes approximately -0.00003 '
+        'percentage points; campaign inputs give 89.967% capture, approximately -2.114 '
+        'percentage points. Remaining 1.220 percentage points cannot be assigned because '
+        'the earlier Engine identity is not recorded. Not an isolated Engine effect '
+        'or same-physics preservation comparison.'),
 }
 (args.run/'conservation_comparison.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
 print(json.dumps(report, indent=2, allow_nan=False))
