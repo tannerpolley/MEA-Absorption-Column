@@ -59,6 +59,7 @@ CSE execution mode: direct.
 - The submitted revision stays unchanged on `codex/fallback-manuscript`. Do not edit its manuscript prose here or rerun its results for consolidation (2026-09-08).
 - `$HOME/Documents/Papers/references.bib` is owned by Zotero/Better BibTeX. Never hand-edit it or its snapshot `docs/scientific/latex/references.bib` (2026-08-12).
 - On this machine `EPCSAFT_HSL_LIBRARY` makes Engine Ipopt use MA57 (results report `linear_solver`). Never copy or bundle HSL. A paper or report with MA57 results must acknowledge "HSL, a collection of Fortran codes for large-scale scientific computation. https://www.hsl.rl.ac.uk/" (Engine #605, 2026-10-19).
+- Twelve-state hydraulic density stays the ePC-SAFT solved-state density (`density_source` default `solved_state`), so the column stays one predictive model. Its loaded density reads about 11 % high against Amundsen 2009, which lowers holdup by about 12–16 % on 3C. State this in any holdup or hydraulic claim. Evidence: `analyses/liquid_density/` (#83, 2026-10-29).
 - Manuscript prose: keep `local`, `history`, `historical` and `histories` out of it, and keep software-build chronology outside the article (2026-09-04). For LaTeX, apply `cse:latex` and run the build loop until the edit adds no warnings (2026-05-06).
 
 ## Commit Discipline
