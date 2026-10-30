@@ -971,7 +971,9 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
                                                       "message": str(error), "inputs": [str(v) for v in args],
                                                       "last_accepted_native_state": native_state} if not (config.solvent and config.solvent.mathematical) else
                                   {"kind": getattr(error, "kind", "mathematical_evaluation_failure"),
-                                   "message": str(error), "inputs": [str(v) for v in args]})
+                                   "message": str(error), "phase": owner.name,
+                                   "inputs": {"temperature_k": float(args[0][0]), "pressure_pa": float(args[0][1]),
+                                              "feed_mol_s": dict(zip(owner.feed_ids,np.asarray(args[0],dtype=float).ravel()[2:].tolist()))}})
                 raise
             finally:
                 counts["wall_s"] += time.perf_counter() - started
@@ -983,6 +985,8 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     instrument(liquid, "actions", "liquid_actions")
     instrument(vapor, "actions", "vapor_actions")
     if mathematical:
+        instrument(liquid, 'check_domain', 'liquid_domain')
+        instrument(vapor, 'check_domain', 'vapor_domain')
         checkpoint['mathematical_calls'], checkpoint['native_calls'] = checkpoint['native_calls'], {}
     initial, lower, upper = _initialize_conserved_column(config, prepared, bulk, bracket, tolerance, checkpoint)
     state_scale, balance_scale, algebraic_scale, boundary_scale = (checkpoint['scaling'][k] for k in

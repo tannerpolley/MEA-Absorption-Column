@@ -1,0 +1,40 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________ test_invalid_evaluated_feed_keeps_domain_failure_in_worker __________
+
+tmp_path = PosixPath('/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-ami...me/.tmp_local/pytest_tmp/tests_test_manufactured_column.py_test_invalid_evaluated_feed_keeps_domain_failure_in_worker')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x79e5e43a0770>
+
+    def test_invalid_evaluated_feed_keeps_domain_failure_in_worker(tmp_path,monkeypatch):
+        from mea_absorption_column import benchmark_worker
+        from mea_absorption_column.BVP.Methods import Casadi_Collocation
+        verify = run_path(str(SCRIPT))
+        directory = Path(os.environ.get('ISSUE85_DOMAIN_RUN_ROOT',tmp_path))
+        directory.mkdir(parents=True,exist_ok=True)
+        verify['inputs'](directory/'inputs')
+        config = resolve_column_config(verify['request'](directory/'inputs'))
+        def invalid_node(node,boundary,grid,initial,*args,**kwargs):
+            state = initial[:,0].copy()
+            state[0] = 0.
+            return node(0.,state)
+        monkeypatch.setattr(Casadi_Collocation,'solve_conservative_collocation',invalid_node)
+        output, payload = directory/'worker.json',directory/'payload.json'
+        verify['save'](payload,dict(task='conserved_execution',output_path=str(output),config=config.as_dict()))
+        assert benchmark_worker.main([str(payload)]) == 0
+        result = json.loads(output.read_text())
+>       assert result['failure_kind'] == 'state_domain_failure'
+E       AssertionError: assert 'outer_solve_failure' == 'state_domain_failure'
+E         
+E         - state_domain_failure
+E         + outer_solve_failure
+
+tests/test_manufactured_column.py:77: AssertionError
+----------------------------- Captured stderr call -----------------------------
+Function mathematical_liquid (0x1b443140)
+Input 0 (i0): [320, 100000, 0, 0.2, 0.3, 1]
+Function column_balances (0x1b468000)
+Input 0 (state): [0, 1, 0.183333, 0.1, 320, 320, 100000, 0.05]
+Input 1 (transfer): [0.000833333, 0, 0]
+=========================== short test summary info ============================
+FAILED tests/test_manufactured_column.py::test_invalid_evaluated_feed_keeps_domain_failure_in_worker
+1 failed in 1.32s

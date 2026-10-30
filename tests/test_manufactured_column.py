@@ -1,4 +1,6 @@
 """Two-amine column admission and active equation checks, #85 stage 3."""
+import json
+import os
 from pathlib import Path
 from runpy import run_path
 
@@ -53,3 +55,29 @@ def test_mathematical_action_failure_preserves_cause(tmp_path,monkeypatch,failur
     assert 'deliberately unavailable' in checkpoint['evaluation_failure']['message']
     assert 'last_accepted_native_state' not in checkpoint['evaluation_failure']
     assert not checkpoint['native_calls']
+
+
+def test_invalid_evaluated_feed_keeps_domain_failure_in_worker(tmp_path,monkeypatch):
+    from mea_absorption_column import benchmark_worker
+    from mea_absorption_column.BVP.Methods import Casadi_Collocation
+    verify = run_path(str(SCRIPT))
+    directory = Path(os.environ.get('ISSUE85_DOMAIN_RUN_ROOT',tmp_path))
+    directory.mkdir(parents=True,exist_ok=True)
+    verify['inputs'](directory/'inputs')
+    config = resolve_column_config(verify['request'](directory/'inputs'))
+    def invalid_node(node,boundary,grid,initial,*args,**kwargs):
+        state = initial[:,0].copy()
+        state[0] = 0.
+        return node(0.,state)
+    monkeypatch.setattr(Casadi_Collocation,'solve_conservative_collocation',invalid_node)
+    output, payload = directory/'worker.json',directory/'payload.json'
+    verify['save'](payload,dict(task='conserved_execution',output_path=str(output),config=config.as_dict()))
+    assert benchmark_worker.main([str(payload)]) == 0
+    result = json.loads(output.read_text())
+    assert result['failure_kind'] == 'state_domain_failure'
+    cause = result['last_checkpoint']['evaluation_failure']
+    assert cause['kind'] == 'state_domain_failure'
+    assert cause['inputs']['feed_mol_s']['C'] == 0.
+    assert cause['inputs']['temperature_k'] == 320.
+    assert cause['inputs']['pressure_pa'] == 100000.
+    assert 'mathematical_liquid' in cause['message'] and 'feed [mol/s]' in cause['message']

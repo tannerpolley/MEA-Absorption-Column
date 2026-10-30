@@ -93,10 +93,10 @@ class ManufacturedColumnPhase:
         self.observables = ca.vertcat(mu, enthalpy/ca.sum1(n))
         values = ca.vertcat(n if kind == 'liquid' else ca.MX.zeros(0), fugacity,
                             t['water_fugacity_pa'], density, enthalpy)
-        domain = ca.mmin(self.u) > 0
-        domain = ca.logic_and(domain, ca.logic_and(self.u[0] >= 293.15, self.u[0] <= 393.15))
-        domain = ca.logic_and(domain, self.u[1] <= 1e7)
-        self.values = ca.Function(self.name, [self.u], [values.attachAssert(domain, 'Mathematical phase outside declared domain')])
+        value_offset = self.observables.numel()
+        self.observables = ca.vertcat(self.observables,values)
+        self.values = ActionCallback(self.name+'_values',self,
+                                     range(value_offset,value_offset+values.numel()))
         self.capacity = ca.Function(self.name+'_capacity', [self.u], [ca.jacobian(enthalpy, self.u)[0]])
         self.output_ids = (tuple('amount:'+s for s in self.component_ids) if kind == 'liquid' else ()) + (
             'fugacity:C', 'fugacity:W', 'molar-density', 'total-enthalpy')
@@ -111,13 +111,17 @@ class ManufacturedColumnPhase:
                             for i, s in enumerate(self.feed_ids)])
 
     def enthalpy_temperature_derivative(self, inputs):
-        return float(self.capacity(inputs))
+        return float(self.capacity(self.check_domain(inputs)))
 
-    def actions(self, inputs, observables, directions=()):
+    def check_domain(self, inputs):
         inputs = np.asarray(inputs, dtype=float).ravel()
         if (not np.isfinite(inputs).all() or np.min(inputs) <= 0 or
                 not 293.15 <= inputs[0] <= 393.15 or inputs[1] > 1e7):
             raise StateDomainFailure(f'{self.name}: invalid T [K], P [Pa], feed [mol/s]: {inputs}')
+        return inputs
+
+    def actions(self, inputs, observables, directions=()):
+        inputs = self.check_domain(inputs)
         if directions not in self.action_functions:
             expr = self.observables
             for direction in directions:
