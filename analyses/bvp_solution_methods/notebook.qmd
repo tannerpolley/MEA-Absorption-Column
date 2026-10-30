@@ -840,7 +840,7 @@ candidate's integration output prints the repository's frozen commit field;
 the actual candidate identity is established by its wheel hash and the
 upstream hand-off, not that frozen-field label.
 
-### Pinned regression evidence and scope decision
+### Pinned persistent behavior checks and scope decision
 
 The pinned full suite passes **332 tests in 521.43 s**, under the 900 s suite
 worker / 960 s outer bound. Its one warning is the existing legacy transport

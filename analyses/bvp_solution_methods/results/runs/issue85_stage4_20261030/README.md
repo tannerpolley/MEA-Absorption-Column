@@ -140,7 +140,7 @@ and finite acceptance checks, not a continuous physical trend.
 Native fixture solves report MA57. **HSL, a collection of Fortran codes for
 large-scale scientific computation. https://www.hsl.rl.ac.uk/**
 
-## Pinned regression gates and delivery budget
+## Pinned persistent behavior checks and delivery budget
 
 The pinned full suite passes **332 tests in 521.43 s**, under the 900 s suite
 worker / 960 s outer bound. Its one warning is the existing legacy transport
