@@ -1,0 +1,119 @@
+{
+  "species_order": [
+    "protonated-methyldiethanolamine",
+    "methyldiethanolamine",
+    "hydroxide-anion",
+    "hydronium-cation",
+    "carbonate-anion",
+    "bicarbonate-anion",
+    "water",
+    "carbon-dioxide"
+  ],
+  "liquid_feed_order": [
+    "methyldiethanolamine",
+    "water",
+    "carbon-dioxide"
+  ],
+  "liquid_support": [
+    "hydroxide-anion",
+    "hydronium-cation",
+    "carbonate-anion",
+    "bicarbonate-anion",
+    "protonated-methyldiethanolamine",
+    "carbon-dioxide",
+    "methyldiethanolamine",
+    "water"
+  ],
+  "roles": {
+    "co2": "carbon-dioxide",
+    "water": "water",
+    "amines": [
+      "methyldiethanolamine"
+    ],
+    "inert_gases": []
+  },
+  "atomic_masses_kg_mol": {
+    "C": 0.012011,
+    "H": 0.001008,
+    "N": 0.014007,
+    "O": 0.015999
+  },
+  "formulas": {
+    "protonated-methyldiethanolamine": {
+      "C": 5,
+      "H": 14,
+      "N": 1,
+      "O": 2
+    },
+    "methyldiethanolamine": {
+      "C": 5,
+      "H": 13,
+      "N": 1,
+      "O": 2
+    },
+    "hydroxide-anion": {
+      "H": 1,
+      "O": 1
+    },
+    "hydronium-cation": {
+      "H": 3,
+      "O": 1
+    },
+    "carbonate-anion": {
+      "C": 1,
+      "O": 3
+    },
+    "bicarbonate-anion": {
+      "H": 1,
+      "C": 1,
+      "O": 3
+    },
+    "water": {
+      "H": 2,
+      "O": 1
+    },
+    "carbon-dioxide": {
+      "C": 1,
+      "O": 2
+    }
+  },
+  "components": {
+    "order": [
+      "methyldiethanolamine",
+      "water",
+      "carbon-dioxide"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1
+      ]
+    ]
+  }
+}

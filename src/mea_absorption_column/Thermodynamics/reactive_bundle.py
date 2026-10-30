@@ -40,25 +40,28 @@ def ideal_gas_record(path: str | Path, component_ids):
     import epcsaft
 
     data = _json(Path(path))
-    pressure, intervals = data["standard_pressure_pa"], []
+    pressure, intervals = data.get("standard_pressure_pa", data.get("reference_pressure_pa")), []
     for name in component_ids:
         row = data["components"].get(name)
         if row is None:
             intervals.append([])
             continue
-        if row["form"] == "shomate":
+        form_name = row.get("form", row.get("representation"))
+        if form_name == "shomate":
             form = epcsaft.IdealShomate(row["coefficients"], row["formation_enthalpy_j_per_mol"])
+        elif form_name == "cp_polynomial":
+            form = epcsaft.IdealPolynomial(row["coefficients"], row["enthalpy_entropy_anchor_k"], 0., 0.)
         else:  # Cp = sum a_j T^j re-centred at T0, where h = s = 0 (moiety convention)
             t0, a = row["reference_temperature_k"], row["coefficients"]
             form = epcsaft.IdealPolynomial([math.fsum(c * math.comb(j, k) * t0 ** (j - k) for j, c in enumerate(a) if j >= k)
                                             for k in range(len(a))], t0, 0., 0.)
-        intervals.append([epcsaft.IdealInterval(*row["interval_k"], True, True,
+        intervals.append([epcsaft.IdealInterval(*row.get("interval_k", row.get("range_k")), True, True,
                                                 epcsaft.IdealCorrelation(form, pressure))])
     return epcsaft.ThermochemistryRecord(pressure, intervals)
 
 
-def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="reactive_liquid", *, loading_policy=None, declarations=None, reaction_path=None, domain=None, parameter_path=None):
-    """Nine-species reactive liquid: MEA record, its Engine reactions and neutral reference, apparent CO2/MEA/water feed."""
+def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="reactive_liquid", *, loading_policy=None, declarations=None, reaction_path=None, domain=None, parameter_path=None, row_tolerance=None):
+    """Declared reactive liquid with native reactions, reference and absolute analytical feed."""
     from epcsaft import equilibrium as q
 
     from .casadi_reactive import EnginePhase
@@ -73,9 +76,9 @@ def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="r
         row["stoichiometry"], name=row["name"],
         correlation=q.ReactionLogPolynomial(*(row["correlation"][key] for key in _CORRELATION_FIELDS)),
         reference=q.ReactionReference(getattr(q.ReferenceSourceBasis, row["reference"]["source_basis"]),
-                                      reference_pressure_pa=row["reference"]["reference_pressure_pa"]),
+                                      reference_pressure_pa=row["reference"].get("reference_pressure_pa")),
     ) for row in record["reactions"]]
-    ids = [c["component_id"] for c in mapping["components"]]
+    ids = declarations["species_order"] if declarations is not None else [c["component_id"] for c in mapping["components"]]
     masses = formula_masses(declarations, ids, mapping) if declarations is not None else _molar_masses(dataset, ids)
     if declarations is None:
         # Undeclared callers retain the original fixed MEA basis, independent of analysis examples.
@@ -90,7 +93,8 @@ def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="r
     phase = EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="liquid",
                         feed_ids=declarations["liquid_feed_order"], molar_masses=masses,
                         reactions=reactions, neutral_reference=q.NeutralReference(**record["neutral_reference"]),
-                        loading_policy=loading_policy, roles=declarations["roles"], support=declarations["liquid_support"], domain=domain)
+                        loading_policy=loading_policy, roles=declarations["roles"], support=declarations["liquid_support"], domain=domain,
+                        component_order=ids, row_tolerance=row_tolerance)
     phase.components = dict(zip(declarations["components"]["order"], declarations["components"]["rows"], strict=True))
     phase.film_constraints = [phase.charges, *[row for key, row in phase.components.items() if key != "co2"]]
     return phase

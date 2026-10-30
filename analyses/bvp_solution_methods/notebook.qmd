@@ -681,3 +681,221 @@ investigator promotion remain open.
 
 HSL acknowledgement for MA57 evidence: HSL, a collection of Fortran codes for
 large-scale scientific computation. https://www.hsl.rl.ac.uk/
+
+## MDEA thermodynamic consumption and actions: issue 85, stage 4 checkpoint 1
+
+The existing `reactive_bundle.engine_liquid` constructor now consumes the
+identified B1 MDEA input, including its mixed reaction reference pressures,
+ordered components and exported calorics. Values and the required first and
+second actions pass numerical checks at **two thermodynamic states on a
+candidate wheel**. This is development evidence: no MDEA absorber was solved,
+and no absorber prediction or physical validation follows from these checks.
+Delivered independent review and investigator promotion remain separate.
+
+The [accepted design](https://github.com/tannerpolley/MEA-Absorption-Column/issues/85#issuecomment-6531482275)
+limits this checkpoint to thermodynamic construction and actions. The source
+files are retained under `src/mea_absorption_column/data/epcsaft_datasets/MDEA_B1_217026ab/`;
+[the run directory](results/runs/issue85_stage4_20261030/README.md) identifies
+inputs, source hashes, solver identity, attempts and verification records. The
+candidate is the non-editable Engine wheel at `217026ab`, SHA-256
+`b4c0f6d8eb8971abd3c0bd801cb9167b8ca602cb2a63b16a22e924d5b6727496`,
+in a separate environment. The repository pin, lock file and final integration
+identity remain `f4566b3d` / `57bdf6c4…`.
+
+### Basis and returned thermodynamic values
+
+Both states are at **313.15 K and 500000 Pa**, with 1 mol analytical MDEA and
+15.433850227880626 mol water. The unloaded MDEA mass fraction is 0.30. Bulk B
+contains 0.128 mol analytical CO₂; loading-path point I contains 0.258 mol.
+These are `comparison:229` and `comparison:233` in the retained 5-bar
+Böttinger speciation input (Table 2, printed p.7922, rows 26/27, PDF child
+`W3HEICT5`). Its corrected CSV digest is
+`488940ecf3fc984edeee3fa145fe6f76936396fce802b5af881bcbee70f677ef`.
+The amounts are absolute mol, not flow rates. Point I is selected by
+$\lambda=\ln(0.258/0.128)$ on the existing loading path; it is not a solved
+interphase balance.
+
+| Returned quantity | Bulk B | Point I |
+|:--|--:|--:|
+| Molecular CO₂ amount (mol) | 0.0001661461940861 | 0.0005452644373862 |
+| CO₂ fugacity (Pa) | 1431.873496751 | 5101.483258150 |
+| Water fugacity (Pa) | 6655.102718022 | 6619.520621318 |
+| Molar density (mol/m³) | 42078.70395845 | 42048.18402384 |
+| Extensive H (J on the stated amount basis) | −4578264.130067 | −4636591.072022 |
+| Minimum supported species amount (mol) | 1.783757749e−9 | 1.836481960e−9 |
+
+The complete eight-species vectors, log activities, caloric observable and
+scaled action arrays are retained in `values_{B,I}_{declared,permuted}.json`
+and `actions_{B,I}_{declared,permuted}.json`. H follows the declared ideal-gas
+anchors and reaction completion; its absolute value is not a measured heat of
+absorption. Both fixtures meet the native row tolerance of $10^{-10}$.
+Maximum element, analytical-component and charge reconstruction errors across
+both orders are **1.42109×10⁻¹⁴**, **4.16334×10⁻¹⁵** and
+**2.49801×10⁻¹⁶ mol**, respectively, against $10^{-10}$ mol limits. All
+supported amounts are positive and finite. The largest direct-native value
+comparison ratio is **1.53214×10⁻⁸**, against a limit of 1 using the declared
+output scales with relative tolerance $10^{-8}$ and absolute tolerance
+$10^{-10}$.
+
+### Action and loading-path checks
+
+Tables report the two fixed states and finite acceptance checks; plotting them
+would imply no additional resolved physical trend.
+
+The check includes first actions in T, P and each analytical feed amount,
+second log-activity actions in CO₂-by-every-control directions, symmetry,
+and the actual loading path's outer derivatives in bulk controls and lambda.
+It tests pressure directions as well as the exponential and product rules.
+Production callbacks use native actions; centered differences are confined to
+the numerical verifier.
+
+Control scales are 1 K, 10000 Pa and 0.1 times each central feed amount.
+Centered steps $h=10^{-3}$ and $5\times10^{-4}$ therefore use pressure
+perturbations of 10/5 Pa and temperature perturbations of 0.001/0.0005 K.
+The fixed output scales and full directions are recorded with the arrays and
+in the retained design. Each reported ratio is
+
+$$
+\max_i \frac{|a_i-b_i|}{10^{-8}+10^{-5}\max(|a_i|,|b_i|)},
+$$
+
+where actions are first scaled by the declared control and output units.
+**The limit is 1.** Each entry below is the maximum over both fixtures and
+both declaration orders; these maxima need not occur at the same state.
+
+| Comparison | $h=10^{-3}$ | $h=5\times10^{-4}$ | Limit |
+|:--|--:|--:|--:|
+| First actions vs centered values | 0.02490764 | 0.03083685 | 1 |
+| Second actions vs centered first actions | 0.002259804 | 0.000618464 | 1 |
+| Loading-path outer derivatives vs centered path outputs | 0.6914694 | 0.1728942 | 1 |
+
+Second-action symmetry has zero difference in these runs. The direct
+loading-tangent comparison has zero difference; the largest explicit chain-rule
+comparison ratio is **4.43257×10⁻¹⁰**, with maximum absolute scaled difference
+**2.42861×10⁻¹⁶**. These checks concern the specified derivative directions at
+two states, not all derivatives or all solvent conditions.
+
+After reversing components, feed IDs, supports, reactions and component rows,
+and mapping both action axes back by identity, the largest comparison ratio is
+**0.000382739** against 1 using relative tolerance $10^{-7}$ and absolute
+scaled tolerance $10^{-9}$. This covers state values, first/second actions,
+affinities, loading values/tangents and their outer derivatives. It is a
+pointwise permutation check, not full-column refinement or permutation evidence.
+
+### Reference pressures at one frozen state
+
+R1–R3 preserve an omitted source reference pressure as native `None` (system
+pressure); MDEA dissociation preserves fixed 100000 Pa. At the bulk state the
+resolved pressures are **[500000, 500000, 500000, 100000] Pa** in exported
+reaction order. The comparison reuses one frozen native physical/chart point
+at 313.15 K and 500000 Pa; it does not compare separately equilibrated controls.
+Native chemical stationarity rows are contracted with the declared
+stoichiometry to give affinity $A=-RT\sum_i\nu_i r_i$, in J/mol reaction.
+
+| Frozen-state construction | Maximum difference in $A/(RT)$ from the direct upstream construction | Required condition |
+|:--|--:|:--|
+| Correct mixed references, either order | 0 | ≤10⁻⁹ |
+| All four at fixed 100000 Pa | 0.005153896778 | >10⁻⁸ |
+| All four at system pressure | 0.0004202765354 | >10⁻⁸ |
+
+The all-fixed discrepancy is largest for R2 (about **13.4191 J/mol reaction**);
+the all-system discrepancy is largest for MDEA dissociation (about
+**1.09426 J/mol reaction** in magnitude). These intentionally wrong controls
+show the numerical check can distinguish the conventions at the fixed state.
+They are not physical errors measured against experiments.
+
+### Evidence limits and failed attempts
+
+The source assessment records prepared-row extrema, not a continuously
+validated property volume. Row 27 retains its upstream impurity indicator;
+this model omits those byproducts. Density/Cp evidence at 298.15 K does not
+validate calorics at 313.15 K. Water Shomate calorics are extrapolated below
+500 K, and ionic calorics are completed by Engine from the reaction laws.
+The pressure perturbations leave the exact 5-bar observation plane and are
+numerical derivative probes, not experimentally assessed pressure actions.
+
+The first value-check attempt refused a duplicate solved-state observable
+request in the verifier. Splitting the overlapping requests corrected that
+verification error without changing equations, inputs or tolerances. A separate
+R2 reporting invocation computed the declared checks but then failed while
+printing an incorrect dictionary key; the ordinary existing verifier was used
+for the final two-order R2 check. Both failure logs are retained. The
+frozen-reference verifier was also corrected to use the independently compiled
+upstream construction as its target; final reference records use that target.
+
+No new solver failure, altered numerical method or relaxed tolerance is
+accepted. Full MDEA transport and the real-absorber question remain blocked
+research/design work, with no checkpoint-2 implementation budget. Upstream B1
+objective/reload evidence is consumed by identity; no downstream observation
+assembly or fitted-objective reproduction is added.
+
+All new candidate state/action groups use a 30 s worker limit and 45 s outer
+limit; the group deadline is shared by its difference evaluations. Native
+solves report **MA57**. HSL acknowledgement: **HSL, a collection of Fortran
+codes for large-scale scientific computation. https://www.hsl.rl.ac.uk/**
+
+The pinned final-integration check passes on `f4566b3d`. Final mode rejects the
+candidate hash as required, while candidate development mode passes. The
+candidate's integration output prints the repository's frozen commit field;
+the actual candidate identity is established by its wheel hash and the
+upstream hand-off, not that frozen-field label.
+
+### Pinned regression evidence and scope decision
+
+The pinned full suite passes **332 tests in 521.43 s**, under the 900 s suite
+worker / 960 s outer bound. Its one warning is the existing legacy transport
+probe's deliberately recorded invalid-log evaluation. The two new parametrized
+frozen-reference cases also pass independently in 0.87 s.
+
+The unchanged MEA 3C gate accepts both seed/cosine solves in both species orders.
+Cosine captures are **89.41488041587351% / 89.41488041586858%**, versus retained
+**89.41488041587351%**, within 1e-6 percentage point. The 306 native state/action
+comparisons have maximum scaled difference **2.69069e-11 <=1e-7**; film
+comparison maximum is **5.43046e-13 <=1e-7**. Every existing mixed-unit profile
+and physical-certificate criterion passes. The four solve runtimes are
+108.5134, 98.9339, 109.3827 and 95.9997 s, each under its 300 s worker bound.
+
+The pinned stage-2 film at 129 points gives **0.0008333330846335338 mol/(m² s)**,
+relative flux/integral error **2.98440e-7 <=1e-5**, interface error
+**0.0024870 Pa <=0.1 Pa**, and closure **5.42101e-19 <=1e-12 mol/(m² s)**.
+Both orders pass. The mathematical R2 gate passes **51 comparisons per order**.
+
+Both pinned stage-3 finest cases (129 nodes / 129 film points) give
+**31.454926062128543%**, with zero capture permutation/preservation difference,
+and **0.07205477434 <=0.1 percentage-point** continuum error. Maximum profile
+error is **1.3210041963e-4 <=2e-4 mol/s**, maximum flux error
+**8.1516465662e-7 <=1e-5 mol/(m² s)**, and maximum scaled equation residual
+**5.91194e-14 <=1e-9**. Minimum species amount is 0.05 mol; maximum component
+and affinity errors are **1.11022e-16 mol/s** and **4.44089e-16 in A/(RT)**.
+Runtimes are **252.1625 / 250.5742 s**, each below 600 s. Existing coarser
+refinement records are reused by identity from stage 3; the current finest
+cases pass the existing refinement/permutation/preservation comparison against
+them. No old refinement numbers are presented as new runs.
+
+Gross executable additions against b2e2d2a, including replacement lines and
+comments/blanks: reactive_bundle.py **12/80**, casadi_reactive.py **5/20**,
+one verifier **200/200**, total **217/300**. Test additions are **21/75**:
+20 lines in one result-level test parametrized over two orders and one changed
+existing wall-limit line. No new reaction owner or abstraction is introduced.
+Data, prose and generated evidence are accounted separately.
+
+### Correct candidate refusals and scope decision
+
+Candidate MEA and both stage-3 gate attempts stop before numerical solving with
+**capability_refusal: Loaded epcsaft distribution does not identify the selected
+wheel**. Their unchanged requests select the pinned wheel. The first stage-3
+launches also omitted PYTHONPATH=src and stopped at import; these separate logs
+are retained. No identity checks or runners were changed to bypass either
+refusal. The owner confirmed that candidate-wheel MEA, stage-2 and stage-3
+repeats are **unavailable in checkpoint 1 and belong to a future repin**, as in
+the stage-4 repin requirements. Stage 2 was not run on the candidate. Only the
+MDEA thermodynamic verifier uses the isolated candidate wheel for accepted
+numerical evidence. The pinned gates and final integration remain mandatory
+and pass.
+
+The first notebook refresh refused run-input symlinks; input snapshots are now
+byte-identical regular files linked by provenance/hash to the canonical retained
+source data. This is a presentation failure, not a numerical failure. Its log is
+retained. This documentation also corrects the initially transcribed caloric
+README digest to the hand-off/file value 278e7b9832dc051f2896615f870f0f91482a8642b7196d2a2a89b669b905ce6c;
+the verifier always checked that value against the hand-off before solving.

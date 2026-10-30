@@ -36,13 +36,15 @@ class EnginePhase:
     """
 
     def __init__(self, name, mapping, thermochemistry, *, kind, feed_ids=None, molar_masses=None,
-                 reactions=(), neutral_reference=None, loading_policy=None, roles=None, support=None, domain=None):
+                 reactions=(), neutral_reference=None, loading_policy=None, roles=None, support=None, domain=None,
+                 component_order=None, row_tolerance=None):
         import epcsaft
         from epcsaft import equilibrium
 
         self._q, self._gas_constant = equilibrium, epcsaft.GAS_CONSTANT_J_PER_MOL_K
         self.name, self.kind = name, kind
-        self.model = epcsaft.Mixture(epcsaft.Parameters.from_mapping(mapping), thermochemistry=thermochemistry)
+        self.model = epcsaft.Mixture(epcsaft.Parameters.from_mapping(mapping, components=component_order), thermochemistry=thermochemistry)
+        self.row_tolerance = row_tolerance
         self.component_ids = tuple(self.model.component_ids)
         self.feed_ids = self.component_ids if feed_ids is None else tuple(feed_ids)
         self.roles = roles or {"co2": "carbon-dioxide", "water": "water", "amines": []}
@@ -91,7 +93,7 @@ class EnginePhase:
         q = self._q
         return q.Problem(phases=[q.Phase(self.kind, kind=self.kind, support=self.support)], T=temperature, P=pressure,
                          feed=q.Amounts(dict(zip(self.feed_ids, feed))), reactions=self.reactions,
-                         neutral_reference=self.neutral_reference)
+                         neutral_reference=self.neutral_reference, row_tolerance=self.row_tolerance)
 
     def _solve(self, inputs):
         temperature, pressure, *feed = inputs

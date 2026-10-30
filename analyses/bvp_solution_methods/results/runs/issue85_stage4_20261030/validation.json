@@ -1,0 +1,170 @@
+{
+  "evidence": "numerical verification at two thermodynamic states on a candidate wheel; development evidence; no absorber prediction",
+  "owner_scope_decision": "Candidate MEA, stage 2 and stage 3 repeats belong to a future repin; unchanged gate runners and integration contract retained. Candidate column attempts correctly refused before numerical solve.",
+  "checks_maximum_ratio": {
+    "component_mol": 4.163336342344337e-05,
+    "element_mol": 0.00014210854715202004,
+    "path_tangent": 0.0,
+    "second_0.001": 0.0022598039273664682,
+    "path_0.001": 0.6914694002080689,
+    "second_symmetry": 0.0,
+    "path_chain_rule": 4.432566144252917e-10,
+    "first_0.0005": 0.030836850179436298,
+    "direct_native_values": 1.5321375359001365e-08,
+    "path_0.0005": 0.1728942395124285,
+    "second_0.0005": 0.0006184636905318513,
+    "first_0.001": 0.024907638174641793,
+    "charge_mol": 2.4980018054066022e-06
+  },
+  "action_tolerances": {
+    "rtol": 1e-05,
+    "atol_scaled": 1e-08,
+    "maximum_ratio_limit": 1
+  },
+  "permutation_maximum_ratio": 0.000382739014518316,
+  "permutation_tolerances": {
+    "rtol": 1e-07,
+    "atol_scaled": 1e-09,
+    "maximum_ratio_limit": 1
+  },
+  "affinity_over_rt": {
+    "mixed": [
+      0.0,
+      0.0
+    ],
+    "fixed": [
+      0.005153896778054445,
+      0.005153896778423928
+    ],
+    "system": [
+      0.0004202765353795712,
+      0.00042027653533693865
+    ]
+  },
+  "all_fixture_solves_requested_tolerance_met": true,
+  "linear_solvers": [
+    "ma57"
+  ],
+  "case_timings_s": {
+    "values_B_declared": 0.49917425899911905,
+    "values_B_permuted": 0.48502240300149424,
+    "values_I_declared": 0.4521445819991641,
+    "values_I_permuted": 0.4664211749986862,
+    "actions_B_declared": 1.3241192479981692,
+    "actions_B_permuted": 1.3449547330019413,
+    "actions_I_declared": 1.3265800239969394,
+    "actions_I_permuted": 1.3042253980020178
+  },
+  "pinned_suite": {
+    "passed": 332,
+    "warnings": 1,
+    "elapsed_s": 521.43,
+    "execution": {
+      "wall_limit_s": 900,
+      "outer_wall_limit_s": 960
+    }
+  },
+  "pinned_mea": {
+    "capture_percent": [
+      89.41488041587351,
+      89.41488041586858
+    ],
+    "baseline_capture_percent": 89.41488041587351,
+    "max_native_scaled_difference": 2.690685453529136e-11,
+    "max_film_scaled_difference": 5.430458370518347e-13,
+    "native_state_comparisons": 306
+  },
+  "pinned_stage3": [
+    {
+      "label": "n129_q129",
+      "nodes": 129,
+      "points": 129,
+      "runtime_s": 252.16246894499636,
+      "capture_percent": 31.454926062128543,
+      "capture_error_percentage_points": 0.0720547743439397,
+      "endpoint_flow_error_mol_s": 0.0001321004196305764,
+      "maximum_co2_profile_error_mol_s": 0.0001321004196305764,
+      "maximum_flux_error_mol_m2_s": 8.151646566222515e-07,
+      "scaled_residual_inf": 5.899127340460206e-14,
+      "minimum_amount_mol": 0.05,
+      "component_error_mol_s": 1.1102230246251565e-16,
+      "affinity_over_rt": 4.440892098500625e-16
+    },
+    {
+      "label": "n129_q129_permuted",
+      "nodes": 129,
+      "points": 129,
+      "runtime_s": 250.574192054999,
+      "capture_percent": 31.454926062128543,
+      "capture_error_percentage_points": 0.0720547743439397,
+      "endpoint_flow_error_mol_s": 0.0001321004196305764,
+      "maximum_co2_profile_error_mol_s": 0.0001321004196305764,
+      "maximum_flux_error_mol_m2_s": 8.151646566222515e-07,
+      "scaled_residual_inf": 5.911937606128959e-14,
+      "minimum_amount_mol": 0.05,
+      "component_error_mol_s": 1.1102230246251565e-16,
+      "affinity_over_rt": 4.440892098500625e-16
+    }
+  ],
+  "pinned_final_integration": {
+    "elapsed_s": 1.45,
+    "exit_status": 0,
+    "execution": {
+      "wall_limit_s": 60,
+      "outer_wall_limit_s": 90
+    }
+  },
+  "candidate_final_rejection": {
+    "exit_status": 1,
+    "reason": "candidate hash mismatches unchanged frozen identity",
+    "timing_log": "candidate_final_rejection_timing.txt"
+  },
+  "wall_limits": {
+    "new_fixture_group": {
+      "wall_limit_s": 30,
+      "outer_wall_limit_s": 45
+    },
+    "MEA_each_solve": {
+      "wall_limit_s": 300,
+      "outer_wall_limit_s": 330
+    },
+    "stage2_or_mathematical_R2": {
+      "wall_limit_s": 120,
+      "outer_wall_limit_s": 150
+    },
+    "stage3_finest_case": {
+      "wall_limit_s": 600,
+      "outer_wall_limit_s": 660
+    },
+    "integration": {
+      "wall_limit_s": 60,
+      "outer_wall_limit_s": 90
+    }
+  },
+  "budget": {
+    "reactive_bundle.py": {
+      "additions": 12,
+      "ceiling": 80
+    },
+    "casadi_reactive.py": {
+      "additions": 5,
+      "ceiling": 20
+    },
+    "verify_mdea_thermodynamics.py": {
+      "additions": 200,
+      "ceiling": 200
+    },
+    "total_executable": {
+      "additions": 217,
+      "ceiling": 300
+    },
+    "tests": {
+      "additions": 21,
+      "ceiling": 75,
+      "new_result_level_functions": 1,
+      "parametrized_cases": 2,
+      "maximum_result_level_tests": 3
+    }
+  },
+  "HSL_acknowledgement": "HSL, a collection of Fortran codes for large-scale scientific computation. https://www.hsl.rl.ac.uk/"
+}

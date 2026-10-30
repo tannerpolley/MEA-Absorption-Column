@@ -1,0 +1,70 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "conserved_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "3C",
+    "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_stage3/n129_q129/inputs/case.json",
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_stage3/n129_q129/inputs/case.json",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": null,
+    "input_hashes": {
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_stage3/n129_q129/inputs/case.json": "7ef2041c088619233641fbf7499f73be4588115d4114fcf60da8be0f00a0390d",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_stage3/n129_q129/inputs/thermodynamics.json": "6bff94156f8b171196135f85182e4381fc2ce62942e5181cb3e419293338d7b5",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_stage3/n129_q129/inputs/transport.json": "3a18759e88416e63c608d6b0d6e09077f4ce768615ad0feff832d40dfb89292f"
+    },
+    "mobility_law": "harmonic_mean_onsager_v1",
+    "references": [],
+    "thermal_reference": null,
+    "thermodynamics_input": "analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_stage3/n129_q129/inputs/thermodynamics.json",
+    "transport_input": "analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_stage3/n129_q129/inputs/transport.json"
+  },
+  "engine": {
+    "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/bin/python3",
+    "required": true,
+    "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_stage3/n129_q129/attempt",
+    "process_isolation": false,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 600.0
+  },
+  "initialization": {
+    "policy": "case_declared_native_inputs",
+    "values": {}
+  },
+  "model": {
+    "coordinate": "physical_height",
+    "energy_model": "mathematical_total_enthalpy",
+    "film_model": "equilibrium_manifold",
+    "formulation": "twelve_state_conserved",
+    "layout": "twelve_conserved",
+    "pressure_model": "prescribed_gradient",
+    "thermo_model": "mathematical_neutral"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "max_iterations": 40,
+      "nodes": 129,
+      "quadrature_points": 129,
+      "tolerance": 1e-09
+    }
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_config_sha256": "52f696f6fbe2c38e705b5422c67ed0547842a939d43c82ceaa85b8092521745a",
+  "schema_version": 1
+}

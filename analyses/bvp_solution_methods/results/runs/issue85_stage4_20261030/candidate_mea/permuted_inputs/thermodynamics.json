@@ -1,0 +1,211 @@
+{
+  "encoding": "issue85-proposed-stage1-json-v1",
+  "status": "input-driven MEA numerical reproduction; no second-solvent qualification",
+  "engine": {
+    "engine_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "wheel_filename": "epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "wheel_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "reactive_inputs_sha256": {
+      "parameters.json": "73fd46326c31fdd7c287566b1d8c68b6092e9b12894609fb76e0b8e441304e31",
+      "engine-reactions.json": "2ae0d64d85cb824c355b4896b80e5999bfaf310cb341cd2036e585167b1f0f60",
+      "ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607"
+    },
+    "release_tag": "main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e"
+  },
+  "parameters": {
+    "repository_path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/candidate_mea/permuted_inputs/parameters.json",
+    "sha256": "2a1db180d1cccf8ed05b917f65d331ab2f3bfe31be3ab7aa04815a54d2841a25"
+  },
+  "reactions": {
+    "repository_path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/candidate_mea/permuted_inputs/reactions.json",
+    "sha256": "56443bde7f3f4e3075015a02d0b0bff21c4a2f34664fa678b761ff2c5d4649d2"
+  },
+  "calorics": {
+    "repository_path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/candidate_mea/permuted_inputs/calorics.json",
+    "sha256": "202bb6b682cf492ae9204a7e4e040ecd98ccaca27814608c23a87de2146c4c41"
+  },
+  "gas_parameters": {
+    "repository_path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/candidate_mea/permuted_inputs/gas_parameters.json",
+    "sha256": "95b43997c64602a76fe74a5f8b0728bd0a9127a9db142e13abcd11511612530b"
+  },
+  "species_order": [
+    "hydroxide-anion",
+    "water",
+    "carbonate-anion",
+    "carbamate-anion",
+    "monoethanolamine",
+    "carbon-dioxide",
+    "hydronium-cation",
+    "protonated-monoethanolamine",
+    "bicarbonate-anion"
+  ],
+  "roles": {
+    "co2": "carbon-dioxide",
+    "water": "water",
+    "amines": [
+      "monoethanolamine"
+    ],
+    "inert_gases": [
+      "nitrogen",
+      "oxygen"
+    ]
+  },
+  "liquid_support": [
+    "hydroxide-anion",
+    "water",
+    "carbonate-anion",
+    "carbamate-anion",
+    "monoethanolamine",
+    "carbon-dioxide",
+    "hydronium-cation",
+    "protonated-monoethanolamine",
+    "bicarbonate-anion"
+  ],
+  "liquid_feed_order": [
+    "water",
+    "monoethanolamine",
+    "carbon-dioxide"
+  ],
+  "vapor_support": [
+    "oxygen",
+    "nitrogen",
+    "water",
+    "carbon-dioxide"
+  ],
+  "vapor_feed_order": [
+    "oxygen",
+    "nitrogen",
+    "water",
+    "carbon-dioxide"
+  ],
+  "neutral_reference": {
+    "solvent": "water",
+    "solute_molality_ratios": {
+      "carbon-dioxide": 0.125,
+      "monoethanolamine": 0.125,
+      "protonated-monoethanolamine": 0.625,
+      "carbamate-anion": 0.25,
+      "bicarbonate-anion": 0.125,
+      "carbonate-anion": 0.125,
+      "hydronium-cation": 0.125,
+      "hydroxide-anion": 0.125
+    },
+    "standard_molality_mol_per_kg": 1.0
+  },
+  "species_reference_encoding": "absent means Engine default; future nonempty entries must use Engine SpeciesReference declarations",
+  "components": {
+    "order": [
+      "water",
+      "amine:monoethanolamine",
+      "co2"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ]
+    ]
+  },
+  "charge_numbers": [
+    -1,
+    0,
+    -2,
+    -1,
+    0,
+    0,
+    1,
+    1,
+    -1
+  ],
+  "formulas": {
+    "hydroxide-anion": {
+      "H": 1,
+      "O": 1
+    },
+    "hydronium-cation": {
+      "H": 3,
+      "O": 1
+    },
+    "carbonate-anion": {
+      "C": 1,
+      "O": 3
+    },
+    "bicarbonate-anion": {
+      "H": 1,
+      "C": 1,
+      "O": 3
+    },
+    "carbamate-anion": {
+      "C": 3,
+      "H": 6,
+      "N": 1,
+      "O": 3
+    },
+    "protonated-monoethanolamine": {
+      "C": 2,
+      "H": 8,
+      "N": 1,
+      "O": 1
+    },
+    "water": {
+      "H": 2,
+      "O": 1
+    },
+    "monoethanolamine": {
+      "C": 2,
+      "H": 7,
+      "N": 1,
+      "O": 1
+    },
+    "carbon-dioxide": {
+      "C": 1,
+      "O": 2
+    }
+  },
+  "atomic_masses_kg_mol": {
+    "C": 0.012011,
+    "H": 0.001008,
+    "N": 0.014007,
+    "O": 0.015999
+  },
+  "mass_convention": {
+    "feed": "exact retained direct SI molar feeds; no reconversion",
+    "liquid_hydraulic": "formula masses using atomic_masses_kg_mol",
+    "vapor_hydraulic": "unchanged gas parameter JSON molar masses",
+    "engine": "unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol",
+    "legacy_property": "unchanged config.Constants MWs_l/MWs_v for retained named laws"
+  },
+  "qualification": {
+    "status": "numerical_reproduction_only; no absorber qualification supplied",
+    "assessment": "inherited provisional MEA record; no new validation claims"
+  }
+}

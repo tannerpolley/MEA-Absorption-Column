@@ -75,7 +75,7 @@ def request(thermo, transport, output, seed=None):
             'numerics': {'method': 'upwind', 'solver_settings': {'nodes': 17, 'quadrature_points': 9,
                           'tolerance': 1e-7, 'max_iterations': 20, **({'end_clustering': 1.} if seed else {})}},
             'initialization': {'values': {'retained_profile': str(seed)} if seed else {}},
-            'execution': {'output_dir': str(output), 'wall_limit_s': 600}}
+            'execution': {'output_dir': str(output), 'wall_limit_s': 300}}
 
 
 def test_mea_declared_reproduction_and_permutation(tmp_path):

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/scripts/verify_manufactured_column.py", line 241, in <module>
+    solve_case(args.output,*args.case,args.permuted);raise SystemExit
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/scripts/verify_manufactured_column.py", line 153, in solve_case
+    assert result['numerical_acceptance']==result['physical_acceptance']=='accepted', result.get('failure')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'kind': 'capability_refusal', 'phase': 'worker', 'message': 'Loaded epcsaft distribution does not identify the selected wheel', 'last_checkpoint': None, 'worker_failure_kind': 'capability_refusal', 'transport_failure': None, 'transport': {'returncode': 0, 'stdout': '', 'stderr': '', 'cause': None, 'message': None}, 'raw_output': None, 'completed_payload': None}

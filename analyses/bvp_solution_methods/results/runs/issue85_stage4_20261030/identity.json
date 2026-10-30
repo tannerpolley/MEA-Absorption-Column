@@ -1,0 +1,31 @@
+{
+  "base_commit": "b2e2d2a087fb36ca40da80a330dad9638fd06eff",
+  "upstream_amine_commit": "62e256d",
+  "candidate_commit": "217026ab60b8e244cd7d9dac126b8b3d16bccb67",
+  "candidate_wheel_sha256": "b4c0f6d8eb8971abd3c0bd801cb9167b8ca602cb2a63b16a22e924d5b6727496",
+  "files": {
+    "analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/inputs/speciation.csv": "488940ecf3fc984edeee3fa145fe6f76936396fce802b5af881bcbee70f677ef",
+    "analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/inputs/parameters.json": "1d0d80832f282cde85acab294501ca9ec8dbc34cddf8edf2eebf6e1e1d03949d",
+    "analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/inputs/handoff.json": "41b9f1aa7fac86af3d7dc5f24a798985fe5297b97c2237c9dfeee65c488e2dba",
+    "analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/inputs/caloric.json": "278e7b9832dc051f2896615f870f0f91482a8642b7196d2a2a89b669b905ce6c",
+    "src/mea_absorption_column/Thermodynamics/reactive_bundle.py": "3520a411f2447f0a83632003cf30c94786608bca5ff72871d6c4ca2759574a31",
+    "src/mea_absorption_column/Thermodynamics/casadi_reactive.py": "5b0e719864d05b2e682e42e0bb65d1264fff26c6e90ba68d1ce9e854779f5f4a",
+    "analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py": "3028b182a574a8e69797ebbc8f5a2782b731774ea15e3b11ff0effd2833a23c2",
+    "tests/test_mdea_thermodynamic_references.py": "f57500e599b71c3d1efe8899ed59c9d80b90fce573915f9daa08a0e07c90e23d",
+    "uv.lock": "668169cbef3166b2fd2ab250f3ca329c47f0a6fb6b1ddce6dcf39ccaed5709e2",
+    "pyproject.toml": "c61a271f21837b284645257f489cf47242ec7132fb04e994f5afde43b83909d0",
+    "integration/epcsaft_contract.json": "c7d84c10d57ae841f65e2ada2705ed1e2de73ef32b32738a1461ee70f7b2c831"
+  },
+  "engine_environment": "separate candidate environment under .tmp_local/issue85_stage4/candidate",
+  "pinned_environment": ".venv",
+  "upstream_objective_evidence": {
+    "url": "https://github.com/tannerpolley/MEA-Absorption-Column/issues/85#issuecomment-6530877055",
+    "B1_cost": 374.4520134237422,
+    "observations": 280,
+    "reload_relative_error": {
+      "B1": 6.2e-13,
+      "A3": 9e-13
+    }
+  },
+  "evidence_type": "numerical verification at two thermodynamic states on a candidate wheel; development evidence; no absorber prediction"
+}

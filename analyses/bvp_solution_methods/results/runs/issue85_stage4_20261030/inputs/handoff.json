@@ -1,0 +1,4811 @@
+{
+  "fitted_parameter_document": {
+    "B1": {
+      "path": "results/B1-parameters.json",
+      "sha256": "1d0d80832f282cde85acab294501ca9ec8dbc34cddf8edf2eebf6e1e1d03949d",
+      "bytes": 93016,
+      "wheel_sha256": "b4c0f6d8eb8971abd3c0bd801cb9167b8ca602cb2a63b16a22e924d5b6727496",
+      "components": [
+        "carbon-dioxide",
+        "water",
+        "bicarbonate-anion",
+        "carbonate-anion",
+        "hydronium-cation",
+        "hydroxide-anion",
+        "methyldiethanolamine",
+        "protonated-methyldiethanolamine"
+      ],
+      "note": "Reaction laws stay in reactions.aqueous; the parameter document excludes them.",
+      "fitted_cost": 374.45201342397434,
+      "reload_cost": 374.4520134237422,
+      "cost_relative_error": 6.199485369506874e-13,
+      "native_entries_equal": 124,
+      "native_entries": 124
+    },
+    "A3": {
+      "path": "results/A3-parameters.json",
+      "sha256": "3e1a69baf8b20cfc2f7586c04aa9e2cf604e6ffda6a2bbbfcbe7d662e3dec0e8",
+      "bytes": 88770,
+      "wheel_sha256": "b4c0f6d8eb8971abd3c0bd801cb9167b8ca602cb2a63b16a22e924d5b6727496",
+      "components": [
+        "carbon-dioxide",
+        "water",
+        "bicarbonate-anion",
+        "carbonate-anion",
+        "hydronium-cation",
+        "hydroxide-anion",
+        "methyldiethanolamine",
+        "protonated-methyldiethanolamine"
+      ],
+      "note": "Reaction laws stay in reactions.aqueous; the parameter document excludes them.",
+      "fitted_cost": 403.71498514705206,
+      "reload_cost": 403.71498514741603,
+      "cost_relative_error": 9.015010959956271e-13,
+      "native_entries_equal": 118,
+      "native_entries": 118
+    }
+  },
+  "species": {
+    "carbon-dioxide": {
+      "caloric_coverage": "ideal_gas_record",
+      "analytical_components": {
+        "carbon-dioxide": 1
+      },
+      "component_id": "carbon-dioxide",
+      "aliases": [
+        "CO2"
+      ],
+      "element_formula": {
+        "C": 1,
+        "O": 2,
+        "charge": 0
+      },
+      "charge_number": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=CO2:family=charge_number:status=retained-literature-lineage",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 0,
+          "unit": "elementary-charge"
+        }
+      },
+      "molar_mass": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=CO2:family=molar_mass:status=retained-literature-lineage",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 0.04401,
+          "unit": "kilogram / mole"
+        }
+      },
+      "phase_supports": {
+        "loaded-liquid": [
+          "L"
+        ],
+        "loaded-bubble": [
+          "L",
+          "V"
+        ],
+        "zero-liquid": [
+          "L"
+        ],
+        "cap-bubble": [
+          "L",
+          "V"
+        ],
+        "binary-bubble": [],
+        "water-bubble": [],
+        "ion-free-liquid": []
+      },
+      "analytical_feed_templates": [
+        "loaded-liquid",
+        "loaded-bubble",
+        "zero-liquid",
+        "cap-bubble"
+      ]
+    },
+    "water": {
+      "caloric_coverage": "ideal_gas_record",
+      "analytical_components": {
+        "water": 1
+      },
+      "component_id": "water",
+      "aliases": [
+        "H2O"
+      ],
+      "element_formula": {
+        "H": 2,
+        "O": 1,
+        "charge": 0
+      },
+      "charge_number": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=charge_number:status=retained-literature-lineage",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 0,
+          "unit": "elementary-charge"
+        }
+      },
+      "molar_mass": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H2O:family=molar_mass:status=retained-literature-lineage",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 0.01801528,
+          "unit": "kilogram / mole"
+        }
+      },
+      "phase_supports": {
+        "loaded-liquid": [
+          "L"
+        ],
+        "loaded-bubble": [
+          "L",
+          "V"
+        ],
+        "zero-liquid": [
+          "L"
+        ],
+        "cap-bubble": [
+          "L",
+          "V"
+        ],
+        "binary-bubble": [
+          "L",
+          "V"
+        ],
+        "water-bubble": [
+          "L",
+          "V"
+        ],
+        "ion-free-liquid": [
+          "L"
+        ]
+      },
+      "analytical_feed_templates": [
+        "loaded-liquid",
+        "loaded-bubble",
+        "zero-liquid",
+        "cap-bubble",
+        "binary-bubble",
+        "water-bubble",
+        "ion-free-liquid"
+      ]
+    },
+    "bicarbonate-anion": {
+      "caloric_coverage": "reaction_reference_completion",
+      "analytical_components": {
+        "carbon-dioxide": 1,
+        "water": 1
+      },
+      "component_id": "bicarbonate-anion",
+      "aliases": [
+        "HCO3-"
+      ],
+      "element_formula": {
+        "H": 1,
+        "C": 1,
+        "O": 3,
+        "charge": -1
+      },
+      "charge_number": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=HCO3-:family=charge_number:status=transferred-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": -1,
+          "unit": "elementary-charge"
+        }
+      },
+      "molar_mass": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=HCO3-:family=molar_mass:status=transferred-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 0.0610168,
+          "unit": "kilogram / mole"
+        }
+      },
+      "phase_supports": {
+        "loaded-liquid": [
+          "L"
+        ],
+        "loaded-bubble": [
+          "L"
+        ],
+        "zero-liquid": [
+          "L"
+        ],
+        "cap-bubble": [
+          "L"
+        ],
+        "binary-bubble": [],
+        "water-bubble": [],
+        "ion-free-liquid": []
+      },
+      "analytical_feed_templates": []
+    },
+    "carbonate-anion": {
+      "caloric_coverage": "reaction_reference_completion",
+      "analytical_components": {
+        "carbon-dioxide": 1,
+        "water": 1
+      },
+      "component_id": "carbonate-anion",
+      "aliases": [
+        "CO3^2-"
+      ],
+      "element_formula": {
+        "C": 1,
+        "O": 3,
+        "charge": -2
+      },
+      "charge_number": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=CO3^2-:family=charge_number:status=transferred-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": -2,
+          "unit": "elementary-charge"
+        }
+      },
+      "molar_mass": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=CO3^2-:family=molar_mass:status=transferred-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 0.06001,
+          "unit": "kilogram / mole"
+        }
+      },
+      "phase_supports": {
+        "loaded-liquid": [
+          "L"
+        ],
+        "loaded-bubble": [
+          "L"
+        ],
+        "zero-liquid": [
+          "L"
+        ],
+        "cap-bubble": [
+          "L"
+        ],
+        "binary-bubble": [],
+        "water-bubble": [],
+        "ion-free-liquid": []
+      },
+      "analytical_feed_templates": []
+    },
+    "hydronium-cation": {
+      "caloric_coverage": "reaction_reference_completion",
+      "analytical_components": {
+        "water": 1
+      },
+      "component_id": "hydronium-cation",
+      "aliases": [
+        "H3O+"
+      ],
+      "element_formula": {
+        "H": 3,
+        "O": 1,
+        "charge": 1
+      },
+      "charge_number": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H3O+:family=charge_number:status=transferred-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 1,
+          "unit": "elementary-charge"
+        }
+      },
+      "molar_mass": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=H3O+:family=molar_mass:status=transferred-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 0.01902,
+          "unit": "kilogram / mole"
+        }
+      },
+      "phase_supports": {
+        "loaded-liquid": [
+          "L"
+        ],
+        "loaded-bubble": [
+          "L"
+        ],
+        "zero-liquid": [
+          "L"
+        ],
+        "cap-bubble": [
+          "L"
+        ],
+        "binary-bubble": [],
+        "water-bubble": [],
+        "ion-free-liquid": []
+      },
+      "analytical_feed_templates": []
+    },
+    "hydroxide-anion": {
+      "caloric_coverage": "reaction_reference_completion",
+      "analytical_components": {
+        "water": 1
+      },
+      "component_id": "hydroxide-anion",
+      "aliases": [
+        "OH-"
+      ],
+      "element_formula": {
+        "H": 1,
+        "O": 1,
+        "charge": -1
+      },
+      "charge_number": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=OH-:family=charge_number:status=transferred-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": -1,
+          "unit": "elementary-charge"
+        }
+      },
+      "molar_mass": {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/pure/any_solvent.csv:component=OH-:family=molar_mass:status=transferred-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": 0.01701,
+          "unit": "kilogram / mole"
+        }
+      },
+      "phase_supports": {
+        "loaded-liquid": [
+          "L"
+        ],
+        "loaded-bubble": [
+          "L"
+        ],
+        "zero-liquid": [
+          "L"
+        ],
+        "cap-bubble": [
+          "L"
+        ],
+        "binary-bubble": [],
+        "water-bubble": [],
+        "ion-free-liquid": []
+      },
+      "analytical_feed_templates": []
+    },
+    "methyldiethanolamine": {
+      "caloric_coverage": "ideal_gas_record",
+      "analytical_components": {
+        "methyldiethanolamine": 1
+      },
+      "component_id": "methyldiethanolamine",
+      "aliases": [],
+      "element_formula": {
+        "C": 5,
+        "H": 13,
+        "N": 1,
+        "O": 2,
+        "charge": 0
+      },
+      "charge_number": {
+        "value": {
+          "magnitude": 0,
+          "unit": "elementary-charge"
+        }
+      },
+      "molar_mass": {
+        "value": {
+          "magnitude": 0.1191622,
+          "unit": "kilogram / mole"
+        }
+      },
+      "phase_supports": {
+        "loaded-liquid": [
+          "L"
+        ],
+        "loaded-bubble": [
+          "L",
+          "V"
+        ],
+        "zero-liquid": [
+          "L"
+        ],
+        "cap-bubble": [
+          "L",
+          "V"
+        ],
+        "binary-bubble": [
+          "L",
+          "V"
+        ],
+        "water-bubble": [],
+        "ion-free-liquid": [
+          "L"
+        ]
+      },
+      "analytical_feed_templates": [
+        "loaded-liquid",
+        "loaded-bubble",
+        "zero-liquid",
+        "cap-bubble",
+        "binary-bubble",
+        "ion-free-liquid"
+      ]
+    },
+    "protonated-methyldiethanolamine": {
+      "caloric_coverage": "reaction_reference_completion",
+      "analytical_components": {
+        "methyldiethanolamine": 1
+      },
+      "component_id": "protonated-methyldiethanolamine",
+      "aliases": [],
+      "element_formula": {
+        "C": 5,
+        "H": 14,
+        "N": 1,
+        "O": 2,
+        "charge": 1
+      },
+      "charge_number": {
+        "value": {
+          "magnitude": 1,
+          "unit": "elementary-charge"
+        }
+      },
+      "molar_mass": {
+        "value": {
+          "magnitude": 0.12017014,
+          "unit": "kilogram / mole"
+        }
+      },
+      "phase_supports": {
+        "loaded-liquid": [
+          "L"
+        ],
+        "loaded-bubble": [
+          "L"
+        ],
+        "zero-liquid": [
+          "L"
+        ],
+        "cap-bubble": [
+          "L"
+        ],
+        "binary-bubble": [],
+        "water-bubble": [],
+        "ion-free-liquid": []
+      },
+      "analytical_feed_templates": []
+    }
+  },
+  "balance_checks": {
+    "species_charges": "Exact match to Engine",
+    "reactions": "All elements and charge conserved"
+  },
+  "conventions": {
+    "mass": "molar_mass is copied unchanged from the Engine parameter document, including rounded magnitudes, units and provenance. Formula masses for conservation are derived by the column; no Engine mass is altered.",
+    "caloric": "inputs/caloric.json is the single source of ideal-gas calorics. Ionic standard thermochemistry is completed by Engine from the four K(T) laws and the aqueous neutral reference; there is no independent reaction enthalpy or second absorption-heat source.",
+    "reaction_direction": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat.",
+    "neutral_reference": "eq.NeutralReference fields: solvent (component ID), solute_molality_ratios (dimensionless), standard_molality_mol_per_kg (mol/kg solvent), species_reference (eq.SpeciesReference enum). No per-species override is declared (empty mapping); Engine uses PureLiquid for solvent and InfiniteDilution for every solute. Enum names: PureLiquid, InfiniteDilution, PureGas; no PureGas choice is used.",
+    "assessment": "Regions are prepared-row minima/maxima, not continuous validity domains. For saturation-capped heat observations, region records requested loading caps; evaluated_region records available native endpoint loadings from the retained results. wt_percent is unloaded aqueous analytical amine mass percent using unchanged Engine molar masses; loading is mol CO2/mol analytical MDEA. AARD_percent uses available nonzero observations only and is not experimental uncertainty. Phase search covers only the retained 751 endpoint states. Native observation values are retained by row; derivative actions were not assessed by #228."
+  },
+  "reactions": {
+    "aqueous": [
+      {
+        "name": "R1",
+        "stoichiometry": {
+          "water": -2.0,
+          "hydronium-cation": 1.0,
+          "hydroxide-anion": 1.0
+        },
+        "correlation": {
+          "a": 3.7290977365566675,
+          "b": -13445.9,
+          "c": -22.4773,
+          "d": 0.0,
+          "reference_temperature": 313.15,
+          "temperature_min": 273.15,
+          "temperature_max": 395.0,
+          "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1"
+        },
+        "reference": {
+          "source_basis": "RawMoleFractionInfiniteDilution"
+        },
+        "interpretation": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat."
+      },
+      {
+        "name": "R2",
+        "stoichiometry": {
+          "carbon-dioxide": -1.0,
+          "water": -2.0,
+          "bicarbonate-anion": 1.0,
+          "hydronium-cation": 1.0
+        },
+        "correlation": {
+          "a": 23.585516142096935,
+          "b": -11928.056737463849,
+          "c": -36.7816,
+          "d": 0.0,
+          "reference_temperature": 313.15,
+          "temperature_min": 293.15,
+          "temperature_max": 395.0,
+          "standard_state_id": "aqueous-molality-infinite-dilution-water-v1"
+        },
+        "reference": {
+          "source_basis": "CommonMolalityInfiniteDilution"
+        },
+        "interpretation": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat."
+      },
+      {
+        "name": "R3",
+        "stoichiometry": {
+          "water": -1.0,
+          "bicarbonate-anion": -1.0,
+          "carbonate-anion": 1.0,
+          "hydronium-cation": 1.0
+        },
+        "correlation": {
+          "a": 12.145792981306897,
+          "b": -12431.7,
+          "c": -35.4819,
+          "d": 0.0,
+          "reference_temperature": 313.15,
+          "temperature_min": 273.15,
+          "temperature_max": 395.0,
+          "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1"
+        },
+        "reference": {
+          "source_basis": "RawMoleFractionInfiniteDilution"
+        },
+        "interpretation": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat."
+      },
+      {
+        "name": "MDEA-dissociation",
+        "stoichiometry": {
+          "protonated-methyldiethanolamine": -1,
+          "water": -1,
+          "methyldiethanolamine": 1,
+          "hydronium-cation": 1
+        },
+        "correlation": {
+          "a": -16.398914976729678,
+          "b": -819.7,
+          "c": 10.976,
+          "d": 0.0,
+          "reference_temperature": 313.15,
+          "temperature_min": 278.0,
+          "temperature_max": 395.0,
+          "standard_state_id": "aqueous-molality-infinite-dilution-water-v1"
+        },
+        "reference": {
+          "source_basis": "CommonMolalityInfiniteDilution",
+          "reference_pressure_pa": 100000.0
+        },
+        "interpretation": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat."
+      }
+    ]
+  },
+  "neutral_references": {
+    "aqueous": {
+      "solvent": "water",
+      "standard_molality_mol_per_kg": 1.0,
+      "solute_molality_ratios": {
+        "methyldiethanolamine": 0.125,
+        "carbon-dioxide": 0.125,
+        "protonated-methyldiethanolamine": 0.125,
+        "hydronium-cation": 0.125,
+        "bicarbonate-anion": 0.125,
+        "hydroxide-anion": 0.0625,
+        "carbonate-anion": 0.03125
+      },
+      "species_reference": {},
+      "effective_species_reference": {
+        "carbon-dioxide": "InfiniteDilution",
+        "water": "PureLiquid",
+        "bicarbonate-anion": "InfiniteDilution",
+        "carbonate-anion": "InfiniteDilution",
+        "hydronium-cation": "InfiniteDilution",
+        "hydroxide-anion": "InfiniteDilution",
+        "methyldiethanolamine": "InfiniteDilution",
+        "protonated-methyldiethanolamine": "InfiniteDilution"
+      }
+    }
+  },
+  "problem_templates": {
+    "loaded-liquid": {
+      "T": "$T",
+      "P": "$P",
+      "feed": {
+        "basis": "amounts",
+        "values": {
+          "water": "$water",
+          "methyldiethanolamine": 1.0,
+          "carbon-dioxide": "$alpha"
+        }
+      },
+      "phases": [
+        {
+          "name": "L",
+          "kind": "liquid",
+          "support": [
+            "water",
+            "methyldiethanolamine",
+            "carbon-dioxide",
+            "protonated-methyldiethanolamine",
+            "bicarbonate-anion",
+            "carbonate-anion",
+            "hydronium-cation",
+            "hydroxide-anion"
+          ]
+        }
+      ],
+      "reaction_set": "aqueous",
+      "neutral_reference": "aqueous",
+      "row_tolerance": 1e-10
+    },
+    "loaded-bubble": {
+      "T": "$T",
+      "P": {
+        "free": true,
+        "guess": "$P"
+      },
+      "feed": {
+        "basis": "amounts",
+        "values": {
+          "water": "$water",
+          "methyldiethanolamine": 1.0,
+          "carbon-dioxide": "$alpha"
+        }
+      },
+      "phases": [
+        {
+          "name": "L",
+          "kind": "liquid",
+          "support": [
+            "water",
+            "methyldiethanolamine",
+            "carbon-dioxide",
+            "protonated-methyldiethanolamine",
+            "bicarbonate-anion",
+            "carbonate-anion",
+            "hydronium-cation",
+            "hydroxide-anion"
+          ]
+        },
+        {
+          "name": "V",
+          "kind": "vapor",
+          "support": [
+            "water",
+            "methyldiethanolamine",
+            "carbon-dioxide"
+          ],
+          "amount": {
+            "status": "pinned",
+            "value": 0.0
+          },
+          "composition_guess": {
+            "water": 0.1,
+            "methyldiethanolamine": 1e-05,
+            "carbon-dioxide": 0.9
+          }
+        }
+      ],
+      "reaction_set": "aqueous",
+      "neutral_reference": "aqueous",
+      "row_tolerance": 1e-10
+    },
+    "zero-liquid": {
+      "T": "$T",
+      "P": "$P",
+      "feed": {
+        "basis": "amounts",
+        "values": {
+          "water": "$water",
+          "methyldiethanolamine": 1.0,
+          "carbon-dioxide": 0.0
+        }
+      },
+      "phases": [
+        {
+          "name": "L",
+          "kind": "liquid",
+          "support": [
+            "water",
+            "methyldiethanolamine",
+            "carbon-dioxide",
+            "protonated-methyldiethanolamine",
+            "bicarbonate-anion",
+            "carbonate-anion",
+            "hydronium-cation",
+            "hydroxide-anion"
+          ]
+        }
+      ],
+      "reaction_set": "aqueous",
+      "neutral_reference": "aqueous",
+      "row_tolerance": 1e-10
+    },
+    "cap-bubble": {
+      "T": "$T",
+      "P": {
+        "free": true,
+        "guess": "$P"
+      },
+      "feed": {
+        "basis": "amounts",
+        "values": {
+          "water": "$water",
+          "methyldiethanolamine": 1.0,
+          "carbon-dioxide": 0.5
+        }
+      },
+      "phases": [
+        {
+          "name": "L",
+          "kind": "liquid",
+          "support": [
+            "water",
+            "methyldiethanolamine",
+            "carbon-dioxide",
+            "protonated-methyldiethanolamine",
+            "bicarbonate-anion",
+            "carbonate-anion",
+            "hydronium-cation",
+            "hydroxide-anion"
+          ]
+        },
+        {
+          "name": "V",
+          "kind": "vapor",
+          "support": [
+            "water",
+            "methyldiethanolamine",
+            "carbon-dioxide"
+          ],
+          "amount": {
+            "status": "pinned",
+            "value": 0.0
+          },
+          "composition_guess": {
+            "water": 0.1,
+            "methyldiethanolamine": 1e-05,
+            "carbon-dioxide": 0.9
+          }
+        }
+      ],
+      "reaction_set": "aqueous",
+      "neutral_reference": "aqueous",
+      "row_tolerance": 1e-10
+    },
+    "binary-bubble": {
+      "T": "$T",
+      "P": {
+        "free": true,
+        "guess": "$P"
+      },
+      "feed": {
+        "basis": "amounts",
+        "values": {
+          "water": "$water",
+          "methyldiethanolamine": "$amine"
+        }
+      },
+      "phases": [
+        {
+          "name": "L",
+          "kind": "liquid",
+          "support": [
+            "water",
+            "methyldiethanolamine"
+          ],
+          "composition_guess": {
+            "water": "$water",
+            "methyldiethanolamine": "$amine"
+          }
+        },
+        {
+          "name": "V",
+          "kind": "vapor",
+          "support": [
+            "water",
+            "methyldiethanolamine"
+          ],
+          "amount": {
+            "status": "pinned",
+            "value": 0.0
+          },
+          "composition_guess": {
+            "water": 1.0,
+            "methyldiethanolamine": 1e-05
+          }
+        }
+      ],
+      "row_tolerance": 1e-10
+    },
+    "water-bubble": {
+      "T": "$T",
+      "P": {
+        "free": true,
+        "guess": "$P"
+      },
+      "feed": {
+        "basis": "amounts",
+        "values": {
+          "water": "$water"
+        }
+      },
+      "phases": [
+        {
+          "name": "L",
+          "kind": "liquid",
+          "support": [
+            "water"
+          ],
+          "composition_guess": {
+            "water": "$water"
+          }
+        },
+        {
+          "name": "V",
+          "kind": "vapor",
+          "support": [
+            "water"
+          ],
+          "amount": {
+            "status": "pinned",
+            "value": 0.0
+          },
+          "composition_guess": {
+            "water": 1.0
+          }
+        }
+      ],
+      "row_tolerance": 1e-10
+    },
+    "ion-free-liquid": {
+      "T": "$T",
+      "P": "$P",
+      "feed": {
+        "basis": "amounts",
+        "values": {
+          "water": "$water",
+          "methyldiethanolamine": 1.0
+        }
+      },
+      "phases": [
+        {
+          "name": "L",
+          "kind": "liquid",
+          "support": [
+            "water",
+            "methyldiethanolamine"
+          ]
+        }
+      ],
+      "row_tolerance": 1e-10
+    }
+  },
+  "caloric": {
+    "schema": "mea-physical-ideal-gas-calorics-v1",
+    "reference_pressure_pa": 100000.0,
+    "components": {
+      "carbon-dioxide": {
+        "representation": "shomate",
+        "coefficients": [
+          24.99735,
+          55.18696,
+          -33.69137,
+          7.948387,
+          -0.136638,
+          -403.6075,
+          228.2431,
+          -393.5224
+        ],
+        "range_k": [
+          298.0,
+          1200.0
+        ],
+        "basis": "ideal gas; Shomate Cp in J/mol/K, t = T[K]/1000",
+        "formation_enthalpy_j_per_mol": -393510.0,
+        "source": "NIST Chemistry WebBook gas Shomate coefficients (Chase 1998); CODATA formation enthalpy"
+      },
+      "water": {
+        "representation": "shomate",
+        "coefficients": [
+          30.092,
+          6.832514,
+          6.793435,
+          -2.53448,
+          0.082139,
+          -250.881,
+          223.3967,
+          -241.8264
+        ],
+        "source_range_k": [
+          500.0,
+          1700.0
+        ],
+        "range_k": [
+          273.15,
+          1700.0
+        ],
+        "basis": "ideal gas; Shomate Cp in J/mol/K, t = T[K]/1000",
+        "formation_enthalpy_j_per_mol": -241826.0,
+        "source": "NIST Chemistry WebBook gas Shomate coefficients (Chase 1998); CODATA formation enthalpy",
+        "note": "Extrapolated below 500 K; Cp at 298.15 K is 33.59 J/mol/K in JANAF."
+      },
+      "methyldiethanolamine": {
+        "representation": "cp_polynomial",
+        "coefficients": [
+          198.77937643331074,
+          0.6267026135868604,
+          -0.0007369604796696283,
+          1.4073022391475026e-06
+        ],
+        "range_k": [
+          293.0,
+          423.0
+        ],
+        "basis": "ideal gas; Cp = sum(a_k*(T - T_ref)^k), T_ref = 313.15 K; Cp in J/(mol K); coefficients in ascending k",
+        "source": "Retained neumann_cubic from analyses/mdea_mea_workflow/results/diagnosis-unloaded-cp/summary.json; cubic approximation of Neumann et al. 2022 Eq. 5, Table 8 (Zotero CA5R9QN8), recentered at 313.15 K during input preparation",
+        "enthalpy_entropy_anchor_k": 313.15,
+        "anchor_basis": "h=s=0 at 313.15 K, MEA amine convention",
+        "enthalpy_anchor_j_per_mol": 0.0,
+        "entropy_anchor_j_per_mol_k": 0.0
+      }
+    }
+  },
+  "runtime": {
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT/build/wheels/main-d5138209/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "wheel_sha256": "ca7093ca721fdc80226c74d018a582f31705684c6995e80b0492c193334dd5d5",
+    "module": "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/.worktrees/issue-230-228-hand-off-export-clarifications/build/issue-228-venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "installed_files_byte_identical": true,
+    "engine_commit": "d513820994a78bfe628d42fffd55b2eeab6f89bd",
+    "python": "3.13.14 (main, Jun 23 2026, 15:18:27) [Clang 22.1.3 ]",
+    "packages": {
+      "epcsaft": "1.0.0",
+      "numpy": "2.5.4",
+      "scipy": "1.18.1"
+    },
+    "workers": 32,
+    "BLAS_threads_per_process": 1
+  },
+  "files": [
+    {
+      "path": "B1.toml",
+      "sha256": "71d4bc1bbe187ecffd943727206dea78b94ed6b7c69d626a0644c7c118ea3a67"
+    },
+    {
+      "path": "declarations.toml",
+      "sha256": "7fc0d5ef5d9c1536ec66a13bf068eb44b4f199357565d5a953408dfe57942a31"
+    },
+    {
+      "path": "inputs/caloric.json",
+      "sha256": "278e7b9832dc051f2896615f870f0f91482a8642b7196d2a2a89b669b905ce6c"
+    },
+    {
+      "path": "inputs/preparation-provenance.json",
+      "sha256": "51c14585f99eab82627afc9b12bf50fd36be90c550ef919d509963ab9451773e"
+    },
+    {
+      "path": "inputs/phase-provenance.json",
+      "sha256": "e412a4e6e4b495e2f46480331a65986884085369dc540b812487d001de59272d"
+    },
+    {
+      "path": "inputs/parameter-caloric-provenance.json",
+      "sha256": "620486ea8e890779aaeb89fbd539842bb5b407e6f7e56be03e8e1ce70487baf4"
+    },
+    {
+      "path": "inputs/B1-endpoint.json",
+      "sha256": "1d0d80832f282cde85acab294501ca9ec8dbc34cddf8edf2eebf6e1e1d03949d"
+    },
+    {
+      "path": "inputs/B1-coordinates.json",
+      "sha256": "0bca9af202313b2bd8325ccaa37a72f32a1b326099c957c5ebf35f630506c8be"
+    },
+    {
+      "path": "inputs/B1-start.json",
+      "sha256": "87ccd90fd6219395b24dceaec61d5c2ed03edacceeb41c81876488115498bb50"
+    },
+    {
+      "path": "inputs/phase-states.csv",
+      "sha256": "1dd77ba96a655a5f6b6cdb94d02d67507cebf68dad4b4c44b9815eb16e927c83"
+    },
+    {
+      "path": "inputs/calibration-Carson.csv",
+      "sha256": "7bd0b8e6cd945d0817bf84de66df582b17aef6ed8248aae426a7f65f44c04dfe"
+    },
+    {
+      "path": "inputs/calibration-Cp.csv",
+      "sha256": "32db9e1c6005c6285c28175a1ae02b6f89e4222de9c2a6f6a8b858655b50ec99"
+    },
+    {
+      "path": "inputs/calibration-Jakobsen-carbonate.csv",
+      "sha256": "60c2f5fe1900aa462b94ac89444278b11e5e7450368dd215539846d12534b160"
+    },
+    {
+      "path": "inputs/calibration-Jakobsen-cation.csv",
+      "sha256": "f5203d7c9d392bda01574df18e4f29c182958a74aa637717d6804dfb82107093"
+    },
+    {
+      "path": "inputs/calibration-Kim-binary.csv",
+      "sha256": "3edc485cd34ef32cccb53b075d53b787ad2e5a6da7d92aaaae43316d75ad92e6"
+    },
+    {
+      "path": "inputs/calibration-Kim-water.csv",
+      "sha256": "05e9477b06e6a1283540bb5d5f7b19dceda0934822d1d061c768e774576a89d2"
+    },
+    {
+      "path": "inputs/calibration-Kuranov.csv",
+      "sha256": "beeb775e555c53f766dd0d91df37ff064a0031d1e602034193a9ae6aa7873b99"
+    },
+    {
+      "path": "inputs/calibration-Merkley.csv",
+      "sha256": "ff5e906205a1e915ad26dba9c9b00a7c55d8df012ac2ed54fba73b8af47c428c"
+    },
+    {
+      "path": "inputs/calibration-loaded-density.csv",
+      "sha256": "f2f796c6c727cab46ca2ff05c955bb8120a7604d9ff6c70483bb9e9e9dd0c64d"
+    },
+    {
+      "path": "inputs/calibration-unloaded-density.csv",
+      "sha256": "dbbea42108c22509efa86ce0eb9d31cb7647617d78f6b2792783c191305c7e95"
+    },
+    {
+      "path": "inputs/outside-fit-Bottinger-amine-sum-25bar.csv",
+      "sha256": "ca33c3fcc4057a3e74220a0cfbcc475d1275470b9acafa1f0354b523a704798a"
+    },
+    {
+      "path": "inputs/outside-fit-Bottinger-amine-sum-5bar.csv",
+      "sha256": "488940ecf3fc984edeee3fa145fe6f76936396fce802b5af881bcbee70f677ef"
+    },
+    {
+      "path": "inputs/outside-fit-Bottinger-bicarbonate-25bar.csv",
+      "sha256": "a788feff21199e1fe2c9a553a133e1fd408bd390d259289b2b7ea3567cc9fbf9"
+    },
+    {
+      "path": "inputs/outside-fit-Bottinger-bicarbonate-5bar.csv",
+      "sha256": "7ac448699c14bc898a7a8a4877afba5950c31f5f9597343316006f87b256da4a"
+    },
+    {
+      "path": "inputs/outside-fit-Cp-60wt.csv",
+      "sha256": "bd3d8b2d2f90cdca479df34ba63c5ff369d2d2b5856a1c6765de7b643c919f98"
+    },
+    {
+      "path": "inputs/outside-fit-Ermatchkov.csv",
+      "sha256": "bffe5603e6ddc4c12c268226b421deaea4ea6a8397771f84aea186b4b6830ae6"
+    },
+    {
+      "path": "inputs/outside-fit-Kuranov-413K.csv",
+      "sha256": "27b302f4baa8efb0af7c79ad562237f484c2e68a9f38f28e7b9fc9b05220fff4"
+    },
+    {
+      "path": "inputs/outside-fit-Merkley-half-loading.csv",
+      "sha256": "b202e6844954310692593f76967abaf5ce7d483f096efa46ae8cae422d18bbee"
+    },
+    {
+      "path": "inputs/outside-fit-Merkley-outside.csv",
+      "sha256": "b88e89910d7aa60ebaf3d8535b5a913d352dc28ebdfea490bddaaba81109ec25"
+    },
+    {
+      "path": "inputs/outside-fit-Sedighi.csv",
+      "sha256": "4ce05f4d475f79af355443fe6a700d25ecf3585fe16ac67a112fe33ee564690c"
+    },
+    {
+      "path": "inputs/outside-fit-Zheng.csv",
+      "sha256": "e255f451d0de07ad57279a6ac1b6806eb89b9aa8236f891b473108e6e0dc1b3a"
+    },
+    {
+      "path": "inputs/outside-fit-corrected-Kamps.csv",
+      "sha256": "4a398d4b816bc8c807ed809c81ef12421485b94aab01b6ef874202a56a53d7a6"
+    },
+    {
+      "path": "inputs/outside-fit-density-60wt.csv",
+      "sha256": "facdc0e8649e4cad6cb58b9fb16db407b2713ddf8e7e7bf6e87bb776ff84328e"
+    },
+    {
+      "path": "results/R4-trials.json.gz",
+      "sha256": "ad8e01e40d7be6bfa8bbe6572d06c6b3093cf7369d474e3e9921a0b8556bc1f5"
+    },
+    {
+      "path": "results/R4.json",
+      "sha256": "235534e96b4f0873ca1caaa991169cf8c97af9ecda8f50dd1401b2667f4357b4"
+    },
+    {
+      "path": "results/R2.json",
+      "sha256": "20cde97b76f4ba7f356d21c776e4b2491c27a7c12352cdc195cee8cb709cf2f7"
+    },
+    {
+      "path": "results/runtime.json",
+      "sha256": "f21d836ddd514760aafd071422acc3ea13bda1e416ca1b91076105aa2b4f825b"
+    },
+    {
+      "path": "results/endpoint-checks.json",
+      "sha256": "314b804cadecb79d1d5b2bf695b8cd0ae546475a8219d5fdc259c249e4f76852"
+    },
+    {
+      "path": "results/comparisons.json",
+      "sha256": "1c27f0691045af8eed57acfedac570a6d92294240cc4f0c46deca12ad186c1e0"
+    }
+  ],
+  "assessment": {
+    "kind": "Numerical reproduction; calibration and conditional outside-fit assessment",
+    "temperature_domain_K": [
+      293.15,
+      395.0
+    ],
+    "composition_basis": "Prepared analytical molar feed; CO2 loading per mole MDEA",
+    "properties": {
+      "pressure": {
+        "datasets": [
+          {
+            "name": "calibration-Kuranov",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                313.11,
+                393.17
+              ],
+              "wt_percent": [
+                18.849801526682164,
+                32.1185885764421
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                1.3160798475273348
+              ]
+            },
+            "rows": 69,
+            "available_rows": 69,
+            "evaluated_region": {
+              "T_K": [
+                313.11,
+                393.17
+              ],
+              "wt_percent": [
+                18.849801526682164,
+                32.1185885764421
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                1.3160798475273348
+              ]
+            },
+            "AARD_percent": 21.11450789718651,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "pressure"
+            }
+          },
+          {
+            "name": "outside-fit-Ermatchkov",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                313.15,
+                393.15
+              ],
+              "wt_percent": [
+                18.500672586646868,
+                50.14577699358068
+              ],
+              "loading_mol_per_mol": [
+                0.0028151623657241636,
+                0.784251968503937
+              ]
+            },
+            "rows": 101,
+            "available_rows": 101,
+            "evaluated_region": {
+              "T_K": [
+                313.15,
+                393.15
+              ],
+              "wt_percent": [
+                18.500672586646868,
+                50.14577699358068
+              ],
+              "loading_mol_per_mol": [
+                0.0028151623657241636,
+                0.784251968503937
+              ]
+            },
+            "AARD_percent": 20.330849028024804,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "partial_pressure"
+            }
+          },
+          {
+            "name": "outside-fit-Kuranov-413K",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                413.13,
+                413.16
+              ],
+              "wt_percent": [
+                18.849801526682164,
+                32.1185885764421
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.6856307392397271
+              ]
+            },
+            "rows": 13,
+            "available_rows": 0,
+            "evaluated_region": {
+              "T_K": null,
+              "wt_percent": null,
+              "loading_mol_per_mol": null
+            },
+            "AARD_percent": null,
+            "unavailable": [
+              {
+                "identity": "comparison:398",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 346400.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "0",
+                  "m_MDEA_mol_per_kg_H2O": "1.9493",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "35",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "35",
+                  "source_series": "m_MDEA 1.9493 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "left",
+                  "temperature_K": "413.15",
+                  "ten_times_total_pressure_MPa": "3.464",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:399",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 696900.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "0.3575",
+                  "m_MDEA_mol_per_kg_H2O": "1.9493",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "36",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "36",
+                  "source_series": "m_MDEA 1.9493 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "left",
+                  "temperature_K": "413.16",
+                  "ten_times_total_pressure_MPa": "6.969",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:400",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 1079800.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "0.5592",
+                  "m_MDEA_mol_per_kg_H2O": "1.9493",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "37",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "37",
+                  "source_series": "m_MDEA 1.9493 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "left",
+                  "temperature_K": "413.16",
+                  "ten_times_total_pressure_MPa": "10.798",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:401",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 1893100.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "0.8601",
+                  "m_MDEA_mol_per_kg_H2O": "1.9493",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "38",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "38",
+                  "source_series": "m_MDEA 1.9493 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "left",
+                  "temperature_K": "413.14",
+                  "ten_times_total_pressure_MPa": "18.931",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:402",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 2132800.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "0.9295",
+                  "m_MDEA_mol_per_kg_H2O": "1.9493",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "39",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "39",
+                  "source_series": "m_MDEA 1.9493 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "left",
+                  "temperature_K": "413.13",
+                  "ten_times_total_pressure_MPa": "21.328",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:403",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 3224700.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "1.1991",
+                  "m_MDEA_mol_per_kg_H2O": "1.9493",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "40",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "40",
+                  "source_series": "m_MDEA 1.9493 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "left",
+                  "temperature_K": "413.16",
+                  "ten_times_total_pressure_MPa": "32.247",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:404",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 3932900.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "1.3365",
+                  "m_MDEA_mol_per_kg_H2O": "1.9493",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "41",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "41",
+                  "source_series": "m_MDEA 1.9493 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "left",
+                  "temperature_K": "413.15",
+                  "ten_times_total_pressure_MPa": "39.329",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:405",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 338600.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "0",
+                  "m_MDEA_mol_per_kg_H2O": "3.9707",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "36",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "77",
+                  "source_series": "m_MDEA 3.9707 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "right",
+                  "temperature_K": "413.15",
+                  "ten_times_total_pressure_MPa": "3.386",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:406",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 660100.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "0.4175",
+                  "m_MDEA_mol_per_kg_H2O": "3.9707",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "37",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "78",
+                  "source_series": "m_MDEA 3.9707 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "right",
+                  "temperature_K": "413.16",
+                  "ten_times_total_pressure_MPa": "6.601",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:407",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 1295600.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "0.8583",
+                  "m_MDEA_mol_per_kg_H2O": "3.9707",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "38",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "79",
+                  "source_series": "m_MDEA 3.9707 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "right",
+                  "temperature_K": "413.14",
+                  "ten_times_total_pressure_MPa": "12.956",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:408",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 1546700.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "1.0110",
+                  "m_MDEA_mol_per_kg_H2O": "3.9707",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "39",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "80",
+                  "source_series": "m_MDEA 3.9707 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "right",
+                  "temperature_K": "413.15",
+                  "ten_times_total_pressure_MPa": "15.467",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:409",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 2744700.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "1.5394",
+                  "m_MDEA_mol_per_kg_H2O": "3.9707",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "40",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "81",
+                  "source_series": "m_MDEA 3.9707 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "right",
+                  "temperature_K": "413.16",
+                  "ten_times_total_pressure_MPa": "27.447",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              },
+              {
+                "identity": "comparison:410",
+                "group": "Kuranov-413K",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": 3396100.0,
+                "row": {
+                  "consistency_flag": "",
+                  "doi": "10.1021/ie950538r",
+                  "m_CO2_mol_per_kg_H2O": "1.7402",
+                  "m_MDEA_mol_per_kg_H2O": "3.9707",
+                  "pdf_attachment_key": "QB5PV62N",
+                  "pressure_basis": "total pressure at the bubble point (synthetic method); printed column 10(p) (MPa) = 10 x p/MPa",
+                  "source_half_row": "41",
+                  "source_key": "Kuranov1996",
+                  "source_pdf_page": "2",
+                  "source_printed_page": "1960",
+                  "source_row": "82",
+                  "source_series": "m_MDEA 3.9707 mol/kg; isotherm about 413 K",
+                  "source_table": "Table 2",
+                  "source_table_half": "right",
+                  "temperature_K": "413.15",
+                  "ten_times_total_pressure_MPa": "33.961",
+                  "verification": "Image reading of 600 dpi crop of PDF p.2 matched pdftotext -layout text for all four values; checked 2026-10-18",
+                  "zotero_parent_key": "9F6UM7M4"
+                }
+              }
+            ],
+            "observation": {
+              "constructor": "observation",
+              "kind": "pressure"
+            }
+          },
+          {
+            "name": "outside-fit-Sedighi",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                303.15,
+                323.15
+              ],
+              "wt_percent": [
+                9.999999999999998,
+                50.0
+              ],
+              "loading_mol_per_mol": [
+                0.391,
+                1.088
+              ]
+            },
+            "rows": 15,
+            "available_rows": 15,
+            "evaluated_region": {
+              "T_K": [
+                303.15,
+                323.15
+              ],
+              "wt_percent": [
+                9.999999999999998,
+                50.0
+              ],
+              "loading_mol_per_mol": [
+                0.391,
+                1.088
+              ]
+            },
+            "AARD_percent": 74.52976388591469,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "pressure"
+            }
+          },
+          {
+            "name": "outside-fit-Zheng",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                323.15,
+                323.15
+              ],
+              "wt_percent": [
+                30.0,
+                50.0
+              ],
+              "loading_mol_per_mol": [
+                0.855,
+                1.177
+              ]
+            },
+            "rows": 6,
+            "available_rows": 6,
+            "evaluated_region": {
+              "T_K": [
+                323.15,
+                323.15
+              ],
+              "wt_percent": [
+                30.0,
+                50.0
+              ],
+              "loading_mol_per_mol": [
+                0.855,
+                1.177
+              ]
+            },
+            "AARD_percent": 22.642545832916642,
+            "unavailable": [],
+            "observation": {
+              "constructor": "addition_enthalpy",
+              "kind": "pressure"
+            }
+          },
+          {
+            "name": "outside-fit-corrected-Kamps",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                313.69,
+                395.0
+              ],
+              "wt_percent": [
+                32.02676720544389,
+                48.7857780626239
+              ],
+              "loading_mol_per_mol": [
+                0.12596947710783085,
+                1.2427921092564491
+              ]
+            },
+            "rows": 28,
+            "available_rows": 28,
+            "evaluated_region": {
+              "T_K": [
+                313.69,
+                395.0
+              ],
+              "wt_percent": [
+                32.02676720544389,
+                48.7857780626239
+              ],
+              "loading_mol_per_mol": [
+                0.12596947710783085,
+                1.2427921092564491
+              ]
+            },
+            "AARD_percent": 25.646534684490266,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "pressure"
+            }
+          }
+        ],
+        "phase_search": "assessment.phase_search",
+        "active_bounds": "assessment.active_bounds",
+        "fitted_bounds": [
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a0",
+                1.0
+              ]
+            ],
+            "origin": -0.17972722027839907,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a1",
+                1.0
+              ]
+            ],
+            "origin": 0.000616832401403298,
+            "scale": 0.001,
+            "bounds": [
+              -0.01,
+              0.01
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "carbon-dioxide"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": -0.2298,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij_reciprocal_temperature_slope",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 10.0,
+            "bounds": [
+              -1000.0,
+              1000.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "bicarbonate-anion"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "segment_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ],
+              [
+                "debye_huckel_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 3.563,
+            "scale": 0.1,
+            "bounds": [
+              3.0,
+              4.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "dispersion_energy_over_k",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 228.71,
+            "scale": 10.0,
+            "bounds": [
+              50.0,
+              950.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "born_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 5.0,
+            "scale": 0.1,
+            "bounds": [
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "actions": "Unavailable: derivative actions not assessed in retained #228 results"
+      },
+      "speciation": {
+        "datasets": [
+          {
+            "name": "calibration-Jakobsen-carbonate",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                293.15,
+                313.15
+              ],
+              "wt_percent": [
+                22.999999999999996,
+                22.999999999999996
+              ],
+              "loading_mol_per_mol": [
+                0.1,
+                0.79
+              ]
+            },
+            "rows": 8,
+            "available_rows": 8,
+            "evaluated_region": {
+              "T_K": [
+                293.15,
+                313.15
+              ],
+              "wt_percent": [
+                22.999999999999996,
+                22.999999999999996
+              ],
+              "loading_mol_per_mol": [
+                0.1,
+                0.79
+              ]
+            },
+            "AARD_percent": 9.812556171220454,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "amount_ratio"
+            }
+          },
+          {
+            "name": "calibration-Jakobsen-cation",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                293.15,
+                313.15
+              ],
+              "wt_percent": [
+                22.999999999999996,
+                22.999999999999996
+              ],
+              "loading_mol_per_mol": [
+                0.1,
+                0.79
+              ]
+            },
+            "rows": 8,
+            "available_rows": 8,
+            "evaluated_region": {
+              "T_K": [
+                293.15,
+                313.15
+              ],
+              "wt_percent": [
+                22.999999999999996,
+                22.999999999999996
+              ],
+              "loading_mol_per_mol": [
+                0.1,
+                0.79
+              ]
+            },
+            "AARD_percent": 17.761876106159278,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "amount_ratio"
+            }
+          },
+          {
+            "name": "outside-fit-Bottinger-amine-sum-25bar",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                293.15,
+                333.15
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.035,
+                1.368
+              ]
+            },
+            "rows": 58,
+            "available_rows": 58,
+            "evaluated_region": {
+              "T_K": [
+                293.15,
+                333.15
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.035,
+                1.368
+              ]
+            },
+            "AARD_percent": 7.214140845105274,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "mole_fraction"
+            }
+          },
+          {
+            "name": "outside-fit-Bottinger-amine-sum-5bar",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                293.15,
+                333.15
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.035,
+                1.368
+              ]
+            },
+            "rows": 58,
+            "available_rows": 58,
+            "evaluated_region": {
+              "T_K": [
+                293.15,
+                333.15
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.035,
+                1.368
+              ]
+            },
+            "AARD_percent": 7.214207561594266,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "mole_fraction"
+            }
+          },
+          {
+            "name": "outside-fit-Bottinger-bicarbonate-25bar",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                293.15,
+                333.15
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.035,
+                1.368
+              ]
+            },
+            "rows": 58,
+            "available_rows": 58,
+            "evaluated_region": {
+              "T_K": [
+                293.15,
+                333.15
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.035,
+                1.368
+              ]
+            },
+            "AARD_percent": 11.146250653775935,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "mole_fraction"
+            }
+          },
+          {
+            "name": "outside-fit-Bottinger-bicarbonate-5bar",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                293.15,
+                333.15
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.035,
+                1.368
+              ]
+            },
+            "rows": 58,
+            "available_rows": 58,
+            "evaluated_region": {
+              "T_K": [
+                293.15,
+                333.15
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.035,
+                1.368
+              ]
+            },
+            "AARD_percent": 11.147191316239494,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "mole_fraction"
+            }
+          }
+        ],
+        "phase_search": "assessment.phase_search",
+        "active_bounds": "assessment.active_bounds",
+        "fitted_bounds": [
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a0",
+                1.0
+              ]
+            ],
+            "origin": -0.17972722027839907,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a1",
+                1.0
+              ]
+            ],
+            "origin": 0.000616832401403298,
+            "scale": 0.001,
+            "bounds": [
+              -0.01,
+              0.01
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "carbon-dioxide"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": -0.2298,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij_reciprocal_temperature_slope",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 10.0,
+            "bounds": [
+              -1000.0,
+              1000.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "bicarbonate-anion"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "segment_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ],
+              [
+                "debye_huckel_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 3.563,
+            "scale": 0.1,
+            "bounds": [
+              3.0,
+              4.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "dispersion_energy_over_k",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 228.71,
+            "scale": 10.0,
+            "bounds": [
+              50.0,
+              950.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "born_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 5.0,
+            "scale": 0.1,
+            "bounds": [
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "actions": "Unavailable: derivative actions not assessed in retained #228 results"
+      },
+      "heat": {
+        "datasets": [
+          {
+            "name": "calibration-Carson",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                9.999999999999998,
+                30.0
+              ],
+              "loading_mol_per_mol": [
+                0.026666036348050454,
+                0.2479764497870354
+              ]
+            },
+            "rows": 40,
+            "available_rows": 40,
+            "evaluated_region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                9.999999999999998,
+                30.0
+              ],
+              "loading_mol_per_mol": [
+                0.026666036348050454,
+                0.2479764497870354
+              ]
+            },
+            "AARD_percent": 4.83380253164192,
+            "unavailable": [],
+            "observation": {
+              "constructor": "addition_enthalpy",
+              "kind": "pressure"
+            }
+          },
+          {
+            "name": "calibration-Merkley",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                333.15,
+                388.71
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.36,
+                1.009
+              ]
+            },
+            "rows": 4,
+            "available_rows": 4,
+            "evaluated_region": {
+              "T_K": [
+                333.15,
+                388.71
+              ],
+              "wt_percent": [
+                20.0,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.25808584895232506,
+                1.009
+              ]
+            },
+            "AARD_percent": 8.507756986271742,
+            "unavailable": [],
+            "observation": {
+              "constructor": "saturation_capped_addition_enthalpy",
+              "kind": "pressure"
+            }
+          },
+          {
+            "name": "outside-fit-Merkley-half-loading",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                288.71,
+                422.04
+              ],
+              "wt_percent": [
+                20.0,
+                59.99999999999999
+              ],
+              "loading_mol_per_mol": [
+                0.039,
+                0.64
+              ]
+            },
+            "rows": 12,
+            "available_rows": 6,
+            "evaluated_region": {
+              "T_K": [
+                333.15,
+                388.71
+              ],
+              "wt_percent": [
+                20.0,
+                59.99999999999999
+              ],
+              "loading_mol_per_mol": [
+                0.09,
+                0.5045
+              ]
+            },
+            "AARD_percent": 16.118292066616647,
+            "unavailable": [
+              {
+                "identity": "comparison:361",
+                "group": "Merkley-half-loading",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -47300.0,
+                "row": {
+                  "MDEA_mass_percent": "20",
+                  "candidate_pressure_1_kPa": "156",
+                  "candidate_pressure_2_kPa": "1121",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-47.3",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "289.32067510548524",
+                  "pixel_y": "403.48523206751054",
+                  "pressure_ambiguity": "Figure 3 does not identify which of the two Table 1 pressures",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1121",
+                  "series": "288.71K_20wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "288.71",
+                  "x": "20.049145610036053",
+                  "y": "-47.26487976497044"
+                }
+              },
+              {
+                "identity": "comparison:363",
+                "group": "Merkley-half-loading",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -49300.0,
+                "row": {
+                  "MDEA_mass_percent": "40",
+                  "candidate_pressure_1_kPa": "156",
+                  "candidate_pressure_2_kPa": "1121",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-49.3",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "419.02888888888884",
+                  "pixel_y": "379.6222222222222",
+                  "pressure_ambiguity": "Figure 3 does not identify which of the two Table 1 pressures",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1121",
+                  "series": "288.71K_40wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "288.71",
+                  "x": "39.92779906343124",
+                  "y": "-49.31614135625597"
+                }
+              },
+              {
+                "identity": "comparison:365",
+                "group": "Merkley-half-loading",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -50800.0,
+                "row": {
+                  "MDEA_mass_percent": "60",
+                  "candidate_pressure_1_kPa": "156",
+                  "candidate_pressure_2_kPa": "1121",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-50.8",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "549.255238095238",
+                  "pixel_y": "362.7180952380952",
+                  "pressure_ambiguity": "Figure 3 does not identify which of the two Table 1 pressures",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1121",
+                  "series": "288.71K_60wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "288.71",
+                  "x": "59.885860244480924",
+                  "y": "-50.76921817437577"
+                }
+              },
+              {
+                "identity": "comparison:375",
+                "group": "Merkley-half-loading",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -63100.0,
+                "row": {
+                  "MDEA_mass_percent": "20",
+                  "candidate_pressure_1_kPa": "1466",
+                  "candidate_pressure_2_kPa": "",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-63.1",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "288.76020408163265",
+                  "pixel_y": "218.75170068027208",
+                  "pressure_ambiguity": "Table 1 identifies only one pressure at this temperature",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1466",
+                  "series": "422.04K_20wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "422.04",
+                  "x": "19.963249667683165",
+                  "y": "-63.14455295011988"
+                }
+              },
+              {
+                "identity": "comparison:377",
+                "group": "Merkley-half-loading",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -65300.0,
+                "row": {
+                  "MDEA_mass_percent": "40",
+                  "candidate_pressure_1_kPa": "1466",
+                  "candidate_pressure_2_kPa": "",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-65.3",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "418.82892416225747",
+                  "pixel_y": "193.4585537918871",
+                  "pressure_ambiguity": "Table 1 identifies only one pressure at this temperature",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1466",
+                  "series": "422.04K_40wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "422.04",
+                  "x": "39.897153128315324",
+                  "y": "-65.31874895771745"
+                }
+              },
+              {
+                "identity": "comparison:379",
+                "group": "Merkley-half-loading",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -67700.0,
+                "row": {
+                  "MDEA_mass_percent": "60",
+                  "candidate_pressure_1_kPa": "1466",
+                  "candidate_pressure_2_kPa": "",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-67.7",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "545.9090909090909",
+                  "pixel_y": "166.03030303030303",
+                  "pressure_ambiguity": "Table 1 identifies only one pressure at this temperature",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1466",
+                  "series": "422.04K_60wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "422.04",
+                  "x": "59.373040752351095",
+                  "y": "-67.67647824954416"
+                }
+              }
+            ],
+            "observation": {
+              "constructor": "addition_enthalpy",
+              "kind": "pressure"
+            }
+          },
+          {
+            "name": "outside-fit-Merkley-outside",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                288.71,
+                422.04
+              ],
+              "wt_percent": [
+                20.0,
+                59.99999999999999
+              ],
+              "loading_mol_per_mol": [
+                0.078,
+                1.28
+              ]
+            },
+            "rows": 8,
+            "available_rows": 1,
+            "evaluated_region": {
+              "T_K": [
+                388.71,
+                388.71
+              ],
+              "wt_percent": [
+                59.99999999999999,
+                59.99999999999999
+              ],
+              "loading_mol_per_mol": [
+                0.15815614361212915,
+                0.15815614361212915
+              ]
+            },
+            "AARD_percent": 1.3089769476000157,
+            "unavailable": [
+              {
+                "identity": "comparison:362",
+                "group": "Merkley-outside",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -47300.0,
+                "row": {
+                  "MDEA_mass_percent": "20",
+                  "candidate_pressure_1_kPa": "156",
+                  "candidate_pressure_2_kPa": "1121",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-47.3",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "289.32067510548524",
+                  "pixel_y": "403.48523206751054",
+                  "pressure_ambiguity": "Figure 3 does not identify which of the two Table 1 pressures",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1121",
+                  "series": "288.71K_20wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "288.71",
+                  "x": "20.049145610036053",
+                  "y": "-47.26487976497044"
+                }
+              },
+              {
+                "identity": "comparison:364",
+                "group": "Merkley-outside",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -49300.0,
+                "row": {
+                  "MDEA_mass_percent": "40",
+                  "candidate_pressure_1_kPa": "156",
+                  "candidate_pressure_2_kPa": "1121",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-49.3",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "419.02888888888884",
+                  "pixel_y": "379.6222222222222",
+                  "pressure_ambiguity": "Figure 3 does not identify which of the two Table 1 pressures",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1121",
+                  "series": "288.71K_40wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "288.71",
+                  "x": "39.92779906343124",
+                  "y": "-49.31614135625597"
+                }
+              },
+              {
+                "identity": "comparison:366",
+                "group": "Merkley-outside",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -50800.0,
+                "row": {
+                  "MDEA_mass_percent": "60",
+                  "candidate_pressure_1_kPa": "156",
+                  "candidate_pressure_2_kPa": "1121",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-50.8",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "549.255238095238",
+                  "pixel_y": "362.7180952380952",
+                  "pressure_ambiguity": "Figure 3 does not identify which of the two Table 1 pressures",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1121",
+                  "series": "288.71K_60wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "288.71",
+                  "x": "59.885860244480924",
+                  "y": "-50.76921817437577"
+                }
+              },
+              {
+                "identity": "comparison:370",
+                "group": "Merkley-outside",
+                "row": {
+                  "MDEA_mass_percent": "60",
+                  "candidate_pressure_1_kPa": "156",
+                  "candidate_pressure_2_kPa": "1121",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-56.8",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "548.6765873015872",
+                  "pixel_y": "292.4107142857143",
+                  "pressure_ambiguity": "Figure 3 does not identify which of the two Table 1 pressures",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1121",
+                  "series": "333.15K_60wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "333.15",
+                  "x": "59.79717813051145",
+                  "y": "-56.81283258288989"
+                },
+                "observed": -56800.0,
+                "status": "CentralSolveUnavailable",
+                "message": "saturation:phase V has no locally unique anchored root: vapor branch not admitted by the finite search: the sole stable root 33402.240559883241 mol/m3 lies above the negative-slope sample 10464.557609122341 mol/m3;saturation:unexamined_gap;saturation:unresolved_slope_reversal;saturation:unresolved_slope_reversal;",
+                "value": null,
+                "residual": null,
+                "requested_tolerance_met": null,
+                "saturation_loading": null,
+                "endpoint_loading": null
+              },
+              {
+                "identity": "comparison:376",
+                "group": "Merkley-outside",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -63100.0,
+                "row": {
+                  "MDEA_mass_percent": "20",
+                  "candidate_pressure_1_kPa": "1466",
+                  "candidate_pressure_2_kPa": "",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-63.1",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "288.76020408163265",
+                  "pixel_y": "218.75170068027208",
+                  "pressure_ambiguity": "Table 1 identifies only one pressure at this temperature",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1466",
+                  "series": "422.04K_20wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "422.04",
+                  "x": "19.963249667683165",
+                  "y": "-63.14455295011988"
+                }
+              },
+              {
+                "identity": "comparison:378",
+                "group": "Merkley-outside",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -65300.0,
+                "row": {
+                  "MDEA_mass_percent": "40",
+                  "candidate_pressure_1_kPa": "1466",
+                  "candidate_pressure_2_kPa": "",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-65.3",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "418.82892416225747",
+                  "pixel_y": "193.4585537918871",
+                  "pressure_ambiguity": "Table 1 identifies only one pressure at this temperature",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1466",
+                  "series": "422.04K_40wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "422.04",
+                  "x": "39.897153128315324",
+                  "y": "-65.31874895771745"
+                }
+              },
+              {
+                "identity": "comparison:380",
+                "group": "Merkley-outside",
+                "status": "OutsideDeclaredDomain",
+                "message": "Temperature outside declared assessment domain",
+                "value": null,
+                "observed": -67700.0,
+                "row": {
+                  "MDEA_mass_percent": "60",
+                  "candidate_pressure_1_kPa": "1466",
+                  "candidate_pressure_2_kPa": "",
+                  "digitization_uncertainty_kJ_mol_CO2": "0.3",
+                  "heat_definition": "sub-saturation slope of integral heat per mol MDEA vs loading",
+                  "heat_kJ_mol_CO2": "-67.7",
+                  "pdf_attachment_key": "ED7IMI2E",
+                  "pixel_x": "545.9090909090909",
+                  "pixel_y": "166.03030303030303",
+                  "pressure_ambiguity": "Table 1 identifies only one pressure at this temperature",
+                  "pressure_rule_status": "owner-freeze proposal; low-temperature alternative retained",
+                  "proposed_pressure_kPa": "1466",
+                  "series": "422.04K_60wt",
+                  "source_key": "Merkley1987",
+                  "source_locator": "Figure 3; PDF p.5 printed p.441",
+                  "source_relative_uncertainty": "0.05",
+                  "temperature_K": "422.04",
+                  "x": "59.373040752351095",
+                  "y": "-67.67647824954416"
+                }
+              }
+            ],
+            "observation": {
+              "constructor": "saturation_capped_addition_enthalpy",
+              "kind": "pressure"
+            }
+          }
+        ],
+        "phase_search": "assessment.phase_search",
+        "active_bounds": "assessment.active_bounds",
+        "fitted_bounds": [
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a0",
+                1.0
+              ]
+            ],
+            "origin": -0.17972722027839907,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a1",
+                1.0
+              ]
+            ],
+            "origin": 0.000616832401403298,
+            "scale": 0.001,
+            "bounds": [
+              -0.01,
+              0.01
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "carbon-dioxide"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": -0.2298,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij_reciprocal_temperature_slope",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 10.0,
+            "bounds": [
+              -1000.0,
+              1000.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "bicarbonate-anion"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "segment_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ],
+              [
+                "debye_huckel_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 3.563,
+            "scale": 0.1,
+            "bounds": [
+              3.0,
+              4.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "dispersion_energy_over_k",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 228.71,
+            "scale": 10.0,
+            "bounds": [
+              50.0,
+              950.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "born_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 5.0,
+            "scale": 0.1,
+            "bounds": [
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "actions": "Unavailable: derivative actions not assessed in retained #228 results"
+      },
+      "Cp": {
+        "datasets": [
+          {
+            "name": "calibration-Cp",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                30.0,
+                50.0
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.5
+              ]
+            },
+            "rows": 33,
+            "available_rows": 33,
+            "evaluated_region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                30.0,
+                50.0
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.5
+              ]
+            },
+            "AARD_percent": 2.656199979587711,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "equilibrium_isobaric_heat_capacity"
+            }
+          },
+          {
+            "name": "outside-fit-Cp-60wt",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                59.99999999999999,
+                59.99999999999999
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.64
+              ]
+            },
+            "rows": 6,
+            "available_rows": 6,
+            "evaluated_region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                59.99999999999999,
+                59.99999999999999
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.64
+              ]
+            },
+            "AARD_percent": 10.730579636067818,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "equilibrium_isobaric_heat_capacity"
+            }
+          }
+        ],
+        "phase_search": "assessment.phase_search",
+        "active_bounds": "assessment.active_bounds",
+        "fitted_bounds": [
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a0",
+                1.0
+              ]
+            ],
+            "origin": -0.17972722027839907,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a1",
+                1.0
+              ]
+            ],
+            "origin": 0.000616832401403298,
+            "scale": 0.001,
+            "bounds": [
+              -0.01,
+              0.01
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "carbon-dioxide"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": -0.2298,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij_reciprocal_temperature_slope",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 10.0,
+            "bounds": [
+              -1000.0,
+              1000.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "bicarbonate-anion"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "segment_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ],
+              [
+                "debye_huckel_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 3.563,
+            "scale": 0.1,
+            "bounds": [
+              3.0,
+              4.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "dispersion_energy_over_k",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 228.71,
+            "scale": 10.0,
+            "bounds": [
+              50.0,
+              950.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "born_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 5.0,
+            "scale": 0.1,
+            "bounds": [
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "actions": "Unavailable: derivative actions not assessed in retained #228 results"
+      },
+      "density": {
+        "datasets": [
+          {
+            "name": "calibration-loaded-density",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                30.0,
+                50.0
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.5
+              ]
+            },
+            "rows": 33,
+            "available_rows": 33,
+            "evaluated_region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                30.0,
+                50.0
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.5
+              ]
+            },
+            "AARD_percent": 0.18323695538207221,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "phase_density"
+            }
+          },
+          {
+            "name": "calibration-unloaded-density",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                293.15,
+                393.15
+              ],
+              "wt_percent": [
+                9.999999999999998,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.0
+              ]
+            },
+            "rows": 24,
+            "available_rows": 24,
+            "evaluated_region": {
+              "T_K": [
+                293.15,
+                393.15
+              ],
+              "wt_percent": [
+                9.999999999999998,
+                40.00000000000001
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.0
+              ]
+            },
+            "AARD_percent": 0.056766861254777444,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "phase_density"
+            }
+          },
+          {
+            "name": "outside-fit-density-60wt",
+            "role": "outside-fit",
+            "region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                59.99999999999999,
+                59.99999999999999
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.64
+              ]
+            },
+            "rows": 11,
+            "available_rows": 11,
+            "evaluated_region": {
+              "T_K": [
+                298.15,
+                298.15
+              ],
+              "wt_percent": [
+                59.99999999999999,
+                59.99999999999999
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.64
+              ]
+            },
+            "AARD_percent": 1.797597980456947,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "phase_density"
+            }
+          }
+        ],
+        "phase_search": "assessment.phase_search",
+        "active_bounds": "assessment.active_bounds",
+        "fitted_bounds": [
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a0",
+                1.0
+              ]
+            ],
+            "origin": -0.17972722027839907,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a1",
+                1.0
+              ]
+            ],
+            "origin": 0.000616832401403298,
+            "scale": 0.001,
+            "bounds": [
+              -0.01,
+              0.01
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "carbon-dioxide"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": -0.2298,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij_reciprocal_temperature_slope",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 10.0,
+            "bounds": [
+              -1000.0,
+              1000.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "bicarbonate-anion"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "segment_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ],
+              [
+                "debye_huckel_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 3.563,
+            "scale": 0.1,
+            "bounds": [
+              3.0,
+              4.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "dispersion_energy_over_k",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 228.71,
+            "scale": 10.0,
+            "bounds": [
+              50.0,
+              950.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "born_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 5.0,
+            "scale": 0.1,
+            "bounds": [
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "actions": "Unavailable: derivative actions not assessed in retained #228 results"
+      },
+      "binary_VLE": {
+        "datasets": [
+          {
+            "name": "calibration-Kim-binary",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                312.99,
+                373.25
+              ],
+              "wt_percent": [
+                3.028891457846626,
+                78.61987900583688
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.0
+              ]
+            },
+            "rows": 58,
+            "available_rows": 58,
+            "evaluated_region": {
+              "T_K": [
+                312.99,
+                373.25
+              ],
+              "wt_percent": [
+                3.028891457846626,
+                78.61987900583688
+              ],
+              "loading_mol_per_mol": [
+                0.0,
+                0.0
+              ]
+            },
+            "AARD_percent": 3.3477648678425336,
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "pressure"
+            }
+          },
+          {
+            "name": "calibration-Kim-water",
+            "role": "calibration",
+            "region": {
+              "T_K": [
+                333.13,
+                353.14
+              ],
+              "wt_percent": [
+                0.0,
+                0.0
+              ],
+              "loading_mol_per_mol": null
+            },
+            "rows": 3,
+            "available_rows": 3,
+            "evaluated_region": {
+              "T_K": [
+                333.13,
+                353.14
+              ],
+              "wt_percent": [
+                0.0,
+                0.0
+              ],
+              "loading_mol_per_mol": null
+            },
+            "AARD_percent": 0.9620846464576394,
+            "loading_unavailable_cause": "Undefined: analytical MDEA amount is zero for pure-water rows.",
+            "unavailable": [],
+            "observation": {
+              "constructor": "observation",
+              "kind": "pressure"
+            }
+          }
+        ],
+        "phase_search": "assessment.phase_search",
+        "active_bounds": "assessment.active_bounds",
+        "fitted_bounds": [
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a0",
+                1.0
+              ]
+            ],
+            "origin": -0.17972722027839907,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "temperature_law_coefficient",
+                "pair/mdea-water/k_ij/a1",
+                1.0
+              ]
+            ],
+            "origin": 0.000616832401403298,
+            "scale": 0.001,
+            "bounds": [
+              -0.01,
+              0.01
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "carbon-dioxide"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": -0.2298,
+            "scale": 0.01,
+            "bounds": [
+              -0.5,
+              0.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij_reciprocal_temperature_slope",
+                [
+                  "protonated-methyldiethanolamine",
+                  "water"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 10.0,
+            "bounds": [
+              -1000.0,
+              1000.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "k_ij",
+                [
+                  "protonated-methyldiethanolamine",
+                  "bicarbonate-anion"
+                ],
+                1.0
+              ]
+            ],
+            "origin": 0.0,
+            "scale": 0.01,
+            "bounds": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "segment_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ],
+              [
+                "debye_huckel_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 3.563,
+            "scale": 0.1,
+            "bounds": [
+              3.0,
+              4.5
+            ]
+          },
+          {
+            "targets": [
+              [
+                "dispersion_energy_over_k",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 228.71,
+            "scale": 10.0,
+            "bounds": [
+              50.0,
+              950.0
+            ]
+          },
+          {
+            "targets": [
+              [
+                "born_diameter",
+                "protonated-methyldiethanolamine",
+                1.0
+              ]
+            ],
+            "origin": 5.0,
+            "scale": 0.1,
+            "bounds": [
+              2.0,
+              7.0
+            ]
+          }
+        ],
+        "actions": "Unavailable: derivative actions not assessed in retained #228 results"
+      }
+    },
+    "observation_policy": [
+      {
+        "name": "calibration-Carson",
+        "group": "Carson",
+        "role": "calibration",
+        "path": "inputs/calibration-Carson.csv",
+        "sha256": "7bd0b8e6cd945d0817bf84de66df582b17aef6ed8248aae426a7f65f44c04dfe",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "addition_enthalpy",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "feed": {
+            "carbon-dioxide": 1.0
+          },
+          "amount": "$alpha",
+          "T": "$T",
+          "P": "$P",
+          "phase": "vapor"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ],
+        "initial": "zero-liquid",
+        "final": "loaded-liquid"
+      },
+      {
+        "name": "calibration-Cp",
+        "group": "Cp",
+        "role": "calibration",
+        "path": "inputs/calibration-Cp.csv",
+        "sha256": "32db9e1c6005c6285c28175a1ae02b6f89e4222de9c2a6f6a8b858655b50ec99",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "equilibrium_isobaric_heat_capacity",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "calibration-Jakobsen-carbonate",
+        "group": "Jakobsen",
+        "role": "calibration",
+        "path": "inputs/calibration-Jakobsen-carbonate.csv",
+        "sha256": "60c2f5fe1900aa462b94ac89444278b11e5e7450368dd215539846d12534b160",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "amount_ratio",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "species": [
+            "bicarbonate-anion",
+            "carbonate-anion"
+          ],
+          "denominator_phase": "L",
+          "denominator_species": [
+            "methyldiethanolamine",
+            "protonated-methyldiethanolamine"
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "calibration-Jakobsen-cation",
+        "group": "Jakobsen",
+        "role": "calibration",
+        "path": "inputs/calibration-Jakobsen-cation.csv",
+        "sha256": "f5203d7c9d392bda01574df18e4f29c182958a74aa637717d6804dfb82107093",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "amount_ratio",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "species": [
+            "protonated-methyldiethanolamine"
+          ],
+          "denominator_phase": "L",
+          "denominator_species": [
+            "methyldiethanolamine",
+            "protonated-methyldiethanolamine"
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "calibration-Kim-binary",
+        "group": "Kim",
+        "role": "calibration",
+        "path": "inputs/calibration-Kim-binary.csv",
+        "sha256": "3edc485cd34ef32cccb53b075d53b787ad2e5a6da7d92aaaae43316d75ad92e6",
+        "template": "binary-bubble",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "log_ratio"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "calibration-Kim-water",
+        "group": "Kim",
+        "role": "calibration",
+        "path": "inputs/calibration-Kim-water.csv",
+        "sha256": "05e9477b06e6a1283540bb5d5f7b19dceda0934822d1d061c768e774576a89d2",
+        "template": "water-bubble",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "log_ratio"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "calibration-Kuranov",
+        "group": "Kuranov",
+        "role": "calibration",
+        "path": "inputs/calibration-Kuranov.csv",
+        "sha256": "beeb775e555c53f766dd0d91df37ff064a0031d1e602034193a9ae6aa7873b99",
+        "template": "loaded-bubble",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "log_ratio"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "calibration-Merkley",
+        "group": "Merkley",
+        "role": "calibration",
+        "path": "inputs/calibration-Merkley.csv",
+        "sha256": "ff5e906205a1e915ad26dba9c9b00a7c55d8df012ac2ed54fba73b8af47c428c",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "saturation_capped_addition_enthalpy",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "feed": {
+            "carbon-dioxide": 1.0
+          },
+          "T": "$T",
+          "P": "$P",
+          "phase": "vapor",
+          "basis_amount": 1.0,
+          "loading_cap": "$alpha",
+          "loading_bounds": [
+            0.05,
+            1.5
+          ],
+          "loading_grid": [
+            0.05,
+            0.1,
+            0.15000000000000002,
+            0.2,
+            0.25,
+            0.30000000000000004,
+            0.35000000000000003,
+            0.4,
+            0.45,
+            0.5,
+            0.55,
+            0.6000000000000001,
+            0.65,
+            0.7000000000000001,
+            0.75,
+            0.8,
+            0.8500000000000001,
+            0.9,
+            0.9500000000000001,
+            1.0,
+            1.05,
+            1.1,
+            1.1500000000000001,
+            1.2000000000000002,
+            1.25,
+            1.3,
+            1.35,
+            1.4000000000000001,
+            1.4500000000000002,
+            1.5
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ],
+        "initial": "zero-liquid",
+        "bubble": "cap-bubble"
+      },
+      {
+        "name": "calibration-loaded-density",
+        "group": "loaded-density",
+        "role": "calibration",
+        "path": "inputs/calibration-loaded-density.csv",
+        "sha256": "f2f796c6c727cab46ca2ff05c955bb8120a7604d9ff6c70483bb9e9e9dd0c64d",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "phase_density",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "mass_basis": true
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "calibration-unloaded-density",
+        "group": "unloaded-density",
+        "role": "calibration",
+        "path": "inputs/calibration-unloaded-density.csv",
+        "sha256": "dbbea42108c22509efa86ce0eb9d31cb7647617d78f6b2792783c191305c7e95",
+        "template": "ion-free-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "phase_density",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "mass_basis": true
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Bottinger-amine-sum-25bar",
+        "group": "Bottinger-amine-sum-25bar",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Bottinger-amine-sum-25bar.csv",
+        "sha256": "ca33c3fcc4057a3e74220a0cfbcc475d1275470b9acafa1f0354b523a704798a",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "mole_fraction",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "species": [
+            "methyldiethanolamine",
+            "protonated-methyldiethanolamine"
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Bottinger-amine-sum-5bar",
+        "group": "Bottinger-amine-sum-5bar",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Bottinger-amine-sum-5bar.csv",
+        "sha256": "488940ecf3fc984edeee3fa145fe6f76936396fce802b5af881bcbee70f677ef",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "mole_fraction",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "species": [
+            "methyldiethanolamine",
+            "protonated-methyldiethanolamine"
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Bottinger-bicarbonate-25bar",
+        "group": "Bottinger-bicarbonate-25bar",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Bottinger-bicarbonate-25bar.csv",
+        "sha256": "a788feff21199e1fe2c9a553a133e1fd408bd390d259289b2b7ea3567cc9fbf9",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "mole_fraction",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "species": [
+            "bicarbonate-anion",
+            "carbonate-anion"
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Bottinger-bicarbonate-5bar",
+        "group": "Bottinger-bicarbonate-5bar",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Bottinger-bicarbonate-5bar.csv",
+        "sha256": "7ac448699c14bc898a7a8a4877afba5950c31f5f9597343316006f87b256da4a",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "mole_fraction",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "species": [
+            "bicarbonate-anion",
+            "carbonate-anion"
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Cp-60wt",
+        "group": "Cp-60wt",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Cp-60wt.csv",
+        "sha256": "bd3d8b2d2f90cdca479df34ba63c5ff369d2d2b5856a1c6765de7b643c919f98",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "equilibrium_isobaric_heat_capacity",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Ermatchkov",
+        "group": "Ermatchkov",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Ermatchkov.csv",
+        "sha256": "bffe5603e6ddc4c12c268226b421deaea4ea6a8397771f84aea186b4b6830ae6",
+        "template": "loaded-bubble",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "partial_pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "V",
+          "species": [
+            "carbon-dioxide"
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Kuranov-413K",
+        "group": "Kuranov-413K",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Kuranov-413K.csv",
+        "sha256": "27b302f4baa8efb0af7c79ad562237f484c2e68a9f38f28e7b9fc9b05220fff4",
+        "template": "loaded-bubble",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Merkley-half-loading",
+        "group": "Merkley-half-loading",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Merkley-half-loading.csv",
+        "sha256": "b202e6844954310692593f76967abaf5ce7d483f096efa46ae8cae422d18bbee",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "addition_enthalpy",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "feed": {
+            "carbon-dioxide": 1.0
+          },
+          "amount": "$alpha",
+          "T": "$T",
+          "P": "$P",
+          "phase": "vapor"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ],
+        "initial": "zero-liquid",
+        "final": "loaded-liquid"
+      },
+      {
+        "name": "outside-fit-Merkley-outside",
+        "group": "Merkley-outside",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Merkley-outside.csv",
+        "sha256": "b88e89910d7aa60ebaf3d8535b5a913d352dc28ebdfea490bddaaba81109ec25",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "saturation_capped_addition_enthalpy",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "feed": {
+            "carbon-dioxide": 1.0
+          },
+          "T": "$T",
+          "P": "$P",
+          "phase": "vapor",
+          "basis_amount": 1.0,
+          "loading_cap": "$alpha",
+          "loading_bounds": [
+            0.05,
+            1.5
+          ],
+          "loading_grid": [
+            0.05,
+            0.1,
+            0.15000000000000002,
+            0.2,
+            0.25,
+            0.30000000000000004,
+            0.35000000000000003,
+            0.4,
+            0.45,
+            0.5,
+            0.55,
+            0.6000000000000001,
+            0.65,
+            0.7000000000000001,
+            0.75,
+            0.8,
+            0.8500000000000001,
+            0.9,
+            0.9500000000000001,
+            1.0,
+            1.05,
+            1.1,
+            1.1500000000000001,
+            1.2000000000000002,
+            1.25,
+            1.3,
+            1.35,
+            1.4000000000000001,
+            1.4500000000000002,
+            1.5
+          ]
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ],
+        "initial": "zero-liquid",
+        "bubble": "cap-bubble"
+      },
+      {
+        "name": "outside-fit-Sedighi",
+        "group": "Sedighi",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Sedighi.csv",
+        "sha256": "4ce05f4d475f79af355443fe6a700d25ecf3585fe16ac67a112fe33ee564690c",
+        "template": "loaded-bubble",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-Zheng",
+        "group": "Zheng",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-Zheng.csv",
+        "sha256": "e255f451d0de07ad57279a6ac1b6806eb89b9aa8236f891b473108e6e0dc1b3a",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "addition_enthalpy",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "feed": {
+            "carbon-dioxide": 1.0
+          },
+          "amount": "$alpha",
+          "T": "$T",
+          "P": "$P",
+          "phase": "vapor"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ],
+        "initial": "zero-liquid",
+        "final": "loaded-liquid"
+      },
+      {
+        "name": "outside-fit-corrected-Kamps",
+        "group": "corrected-Kamps",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-corrected-Kamps.csv",
+        "sha256": "4a398d4b816bc8c807ed809c81ef12421485b94aab01b6ef874202a56a53d7a6",
+        "template": "loaded-bubble",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "pressure",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale"
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      },
+      {
+        "name": "outside-fit-density-60wt",
+        "group": "density-60wt",
+        "role": "outside-fit",
+        "path": "inputs/outside-fit-density-60wt.csv",
+        "sha256": "facdc0e8649e4cad6cb58b9fb16db407b2713ddf8e7e7bf6e87bb776ff84328e",
+        "template": "loaded-liquid",
+        "columns": {
+          "observation_order": "observation_order",
+          "T": "T",
+          "P": "P",
+          "water": "water",
+          "alpha": "alpha",
+          "amine": "amine",
+          "observed": "observed",
+          "scale": "scale",
+          "weight": "weight"
+        },
+        "constructor": "observation",
+        "kind": "phase_density",
+        "arguments": {
+          "observed": "$observed",
+          "form": "difference",
+          "scale": "$scale",
+          "phase": "L",
+          "mass_basis": true
+        },
+        "weight": "$weight",
+        "filter": {},
+        "temperature_domain": [
+          293.15,
+          395.0
+        ]
+      }
+    ],
+    "active_bounds": [
+      5,
+      8
+    ],
+    "phase_search": {
+      "states": 751,
+      "policy": {
+        "carbon_component": "carbon-dioxide",
+        "carbon_species": [
+          "carbon-dioxide",
+          "bicarbonate-anion",
+          "carbonate-anion"
+        ],
+        "neutral_species": [
+          "water",
+          "methyldiethanolamine",
+          "carbon-dioxide"
+        ],
+        "packing_fraction_threshold": 0.1,
+        "ambiguity_interval": [
+          0.05,
+          0.35
+        ]
+      },
+      "dense": [],
+      "gas": [
+        "fit:199:0",
+        "fit:200:0",
+        "fit:206:0",
+        "fit:212:0",
+        "fit:218:0",
+        "comparison:157:0",
+        "comparison:158:0",
+        "comparison:161:0",
+        "comparison:162:0",
+        "comparison:163:0",
+        "comparison:164:0",
+        "comparison:201:0",
+        "comparison:202:0",
+        "comparison:221:0",
+        "comparison:222:0",
+        "comparison:225:0",
+        "comparison:226:0",
+        "comparison:227:0",
+        "comparison:228:0",
+        "comparison:249:0",
+        "comparison:250:0",
+        "comparison:305:0",
+        "comparison:306:0",
+        "comparison:321:0",
+        "comparison:322:0",
+        "comparison:325:0",
+        "comparison:326:0",
+        "comparison:353:0",
+        "comparison:354:0",
+        "comparison:357:0",
+        "comparison:358:0",
+        "comparison:370:1",
+        "comparison:374:1",
+        "comparison:411:1",
+        "comparison:414:1",
+        "comparison:415:1",
+        "comparison:416:1"
+      ],
+      "ambiguous": [],
+      "unresolved": [],
+      "reconstruction": [],
+      "identities_match": true,
+      "gas_identities_match": true,
+      "passed": true
+    },
+    "limits": [
+      "Accepted active bounds",
+      "Finite phase and saturation searches",
+      "Unmodeled nitrogen headspace",
+      "Property-specific unavailable and extrapolated quantities retained",
+      "Not qualified for absorber use"
+    ],
+    "export_complete": false
+  }
+}

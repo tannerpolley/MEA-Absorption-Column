@@ -1,0 +1,649 @@
+{
+  "failure_kind": "state_domain_failure",
+  "last_checkpoint": {
+    "assets": {
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_domain/inputs/case.json": "7ef2041c088619233641fbf7499f73be4588115d4114fcf60da8be0f00a0390d",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_domain/inputs/thermodynamics.json": "6bff94156f8b171196135f85182e4381fc2ce62942e5181cb3e419293338d7b5",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_domain/inputs/transport.json": "dd315d1eada686b36b8cd5230d28aea355b91f16250061e3d67f4ae5fe55c3c2"
+    },
+    "capabilities": {
+      "a1_equilibrium_values": "analytic_mathematical",
+      "a2_equilibrium_actions": "analytic_mathematical_first_and_second",
+      "caloric_actions": "analytic_mathematical_first_and_second",
+      "evidence_type": "mathematical_numerical_verification_only",
+      "finite_difference_fallback": false
+    },
+    "engine": {
+      "actual_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "archive_hash_status": "verified_from_installed_contents",
+      "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "commit_evidence": "not_available_from_installed_distribution",
+      "declared_archive_sha256": null,
+      "declared_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "declared_wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+      "expected_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "expected_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "installed_artifact_members": 39,
+      "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages",
+      "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+      "loaded_version": "1.0.0",
+      "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/bin/python",
+      "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv",
+      "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+      "python_implementation": "cpython",
+      "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv",
+      "python_version": "3.13.13",
+      "required": true,
+      "status": "verified",
+      "verified_commit": null,
+      "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+    },
+    "evaluation_failure": {
+      "inputs": {
+        "feed_mol_s": {
+          "A": 0.2,
+          "B": 0.3,
+          "C": 0.0,
+          "W": 1.0
+        },
+        "pressure_pa": 100000.0,
+        "temperature_k": 320.0
+      },
+      "kind": "state_domain_failure",
+      "message": "mathematical_liquid: invalid T [K], P [Pa], feed [mol/s]: [   320.  100000.       0.       0.2      0.3      1. ]",
+      "phase": "mathematical_liquid"
+    },
+    "initial_profile": [
+      [
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667,
+        0.21666666666666667
+      ],
+      [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      [
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332,
+        0.18333333333333332
+      ],
+      [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      [
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0
+      ],
+      [
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0,
+        320.0
+      ],
+      [
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0
+      ],
+      [
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.05
+      ],
+      [
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336,
+        0.0008333330846335336
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052,
+        0.4795732401403052
+      ]
+    ],
+    "initialization": {
+      "accepted": true,
+      "algebraic_residual": [
+        0.0,
+        0.0,
+        4.336808689942018e-19,
+        0.0,
+        0.0
+      ],
+      "state": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        320.0,
+        320.0,
+        100000.0,
+        0.05,
+        0.0008333330846335336,
+        0.0,
+        0.0,
+        0.4795732401403052
+      ]
+    },
+    "initialization_evaluations": [
+      {
+        "loading": 0.0,
+        "original_co2_residual": -0.001333333333333333
+      },
+      {
+        "loading": 1.0,
+        "original_co2_residual": 0.002389598873635713
+      },
+      {
+        "loading": 0.3581406427002443,
+        "original_co2_residual": -0.0004002220450263277
+      },
+      {
+        "loading": 0.4897145738172229,
+        "original_co2_residual": 3.5675210653035474e-05
+      },
+      {
+        "loading": 0.47894614697376753,
+        "original_co2_residual": -2.1941351534711644e-06
+      },
+      {
+        "loading": 0.47957006543292263,
+        "original_co2_residual": -1.1111443518974431e-08
+      },
+      {
+        "loading": 0.47957324014701913,
+        "original_co2_residual": 2.3498672625799077e-14
+      },
+      {
+        "loading": 0.4795732401403052,
+        "original_co2_residual": 4.336808689942018e-19
+      },
+      {
+        "loading": 0.479573240139305,
+        "original_co2_residual": -3.5004551340866996e-15
+      }
+    ],
+    "layout": {
+      "algebraic_equations": 5,
+      "boundary_equations": 7,
+      "conserved_balances": 7,
+      "coordinate": "physical_height",
+      "states": 12
+    },
+    "mathematical_calls": {
+      "liquid_actions": {
+        "failed": 1,
+        "returned": 2842,
+        "started": 2843,
+        "wall_s": 0.14508272101375042
+      },
+      "liquid_domain": {
+        "failed": 1,
+        "returned": 2843,
+        "started": 2844,
+        "wall_s": 0.04796981236722786
+      },
+      "vapor_actions": {
+        "failed": 0,
+        "returned": 48,
+        "started": 48,
+        "wall_s": 0.0037745900262962095
+      },
+      "vapor_domain": {
+        "failed": 0,
+        "returned": 49,
+        "started": 49,
+        "wall_s": 0.0008589970311732031
+      }
+    },
+    "native_calls": {},
+    "resolved_inputs": {
+      "case_id": "3C",
+      "conserved_policy": {
+        "species_diffusivity_model": {
+          "A": {
+            "constant_m2_s": 1e-09
+          },
+          "B": {
+            "constant_m2_s": 1e-09
+          },
+          "C": {
+            "constant_m2_s": 1e-09
+          },
+          "CA": {
+            "constant_m2_s": 1e-09
+          },
+          "CB": {
+            "constant_m2_s": 1e-09
+          },
+          "W": {
+            "constant_m2_s": 1e-09
+          }
+        }
+      },
+      "data_type": "mole",
+      "feed_ids": {
+        "liquid": [
+          "C",
+          "A",
+          "B",
+          "W"
+        ],
+        "vapor": [
+          "C",
+          "W",
+          "I"
+        ]
+      },
+      "gas_flow_basis": "reported_total_wet",
+      "metadata": {
+        "beds": 1,
+        "case_id": "3C",
+        "diameter_m": 1.1283791670955126,
+        "gas_flow_basis": "reported_total_wet",
+        "intercoolers": 0,
+        "loading_mol_co2_per_mol_total_amine": 0.43333333333333335,
+        "physical_input_basis": "direct_canonical_SI",
+        "single_bed_height_m": 1.0,
+        "total_amine_flow_mol_s": 0.5,
+        "total_packed_height_m": 1.0,
+        "unloaded_amine_mass_fractions": {
+          "A": 0.16453654233804216,
+          "B": 0.35827146039558067
+        },
+        "unloaded_total_amine_mass_fraction": 0.5228080027336228,
+        "vapor_composition_mode": "legacy_ratio"
+      },
+      "parameters": [
+        [
+          0.21666666666666667,
+          0.2,
+          0.3,
+          1.0
+        ],
+        [
+          0.18333333333333332,
+          0.1,
+          1.0
+        ],
+        320.0,
+        320.0,
+        [
+          0.0,
+          0.01,
+          0.02,
+          0.03,
+          0.04,
+          0.05,
+          0.06,
+          0.07,
+          0.08,
+          0.09,
+          0.1,
+          0.11,
+          0.12,
+          0.13,
+          0.14,
+          0.15,
+          0.16,
+          0.17,
+          0.18,
+          0.19,
+          0.2,
+          0.21,
+          0.22,
+          0.23,
+          0.24,
+          0.25,
+          0.26,
+          0.27,
+          0.28,
+          0.29,
+          0.3,
+          0.31,
+          0.32,
+          0.33,
+          0.34,
+          0.35000000000000003,
+          0.36,
+          0.37,
+          0.38,
+          0.39,
+          0.4,
+          0.41000000000000003,
+          0.42,
+          0.43,
+          0.44,
+          0.45,
+          0.46,
+          0.47000000000000003,
+          0.48,
+          0.49,
+          0.5,
+          0.51,
+          0.52,
+          0.53,
+          0.54,
+          0.55,
+          0.56,
+          0.5700000000000001,
+          0.58,
+          0.59,
+          0.6,
+          0.61,
+          0.62,
+          0.63,
+          0.64,
+          0.65,
+          0.66,
+          0.67,
+          0.68,
+          0.6900000000000001,
+          0.7000000000000001,
+          0.71,
+          0.72,
+          0.73,
+          0.74,
+          0.75,
+          0.76,
+          0.77,
+          0.78,
+          0.79,
+          0.8,
+          0.81,
+          0.8200000000000001,
+          0.8300000000000001,
+          0.84,
+          0.85,
+          0.86,
+          0.87,
+          0.88,
+          0.89,
+          0.9,
+          0.91,
+          0.92,
+          0.93,
+          0.9400000000000001,
+          0.9500000000000001,
+          0.96,
+          0.97,
+          0.98,
+          0.99,
+          1.0
+        ],
+        1.0,
+        1.0,
+        100000.0,
+        [
+          250.0,
+          0.97,
+          0.203,
+          0.35,
+          0.017,
+          0.292,
+          0.119
+        ]
+      ],
+      "physical_input_sha256": "54b0a8f1c341b765b17a2c8227d1824510b425afb7f7281a4a1278322a109032",
+      "raw_input": [
+        1.3376623376623378,
+        1.2833333333333332,
+        0.43333333333333335,
+        0.5228080027336228,
+        0.14285714285714285,
+        320.0,
+        320.0,
+        100000.0,
+        1.0
+      ],
+      "solvent_identity": {
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_domain/inputs/case.json": "7ef2041c088619233641fbf7499f73be4588115d4114fcf60da8be0f00a0390d",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_domain/inputs/thermodynamics.json": "6bff94156f8b171196135f85182e4381fc2ce62942e5181cb3e419293338d7b5",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_domain/inputs/transport.json": "dd315d1eada686b36b8cd5230d28aea355b91f16250061e3d67f4ae5fe55c3c2"
+      },
+      "source_lineage": {
+        "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_domain/inputs/case.json",
+        "physical_input_file_sha256": "7ef2041c088619233641fbf7499f73be4588115d4114fcf60da8be0f00a0390d",
+        "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/pinned_domain/inputs/case.json",
+        "source_file_sha256": "7ef2041c088619233641fbf7499f73be4588115d4114fcf60da8be0f00a0390d",
+        "source_row_sha256": "be617413c28ed93321f176809d66ef890b675e4a22839f511bc342f1a4c5be6d"
+      },
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "scaling": {
+      "algebraic_scale": [
+        0.97,
+        1.833333333333333e-07,
+        0.001833333333333333,
+        9.999999999999999e-05,
+        1000.0
+      ],
+      "balance_scale": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        4500.0,
+        3000.0,
+        100000.0
+      ],
+      "boundary_scale": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        100.0,
+        100.0,
+        100000.0
+      ],
+      "capacity_rates_w_k": [
+        45.0,
+        30.0
+      ],
+      "policy": "case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds",
+      "state_scale": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        300.0,
+        300.0,
+        100000.0,
+        0.97,
+        0.001833333333333333,
+        9.999999999999999e-05,
+        1000.0,
+        1.0
+      ]
+    },
+    "stage": "global_solve",
+    "support_limits": {
+      "policy": "case_declared_native_inputs: 3C fixed 293.15--393.15 K bounds, 300 K state scale, 100 K span, 0.97 holdup/packing void fraction",
+      "unsupported": "arbitrary packing void fractions, feed-seed mismatches, and temperature policies"
+    }
+  },
+  "message": "Error in Function::call for 'coupled_column' [MXFunction] at .../casadi/core/function.cpp:362:\nError in Function::operator() for 'column_balances' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'mathematical_liquid_values' [CallbackInternal] at .../casadi/core/function.cpp:1547:\n.../casadi/core/function_internal.cpp:3807: Failed to evaluate 'eval_dm' for mathematical_liquid_values:\n.../casadi/core/callback_internal.cpp:116: Error calling \"eval\" for object mathematical_liquid_values:\n/work/swig/python/target3/source/casadiPYTHON_wrap_gil_release.cxx:3856: mathematical_liquid: invalid T [K], P [Pa], feed [mol/s]: [   320.  100000.       0.       0.2      0.3      1. ]"
+}

@@ -1,0 +1,209 @@
+{
+  "engine": {
+    "module_path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.tmp_local/issue85_stage4/candidate/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "version": "1.0.0",
+    "source_kind": "local_file",
+    "source_detail": "{\"archive_info\": {}, \"url\": \"file:///home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT/build/wheels/main-217026ab/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl\"}",
+    "wheel_path": "/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT/build/wheels/main-217026ab/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "wheel_sha256": "b4c0f6d8eb8971abd3c0bd801cb9167b8ca602cb2a63b16a22e924d5b6727496"
+  },
+  "fixture": {
+    "observation_order": "229",
+    "identity": "comparison:229",
+    "source": "{\"DMDEA_over_reported_amine_sum\": 0.008547008547008546, \"byproduct_over_reported_amine_sum\": 0.0, \"exceeds_3_percent\": false, \"initial_MDEA_mass_fraction\": \"0.30\", \"loading\": \"0.128\", \"pdf_attachment_key\": \"W3HEICT5\", \"pressure_Pa\": 500000.0, \"source_key\": \"BottingerMDEA2008\", \"source_locator\": \"Table 2, PDF p.6, printed p.7922\", \"source_row\": \"26\", \"temperature_K\": \"313.15\", \"x_CO2\": \"0.0\", \"x_DMDEA\": \"0.0005\", \"x_HCO3_reported\": \"0.0069\", \"x_MDEA_H\": \"0.0585\", \"x_byproduct\": \"0.0\"}",
+    "T": "313.15",
+    "P": "500000.0",
+    "water": "15.433850227880626",
+    "alpha": "0.128",
+    "amine": "1.0",
+    "observed": "0.0585",
+    "scale": "1.0",
+    "weight": "1.0"
+  },
+  "inputs": [
+    313.15,
+    500000.0,
+    1.0,
+    15.433850227880626,
+    0.128
+  ],
+  "controls": [
+    "T",
+    "P",
+    "methyldiethanolamine",
+    "water",
+    "carbon-dioxide"
+  ],
+  "species": [
+    "protonated-methyldiethanolamine",
+    "methyldiethanolamine",
+    "hydroxide-anion",
+    "hydronium-cation",
+    "carbonate-anion",
+    "bicarbonate-anion",
+    "water",
+    "carbon-dioxide"
+  ],
+  "reactions": [
+    "MDEA-dissociation",
+    "R3",
+    "R2",
+    "R1"
+  ],
+  "labels": [
+    "amount:protonated-methyldiethanolamine",
+    "amount:methyldiethanolamine",
+    "amount:hydroxide-anion",
+    "amount:hydronium-cation",
+    "amount:carbonate-anion",
+    "amount:bicarbonate-anion",
+    "amount:water",
+    "amount:carbon-dioxide",
+    "fugacity:carbon-dioxide",
+    "fugacity:water",
+    "molar-density",
+    "total-enthalpy",
+    "log_activity:protonated-methyldiethanolamine",
+    "log_activity:methyldiethanolamine",
+    "log_activity:hydroxide-anion",
+    "log_activity:hydronium-cation",
+    "log_activity:carbonate-anion",
+    "log_activity:bicarbonate-anion",
+    "log_activity:water",
+    "log_activity:carbon-dioxide",
+    "molar_enthalpy"
+  ],
+  "scales": [
+    1.0,
+    10000.0,
+    0.1,
+    1.5433850227880628,
+    0.0128
+  ],
+  "output_scale": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    100000.0,
+    100000.0,
+    50000.0,
+    100000.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    100000.0
+  ],
+  "execution": {
+    "wall_limit_s": 30
+  },
+  "solver": "SUCCESS",
+  "linear_solver": "ma57",
+  "requested_tolerance_met": true,
+  "checks": {},
+  "frozen_coordinates": [
+    -4.855109075567009,
+    -2.936314703911113,
+    -17.41611055498216,
+    -22.9438969586196,
+    -11.528694059788418,
+    -4.857643496085017,
+    -0.0711074071298105,
+    -11.501995825781432,
+    16.434016374074712,
+    -0.7690615883953874,
+    -199.209153440276,
+    -234.72123780050055,
+    -361.68669710462757,
+    -40.01580771713625
+  ],
+  "composition": [
+    0.007788483773694365,
+    0.053060914038610275,
+    2.730733321254427e-08,
+    1.0854058488821812e-10,
+    9.843550785679413e-06,
+    0.0077687694733303645,
+    0.9313618518518466,
+    1.0109895858947549e-05
+  ],
+  "density": [
+    42078.70395844612
+  ],
+  "variants": {
+    "mixed": {
+      "affinity_over_rt": [
+        2.3447910280083306e-13,
+        -1.7053025658242404e-13,
+        2.7000623958883807e-13,
+        1.4210854715202004e-13
+      ],
+      "affinity_j_mol": [
+        6.105071362076207e-10,
+        -4.440051899691787e-10,
+        7.030082174511997e-10,
+        3.7000432497431563e-10
+      ],
+      "maximum_difference": 0.0,
+      "reference_pressures_pa": [
+        100000.0,
+        500000.0,
+        500000.0,
+        500000.0
+      ]
+    },
+    "fixed": {
+      "affinity_over_rt": [
+        2.2026824808563106e-13,
+        0.0019826775344711223,
+        0.005153896778693934,
+        0.0024819676638117016
+      ],
+      "affinity_j_mol": [
+        5.735067037101891e-10,
+        5.162245885175105,
+        13.419066880952498,
+        6.462234597855248
+      ],
+      "maximum_difference": 0.005153896778423928,
+      "reference_pressures_pa": [
+        100000.0,
+        100000.0,
+        100000.0,
+        100000.0
+      ]
+    },
+    "system": {
+      "affinity_over_rt": [
+        -0.00042027653510245955,
+        -1.4210854715202004e-13,
+        3.836930773104541e-13,
+        2.2737367544323206e-13
+      ],
+      "affinity_j_mol": [
+        -1.0942630741751225,
+        -3.7000432497431563e-10,
+        9.990116774306522e-10,
+        5.920069199589049e-10
+      ],
+      "maximum_difference": 0.00042027653533693865,
+      "reference_pressures_pa": [
+        500000.0,
+        500000.0,
+        500000.0,
+        500000.0
+      ]
+    }
+  },
+  "seconds": 0.09359125699847937,
+  "native_solves": 1
+}

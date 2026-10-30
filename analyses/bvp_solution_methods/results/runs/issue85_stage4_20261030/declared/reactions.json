@@ -1,0 +1,111 @@
+{
+  "parameter_sha256": "1d0d80832f282cde85acab294501ca9ec8dbc34cddf8edf2eebf6e1e1d03949d",
+  "neutral_reference": {
+    "solvent": "water",
+    "standard_molality_mol_per_kg": 1.0,
+    "solute_molality_ratios": {
+      "methyldiethanolamine": 0.125,
+      "carbon-dioxide": 0.125,
+      "protonated-methyldiethanolamine": 0.125,
+      "hydronium-cation": 0.125,
+      "bicarbonate-anion": 0.125,
+      "hydroxide-anion": 0.0625,
+      "carbonate-anion": 0.03125
+    },
+    "species_reference": {}
+  },
+  "reactions": [
+    {
+      "name": "R1",
+      "stoichiometry": {
+        "water": -2.0,
+        "hydronium-cation": 1.0,
+        "hydroxide-anion": 1.0
+      },
+      "correlation": {
+        "a": 3.7290977365566675,
+        "b": -13445.9,
+        "c": -22.4773,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "temperature_min": 273.15,
+        "temperature_max": 395.0,
+        "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1"
+      },
+      "reference": {
+        "source_basis": "RawMoleFractionInfiniteDilution"
+      },
+      "interpretation": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat."
+    },
+    {
+      "name": "R2",
+      "stoichiometry": {
+        "carbon-dioxide": -1.0,
+        "water": -2.0,
+        "bicarbonate-anion": 1.0,
+        "hydronium-cation": 1.0
+      },
+      "correlation": {
+        "a": 23.585516142096935,
+        "b": -11928.056737463849,
+        "c": -36.7816,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "temperature_min": 293.15,
+        "temperature_max": 395.0,
+        "standard_state_id": "aqueous-molality-infinite-dilution-water-v1"
+      },
+      "reference": {
+        "source_basis": "CommonMolalityInfiniteDilution"
+      },
+      "interpretation": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat."
+    },
+    {
+      "name": "R3",
+      "stoichiometry": {
+        "water": -1.0,
+        "bicarbonate-anion": -1.0,
+        "carbonate-anion": 1.0,
+        "hydronium-cation": 1.0
+      },
+      "correlation": {
+        "a": 12.145792981306897,
+        "b": -12431.7,
+        "c": -35.4819,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "temperature_min": 273.15,
+        "temperature_max": 395.0,
+        "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1"
+      },
+      "reference": {
+        "source_basis": "RawMoleFractionInfiniteDilution"
+      },
+      "interpretation": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat."
+    },
+    {
+      "name": "MDEA-dissociation",
+      "stoichiometry": {
+        "protonated-methyldiethanolamine": -1,
+        "water": -1,
+        "methyldiethanolamine": 1,
+        "hydronium-cation": 1
+      },
+      "correlation": {
+        "a": -16.398914976729678,
+        "b": -819.7,
+        "c": 10.976,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "temperature_min": 278.0,
+        "temperature_max": 395.0,
+        "standard_state_id": "aqueous-molality-infinite-dilution-water-v1"
+      },
+      "reference": {
+        "source_basis": "CommonMolalityInfiniteDilution",
+        "reference_pressure_pa": 100000.0
+      },
+      "interpretation": "K is dimensionless; correlation is natural ln K: a and c dimensionless, b in K, d in 1/K, reference_temperature and temperature limits in K; reference_pressure_pa in Pa. Negative stoichiometric coefficients are reactants; positive coefficients are products. Extent unit: mol of reaction as written. Enthalpy follows the declared K(T) law and its source_basis/standard_state_id, with Engine reference conversion; it is not an independently fitted heat."
+    }
+  ]
+}
