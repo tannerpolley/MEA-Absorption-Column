@@ -1,0 +1,113 @@
+{
+  "thermodynamic_input": "thermodynamics.json",
+  "thermodynamic_input_sha256": "6bff94156f8b171196135f85182e4381fc2ce62942e5181cb3e419293338d7b5",
+  "case": {
+    "repository_path": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_20261029/n129_q33/inputs/case.json",
+    "sha256": "7ef2041c088619233641fbf7499f73be4588115d4114fcf60da8be0f00a0390d"
+  },
+  "film": "equilibrium_manifold",
+  "hydraulic_density": "solved_state",
+  "quadrature_points": 33,
+  "species_diffusivities": {
+    "C": {
+      "constant_m2_s": 1e-09
+    },
+    "A": {
+      "constant_m2_s": 1e-09
+    },
+    "B": {
+      "constant_m2_s": 1e-09
+    },
+    "W": {
+      "constant_m2_s": 1e-09
+    },
+    "CA": {
+      "constant_m2_s": 1e-09
+    },
+    "CB": {
+      "constant_m2_s": 1e-09
+    }
+  },
+  "stationary_film_components": [
+    "amine:A",
+    "amine:B",
+    "water"
+  ],
+  "execution_policy": {
+    "id": "retained_3c_only",
+    "temperature_bounds_k": [
+      293.15,
+      393.15
+    ],
+    "void_fraction": 0.97,
+    "temperature_scale_k": 300.0,
+    "temperature_span_k": 100.0,
+    "initial_bulk_state": [
+      0.21666666666666667,
+      1.0,
+      0.18333333333333332,
+      0.1,
+      320.0,
+      320.0,
+      100000.0,
+      0.05
+    ],
+    "initial_interface_bracket": [
+      0.0,
+      1.0
+    ],
+    "physical_residual_tolerance": 1e-09,
+    "branch_policy": {}
+  },
+  "closures": {
+    "area_per_length": {
+      "value": 100.0,
+      "unit": "m2/m"
+    },
+    "holdup": {
+      "value": 0.05,
+      "unit": "1"
+    },
+    "pressure_gradient": {
+      "value": 100.0,
+      "unit": "Pa/m"
+    },
+    "liquid_transfer": {
+      "value": 1e-05,
+      "unit": "m/s"
+    },
+    "gas_transfer": {
+      "value": 1e-07,
+      "unit": "mol/(m2 s Pa)"
+    },
+    "heat_transfer": {
+      "value": 10.0,
+      "unit": "W/(m2 K)"
+    },
+    "bulk_diffusivity": {
+      "value": 1e-09,
+      "unit": "m2/s"
+    }
+  },
+  "unconsumed_properties": {
+    "status": "not_consumed_by_prescribed_closures",
+    "values": {
+      "liquid_viscosity": {
+        "value": 0.001,
+        "unit": "Pa s"
+      },
+      "gas_viscosity": {
+        "value": 1e-05,
+        "unit": "Pa s"
+      },
+      "surface_tension": {
+        "value": 0.05,
+        "unit": "N/m"
+      },
+      "gas_conductivity": {
+        "value": 0.02,
+        "unit": "W/(m K)"
+      }
+    }
+  }
+}

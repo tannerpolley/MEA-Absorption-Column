@@ -1,0 +1,21 @@
+{
+  "base": "3221748d53dbdc92297327428dac078c60ebdbb5",
+  "checkpoint1_commit": "52eb1680a13f93c18cf091361e3cf83b6788f133",
+  "source_sha256": {
+    "analyses/bvp_solution_methods/scripts/verify_manufactured_column.py": "6b993db7dd9242f22374cced3df8b3544a243e9f6ceabac026050ff58bf7679e",
+    "analyses/bvp_solution_methods/input/issue85/column/transport.json": "9315b515b2c4b9d18725288bda864cb1d9539ffa3b3253a7e8d9d000fa8ef71b",
+    "analyses/bvp_solution_methods/input/issue85/column/case.json": "7ef2041c088619233641fbf7499f73be4588115d4114fcf60da8be0f00a0390d",
+    "analyses/bvp_solution_methods/input/issue85/column/thermodynamics.json": "6bff94156f8b171196135f85182e4381fc2ce62942e5181cb3e419293338d7b5"
+  },
+  "engine_identity": {
+    "engine_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "wheel_filename": "epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "wheel_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "reactive_inputs_sha256": {
+      "parameters.json": "73fd46326c31fdd7c287566b1d8c68b6092e9b12894609fb76e0b8e441304e31",
+      "engine-reactions.json": "2ae0d64d85cb824c355b4896b80e5999bfaf310cb341cd2036e585167b1f0f60",
+      "ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607"
+    },
+    "release_tag": "main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e"
+  }
+}

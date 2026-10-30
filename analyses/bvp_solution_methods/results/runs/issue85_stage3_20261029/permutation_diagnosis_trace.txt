@@ -1,0 +1,18 @@
+0.546 s: prepared
+0.668 s: initialized
+0.668 s: collocation graph construction starts
+Timeout (0:00:30)!
+Thread 0x000075357adfe740 (most recent call first):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 24284 in __init__
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py", line 149 in solve_conservative_collocation
+  File "/tmp/issue85_trace_graph.py", line 36 in <module>
+Timeout (0:00:30)!
+Thread 0x000075357adfe740 (most recent call first):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 24284 in __init__
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py", line 149 in solve_conservative_collocation
+  File "/tmp/issue85_trace_graph.py", line 36 in <module>
+Timeout (0:00:30)!
+Thread 0x000075357adfe740 (most recent call first):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 24284 in __init__
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py", line 149 in solve_conservative_collocation
+  File "/tmp/issue85_trace_graph.py", line 36 in <module>

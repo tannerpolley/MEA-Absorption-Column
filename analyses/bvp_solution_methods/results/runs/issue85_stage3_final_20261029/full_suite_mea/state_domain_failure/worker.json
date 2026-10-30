@@ -1,0 +1,381 @@
+{
+  "failure_kind": "state_domain_failure",
+  "last_checkpoint": {
+    "assets": {
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory": "0fdec0f8313e1d58d04b06c0c1455ed552d20d60f70a485bcfcdb0342e0b2262",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+    },
+    "capabilities": {
+      "a1_equilibrium_values": "required_on_evaluation",
+      "a2_equilibrium_actions": "required_on_outer_derivative",
+      "caloric_actions": "required_on_outer_derivative",
+      "evidence_type": "native_Engine_evaluation",
+      "finite_difference_fallback": false
+    },
+    "engine": {
+      "actual_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "archive_hash_status": "verified_from_installed_contents",
+      "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "commit_evidence": "not_available_from_installed_distribution",
+      "declared_archive_sha256": null,
+      "declared_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "declared_wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+      "expected_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "expected_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "installed_artifact_members": 39,
+      "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages",
+      "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+      "loaded_version": "1.0.0",
+      "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.39",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/bin/python",
+      "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv",
+      "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+      "python_implementation": "cpython",
+      "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv",
+      "python_version": "3.13.13",
+      "required": true,
+      "status": "verified",
+      "verified_commit": null,
+      "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+    },
+    "evaluation_failure": {
+      "inputs": [
+        "[318.15, 110900, 2.75618, 9.72928, 76.9752]",
+        "(<epcsaft._core.SolvedStateObservable object at 0x7259ec903d30>, <epcsaft._core.SolvedStateObservable object at 0x7259ec9656f0>, <epcsaft._core.SolvedStateObservable object at 0x7259ec9653f0>, <epcsaft._core.SolvedStateObservable object at 0x7259ec964230>, <epcsaft._core.SolvedStateObservable object at 0x7259ec9640f0>, <epcsaft._core.SolvedStateObservable object at 0x7259ec9678b0>, <epcsaft._core.SolvedStateObservable object at 0x7259ec9675b0>, <epcsaft._core.SolvedStateObservable object at 0x7259ec9674b0>, <epcsaft._core.SolvedStateObservable object at 0x7259ec967370>, <epcsaft._core.SolvedStateObservable object at 0x7259ec90e830>, <epcsaft._core.SolvedStateObservable object at 0x7259ec9029f0>, <epcsaft._core.SolvedStateObservable object at 0x7259f0b35ab0>)",
+        "()"
+      ],
+      "kind": "state_domain_failure",
+      "last_accepted_native_state": {
+        "feed_ids": [
+          "carbon-dioxide",
+          "monoethanolamine",
+          "water"
+        ],
+        "inputs": [
+          318.15,
+          110900.0,
+          2.4323205276203805,
+          9.729282110481522,
+          76.97519250729157
+        ],
+        "message": "converged: residual 5.6696132255546975e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 13 iterations, contraction absent, floor 1.8230916845209678e-10, amplification 0",
+        "mole_fractions": [
+          3.320156756464917e-07,
+          0.05720306929174069,
+          0.8849835822342736,
+          0.029757658502495635,
+          0.02525123039017367,
+          0.00109912650283227,
+          0.0017023006374120822,
+          4.5377384000193765e-11,
+          2.7003800190028232e-06
+        ],
+        "native_residuals": [
+          -1.5631940186722204e-13,
+          1.8474111129762605e-13,
+          5.684341886080802e-14,
+          4.263256414560601e-14,
+          -2.8421709430404007e-13,
+          -4.547473508864641e-13,
+          -5.115907697472721e-13,
+          -2.2737367544323206e-13,
+          -1.7053025658242404e-13,
+          5.828660943701106e-14,
+          -2.4870687037328158e-14,
+          2.5632949680900115e-14,
+          2.386430106346191e-15,
+          4.392227101784556e-14,
+          4.8627768478581856e-14
+        ],
+        "phase_amounts_mol": [
+          86.70450340502735
+        ],
+        "phase_densities_mol_m3": [
+          48181.964035976445
+        ],
+        "species_ids": [
+          "carbon-dioxide",
+          "monoethanolamine",
+          "water",
+          "protonated-monoethanolamine",
+          "carbamate-anion",
+          "bicarbonate-anion",
+          "carbonate-anion",
+          "hydronium-cation",
+          "hydroxide-anion"
+        ]
+      },
+      "message": "forced interface evaluation failure"
+    },
+    "initialization_evaluations": [
+      {
+        "loading": 0.0,
+        "original_co2_residual": -0.23390030447416288
+      }
+    ],
+    "layout": {
+      "algebraic_equations": 5,
+      "boundary_equations": 7,
+      "conserved_balances": 7,
+      "coordinate": "physical_height",
+      "states": 12
+    },
+    "native_calls": {
+      "liquid_actions": {
+        "failed": 1,
+        "returned": 36,
+        "started": 37,
+        "wall_s": 0.062029683005675906
+      },
+      "liquid_solve": {
+        "failed": 0,
+        "returned": 36,
+        "started": 36,
+        "wall_s": 0.02561552999759442
+      },
+      "vapor_actions": {
+        "failed": 0,
+        "returned": 10,
+        "started": 10,
+        "wall_s": 0.0070965689919830766
+      }
+    },
+    "resolved_inputs": {
+      "case_id": "corrected published 2017 3C",
+      "conserved_policy": {
+        "loading_anchor": 0.25,
+        "max_loading_steps": 32,
+        "max_log_loading_step": 0.1,
+        "species_diffusivity_model": {
+          "bicarbonate-anion": {
+            "constant_m2_s": 6.8e-10
+          },
+          "carbamate-anion": {
+            "constant_m2_s": 6.8e-10
+          },
+          "carbon-dioxide": {
+            "activation_j_mol": 15230.0,
+            "gas_constant_j_mol_k": 8.314462618,
+            "model": "prefactor_exp_minus_E_over_RT",
+            "prefactor_m2_s": 3.14e-07
+          },
+          "carbonate-anion": {
+            "constant_m2_s": 6.8e-10
+          },
+          "hydronium-cation": {
+            "constant_m2_s": 1.8439088914585774e-09
+          },
+          "hydroxide-anion": {
+            "constant_m2_s": 1.8439088914585774e-09
+          },
+          "monoethanolamine": {
+            "constant_m2_s": 8.8e-10
+          },
+          "protonated-monoethanolamine": {
+            "constant_m2_s": 8.4e-10
+          },
+          "water": {
+            "constant_m2_s": 8.8e-10
+          }
+        }
+      },
+      "data_type": "mole",
+      "feed_ids": {
+        "liquid": [
+          "carbon-dioxide",
+          "monoethanolamine",
+          "water"
+        ],
+        "vapor": [
+          "carbon-dioxide",
+          "water",
+          "nitrogen",
+          "oxygen"
+        ]
+      },
+      "gas_flow_basis": "reported_total_wet",
+      "metadata": {
+        "beds": 1,
+        "case_id": "corrected published 2017 3C",
+        "diameter_m": 0.64,
+        "gas_flow_basis": "reported_total_wet",
+        "intercoolers": 0,
+        "physical_input_basis": "direct_canonical_SI",
+        "single_bed_height_m": 6.0,
+        "total_packed_height_m": 6.0,
+        "vapor_composition_mode": "legacy_ratio"
+      },
+      "parameters": [
+        [
+          2.4323205276203805,
+          9.729282110481522,
+          76.97519250729157
+        ],
+        [
+          1.6540435157308098,
+          1.5624169375299577,
+          14.530683358624426,
+          1.6006872732878803
+        ],
+        318.15,
+        316.75,
+        [
+          0.0,
+          0.01,
+          0.02,
+          0.03,
+          0.04,
+          0.05,
+          0.06,
+          0.07,
+          0.08,
+          0.09,
+          0.1,
+          0.11,
+          0.12,
+          0.13,
+          0.14,
+          0.15,
+          0.16,
+          0.17,
+          0.18,
+          0.19,
+          0.2,
+          0.21,
+          0.22,
+          0.23,
+          0.24,
+          0.25,
+          0.26,
+          0.27,
+          0.28,
+          0.29,
+          0.3,
+          0.31,
+          0.32,
+          0.33,
+          0.34,
+          0.35000000000000003,
+          0.36,
+          0.37,
+          0.38,
+          0.39,
+          0.4,
+          0.41000000000000003,
+          0.42,
+          0.43,
+          0.44,
+          0.45,
+          0.46,
+          0.47000000000000003,
+          0.48,
+          0.49,
+          0.5,
+          0.51,
+          0.52,
+          0.53,
+          0.54,
+          0.55,
+          0.56,
+          0.5700000000000001,
+          0.58,
+          0.59,
+          0.6,
+          0.61,
+          0.62,
+          0.63,
+          0.64,
+          0.65,
+          0.66,
+          0.67,
+          0.68,
+          0.6900000000000001,
+          0.7000000000000001,
+          0.71,
+          0.72,
+          0.73,
+          0.74,
+          0.75,
+          0.76,
+          0.77,
+          0.78,
+          0.79,
+          0.8,
+          0.81,
+          0.8200000000000001,
+          0.8300000000000001,
+          0.84,
+          0.85,
+          0.86,
+          0.87,
+          0.88,
+          0.89,
+          0.9,
+          0.91,
+          0.92,
+          0.93,
+          0.9400000000000001,
+          0.9500000000000001,
+          0.96,
+          0.97,
+          0.98,
+          0.99,
+          1.0
+        ],
+        6.0,
+        0.3216990877275948,
+        110900.0,
+        [
+          250.0,
+          0.97,
+          0.203,
+          0.35,
+          0.017,
+          0.292,
+          0.119
+        ]
+      ],
+      "physical_input_sha256": "601f79091ee94d790b247bb91b0c67387e65411b112b760023e9b9050e53d17c",
+      "raw_input": [
+        4.607069120719279,
+        19.347831085173077,
+        0.25,
+        0.2999967360887997,
+        0.08548986749209121,
+        318.15,
+        316.75,
+        110900.0,
+        1.0
+      ],
+      "solvent_identity": {
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/issue85/thermodynamics.json": "2214f28b01d3bb3a1f260796d74740325d1c07879d7a8dfece93df4ef3327561",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/issue85/transport.json": "5a1cf88bc90291054a9915db45eafbe94b91e7e86eae8d74bf779b5a30a7516e",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Properties/Thermophysical_Properties.py": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Properties/Transport_Properties.py": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Pressure_Drop.py": "3c5e82117033a744032f7d7d64155e9175143134195fd926432f0e0e4abaa707",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/engine-reactions.json": "2ae0d64d85cb824c355b4896b80e5999bfaf310cb341cd2036e585167b1f0f60",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/parameters.json": "73fd46326c31fdd7c287566b1d8c68b6092e9b12894609fb76e0b8e441304e31",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+      },
+      "source_lineage": {
+        "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json",
+        "physical_input_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+        "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/input/case_3c.json",
+        "source_file_sha256": "0fd3117251de9b526d72cfd83e1ffac81fe9c5ccd846677ed159cd7db1ede385",
+        "source_row_sha256": "8483a65064aebcece44880142fceccca7fd9a306c73516447a5fda0870bdb936"
+      },
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "stage": "interface_initialization",
+    "support_limits": {
+      "policy": "case_declared_native_inputs: 3C fixed 293.15--393.15 K bounds, 300 K state scale, 100 K span, 0.97 holdup/packing void fraction",
+      "unsupported": "arbitrary packing void fractions, feed-seed mismatches, and temperature policies"
+    }
+  },
+  "message": "Error in Function::call for 'coupled_column_diagnostics' [MXFunction] at .../casadi/core/function.cpp:362:\nError in Function::operator() for 'native_loading_path' [MXFunction] at .../casadi/core/function.cpp:1547:\nError in Function::operator() for 'column_liquid_state' [CallbackInternal] at .../casadi/core/function.cpp:1547:\n.../casadi/core/function_internal.cpp:3807: Failed to evaluate 'eval_dm' for column_liquid_state:\n.../casadi/core/callback_internal.cpp:116: Error calling \"eval\" for object column_liquid_state:\n/work/swig/python/target3/source/casadiPYTHON_wrap_gil_release.cxx:3856: forced interface evaluation failure"
+}

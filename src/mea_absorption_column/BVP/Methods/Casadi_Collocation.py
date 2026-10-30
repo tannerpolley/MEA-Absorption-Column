@@ -92,7 +92,7 @@ def solve_conservative_collocation(
 
     variables = ca.MX.sym("scaled_nodes", n, grid.size)
     physical = ca.repmat(ca.DM(state_scale), 1, grid.size) * variables
-    evaluated = [node.call([ca.MX(float(z)), physical[:, k]], True, False) for k, z in enumerate(grid)]
+    evaluated = [node.call([ca.MX(float(z)), physical[:, k]], False, False) for k, z in enumerate(grid)]
     cell_rows = [i for i, v in enumerate(cell_sources or ()) if v == "cell"]
     cells = ca.MX.sym("scaled_cells", len(cell_rows), grid.size - 1)
     cell_algebraic = []
@@ -102,7 +102,7 @@ def solve_conservative_collocation(
         for k, h in enumerate(np.diff(grid)):
             state = [physical[i, k] if v == "lower" else physical[i, k + 1] if v == "upper"
                      else cell_physical[cell_rows.index(i), k] for i, v in enumerate(cell_sources)]
-            _, source, algebraic_value = node.call([ca.MX(float(grid[k] + h / 2)), ca.vertcat(*state)], True, False)
+            _, source, algebraic_value = node.call([ca.MX(float(grid[k] + h / 2)), ca.vertcat(*state)], False, False)
             columns.append(evaluated[k + 1][0] - evaluated[k][0] - h * source)
             cell_algebraic.append(algebraic_value)
         defects = ca.horzcat(*columns)

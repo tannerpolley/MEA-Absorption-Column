@@ -1,0 +1,51 @@
+2.478 s: prepared
+2.607 s: initialized
+2.611 s: candidate: preserve node calls instead of forced inlining; construction starts
+4.057 s: nlpsol construction starts
+5.052 s: nlpsol construction ends
+5.052 s: nonlinear iterations start
+
+******************************************************************************
+This program contains Ipopt, a library for large-scale nonlinear optimization.
+ Ipopt is released as open source code under the Eclipse Public License (EPL).
+         For more information visit https://github.com/coin-or/Ipopt
+******************************************************************************
+
+Timeout (0:00:30)!
+Thread 0x0000775304d81740 (most recent call first):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 20698 in call
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 11250 in __array__
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Thermodynamics/manufactured_neutral.py", line 129 in actions
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Thermodynamics/casadi_reactive.py", line 198 in evaluate
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Thermodynamics/casadi_reactive.py", line 238 in eval
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 20698 in call
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 24049 in __call__
+  File "/tmp/issue85_candidate_graph.py", line 28 in evaluate
+  File "disposable_graph_diagnosis", line 164 in solve_conservative_collocation
+  File "/tmp/issue85_candidate_graph.py", line 42 in <module>
+Timeout (0:00:30)!
+Thread 0x0000775304d81740 (most recent call first):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 20698 in call
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 24049 in __call__
+  File "/tmp/issue85_candidate_graph.py", line 28 in evaluate
+  File "disposable_graph_diagnosis", line 164 in solve_conservative_collocation
+  File "/tmp/issue85_candidate_graph.py", line 42 in <module>
+Timeout (0:00:30)!
+Thread 0x0000775304d81740 (most recent call first):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 20698 in call
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 24036 in __call__
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Thermodynamics/manufactured_neutral.py", line 126 in actions
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Thermodynamics/casadi_reactive.py", line 198 in evaluate
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/src/mea_absorption_column/Thermodynamics/casadi_reactive.py", line 238 in eval
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 20698 in call
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 24049 in __call__
+  File "/tmp/issue85_candidate_graph.py", line 28 in evaluate
+  File "disposable_graph_diagnosis", line 164 in solve_conservative_collocation
+  File "/tmp/issue85_candidate_graph.py", line 42 in <module>
+Timeout (0:00:30)!
+Thread 0x0000775304d81740 (most recent call first):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 20698 in call
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/lib/python3.13/site-packages/casadi/casadi.py", line 24049 in __call__
+  File "/tmp/issue85_candidate_graph.py", line 28 in evaluate
+  File "disposable_graph_diagnosis", line 164 in solve_conservative_collocation
+  File "/tmp/issue85_candidate_graph.py", line 42 in <module>

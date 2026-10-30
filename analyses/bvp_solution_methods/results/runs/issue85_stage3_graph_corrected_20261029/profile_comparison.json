@@ -1,0 +1,42 @@
+{
+  "permutation_capture_difference_percentage_points": 0.0,
+  "original_capture_difference_percentage_points": 0.0,
+  "maximum_absolute_profile_differences": {
+    "flow": {
+      "permutation": 2.7755575615628914e-17,
+      "original_preservation": 2.7755575615628914e-17
+    },
+    "temperature": {
+      "permutation": 0.0,
+      "original_preservation": 0.0
+    },
+    "pressure": {
+      "permutation": 0.0,
+      "original_preservation": 0.0
+    },
+    "holdup_loading": {
+      "permutation": 1.6653345369377348e-16,
+      "original_preservation": 1.1102230246251565e-16
+    },
+    "flux": {
+      "permutation": 3.2526065174565133e-19,
+      "original_preservation": 2.168404344971009e-19
+    }
+  },
+  "certificates": {
+    "declared": {
+      "boundary": 0.0,
+      "charge": 0.0,
+      "energy": 0.0,
+      "interface": 5.913830031739116e-16,
+      "material": 3.8430797006255415e-16
+    },
+    "permuted": {
+      "boundary": 0.0,
+      "charge": 0.0,
+      "energy": 0.0,
+      "interface": 5.913830031739116e-16,
+      "material": 3.8430797006255415e-16
+    }
+  }
+}

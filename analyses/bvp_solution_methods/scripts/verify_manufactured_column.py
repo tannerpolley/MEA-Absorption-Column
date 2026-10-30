@@ -119,10 +119,130 @@ def prepared_check(directory, permuted=False):
     return result
 
 
+def scalar_reference(grid, epsilon=1e-12):
+    """S3-4/S3-5: closed integral, independent of column/film implementations."""
+    from scipy.integrate import quad
+    from scipy.optimize import brentq
+    def free(f):
+        return max(np.roots([10,6-10*f,-f]))
+    def flux(f,g):
+        s = free(f)
+        def residual(si):
+            return .005*(10*si/(1+10*si)-10*s/(1+10*s))-1e-7*(1e5*g-1e5*si)
+        si = brentq(residual,s,g,xtol=1e-14)
+        return 1e-7*(1e5*g-1e5*si)
+    def length(f,bottom):
+        return quad(lambda value: 1/(100*flux(value,value-bottom+11/60)),13/60,f,
+                    epsabs=epsilon,epsrel=epsilon)[0]
+    bottom = brentq(lambda value:length(value,value)-1,.217,.3,xtol=1e-13)
+    liquid = np.array([bottom if z==0 else 13/60 if z==1 else
+                       brentq(lambda value:length(value,bottom)-(1-z),13/60,bottom,xtol=1e-13) for z in grid])
+    gas = liquid-bottom+11/60
+    return dict(bottom_liquid_co2_mol_s=bottom,top_vapor_co2_mol_s=float(gas[-1]),
+                capture_percent=100*(bottom-13/60)/(11/60),grid=np.asarray(grid),
+                liquid=liquid,vapor=gas,flux=[flux(f,g) for f,g in zip(liquid,gas)],
+                reference_integration_tolerance=epsilon)
+
+
+def solve_case(root,nodes,points,permuted=False):
+    label = f'n{nodes}_q{points}'+('_permuted' if permuted else '')
+    directory = root/label
+    inputs(directory/'inputs',points,permuted)
+    req = request(directory/'inputs',nodes,points,directory/'attempt')
+    result = run_column(req)
+    assert result['numerical_acceptance']==result['physical_acceptance']=='accepted', result.get('failure')
+    profile, grid = (np.asarray(result['native_profile'][key]) for key in ('state_matrix','grid'))
+    ref = scalar_reference(grid)
+    capture = 100*(1-profile[2,-1]/profile[2,0])
+    metrics = dict(label=label,nodes=nodes,points=points,runtime_s=result['execution']['runtime_s'],
+        capture_percent=capture,capture_error_percentage_points=abs(capture-ref['capture_percent']),
+        endpoint_flow_error_mol_s=max(abs(profile[0,0]-ref['bottom_liquid_co2_mol_s']),abs(profile[2,-1]-ref['top_vapor_co2_mol_s'])),
+        maximum_co2_profile_error_mol_s=float(np.max(abs(profile[[0,2]]-np.array([ref['liquid'],ref['vapor']])))),
+        maximum_flux_error_mol_m2_s=float(np.max(abs(profile[8]-ref['flux']))),
+        scaled_residual_inf=result['result']['scaled_residual_inf'])
+    np.testing.assert_allclose(profile[0]-profile[2],profile[0,0]-profile[2,0],rtol=0,atol=1e-10)
+    for rows,expected,tol in [([1,3],[[1],[.1]],1e-10),([4,5],320,1e-7),([9,10],0,1e-10),([7],.05,1e-10)]:
+        np.testing.assert_allclose(profile[rows],np.broadcast_to(expected,profile[rows].shape),rtol=0,atol=tol)
+    np.testing.assert_allclose(profile[6],1e5-100*grid,rtol=0,atol=1e-5)
+    prepared = _prepare_conserved_column_in_process(resolve_column_config(req))
+    liquid = prepared['assembly']['liquid']
+    fixed = prepared['resolved_inputs']['parameters'][0]
+    states, minimum_amount, component_error, affinity = [],np.inf,0.,0.
+    for state in profile.T:
+        for fraction in (0.,1.):
+            flow = np.asarray(liquid.flow(state[0]*np.exp(fraction*state[11]),state[1],fixed)).ravel()
+            u = np.r_[state[4],state[6],flow]
+            values = np.asarray(liquid(u)).ravel()
+            amounts = dict(zip(liquid.component_ids,values[:len(liquid.component_ids)]))
+            minimum_amount = min(minimum_amount,min(amounts.values()))
+            for name,row in liquid.components.items():
+                expected = flow[liquid.feed_index[{'co2':'C','water':'W','amine:A':'A','amine:B':'B'}[name]]]
+                component_error = max(component_error,abs(np.dot(row,values[:6])-expected))
+            for amine,bound in [('A','CA'),('B','CB')]:
+                affinity = max(affinity,abs(np.log(amounts[bound]/(10*amounts['C']*amounts[amine]))))
+            states.append(dict(inputs=u,values=values))
+    assert minimum_amount>0 and component_error<=1e-12 and affinity<=1e-12
+    metrics.update(minimum_amount_mol=minimum_amount,component_error_mol_s=component_error,affinity_over_rt=affinity)
+    if nodes==points==129:
+        assert metrics['capture_error_percentage_points']<=.1
+        assert metrics['maximum_co2_profile_error_mol_s']<=2e-4
+        assert metrics['maximum_flux_error_mol_m2_s']<=1e-5
+    save(directory/'comparison.json',dict(metrics=metrics,reference=ref,phase_states=states))
+    print(json.dumps(metrics),flush=True)
+
+
+def compare_study(root, previous):
+    labels = [f'n{n}_q33' for n in (17,33,65,129)]+['n129_q65','n129_q129','n129_q129_permuted']
+    paths = [(previous if label not in labels[-2:] else root)/label for label in labels]
+    rows = [json.loads((path/'comparison.json').read_text())['metrics'] for path in paths]
+    for key in ('capture_error_percentage_points','maximum_co2_profile_error_mol_s'):
+        assert all(a[key]>b[key] for a,b in zip(rows[:3],rows[1:4]))
+    assert abs(rows[4]['capture_percent']-rows[5]['capture_percent'])<=.001
+    profiles = [np.array(json.loads((root/label/'attempt/attempt.json').read_text())['native_profile']['state_matrix'])
+                for label in labels[-2:]]
+    left,right = profiles
+    reference = np.array(json.loads((previous/'n129_q129/attempt/attempt.json').read_text())
+                         ['native_profile']['state_matrix'])
+    for indices,rtol,atol in [([0,1,2,3],1e-8,1e-9),([4,5],0,1e-6),([6],0,1e-3),([7,11],0,1e-8),([8,9,10],1e-7,1e-10)]:
+        np.testing.assert_allclose(left[indices],right[indices],rtol=rtol,atol=atol)
+        np.testing.assert_allclose(left[indices],reference[indices],rtol=rtol,atol=atol)
+    delta = rows[-1]['capture_percent']-rows[-2]['capture_percent']
+    assert abs(delta)<=1e-6
+    assert abs(rows[-2]['capture_percent']-100*(1-reference[2,-1]/reference[2,0]))<=1e-6
+    refs = [scalar_reference([0,1],epsilon) for epsilon in (1e-10,1e-12)]
+    assert abs(refs[0]['capture_percent']-refs[1]['capture_percent'])<=1e-7
+    save(root/'study.json',dict(cases=rows,permutation_capture_difference_percentage_points=delta,references=refs,
+        original_capture_difference_percentage_points=rows[-2]['capture_percent']-100*(1-reference[2,-1]/reference[2,0]),
+        previous_comparison_root=str(previous)))
+    print(json.dumps(dict(cases=rows,permutation_capture_difference_percentage_points=delta)),flush=True)
+
+
+def render_study(root):
+    """Render retained error values only; do not run the reference or column."""
+    import matplotlib.pyplot as plt
+    rows = json.loads((root/'study.json').read_text())['cases'][:4]
+    fig,ax = plt.subplots(figsize=(6,3.5),layout='constrained')
+    ax.plot([r['nodes'] for r in rows],[r['capture_error_percentage_points'] for r in rows],'o-',color='#0072B2',label='Upwind, 33 film points')
+    ax.axhline(.1,color='#D55E00',linestyle='--',label='Terminal capture limit')
+    ax.set(xlabel='Spatial nodes',ylabel='Capture error (percentage point)',title='Mathematical two-amine column refinement')
+    ax.legend();fig.savefig(root/'refinement.png',dpi=180);plt.close(fig)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output',type=Path)
+    parser.add_argument('--case',nargs=2,type=int,metavar=('NODES','POINTS'))
+    parser.add_argument('--permuted',action='store_true')
+    parser.add_argument('--previous',type=Path)
+    parser.add_argument('--compare',action='store_true')
+    parser.add_argument('--render',action='store_true')
     args = parser.parse_args()
+    if args.case:
+        solve_case(args.output,*args.case,args.permuted);raise SystemExit
+    if args.compare:
+        compare_study(args.output,args.previous);raise SystemExit
+    if args.render:
+        render_study(args.output);raise SystemExit
     for label, permuted in [('declared',False),('permuted',True)]:
         result = prepared_check(args.output/label,permuted)
         print(label,len(result['checks']),'independent prepared/equation checks passed',flush=True)

@@ -1,0 +1,71 @@
+{
+  "physical_inputs": {
+    "case_id": "3C",
+    "height_m": 1.0,
+    "area_m2": 1.0,
+    "packing": [
+      250.0,
+      0.97,
+      0.203,
+      0.35,
+      0.017,
+      0.292,
+      0.119
+    ],
+    "liquid_feed_ids": [
+      "C",
+      "A",
+      "B",
+      "W"
+    ],
+    "vapor_feed_ids": [
+      "C",
+      "W",
+      "I"
+    ],
+    "liquid_feed_mol_s": [
+      0.21666666666666667,
+      0.2,
+      0.3,
+      1.0
+    ],
+    "vapor_feed_mol_s": [
+      0.18333333333333332,
+      0.1,
+      1.0
+    ],
+    "liquid_temperature_k": 320.0,
+    "vapor_temperature_k": 320.0,
+    "bottom_pressure_pa": 100000.0
+  },
+  "model_input_row": {
+    "Beds": 1,
+    "Intercoolers": 0
+  },
+  "initial_bulk_state": [
+    0.21666666666666667,
+    1.0,
+    0.18333333333333332,
+    0.1,
+    320.0,
+    320.0,
+    100000.0,
+    0.05
+  ],
+  "initial_interface_bracket": [
+    0.0,
+    1.0
+  ],
+  "physical_residual_tolerance": 1e-09,
+  "liquid_molar_masses_kg_mol": [
+    0.044009,
+    0.031058000000000002,
+    0.045085,
+    0.018015
+  ],
+  "vapor_molar_masses_kg_mol": [
+    0.044009,
+    0.018015,
+    0.028014
+  ]
+}

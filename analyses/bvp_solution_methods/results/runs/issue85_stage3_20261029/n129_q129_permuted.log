@@ -1,0 +1,12 @@
+Worker outcome extracted from retained attempt.json (worker stdout was empty):
+{
+  "execution": {
+    "runtime_s": 600.7910042990006,
+    "started_at_utc": "2026-10-29T23:48:31Z",
+    "status": "timed_out"
+  },
+  "failure_kind": "timed_out",
+  "phase": "global_solve",
+  "cause": "TimeoutExpired",
+  "message": "Command '['/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/bin/python3', '-m', 'mea_absorption_column.benchmark_worker', '/tmp/conserved_execute_zs7ymysx/input.json']' timed out after 600.0 seconds"
+}

@@ -1,0 +1,769 @@
+{
+  "checks": {
+    "liquid_feeds": {
+      "actual": [
+        0.21666666666666667,
+        0.2,
+        0.3,
+        1.0
+      ],
+      "expected": [
+        0.21666666666666667,
+        0.2,
+        0.3,
+        1.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "vapor_feeds": {
+      "actual": [
+        0.18333333333333332,
+        0.1,
+        1.0
+      ],
+      "expected": [
+        0.18333333333333332,
+        0.1,
+        1.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "loading_reporting": {
+      "actual": [
+        0.43333333333333335,
+        0.5228080027336228
+      ],
+      "expected": [
+        0.43333333333333335,
+        0.5228080027336228
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "separate_amine_reporting": {
+      "actual": [
+        0.16453654233804216,
+        0.35827146039558067
+      ],
+      "expected": [
+        0.16453654233804213,
+        0.35827146039558067
+      ],
+      "maximum_absolute_error": 2.7755575615628914e-17
+    },
+    "total_amine": {
+      "actual": [
+        0.5
+      ],
+      "expected": [
+        0.5
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "capacity_rates_w_k": {
+      "actual": [
+        45.0,
+        30.0
+      ],
+      "expected": [
+        45.0,
+        30.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "state_scale": {
+      "actual": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        300.0,
+        300.0,
+        100000.0,
+        0.97,
+        0.001833333333333333,
+        9.999999999999999e-05,
+        1000.0,
+        1.0
+      ],
+      "expected": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        300.0,
+        300.0,
+        100000.0,
+        0.97,
+        0.0018333333333333333,
+        0.0001,
+        1000.0,
+        1.0
+      ],
+      "maximum_absolute_error": 2.168404344971009e-19
+    },
+    "balance_scale": {
+      "actual": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        4500.0,
+        3000.0,
+        100000.0
+      ],
+      "expected": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        4500.0,
+        3000.0,
+        100000.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "algebraic_scale": {
+      "actual": [
+        0.97,
+        1.833333333333333e-07,
+        0.001833333333333333,
+        9.999999999999999e-05,
+        1000.0
+      ],
+      "expected": [
+        0.97,
+        1.8333333333333333e-07,
+        0.0018333333333333333,
+        0.0001,
+        1000.0
+      ],
+      "maximum_absolute_error": 2.168404344971009e-19
+    },
+    "boundary_scale": {
+      "actual": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        100.0,
+        100.0,
+        100000.0
+      ],
+      "expected": [
+        0.21666666666666667,
+        1.0,
+        0.18333333333333332,
+        0.1,
+        100.0,
+        100.0,
+        100000.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "conserved": {
+      "actual": [
+        0.24,
+        1.1,
+        0.16,
+        0.12,
+        240.0,
+        300.0,
+        99950.0
+      ],
+      "expected": [
+        0.24,
+        1.1,
+        0.16,
+        0.12,
+        240.0,
+        300.0,
+        99950.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "sources": {
+      "actual": [
+        -0.06,
+        -0.002,
+        -0.06,
+        -0.002,
+        -2500.0,
+        -2500.0,
+        -100.0
+      ],
+      "expected": [
+        -0.06,
+        -0.002,
+        -0.06,
+        -0.002,
+        -2500.0,
+        -2500.0,
+        -100.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "boundary": {
+      "actual": [
+        0.023333333333333317,
+        0.10000000000000009,
+        -0.023333333333333317,
+        0.01999999999999999,
+        5.0,
+        10.0,
+        -50.0
+      ],
+      "expected": [
+        0.023333333333333317,
+        0.1,
+        -0.023333333333333317,
+        0.02,
+        5.0,
+        10.0,
+        -50.0
+      ],
+      "maximum_absolute_error": 8.326672684688674e-17
+    },
+    "quadrature": {
+      "actual": [
+        3.0974367107993946e-08
+      ],
+      "expected": [
+        3.097436919317581e-08
+      ],
+      "maximum_absolute_error": 2.0851818623607264e-15
+    },
+    "holdup": {
+      "actual": [
+        0.009999999999999995
+      ],
+      "expected": [
+        0.01
+      ],
+      "maximum_absolute_error": 5.204170427930421e-18
+    },
+    "liquid_interface": {
+      "actual": [
+        2.9025632892006036e-08
+      ],
+      "expected": [
+        2.902563289200605e-08
+      ],
+      "maximum_absolute_error": 1.3234889800848443e-23
+    },
+    "gas_water_heat": {
+      "actual": [
+        -0.00025487527452417455,
+        2e-05,
+        -25.0
+      ],
+      "expected": [
+        -0.00025487527452417455,
+        2e-05,
+        -25.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "transport_diagnostics": {
+      "actual": [
+        0.0001,
+        1e-07,
+        1e-07,
+        10.0
+      ],
+      "expected": [
+        0.0001,
+        1e-07,
+        1e-07,
+        10.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "vapor_caloric": {
+      "actual": [
+        23.4375,
+        0.0,
+        0.0
+      ],
+      "expected": [
+        23.4375,
+        0.0,
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "liquid_off_capacity": {
+      "actual": [
+        48.0
+      ],
+      "expected": [
+        48.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "vapor_off_capacity": {
+      "actual": [
+        30.0
+      ],
+      "expected": [
+        30.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_first_0": {
+      "actual": [
+        23.4375
+      ],
+      "expected": [
+        23.4375
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_0_0": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_0_1": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_0_2": {
+      "actual": [
+        -18.310546875
+      ],
+      "expected": [
+        -18.310546875
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_0_3": {
+      "actual": [
+        -18.310546875
+      ],
+      "expected": [
+        -18.310546875
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_0_4": {
+      "actual": [
+        5.126953125
+      ],
+      "expected": [
+        5.126953125
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_first_1": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_1_0": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_1_1": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_1_2": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_1_3": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_1_4": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_first_2": {
+      "actual": [
+        -183.10546875
+      ],
+      "expected": [
+        -183.10546875
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_2_0": {
+      "actual": [
+        -18.310546875
+      ],
+      "expected": [
+        -18.310546875
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_2_1": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_2_2": {
+      "actual": [
+        286.102294921875
+      ],
+      "expected": [
+        286.10229492187494
+      ],
+      "maximum_absolute_error": 5.684341886080802e-14
+    },
+    "molar_h_second_2_3": {
+      "actual": [
+        286.102294921875
+      ],
+      "expected": [
+        286.10229492187494
+      ],
+      "maximum_absolute_error": 5.684341886080802e-14
+    },
+    "molar_h_second_2_4": {
+      "actual": [
+        102.996826171875
+      ],
+      "expected": [
+        102.99682617187497
+      ],
+      "maximum_absolute_error": 2.842170943040401e-14
+    },
+    "molar_h_first_3": {
+      "actual": [
+        -183.10546875
+      ],
+      "expected": [
+        -183.10546875
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_3_0": {
+      "actual": [
+        -18.310546875
+      ],
+      "expected": [
+        -18.310546875
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_3_1": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_3_2": {
+      "actual": [
+        286.102294921875
+      ],
+      "expected": [
+        286.10229492187494
+      ],
+      "maximum_absolute_error": 5.684341886080802e-14
+    },
+    "molar_h_second_3_3": {
+      "actual": [
+        286.102294921875
+      ],
+      "expected": [
+        286.10229492187494
+      ],
+      "maximum_absolute_error": 5.684341886080802e-14
+    },
+    "molar_h_second_3_4": {
+      "actual": [
+        102.996826171875
+      ],
+      "expected": [
+        102.99682617187497
+      ],
+      "maximum_absolute_error": 2.842170943040401e-14
+    },
+    "molar_h_first_4": {
+      "actual": [
+        51.26953125
+      ],
+      "expected": [
+        51.26953125
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_4_0": {
+      "actual": [
+        5.126953125
+      ],
+      "expected": [
+        5.126953125
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_4_1": {
+      "actual": [
+        0.0
+      ],
+      "expected": [
+        0.0
+      ],
+      "maximum_absolute_error": 0.0
+    },
+    "molar_h_second_4_2": {
+      "actual": [
+        102.996826171875
+      ],
+      "expected": [
+        102.99682617187497
+      ],
+      "maximum_absolute_error": 2.842170943040401e-14
+    },
+    "molar_h_second_4_3": {
+      "actual": [
+        102.996826171875
+      ],
+      "expected": [
+        102.99682617187497
+      ],
+      "maximum_absolute_error": 2.842170943040401e-14
+    },
+    "molar_h_second_4_4": {
+      "actual": [
+        -80.108642578125
+      ],
+      "expected": [
+        -80.10864257812503
+      ],
+      "maximum_absolute_error": 2.842170943040401e-14
+    }
+  },
+  "order": {
+    "equations": "neutral_two_amine_column",
+    "evidence_type": "mathematical_numerical_verification_only",
+    "species_order": [
+      "C",
+      "A",
+      "B",
+      "W",
+      "CA",
+      "CB"
+    ],
+    "liquid_feed_order": [
+      "C",
+      "A",
+      "B",
+      "W"
+    ],
+    "vapor_feed_order": [
+      "C",
+      "W",
+      "I"
+    ],
+    "roles": {
+      "co2": "C",
+      "water": "W",
+      "amines": [
+        "A",
+        "B"
+      ],
+      "inert_gases": [
+        "I"
+      ]
+    },
+    "components": {
+      "co2": {
+        "C": 1,
+        "CA": 1,
+        "CB": 1
+      },
+      "water": {
+        "W": 1
+      },
+      "amine:A": {
+        "A": 1,
+        "CA": 1
+      },
+      "amine:B": {
+        "B": 1,
+        "CB": 1
+      }
+    },
+    "charge_numbers": {
+      "C": 0,
+      "A": 0,
+      "B": 0,
+      "W": 0,
+      "CA": 0,
+      "CB": 0,
+      "I": 0
+    },
+    "formulas": {
+      "C": {
+        "C": 1,
+        "O": 2
+      },
+      "A": {
+        "C": 1,
+        "H": 5,
+        "N": 1
+      },
+      "B": {
+        "C": 2,
+        "H": 7,
+        "N": 1
+      },
+      "W": {
+        "H": 2,
+        "O": 1
+      },
+      "CA": {
+        "C": 2,
+        "H": 5,
+        "N": 1,
+        "O": 2
+      },
+      "CB": {
+        "C": 3,
+        "H": 7,
+        "N": 1,
+        "O": 2
+      },
+      "I": {
+        "N": 2
+      }
+    },
+    "atomic_masses_kg_mol": {
+      "C": 0.012011,
+      "H": 0.001008,
+      "N": 0.014007,
+      "O": 0.015999
+    },
+    "reactions": [
+      {
+        "C": -1,
+        "A": -1,
+        "CA": 1
+      },
+      {
+        "C": -1,
+        "B": -1,
+        "CB": 1
+      }
+    ],
+    "K_per_mol": 10.0,
+    "liquid_volume_m3": 0.001,
+    "vapor_volume_m3": 0.01,
+    "henry_pa_m3_mol": 100.0,
+    "gas_fugacity_pa_s_mol": 100000.0,
+    "water_fugacity_pa": 1000.0,
+    "capacity_j_mol_k": 30.0,
+    "reference_temperature_k": 320.0
+  },
+  "scaling": {
+    "state_scale": [
+      0.21666666666666667,
+      1.0,
+      0.18333333333333332,
+      0.1,
+      300.0,
+      300.0,
+      100000.0,
+      0.97,
+      0.001833333333333333,
+      9.999999999999999e-05,
+      1000.0,
+      1.0
+    ],
+    "balance_scale": [
+      0.21666666666666667,
+      1.0,
+      0.18333333333333332,
+      0.1,
+      4500.0,
+      3000.0,
+      100000.0
+    ],
+    "algebraic_scale": [
+      0.97,
+      1.833333333333333e-07,
+      0.001833333333333333,
+      9.999999999999999e-05,
+      1000.0
+    ],
+    "boundary_scale": [
+      0.21666666666666667,
+      1.0,
+      0.18333333333333332,
+      0.1,
+      100.0,
+      100.0,
+      100000.0
+    ],
+    "capacity_rates_w_k": [
+      45.0,
+      30.0
+    ],
+    "policy": "case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds"
+  },
+  "capabilities": {
+    "evidence_type": "mathematical_numerical_verification_only",
+    "a1_equilibrium_values": "analytic_mathematical",
+    "a2_equilibrium_actions": "analytic_mathematical_first_and_second",
+    "caloric_actions": "analytic_mathematical_first_and_second",
+    "finite_difference_fallback": false
+  },
+  "source_identity": {
+    "repository_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume",
+    "commit": "52eb1680a13f93c18cf091361e3cf83b6788f133",
+    "dirty_paths": [
+      "src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py"
+    ],
+    "dirty": true,
+    "source_tree_sha256": "5b8166c6834427bd1688def53a39a9cf501effdbac7ee3b8a2d5e4abe21ecdcd",
+    "dirty_patch": "diff --git a/src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py b/src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py\nindex 8062cbf..6abba69 100644\n--- a/src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py\n+++ b/src/mea_absorption_column/BVP/Methods/Casadi_Collocation.py\n@@ -92,7 +92,7 @@ def solve_conservative_collocation(\n \n     variables = ca.MX.sym(\"scaled_nodes\", n, grid.size)\n     physical = ca.repmat(ca.DM(state_scale), 1, grid.size) * variables\n-    evaluated = [node.call([ca.MX(float(z)), physical[:, k]], True, False) for k, z in enumerate(grid)]\n+    evaluated = [node.call([ca.MX(float(z)), physical[:, k]], False, False) for k, z in enumerate(grid)]\n     cell_rows = [i for i, v in enumerate(cell_sources or ()) if v == \"cell\"]\n     cells = ca.MX.sym(\"scaled_cells\", len(cell_rows), grid.size - 1)\n     cell_algebraic = []\n@@ -102,7 +102,7 @@ def solve_conservative_collocation(\n         for k, h in enumerate(np.diff(grid)):\n             state = [physical[i, k] if v == \"lower\" else physical[i, k + 1] if v == \"upper\"\n                      else cell_physical[cell_rows.index(i), k] for i, v in enumerate(cell_sources)]\n-            _, source, algebraic_value = node.call([ca.MX(float(grid[k] + h / 2)), ca.vertcat(*state)], True, False)\n+            _, source, algebraic_value = node.call([ca.MX(float(grid[k] + h / 2)), ca.vertcat(*state)], False, False)\n             columns.append(evaluated[k + 1][0] - evaluated[k][0] - h * source)\n             cell_algebraic.append(algebraic_value)\n         defects = ca.horzcat(*columns)\n",
+    "dirty_patch_sha256": "f52af28e97ec0b9580233cec52652a997ec0d12164f86ba23552081f2951f0fb"
+  }
+}

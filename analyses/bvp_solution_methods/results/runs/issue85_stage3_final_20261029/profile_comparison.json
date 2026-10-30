@@ -1,0 +1,66 @@
+{
+  "permutation": {
+    "flow_mol_s": 0.0,
+    "temperature_K": 0.0,
+    "pressure_Pa": 0.0,
+    "holdup_loading": 1.6653345369377348e-16,
+    "flux": 3.2526065174565133e-19
+  },
+  "retained_original": {
+    "flow_mol_s": 2.7755575615628914e-17,
+    "temperature_K": 0.0,
+    "pressure_Pa": 0.0,
+    "holdup_loading": 5.551115123125783e-17,
+    "flux": 2.168404344971009e-19
+  },
+  "declared": {
+    "accepted": true,
+    "capture": {
+      "accepted": true,
+      "criterion": "0 <= outlet_vapor_co2_mol_s <= inlet_vapor_co2_mol_s",
+      "inlet_vapor_co2_mol_s": 0.18333333333333332,
+      "outlet_vapor_co2_mol_s": 0.12566596888609766
+    },
+    "criteria": {
+      "boundary": 1e-09,
+      "charge": 1e-09,
+      "energy": 1e-09,
+      "interface": 1e-09,
+      "material": 1e-09
+    },
+    "scaled_residual_inf": {
+      "boundary": 0.0,
+      "charge": 0.0,
+      "energy": 0.0,
+      "interface": 5.913830031739116e-16,
+      "material": 3.8430797006255415e-16
+    },
+    "scope": "Native-grid material/energy invariants, bulk/film-quadrature charge, interface, boundary, original bounds, and CO2 capture direction; between-node accuracy still requires refinement",
+    "bounds_accepted": true
+  },
+  "permuted": {
+    "accepted": true,
+    "capture": {
+      "accepted": true,
+      "criterion": "0 <= outlet_vapor_co2_mol_s <= inlet_vapor_co2_mol_s",
+      "inlet_vapor_co2_mol_s": 0.18333333333333332,
+      "outlet_vapor_co2_mol_s": 0.12566596888609766
+    },
+    "criteria": {
+      "boundary": 1e-09,
+      "charge": 1e-09,
+      "energy": 1e-09,
+      "interface": 1e-09,
+      "material": 1e-09
+    },
+    "scaled_residual_inf": {
+      "boundary": 0.0,
+      "charge": 0.0,
+      "energy": 0.0,
+      "interface": 5.913830031739116e-16,
+      "material": 3.8430797006255415e-16
+    },
+    "scope": "Native-grid material/energy invariants, bulk/film-quadrature charge, interface, boundary, original bounds, and CO2 capture direction; between-node accuracy still requires refinement",
+    "bounds_accepted": true
+  }
+}

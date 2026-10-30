@@ -1,0 +1,70 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "conserved_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "3C",
+    "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_graph_corrected_20261029/n129_q129_permuted/inputs/case.json",
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_graph_corrected_20261029/n129_q129_permuted/inputs/case.json",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": null,
+    "input_hashes": {
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_graph_corrected_20261029/n129_q129_permuted/inputs/case.json": "497fe9892bfd7eadc501d58a371be92e4ce2c9321efd5731b74d4f52c6b43a6a",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_graph_corrected_20261029/n129_q129_permuted/inputs/thermodynamics.json": "4f74a9d4ce94267b01d35b1c5dc27e0a780dd8f996672343bf8391ad5bac2c30",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_graph_corrected_20261029/n129_q129_permuted/inputs/transport.json": "412dac92f6a87d45b8bf423657c47d193259473966a9c70fade241a5ec871c9e"
+    },
+    "mobility_law": "harmonic_mean_onsager_v1",
+    "references": [],
+    "thermal_reference": null,
+    "thermodynamics_input": "analyses/bvp_solution_methods/results/runs/issue85_stage3_graph_corrected_20261029/n129_q129_permuted/inputs/thermodynamics.json",
+    "transport_input": "analyses/bvp_solution_methods/results/runs/issue85_stage3_graph_corrected_20261029/n129_q129_permuted/inputs/transport.json"
+  },
+  "engine": {
+    "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/.venv/bin/python3",
+    "required": true,
+    "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-85-accept-any-amine-or-amine-blend-consume/analyses/bvp_solution_methods/results/runs/issue85_stage3_graph_corrected_20261029/n129_q129_permuted/attempt",
+    "process_isolation": false,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 600.0
+  },
+  "initialization": {
+    "policy": "case_declared_native_inputs",
+    "values": {}
+  },
+  "model": {
+    "coordinate": "physical_height",
+    "energy_model": "mathematical_total_enthalpy",
+    "film_model": "equilibrium_manifold",
+    "formulation": "twelve_state_conserved",
+    "layout": "twelve_conserved",
+    "pressure_model": "prescribed_gradient",
+    "thermo_model": "mathematical_neutral"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "max_iterations": 40,
+      "nodes": 129,
+      "quadrature_points": 129,
+      "tolerance": 1e-09
+    }
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_config_sha256": "3638f89742c1e9852d1af22018212fc000bf578375b32c1335cc49de6ccb3e89",
+  "schema_version": 1
+}

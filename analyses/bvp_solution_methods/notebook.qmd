@@ -457,8 +457,9 @@ mapped comparisons. A duplicated stationary row refuses with the existing
 independence-modulo-total-flux diagnostic; it is not silently discarded.
 
 The calculation establishes variable-count numerical verification at the film
-input boundary. The complete column still requires the MEA declarations,
-three-liquid/four-vapor property basis and retained 3C policy. It does not
+input boundary. This stage-2 evidence is confined to the shared film. The full-column
+verification below uses a separate declared mathematical phase and prescribed
+property closures; Engine-backed solvent prediction retains the MEA restrictions. It does not
 establish ionic-blend generality, a real second-solvent prediction, finite-rate
 or volatile-amine behavior, physical validation, column grid convergence or
 experimental uncertainty. No fitted export or expression language is added.
@@ -491,3 +492,192 @@ review remains open; these findings are not promoted for manuscript use.
 
 MA57 acknowledgement: HSL, a collection of Fortran codes for large-scale
 scientific computation. https://www.hsl.rl.ac.uk/
+
+
+## Two-amine twelve-state column numerical verification {#two-amine-column}
+
+The declared and permuted 129-node, 129-film-point columns both give
+**31.454926062128543% capture**. Their capture difference is **zero percentage
+points**, and the corrected original-order capture also equals its retained
+pre-correction value exactly. Both ordinary `run_column` executions return
+accepted profiles and original-equation certificates under the unchanged
+600 s worker / 660 s outer limits, tolerance 10⁻⁹ and 40-iteration cap.
+
+The full twelve-state calculation accepts a declared mathematical liquid with
+six species, four analytical components and two nonvolatile amines, together
+with a three-species vapor. The species are C/A/B/W/CA/CB; the two neutral
+association reactions and analytical component rows are those of the film
+verification above. Both amines participate, with unequal fixed flows
+0.2 and 0.3 mol/s. The question and independent equations are fixed in the
+[amended stage-3 design](https://github.com/tannerpolley/MEA-Absorption-Column/issues/85#issuecomment-6510746468).
+This evidence is **mathematical numerical verification only**.
+
+The one-metre bed has cross section 1 m² and prescribed interfacial area
+100 m² per metre of bed. Liquid and vapor volume flows are 0.001 and 0.01 m³/s.
+Inlet temperatures are 320 K, bottom pressure is 100000 Pa, prescribed pressure
+gradient is 100 Pa/m and liquid holdup is 0.05. Species diffusivities are
+$10^{-9}$ m²/s; film thickness is $10^{-4}$ m. The gas coefficients are
+$10^{-7}$ mol/(m² s Pa), and the heat coefficient is 10 W/(m² K).
+Every phase evaluation uses an explicit one-second reference amount, mapping
+mol/s inputs to mol and extensive J outputs to W. These are mathematical
+phase and mixture-property declarations; they do not adopt real-solvent
+correlations or a property mixing rule.
+
+Equal inlet temperatures, equal water fugacities and zero transferred partial
+enthalpies give an exact constant-temperature, zero-water/energy-transfer
+solution. The independent reference uses the closed film integral, a scalar
+interface root and the separable plug-flow balance, without calling the
+column assembly, projection, loading callbacks or numerical film quadrature.
+It gives bottom liquid CO₂ **0.2744661315335329 mol/s**, top vapor CO₂
+**0.1255338684664671 mol/s** and capture **31.526980836472482%**.
+Spatial refinement assesses the existing mixed upwind discretization against
+this continuum reference; it does not change the equations or solve method.
+
+The zero thermal solution alone cannot check heat and capacity wiring.
+Checkpoint 1 therefore evaluates a deliberately off-solution state at
+325/330 K, with trial CO₂/water/energy fluxes of
+0.0006 mol/(m² s), 0.00002 mol/(m² s) and 25 W/m². The ordinary prepared
+feed vectors, separate A/B reporting, total-amine inlet loading 13/30 mol/mol,
+actual scales, assembled sources and interface equations pass **51 independent
+comparisons in each declaration order**. Inlet extensive capacities are
+**45 and 30 W/K**. At the off-solution state they are 48 and 30 W/K;
+vapor molar Cp is 23.4375 J/(mol K), distinct from its extensive capacity.
+Both energy source rows are −2500 W/m, both water source rows are
+−0.002 mol/(s m), and the heat-interface residual is **−25 W/m²**.
+These nonzero comparisons expose inactive thermal or water wiring that
+capture at equal temperatures would not test. The off-solution point is an
+equation check, not a column solution.
+
+The 129-node, 129-film-point declared solve gives **31.4549260621% capture**.
+Its error against the continuum reference is **0.0720548 percentage point**,
+below the specified 0.1-point limit. The bottom liquid and top vapor endpoint
+flow errors are bounded by **1.3210042×10⁻⁴ mol/s**, below 2×10⁻⁴ mol/s;
+the maximum CO₂ profile error has the same value. Maximum interface-flux
+error is **8.1516466×10⁻⁷ mol/(m² s)**, below 10⁻⁵ mol/(m² s).
+The maximum scaled original-equation residual is **5.8991×10⁻¹⁴**,
+against 10⁻⁹. The retained pre-correction solve took **303.31 s**. Corrected ordinary
+executions on the final source take **257.98 s** in original order and **256.46 s** in permuted
+order, both within the same 600 s worker / 660 s outer limits.
+
+The following refinement cases retain their pre-correction source identities and runtimes.
+The final-source finest runs above separately verify preservation.
+
+| Spatial nodes | Film points | Capture (%) | Capture error (percentage point) | Endpoint flow error (mol/s) | Column runtime (s) |
+|---:|---:|---:|---:|---:|---:|
+| 17 | 33 | 30.9604491341 | 0.5665317 | 0.001038641 | 8.72 |
+| 33 | 33 | 31.2408727055 | 0.2861081 | 0.0005245316 | 15.91 |
+| 65 | 33 | 31.3831837328 | 0.1437971 | 0.000263628 | 35.51 |
+| 129 | 33 | 31.4548740837 | 0.0721068 | 0.0001321957 | 79.72 |
+| 129 | 65 | 31.4549156665 | 0.0720652 | 0.0001321195 | 130.42 |
+| 129 | 129 | 31.4549260621 | 0.0720548 | 0.0001321004 | 303.31 |
+
+At fixed 33 film points, capture and maximum CO₂ profile errors decrease
+monotonically with 17/33/65/129 spatial nodes. The 65-node continuum error
+exceeds the terminal limits; it remains a useful coarse-grid result rather
+than a reason to relax the limits. At 129 nodes, increasing film points
+from 65 to 129 changes capture by **0.0000103957 percentage point**, below
+0.001. The remaining discrepancy is dominated by spatial discretization in
+this tested sequence. This does not establish a grid-independent solution.
+
+![The ordered spatial refinement at 33 film points reduces capture error below the terminal 0.1-point limit at 129 nodes. Points are numerical cases, with lines connecting the ordered refinement sequence; no experimental uncertainty is assigned.](results/runs/issue85_stage3_final_20261029/refinement.png)
+
+Temperature, water and energy fluxes retain their exact manufactured values
+within the prescribed checks. Pressure is 100000−100z Pa and holdup is 0.05.
+Analytical-component reconstruction errors in the finest declared run are
+at most 1.11×10⁻¹⁶ mol/s, against 10⁻¹²; reaction affinities divided by RT are
+below 4.45×10⁻¹⁶, against 10⁻¹². Minimum sampled species amount is 0.05 mol
+on the one-second basis. Fixed A/B/water/inert flows and the liquid-minus-vapor
+CO₂ invariant retain the 10⁻¹⁰ mol/s allowance. Native-grid and film checks
+remain distinct from between-node error, which the continuum comparison
+measures here.
+
+The full suite reports **330 passed, 1 warning in 537.19 s**. The warning
+is the existing deliberately invalid logarithm timing probe. Final-mode
+Engine integration passes with immutable Engine 1.0.0 `f4566b3d` and the
+unchanged wheel SHA-256. The stage-1 MEA reference remains
+89.41488041587351% capture; its declaration permutation differs by
+−4.93×10⁻¹² percentage point. The unchanged six-species film verification
+retains its 129-point flux 0.0008333330846335338 mol/(m² s), relative error
+2.9844×10⁻⁷ against the exact 1/1200 reference.
+
+
+The first finest permutation attempt remains retained under
+`results/runs/issue85_stage3_20261029/n129_q129_permuted/`. It timed out at
+600 s, with accepted algebraic initialization but no completed profile.
+A bounded trace localized construction of the common-subexpression-eliminating
+Jacobian before nonlinear-solver construction. The independent readiness review
+reported that disabling common-subexpression elimination only for a diagnostic
+probe and stopping before `nlpsol` allowed construction in about 18 s (permuted)
+and 21 s (original), with identical reported graph sizes of 6,657 and 11.53
+million nodes. This localizes construction as the cause; the exact mechanism
+making only the permuted order slow remains unestablished.
+
+The accepted correction changes only `always_inline` from true to false at
+the two existing node-call sites. Common-subexpression elimination stays enabled;
+the equations, native actions, starts, scales, limits and numerical method are
+unchanged. After independent Ready, the corrected ordinary cases complete with
+construction times **1.4911/1.4558 s**, solve times **244.4182/243.7249 s** and
+whole-column times **257.9836/256.4634 s**, in original/permuted order.
+Construction means entry to conservative collocation through return of
+`nlpsol` construction; solve time is CasADi's recorded `t_wall_total` for the
+nonlinear solver invocation. Preparation, initialization, residual reevaluation,
+certification and serialization explain the remaining whole-column time.
+Temporary pass-through timing observation changes no solver arguments or
+returned solver objects.
+
+The original/permuted flow profiles agree exactly;
+temperatures and pressures agree exactly. Holdup/loading differences are at
+most 1.67×10⁻¹⁶, and CO₂-flux differences are 3.26×10⁻¹⁹ mol/(m² s).
+All quantity-specific profile tolerances pass. Relative to the retained
+original-order profile, maximum flow difference is 2.78×10⁻¹⁷ mol/s,
+holdup/loading difference 5.56×10⁻¹⁷ and CO₂-flux difference
+2.17×10⁻¹⁹ mol/(m² s), with zero temperature/pressure difference.
+Both scaled certificates give material residual below 3.85×10⁻¹⁶,
+interface residual below 5.92×10⁻¹⁶ and zero charge/energy/boundary residuals.
+The largest scaled equation residual across both solves is 5.91×10⁻¹⁴.
+The original 31.454926062128543% record is unchanged.
+
+The scalar reference agrees at integration tolerances 10⁻¹⁰ and 10⁻¹² within
+10⁻⁷ percentage point. The corrected study combines the accepted pre-correction
+spatial/film refinement with corrected finest executions. The finest
+preservation check justifies reuse of the unchanged coarse numerical evidence;
+source identities and exact comparison roots remain in `study.json`.
+Complete corrected attempts, timing records, comparison values and the refreshed
+checks are in `results/runs/issue85_stage3_final_20261029/`;
+failed attempts and bounded diagnostics remain in the preceding run directory.
+
+The required domain-failure correction uses one shared mathematical domain
+check for value and action evaluations. An actual assembled worker evaluation
+with liquid CO₂ flow set to zero now retains `state_domain_failure`, the phase,
+T/P/feed inputs and the cause, rather than `outer_solve_failure` with no
+evaluation failure. One new previous-failure check reproduces the rejected calculation;
+the retained before/after worker records are in
+`results/runs/issue85_stage3_domain_fix_20261029/`. No native Engine state or
+result is manufactured. The final-source runs above include this correction.
+The earlier graph-only successful runs (135.92/135.98 s) remain separately
+retained; those timings are not the final-source timings.
+
+| MEA run | Stage-1 whole time (s) | Final whole time (s) | Final construction (s) | Final solve (s) |
+|:--|--:|--:|--:|--:|
+| Declared seed | 121.4600 | 110.4431 | 0.1925 | 106.5673 |
+| Declared cosine | 111.7225 | 102.4879 | 0.2040 | 98.3890 |
+| Permuted seed | 116.7868 | 119.5777 | 0.2263 | 115.3523 |
+| Permuted cosine | 110.1089 | 96.5070 | 0.2066 | 92.5872 |
+
+These are observed wall times under shared machine load, not a controlled
+speed comparison. Stage-1 construction times were not separately retained.
+All four unchanged MEA solves and their native/film permutation gates pass.
+The finest mathematical runs used the same limits and ran alongside the
+full suite; their timing is evidence for these executions only.
+
+This establishes variable-count numerical verification for this mathematical
+neutral column, including the specified full-column permutation. It supplies
+no physical validation, real second-solvent prediction, ionic-blend
+qualification, finite-rate film or fitted Amine-Thermodynamics export.
+The mathematical phase has no native Engine solve; the unchanged immutable
+Engine identity identifies the environment. Existing MEA density/holdup, area
+and caloric limitations remain. Delivered independent review and any subsequent
+investigator promotion remain open.
+
+HSL acknowledgement for MA57 evidence: HSL, a collection of Fortran codes for
+large-scale scientific computation. https://www.hsl.rl.ac.uk/

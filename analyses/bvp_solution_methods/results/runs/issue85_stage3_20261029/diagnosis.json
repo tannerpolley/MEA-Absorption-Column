@@ -1,0 +1,12 @@
+{
+  "production_changed": false,
+  "full_case_worker_limit_s": 600,
+  "full_case_outer_limit_s": 660,
+  "diagnostic_original_outer_limit_s": 95,
+  "diagnostic_original_exit_code": 124,
+  "diagnostic_candidate_outer_limit_s": 150,
+  "diagnostic_candidate_exit_code": 124,
+  "candidate_nlpsol_constructed_s": 5.052,
+  "candidate_completed_profile": false,
+  "remaining_decision": "Return to Design before second production integration"
+}
