@@ -1,4 +1,4 @@
-# Local Codex Instructions
+# MEA-Absorption-Column agent instructions
 
 <!-- CSE:BEGIN PROTOCOL -->
 ## CSE Protocol
@@ -48,7 +48,7 @@ CSE execution mode: direct.
 ## Repository Workflow
 
 - A new checkout or worktree needs only `bash scripts/setup_environment.sh` (fetches and hash-checks the pinned Engine wheel, then `uv sync --frozen --group test`; about 8 s first time). Run everything through `uv run --frozen`.
-- Regression checks: see `README.md`. Engine 1.0.0 main-f4566b3d passes the final integration check; the full suite passes 289 tests, including the ideal-Henry 3C positive-flow pressure transform.
+- Regression checks and the current Engine qualification: see `README.md`.
 - Tests write scratch under `.tmp_local/` and column runs default to `.tmp_column_runs/`; both are git-ignored. A new study result goes in a new `analyses/<study>/results/runs/<label>/` directory.
 - Do not accept slow or broken solver runs as normal: give each case a wall limit (`execution.wall_limit_s`) and a log, stop stale runs you started, and report the root cause with a faster bounded alternative.
 - Preserve existing dirty work and inspect overlapping files before editing.
@@ -62,19 +62,13 @@ CSE execution mode: direct.
 - Twelve-state hydraulic density stays the ePC-SAFT solved-state density (`density_source` default `solved_state`), so the column stays one predictive model. Its loaded density reads about 11 % high against Amundsen 2009, which lowers holdup by about 12–16 % on 3C. State this in any holdup or hydraulic claim. Evidence: `analyses/liquid_density/` (#83, 2026-10-29).
 - Manuscript prose: keep `local`, `history`, `historical` and `histories` out of it, and keep software-build chronology outside the article (2026-09-04). For LaTeX, apply `cse:latex` and run the build loop until the edit adds no warnings (2026-05-06).
 
-## Commit Discipline
-
-- Commit, push, or create a PR only when the user requests it or an approved workflow requires it.
-- Before committing, verify the current branch, validation results, status, and final commit.
-
 ## ePC-SAFT Cross-Repo Integration
 
 - This is an official downstream application under ePC-SAFT Governance D-038.
-- Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT` (GitHub `tannerpolley/ePC-SAFT`); never import its source tree directly.
+- Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT` (`tannerpolley/ePC-SAFT`); never import its source tree directly.
 - Normal and final work uses one non-editable `epcsaft` wheel identified by Engine commit and wheel SHA-256. Intentional co-development uses an explicitly supplied candidate wheel with the same recorded identity.
 - Keep absorber integration, column validation and process analyses here. Thermodynamic parameter adoption remains owned by Amine-Thermodynamics; generic equations and solvers remain owned by the Engine.
 - Do not create nested repositories, submodules, mutable Git package dependencies, or dictionary compatibility copies of Engine behavior.
 - Final manuscript, report, or archive results must pass `uv run python scripts/check_epcsaft_integration.py --mode final` without mutable package state.
 - Preserve result-critical datasets under `src/mea_absorption_column/data/epcsaft_datasets`.
 - Keep reusable `epcsaft` interactions behind explicit thermodynamics/runtime modules.
-- Use `epcsaft-cross-repo` for contracts, upstream feedback, and handoffs.
