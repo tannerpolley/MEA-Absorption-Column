@@ -52,6 +52,7 @@ CSE execution mode: direct.
 - Tests write scratch under `.tmp_local/` and column runs default to `.tmp_column_runs/`; both are git-ignored. A new study result goes in a new `analyses/<study>/results/runs/<label>/` directory.
 - Do not accept slow or broken solver runs as normal: give each case a wall limit (`execution.wall_limit_s`) and a log, stop stale runs you started, and report the root cause with a faster bounded alternative.
 - Preserve existing dirty work and inspect overlapping files before editing.
+- Before committing, verify the current branch, validation results, status, and final commit.
 - Record durable rules in this file. Do not keep local journals or agent memory for this repository.
 
 ## Standing Decisions
