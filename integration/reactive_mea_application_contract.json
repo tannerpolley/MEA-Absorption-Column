@@ -316,7 +316,7 @@
     "simultaneous_k_ij_and_cross_association_fit": "forbidden_without_preregistered_rank_and_profile_identifiability_evidence"
   },
   "upstream_acceptance": {
-    "engine_repository": "tannerpolley/ePC-SAFT",
+    "engine_repository": "tannerpolley/epcsaft",
     "required_families_in_order": [
       "certified_homogeneous_reactive_observations",
       "certified_reactive_bubble_vle_observations"

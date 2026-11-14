@@ -111,7 +111,7 @@ validation claim.
 - `analyses/`: study inputs, scripts, retained attempts and Quarto notebooks.
 - `tests/`: focused behavior and independent analytic checks.
 - `docs/scientific/latex/`: preserved submitted manuscript; no ongoing editorial work.
-- Engine (`../ePC-SAFT`, GitHub `tannerpolley/ePC-SAFT`): generic equations, equilibrium and derivatives.
+- Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/epcsaft` (`tannerpolley/epcsaft`); pinned release wheels come from `tannerpolley/epcsaft-validation`, and new Engine requests are filed in `tannerpolley/epcsaft`. The Engine owns generic equations, equilibrium and derivatives.
 - `Amine-Thermodynamics`: parameter fitting and thermodynamic parameter adoption.
 
 Use identified, non-editable Engine wheels. The pinned dependency is a convenient

@@ -12,11 +12,11 @@ wheel="$dir/$name"
 
 if [[ ! -f "$wheel" ]]; then
   mkdir -p "$dir"
-  gh release download "$tag" --repo tannerpolley/ePC-SAFT --dir "$dir" \
+  gh release download "$tag" --repo tannerpolley/epcsaft-validation --dir "$dir" \
     --pattern '*.whl' --pattern '*.sha256' --pattern release.json
-  digest="$(gh api "repos/tannerpolley/ePC-SAFT/releases/tags/$tag" \
+  digest="$(gh api "repos/tannerpolley/epcsaft-validation/releases/tags/$tag" \
     --jq '.assets[] | select(.name | endswith(".whl")) | .digest')"
-  target="$(gh api "repos/tannerpolley/ePC-SAFT/git/ref/tags/$tag" --jq .object.sha)"
+  target="$(gh api "repos/tannerpolley/epcsaft-validation/git/ref/tags/$tag" --jq .object.sha)"
   [[ "$digest" == "sha256:$sha" ]] || { echo "release digest $digest != contract $sha" >&2; exit 1; }
   [[ "$target" == "$commit" ]] || { echo "tag target $target != contract $commit" >&2; exit 1; }
 fi

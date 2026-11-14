@@ -67,7 +67,7 @@ CSE execution mode: direct.
 ## ePC-SAFT Cross-Repo Integration
 
 - This is an official downstream application under ePC-SAFT Governance D-038.
-- Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/ePC-SAFT` (`tannerpolley/ePC-SAFT`); never import its source tree directly.
+- Engine governance and source live at `/home/tnnrpolley21/Workspaces/Engineering/epcsaft` (`tannerpolley/epcsaft`); pinned release wheels come from `tannerpolley/epcsaft-validation`, and new Engine requests are filed in `tannerpolley/epcsaft`. Never import its source tree directly.
 - Normal and final work uses one non-editable `epcsaft` wheel identified by Engine commit and wheel SHA-256. Intentional co-development uses an explicitly supplied candidate wheel with the same recorded identity.
 - Keep absorber integration, column validation and process analyses here. Thermodynamic parameter adoption remains owned by Amine-Thermodynamics; generic equations and solvers remain owned by the Engine.
 - Do not create nested repositories, submodules, mutable Git package dependencies, or dictionary compatibility copies of Engine behavior.
