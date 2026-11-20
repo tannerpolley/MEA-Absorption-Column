@@ -125,8 +125,7 @@ hashes, species, charges and units. Do not import a mutable sibling source tree.
 ## Notebook and validation workflow
 
 ```bash
-python3 analyses/manuscript.py validate analyses
-bash analyses/render.sh --to html
+bash analyses/render.sh
 ```
 
 The registered analysis pages appear in the root Quarto website. Rendering is

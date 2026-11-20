@@ -5,10 +5,18 @@ Research is active; manuscript revision work is complete. Start at
 analysis pages:
 
 ```bash
-python3 analyses/manuscript.py validate analyses
-bash analyses/render.sh --to html
+bash analyses/render.sh
 ```
 
+To upgrade the tooling or register and refresh a report, run from the repository root:
+
+```bash
+python3 "$CSE_PLUGIN/assets/visualize/project/quarto/manuscript.py" init analyses/
+python3 analyses/manuscript.py include analyses/ analyses/case/notebook.qmd --title "Case" --group "Reports"
+python3 analyses/manuscript.py refresh analyses/ analyses/case/notebook.qmd
+```
+
+Replace the example report and title with the intended page; the group is optional.
 The site renders with execution disabled. Start a calculation separately from
 an explicit configuration; rendering never runs a model or changes retained
 results. `_cse-manuscript.json` owns site membership and sidebar order.

@@ -20,73 +20,15 @@
       "collapse-level": 1,
       "contents": [
         {
-          "section": "Home",
-          "contents": [
-            {
-              "text": "Overview",
-              "href": "index.qmd"
-            },
-            {
-              "text": "Research focus",
-              "href": "index.qmd#research-focus"
-            },
-            {
-              "text": "Ownership",
-              "href": "index.qmd#ownership"
-            },
-            {
-              "text": "Reading the analyses",
-              "href": "index.qmd#reading-the-analyses"
-            },
-            {
-              "text": "Rendering boundary",
-              "href": "index.qmd#rendering-boundary"
-            }
-          ]
+          "text": "Home",
+          "href": "index.qmd"
         },
         {
           "section": "Research overview",
           "contents": [
             {
-              "section": "Research options",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "research_options/notebook.qmd"
-                },
-                {
-                  "text": "Research question",
-                  "href": "research_options/notebook.qmd#research-question"
-                },
-                {
-                  "text": "Select the calculation explicitly",
-                  "href": "research_options/notebook.qmd#select-the-calculation-explicitly"
-                },
-                {
-                  "text": "Retained findings and potential promotions",
-                  "href": "research_options/notebook.qmd#retained-findings-and-potential-promotions"
-                },
-                {
-                  "text": "Comparison design",
-                  "href": "research_options/notebook.qmd#comparison-design"
-                },
-                {
-                  "text": "Evidence preservation",
-                  "href": "research_options/notebook.qmd#evidence-preservation"
-                },
-                {
-                  "text": "Working practice",
-                  "href": "research_options/notebook.qmd#working-practice"
-                },
-                {
-                  "text": "Seven-state Engine calculation: numerical verification",
-                  "href": "research_options/notebook.qmd#seven-state-engine-calculation-numerical-verification"
-                },
-                {
-                  "text": "Configuration capability evidence \u2014 29 October 2026",
-                  "href": "research_options/notebook.qmd#configuration-capability-evidence-29-october-2026"
-                }
-              ]
+              "text": "Research options",
+              "href": "research_options/notebook.qmd"
             }
           ]
         },
@@ -94,152 +36,20 @@
           "section": "Column studies",
           "contents": [
             {
-              "section": "NCCC validation",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "nccc_validation/notebook.qmd"
-                },
-                {
-                  "text": "Decision addressed",
-                  "href": "nccc_validation/notebook.qmd#decision-addressed"
-                },
-                {
-                  "text": "Work Package A property admission after the source correction",
-                  "href": "nccc_validation/notebook.qmd#work-package-a-property-admission-after-the-source-correction"
-                },
-                {
-                  "text": "Retained evidence and identity",
-                  "href": "nccc_validation/notebook.qmd#retained-evidence-and-identity"
-                },
-                {
-                  "text": "Calculations compared",
-                  "href": "nccc_validation/notebook.qmd#calculations-compared"
-                },
-                {
-                  "text": "Results",
-                  "href": "nccc_validation/notebook.qmd#results"
-                },
-                {
-                  "text": "Numerical acceptance evidence",
-                  "href": "nccc_validation/notebook.qmd#numerical-acceptance-evidence"
-                },
-                {
-                  "text": "Interpretation",
-                  "href": "nccc_validation/notebook.qmd#interpretation"
-                },
-                {
-                  "text": "Claim boundary and manuscript use",
-                  "href": "nccc_validation/notebook.qmd#claim-boundary-and-manuscript-use"
-                },
-                {
-                  "text": "Next scientific checks",
-                  "href": "nccc_validation/notebook.qmd#next-scientific-checks"
-                }
-              ]
+              "text": "NCCC validation",
+              "href": "nccc_validation/notebook.qmd"
             },
             {
-              "section": "Case 3C operating response",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd"
-                },
-                {
-                  "text": "Question and conditions",
-                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd#question-and-conditions"
-                },
-                {
-                  "text": "Results",
-                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd#results"
-                },
-                {
-                  "text": "Numerical checks and failures",
-                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd#numerical-checks-and-failures"
-                },
-                {
-                  "text": "Reproduction and provenance",
-                  "href": "nccc_validation/figures/reactive_operating/notebook.qmd#reproduction-and-provenance"
-                }
-              ]
+              "text": "Case 3C operating response",
+              "href": "nccc_validation/figures/reactive_operating/notebook.qmd"
             },
             {
-              "section": "Transport sensitivity",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "transport_sensitivity/notebook.qmd"
-                },
-                {
-                  "text": "Question and conditions",
-                  "href": "transport_sensitivity/notebook.qmd#question-and-conditions"
-                },
-                {
-                  "text": "Baseline verification",
-                  "href": "transport_sensitivity/notebook.qmd#baseline-verification"
-                },
-                {
-                  "text": "Column response",
-                  "href": "transport_sensitivity/notebook.qmd#column-response"
-                },
-                {
-                  "text": "Diagnosed initialization failure",
-                  "href": "transport_sensitivity/notebook.qmd#diagnosed-initialization-failure"
-                },
-                {
-                  "text": "Interpretation limits",
-                  "href": "transport_sensitivity/notebook.qmd#interpretation-limits"
-                },
-                {
-                  "text": "Retained evidence and reproduction",
-                  "href": "transport_sensitivity/notebook.qmd#retained-evidence-and-reproduction"
-                },
-                {
-                  "text": "Numerical sensitivity: interfacial-area coefficients (issue 84)",
-                  "href": "transport_sensitivity/notebook.qmd#numerical-sensitivity-interfacial-area-coefficients-issue-84"
-                }
-              ]
+              "text": "Transport sensitivity",
+              "href": "transport_sensitivity/notebook.qmd"
             },
             {
-              "section": "Reactive-film evidence",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "reactive_film_evidence/notebook.qmd"
-                },
-                {
-                  "text": "Current selectable closures: Engine 1.0.0 (issue 16)",
-                  "href": "reactive_film_evidence/notebook.qmd#current-selectable-closures-engine-1.0.0-issue-16"
-                },
-                {
-                  "text": "Earlier hybrid campaign (separate input basis)",
-                  "href": "reactive_film_evidence/notebook.qmd#earlier-hybrid-campaign-separate-input-basis"
-                },
-                {
-                  "text": "Decision",
-                  "href": "reactive_film_evidence/notebook.qmd#decision"
-                },
-                {
-                  "text": "Formulation",
-                  "href": "reactive_film_evidence/notebook.qmd#formulation"
-                },
-                {
-                  "text": "Retained campaign",
-                  "href": "reactive_film_evidence/notebook.qmd#retained-campaign"
-                },
-                {
-                  "text": "Temperature-profile comparison",
-                  "href": "reactive_film_evidence/notebook.qmd#temperature-profile-comparison"
-                },
-                {
-                  "text": "Numerical status",
-                  "href": "reactive_film_evidence/notebook.qmd#numerical-status"
-                },
-                {
-                  "text": "Claim boundary",
-                  "href": "reactive_film_evidence/notebook.qmd#claim-boundary"
-                }
-              ]
+              "text": "Reactive-film evidence",
+              "href": "reactive_film_evidence/notebook.qmd"
             }
           ]
         },
@@ -247,102 +57,12 @@
           "section": "Numerical methods",
           "contents": [
             {
-              "section": "BVP derivative trials",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "bvp_derivative_trials/notebook.qmd"
-                },
-                {
-                  "text": "Decision addressed",
-                  "href": "bvp_derivative_trials/notebook.qmd#decision-addressed"
-                },
-                {
-                  "text": "Retained evidence and admission",
-                  "href": "bvp_derivative_trials/notebook.qmd#retained-evidence-and-admission"
-                },
-                {
-                  "text": "Quantities and checks",
-                  "href": "bvp_derivative_trials/notebook.qmd#quantities-and-checks"
-                },
-                {
-                  "text": "Results",
-                  "href": "bvp_derivative_trials/notebook.qmd#results"
-                },
-                {
-                  "text": "Claim boundary and remaining gates",
-                  "href": "bvp_derivative_trials/notebook.qmd#claim-boundary-and-remaining-gates"
-                },
-                {
-                  "text": "Reproduction boundary",
-                  "href": "bvp_derivative_trials/notebook.qmd#reproduction-boundary"
-                },
-                {
-                  "text": "Issue 81: positive-flow coordinate correction",
-                  "href": "bvp_derivative_trials/notebook.qmd#issue-81-positive-flow-coordinate-correction"
-                }
-              ]
+              "text": "BVP derivative trials",
+              "href": "bvp_derivative_trials/notebook.qmd"
             },
             {
-              "section": "Conserved full-column BVP",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "bvp_solution_methods/notebook.qmd"
-                },
-                {
-                  "text": "Question",
-                  "href": "bvp_solution_methods/notebook.qmd#question"
-                },
-                {
-                  "text": "Conditions",
-                  "href": "bvp_solution_methods/notebook.qmd#conditions"
-                },
-                {
-                  "text": "Results",
-                  "href": "bvp_solution_methods/notebook.qmd#results"
-                },
-                {
-                  "text": "Interpretation",
-                  "href": "bvp_solution_methods/notebook.qmd#interpretation"
-                },
-                {
-                  "text": "Limitations",
-                  "href": "bvp_solution_methods/notebook.qmd#limitations"
-                },
-                {
-                  "text": "Conclusion and next steps",
-                  "href": "bvp_solution_methods/notebook.qmd#conclusion-and-next-steps"
-                },
-                {
-                  "text": "Provenance",
-                  "href": "bvp_solution_methods/notebook.qmd#provenance"
-                },
-                {
-                  "text": "Current-pin MEA reproduction for issue 85",
-                  "href": "bvp_solution_methods/notebook.qmd#current-pin-mea-reproduction-for-issue-85"
-                },
-                {
-                  "text": "Declared-input MEA verification for issue 85, stage 1",
-                  "href": "bvp_solution_methods/notebook.qmd#declared-input-mea-verification-for-issue-85-stage-1"
-                },
-                {
-                  "text": "Corrected stage-1 admission and native-action verification",
-                  "href": "bvp_solution_methods/notebook.qmd#corrected-stage-1-admission-and-native-action-verification"
-                },
-                {
-                  "text": "Variable-count two-amine film: numerical verification",
-                  "href": "bvp_solution_methods/notebook.qmd#variable-count-two-amine-film"
-                },
-                {
-                  "text": "Two-amine twelve-state column numerical verification",
-                  "href": "bvp_solution_methods/notebook.qmd#two-amine-column"
-                },
-                {
-                  "text": "MDEA thermodynamic consumption and actions: issue 85, stage 4 checkpoint 1",
-                  "href": "bvp_solution_methods/notebook.qmd#mdea-thermodynamic-consumption-and-actions-issue-85-stage-4-checkpoint-1"
-                }
-              ]
+              "text": "Conserved full-column BVP",
+              "href": "bvp_solution_methods/notebook.qmd"
             }
           ]
         },
@@ -350,37 +70,8 @@
           "section": "Reactive-film methods",
           "contents": [
             {
-              "section": "Reactive-film runtime",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "issue16_reactive_film_runtime/notebook.qmd"
-                },
-                {
-                  "text": "Question",
-                  "href": "issue16_reactive_film_runtime/notebook.qmd#question"
-                },
-                {
-                  "text": "Retained calculation",
-                  "href": "issue16_reactive_film_runtime/notebook.qmd#retained-calculation"
-                },
-                {
-                  "text": "Numerical results",
-                  "href": "issue16_reactive_film_runtime/notebook.qmd#numerical-results"
-                },
-                {
-                  "text": "Scientific limitations",
-                  "href": "issue16_reactive_film_runtime/notebook.qmd#scientific-limitations"
-                },
-                {
-                  "text": "Conclusion and manuscript-adoption decision",
-                  "href": "issue16_reactive_film_runtime/notebook.qmd#conclusion-and-manuscript-adoption-decision"
-                },
-                {
-                  "text": "Provenance",
-                  "href": "issue16_reactive_film_runtime/notebook.qmd#provenance"
-                }
-              ]
+              "text": "Reactive-film runtime",
+              "href": "issue16_reactive_film_runtime/notebook.qmd"
             }
           ]
         },
@@ -388,33 +79,8 @@
           "section": "Thermodynamic integration",
           "contents": [
             {
-              "section": "Engine wheel adoption",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "engine_wheel_adoption/notebook.qmd"
-                },
-                {
-                  "text": "Question and basis",
-                  "href": "engine_wheel_adoption/notebook.qmd#question-and-basis"
-                },
-                {
-                  "text": "Reaction reference and unchanged inputs",
-                  "href": "engine_wheel_adoption/notebook.qmd#reaction-reference-and-unchanged-inputs"
-                },
-                {
-                  "text": "Diagnosed reference correction",
-                  "href": "engine_wheel_adoption/notebook.qmd#diagnosed-reference-correction"
-                },
-                {
-                  "text": "Bounded reactive 3C calculation",
-                  "href": "engine_wheel_adoption/notebook.qmd#bounded-reactive-3c-calculation"
-                },
-                {
-                  "text": "Remaining gate",
-                  "href": "engine_wheel_adoption/notebook.qmd#remaining-gate"
-                }
-              ]
+              "text": "Engine wheel adoption",
+              "href": "engine_wheel_adoption/notebook.qmd"
             }
           ]
         },
@@ -422,37 +88,8 @@
           "section": "Properties",
           "contents": [
             {
-              "section": "Liquid density comparison",
-              "contents": [
-                {
-                  "text": "Overview",
-                  "href": "liquid_density/notebook.qmd"
-                },
-                {
-                  "text": "Question and decision",
-                  "href": "liquid_density/notebook.qmd#question-and-decision"
-                },
-                {
-                  "text": "Observation basis and retained identities",
-                  "href": "liquid_density/notebook.qmd#observation-basis-and-retained-identities"
-                },
-                {
-                  "text": "Density comparison",
-                  "href": "liquid_density/notebook.qmd#density-comparison"
-                },
-                {
-                  "text": "Recovered candidate and scope",
-                  "href": "liquid_density/notebook.qmd#recovered-candidate-and-scope"
-                },
-                {
-                  "text": "Controlled case 3C comparison",
-                  "href": "liquid_density/notebook.qmd#controlled-case-3c-comparison"
-                },
-                {
-                  "text": "Evidence and reproduction",
-                  "href": "liquid_density/notebook.qmd#evidence-and-reproduction"
-                }
-              ]
+              "text": "Liquid density comparison",
+              "href": "liquid_density/notebook.qmd"
             }
           ]
         }
