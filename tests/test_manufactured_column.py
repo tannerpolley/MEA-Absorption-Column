@@ -81,3 +81,47 @@ def test_invalid_evaluated_feed_keeps_domain_failure_in_worker(tmp_path,monkeypa
     assert cause['inputs']['temperature_k'] == 320.
     assert cause['inputs']['pressure_pa'] == 100000.
     assert 'mathematical_liquid' in cause['message'] and 'feed [mol/s]' in cause['message']
+
+
+def test_symbolic_inlet_functions_equal_numeric_inlet_functions(tmp_path):
+    from mea_absorption_column.column import _build_conserved_assembly, _case_frame, _resolved_inputs
+
+    verify = run_path(str(SCRIPT))
+    verify["inputs"](tmp_path, points=9)
+    request = verify["request"](tmp_path, points=9)
+    config = resolve_column_config(request)
+    inputs = _resolved_inputs(config, _case_frame(config)[0])
+    moved = list(inputs["parameters"])
+    moved[0] = 1.3 * np.asarray(moved[0])
+    moved[1] = .8 * np.asarray(moved[1])
+    moved[2] += 4.
+    moved[3] -= 3.
+    moved[7] *= .98
+    inlets = np.r_[moved[0], moved[1], moved[2], moved[3], moved[7]]
+
+    design_config = resolve_column_config({**request, "design": {
+        "capture_target": .9, "scale_bounds": [.5, 2.], "inlet_parameters": inlets.tolist(),
+    }})
+    resolved_request = design_config.as_dict()
+    assert resolve_column_config(resolved_request).as_dict() == resolved_request
+    symbolic = _build_conserved_assembly(design_config, inputs)
+    moved_numeric = _build_conserved_assembly(config, {**inputs, "parameters": tuple(moved)})
+    base_numeric = _build_conserved_assembly(config, inputs)
+    bottom = np.array([.24, 1.1, .16, .12, 325, 330, 99950, .06, .0006, .00002, 25, np.log(1.2)])
+    top = 1.01 * bottom
+
+    def same(actual, expected):
+        np.testing.assert_allclose(np.asarray(actual), np.asarray(expected), rtol=1e-12, atol=1e-12)
+
+    for actual, expected in zip(symbolic["design_node"](0., bottom, inlets), moved_numeric["node"](0., bottom), strict=True):
+        same(actual, expected)
+    same(symbolic["design_boundary"](bottom, top, inlets), moved_numeric["boundary"](bottom, top))
+
+    for function, args in (
+        ("node", (0., bottom)),
+        ("balance", (bottom[:8], bottom[8:11])),
+        ("diagnostics", (bottom,)),
+    ):
+        for actual, expected in zip(symbolic[function](*args), base_numeric[function](*args), strict=True):
+            same(actual, expected)
+    same(symbolic["boundary"](bottom, top), base_numeric["boundary"](bottom, top))

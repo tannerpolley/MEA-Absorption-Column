@@ -518,11 +518,16 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         )
 
     settings = dict(config.numerics.as_dict()["solver_settings"])
+    inlet = None
+    if config.design:
+        inlet_values = np.r_[liquid_feed, vapor_feed, liquid_temperature, vapor_temperature, pressure]
+        inlet = ca.MX.sym("inlets", inlet_values.size)
     node, boundary, diagnostics = build_coupled_column_functions(
         liquid,
         vapor,
         species_diffusivities=solvent.diffusivities if solvent else species_diffusivities,
         quadrature_points=settings["quadrature_points"],
+        inlet=inlet,
         **({"prescribed_closures": solvent.transport["closures"]} if mathematical else {}),
         liquid_density_source=settings.get("liquid_density_source", "solved_state"),
         co2_model={
@@ -538,13 +543,16 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         packing=packing,
     )
     balance = node._thermodynamic_callbacks[0]
+    functions = {"node": node, "boundary": boundary, "balance": balance, "diagnostics": diagnostics}
+    if inlet is not None:
+        def bind(function):
+            return lambda *args: function(*args, inlet_values)
+        functions = {name: bind(function) for name, function in functions.items()}
+        functions.update(design_node=node, design_boundary=boundary, inlet_values=inlet_values)
     return {
         "liquid": liquid,
         "vapor": vapor,
-        "node": node,
-        "balance": balance,
-        "boundary": boundary,
-        "diagnostics": diagnostics,
+        **functions,
         "balance_count": int(node.size1_out(0)),
         "algebraic_count": int(node.size1_out(2)),
         "state_count": int(node.size1_in(1)),
@@ -996,13 +1004,35 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     grid = assembly['coordinate']
     homotopy_step = settings.get('source_homotopy_initial_step')
     from .BVP.Methods.Casadi_Collocation import solve_conservative_collocation
+    design = None
+    if config.design:
+        import casadi as ca
+
+        requested = config.as_dict()["design"]
+        base_inlets = assembly["inlet_values"]
+        inlet_parameters = requested.get("inlet_parameters", base_inlets)
+        scale, p = ca.MX.sym("s"), ca.MX.sym("p", len(base_inlets) + 1)
+        bottom, top = ca.MX.sym("bottom", len(lower)), ca.MX.sym("top", len(lower))
+        n_liquid = len(liquid_feed)
+        s_min, s_max = requested["scale_bounds"]
+        node, boundary = assembly["design_node"], assembly["design_boundary"]
+        design = {
+            "initial": [requested["initial_scale"]], "lower": [s_min], "upper": [s_max],
+            "parameters": np.r_[inlet_parameters, requested["capture_target"]],
+            "inlets": ca.Function("design_inlets", [scale, p], [ca.vertcat(scale * p[:n_liquid], p[n_liquid:-1])]),
+            "objective": ca.Function("solvent_scale", [scale, p], [scale]),
+            "rows": ca.Function("capture", [bottom, top, scale, p],
+                                [top[2] - (1. - p[-1]) * p[n_liquid + vf[co2]]]),
+            "row_scale": [boundary_scale[2]],
+        }
+
     def solve(profile, multiplier=None):
         return solve_conservative_collocation(
             node, boundary, grid, profile, lower, upper, state_scale=state_scale, balance_scale=balance_scale,
             algebraic_scale=algebraic_scale, boundary_scale=boundary_scale, tolerance=settings["tolerance"],
             max_iterations=settings["max_iterations"], scheme=config.numerics.method,
             boundary_slots=[(0, -1), (1, -1), (2, 0), (3, 0), (4, -1), (5, 0), (6, 0)] if config.numerics.method == "central" else None,
-            source_multiplier=multiplier,
+            source_multiplier=multiplier, design=design,
             # Liquid flows down (leaves a cell at its lower node), gas and its pressure up.
             cell_sources=("lower", "lower", "upper", "upper", "lower", "upper", "upper", *["cell"] * 5)
             if config.numerics.method == "upwind" else None,
@@ -1057,6 +1087,11 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
                 {"accepted": False, "reason": "No completed candidate profile was returned"})
     if result["profile"] is not None:
         profile = np.asarray(result["profile"], dtype=float)
+        if design is not None:
+            inlets = design["inlets"](result["design"]["decision"], design["parameters"])
+            liquid_feed = np.asarray(inlets).ravel()[:len(liquid_feed)]
+            assembly = {**assembly, "node": lambda z, state: node(z, state, inlets),
+                        "boundary": lambda bottom, top: boundary(bottom, top, inlets)}
         if config.model.film_model == "equilibrium_manifold":
             physical = _equilibrium_physical_certification(
                 result, assembly, liquid_feed, lower, upper, checkpoint["scaling"],

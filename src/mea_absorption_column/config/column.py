@@ -260,6 +260,7 @@ class ColumnConfig:
     engine: EngineConfig
     schema_version: int = SCHEMA_VERSION
     solvent: Any = field(default=None, repr=False, compare=False)
+    design: tuple[tuple[str, Any], ...] = ()
     resolved_config_sha256: str = field(init=False)
 
     def __post_init__(self) -> None:
@@ -281,6 +282,7 @@ class ColumnConfig:
             "execution": self.execution.as_dict(),
             "dependencies": self.dependencies.as_dict(),
             "engine": self.engine.as_dict(),
+            **({"design": _thaw(self.design)} if self.design else {}),
         }
         if include_fingerprint:
             result["resolved_config_sha256"] = self.resolved_config_sha256
@@ -610,12 +612,17 @@ def _dependencies(request: Mapping[str, Any]) -> DependencyConfig:
 
 
 def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
-    """Resolve declarations before native evaluation or solver construction."""
+    """Resolve declarations before native evaluation or solver construction.
+
+    Optional design inlet_parameters follow the case's liquid feed order, then
+    vapor feed order, liquid and vapor temperatures [K], and pressure [Pa].
+    capture_target is a fraction and initial_scale defaults to 1.
+    """
     if not isinstance(request, Mapping):
         raise ConfigurationError("Column configuration must be a mapping")
     allowed = {
         "schema_version", "preset", "case", "model", "numerics", "initialization",
-        "acceptance", "execution", "dependencies", "engine", "resolved_config_sha256",
+        "acceptance", "execution", "dependencies", "engine", "resolved_config_sha256", "design",
     }
     unknown = set(request) - allowed
     if unknown:
@@ -715,6 +722,27 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     model = ModelConfig(**expected)
     numerics_request = _section(request, "numerics")
     numerics = _conserved_numeric(numerics_request) if preset == TWELVE_PRESET else _numeric(numerics_request)
+    design = dict(_section(request, "design"))
+    if "design" in request:
+        if preset != TWELVE_PRESET or model.film_model != "equilibrium_manifold" or numerics.method != "upwind":
+            raise ConfigurationError("Design requires the twelve-state equilibrium-manifold upwind route")
+        if set(design) - {"capture_target", "scale_bounds", "initial_scale", "inlet_parameters"}:
+            raise ConfigurationError("Unknown design settings")
+        bounds = design.get("scale_bounds")
+        target, start = design.get("capture_target"), design.get("initial_scale", 1.)
+        def positive(value):
+            return type(value) in (int, float) and math.isfinite(value) and value > 0.
+        if not positive(target) or target >= 1. or not positive(start):
+            raise ConfigurationError("Design needs 0 < capture_target < 1 and a positive initial_scale")
+        if (not isinstance(bounds, (list, tuple)) or len(bounds) != 2
+                or not all(map(positive, bounds)) or bounds[0] >= bounds[1] or not bounds[0] <= start <= bounds[1]):
+            raise ConfigurationError("Design needs increasing positive scale_bounds containing initial_scale")
+        if "inlet_parameters" in design:
+            values = design["inlet_parameters"]
+            count = len(solvent.feeds) + len(solvent.gas) + 3 if solvent else 10
+            if not isinstance(values, (tuple, list)) or len(values) != count or not all(map(positive, values)):
+                raise ConfigurationError(f"Design needs {count} positive inlet_parameters in feed, temperature, pressure order")
+        design["initial_scale"] = start
     init_values = _section(request, "initialization")
     if set(init_values) - {"policy", "values"}:
         raise ConfigurationError(f"Unknown initialization keys: {sorted(set(init_values) - {'policy', 'values'})}")
@@ -789,6 +817,7 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
         dependencies=dependencies,
         engine=engine,
         solvent=solvent,
+        design=_freeze(design),
     )
     expected_fingerprint = request.get("resolved_config_sha256")
     if expected_fingerprint is not None:

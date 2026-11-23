@@ -9,7 +9,7 @@ def solve_conservative_collocation(
     node, boundary, grid, initial, lower, upper, *, state_scale,
     balance_scale, algebraic_scale, boundary_scale, tolerance=1e-8,
     max_iterations=200, iteration_callback=None, scheme="trapezoidal", boundary_slots=None, source_multiplier=None,
-    cell_sources=None,
+    cell_sources=None, design=None,
 ):
     """Solve dB(z,u)/dz=R(z,u), a(z,u)=0 with countercurrent boundaries.
 
@@ -43,12 +43,19 @@ def solve_conservative_collocation(
     either sign never alternate. One shared cell source keeps every linear
     invariant exact on the grid. Nodes keep their own algebraic equations.
     First order in h.
+
+    With design, node and boundary also take inlets(decision, parameters).
+    Minimize objective(decision, parameters) subject to the column equations
+    and rows(bottom, top, decision, parameters) / row_scale <= 0.
+    Returned lam_p is the negative optimum objective derivative. Row multipliers
+    are in solver units, so the physical multiplier is lam_g / row_scale.
     """
     grid = np.asarray(grid, dtype=float)
     initial = np.asarray(initial, dtype=float)
     if grid.ndim != 1 or grid.size < 2 or np.any(~np.isfinite(grid)) or np.any(np.diff(grid) <= 0):
         raise ValueError("Collocation grid must be finite and strictly increasing")
-    if node.n_in() != 2 or node.n_out() != 3 or boundary.n_in() != 2 or boundary.n_out() != 1:
+    arity = 2 if design is None else 3
+    if node.n_in() != arity or node.n_out() != 3 or boundary.n_in() != arity or boundary.n_out() != 1:
         raise ValueError("Expected node(z,u)->(B,R,a) and boundary(bottom,top)")
     n, m, q = node.size1_in(1), node.size1_out(0), node.size1_out(2)
     if (m < 1 or n != m + q or node.size_in(0) != (1, 1)
@@ -90,9 +97,19 @@ def solve_conservative_collocation(
             or list(cell_sources).count("cell") != q)):
         raise ValueError("Upwind cells need one lower/upper/cell source per state, with q cell unknowns")
 
+    parameters, inlet_args = [], []
+    if design is not None:
+        decision = ca.MX.sym("decision", len(design["initial"]))
+        parameter = ca.MX.sym("p", len(design["parameters"]))
+        parameters = [parameter]
+        inlet_args = [design["inlets"](decision, parameter)]
+        row_scale = np.asarray(design["row_scale"], dtype=float)
+        if np.any(~np.isfinite(row_scale)) or np.any(row_scale <= 0):
+            raise ValueError("Design row scales must be finite positive")
+
     variables = ca.MX.sym("scaled_nodes", n, grid.size)
     physical = ca.repmat(ca.DM(state_scale), 1, grid.size) * variables
-    evaluated = [node.call([ca.MX(float(z)), physical[:, k]], False, False) for k, z in enumerate(grid)]
+    evaluated = [node.call([ca.MX(float(z)), physical[:, k], *inlet_args], False, False) for k, z in enumerate(grid)]
     cell_rows = [i for i, v in enumerate(cell_sources or ()) if v == "cell"]
     cells = ca.MX.sym("scaled_cells", len(cell_rows), grid.size - 1)
     cell_algebraic = []
@@ -102,7 +119,7 @@ def solve_conservative_collocation(
         for k, h in enumerate(np.diff(grid)):
             state = [physical[i, k] if v == "lower" else physical[i, k + 1] if v == "upper"
                      else cell_physical[cell_rows.index(i), k] for i, v in enumerate(cell_sources)]
-            _, source, algebraic_value = node.call([ca.MX(float(grid[k] + h / 2)), ca.vertcat(*state)], False, False)
+            _, source, algebraic_value = node.call([ca.MX(float(grid[k] + h / 2)), ca.vertcat(*state), *inlet_args], False, False)
             columns.append(evaluated[k + 1][0] - evaluated[k][0] - h * source)
             cell_algebraic.append(algebraic_value)
         defects = ca.horzcat(*columns)
@@ -128,12 +145,19 @@ def solve_conservative_collocation(
         replaced = {row+m*(0 if end == 0 else grid.size-1) for row, end in boundary_slots}
         balance_constraints = scaled_defects[[i for i in range(m*grid.size) if i not in replaced]]
     algebraic = ca.horzcat(*[v[2] for v in evaluated], *cell_algebraic)
-    boundary_residual = boundary(physical[:, 0], physical[:, -1])
+    boundary_residual = boundary(physical[:, 0], physical[:, -1], *inlet_args)
     scaled = ca.vertcat(balance_constraints,
                        ca.vec(algebraic / ca.repmat(ca.DM(algebraic_scale), 1, algebraic.size2())),
                        boundary_residual / boundary_scale)
     unknowns = ca.vertcat(ca.vec(variables), ca.vec(cells))
-    residuals = ca.Function("physical_residuals", [unknowns], [defects, algebraic, boundary_residual, scaled])
+    objective, constraint, lbg = 0., scaled, 0.
+    if design is not None:
+        unknowns = ca.vertcat(unknowns, decision)
+        objective = design["objective"](decision, parameter)
+        rows = design["rows"](physical[:, 0], physical[:, -1], decision, parameter)
+        constraint = ca.vertcat(scaled, rows / row_scale)
+        lbg = np.r_[np.zeros(scaled.numel()), np.full(rows.numel(), -np.inf)]
+    residuals = ca.Function("physical_residuals", [unknowns, *parameters], [defects, algebraic, boundary_residual, scaled])
     result = {"accepted": False, "profile": None, "grid": grid.copy(), "status": None,
               "failure": None, "profile_finite": None, "defects": None, "algebraic_residual": None,
               "boundary_residual": None, "bound_violation": None,
@@ -146,12 +170,14 @@ def solve_conservative_collocation(
     try:
         # Share identical native callback expressions between g and its exact
         # Jacobian; the autogenerated graph repeats their value work.
-        jacobian = ca.Function("column_constraint_jacobian", [unknowns, ca.MX.sym("p", 0)],
-                               [scaled, ca.jacobian(scaled, unknowns)], {"cse": True})
+        jacobian = ca.Function("column_constraint_jacobian", [unknowns, *(parameters or [ca.MX.sym("p", 0)])],
+                               [constraint, ca.jacobian(constraint, unknowns)], {"cse": True})
         solver = ca.nlpsol("conservative_column", "ipopt", {
-            "x": unknowns, "f": 0., "g": scaled,
+            "x": unknowns, "f": objective, "g": constraint,
+            **({"p": parameter} if design is not None else {}),
         }, {"print_time": False, "record_time": True, "error_on_fail": False, "enable_fd": False,
             "jac_g": jacobian,
+            **({"calc_lam_p": True} if design is not None else {}),
             **({"iteration_callback": iteration_callback} if iteration_callback is not None else {}),
             "ipopt.print_level": 0, "ipopt.max_iter": int(max_iterations),
             # Physical variables/equations are already scaled above. Automatic
@@ -161,18 +187,31 @@ def solve_conservative_collocation(
             "ipopt.bound_relax_factor": 0., "ipopt.hessian_approximation": "limited-memory"})
         # Cell unknowns start from the mean of their two nodes.
         cell_initial = (.5 * (initial[cell_rows, :-1] + initial[cell_rows, 1:]) / state_scale[cell_rows, None]).ravel(order="F")
-        candidate = solver(x0=np.r_[(initial / state_scale[:, None]).ravel(order="F"), cell_initial],
-                           lbx=np.r_[np.tile(lower / state_scale, grid.size), np.tile((lower / state_scale)[cell_rows], grid.size - 1)],
-                           ubx=np.r_[np.tile(upper / state_scale, grid.size), np.tile((upper / state_scale)[cell_rows], grid.size - 1)],
-                           lbg=0., ubg=0.)
+        x0 = np.r_[(initial / state_scale[:, None]).ravel(order="F"), cell_initial]
+        lbx = np.r_[np.tile(lower / state_scale, grid.size), np.tile((lower / state_scale)[cell_rows], grid.size - 1)]
+        ubx = np.r_[np.tile(upper / state_scale, grid.size), np.tile((upper / state_scale)[cell_rows], grid.size - 1)]
+        parameter_values = []
+        if design is not None:
+            x0, lbx, ubx = np.r_[x0, design["initial"]], np.r_[lbx, design["lower"]], np.r_[ubx, design["upper"]]
+            parameter_values = [design["parameters"]]
+        candidate = solver(x0=x0, lbx=lbx, ubx=ubx, lbg=lbg, ubg=0.,
+                           **({"p": parameter_values[0]} if design is not None else {}))
         stats = solver.stats()
         result.update(status=stats["return_status"], iterations=stats.get("iter_count"), solver_statistics=stats)
         solution = np.asarray(candidate["x"]).ravel()
+        cell_end = n * grid.size + cells.numel()
+        if design is not None:
+            scaled_rows = np.asarray(candidate["g"]).ravel()[scaled.numel():]
+            result["design"] = {
+                "decision": solution[cell_end:], "objective": float(candidate["f"]),
+                "parameters": parameter_values[0], "rows": scaled_rows * row_scale, "row_scale": row_scale,
+                **{name: np.asarray(candidate[name]).ravel() for name in ("lam_g", "lam_x", "lam_p")},
+            }
         coordinates = solution[:n * grid.size].reshape((n, grid.size), order="F")
         profile = coordinates * state_scale[:, None]
         result["profile"] = profile
         if cell_rows:
-            result["cell_profile"] = solution[n * grid.size:].reshape((len(cell_rows), -1), order="F") * state_scale[cell_rows, None]
+            result["cell_profile"] = solution[n * grid.size:cell_end].reshape((len(cell_rows), -1), order="F") * state_scale[cell_rows, None]
         result["profile_finite"] = bool(np.all(np.isfinite(profile)))
         violation = np.maximum(np.maximum(lower[:, None] - profile, profile - upper[:, None]), 0.)
         if cell_rows:
@@ -185,11 +224,17 @@ def solve_conservative_collocation(
         if not result["profile_finite"]:
             result["failure"] = "Solver returned a non-finite candidate"
             return result
-        defect, alg, bc, scaled_value = (np.asarray(v) for v in residuals(solution))
+        defect, alg, bc, scaled_value = (np.asarray(v) for v in residuals(solution, *parameter_values))
         result.update(defects=defect, algebraic_residual=alg, boundary_residual=bc,
                       balance_residual_per_length=defect if scheme == "central" else defect / np.diff(grid)[None, :],
                       scaled_residual_inf=float(np.max(np.abs(scaled_value))))
+        if design is not None:
+            result["scaled_residual_inf"] = float(np.max(np.r_[np.abs(scaled_value).ravel(), scaled_rows]))
+            result["scaled_bound_violation_inf"] = float(np.max(np.r_[0., lbx - solution, solution - ubx]))
+            scaled_value = np.r_[scaled_value.ravel(), scaled_rows]
         finite = all(np.all(np.isfinite(v)) for v in (profile, defect, alg, bc, scaled_value, violation))
+        if design is not None:
+            finite = finite and all(np.all(np.isfinite(v)) for v in result["design"].values())
         result["accepted"] = bool(stats["success"] and finite
                                   and result["scaled_residual_inf"] <= tolerance
                                   and result["scaled_bound_violation_inf"] <= tolerance)

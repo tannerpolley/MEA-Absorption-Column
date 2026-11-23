@@ -193,3 +193,69 @@ def test_upwind_cells_are_first_order_and_conserve_on_the_grid(lam):
         assert np.max(abs(invariant - invariant[0])) < 1e-10
     order = np.log2(np.asarray(errors[:-1]) / errors[1:])  # observed 0.89 then 0.94: approaching 1
     assert order[0] < order[1] and abs(order[1] - 1) < 0.1, (errors, order)
+
+
+def _exchanger_outlet(scale, parameters, grid, big_g=1.0, k=1.0, m=1.0):
+    """Independent NumPy solve of the upwind exchanger cells; returns the gas leaving the top.
+
+    Cell k: L(x_k+1 - x_k) = G(y_k+1 - y_k) = -h K (y_k+1 - m x_k), liquid L = s L0 entering
+    at the top with x_in, gas entering at the bottom with y_in."""
+    big_l, x_in, y_in = scale * parameters[0], parameters[1], parameters[2]
+    n = grid.size
+    matrix, rhs = np.zeros((2 * n, 2 * n)), np.zeros(2 * n)
+    for j, h in enumerate(np.diff(grid)):  # unknowns x_0..x_n-1, then y_0..y_n-1
+        matrix[2 * j, [j, j + 1, n + j + 1]] = [-big_l - h * k * m, big_l, h * k]
+        matrix[2 * j + 1, [j, n + j, n + j + 1]] = [-h * k * m, -big_g, big_g + h * k]
+    matrix[-2, n - 1], rhs[-2] = 1.0, x_in
+    matrix[-1, n], rhs[-1] = 1.0, y_in
+    return np.linalg.solve(matrix, rhs)[-1]
+
+
+def _minimum_scale(parameters, grid):
+    from scipy.optimize import brentq
+
+    return brentq(lambda s: _exchanger_outlet(s, parameters, grid) - (1 - parameters[3]) * parameters[2], 0.1, 10.0, xtol=1e-14)
+
+
+def test_design_nlp_minimum_liquid_and_parameter_multipliers_match_root_find():
+    """#93 stage 1: min s s.t. exchanger equations and y_top <= (1 - eta) y_in, p = [L0, x_in, y_in, eta]."""
+    from mea_absorption_column.BVP.Methods.Casadi_Collocation import solve_conservative_collocation
+
+    big_g, k, m, height, nodes = 1.0, 1.0, 1.0, 6.0, 9
+    z, u, inlet = ca.MX.sym("z"), ca.MX.sym("u", 3), ca.MX.sym("inlet", 3)
+    node = ca.Function("node", [z, u, inlet], [ca.vertcat(inlet[0] * u[0], big_g * u[1]), -ca.vertcat(u[2], u[2]),
+                                               u[2] - k * (u[1] - m * u[0])])
+    bottom, top = ca.MX.sym("bottom", 3), ca.MX.sym("top", 3)
+    boundary = ca.Function("inlets", [bottom, top, inlet], [ca.vertcat(top[0] - inlet[1], bottom[1] - inlet[2])])
+    s, p = ca.MX.sym("s"), ca.MX.sym("p", 4)
+    row_scale = 0.37  # deliberately not 1: the physical multiplier is lam_g / row_scale
+    design = {"initial": [1.0], "lower": [0.1], "upper": [10.0], "parameters": [1.0, 0.0, 1.0, 0.9],
+              "inlets": ca.Function("inlets_of", [s, p], [ca.vertcat(s * p[0], p[1], p[2])]),
+              "objective": ca.Function("objective", [s, p], [s]),
+              "rows": ca.Function("capture", [bottom, top, s, p], [top[1] - (1 - p[3]) * p[2]]),
+              "row_scale": [row_scale]}
+    grid = np.linspace(0.0, height, nodes)
+    result = solve_conservative_collocation(
+        node, boundary, grid, np.tile([[0.0], [1.0], [0.0]], nodes), [-10, -10, -1e3], [10, 10, 1e3],
+        state_scale=[1, 1, 1], balance_scale=[1, 1], algebraic_scale=[1], boundary_scale=[1, 1],
+        tolerance=1e-10, max_iterations=200, scheme="upwind", cell_sources=("lower", "upper", "cell"), design=design)
+    assert result["accepted"], result["failure"]
+    reference = _minimum_scale(design["parameters"], grid)
+    assert 1.0 < reference < 10.0  # capture row active, decision bound inactive
+    np.testing.assert_allclose(result["design"]["decision"], [reference], rtol=1e-8)
+    np.testing.assert_allclose(result["design"]["objective"], reference, rtol=1e-8)
+    assert abs(result["design"]["lam_x"][-1]) < 1e-8
+
+    # ds*/dp by centred differences of the independent root find.
+    step = 1e-5
+    sensitivity = []
+    for i in range(4):
+        moved = [np.array(design["parameters"]) + sign * step * np.eye(4)[i] for sign in (1, -1)]
+        sensitivity.append((_minimum_scale(moved[0], grid) - _minimum_scale(moved[1], grid)) / (2 * step))
+    sensitivity = np.asarray(sensitivity)
+    assert sensitivity[0] < 0 < sensitivity[3]  # more base liquid lowers s*; a higher target raises it
+    # Sign convention (CasADi): lam_p = -d(objective*)/dp.
+    np.testing.assert_allclose(-result["design"]["lam_p"], sensitivity, rtol=1e-6, atol=1e-8)
+    # Physical capture multiplier: d s*/d eta = lam_c * y_in with lam_c = lam_g(capture) / row_scale.
+    capture_multiplier = result["design"]["lam_g"][-1] / row_scale
+    np.testing.assert_allclose(capture_multiplier * design["parameters"][2], sensitivity[3], rtol=1e-6)

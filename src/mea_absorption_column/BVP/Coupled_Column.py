@@ -20,7 +20,7 @@ from ..Transport.Transfer_Coefficients import (
 
 def build_column_balance_functions(
     liquid, vapor, *, liquid_feed_mol_s, vapor_feed_mol_s,
-    liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2, packing, liquid_density_source="solved_state", prescribed_closures=None,
+    liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa, area_m2, packing, liquid_density_source="solved_state", prescribed_closures=None, inlet=None,
 ):
     """Build native balance(state, transfer) and boundary(bottom, top).
 
@@ -72,6 +72,12 @@ def build_column_balance_functions(
     if liquid.output_ids[-1] != "total-enthalpy" or vapor.output_ids[-1] != "total-enthalpy":
         raise ValueError("Column requires native caloric callbacks")
 
+    inlet_args = [] if inlet is None else [inlet]
+    if inlet is not None:
+        n_l, n_v = fl.size, fv.size
+        fl, fv = inlet[:n_l], inlet[n_l:n_l + n_v]
+        liquid_temperature_k, vapor_temperature_k, bottom_pressure_pa = ca.vertsplit(inlet[-3:])
+
     state, transfer = ca.MX.sym("bulk", 8), ca.MX.sym("transfer", 3)
     liquid_flow = liquid.flow(state[0], state[1], fl)
     vapor_flow = vapor.flow(state[2], state[3], fv)
@@ -107,23 +113,23 @@ def build_column_balance_functions(
     conserved = ca.vertcat(state[:4], liquid_values[-1], vapor_values[-1], state[6])
     exchange = transfer * area_per_length
     sources = -ca.vertcat(exchange[0], exchange[1], exchange[0], exchange[1], exchange[2], exchange[2], gradient)
-    balance = ca.Function("column_balances", [state, transfer], [conserved, sources,
+    balance = ca.Function("column_balances", [state, transfer, *inlet_args], [conserved, sources,
         state[7] - raw_holdup, liquid_values, vapor_values,
         ca.vertcat(volume_l, volume_v, mass_density_l, mass_density_v, raw_holdup, area_per_length, gradient)],
-        ["state", "transfer"], ["conserved", "sources", "holdup_residual", "liquid", "vapor", "hydraulics"])
+        ["state", "transfer"] + (["inlet"] if inlet_args else []), ["conserved", "sources", "holdup_residual", "liquid", "vapor", "hydraulics"])
     # CasADi graphs do not own Python Callback lifetimes.
     balance._thermodynamic_callbacks = (liquid, vapor)
 
     bottom, top = ca.MX.sym("bottom", 8), ca.MX.sym("top", 8)
     residual = ca.vertcat(top[0] - fl[lf[roles["co2"]]], top[1] - fl[lf[roles["water"]]], bottom[2] - fv[vf[roles["co2"]]], bottom[3] - fv[vf[roles["water"]]],
                          top[4] - liquid_temperature_k, bottom[5] - vapor_temperature_k, bottom[6] - bottom_pressure_pa)
-    boundary = ca.Function("column_inlets", [bottom, top], [residual])
+    boundary = ca.Function("column_inlets", [bottom, top, *inlet_args], [residual])
     return balance, boundary
 
 
 def build_coupled_column_functions(
     liquid, vapor, *, species_diffusivities, quadrature_points=9,
-    co2_model="reactive_film", film_thickness_multiplier=1., **column_inputs,
+    co2_model="reactive_film", film_thickness_multiplier=1., inlet=None, **column_inputs,
 ):
     """Twelve-state native node, inlet residuals and physical diagnostics.
 
@@ -163,7 +169,7 @@ def build_coupled_column_functions(
         raise ValueError("Film thickness multiplier must be finite positive")
     if co2_model == "enhancement_reference" and film_thickness_multiplier != 1.:
         raise ValueError("Film thickness perturbations apply only to reactive_film")
-    balance, bulk_boundary = build_column_balance_functions(liquid, vapor, **column_inputs)
+    balance, bulk_boundary = build_column_balance_functions(liquid, vapor, inlet=inlet, **column_inputs)
     loading_path = build_loading_path_function(liquid) if co2_model == "reactive_film" else None
     roles = liquid.roles
     lf, vf = liquid.feed_index, vapor.feed_index
@@ -173,13 +179,16 @@ def build_coupled_column_functions(
     vapor_caloric = build_caloric_flow_function(vapor, partial_enthalpy_indices=tuple(vp[:2]))
     state, z = ca.MX.sym("coupled", 12), ca.MX.sym("z")
     fl, fv = column_inputs["liquid_feed_mol_s"], column_inputs["vapor_feed_mol_s"]
+    inlet_args = [] if inlet is None else [inlet]
+    if inlet is not None:
+        fl, fv = inlet[:len(fl)], inlet[len(fl):-3]
     packing, area = column_inputs["packing"], column_inputs["area_m2"]
     liquid_flow = liquid.flow(state[0], state[1], fl)
     vapor_flow = vapor.flow(state[2], state[3], fv)
     liquid_inputs = ca.vertcat(state[4], state[6], liquid_flow)
     bounded_bulk = state[:8].attachAssert(ca.logic_and(state[7] > 0., state[7] < packing[1]),
                                          "Column holdup must satisfy 0 < h_L < epsilon")
-    conserved, sources, holdup, l, v, hydraulics = balance(bounded_bulk, state[8:11])
+    conserved, sources, holdup, l, v, hydraulics = balance(bounded_bulk, state[8:11], *inlet_args)
     x, y = liquid_flow / ca.sum1(liquid_flow), vapor_flow / ca.sum1(vapor_flow)
     prescribed = column_inputs.get('prescribed_closures')
     if prescribed is not None:
@@ -227,15 +236,15 @@ def build_coupled_column_functions(
         interface_co2_fugacity_pa=at_loading[li[f"fugacity:{roles['co2']}"]], liquid_water_fugacity_pa=l[li[f"fugacity:{roles['water']}"]],
         gas_coefficients_mol_m2_s_pa=kg, heat_coefficient_w_m2_k=heat,
         vapor_temperature_k=state[5], liquid_temperature_k=state[4], transfer_enthalpies_j_mol=partial_h[:2])
-    node = ca.Function("coupled_column", [z, state], [conserved, sources, ca.vertcat(holdup, interface)])
-    diagnostics = ca.Function("coupled_column_diagnostics", [state],
+    node = ca.Function("coupled_column", [z, state, *inlet_args], [conserved, sources, ca.vertcat(holdup, interface)])
+    diagnostics = ca.Function("coupled_column_diagnostics", [state, *inlet_args],
         [ca.vertcat(*conductances), integral, thickness, kg, heat, cp, partial_h, at_loading[li[f"fugacity:{roles['co2']}"]]]
         + ([enhancement] if co2_model == "enhancement_reference" else []),
-        ["state"], ["conductances", "integral", "thickness", "gas_coefficients", "heat_coefficient",
+        ["state"] + (["inlet"] if inlet_args else []), ["conductances", "integral", "thickness", "gas_coefficients", "heat_coefficient",
                     "vapor_cp", "vapor_partial_enthalpies", "interface_fugacity"]
         + (["enhancement_factor"] if co2_model == "enhancement_reference" else []))
     for function in (node, diagnostics):
         function._thermodynamic_callbacks = (balance, loading_path, vapor_caloric, liquid, vapor)
     bottom, top = ca.MX.sym("bottom", 12), ca.MX.sym("top", 12)
-    boundary = ca.Function("coupled_inlets", [bottom, top], [bulk_boundary(bottom[:8], top[:8])])
+    boundary = ca.Function("coupled_inlets", [bottom, top, *inlet_args], [bulk_boundary(bottom[:8], top[:8], *inlet_args)])
     return node, boundary, diagnostics
