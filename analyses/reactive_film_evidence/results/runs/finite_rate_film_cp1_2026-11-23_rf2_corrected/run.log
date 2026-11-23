@@ -1,0 +1,670 @@
+Build base e431e5917574a6ea6236b3abd12e80b2187b3a0d
+C5 with former implementation: 0.09489011588951102 relative error (failed)
+C5 with corrected implementation: -7.693845560652335e-14 relative error (passed)
+agent-heavy timeout --kill-after=10s 600s taskset -c 0-3 env OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 uv run --frozen python -u analyses/reactive_film_evidence/scripts/check_finite_rate_film.py analyses/reactive_film_evidence/results/runs/finite_rate_film_cp1_2026-11-23_rf2_corrected
+enhancement_reference z=0 N2O analogy column None H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 column None H=2452.09
+enhancement_reference z=0 N2O analogy k_L 3.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 k_L 3.0 H=2452.09
+enhancement_reference z=0 N2O analogy k_L 10.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 k_L 10.0 H=2452.09
+enhancement_reference z=0 N2O analogy k_L 35.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 k_L 35.0 H=2452.09
+enhancement_reference z=0 N2O analogy k_L 75.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 k_L 75.0 H=2452.09
+enhancement_reference z=0 N2O analogy k_L 165.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 k_L 165.0 H=2452.09
+enhancement_reference z=0 N2O analogy k_L 350.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 k_L 350.0 H=2452.09
+enhancement_reference z=0 N2O analogy k_L 700.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 k_L 700.0 H=2452.09
+enhancement_reference z=0 N2O analogy rate 3.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 rate 3.0 H=2452.09
+enhancement_reference z=0 N2O analogy rate 10.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 rate 10.0 H=2452.09
+enhancement_reference z=0 N2O analogy rate 35.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 rate 35.0 H=2452.09
+enhancement_reference z=0 N2O analogy rate 75.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 rate 75.0 H=2452.09
+enhancement_reference z=0 N2O analogy rate 165.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 rate 165.0 H=2452.09
+enhancement_reference z=0 N2O analogy rate 350.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 rate 350.0 H=2452.09
+enhancement_reference z=0 N2O analogy rate 700.0 H=5731.98
+enhancement_reference z=0 ePC-SAFT free CO2 rate 700.0 H=2452.09
+enhancement_reference z=0.14683 N2O analogy column None H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 column None H=2600.83
+enhancement_reference z=0.14683 N2O analogy k_L 3.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 k_L 3.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy k_L 10.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 k_L 10.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy k_L 35.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 k_L 35.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy k_L 75.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 k_L 75.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy k_L 165.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 k_L 165.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy k_L 350.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 k_L 350.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy k_L 700.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 k_L 700.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy rate 3.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 rate 3.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy rate 10.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 rate 10.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy rate 35.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 rate 35.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy rate 75.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 rate 75.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy rate 165.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 rate 165.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy rate 350.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 rate 350.0 H=2600.83
+enhancement_reference z=0.14683 N2O analogy rate 700.0 H=6086.85
+enhancement_reference z=0.14683 ePC-SAFT free CO2 rate 700.0 H=2600.83
+enhancement_reference z=0.572949 N2O analogy column None H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 column None H=2776.05
+enhancement_reference z=0.572949 N2O analogy k_L 3.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 k_L 3.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy k_L 10.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 k_L 10.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy k_L 35.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 k_L 35.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy k_L 75.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 k_L 75.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy k_L 165.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 k_L 165.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy k_L 350.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 k_L 350.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy k_L 700.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 k_L 700.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy rate 3.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 rate 3.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy rate 10.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 rate 10.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy rate 35.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 rate 35.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy rate 75.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 rate 75.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy rate 165.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 rate 165.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy rate 350.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 rate 350.0 H=2776.05
+enhancement_reference z=0.572949 N2O analogy rate 700.0 H=6431.96
+enhancement_reference z=0.572949 ePC-SAFT free CO2 rate 700.0 H=2776.05
+enhancement_reference z=1.23664 N2O analogy column None H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 column None H=2935.98
+enhancement_reference z=1.23664 N2O analogy k_L 3.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 k_L 3.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy k_L 10.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 k_L 10.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy k_L 35.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 k_L 35.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy k_L 75.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 k_L 75.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy k_L 165.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 k_L 165.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy k_L 350.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 k_L 350.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy k_L 700.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 k_L 700.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy rate 3.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 rate 3.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy rate 10.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 rate 10.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy rate 35.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 rate 35.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy rate 75.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 rate 75.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy rate 165.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 rate 165.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy rate 350.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 rate 350.0 H=2935.98
+enhancement_reference z=1.23664 N2O analogy rate 700.0 H=6696.87
+enhancement_reference z=1.23664 ePC-SAFT free CO2 rate 700.0 H=2935.98
+enhancement_reference z=2.07295 N2O analogy column None H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 column None H=3070.58
+enhancement_reference z=2.07295 N2O analogy k_L 3.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 k_L 3.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy k_L 10.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 k_L 10.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy k_L 35.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 k_L 35.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy k_L 75.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 k_L 75.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy k_L 165.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 k_L 165.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy k_L 350.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 k_L 350.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy k_L 700.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 k_L 700.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy rate 3.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 rate 3.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy rate 10.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 rate 10.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy rate 35.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 rate 35.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy rate 75.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 rate 75.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy rate 165.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 rate 165.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy rate 350.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 rate 350.0 H=3070.58
+enhancement_reference z=2.07295 N2O analogy rate 700.0 H=6882.05
+enhancement_reference z=2.07295 ePC-SAFT free CO2 rate 700.0 H=3070.58
+enhancement_reference z=3 N2O analogy column None H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 column None H=3169.51
+enhancement_reference z=3 N2O analogy k_L 3.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 k_L 3.0 H=3169.51
+enhancement_reference z=3 N2O analogy k_L 10.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 k_L 10.0 H=3169.51
+enhancement_reference z=3 N2O analogy k_L 35.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 k_L 35.0 H=3169.51
+enhancement_reference z=3 N2O analogy k_L 75.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 k_L 75.0 H=3169.51
+enhancement_reference z=3 N2O analogy k_L 165.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 k_L 165.0 H=3169.51
+enhancement_reference z=3 N2O analogy k_L 350.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 k_L 350.0 H=3169.51
+enhancement_reference z=3 N2O analogy k_L 700.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 k_L 700.0 H=3169.51
+enhancement_reference z=3 N2O analogy rate 3.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 rate 3.0 H=3169.51
+enhancement_reference z=3 N2O analogy rate 10.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 rate 10.0 H=3169.51
+enhancement_reference z=3 N2O analogy rate 35.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 rate 35.0 H=3169.51
+enhancement_reference z=3 N2O analogy rate 75.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 rate 75.0 H=3169.51
+enhancement_reference z=3 N2O analogy rate 165.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 rate 165.0 H=3169.51
+enhancement_reference z=3 N2O analogy rate 350.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 rate 350.0 H=3169.51
+enhancement_reference z=3 N2O analogy rate 700.0 H=6983.72
+enhancement_reference z=3 ePC-SAFT free CO2 rate 700.0 H=3169.51
+enhancement_reference z=3.92705 N2O analogy column None H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 column None H=3217.11
+enhancement_reference z=3.92705 N2O analogy k_L 3.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 k_L 3.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy k_L 10.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 k_L 10.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy k_L 35.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 k_L 35.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy k_L 75.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 k_L 75.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy k_L 165.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 k_L 165.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy k_L 350.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 k_L 350.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy k_L 700.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 k_L 700.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy rate 3.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 rate 3.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy rate 10.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 rate 10.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy rate 35.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 rate 35.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy rate 75.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 rate 75.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy rate 165.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 rate 165.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy rate 350.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 rate 350.0 H=3217.11
+enhancement_reference z=3.92705 N2O analogy rate 700.0 H=6980.38
+enhancement_reference z=3.92705 ePC-SAFT free CO2 rate 700.0 H=3217.11
+enhancement_reference z=4.76336 N2O analogy column None H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 column None H=3186.21
+enhancement_reference z=4.76336 N2O analogy k_L 3.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 k_L 3.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy k_L 10.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 k_L 10.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy k_L 35.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 k_L 35.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy k_L 75.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 k_L 75.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy k_L 165.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 k_L 165.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy k_L 350.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 k_L 350.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy k_L 700.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 k_L 700.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy rate 3.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 rate 3.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy rate 10.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 rate 10.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy rate 35.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 rate 35.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy rate 75.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 rate 75.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy rate 165.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 rate 165.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy rate 350.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 rate 350.0 H=3186.21
+enhancement_reference z=4.76336 N2O analogy rate 700.0 H=6808.84
+enhancement_reference z=4.76336 ePC-SAFT free CO2 rate 700.0 H=3186.21
+enhancement_reference z=5.42705 N2O analogy column None H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 column None H=3034.53
+enhancement_reference z=5.42705 N2O analogy k_L 3.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 k_L 3.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy k_L 10.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 k_L 10.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy k_L 35.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 k_L 35.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy k_L 75.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 k_L 75.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy k_L 165.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 k_L 165.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy k_L 350.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 k_L 350.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy k_L 700.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 k_L 700.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy rate 3.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 rate 3.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy rate 10.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 rate 10.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy rate 35.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 rate 35.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy rate 75.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 rate 75.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy rate 165.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 rate 165.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy rate 350.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 rate 350.0 H=3034.53
+enhancement_reference z=5.42705 N2O analogy rate 700.0 H=6345.87
+enhancement_reference z=5.42705 ePC-SAFT free CO2 rate 700.0 H=3034.53
+enhancement_reference z=5.85317 N2O analogy column None H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 column None H=2751.52
+enhancement_reference z=5.85317 N2O analogy k_L 3.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 k_L 3.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy k_L 10.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 k_L 10.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy k_L 35.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 k_L 35.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy k_L 75.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 k_L 75.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy k_L 165.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 k_L 165.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy k_L 350.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 k_L 350.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy k_L 700.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 k_L 700.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy rate 3.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 rate 3.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy rate 10.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 rate 10.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy rate 35.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 rate 35.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy rate 75.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 rate 75.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy rate 165.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 rate 165.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy rate 350.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 rate 350.0 H=2751.52
+enhancement_reference z=5.85317 N2O analogy rate 700.0 H=5539.86
+enhancement_reference z=5.85317 ePC-SAFT free CO2 rate 700.0 H=2751.52
+enhancement_reference z=6 N2O analogy column None H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 column None H=2489.96
+enhancement_reference z=6 N2O analogy k_L 3.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 k_L 3.0 H=2489.96
+enhancement_reference z=6 N2O analogy k_L 10.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 k_L 10.0 H=2489.96
+enhancement_reference z=6 N2O analogy k_L 35.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 k_L 35.0 H=2489.96
+enhancement_reference z=6 N2O analogy k_L 75.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 k_L 75.0 H=2489.96
+enhancement_reference z=6 N2O analogy k_L 165.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 k_L 165.0 H=2489.96
+enhancement_reference z=6 N2O analogy k_L 350.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 k_L 350.0 H=2489.96
+enhancement_reference z=6 N2O analogy k_L 700.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 k_L 700.0 H=2489.96
+enhancement_reference z=6 N2O analogy rate 3.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 rate 3.0 H=2489.96
+enhancement_reference z=6 N2O analogy rate 10.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 rate 10.0 H=2489.96
+enhancement_reference z=6 N2O analogy rate 35.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 rate 35.0 H=2489.96
+enhancement_reference z=6 N2O analogy rate 75.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 rate 75.0 H=2489.96
+enhancement_reference z=6 N2O analogy rate 165.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 rate 165.0 H=2489.96
+enhancement_reference z=6 N2O analogy rate 350.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 rate 350.0 H=2489.96
+enhancement_reference z=6 N2O analogy rate 700.0 H=4813.99
+enhancement_reference z=6 ePC-SAFT free CO2 rate 700.0 H=2489.96
+equilibrium_manifold z=0 N2O analogy column None H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 column None H=2431.35
+equilibrium_manifold z=0 N2O analogy k_L 3.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 k_L 3.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy k_L 10.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 k_L 10.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy k_L 35.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 k_L 35.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy k_L 75.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 k_L 75.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy k_L 165.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 k_L 165.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy k_L 350.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 k_L 350.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy k_L 700.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 k_L 700.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy rate 3.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 rate 3.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy rate 10.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 rate 10.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy rate 35.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 rate 35.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy rate 75.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 rate 75.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy rate 165.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 rate 165.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy rate 350.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 rate 350.0 H=2431.35
+equilibrium_manifold z=0 N2O analogy rate 700.0 H=5637.46
+equilibrium_manifold z=0 ePC-SAFT free CO2 rate 700.0 H=2431.35
+equilibrium_manifold z=0.14683 N2O analogy column None H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 column None H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy k_L 3.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 k_L 3.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy k_L 10.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 k_L 10.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy k_L 35.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 k_L 35.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy k_L 75.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 k_L 75.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy k_L 165.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 k_L 165.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy k_L 350.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 k_L 350.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy k_L 700.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 k_L 700.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy rate 3.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 rate 3.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy rate 10.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 rate 10.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy rate 35.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 rate 35.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy rate 75.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 rate 75.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy rate 165.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 rate 165.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy rate 350.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 rate 350.0 H=2562.1
+equilibrium_manifold z=0.14683 N2O analogy rate 700.0 H=5967.18
+equilibrium_manifold z=0.14683 ePC-SAFT free CO2 rate 700.0 H=2562.1
+equilibrium_manifold z=0.572949 N2O analogy column None H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 column None H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy k_L 3.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 k_L 3.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy k_L 10.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 k_L 10.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy k_L 35.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 k_L 35.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy k_L 75.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 k_L 75.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy k_L 165.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 k_L 165.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy k_L 350.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 k_L 350.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy k_L 700.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 k_L 700.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy rate 3.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 rate 3.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy rate 10.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 rate 10.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy rate 35.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 rate 35.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy rate 75.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 rate 75.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy rate 165.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 rate 165.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy rate 350.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 rate 350.0 H=2717.3
+equilibrium_manifold z=0.572949 N2O analogy rate 700.0 H=6296.73
+equilibrium_manifold z=0.572949 ePC-SAFT free CO2 rate 700.0 H=2717.3
+equilibrium_manifold z=1.23664 N2O analogy column None H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 column None H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy k_L 3.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 k_L 3.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy k_L 10.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 k_L 10.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy k_L 35.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 k_L 35.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy k_L 75.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 k_L 75.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy k_L 165.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 k_L 165.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy k_L 350.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 k_L 350.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy k_L 700.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 k_L 700.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy rate 3.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 rate 3.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy rate 10.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 rate 10.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy rate 35.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 rate 35.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy rate 75.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 rate 75.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy rate 165.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 rate 165.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy rate 350.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 rate 350.0 H=2861.87
+equilibrium_manifold z=1.23664 N2O analogy rate 700.0 H=6559.02
+equilibrium_manifold z=1.23664 ePC-SAFT free CO2 rate 700.0 H=2861.87
+equilibrium_manifold z=2.07295 N2O analogy column None H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 column None H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy k_L 3.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 k_L 3.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy k_L 10.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 k_L 10.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy k_L 35.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 k_L 35.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy k_L 75.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 k_L 75.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy k_L 165.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 k_L 165.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy k_L 350.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 k_L 350.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy k_L 700.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 k_L 700.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy rate 3.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 rate 3.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy rate 10.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 rate 10.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy rate 35.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 rate 35.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy rate 75.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 rate 75.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy rate 165.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 rate 165.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy rate 350.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 rate 350.0 H=2988.5
+equilibrium_manifold z=2.07295 N2O analogy rate 700.0 H=6755.33
+equilibrium_manifold z=2.07295 ePC-SAFT free CO2 rate 700.0 H=2988.5
+equilibrium_manifold z=3 N2O analogy column None H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 column None H=3090.06
+equilibrium_manifold z=3 N2O analogy k_L 3.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 k_L 3.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy k_L 10.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 k_L 10.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy k_L 35.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 k_L 35.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy k_L 75.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 k_L 75.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy k_L 165.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 k_L 165.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy k_L 350.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 k_L 350.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy k_L 700.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 k_L 700.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy rate 3.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 rate 3.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy rate 10.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 rate 10.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy rate 35.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 rate 35.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy rate 75.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 rate 75.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy rate 165.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 rate 165.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy rate 350.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 rate 350.0 H=3090.06
+equilibrium_manifold z=3 N2O analogy rate 700.0 H=6882.36
+equilibrium_manifold z=3 ePC-SAFT free CO2 rate 700.0 H=3090.06
+equilibrium_manifold z=3.92705 N2O analogy column None H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 column None H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy k_L 3.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 k_L 3.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy k_L 10.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 k_L 10.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy k_L 35.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 k_L 35.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy k_L 75.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 k_L 75.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy k_L 165.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 k_L 165.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy k_L 350.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 k_L 350.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy k_L 700.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 k_L 700.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy rate 3.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 rate 3.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy rate 10.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 rate 10.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy rate 35.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 rate 35.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy rate 75.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 rate 75.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy rate 165.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 rate 165.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy rate 350.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 rate 350.0 H=3152.87
+equilibrium_manifold z=3.92705 N2O analogy rate 700.0 H=6917.3
+equilibrium_manifold z=3.92705 ePC-SAFT free CO2 rate 700.0 H=3152.87
+equilibrium_manifold z=4.76336 N2O analogy column None H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 column None H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy k_L 3.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 k_L 3.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy k_L 10.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 k_L 10.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy k_L 35.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 k_L 35.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy k_L 75.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 k_L 75.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy k_L 165.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 k_L 165.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy k_L 350.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 k_L 350.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy k_L 700.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 k_L 700.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy rate 3.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 rate 3.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy rate 10.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 rate 10.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy rate 35.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 rate 35.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy rate 75.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 rate 75.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy rate 165.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 rate 165.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy rate 350.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 rate 350.0 H=3148.72
+equilibrium_manifold z=4.76336 N2O analogy rate 700.0 H=6795.42
+equilibrium_manifold z=4.76336 ePC-SAFT free CO2 rate 700.0 H=3148.72
+equilibrium_manifold z=5.42705 N2O analogy column None H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 column None H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy k_L 3.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 k_L 3.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy k_L 10.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 k_L 10.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy k_L 35.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 k_L 35.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy k_L 75.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 k_L 75.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy k_L 165.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 k_L 165.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy k_L 350.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 k_L 350.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy k_L 700.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 k_L 700.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy rate 3.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 rate 3.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy rate 10.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 rate 10.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy rate 35.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 rate 35.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy rate 75.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 rate 75.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy rate 165.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 rate 165.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy rate 350.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 rate 350.0 H=3028.52
+equilibrium_manifold z=5.42705 N2O analogy rate 700.0 H=6385.03
+equilibrium_manifold z=5.42705 ePC-SAFT free CO2 rate 700.0 H=3028.52
+equilibrium_manifold z=5.85317 N2O analogy column None H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 column None H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy k_L 3.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 k_L 3.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy k_L 10.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 k_L 10.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy k_L 35.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 k_L 35.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy k_L 75.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 k_L 75.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy k_L 165.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 k_L 165.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy k_L 350.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 k_L 350.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy k_L 700.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 k_L 700.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy rate 3.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 rate 3.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy rate 10.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 rate 10.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy rate 35.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 rate 35.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy rate 75.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 rate 75.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy rate 165.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 rate 165.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy rate 350.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 rate 350.0 H=2761.84
+equilibrium_manifold z=5.85317 N2O analogy rate 700.0 H=5589.92
+equilibrium_manifold z=5.85317 ePC-SAFT free CO2 rate 700.0 H=2761.84
+equilibrium_manifold z=6 N2O analogy column None H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 column None H=2489.97
+equilibrium_manifold z=6 N2O analogy k_L 3.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 k_L 3.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy k_L 10.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 k_L 10.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy k_L 35.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 k_L 35.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy k_L 75.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 k_L 75.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy k_L 165.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 k_L 165.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy k_L 350.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 k_L 350.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy k_L 700.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 k_L 700.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy rate 3.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 rate 3.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy rate 10.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 rate 10.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy rate 35.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 rate 35.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy rate 75.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 rate 75.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy rate 165.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 rate 165.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy rate 350.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 rate 350.0 H=2489.97
+equilibrium_manifold z=6 N2O analogy rate 700.0 H=4813.99
+equilibrium_manifold z=6 ePC-SAFT free CO2 rate 700.0 H=2489.97
+
+Verified 44 nominal and 616 sweep rows. All reference solves converged, C7 stayed below 2%, and G-Dm stayed positive.
+
+Verified 44 ideal chemistry rows. All resolved solves converged.
+
+Final immutable Engine integration check passed with Engine f4566b3d0c64d05822b41fe363de47ab5cfa6a0e.

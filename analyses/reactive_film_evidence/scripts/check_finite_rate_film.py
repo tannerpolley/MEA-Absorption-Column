@@ -37,7 +37,7 @@ def record(output, table, **row):
 
 def constant_film(output):
     # D = delta = m = 1, G = 2. Independent free and bound concentration BVP.
-    rate, ha = 2.25, 3.
+    rate, q = 2.25, np.linspace(0., 1., 33)
     def rhs(x, y):
         reaction = rate * (y[0] - y[2])
         return np.vstack((y[1], reaction, y[3], -reaction))
@@ -45,10 +45,11 @@ def constant_film(output):
         return a[0] - 1, a[3], b[0], b[2]
     sol = solve_bvp(rhs, bc, MESH, np.zeros((4, MESH.size)), tol=2e-9, max_nodes=20000)
     assert sol.success, sol.message
-    exact, rf2 = [2 / (1 + np.tanh(h) / h) for h in (ha / np.sqrt(2), ha)]
-    record(output, "C5", Ha=ha, Ha_over_Einf=ha / 2, henry="manufactured",
-           reference_flux=-sol.y[1, 0], printed_rf2_error=rf2 / -sol.y[1, 0] - 1,
-           analytic_error=exact / -sol.y[1, 0] - 1, limit=1e-5)
+    table = np.column_stack((1 + q, 1 / (1 + q), np.full_like(q, 2.), np.full_like(q, rate)))
+    film = compare(q, table, 2e-9, 1., 1., 1., 2.)
+    error = film["reduced_flux"] / -sol.y[1, 0] - 1
+    record(output, "C5", independent_flux=-sol.y[1, 0], rf2_error=error, limit=1e-5, **film)
+    assert "failure" not in film and abs(error) <= 1e-5, f"C5 failed: {film}, RF-2 error {error:g}"
 
 
 def gaspar(output, z, temperature, c, d, f_bulk, f_interface):
@@ -94,7 +95,7 @@ def compare(q, table, tolerance, henry, d, kl, f_i, target=None, sweep=None, rat
     delta, drive = d / kl, (f_i - f[0]) / henry
     upper, integral = q[-1], conductance.antiderivative()
     def rf2(xi):
-        ha = delta * np.sqrt(rate_scale * k1(xi) / d) * conductance(xi) / bound(xi)
+        ha = delta * np.sqrt(rate_scale * k1(xi) / d * conductance(xi) / bound(xi))
         return (drive - c_star(xi)) / drive * ha / np.tanh(ha), ha
     if target:
         theta = np.tanh(target) / target
@@ -192,8 +193,7 @@ def main(output):
                     record(output, "C6_C7", film=film, z_m=z, basis=basis, H_Pa_m3_mol=henry,
                            sweep=sweep, target=target, coarse=coarse, fine=fine,
                            reference_uncertainty=uncertainty, C7_error=error)
-                    if sweep == "column" and error is not None and abs(error) > .02:
-                        raise SystemExit("C7 exceeded 2 % at a column state. Return to Design.")
-
+                    if error is not None and abs(error) >= .02:
+                        raise SystemExit("C7 reached or exceeded 2 %.")
 
 main(Path(sys.argv[1]))

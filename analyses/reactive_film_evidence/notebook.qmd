@@ -4,64 +4,60 @@ jupyter: false
 ---
 ## Finite-rate film on the ePC-SAFT manifold
 
-The printed RF-2 equation passed the 2% matched-fugacity comparison on
-all 22 retained 3C states and both Henry bases, but failed the constant-coefficient
-check. For C5, the independent `solve_bvp` flux was 1.37169633839 in
-manufactured units. At printed $Ha=3$ and $Ha/E_\infty=1.5$, RF-2 overshot
-by 9.489%, against a relative limit of $10^{-5}$. The resolved implementation
-agreed with that independent BVP to $3.4\times10^{-14}$ relative. The
-constant-coefficient balances give
-$Ha=\delta\sqrt{(k_1/D)G/(G-Dm)}$, which reproduced the independent flux to
-$7.7\times10^{-14}$ relative. The printed RF-2 places the conductance ratio
-outside the square root. This discrepancy requires resolution in Design
-before using the equation in the column.
+The corrected RF-2 implementation passed C5 and the 2% matched-fugacity
+comparison on all 22 retained 3C states and both Henry bases. C5 used the
+same RF-2 code as C7 at $Ha=2.12132$ and $Ha/E_\infty=1.06066$ in the
+manufactured constant-coefficient film. The RF-2 flux was 1.371696338389811
+and the independent `solve_bvp` flux was 1.371696338389917 in manufactured
+units. The signed relative error was $-7.69\times10^{-14}$ against the
+$10^{-5}$ limit. RF-2 uses $Ha=\delta\sqrt{(k_1/D)G/(G-Dm)}$.
+[Issue #16 design equation](https://github.com/tannerpolley/MEA-Absorption-Column/issues/16#issuecomment-7116858937).
 
 C6's largest absolute relative RF-1 defect was $1.32\times10^{-13}$,
 using separate quadrature for $I$ and a $2\times10^{-7}$ reference tolerance.
-In C7, the 17-to-33 tabulation and collocation refinement at identical
-physical inputs changed the flux by at most $1.04\times10^{-6}$ relative.
-All 44 nominal and 616 sweep comparisons converged and were scored. The
-two sweeps varied either $k_L$ or the rate multiplier at the same seven
-printed Hatta targets from 3 to 700. $E_\infty$ uses the instantaneous limit
-of the matching film, evaluated at the same interfacial fugacity.
+The 17-to-33 point manifold and collocation refinement at identical
+physical inputs changed the reference flux by at most $1.045\times10^{-6}$
+relative. All 44 nominal and 616 sweep comparisons converged and were
+scored. The sweeps varied either $k_L$ or the rate multiplier at the same
+seven Hatta targets from 3 to 700. $E_\infty$ uses the instantaneous limit
+of the matching film at the same interfacial fugacity.
 
-| Henry basis | Largest nominal flux error | Largest sweep flux error | Minimum $G-Dm$ (mol m$^{-1}$ s$^{-1}$) |
+| Henry basis | Worst nominal flux error | Worst sweep flux error | Minimum $G-Dm$ (mol m$^{-1}$ s$^{-1}$) |
 |---|---:|---:|---:|
-| N₂O analogy | +0.1283% | +0.1815% | $9.77843\times10^{-7}$ |
-| ePC-SAFT bulk fugacity / free CO₂ concentration | +0.1695% | +0.4284% | $9.77776\times10^{-7}$ |
+| N₂O analogy | −0.005094% | −0.048143% | $9.77843\times10^{-7}$ |
+| ePC-SAFT bulk fugacity / free CO₂ concentration | −0.004324% | −0.095693% | $9.77776\times10^{-7}$ |
 
-Both nominal maxima occur at the bottom of the equilibrium-manifold
-profile. The sweep maxima occur at 0.147 m on the enhancement-reference
-profile at $Ha=75$ (N₂O) and $Ha=35$ (ePC-SAFT). The minima occur at the
-bulk boundary of the liquid film at the top of the enhancement-reference
-profile. The species diffusivities use the enhancement factor's correlations
-for CO₂, MEA and the ions, and the retained 3C water diffusivity for water.
-The rate uses the Luo coefficients and true concentrations along the
-manifold.
+The worst nominal states are at 0 m (N₂O) and 5.853 m (ePC-SAFT) on the
+equilibrium-manifold profile. The largest sweep errors occur at 0 m on
+that profile for both sweeps and both Henry bases at $Ha=10$. The minima
+of $G-Dm$ occur at the bulk boundary of the liquid film at the top of the
+enhancement-reference profile. The species diffusivities use the
+enhancement factor's correlations for CO₂, MEA and the ions, and the
+retained 3C water diffusivity for water. The rate uses the Luo coefficients
+and true concentrations along the manifold.
 
 The ideal-chemistry comparison uses the 11 enhancement-reference bulk states
 and their corresponding interface conditions. Over the 44 comparisons the
 explicit enhancement exceeded the complete general model by 0.55–79.28%.
-The printed RF-2 enhancement was 0.30–1.67% lower. The table gives the
-largest explicit deviation at each bulk Hatta number, all at $z=0$ m.
+RF-2 enhancement was 0.31–2.18% lower. The table gives the largest explicit
+deviation at each bulk Hatta number, all at $z=0$ m.
 [Gaspar and Fosbøl (2015), Eqs. 10, 12, 13, 17 and 22](https://doi.org/10.1016/j.ces.2015.08.023).
 
 | Bulk $Ha$ | $Ha/E_\infty$ | Complete general $E$ | Explicit $E$ | Explicit deviation | RF-2 $E$ |
 |---:|---:|---:|---:|---:|---:|
-| 35 | 0.737 | 23.096 | 27.629 | +19.63% | 22.709 |
-| 75 | 1.580 | 33.069 | 47.450 | +43.49% | 32.574 |
-| 110 | 2.318 | 37.042 | 59.292 | +60.07% | 36.600 |
-| 165 | 3.476 | 40.248 | 72.154 | +79.28% | 39.898 |
+| 35 | 0.737 | 23.096 | 27.629 | +19.63% | 22.593 |
+| 75 | 1.580 | 33.069 | 47.450 | +43.49% | 32.428 |
+| 110 | 2.318 | 37.042 | 59.292 | +60.07% | 36.462 |
+| 165 | 3.476 | 40.248 | 72.154 | +79.28% | 39.780 |
 
-These are numerical comparisons on frozen states. No absorption-rate or
-column observations enter the checks. The numerical results await independent
-review and investigator promotion. The retained tables give the exact
-row-level comparisons and the manufactured failure.
-[C5](results/runs/finite_rate_film_cp1_2026-11-23/C5.jsonl),
-[C6 and C7](results/runs/finite_rate_film_cp1_2026-11-23/C6_C7.jsonl),
-[ideal chemistry](results/runs/finite_rate_film_cp1_2026-11-23/gaspar.jsonl),
-[inputs and Engine identity](results/runs/finite_rate_film_cp1_2026-11-23/inputs.jsonl),
-[run log](results/runs/finite_rate_film_cp1_2026-11-23/run.log).
+The 2% C7 limit applies to the comparison with the resolved film on the
+ePC-SAFT manifold. These are numerical comparisons on frozen states.
+Physical validation, independent review and investigator promotion remain open.
+[C5](results/runs/finite_rate_film_cp1_2026-11-23_rf2_corrected/C5.jsonl),
+[C6 and C7](results/runs/finite_rate_film_cp1_2026-11-23_rf2_corrected/C6_C7.jsonl),
+[ideal chemistry](results/runs/finite_rate_film_cp1_2026-11-23_rf2_corrected/gaspar.jsonl),
+[inputs and Engine identity](results/runs/finite_rate_film_cp1_2026-11-23_rf2_corrected/inputs.jsonl),
+[run log](results/runs/finite_rate_film_cp1_2026-11-23_rf2_corrected/run.log).
 
 ## Current selectable closures: Engine 1.0.0 (issue 16)
 
