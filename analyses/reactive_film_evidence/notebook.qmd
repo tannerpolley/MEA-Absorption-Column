@@ -281,10 +281,11 @@ Dugas rows exceed the concentration range of the Snijder correlation.
 
 The enhancement factor's source-range restriction is removed only at column
 states where C7 passes at their own Hatta numbers. C7 checks the reduction
-against a resolved film. Five refined references reached the mesh-node limit
-and remain unscored, all on N₂O profiles. The N₂O Henry checks failed to
-converge at 3.000 m in 1C, 3.000 m in 2C, 5.494 m in 4C, and 4.667 m in
-5C. The ePC-SAFT Henry check failed to converge at 4.667 m in 1C.
+against a resolved film. Four N₂O Henry references remain unscored after
+reaching the 100,000-node limit: 3.000 m in 1C, 3.000 m in 2C, 5.494 m
+in 4C, and 4.667 m in 5C. At 4.667 m in 1C, the ePC-SAFT Henry check
+passes with a signed flux error of −0.000956% at Hatta number 869.34.
+[Reference records](results/runs/finite_rate_film_cp5_2026-11-24/C7.jsonl).
 
 The Luo kinetics are used outside their source domain. For example, the
 1C ePC-SAFT profile reaches 344.9 K, above Luo's 343 K ceiling. The R5
@@ -303,7 +304,9 @@ The provisional vapour caloric reference also limits thermal interpretation.
 The 7C manifold capture changed by −5.55 percentage points when the
 axial grid grew from 17 to 33 nodes. The reported 7C capture comparison
 therefore describes the 17-node grid, with mesh sensitivity unresolved
-for the finite-rate profiles. [Liquid density assessment](../liquid_density/notebook.qmd).
+for the finite-rate profiles. The 33-node finite-rate retry was refused before
+solving because the retained input identities contain paths from a removed
+worktree; the input hashes match. [Liquid density assessment](../liquid_density/notebook.qmd).
 
 The checkpoint 4 figures and 1C reruns await independent review and
 investigator promotion.
