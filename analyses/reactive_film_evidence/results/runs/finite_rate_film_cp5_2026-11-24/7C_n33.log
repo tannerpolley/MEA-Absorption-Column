@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/cp5_mesh.py", line 12, in <module>
+    a=run_column(r); print(a['execution'],a['solver'],a.get('failure'),flush=True)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/16-cp5-7c-finite-rate-m-314c701dd447e65e-2/src/mea_absorption_column/column.py", line 1393, in run_column
+    return _run_conserved_preparation(config)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/16-cp5-7c-finite-rate-m-314c701dd447e65e-2/src/mea_absorption_column/column.py", line 1272, in _run_conserved_preparation
+    raise FileExistsError(f"Refusing overwrite existing output directory: {output_dir}")
+FileExistsError: Refusing overwrite existing output directory: /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/16-cp5-7c-finite-rate-m-314c701dd447e65e-2/analyses/reactive_film_evidence/results/runs/finite_rate_film_cp5_2026-11-24/7C_n33
