@@ -1,0 +1,119 @@
+2026-11-24T03:53:14+00:00
+ 20:53:14 up  4:24,  1 user,  load average: 1.42, 1.86, 2.61
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064  8090509312  9399222272    75886592 16607141888 25472458752
+Swap:    16980627456  7404040192  9576587264
+Command: uv run --frozen python -u analyses/absorber_optimization/scripts/check_derivative_cost.py .tmp_local/issue93-stage6/stage6_timing_3c_n17_fd_r2.request.json \[\]
+	Command being timed: "timeout --kill-after=20 3635 agent-heavy uv run --frozen python -u analyses/absorber_optimization/scripts/check_derivative_cost.py .tmp_local/issue93-stage6/stage6_timing_3c_n17_fd_r2.request.json []"
+	User time (seconds): 155.02
+	System time (seconds): 6.69
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:41.78
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 477120
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 162537
+	Voluntary context switches: 78
+	Involuntary context switches: 2561
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 3336
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Exit status: 0
+2026-11-24T03:55:56+00:00
+ 20:55:56 up  4:26,  1 user,  load average: 1.59, 1.76, 2.45
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064  8144744448  9338867712    75927552 16613310464 25418223616
+Swap:    16980627456  7403757568  9576869888
+2026-11-24T03:53:14+00:00
+ 20:53:14 up  4:24,  1 user,  load average: 1.42, 1.86, 2.61
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064  8089149440  9400582144    75886592 16607133696 25473818624
+Swap:    16980627456  7404040192  9576587264
+  UNIT                         LOAD   ACTIVE SUB     DESCRIPTION
+● mea-91-cp3-campaign.service  loaded failed failed  /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen python -u .tmp_local/91-cp3-campaign.py
+● mea-93-stage4-sweep.service  loaded failed failed  /usr/bin/bash .tmp_local/issue93-stages45/sweep.sh
+● mea-93-stage5.service        loaded failed failed  /usr/bin/bash .tmp_local/issue93-stages45/mesh.sh
+  mea-93-stage6-timing.service loaded active running /usr/bin/bash .tmp_local/issue93-stage6/repeats.sh
+
+Legend: LOAD   → Reflects whether the unit definition was properly loaded.
+        ACTIVE → The high-level unit activation state, i.e. generalization of SUB.
+        SUB    → The low-level unit activation state, values depend on unit type.
+
+4 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+    PID COMMAND         %CPU
+1529438 t3code          11.6
+1529588 t3code           9.1
+1529629 t3code           6.8
+   2216 TShock.Server    6.4
+   2273 gnome-shell      6.3
+   4586 process-monitor  6.0
+  25005 chrome           5.6
+   1880 Xorg             3.3
+ 175117 chrome           2.1
+  24658 chrome           2.1
+   1613 pipewire         2.1
+
+******************************************************************************
+This program contains Ipopt, a library for large-scale nonlinear optimization.
+ Ipopt is released as open source code under the Eclipse Public License (EPL).
+         For more information visit https://github.com/coin-or/Ipopt
+******************************************************************************
+
+This is Ipopt version 3.14.11, running with linear solver MUMPS 5.4.1.
+
+Number of nonzeros in equality constraint Jacobian...:     2436
+Number of nonzeros in inequality constraint Jacobian.:        1
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Total number of variables............................:      285
+                     variables with only lower bounds:       68
+                variables with lower and upper bounds:       85
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      284
+Total number of inequality constraints...............:        1
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        1
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  1.0000000e+00 3.47e+02 1.36e+00   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1  1.0235491e+00 1.28e+00 9.79e-01  -1.2 6.63e-01    -  9.90e-01 1.00e+00h  1
+   2  1.0336149e+00 1.16e-02 1.51e-01  -2.6 3.74e-02    -  9.93e-01 1.00e+00h  1
+   3  1.0247855e+00 4.45e-03 1.10e-01  -4.1 2.11e-02    -  9.99e-01 9.87e-01h  1
+   4  1.0247460e+00 4.60e-05 4.13e-03  -5.0 3.00e-04    -  1.00e+00 9.90e-01h  1
+   5  1.0247457e+00 8.10e-11 2.15e-09  -7.1 3.12e-06    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 5
+
+                                   (scaled)                 (unscaled)
+Objective...............:   1.0247456617941515e+00    1.0247456617941515e+00
+Dual infeasibility......:   2.1493966596052906e-09    2.1493966596052906e-09
+Constraint violation....:   8.0977842745155970e-11    8.0977842745155970e-11
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   7.4356078027186620e-08    7.4356078027186620e-08
+Overall NLP error.......:   7.4356078027186620e-08    7.4356078027186620e-08
+
+
+Number of objective function evaluations             = 6
+Number of objective gradient evaluations             = 6
+Number of equality constraint evaluations            = 6
+Number of inequality constraint evaluations          = 6
+Number of equality constraint Jacobian evaluations   = 6
+Number of inequality constraint Jacobian evaluations = 6
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 149.885
+
+EXIT: Optimal Solution Found.
+
+
+Timing eligible. No other column activity detected at launch or during the 3 s checks.

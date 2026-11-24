@@ -3,6 +3,7 @@ title: "Constrained solvent flow for case 3C"
 resources:
   - results/runs/stage0_3c_n17_base_1972203/attempt.json
   - results/runs/stage2_3c_n17_problem_p/optimum.json
+  - results/runs/stage2_3c_n17_problem_p/attempt.json
   - results/runs/stage3_3c_n17_second_start/attempt.json
   - results/runs/stage3_3c_n17_o4_*/attempt.json
   - results/runs/stage3_3c_n17_o4_low_interrupted/run.log
@@ -11,19 +12,37 @@ resources:
   - results/runs/stage5_*/run.log
   - results/runs/stage4_*/attempt.json
   - results/runs/stage4_*/run.log
+  - results/runs/stage6_timing_*/attempt.json
+  - results/runs/stage6_timing_*/run.log
 ---
 
-## Problem and numerical basis
+For the 6 m case 3C absorber, the 17-node model reaches 90% CO₂ capture at 2.13973 kg/s of loaded lean solvent, 2.4746% above the reference flow that gives 89.41488% capture. Independent column solves bracket the target, and three perturbation directions verify the first-order sensitivities on that mesh. The computed solvent scales are 1.0247, 1.0595 and 1.0925 at 17, 33 and 65 cosine nodes. Their observed order of 0.078 leaves the mesh-independent optimum unresolved. These are numerical verification results for one case and have no experimental design validation. The single flow decision and active capture constraint leave trade-offs unresolved. The model has no stripper or energy objective.
 
-The optimization minimizes the lean-solvent flow scale $s=L/L_{3\mathrm{C}}$ at a carbon dioxide capture target of 90%.
-The scale multiplies the three liquid feeds together, preserving the nominal lean loading and unloaded amine mass fraction.
-The calculation uses the 6 m case 3C bed, the twelve-state conserved model, 17 cosine nodes with upwind cells, and the equilibrium-manifold film with nine quadrature points.
-The calculation retains the pre-joint-fit thermodynamic parameters used in the Stage 2 reference.
-The nominal liquid inlet temperature of 318.15 K was imputed, and the caloric reference remains provisional.
+## Problem P
 
-The [baseline](results/runs/stage0_3c_n17_base_1972203/attempt.json) captured 89.4148804% at $s=1$.
-The [constrained optimum](results/runs/stage2_3c_n17_problem_p/optimum.json) was $s^*=1.024745661793$, or 2.139726 kg/s of loaded lean liquid.
-The Stage 3 comparisons test numerical reproducibility on this grid and the sensitivity of this optimum to changes in the input quantities.
+The design variable is the dimensionless lean-solvent scale $s=L/L_{3\mathrm{C}}$. It multiplies the three liquid feeds together, preserving the nominal lean loading and unloaded amine mass fraction. The nominal 3C liquid feed is 2.4323 mol/s CO₂, 9.7293 mol/s MEA and 76.9752 mol/s water. The model uses the pre-joint-fit thermodynamic parameters, an imputed liquid inlet temperature of 318.15 K, a provisional vapour caloric reference and a bottom pressure of 110900 Pa.
+
+The reference discretization uses the twelve-state conserved model with 17 cosine nodes, upwind cells and the equilibrium-manifold film with nine quadrature points. IPOPT minimizes $s$ with the column equations $g(x;s,p)=0$, the existing state bounds, $0.5\leq s\leq2.0$ and the capture constraint
+
+$$
+F_{V,\mathrm{CO_2},\mathrm{out}}-(1-\eta^*)F_{V,\mathrm{CO_2},\mathrm{in}}\leq0,
+\qquad \eta^*=0.90.
+$$
+
+The objective and capture row are part of the column solve. The reference Jacobians use CasADi with Engine actions, and IPOPT uses a limited-memory Hessian approximation. A linear exchanger with an independent NumPy solution and scalar root find checked the embedded optimizer and the sign of its parameter multiplier. Symbolic and numeric inlet functions were also compared at the node and boundary levels.
+
+## Reference optimum and checks O1–O3
+
+The [reference column](results/runs/stage0_3c_n17_base_1972203/attempt.json) captured 89.4148804% at $s=1$ and $L_{3\mathrm{C}}=2.08805556$ kg/s. The [optimum](results/runs/stage2_3c_n17_problem_p/optimum.json) was $s^*=1.024745661793$, or 2.139725872 kg/s (91.34254413 mol/s), at 90.000001713% capture. IPOPT used five iterations. The [retained solve](results/runs/stage2_3c_n17_problem_p/attempt.json) includes the derivative checks, optimality diagnostics and individual bound slacks.
+
+| Check | Numerical evidence |
+|---|---|
+| O1 · Constraint derivatives | All 36 comparisons of the 12 columns in $(s,p)$ passed the $10^{-5}$ relative limit. The largest error against the centered residual differences was $6.49\times10^{-6}$ over relative steps $10^{-3}$, $10^{-4}$ and $10^{-5}$. |
+| O1b · Liquid feed scale identity | $\sum_i p_{L,i}\,\partial s^*/\partial p_{L,i}=-1.024745595$ against $-s^*=-1.024745662$. The relative error of $6.55\times10^{-8}$ was below $10^{-6}$. |
+| O2 · Optimality and feasibility | IPOPT returned `Solve_Succeeded`. Scaled constraint violation was $1.61\times10^{-11}$ and bound violation was zero, both below $10^{-7}$. Final dual infeasibility was $1.10\times10^{-11}$ and complementarity was $7.44\times10^{-8}$. The native-grid physical certificate accepted the result, with largest scaled residual $1.30\times10^{-12}$. |
+| O3 · Active constraints | Capture was the sole active inequality, with scaled slack $1.71\times10^{-8}$ and physical multiplier $\lambda_c=2.611531805$ s/mol. All state and scale bounds were inactive. The smallest singular value of the $285\times285$ scaled active-constraint Jacobian was $1.9411\times10^{-3}$. |
+
+At the optimized inlets, native-node maxima were 345.020 K liquid temperature, 174.084 Pa/m pressure-drop magnitude and 5.356% liquid holdup by bed volume. In the 3C density comparison, solved-state loaded density was about 11% high and lowered predicted holdup by about 12–16%. These quantities are reported as margins and were outside the optimization constraints. [Density comparison #83](https://github.com/tannerpolley/MEA-Absorption-Column/issues/83)
 
 ## Second start
 
@@ -32,14 +51,11 @@ The [second start](results/runs/stage3_3c_n17_second_start/attempt.json) converg
 The scaled residual infinity norm was $6.10\times10^{-12}$, and the physical certificate accepted the profile.
 The difference $|s_2^*-s^*|=7.3973\times10^{-8}$ defines $\mathrm{tol}_s$ for the sensitivity comparisons.
 It measures agreement between two starts on a fixed grid.
-A sample late in the second start recorded 575 s of CPU time over 583 s of elapsed time, about 98.6% of one core.
-The second start required 31 iterations, compared with five for the reference solve.
 
 ## Capture around the optimum (O4)
 
 The ordinary column solver used separate case files with each liquid feed multiplied by the indicated solvent scale.
 The initial bulk state used those same liquid CO₂ and water flows.
-The cases use direct SI inputs, so the transport declaration does not restrict the case paths.
 
 | Case | Solvent scale | Capture (%) | Wall time (s) |
 |---|---:|---:|---:|
@@ -54,7 +70,7 @@ The relative slope difference was 0.0134%, and the plan specifies no separate to
 
 ## Sensitivity checks (O5)
 
-Each perturbed problem used the Stage 2 nodal profile and solvent scale as its starting point.
+Each perturbed problem used the 17-node optimum's nodal profile and solvent scale as its starting point.
 The capture target moved by $\Delta=0.005$ in capture fraction, the lean loading by $\Delta=0.005$ mol CO₂ per mol MEA, and the liquid inlet temperature by $\Delta=1$ K.
 The lean-loading perturbation changes the CO₂ feed and holds the MEA and water feeds fixed.
 Each direction used four re-solves at $-2\Delta$, $-\Delta$, $+\Delta$, and $+2\Delta$.
@@ -79,21 +95,7 @@ $$
 
 All twelve perturbed solves passed numerical and physical certification.
 The capture inequality remained active to the scaled feasibility tolerance, and the state and solvent-scale bounds remained inactive.
-These comparisons support the multiplier derivatives for the tested directions on this mesh.
-
-| Input direction | −2Δ wall time (s) | −Δ (s) | +Δ (s) | +2Δ (s) |
-|---|---:|---:|---:|---:|
-| Capture target | 144.43 | 148.76 | 124.84 | 120.78 |
-| Lean loading | 158.74 | 146.18 | 127.57 | 133.79 |
-| Liquid inlet temperature | 150.16 | 146.84 | 136.45 | 151.69 |
-
-## Scope and retained evidence
-
-The comparisons verify feasibility and first-order sensitivity for the local numerical optimum on the 17-node grid.
-The attempt files preserve the solver settings, the inlet basis, and physical certification.
-The [summary](results/runs/stage3_3c_n17_summary.json) retains the calculated comparisons, individual perturbed optima, and wall times.
-The first [low-flow attempt](results/runs/stage3_3c_n17_o4_low_interrupted/run.log) ended during a workspace routing interruption and the output recorder reported a JSON error for byte-valued worker output.
-The successful retry supplied the low-flow value in the O4 table.
+The sensitivity verification applies to first-order changes near the reference optimum on the 17-node mesh while capture remains the sole active inequality. The [retained perturbation summary](results/runs/stage3_3c_n17_summary.json) gives the individual optima and wall times. The [interrupted low-flow attempt](results/runs/stage3_3c_n17_o4_low_interrupted/run.log) is retained separately from the completed O4 result.
 
 ## Mesh dependence of the optimum
 
@@ -141,12 +143,12 @@ Each entry is per unit of its input quantity.
 | Capture target | fraction | −6.39664716 | −8.98684974 |
 
 The capture multiplier more than doubles from 17 to 65 nodes, and several inlet sensitivities also change materially.
-The Stage 3 perturbations verify derivatives at fixed mesh resolution, and these changes quantify their mesh dependence for this case.
+The capture slope from the multipliers drops from 0.232 to 0.156 to 0.111 per unit solvent scale across the ladder. The refinement results show that a derivative verified on the 17-node mesh cannot be carried to another mesh without a resolution check.
 
 ## Film quadrature and solver tolerance at 17 nodes
 
 Both checks start from the reference optimum's solvent scale and initialize the nodal states from the feeds.
-The retained-profile guard requires matching quadrature and tolerance settings, so these comparisons also change the nodal start relative to the Stage 2 reference.
+The retained-profile guard requires matching quadrature and tolerance settings, so these comparisons also change the nodal start relative to the reference optimum.
 The two-start scale difference on the reference settings was $7.40\times10^{-8}$.
 
 | Change from the reference | $s^*$ | $s^*-s^*_{17}$ | CO₂ capture (%) | Scaled NLP residual | IPOPT iterations | Wall time (s) |
@@ -165,7 +167,7 @@ The reruns resolved the modified requests from the original input file and suppl
 
 ## Engine work with exact and forward-difference Jacobians
 
-This numerical comparison holds the constrained NLP, inlet values, initial scale and retained stage 0 nodal seed, solver options and solver tolerance fixed within each mesh pair.
+This numerical comparison holds the constrained NLP, inlet values, initial scale and retained reference-column nodal seed, solver options and solver tolerance fixed within each mesh pair.
 The changed calculation is the Jacobian of each Engine callback.
 It uses a forward perturbation $h_j=r u_j$ on one positive Engine input $u_j$ at a time.
 The residual still consumes Engine first actions for the loading tangent and caloric slopes in both arms.
@@ -214,18 +216,35 @@ The sweep's shell wrapper stopped while finalizing its log.
 The [combined log](results/runs/stage4_3c_n17_step_sweep/run.log) retains the wrapper error and IPOPT's output.
 The worker had already returned the converged optimum, all seven Jacobian errors and the physical certificate.
 
-### Timing conditions
+### Uncontended elapsed time
 
-The comparison ran with single-threaded BLAS and a 3600 s worker limit per run.
-Load averages at the start of the four count runs were recorded over 1, 5 and 15 minutes.
+The timing runs replayed the four cost requests on `1335739`. The source base advanced from `0b21f55` and includes the #16 checkpoint 3 change, which added 17 source lines and removed four. Each repeat reproduced the original liquid and vapour Engine solve counts exactly. The thermodynamic inputs, Engine wheel, initial profiles and solver settings match the original cost comparison.
 
-| Nodes | Exact load average | Forward-difference load average |
-|---|---|---|
-| 9 | 4.69 / 4.06 / 5.95 | 5.08 / 4.55 / 5.90 |
-| 17 | 10.39 / 6.85 / 6.47 | 6.43 / 6.86 / 6.54 |
+Each configuration ran three times in separate workers with single-threaded BLAS and a 3600 s worker limit. A unit and process check preceded every launch and ran every three seconds during the solve. Wall time is the elapsed time through profile certification recorded in the retained attempt. The spread below is the observed minimum to maximum across the three repeats.
 
-The first [timing repeat](results/runs/stage4_3c_n9_exact_r1/run.log) started at load averages of 2.17 / 3.70 / 5.22, with no other column process detected.
-A #16 column campaign started during that solve, so its wall time is excluded.
-The waiting window closed with other column activity still present.
-The three uncontended repeats per configuration remain pending.
-No column solve exceeded its wall limit.
+| Nodes | Exact median [range] (s) | FD median [range] (s) | FD/exact wall time | Engine solves exact / FD | FD/exact Engine solves |
+|---:|---:|---:|---:|---:|---:|
+| 9 | 115.61 [115.28–117.15] | 202.18 [201.13–204.00] | 1.75 | 2,344 / 14,706 | 6.27 |
+| 17 | 107.01 [106.16–108.00] | 161.57 [161.15–163.21] | 1.51 | 1,968 / 11,460 | 5.82 |
+
+The elapsed-time ratios describe these four configurations on this host. Engine solve counts are the primary work measure. The host load averages include all projects and background activity.
+
+| Nodes | Jacobian | Repeat | Wall time (s) | Launch load average, 1 / 5 / 15 min |
+|---:|---|---:|---:|---|
+| 9 | Exact | [1](results/runs/stage6_timing_3c_n9_exact_r1/run.log) | 117.15 | 1.00 / 3.16 / 3.96 |
+| 9 | Exact | [2](results/runs/stage6_timing_3c_n9_exact_r2/run.log) | 115.61 | 2.30 / 2.11 / 2.79 |
+| 9 | Exact | [3](results/runs/stage6_timing_3c_n9_exact_r3/run.log) | 115.28 | 1.46 / 1.67 / 2.34 |
+| 9 | FD | [1](results/runs/stage6_timing_3c_n9_fd_r1/run.log) | 204.00 | 1.48 / 2.69 / 3.69 |
+| 9 | FD | [2](results/runs/stage6_timing_3c_n9_fd_r2/run.log) | 202.18 | 2.34 / 2.15 / 2.97 |
+| 9 | FD | [3](results/runs/stage6_timing_3c_n9_fd_r3/run.log) | 201.13 | 1.41 / 1.59 / 2.23 |
+| 17 | Exact | [1](results/runs/stage6_timing_3c_n17_exact_r1/run.log) | 108.00 | 1.66 / 2.19 / 3.29 |
+| 17 | Exact | [2](results/runs/stage6_timing_3c_n17_exact_r2/run.log) | 106.16 | 1.59 / 1.76 / 2.45 |
+| 17 | Exact | [3](results/runs/stage6_timing_3c_n17_exact_r3/run.log) | 107.01 | 1.45 / 1.58 / 2.10 |
+| 17 | FD | [1](results/runs/stage6_timing_3c_n17_fd_r1/run.log) | 163.21 | 2.11 / 2.09 / 3.12 |
+| 17 | FD | [2](results/runs/stage6_timing_3c_n17_fd_r2/run.log) | 161.15 | 1.42 / 1.86 / 2.61 |
+| 17 | FD | [3](results/runs/stage6_timing_3c_n17_fd_r3/run.log) | 161.57 | 1.25 / 1.47 / 1.99 |
+
+The [earlier 9-node repeat](results/runs/stage4_3c_n9_exact_r1/run.log) overlapped a #16 column run and is excluded from the elapsed-time comparison.
+The twelve accepted repeats showed no overlap with other column activity.
+
+This synthesis is awaiting independent review and investigator promotion for manuscript use.

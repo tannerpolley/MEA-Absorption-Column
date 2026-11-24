@@ -1,0 +1,33 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "nodes": 9,
+      "end_clustering": 1.0,
+      "quadrature_points": 9,
+      "tolerance": 1E-7,
+      "max_iterations": 60
+    }
+  },
+  "initialization": {
+    "values": {
+      "retained_profile": "analyses/absorber_optimization/results/runs/stage0_3c_n17_base_1972203/attempt.json"
+    }
+  },
+  "design": {
+    "capture_target": 0.90,
+    "scale_bounds": [
+      0.5,
+      2.0
+    ]
+  },
+  "execution": {
+    "wall_limit_s": 3600,
+    "threads": 1,
+    "output_dir": "analyses/absorber_optimization/results/runs/stage6_timing_3c_n9_exact_r2"
+  }
+}
