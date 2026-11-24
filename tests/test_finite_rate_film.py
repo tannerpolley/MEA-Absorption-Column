@@ -52,7 +52,12 @@ def test_finite_rate_limits_and_node_jacobian(basis):
             kg = float(d[3][0])
             assert abs(zero) <= 1e-8 * kg * fb and np.isnan(float(d[12]))
             assert reversals[0] < 0 < reversals[1]
-            physical = (fg - fb) / (1. / kg + float(d[11]) / float(d[9]))
+            evidence = directory / "finite_rate_film_cp1_2026-11-23_rf2_corrected/C6_C7.jsonl"
+            basis_name = {"n2o_analogy": "N2O analogy", "epcsaft_free_co2": "ePC-SAFT free CO2"}[basis]
+            retained = next(r for line in evidence.read_text().splitlines() if (r := json.loads(line))
+                            and r["film"] == row["film"] and r["z_m"] == row["z_m"]
+                            and r["basis"] == basis_name and r["sweep"] == "column")
+            physical = (fg - fb) / (1. / kg + retained["H_Pa_m3_mol"] / retained["fine"]["k_L_m_s"])
             slow_error = flux(slow, state, fg, fg, (0., .6)) / physical - 1.
             print(basis, "C1 flux/limit", zero, 1e-8 * kg * fb, "C2 fluxes", reversals, "C3 error", slow_error)
             assert abs(slow_error) <= 1e-6

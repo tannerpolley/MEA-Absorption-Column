@@ -108,7 +108,11 @@ the common nodes, with $s_i$ taken from the 11-node solver state scales.
 For vapor water flow, $s_i$ is the inlet vapor water flow of 1.56242
 mol s$^{-1}$ for both bases. The maxima of 0.8514 and 0.8409 occurred
 in this state at 5.427 m, where refinement increased the flow by 1.330
-and 1.314 mol s$^{-1}$, respectively. The largest scaled
+and 1.314 mol s$^{-1}$, or 28.2% and 26.7% of the coarse local flow,
+respectively. Axial nodes and film quadrature were refined together, so
+the change cannot be attributed to either refinement individually. The
+Henry-basis capture gap is 4.165 percentage points on 21 nodes and 4.292
+points on 11 nodes. The largest scaled
 material and energy invariant drifts across the four runs were
 $3.70\times10^{-16}$ and $1.68\times10^{-12}$. C8 is report only.
 Axial profile convergence remains open.
@@ -139,7 +143,7 @@ with Engine 1.0.0 at `f4566b3d`.
 [Full suite](results/runs/finite_rate_film_cp2_2026-11-23_henry_pin/full_suite.log),
 [Engine integration](results/runs/finite_rate_film_cp2_2026-11-23_henry_pin/integration.log).
 
-## Current selectable closures: Engine 1.0.0 (issue 16)
+## Stage 1 comparison: Engine 1.0.0 (issue 16)
 
 The current twelve-state conserved route runs two CO2 closures on the same
 nine-species Engine equilibrium and total-enthalpy basis. At eleven cosine-upwind

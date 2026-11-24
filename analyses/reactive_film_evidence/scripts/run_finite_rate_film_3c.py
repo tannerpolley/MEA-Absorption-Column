@@ -9,6 +9,7 @@ from mea_absorption_column.column import run_column
 
 
 def main(output):
+    output.mkdir(parents=True, exist_ok=True)
     retained = Path(__file__).resolve().parents[1] / "results/runs/engine100"
     rows, accepted = [], {}
     for nodes, quadrature in ((11, 5), (21, 9)):
