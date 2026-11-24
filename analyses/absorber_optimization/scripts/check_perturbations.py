@@ -1,4 +1,5 @@
 """Run Stage 3: check_perturbations.py RETAINED_RUN LABEL."""
+import glob
 import json
 import resource
 import sys
@@ -9,7 +10,7 @@ request = json.loads((base / "request.json").read_text())
 design = json.loads((base / "attempt.json").read_text())["result"]["design"]
 s, p = design["decision"][0], design["parameters"]
 prefix = base.parent / f"stage3_{label}"
-if any(base.parent.glob(f"{prefix.name}_*")):  # a reused label could pair new case files with old certified attempts
+if any(base.parent.glob(f"{glob.escape(prefix.name)}_*")):  # a reused label could pair new case files with old certified attempts
     raise FileExistsError(f"{prefix}_* already exists; choose a new label")
 def run(tag, settings):
     output = prefix.with_name(f"{prefix.name}_{tag}")
