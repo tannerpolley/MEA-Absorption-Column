@@ -14,3 +14,16 @@
 | 6C | 33 | 69.7591 | 60.2 ± 0.5 | 4 | 180.97 | 1.36e-11 | [Accepted](results/runs/joint_fit_f2_20261123/bridge/6C/33/summary.json) | 316.55–339.99 | +0.0823 |
 | 7C | 17 | 74.0757 | 76.4 ± 2.2 | 4 | 89.64 | 2.04e-12 | [Accepted](results/runs/joint_fit_f2_20261123/bridge/7C/17/cosine/summary.json) | 316.45–339.57 | — |
 | 7C | 33 | 68.5212 | 76.4 ± 2.2 | 4 | 181.22 | 6.01e-12 | [Accepted](results/runs/joint_fit_f2_20261123/bridge/7C/33/summary.json) | 316.45–342.68 | -5.5545 |
+
+Attempts that stopped before a certified result are listed below. None of them supplies a reported capture or a final residual.
+
+| Case | Nodes | Stage | Elapsed (s) | Stopping point | Record |
+|---|---:|---|---:|---|---|
+| 1C | 17 | Unclustered seed | 1.50 | Interface initialization: Brent bracket `[0, 1]` refused, endpoint residuals of equal sign | [summary](results/runs/joint_fit_f2_20261123/bridge/1C/17/seed/summary.json) |
+| 1C | 17 | Cosine | 2114.39 | Wall limit reached in the global solve | [summary](results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/summary.json) |
+| 2C | 17 | Unclustered seed | — | Campaign stopped after the 1C seed failure | [summary](results/runs/joint_fit_f2_20261123/bridge/2C/17/seed/summary.json) |
+| 2C | 17 | Unclustered seed retry | 2459.76 | Wall limit reached in the global solve | [summary](results/runs/joint_fit_f2_20261123/bridge/2C/17/seed_retry/summary.json) |
+| 4C | 17 | Unclustered seed | — | Campaign stopped after the 1C seed failure | [summary](results/runs/joint_fit_f2_20261123/bridge/4C/17/seed/summary.json) |
+| 4C | 33 | Warm start | 2202.06 | Wall limit reached in the global solve | [summary](results/runs/joint_fit_f2_20261123/bridge/4C/33/summary.json) |
+| 5C | 17 | Unclustered seed | — | Campaign stopped after the 1C seed failure | [summary](results/runs/joint_fit_f2_20261123/bridge/5C/17/seed/summary.json) |
+| 5C | 33 | Warm start | 2203.96 | Wall limit reached in the global solve | [summary](results/runs/joint_fit_f2_20261123/bridge/5C/33/summary.json) |
