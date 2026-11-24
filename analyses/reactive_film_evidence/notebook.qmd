@@ -155,7 +155,8 @@ capture by 0.023 and 0.150 percentage points for N₂O and ePC-SAFT Henry,
 respectively. Seventeen nodes permit reuse of the certified #91 comparison at
 the same resolution. The co-refinement in 3C also moved vapour-water flow, and
 the #91 manifold result for 7C changed by −5.55 points at 33 nodes. The
-seven-case results describe this discretization.
+closure and temperature comparisons below use this discretization; the N₂O
+capture mesh study also uses 33, 65, and 129 nodes.
 
 The [#91 case rules](../nccc_validation/inputs/joint_fit_f2/case_rules.md)
 reproduce the 3C inputs within $10^{-12}$ absolute before generating 1C, 2C and
@@ -212,7 +213,7 @@ than the N₂O profile at each corresponding height. The manifold term
 exceeds the kinetic term at the gas inlet and falls below it near the
 liquid inlet under both Henry conventions.
 
-Across 2C–7C, changing to ePC-SAFT Henry raised finite-rate capture by
+At 17 nodes across 2C–7C, changing to ePC-SAFT Henry raised finite-rate capture by
 +2.25 to +4.38 percentage points and the native-node peak liquid temperature
 by 0.24–0.71 K. The liquid tap RMSE moved by −0.18 to +0.32 K. On 1C the
 same change raised capture by 1.35 percentage points, peak liquid
@@ -220,7 +221,48 @@ temperature by 0.29 K, and tap RMSE by 0.41 K. Across all seven cases,
 capture MAE is 4.78 points for enhancement, 3.98 for the manifold, 3.48
 for finite rate with N₂O, and 3.57 for finite rate with ePC-SAFT. The mean
 tap RMSE is lowest for finite rate with N₂O at 4.58 K. These are measurement
-comparisons on the selected grid.
+comparisons on the 17-node grid.
+
+### N₂O finite-rate axial mesh refinement
+
+The 17-node cases use the certified profiles above; the 1C source is the
+60-iteration rerun. Each finer solution starts from the preceding profile,
+with nine film quadrature points, the same case inputs and iteration cap, and
+only the axial node count changed. The new runs use wall limits of 3600 s at
+33 and 65 nodes and 7200 s at 129 nodes; the retained 7C 65-node run used
+7200 s. All runs pass numerical and native-grid physical
+acceptance, have finite twelve-state profiles, and retain film diagnostics at
+all nodes. Measured means and standard deviations are from Morgan et al.
+(2020), Table A1. Capture and measurement are percent; changes and errors are
+percentage points. Run time is wall seconds, followed by solver iterations.
+
+| Case | Measured ± SD | 17 | 33 | 65 | 129 | Δ33−17 | Δ65−33 | Δ129−65 | Order | Conditional limit | 129 error | Time / iterations (17, 33, 65, 129) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| 1C | 97.1 ± 0.7 | 97.706 | 98.011 | 98.112 | 98.149 | +0.305 | +0.100 | +0.037 | 1.43 | 98.171 | +1.049 | 521.8/33, 168.4/4, 339.0/4, 553.1/3 |
+| 2C | 92.3 ± 0.5 | 90.979 | 91.669 | 92.025 | 92.207 | +0.690 | +0.356 | +0.182 | 0.97 | 92.396 | -0.093 | 117.6/6, 166.6/4, 340.5/4, 551.6/3 |
+| 3C | 89.5 ± 1.2 | 81.659 | 81.785 | 81.911 | 81.991 | +0.126 | +0.127 | +0.080 | 0.66 | 82.130 | -7.509 | 109.1/6, 171.0/4, 335.0/4, 552.5/3 |
+| 4C | 88.9 ± 0.8 | 82.842 | 82.822 | 82.873 | 82.914 | -0.020 | +0.052 | +0.041 | 0.33 | unresolved | -5.986 | 118.7/6, 170.3/4, 326.8/4, 667.3/3 |
+| 5C | 86.4 ± 0.6 | 86.232 | 86.189 | 86.176 | 86.175 | -0.043 | -0.013 | -0.001 | 4.50 | unresolved | -0.225 | 113.1/6, 179.2/4, 327.5/4, 666.4/3 |
+| 6C | 60.2 ± 0.5 | 61.132 | 61.378 | 61.595 | 61.731 | +0.246 | +0.217 | +0.136 | 0.68 | 61.956 | +1.531 | 111.8/6, 185.2/4, 259.6/3, 665.5/3 |
+| 7C | 76.4 ± 2.2 | 68.980 | 63.776 | 60.617 | 59.034 | -5.203 | -3.160 | -1.583 | 1.00 | 57.444 | -17.366 | 102.8/5, 174.3/4, 342.1/4, 711.6/4 |
+
+Mean absolute capture error across the seven cases is 3.48, 4.19,
+4.61, and 4.82 percentage points at 17, 33, 65, and 129 nodes,
+respectively. The 129-node mean exceeds the 17-node value by 1.34
+points; 7C accounts for much of the increase. Its 129-node prediction is
+59.034%, 17.366 points below the measured 76.4 ± 2.2%. These are model
+predictions compared with measurements, and mesh refinement is numerical
+verification; the difference does not establish physical validation.
+
+Order is $p=\log_2(|(c_{65}-c_{33})/(c_{129}-c_{65})|)$.
+The conditional limit uses $c_{129}+(c_{129}-c_{65})/(2^p-1)$ only when
+$0.5\leq p\leq3$, the study's specified range. It assumes the observed
+order persists; it is not a measured value or a bound on model error. The
+4C and 5C orders fall outside that range, so their extrapolations are
+unresolved. The 4C sequence also changes direction between the first two
+refinements. C7 resolved-film checks cover the 17-node states only, not
+these refined states. [Requests, profiles, certificates and summary](results/runs/finite_rate_film_cp6_2026-11-24/summary.json);
+[retained 7C 33- and 65-node runs](results/runs/finite_rate_film_cp5_2026-11-24/).
 
 ### Wetted-wall measurement comparison
 
@@ -281,7 +323,7 @@ Dugas rows exceed the concentration range of the Snijder correlation.
 
 The enhancement factor's source-range restriction is removed only at column
 states where C7 passes at their own Hatta numbers. C7 checks the reduction
-against a resolved film. Five references on accepted profiles remain
+against a resolved film at the 17-node column states only. Five references on accepted profiles remain
 unscored. Four N₂O Henry references reached the 100,000-node limit:
 3.000 m in 1C, 3.000 m in 2C, 5.494 m in 4C, and 4.667 m in 5C. The
 ePC-SAFT Henry reference at 4.667 m in 1C was not rerun on its accepted
@@ -307,14 +349,9 @@ The solved-state liquid density is about 11% high against Amundsen et al.
 (2009). On 3C this lowers predicted liquid holdup by about 12–16%.
 The provisional vapour caloric reference also limits thermal interpretation.
 The 7C manifold capture changed by −5.55 percentage points when the axial grid
-grew from 17 to 33 nodes. For the finite-rate film with N₂O Henry, capture is
-68.980%, 63.776%, and 60.617% at 17, 33, and 65 nodes, respectively: changes
-of −5.203 and −3.160 percentage points. The observed order is 0.720 and the
-Richardson estimate is 55.732%, with a 4.885-point correction from 65 nodes;
-this extrapolation assumes the observed order persists. The 65-node prediction
-is 15.783 points below Morgan et al.'s measured 76.4 ± 2.2%. Each run passed
-the native-grid physical certificate, but the large refinement changes limit
-the capture comparison. [Mesh runs](results/runs/finite_rate_film_cp5_2026-11-24/).
+increased from 17 to 33 nodes. The N₂O finite-rate capture refinement and
+measurement comparison for all seven cases are given above. The resolved-film
+C7 checks apply to the 17-node states only.
 [Liquid density assessment](../liquid_density/notebook.qmd).
 
 The checkpoint 4 figures and 1C reruns await independent review and

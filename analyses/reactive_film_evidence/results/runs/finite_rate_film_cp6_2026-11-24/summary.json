@@ -1,0 +1,325 @@
+{
+  "cases": [
+    {
+      "case": "1C",
+      "measured": 97.1,
+      "sd": 0.7,
+      "capture": [
+        97.70626104783891,
+        98.01130216916376,
+        98.11178411543582,
+        98.14898991472275
+      ],
+      "changes": [
+        0.30504112132484806,
+        0.10048194627206897,
+        0.037205799286923025
+      ],
+      "order": 1.4333368961222492,
+      "estimate": 98.17086658652616,
+      "error": 1.0489899147227533,
+      "runs": [
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp4_2026-11-23/n2o/solve/attempt.json",
+          "seconds": 521.7605119559994,
+          "iterations": 33,
+          "residual": 3.9176138640715425e-08
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/1C_n33/attempt.json",
+          "seconds": 168.41813947699848,
+          "iterations": 4,
+          "residual": 1.9196586386498215e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/1C_n65/attempt.json",
+          "seconds": 338.9659257099993,
+          "iterations": 4,
+          "residual": 3.4808604700859725e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/1C_n129/attempt.json",
+          "seconds": 553.0956223579997,
+          "iterations": 3,
+          "residual": 6.5173245097914616e-09
+        }
+      ]
+    },
+    {
+      "case": "2C",
+      "measured": 92.3,
+      "sd": 0.5,
+      "capture": [
+        90.97893906598343,
+        91.66857238426913,
+        92.0249820382149,
+        92.20685994531252
+      ],
+      "changes": [
+        0.6896333182857006,
+        0.35640965394577506,
+        0.18187790709761487
+      ],
+      "order": 0.9705661072391474,
+      "estimate": 92.39639321755432,
+      "error": -0.09314005468748121,
+      "runs": [
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/2C/n2o/try1/attempt.json",
+          "seconds": 117.56580187899999,
+          "iterations": 6,
+          "residual": 9.118415229792725e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/2C_n33/attempt.json",
+          "seconds": 166.60426707100123,
+          "iterations": 4,
+          "residual": 1.6881866068286298e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/2C_n65/attempt.json",
+          "seconds": 340.5259161849972,
+          "iterations": 4,
+          "residual": 6.168690901258157e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/2C_n129/attempt.json",
+          "seconds": 551.6096075029927,
+          "iterations": 3,
+          "residual": 5.4124189337466416e-09
+        }
+      ]
+    },
+    {
+      "case": "3C",
+      "measured": 89.5,
+      "sd": 1.2,
+      "capture": [
+        81.65900367324679,
+        81.78457183922015,
+        81.91120416281362,
+        81.99136081295637
+      ],
+      "changes": [
+        0.1255681659733625,
+        0.1266323235934692,
+        0.08015665014275442
+      ],
+      "order": 0.6597515848919026,
+      "estimate": 82.12960708428629,
+      "error": -7.508639187043627,
+      "runs": [
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/3C/n2o/try1/attempt.json",
+          "seconds": 109.08803119099866,
+          "iterations": 6,
+          "residual": 8.319009556161396e-12
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/3C_n33/attempt.json",
+          "seconds": 171.030320277001,
+          "iterations": 4,
+          "residual": 7.600208010883043e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/3C_n65/attempt.json",
+          "seconds": 334.9997351849961,
+          "iterations": 4,
+          "residual": 3.140186562919296e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/3C_n129/attempt.json",
+          "seconds": 552.4518233790004,
+          "iterations": 3,
+          "residual": 2.6067160835331623e-08
+        }
+      ]
+    },
+    {
+      "case": "4C",
+      "measured": 88.9,
+      "sd": 0.8,
+      "capture": [
+        82.84215955060318,
+        82.82174419157515,
+        82.8732668269408,
+        82.91428163477838
+      ],
+      "changes": [
+        -0.020415359028035596,
+        0.051522635365657266,
+        0.04101480783756983
+      ],
+      "order": 0.3290615195434296,
+      "estimate": null,
+      "error": -5.985718365221629,
+      "runs": [
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/4C/n2o/try1/attempt.json",
+          "seconds": 118.6761974100009,
+          "iterations": 6,
+          "residual": 1.0194730935948119e-10
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/4C_n33/attempt.json",
+          "seconds": 170.34763372399902,
+          "iterations": 4,
+          "residual": 4.047738502444245e-10
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/4C_n65/attempt.json",
+          "seconds": 326.750397429998,
+          "iterations": 4,
+          "residual": 1.5305401156642595e-09
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/4C_n129/attempt.json",
+          "seconds": 667.2601515269998,
+          "iterations": 3,
+          "residual": 6.054522837781309e-08
+        }
+      ]
+    },
+    {
+      "case": "5C",
+      "measured": 86.4,
+      "sd": 0.6,
+      "capture": [
+        86.2317668468301,
+        86.18895112162501,
+        86.17572056320856,
+        86.17513530144164
+      ],
+      "changes": [
+        -0.04281572520508803,
+        -0.013230558416452709,
+        -0.0005852617669148685
+      ],
+      "order": 4.498648108309175,
+      "estimate": null,
+      "error": -0.22486469855836333,
+      "runs": [
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/5C/n2o/try1/attempt.json",
+          "seconds": 113.10563915800049,
+          "iterations": 6,
+          "residual": 2.9078791385054425e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/5C_n33/attempt.json",
+          "seconds": 179.18206635800016,
+          "iterations": 4,
+          "residual": 1.9913054220848164e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/5C_n65/attempt.json",
+          "seconds": 327.4815383940004,
+          "iterations": 4,
+          "residual": 2.8613439343185995e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/5C_n129/attempt.json",
+          "seconds": 666.410183439999,
+          "iterations": 3,
+          "residual": 1.3131247863098932e-08
+        }
+      ]
+    },
+    {
+      "case": "6C",
+      "measured": 60.2,
+      "sd": 0.5,
+      "capture": [
+        61.13163355541935,
+        61.3776656853775,
+        61.59495875148865,
+        61.73063125584402
+      ],
+      "changes": [
+        0.24603212995815227,
+        0.21729306611114652,
+        0.13567250435536948
+      ],
+      "order": 0.6795137673170053,
+      "estimate": 61.95615075781871,
+      "error": 1.530631255844014,
+      "runs": [
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/6C/n2o/try1/attempt.json",
+          "seconds": 111.81178510100108,
+          "iterations": 6,
+          "residual": 3.7110525740543687e-09
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/6C_n33/attempt.json",
+          "seconds": 185.17114650899748,
+          "iterations": 4,
+          "residual": 2.535978407414369e-11
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/6C_n65/attempt.json",
+          "seconds": 259.6247424999965,
+          "iterations": 3,
+          "residual": 6.176542605259424e-08
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/6C_n129/attempt.json",
+          "seconds": 665.4721870520007,
+          "iterations": 3,
+          "residual": 1.3110797602795305e-09
+        }
+      ]
+    },
+    {
+      "case": "7C",
+      "measured": 76.4,
+      "sd": 2.2,
+      "capture": [
+        68.97992848850876,
+        63.776491303830454,
+        60.616816867390675,
+        59.03374243457371
+      ],
+      "changes": [
+        -5.203437184678307,
+        -3.1596744364397793,
+        -1.5830744328169644
+      ],
+      "order": 0.9970468254623954,
+      "estimate": 57.44416698482107,
+      "error": -17.366257565426295,
+      "runs": [
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/7C/n2o/try1/attempt.json",
+          "seconds": 102.78137327300101,
+          "iterations": 5,
+          "residual": 8.653837663321493e-12
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp5_2026-11-24/7C_n33/try3/attempt.json",
+          "seconds": 174.33263625899417,
+          "iterations": 4,
+          "residual": 1.467652655006442e-10
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp5_2026-11-24/7C_n65/try2/attempt.json",
+          "seconds": 342.08568306099914,
+          "iterations": 4,
+          "residual": 6.687123731544429e-10
+        },
+        {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/7C_n129/attempt.json",
+          "seconds": 711.5623560000022,
+          "iterations": 4,
+          "residual": 1.470021482746382e-10
+        }
+      ]
+    }
+  ],
+  "mean_absolute_error": [
+    3.4780138540122882,
+    4.192662430574484,
+    4.614964629765133,
+    4.822605863072023
+  ]
+}
