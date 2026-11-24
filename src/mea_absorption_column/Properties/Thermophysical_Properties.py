@@ -12,7 +12,6 @@ MEA_MOLAR_VOLUME_INTERACTION_COEFFS_ML_PER_MOL = (-2.2642, 3.0059)
 
 def henrys_law(T, z):
 
-    exp, log = (ca.exp, ca.log) if isinstance(T, (ca.MX, ca.SX, ca.DM)) else (np.exp, np.log)
     Tl = T
     x = z
 

@@ -102,10 +102,13 @@ per basis, with the same diffusivities, conductance and quadrature in both
 limits. The smallest margin to the $10^{-6}$ limit was $9.672\times10^{-7}$.
 
 C8 changed capture by −0.02275 and −0.15039 percentage points for the N₂O
-and ePC-SAFT bases. The maximum difference across the 12 states at common
-nodes, divided by the coarse solver state scales, was 0.8514 and 0.8409.
-Both maxima occurred in vapor water flow at 5.427 m, where the refined
-profiles changed by +1.330 and +1.314 mol s$^{-1}$. The largest scaled
+and ePC-SAFT bases. The scaled state change is
+$\max_{i,j}|u_{i,21}(z_j)-u_{i,11}(z_j)|/s_i$ over the 12 states and
+the common nodes, with $s_i$ taken from the 11-node solver state scales.
+For vapor water flow, $s_i$ is the inlet vapor water flow of 1.56242
+mol s$^{-1}$ for both bases. The maxima of 0.8514 and 0.8409 occurred
+in this state at 5.427 m, where refinement increased the flow by 1.330
+and 1.314 mol s$^{-1}$, respectively. The largest scaled
 material and energy invariant drifts across the four runs were
 $3.70\times10^{-16}$ and $1.68\times10^{-12}$. C8 is report only.
 Axial profile convergence remains open.
@@ -118,12 +121,23 @@ the column implementation remain open.
 [3C outcomes and C8](results/runs/finite_rate_film_cp2_2026-11-23/summary.json),
 [worker run log](results/runs/finite_rate_film_cp2_2026-11-23/cases.log).
 
-The full suite stopped at the MEA declared-input reproduction test after
-287 passes. The issue 85 transport declaration pins
-`Thermophysical_Properties.py` by SHA-256. The symbolic Henry change
-altered that file and the declaration rejected it. The final Engine
-integration check remains pending.
-[Full-suite failure](results/runs/finite_rate_film_cp2_2026-11-23/full_suite.log).
+The first full suite stopped at the MEA declared-input reproduction test
+because the issue 85 transport declaration pins `Thermophysical_Properties.py`
+by SHA-256. The restored file is byte-identical to `main` and its existing
+`henrys_law` evaluates on the film's CasADi expressions. The 11-node replays
+reproduced C1–C4, the node Jacobian comparisons, the full state profiles,
+capture, iteration counts, and node diagnostics exactly on both Henry
+bases. The 21-node results above are from the original refinement runs.
+[Initial suite failure](results/runs/finite_rate_film_cp2_2026-11-23/full_suite.log),
+[hash check](results/runs/finite_rate_film_cp2_2026-11-23_henry_pin/hash.log),
+[reproduction differences](results/runs/finite_rate_film_cp2_2026-11-23_henry_pin/reproduction.json).
+
+The full suite passed all 336 tests, including the issue 85 reproduction
+and ordering check. The legacy transport domain-guard test emitted one
+runtime warning. The final immutable Engine integration check passed
+with Engine 1.0.0 at `f4566b3d`.
+[Full suite](results/runs/finite_rate_film_cp2_2026-11-23_henry_pin/full_suite.log),
+[Engine integration](results/runs/finite_rate_film_cp2_2026-11-23_henry_pin/integration.log).
 
 ## Current selectable closures: Engine 1.0.0 (issue 16)
 

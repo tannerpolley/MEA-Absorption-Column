@@ -1,0 +1,52 @@
+{
+  "n2o_analogy": {
+    "3C": {
+      "capture_percent": 81.71200555921816,
+      "capture_change_percentage_points": 0.0,
+      "iterations": 5,
+      "iteration_change": 0,
+      "runtime_s": 37.00368738499992,
+      "runtime_change_s": -6.444590360999882,
+      "max_absolute_state_change": 0.0,
+      "max_absolute_diagnostic_change": 0.0,
+      "scaled_residual_inf_change": 0.0
+    },
+    "check_differences": {
+      "C1_flux": 0.0,
+      "C1_limit": 0.0,
+      "C2_negative_flux": 0.0,
+      "C2_positive_flux": 0.0,
+      "C3_relative_error": 0.0,
+      "node_Jacobian_relative_error": 0.0,
+      "C4_max_reference_flux_change": 0.0,
+      "C4_max_finite_rate_flux_change": 0.0,
+      "C4_max_relative_error_change": 0.0,
+      "C4_max_margin_change": 0.0
+    }
+  },
+  "epcsaft_free_co2": {
+    "3C": {
+      "capture_percent": 86.00430803805135,
+      "capture_change_percentage_points": 0.0,
+      "iterations": 5,
+      "iteration_change": 0,
+      "runtime_s": 37.503399900000204,
+      "runtime_change_s": -6.279681737999454,
+      "max_absolute_state_change": 0.0,
+      "max_absolute_diagnostic_change": 0.0,
+      "scaled_residual_inf_change": 0.0
+    },
+    "check_differences": {
+      "C1_flux": 0.0,
+      "C1_limit": 0.0,
+      "C2_negative_flux": 0.0,
+      "C2_positive_flux": 0.0,
+      "C3_relative_error": 0.0,
+      "node_Jacobian_relative_error": 0.0,
+      "C4_max_reference_flux_change": 0.0,
+      "C4_max_finite_rate_flux_change": 0.0,
+      "C4_max_relative_error_change": 0.0,
+      "C4_max_margin_change": 0.0
+    }
+  }
+}
