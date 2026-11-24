@@ -1,6 +1,6 @@
 ---
 title: "Reactive ePC-SAFT fugacity and liquid-film consistency"
-subtitle: "Retained NCCC Case 3C analysis research notebook"
+subtitle: "Seven-case NCCC comparison and retained Case 3C analysis"
 author: "MEA Absorption Column project"
 date: 2026-08-26
 bibliography: ../../docs/scientific/latex/references.bib
@@ -158,7 +158,7 @@ The declared cap is 60 iterations for subsequent checkpoint 3 runs in both arms.
 
 {{< include results/runs/joint_fit_f2_20261123/_bridge_iterations.qmd >}}
 
-The run files retain CPU and memory measurements at launch and through termination. All resumed runs certified within their wall limits. The F2 evidence awaits independent review. HSL, a collection of Fortran codes for large-scale scientific computation. <https://www.hsl.rl.ac.uk/>
+The run files retain CPU and memory measurements at launch and through termination. All resumed runs certified within their wall limits. The retained F2 1C seed diagnosis identifies MA57. HSL, a collection of Fortran codes for large-scale scientific computation. <https://www.hsl.rl.ac.uk/> [MA57 diagnosis](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/diagnosis.json)
 
 {{< include results/runs/joint_fit_f2_20261123/_checkpoint3_attempts.qmd >}}
 
@@ -169,6 +169,111 @@ The 65-node calculations use the declared 3C case seed because the retained-prof
 {{< include results/runs/joint_fit_f2_20261123/_controls.qmd >}}
 
 For 3C, the record effect fell from +1.6397 points at 17 nodes to +0.8426 at 33 and +0.4545 at 65. At 65 nodes, the bridge and F2 predicted 88.8398% and 89.2943% capture, respectively, against 89.5 ± 1.2% measured. At 33 nodes, the correlation-density swap changed capture by −0.0694 points for the bridge and +0.0009 for F2. Increasing F2 film quadrature from 9 to 17 points changed capture by −0.0034 points. These control differences apply to 3C at the listed meshes.
+
+## Capture on the reporting mesh
+
+At 33 nodes, capture MAE across the seven cases is **4.58 percentage points for F2**, **4.79 for the bridge**, and **5.85 for the published chapter predictions**. Signed errors are prediction minus the measured mean. The ± values are steady-state standard deviations from Morgan et al. Table A1 [@Morgan2020]. MAE weights cases equally and uses the full retained prediction precision.
+
+| Case | Measured (%) | Published (%) | Bridge (%) | F2 (%) | Published error (pp) | Bridge error (pp) | F2 error (pp) | F2 − bridge (pp) | Bridge − published (pp) |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| 1C | 97.1 ± 0.7 | 99.10 | 99.48 | 99.44 | +2.00 | +2.38 | +2.34 | −0.04 | +0.38 |
+| 2C | 92.3 ± 0.5 | 97.39 | 98.18 | 98.11 | +5.09 | +5.88 | +5.81 | −0.07 | +0.79 |
+| 3C | 89.5 ± 1.2 | 91.54 | 89.01 | 89.85 | +2.04 | −0.49 | +0.35 | +0.84 | −2.54 |
+| 4C | 88.9 ± 0.8 | 91.49 | 88.09 | 89.28 | +2.59 | −0.81 | +0.38 | +1.18 | −3.40 |
+| 5C | 86.4 ± 0.6 | 92.28 | 92.91 | 94.90 | +5.88 | +6.51 | +8.50 | +1.99 | +0.63 |
+| 6C | 60.2 ± 0.5 | 71.65 | 69.76 | 72.03 | +11.45 | +9.56 | +11.83 | +2.27 | −1.89 |
+| 7C | 76.4 ± 2.2 | 64.47 | 68.52 | 79.28 | −11.93 | −7.88 | +2.88 | +10.76 | +4.05 |
+
+F2 minus bridge is the **record effect** on the shared formulation and inputs. Bridge minus published combines formulation and input changes. The largest record effect is on 7C, where the bridge and F2 each changed by more than 5.5 points from 17 to 33 nodes. The 33-node values leave 7C capture unresolved with respect to mesh refinement. Across 1C–6C alone, MAE is 4.87 points for F2, 4.27 for the bridge and 4.84 for the published predictions. The seven-case MAE ordering of F2 and the bridge depends on 7C. [Capture values and residuals](results/runs/joint_fit_f2_20261123/comparison/capture.csv)
+
+![Predicted versus measured CO₂ capture for the seven NCCC cases. Horizontal bars show one Table A1 standard deviation.](results/runs/joint_fit_f2_20261123/comparison/capture_parity.png){#fig-joint-fit-capture width=72%}
+
+## Temperature at the Table C2 taps
+
+Across the 35 taps, the liquid-temperature RMSE is **6.29 K for the bridge** and **7.06 K for F2**. Each score uses linear interpolation of the retained liquid profile at the five measured positions per case. Morgan et al. give the fractional coordinate $x$ from the top, so each tap is at $z = H(1-x)$ above the gas inlet. The source reports packing temperatures without a phase designation or tap uncertainty. The pooled score uses the 35 individual residuals. Peaks are native-node liquid maxima. [Mapped taps and predictions](results/runs/joint_fit_f2_20261123/comparison/temperature_taps.csv)
+
+| Case | Bridge RMSE (K) | F2 RMSE (K) | Bridge peak (K) | F2 peak (K) |
+|:--|--:|--:|--:|--:|
+| 1C | 4.10 | 4.08 | 345.83 | 346.88 |
+| 2C | 3.49 | 3.68 | 345.75 | 346.78 |
+| 3C | 3.11 | 3.30 | 346.73 | 348.04 |
+| 4C | 5.32 | 6.27 | 348.71 | 350.08 |
+| 5C | 6.09 | 7.22 | 344.50 | 346.12 |
+| 6C | 4.04 | 5.44 | 339.99 | 341.85 |
+| 7C | 12.51 | 13.66 | 342.68 | 344.83 |
+| All 35 taps | 6.29 | 7.06 | | |
+
+![Bridge and F2 phase-temperature profiles for 3C at 33 nodes, with the five Table C2 packing temperatures.](results/runs/joint_fit_f2_20261123/comparison/3c_temperature_profile.png){#fig-joint-fit-3c-temperature width=85%}
+
+## Published and retained arm inputs
+
+The chapter comparison uses the archived `codex/fallback-manuscript` tree at `eef9dce41d41`. Its selected runs use the same Table A1 reported lean-liquid and gas mass rates, lean loading, dry CO₂ and O₂ fractions, and inlet temperatures as the bridge and F2. The pressure and gas-basis changes affect the molar gas feed. Both sets assume saturation at the selected gas inlet temperature and pressure. The archived 3C and 7C input rows came from the mass-input CSV named by their run hashes. The archived feed conversions were checked against the retained inlet profiles for all seven runs. [Exact feed inputs](results/runs/joint_fit_f2_20261123/comparison/inlets.csv) · [Source paths and SHA-256 values](results/runs/joint_fit_f2_20261123/comparison/comparison_sources.json)
+
+| Case | Reported liquid / gas (kg/s) | Lean CO₂/MEA (mol/mol) | Unloaded MEA (wt %) | Dry CO₂ / O₂ (mol %) | Liquid / gas inlet (K) |
+|:--|:--|--:|--:|:--|:--|
+| 1C | 1.718 / 0.555 | 0.15 | 30 | 7.7 / 10.8 | 318.15 / 316.45 |
+| 2C | 2.157 / 0.694 | 0.20 | 30 | 7.7 / 10.9 | 318.15 / 316.25 |
+| 3C | 2.088 / 0.559 | 0.25 | 30 | 9.3 / 9.0 | 318.15 / 316.75 |
+| 4C | 1.711 / 0.417 | 0.25 | 30 | 10.8 / 7.5 | 318.05 / 316.45 |
+| 5C | 1.455 / 0.416 | 0.26 | 30 | 7.7 / 11.0 | 318.15 / 316.45 |
+| 6C | 2.129 / 0.750 | 0.31 | 31 | 7.7 / 10.9 | 317.95 / 316.55 |
+| 7C | 1.504 / 0.278 | 0.34 | 29 | 10.0 / 9.1 | 317.85 / 316.45 |
+
+| Case | Published pressure input (kPa) | Bridge/F2 gas-inlet pressure (kPa) | Published inlet CO₂ (mol/s) | Bridge/F2 inlet CO₂ (mol/s) |
+|:--|--:|--:|--:|--:|
+| 1C | 109.1 | 110.7 | 1.4395 | 1.3676 |
+| 2C | 109.6 | 112.5 | 1.8011 | 1.7136 |
+| 3C | 109.5 | 110.9 | 1.7417 | 1.6540 |
+| 4C | 107.7 | 110.4 | 1.4981 | 1.4240 |
+| 5C | 108.4 | 108.7 | 1.0795 | 1.0246 |
+| 6C | 109.7 | 112.4 | 1.9460 | 1.8498 |
+| 7C | 107.3 | 107.7 | 0.9268 | 0.8796 |
+
+| Input or formulation | Published chapter runs | Bridge and F2 |
+|:--|:--|:--|
+| Bed and packing | One 6.0 m bed, 0.64 m diameter, MellapakPlus 252Y, no intercooling | Same |
+| Gas flow and pressure | Reported mass as dry gas, saturated water added, Table A1 top pressure as pressure input | Reported mass as total wet gas, saturated water included, measured bottom pressure at gas inlet |
+| Liquid mass and boundary | Loaded mass, unloaded MEA fraction, liquid inlet at bed top | Same, with declared species molar masses |
+| Thermodynamic record | Earlier nine-species reactive bundle, Engine 0.2.0.dev0 | Bridge exploratory record and Amine F2, Engine 1.0.0, with record-specific reactions and calorics |
+| Film, calorics and density | Enhancement factor, empirical heat capacities, enthalpies and hydraulic density | Equilibrium-manifold film, native phase enthalpies and solved-state hydraulic density |
+| Formulation and mesh | Seven-state SciPy BVP, temperature variables, 21 initial nodes, 21–22 final nodes, BVP tolerance 0.5 | Twelve-state conservative upwind IPOPT solve, 33 cosine nodes, nine film quadrature points and scaled tolerance of $10^{-7}$ |
+
+## Matched 3C properties and energy terms
+
+The ranges use all 33 bridge nodes for both records, covering liquid temperatures of 318.15–346.73 K, pressures of 109.904–110.900 kPa, and analytical loadings of 0.2500–0.4013 mol CO₂/mol MEA. Liquid Cp and differential CO₂ absorption heat use derivatives of the equilibrated enthalpy flow at fixed pressure. Cp also holds analytical feeds fixed and uses the loaded mass. Positive absorption heat means an ideal-gas mole of CO₂ at liquid temperature releases heat upon uptake at fixed temperature and other feeds. CO₂ equilibrium pressure is its incipient-vapor partial pressure at the node's liquid temperature and analytical liquid composition. Species fractions use total true liquid moles. Pure-water vaporization enthalpy uses each liquid record's pure-water saturation states at the liquid temperature. Vapor Cp uses the fixed-composition gas at the retained bridge gas temperature, pressure and composition, with the common neutral EOS and each arm's calorics. All 66 reactive bubble points and all 66 pure-water saturation points met their requested Engine tolerances. [Matched node values and native residuals](results/runs/joint_fit_f2_20261123/comparison/3c_properties.csv)
+
+| Property | Bridge range | F2 range | Earlier record deviations | F2 deviations |
+|:--|--:|--:|:--|:--|
+| Loaded density (kg/m³) | 1145.5–1269.1 | 1032.6–1075.0 | +12.5 to +16.8% vs Amundsen | 0.152% fitted, 0.351% Han |
+| Liquid Cp (kJ/(kg K)) | 2.952–3.083 | 3.479–3.640 | −14.6 to −9.8% vs Hilliard | 2.835% fitted, 2.540% broad Cp |
+| Differential absorption heat (kJ/mol CO₂) | 80.31–85.43 | 83.37–85.82 | — | 1.969% fitted heat, 7.009% Kim |
+| CO₂ equilibrium partial pressure (Pa) | 39.76–1747.01 | 30.08–849.45 | — | — |
+| Carbamate mole fraction | 0.02525–0.03784 | 0.02695–0.04285 | — | — |
+| Bicarbonate mole fraction | 0.00110–0.00509 | 0.00093–0.00303 | — | — |
+| Pure-water vaporization enthalpy (kJ/mol) | 42.000–42.995 | 42.074–43.276 | — | — |
+| Gas Cp (J/(mol K)) | 30.56888–31.91678 | 30.56904–31.91720 | — | — |
+
+The earlier signed deviations refer to record `868a5018` in [column issue #31](https://github.com/tannerpolley/MEA-Absorption-Column/issues/31). The F2 deviations are average absolute relative deviations on the fitted and separate comparison datasets in [Amine issue #338](https://github.com/tannerpolley/Amine-Thermodynamics/issues/338). The two sources report different metrics and observation sets. The 3C property ranges describe predicted states.
+
+The 33-node density-only change shifted 3C capture by −0.0694 points for the bridge and +0.0009 for F2. Its scope is hydraulic density in this case. The matched properties change together, so their individual contributions to the capture difference remain unresolved.
+
+The 3C energy calculation uses each arm's own certified 33-node solution. For each upwind cell, the direct sensible term is $\Delta z\,a' U(T_V-T_L)$, where $a'$ is interfacial area per packed length. The CO₂ and water terms multiply the transferred moles per second by the gas-minus-liquid differential enthalpy at the respective phase temperatures. Positive values heat the liquid. The temperature-step term sums the product of the liquid enthalpy-flow derivative with respect to temperature and the change in liquid temperature down each cell. The source-based and temperature-step sensible sums differ because the decomposition linearizes the liquid enthalpy at the upwind state. [Cell terms, transfers and interface energy defects](results/runs/joint_fit_f2_20261123/comparison/3c_energy_cells.csv)
+
+| 3C bed-integrated term | Bridge | F2 |
+|:--|--:|--:|
+| Direct sensible exchange (kW) | −9.52 | −8.65 |
+| CO₂ uptake heat (kW) | +122.73 | +126.61 |
+| Water transfer (mol/s into liquid) | −1.592 | −1.382 |
+| Water-transfer heat (kW) | −66.02 | −55.74 |
+| Liquid pressure term (W) | +1.49 | +1.82 |
+| Sensible liquid heating from source terms (kW) | +47.20 | +62.22 |
+| Sensible liquid heating from cell temperature steps (kW) | +48.72 | +64.09 |
+
+The conserved liquid enthalpy-flow change agrees with the integrated native exchange to within $4.5\times 10^{-7}$ W in both arms. The sensible estimates differ by 1.52 and 1.87 kW in the linearized decomposition. On these solutions F2 has higher CO₂ uptake heat and smaller evaporative cooling than the bridge. The energy terms compare the combined record change.
+
+## Scope of the comparison
+
+These are numerical verification and measurement comparisons on previously studied, one-bed, nominal 30 wt % MEA cases. The exact lean MEA fractions span 29–31 wt %. Both arms use the equilibrium-manifold film. The published predictions use the enhancement factor. The models assume inlet saturation, the manifold uses estimated ion mobilities, and the lean-liquid inlet temperature for 1C–3C is imputed at 318.15 K. F2 was fitted using Engine 1.3.0 and evaluated here using Engine 1.0.0. [Amine issue #340](https://github.com/tannerpolley/Amine-Thermodynamics/issues/340) gives thermodynamic adoption evidence and leaves absorber qualification open. In the earlier 3C hydraulic comparison, bridge loaded density was about 11% high against Amundsen and predicted liquid holdup was about 12–16% lower on the tested basis. [Density comparison](../liquid_density/notebook.qmd)
 
 # Retained evidence and identity
 
