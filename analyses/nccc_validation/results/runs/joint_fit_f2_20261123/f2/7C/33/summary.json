@@ -1,0 +1,37 @@
+{
+  "arm": "f2",
+  "case": "7C",
+  "stage": "fine",
+  "nodes": 33,
+  "wall_limit_s": 1500,
+  "runtime_s": 176.56517318100123,
+  "solver_status": "Solve_Succeeded",
+  "iterations": 4,
+  "certification": true,
+  "failure": null,
+  "predicted_capture_pct": 79.28169497812722,
+  "measured_capture_pct": 76.4,
+  "scaled_residual_inf": 3.585174421023484e-09,
+  "temperature_k": {
+    "minimum": 316.45,
+    "maximum": 344.8273753564232,
+    "allowed": [
+      298.0,
+      393.15
+    ],
+    "native_callback_failures": 0
+  },
+  "balances": {
+    "boundary": 0.0,
+    "charge": 1.8058361601507664e-14,
+    "energy": 2.5013150945960728e-12,
+    "interface": 3.585174421023484e-09,
+    "material": 3.9186810255334715e-16
+  },
+  "mea_balance": {
+    "liquid_mea_feed_mol_s": 6.666246761818602,
+    "liquid_mea_outlet_mol_s": 6.666246761818602,
+    "gas_mea_mol_s": 0.0,
+    "drift_mol_s": 0.0
+  }
+}

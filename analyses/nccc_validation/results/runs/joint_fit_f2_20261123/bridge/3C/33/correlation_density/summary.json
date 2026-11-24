@@ -1,0 +1,37 @@
+{
+  "arm": "bridge",
+  "case": "3C",
+  "stage": "density",
+  "nodes": 33,
+  "wall_limit_s": 1500,
+  "runtime_s": 254.8488084239998,
+  "solver_status": "Solve_Succeeded",
+  "iterations": 7,
+  "certification": true,
+  "failure": null,
+  "predicted_capture_pct": 88.9384210454318,
+  "measured_capture_pct": 89.5,
+  "scaled_residual_inf": 1.5677532719880548e-11,
+  "temperature_k": {
+    "minimum": 316.75,
+    "maximum": 346.73163889265186,
+    "allowed": [
+      293.15,
+      393.15
+    ],
+    "native_callback_failures": 0
+  },
+  "balances": {
+    "boundary": 0.0,
+    "charge": 2.327637391098987e-14,
+    "energy": 5.787049234574334e-14,
+    "interface": 6.199941987107163e-13,
+    "material": 1.8461603345591976e-16
+  },
+  "mea_balance": {
+    "liquid_mea_feed_mol_s": 9.729282110481522,
+    "liquid_mea_outlet_mol_s": 9.729282110481522,
+    "gas_mea_mol_s": 0.0,
+    "drift_mol_s": 0.0
+  }
+}

@@ -1,7 +1,7 @@
 | Arm | 3C calculation | Nodes | Predicted capture (%) | IPOPT iterations | Wall time (s) | Scaled residual | Certification | Temperature span (K) | Change from 33-node baseline (pp) |
 |---|---|---|---|---|---|---|---|---|---|
-| Bridge | Refinement | 65 | — | — | — | — | Not run | — | — |
-| F2 | Refinement | 65 | — | — | — | — | Not run | — | — |
-| Bridge | Correlation density | 33 | — | — | — | — | Not run | — | — |
-| F2 | Correlation density | 33 | — | — | — | — | Not run | — | — |
-| F2 | 17 film points | 33 | — | — | — | — | Not run | — | — |
+| Bridge | Refinement | 65 | 88.8398 | 10 | 693.05 | 2.54e-10 | [Accepted](results/runs/joint_fit_f2_20261123/bridge/3C/65/summary.json) | 316.75–347.59 | -0.1680 |
+| F2 | Refinement | 65 | 89.2943 | 8 | 617.12 | 1.25e-10 | [Accepted](results/runs/joint_fit_f2_20261123/f2/3C/65/summary.json) | 316.75–349.01 | -0.5561 |
+| Bridge | Correlation density | 33 | 88.9384 | 7 | 254.85 | 1.57e-11 | [Accepted](results/runs/joint_fit_f2_20261123/bridge/3C/33/correlation_density/summary.json) | 316.75–346.73 | -0.0694 |
+| F2 | Correlation density | 33 | 89.8513 | 8 | 289.29 | 9.84e-10 | [Accepted](results/runs/joint_fit_f2_20261123/f2/3C/33/correlation_density/summary.json) | 316.75–348.04 | +0.0009 |
+| F2 | 17 film points | 33 | 89.8471 | 8 | 469.72 | 1.12e-09 | [Accepted](results/runs/joint_fit_f2_20261123/f2/3C/33/quadrature_17/summary.json) | 316.75–348.04 | -0.0034 |

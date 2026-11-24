@@ -1,0 +1,10 @@
+{
+  "solver": "IPOPT",
+  "max_iterations": 60,
+  "previous_max_iterations": 20,
+  "scope": "Remaining checkpoint 3 F2 and bridge runs",
+  "justification": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/f2/1C/17/seed/iterations_60/iteration_comparison.json",
+  "retained_runs": "All twenty certified bridge attempts and three completed F2 3C attempts had iteration counts below 20.",
+  "refinement_initialization": "The 65-node cases use the declared 3C case seed. The retained-profile check requires matching iteration caps.",
+  "other_controls_initialization": "Density and quadrature controls use the declared 3C case seed under their own input declarations."
+}

@@ -1,0 +1,10 @@
+{'arm': 'f2', 'case': '5C', 'stage': 'seed', 'nodes': 17} wall limit 900 s
+
+******************************************************************************
+This program contains Ipopt, a library for large-scale nonlinear optimization.
+ Ipopt is released as open source code under the Eclipse Public License (EPL).
+         For more information visit https://github.com/coin-or/Ipopt
+******************************************************************************
+
+
+{'arm': 'f2', 'case': '5C', 'stage': 'seed', 'nodes': 17, 'wall_limit_s': 900, 'runtime_s': 349.68092475199956, 'solver_status': 'Solve_Succeeded', 'iterations': 18, 'certification': True, 'predicted_capture_pct': 97.54064958976186, 'measured_capture_pct': 86.4, 'scaled_residual_inf': 2.7634306545904273e-09, 'temperature_k': {'minimum': 316.4499999989478, 'maximum': 343.6742368171911, 'allowed': [298.0, 393.15], 'native_callback_failures': 0}, 'balances': {'boundary': 1.9817851968789597e-10, 'charge': 2.452252315816223e-14, 'energy': 1.4543361364849062e-11, 'interface': 2.3054618386210117e-09, 'material': 2.517744202106337e-10}, 'mea_balance': {'liquid_mea_feed_mol_s': 6.764398258712397, 'liquid_mea_outlet_mol_s': 6.764398258712397, 'gas_mea_mol_s': 0.0, 'drift_mol_s': 0.0}}

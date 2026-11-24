@@ -10,6 +10,7 @@ resources:
   - results/runs/joint_fit_f2_20261123/**/*.json
   - results/runs/joint_fit_f2_20261123/**/*.log
   - results/runs/joint_fit_f2_20261123/**/*.jsonl
+  - results/runs/joint_fit_f2_20261123/**/*.csv
 format:
   html: {}
   pdf:
@@ -139,23 +140,35 @@ The 17-node cosine 3C result reproduces the retained prediction of 89.4148804158
 
 All fourteen bridge reporting profiles passed certification with native-grid temperatures spanning 316.25–348.71 K. The largest mesh change occurred on 7C, where refinement lowered capture by 5.55 percentage points to 68.52%, 7.88 points below the measured mean. At 33 nodes the predictions exceed the measured means by 5.88, 6.51 and 9.56 percentage points on 2C, 5C and 6C. On 6C, refinement raised capture by 0.08 points to 69.76%. The two meshes leave the discretization error at finer resolutions unresolved.
 
+All fourteen F2 reporting profiles passed certification with native-grid temperatures spanning 316.25–350.08 K. The largest 33-node record effect was +10.7605 percentage points on 7C. The F2 prediction there was 79.2817%, compared with 76.4 ± 2.2% measured. Refining from 17 to 33 nodes lowered 7C capture by 6.1735 points in F2 and 5.5545 points in the bridge. The record effect moved from +11.3796 to +10.7605 points. At 1C and 2C the 33-node record effects were −0.0376 and −0.0659 points, respectively, smaller than the observed 17-to-33 changes in either arm.
+
 Four attempts hit their wall limits while other jobs were running on the machine. No contemporaneous CPU or memory measurement was retained, so the cause of the slowdown is undetermined. Each last checkpoint reached the global solve, with no native callback failure recorded at that checkpoint and no final IPOPT residual. The configured worker limit and the elapsed parent time are recorded separately. The 1C cosine and the 4C and 5C 33-node retries certified with the same settings and limits. The 2C cosine run started directly from its checked feed seed after the unclustered attempt timed out. [1C cosine log](results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/run.log) · [2C unclustered seed log](results/runs/joint_fit_f2_20261123/bridge/2C/17/seed_retry/run.log) · [4C 33-node log](results/runs/joint_fit_f2_20261123/bridge/4C/33/run.log) · [5C 33-node log](results/runs/joint_fit_f2_20261123/bridge/5C/33/run.log)
 
 {{< include results/runs/joint_fit_f2_20261123/_bridge_attempts.qmd >}}
 
-## F2 stopping point
+## F2 1C iteration limit
 
-The 3C F2 unclustered seed passed certification in 145.41 s, with 94.1579% predicted capture and a scaled residual of $2.68\times10^{-8}$. The reporting profiles also certified. Refining from 17 to 33 nodes lowered F2 capture by 1.2041 percentage points. The 33-node F2 prediction is 0.8426 points above the bridge prediction and 0.3504 points above the measured mean of 89.5 ± 1.2%. The available record effect covers 3C at the two reporting meshes. [F2 3C timing seed](results/runs/joint_fit_f2_20261123/f2/3C/17/seed/summary.json)
+The 3C F2 unclustered seed passed certification in 145.41 s, with 94.1579% predicted capture and a scaled residual of $2.68\times10^{-8}$. The reporting profiles also certified. Refining from 17 to 33 nodes lowered 3C F2 capture by 1.2041 percentage points. The 33-node F2 prediction is 0.8426 points above the bridge prediction and 0.3504 points above the measured mean of 89.5 ± 1.2%. [F2 3C timing seed](results/runs/joint_fit_f2_20261123/f2/3C/17/seed/summary.json)
 
-For 1C, IPOPT exhausted the planned 20 iterations in 369.57 s, inside the 900 s worker limit. The seed's interface check passed and the finite final iterate stayed within the F2 temperature bounds. All native calls returned. A direct evaluation of the final state at 3.1875 m reproduced the vapor-side CO₂ flux mismatch, the largest remaining scaled equation defect. This identifies the stopping point of the numerical solve. Convergence with a different initial profile or iteration limit remains unresolved. [1C diagnosis](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/diagnosis.json)
+The original F2 1C seed exhausted 20 IPOPT iterations in 369.57 s, inside the 900 s worker limit. The seed's interface check passed and all native calls returned. A direct evaluation at 3.1875 m reproduced the vapor-side CO₂ flux mismatch, the largest remaining scaled equation defect. The stop rule halted 2C and 4C in their global seed solves. [Original 1C diagnosis](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/diagnosis.json)
 
-The plan's stop rule halted 2C and 4C in the global solve. It left the remaining F2 reporting runs and the five 3C controls unstarted. The run files retain CPU and memory measurements at launch and through termination. No checkpoint 3 attempt reached a wall limit. The F2 evidence awaits independent review. HSL, a collection of Fortran codes for large-scale scientific computation. <https://www.hsl.rl.ac.uk/>
+With the same 1C seed, a cap of 60 iterations and a 1500 s wall limit returned `Solve_Succeeded` in 32 iterations and 557.85 s. It certified 99.6844% capture on the unclustered seed mesh at a scaled residual of $1.30\times10^{-9}$. The recorded primal and dual infeasibilities agree exactly through iteration 20. They then fell unevenly through sample 27 before both dropped sharply. Continuing past 20 iterations was sufficient to resolve the failure. The trajectory CSV numbers consecutive samples, including a terminal sample after the reported iteration count. [Certified probe](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/iterations_60/summary.json) · [IPOPT trajectory](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/iterations_60/ipopt_trajectory.csv) · [Trace comparison](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/iterations_60/iteration_comparison.json)
+
+The declared cap is 60 iterations for subsequent checkpoint 3 runs in both arms. All 20 certified bridge attempts under the old cap converged in 4–17 iterations. IPOPT stopped before the cap in each case, so the increased budget leaves these retained calculations applicable. The retained F2 3C solves also finished before 20 iterations. The resumed 2C seed used 22 iterations. [Run policy](results/runs/joint_fit_f2_20261123/f2/inputs/run_policy.json) · [Resumed 2C seed](results/runs/joint_fit_f2_20261123/f2/2C/17/seed/resume/summary.json)
+
+{{< include results/runs/joint_fit_f2_20261123/_bridge_iterations.qmd >}}
+
+The run files retain CPU and memory measurements at launch and through termination. All resumed runs certified within their wall limits. The F2 evidence awaits independent review. HSL, a collection of Fortran codes for large-scale scientific computation. <https://www.hsl.rl.ac.uk/>
 
 {{< include results/runs/joint_fit_f2_20261123/_checkpoint3_attempts.qmd >}}
 
 ## 3C controls
 
+The 65-node calculations use the declared 3C case seed because the retained-profile reader requires matching iteration caps. The hydraulic-density and film-quadrature controls also start from the declared 3C case seed under their respective declarations.
+
 {{< include results/runs/joint_fit_f2_20261123/_controls.qmd >}}
+
+For 3C, the record effect fell from +1.6397 points at 17 nodes to +0.8426 at 33 and +0.4545 at 65. At 65 nodes, the bridge and F2 predicted 88.8398% and 89.2943% capture, respectively, against 89.5 ± 1.2% measured. At 33 nodes, the correlation-density swap changed capture by −0.0694 points for the bridge and +0.0009 for F2. Increasing F2 film quadrature from 9 to 17 points changed capture by −0.0034 points. These control differences apply to 3C at the listed meshes.
 
 # Retained evidence and identity
 

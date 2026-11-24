@@ -1,0 +1,29 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"
+  },
+  "dependencies": {
+    "thermodynamics_input": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/f2/inputs/thermodynamics.json",
+    "transport_input": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/f2/inputs/transport_3c_quad.json"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "nodes": 33,
+      "quadrature_points": 17,
+      "tolerance": 1e-07,
+      "max_iterations": 60,
+      "liquid_density_source": "solved_state",
+      "end_clustering": 1.0
+    }
+  },
+  "initialization": {
+    "values": {}
+  },
+  "execution": {
+    "output_dir": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/f2/3C/33/quadrature_17",
+    "wall_limit_s": 900,
+    "threads": 1
+  }
+}

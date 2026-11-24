@@ -1,0 +1,9 @@
+| Case | 17-node unclustered seed | 17-node cosine | 33-node warm start |
+|---|---:|---:|---:|
+| 1C | [17](results/runs/joint_fit_f2_20261123/bridge/1C/17/seed_retry/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/retry/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/1C/33/summary.json) |
+| 2C | — | [15](results/runs/joint_fit_f2_20261123/bridge/2C/17/cosine/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/2C/33/summary.json) |
+| 3C | [6](results/runs/joint_fit_f2_20261123/bridge/3C/17/seed/summary.json) | [5](results/runs/joint_fit_f2_20261123/bridge/3C/17/cosine/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/3C/33/summary.json) |
+| 4C | [7](results/runs/joint_fit_f2_20261123/bridge/4C/17/seed_retry/summary.json) | [5](results/runs/joint_fit_f2_20261123/bridge/4C/17/cosine/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/4C/33/retry/summary.json) |
+| 5C | [7](results/runs/joint_fit_f2_20261123/bridge/5C/17/seed_retry/summary.json) | [5](results/runs/joint_fit_f2_20261123/bridge/5C/17/cosine/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/5C/33/retry/summary.json) |
+| 6C | [5](results/runs/joint_fit_f2_20261123/bridge/6C/17/seed_retry/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/6C/17/cosine/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/6C/33/summary.json) |
+| 7C | [5](results/runs/joint_fit_f2_20261123/bridge/7C/17/seed_retry/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/7C/17/cosine/summary.json) | [4](results/runs/joint_fit_f2_20261123/bridge/7C/33/summary.json) |

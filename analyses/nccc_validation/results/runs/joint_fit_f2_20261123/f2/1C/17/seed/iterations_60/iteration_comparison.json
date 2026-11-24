@@ -1,0 +1,62 @@
+{
+  "prior_limit": 20,
+  "current_limit": 60,
+  "prior_status": "Maximum_Iterations_Exceeded",
+  "current_status": "Solve_Succeeded",
+  "prior_iterations": 20,
+  "current_iterations": 32,
+  "prefix_identical": {
+    "inf_pr": true,
+    "inf_du": true
+  },
+  "prefix_maximum_absolute_difference": {
+    "inf_pr": 0.0,
+    "inf_du": 0.0
+  },
+  "trajectory_samples": [
+    {
+      "iteration": 0,
+      "inf_pr": 64.33508571962572,
+      "inf_du": 1.0
+    },
+    {
+      "iteration": 5,
+      "inf_pr": 1.7331074893182445,
+      "inf_du": 1031.8563225512219
+    },
+    {
+      "iteration": 10,
+      "inf_pr": 0.376984970708837,
+      "inf_du": 327.76976922580906
+    },
+    {
+      "iteration": 15,
+      "inf_pr": 0.11981555987730846,
+      "inf_du": 495.42758969892776
+    },
+    {
+      "iteration": 20,
+      "inf_pr": 0.0360861762601618,
+      "inf_du": 479.73104025892764
+    },
+    {
+      "iteration": 25,
+      "inf_pr": 0.022963203412097538,
+      "inf_du": 451.9230533498302
+    },
+    {
+      "iteration": 30,
+      "inf_pr": 6.636585185269302e-05,
+      "inf_du": 1.5573195024649067
+    },
+    {
+      "iteration": 32,
+      "inf_pr": 1.3047231374527169e-09,
+      "inf_du": 0.002083179225081127
+    }
+  ],
+  "prior_scaled_residual": 0.0360861762601618,
+  "current_scaled_residual": 1.3047231374527169e-09,
+  "initial_profile_unchanged": true,
+  "physical_certification": true
+}
