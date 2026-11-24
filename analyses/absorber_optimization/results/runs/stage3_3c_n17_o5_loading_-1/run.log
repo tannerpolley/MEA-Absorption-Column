@@ -1,0 +1,18 @@
+{
+  "execution": {
+    "status": "completed",
+    "started_at_utc": "2026-11-24T01:47:38Z",
+    "runtime_s": 146.17545026900007
+  },
+  "worker_cpu_s": 145.96709299999986,
+  "solver": {
+    "method": "upwind",
+    "stages": {
+      "outer": {
+        "success": true,
+        "status": "Solve_Succeeded"
+      }
+    }
+  },
+  "failure": null
+}

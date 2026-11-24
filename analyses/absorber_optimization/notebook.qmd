@@ -1,0 +1,95 @@
+---
+title: "Constrained solvent flow for case 3C"
+resources:
+  - results/runs/stage0_3c_n17_base_1972203/attempt.json
+  - results/runs/stage2_3c_n17_problem_p/optimum.json
+  - results/runs/stage3_3c_n17_second_start/attempt.json
+  - results/runs/stage3_3c_n17_o4_*/attempt.json
+  - results/runs/stage3_3c_n17_o4_low_interrupted/run.log
+  - results/runs/stage3_3c_n17_summary.json
+---
+
+## Problem and numerical basis
+
+The optimization minimizes the lean-solvent flow scale $s=L/L_{3\mathrm{C}}$ at a carbon dioxide capture target of 90%.
+The scale multiplies the three liquid feeds together, preserving the nominal lean loading and unloaded amine mass fraction.
+The calculation uses the 6 m case 3C bed, the twelve-state conserved model, 17 cosine nodes with upwind cells, and the equilibrium-manifold film with nine quadrature points.
+The calculation retains the pre-joint-fit thermodynamic parameters used in the Stage 2 reference.
+The nominal liquid inlet temperature of 318.15 K was imputed, and the caloric reference remains provisional.
+
+The [baseline](results/runs/stage0_3c_n17_base_1972203/attempt.json) captured 89.4148804% at $s=1$.
+The [constrained optimum](results/runs/stage2_3c_n17_problem_p/optimum.json) was $s^*=1.024745661793$, or 2.139726 kg/s of loaded lean liquid.
+The Stage 3 comparisons test numerical reproducibility on this grid and the sensitivity of this optimum to changes in the input quantities.
+
+## Second start
+
+IPOPT started at $s=1.15$ with the same initial nodal profile as the constrained optimum.
+The [second start](results/runs/stage3_3c_n17_second_start/attempt.json) converged to $s_2^*=1.024745587820$ in 31 iterations and 597.20 s.
+The scaled residual infinity norm was $6.10\times10^{-12}$, and the physical certificate accepted the profile.
+The difference $|s_2^*-s^*|=7.3973\times10^{-8}$ defines $\mathrm{tol}_s$ for the sensitivity comparisons.
+It measures agreement between two starts on a fixed grid.
+A sample late in the second start recorded 575 s of CPU time over 583 s of elapsed time, about 98.6% of one core.
+The second start required 31 iterations, compared with five for the reference solve.
+
+## Capture around the optimum (O4)
+
+The ordinary column solver used separate case files with each liquid feed multiplied by the indicated solvent scale.
+The initial bulk state used those same liquid CO₂ and water flows.
+The cases use direct SI inputs, so the transport declaration does not restrict the case paths.
+
+| Case | Solvent scale | Capture (%) | Wall time (s) |
+|---|---:|---:|---:|
+| [1% below optimum](results/runs/stage3_3c_n17_o4_low/attempt.json) | 1.014498205 | 89.7607166 | 117.86 |
+| [Optimum](results/runs/stage3_3c_n17_o4_center/attempt.json) | 1.024745662 | 90.0000019 | 130.79 |
+| [1% above optimum](results/runs/stage3_3c_n17_o4_high/attempt.json) | 1.034993118 | 90.2352449 | 125.62 |
+
+All three solves passed numerical and physical certification.
+The outer cases bracketed 90% capture, and $\eta(s^*)-0.90=+1.8625\times10^{-8}$ as a fraction, within the $10^{-7}$ feasibility tolerance.
+The centered difference gave $d\eta/ds=0.23153470$, compared with $1/(\lambda_c F_{V,\mathrm{CO_2,in}})=0.23150360$.
+The relative slope difference was 0.0134%, and the plan specifies no separate tolerance for slope agreement.
+
+## Sensitivity checks (O5)
+
+Each perturbed problem used the Stage 2 nodal profile and solvent scale as its starting point.
+The capture target moved by $\Delta=0.005$ in capture fraction, the lean loading by $\Delta=0.005$ mol CO₂ per mol MEA, and the liquid inlet temperature by $\Delta=1$ K.
+The lean-loading perturbation changes the CO₂ feed and holds the MEA and water feeds fixed.
+Each direction used four re-solves at $-2\Delta$, $-\Delta$, $+\Delta$, and $+2\Delta$.
+
+The exact scale derivative is $-\mathrm{lam}_p$ in each input coordinate.
+For lean loading, the CO₂ coordinate derivative is multiplied by the nominal MEA molar feed.
+The finite-difference check accepts a direction when
+$$
+\left|D_{\mathrm{exact}}-D_{\mathrm{FD}}(\Delta)\right|
+\leq
+\max\left(
+\left|D_{\mathrm{FD}}(2\Delta)-D_{\mathrm{FD}}(\Delta)\right|,
+2\,\mathrm{tol}_s/\Delta
+\right).
+$$
+
+| Input direction | Multiplier | FD(Δ) | FD(2Δ) | Absolute error | Allowed error | Result |
+|---|---:|---:|---:|---:|---:|---|
+| Capture target (per fraction) | 4.31958725 | 4.3197567 | 4.32016869 | 0.000169451004 | 0.000411990504 | Pass |
+| Lean loading (per mol CO₂/mol MEA) | 11.5666215 | 11.5197568 | 11.3819525 | 0.0468646946 | 0.137804269 | Pass |
+| Liquid inlet temperature (per K) | 0.0102853337 | 0.0102897835 | 0.0103030003 | 4.44985732e-06 | 1.32168141e-05 | Pass |
+
+All twelve perturbed solves passed numerical and physical certification.
+The capture inequality remained active to the scaled feasibility tolerance, and the state and solvent-scale bounds remained inactive.
+These comparisons support the multiplier derivatives for the tested directions on this mesh.
+
+| Input direction | −2Δ wall time (s) | −Δ (s) | +Δ (s) | +2Δ (s) |
+|---|---:|---:|---:|---:|
+| Capture target | 144.43 | 148.76 | 124.84 | 120.78 |
+| Lean loading | 158.74 | 146.18 | 127.57 | 133.79 |
+| Liquid inlet temperature | 150.16 | 146.84 | 136.45 | 151.69 |
+
+## Scope and retained evidence
+
+The comparisons verify feasibility and first-order sensitivity for the numerical optimum on the 17-node grid.
+The mesh dependence of the optimum and sensitivities remains to be quantified.
+The attempt files preserve the solver settings, the inlet basis, and physical certification.
+The [summary](results/runs/stage3_3c_n17_summary.json) retains the calculated comparisons, individual perturbed optima, and wall times.
+The first [low-flow attempt](results/runs/stage3_3c_n17_o4_low_interrupted/run.log) ended during a workspace routing interruption and the output recorder reported a JSON error for byte-valued worker output.
+The successful retry supplied the low-flow value in the O4 table.
+
+HSL, a collection of Fortran codes for large-scale scientific computation. [HSL](https://www.hsl.rl.ac.uk/)

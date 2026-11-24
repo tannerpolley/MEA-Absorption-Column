@@ -9,6 +9,7 @@
       "reactive_film_evidence/notebook.qmd",
       "bvp_derivative_trials/notebook.qmd",
       "bvp_solution_methods/notebook.qmd",
+      "absorber_optimization/notebook.qmd",
       "issue16_reactive_film_runtime/notebook.qmd",
       "engine_wheel_adoption/notebook.qmd",
       "liquid_density/notebook.qmd"
@@ -63,6 +64,10 @@
             {
               "text": "Conserved full-column BVP",
               "href": "bvp_solution_methods/notebook.qmd"
+            },
+            {
+              "text": "Constrained solvent flow for case 3C",
+              "href": "absorber_optimization/notebook.qmd"
             }
           ]
         },

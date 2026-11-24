@@ -1,0 +1,112 @@
+{
+  "attempt_id": "20261124T005252-7d1975abb543",
+  "config": {
+    "acceptance": {
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null,
+      "numerical": "conserved_original_equations",
+      "physical": "not_evaluated"
+    },
+    "case": {
+      "data_type": "mole",
+      "gas_flow_basis": "reported_total_wet",
+      "id": "corrected published 2017 3C",
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/analyses/absorber_optimization/results/runs/stage3_3c_n17_o4_low.case.json",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/analyses/absorber_optimization/results/runs/stage3_3c_n17_o4_low.case.json",
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "dependencies": {
+      "dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory",
+      "mobility_law": "harmonic_mean_onsager_v1",
+      "references": [
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+        "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+      ],
+      "thermal_reference": "src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json"
+    },
+    "engine": {
+      "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python3",
+      "required": true,
+      "sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+      "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+    },
+    "execution": {
+      "cache_policy": "legacy_explicit",
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/analyses/absorber_optimization/results/runs/stage3_3c_n17_o4_low",
+      "process_isolation": false,
+      "resume": false,
+      "retry": false,
+      "threads": 1,
+      "wall_limit_s": 1800.0
+    },
+    "initialization": {
+      "policy": "case_declared_native_inputs",
+      "values": {}
+    },
+    "model": {
+      "coordinate": "physical_height",
+      "energy_model": "native_total_enthalpy",
+      "film_model": "equilibrium_manifold",
+      "formulation": "twelve_state_conserved",
+      "layout": "twelve_conserved",
+      "pressure_model": "hydraulic_pressure_drop",
+      "thermo_model": "reactive_epcsaft"
+    },
+    "numerics": {
+      "method": "upwind",
+      "solver_settings": {
+        "end_clustering": 1.0,
+        "max_iterations": 60,
+        "nodes": 17,
+        "quadrature_points": 9,
+        "tolerance": 1e-07
+      }
+    },
+    "preset": "twelve_state_conserved",
+    "resolved_config_sha256": "2b2ac543f81866f45f232ee43f8fed23751c78bc1091e25c9d552b73e0959e94",
+    "schema_version": 1
+  },
+  "config_sha256": "2b2ac543f81866f45f232ee43f8fed23751c78bc1091e25c9d552b73e0959e94",
+  "coordinate": "physical_height",
+  "execution": {
+    "started_at_utc": "2026-11-24T00:52:52Z",
+    "status": "prepared"
+  },
+  "failure": null,
+  "formulation": "twelve_state_conserved",
+  "limitations": [
+    "exploratory numerical attempt only; no solution-verification, validation, or scientific-promotion claim",
+    "species mobilities are case-estimated and use the declared harmonic-mean closure",
+    "native vapor caloric reference remains provisional for thermal interpretation",
+    "physical certification is limited to the native grid and configured film quadrature",
+    "the case-declared 3C policy does not establish continuous-profile or peak behavior"
+  ],
+  "native_layout": "twelve_conserved",
+  "native_profile": {
+    "available": false,
+    "reason": "worker has not returned a native profile"
+  },
+  "numerical_acceptance": "not_evaluated",
+  "physical_acceptance": "not_evaluated",
+  "physical_certification": {
+    "accepted": null,
+    "reason": "worker has not returned a candidate"
+  },
+  "preset": "twelve_state_conserved",
+  "schema_version": 1,
+  "scientific_acceptance": "not_evaluated",
+  "solver": {
+    "method": "upwind",
+    "stages": {}
+  },
+  "source_identity": {
+    "commit": "3b00b5d30d35f1a27f12b42f16a2f68d652038f4",
+    "dirty": false,
+    "dirty_patch": "",
+    "dirty_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "dirty_paths": [],
+    "repository_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513",
+    "source_tree_sha256": "6a4e60bd50903ace2d445a06798f8bd93a53dccc8636bf7985972297de09e910"
+  }
+}
