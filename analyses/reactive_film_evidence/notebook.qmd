@@ -281,10 +281,15 @@ Dugas rows exceed the concentration range of the Snijder correlation.
 
 The enhancement factor's source-range restriction is removed only at column
 states where C7 passes at their own Hatta numbers. C7 checks the reduction
-against a resolved film. Four N₂O Henry references remain unscored after
-reaching the 100,000-node limit: 3.000 m in 1C, 3.000 m in 2C, 5.494 m
-in 4C, and 4.667 m in 5C. At 4.667 m in 1C, the ePC-SAFT Henry check
-passes with a signed flux error of −0.000956% at Hatta number 869.34.
+against a resolved film. Five references on accepted profiles remain
+unscored. Four N₂O Henry references reached the 100,000-node limit:
+3.000 m in 1C, 3.000 m in 2C, 5.494 m in 4C, and 4.667 m in 5C. The
+ePC-SAFT Henry reference at 4.667 m in 1C was not rerun on its accepted
+profile. The retry read the unconverged checkpoint 3 1C profile, whose
+state at 4.667 m differs from the accepted checkpoint 4 profile. On that
+separate frozen state, the
+ePC-SAFT Henry check gave a signed flux error of −0.000956% at Hatta
+number 869.34. That value does not score the accepted-profile state.
 [Reference records](results/runs/finite_rate_film_cp5_2026-11-24/C7.jsonl).
 
 The Luo kinetics are used outside their source domain. For example, the
