@@ -347,6 +347,28 @@ def _retained_profile_context(tmp_path, mismatch=None):
     return config, prepared, scaling, lower, upper, baseline, source_path
 
 
+def test_retained_profile_checkout_paths_require_identical_hashes(tmp_path):
+    config, prepared, scaling, lower, upper, _, path = _retained_profile_context(tmp_path)
+    source = json.loads(path.read_text())
+    root = column_runner._ROOT
+    root = root.parent.parent if root.parent.name == ".worktrees" else root
+    old = str(root / ".worktrees" / "old-checkout")
+    current = str(root / ".worktrees" / "current-checkout")
+    source["config"]["dependencies"] = {"dataset": old + "/data", "input_hashes": {old + "/input": "abc"}}
+    prepared["resolved_inputs"]["solvent_identity"] = {current + "/input": "abc"}
+    source["resolved_inputs"]["solvent_identity"] = {old + "/input": "abc"}
+    current_config = config.as_dict()
+    current_config["dependencies"] = {"dataset": current + "/data", "input_hashes": {current + "/input": "abc"}}
+    from unittest.mock import patch
+    path.write_text(json.dumps(source))
+    with patch.object(type(config), "as_dict", return_value=current_config):
+        column_runner._retained_initial_profile(path, config, prepared, scaling, lower, upper)
+        source["resolved_inputs"]["solvent_identity"][old + "/input"] = "changed"
+        path.write_text(json.dumps(source))
+        with pytest.raises(ConfigurationError, match="do not match"):
+            column_runner._retained_initial_profile(path, config, prepared, scaling, lower, upper)
+
+
 def test_retained_profile_interpolates_accepted_n2_seed_before_solver(tmp_path):
     config, prepared, scaling, lower, upper, source, source_path = _retained_profile_context(tmp_path)
     initial, provenance = column_runner._retained_initial_profile(

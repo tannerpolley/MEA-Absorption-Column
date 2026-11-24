@@ -777,13 +777,25 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         raise ConfigurationError("Retained profile source solver settings are incomplete")
     current_settings = current_config["numerics"]["solver_settings"]
     seed_overrides = ("nodes", "end_clustering", "max_iterations") if config.design else ("nodes", "end_clustering")
+    root = _ROOT.parent.parent if _ROOT.parent.name == ".worktrees" else _ROOT
+    def checkout_relative(value):
+        if isinstance(value, Mapping):
+            return sorted((checkout_relative(k), checkout_relative(v)) for k, v in value.items())
+        if isinstance(value, list):
+            return [checkout_relative(v) for v in value]
+        if isinstance(value, str) and value.startswith(str(root) + "/"):
+            relative = value[len(str(root)) + 1:]
+            if relative.startswith(".worktrees/"):
+                relative = relative.split("/", 2)[-1]
+            return relative
+        return value
     identity_matches = (
         source.get("preset") == config.preset
         and source.get("formulation") == config.model.formulation
         and source.get("native_layout") == config.model.layout
         and source.get("coordinate") == config.model.coordinate
         and source_config.get("model") == current_config["model"]
-        and source_config.get("dependencies") == current_config["dependencies"]
+        and checkout_relative(source_config.get("dependencies")) == checkout_relative(current_config["dependencies"])
         and source.get("config_sha256") == source_config.get("resolved_config_sha256")
         and {k: v for k, v in source_settings.items() if k not in seed_overrides}
         == {k: v for k, v in current_settings.items() if k not in seed_overrides}
@@ -794,7 +806,7 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         and (source_inputs.get("metadata") or {}).get("physical_input_basis")
         == (current_inputs.get("metadata") or {}).get("physical_input_basis")
         and source_inputs.get("conserved_policy") == current_inputs.get("conserved_policy")
-        and source_inputs.get("solvent_identity") == current_inputs.get("solvent_identity")
+        and checkout_relative(source_inputs.get("solvent_identity")) == checkout_relative(current_inputs.get("solvent_identity"))
         and source_inputs.get("feed_ids") == current_inputs.get("feed_ids")
     )
     if not identity_matches:

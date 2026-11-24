@@ -301,12 +301,16 @@ a slow amine by itself. [Gaspar and Fosbøl](https://doi.org/10.1016/j.ces.2015.
 The solved-state liquid density is about 11% high against Amundsen et al.
 (2009). On 3C this lowers predicted liquid holdup by about 12–16%.
 The provisional vapour caloric reference also limits thermal interpretation.
-The 7C manifold capture changed by −5.55 percentage points when the
-axial grid grew from 17 to 33 nodes. The reported 7C capture comparison
-therefore describes the 17-node grid, with mesh sensitivity unresolved
-for the finite-rate profiles. The 33-node finite-rate retry was refused before
-solving because the retained input identities contain paths from a removed
-worktree; the input hashes match. [Liquid density assessment](../liquid_density/notebook.qmd).
+The 7C manifold capture changed by −5.55 percentage points when the axial grid
+grew from 17 to 33 nodes. For the finite-rate film with N₂O Henry, capture is
+68.980%, 63.776%, and 60.617% at 17, 33, and 65 nodes, respectively: changes
+of −5.203 and −3.160 percentage points. The observed order is 0.720 and the
+Richardson estimate is 55.732%, with a 4.885-point correction from 65 nodes;
+this extrapolation assumes the observed order persists. The 65-node prediction
+is 15.783 points below Morgan et al.'s measured 76.4 ± 2.2%. Each run passed
+the native-grid physical certificate, but the large refinement changes limit
+the capture comparison. [Mesh runs](results/runs/finite_rate_film_cp5_2026-11-24/).
+[Liquid density assessment](../liquid_density/notebook.qmd).
 
 The checkpoint 4 figures and 1C reruns await independent review and
 investigator promotion.
