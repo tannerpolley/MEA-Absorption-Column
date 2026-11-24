@@ -786,8 +786,8 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
             return sorted(pairs)
         if isinstance(value, list):
             return [checkout_relative(v, root) for v in value]
-        if root and isinstance(value, str) and value.startswith(str(root) + "/"):
-            return value[len(str(root)) + 1:]
+        if root and isinstance(value, str) and os.path.normpath(value).startswith(str(root) + "/"):  # containment after resolving "..", so escaping paths stay exact
+            return os.path.normpath(value)[len(str(root)) + 1:]
         return value
     current_root = _ROOT if source_root else None
     identity_matches = (

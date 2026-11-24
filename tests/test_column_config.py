@@ -370,6 +370,12 @@ def test_retained_profile_checkout_paths_require_identical_hashes(tmp_path):
         path.write_text(json.dumps(source))
         with pytest.raises(ConfigurationError, match="do not match"):
             column_runner._retained_initial_profile(path, config, prepared, scaling, lower, upper)
+        source["resolved_inputs"]["solvent_identity"] = {old + "/../ref.json": "abc"}
+        prepared["resolved_inputs"]["solvent_identity"] = {current + "/../ref.json": "abc"}
+        path.write_text(json.dumps(source))
+        with pytest.raises(ConfigurationError, match="do not match"):  # different files outside each checkout
+            column_runner._retained_initial_profile(path, config, prepared, scaling, lower, upper)
+        prepared["resolved_inputs"]["solvent_identity"] = {current + "/input": "abc"}
         source.pop("source_identity")
         source["resolved_inputs"]["solvent_identity"] = {old + "/input": "abc"}
         path.write_text(json.dumps(source))
