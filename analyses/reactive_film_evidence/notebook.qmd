@@ -1,6 +1,12 @@
 ---
 title: "Selectable reactive-film closures and retained evidence"
 jupyter: false
+resources:
+  - results/runs/finite_rate_film_cp3_2026-11-23/*/enhancement/try1/attempt.json
+  - results/runs/finite_rate_film_cp7_2026-11-24/enhancement_*/attempt.json
+  - results/runs/finite_rate_film_cp7_2026-11-24/summary.json
+  - results/runs/finite_rate_film_cp7_2026-11-24/ladder.log
+  - results/runs/finite_rate_film_cp7_2026-11-24/retry_it60.log
 ---
 ## Finite-rate film on the ePC-SAFT manifold
 
@@ -217,11 +223,13 @@ At 17 nodes across 2C–7C, changing to ePC-SAFT Henry raised finite-rate captur
 +2.25 to +4.38 percentage points and the native-node peak liquid temperature
 by 0.24–0.71 K. The liquid tap RMSE moved by −0.18 to +0.32 K. On 1C the
 same change raised capture by 1.35 percentage points, peak liquid
-temperature by 0.29 K, and tap RMSE by 0.41 K. Across all seven cases,
+temperature by 0.29 K, and tap RMSE by 0.41 K. On the common 2C–7C basis
+at every refined mesh, N₂O finite rate has the lowest capture MAE, followed by
+the equilibrium manifold and enhancement factor. Finite rate with ePC-SAFT
+Henry has results at 17 nodes only. At 17 nodes across all seven cases,
 capture MAE is 4.78 points for enhancement, 3.98 for the manifold, 3.48
 for finite rate with N₂O, and 3.57 for finite rate with ePC-SAFT. The mean
-tap RMSE is lowest for finite rate with N₂O at 4.58 K. These are measurement
-comparisons on the 17-node grid.
+17-node tap RMSE is lowest for finite rate with N₂O at 4.58 K.
 
 ### N₂O finite-rate axial mesh refinement
 
@@ -263,6 +271,145 @@ unresolved. The 4C sequence also changes direction between the first two
 refinements. C7 resolved-film checks cover the 17-node states only, not
 these refined states. [Requests, profiles, certificates and summary](results/runs/finite_rate_film_cp6_2026-11-24/summary.json);
 [retained 7C 33- and 65-node runs](results/runs/finite_rate_film_cp5_2026-11-24/).
+
+### Equilibrium-manifold axial mesh refinement
+
+The manifold uses the #91 17-node bridge profiles, including the 1C retry,
+and starts each refined solve from the preceding accepted profile. All 21
+refined runs returned `Solve_Succeeded` and passed the runner's native-grid
+physical checks. The 1C 33-node result uses the bridge profile with retained
+input paths resolved against the roots recorded in that attempt. The
+preflight refusals and interrupted starts are retained alongside the completed
+runs. [Run paths, wall times, and diagnostics](results/runs/finite_rate_film_cp7_2026-11-24/summary.json).
+
+Capture and its conditional limit are percent. Standard deviations,
+signed mesh changes (finer minus coarser), and signed errors (prediction minus
+measurement) are in percentage points. The measured means and standard
+deviations are from Morgan et al. (2020), Table A1. The order and conditional
+Richardson estimates use the 33-, 65-, and 129-node values as defined above.
+
+| Case | Measured ± SD | 17 | 33 | 65 | 129 | Δ33−17 | Δ65−33 | Δ129−65 | Order | Conditional limit | 129 error |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1C | 97.1 ± 0.7 | 99.577 | 99.479 | 99.403 | 99.356 | -0.098 | -0.076 | -0.046 | 0.70 | 99.282 | +2.256 |
+| 2C | 92.3 ± 0.5 | 98.346 | 98.181 | 98.013 | 97.906 | -0.165 | -0.168 | -0.107 | 0.65 | 97.718 | +5.606 |
+| 3C | 89.5 ± 1.2 | 89.415 | 89.008 | 88.840 | 88.771 | -0.407 | -0.168 | -0.068 | 1.29 | 88.724 | -0.729 |
+| 4C | 88.9 ± 0.8 | 88.617 | 88.094 | 87.875 | 87.782 | -0.523 | -0.219 | -0.093 | 1.23 | 87.712 | -1.118 |
+| 5C | 86.4 ± 0.6 | 93.584 | 92.909 | 92.451 | 92.198 | -0.676 | -0.457 | -0.254 | 0.85 | 91.880 | +5.798 |
+| 6C | 60.2 ± 0.5 | 69.677 | 69.759 | 69.905 | 70.012 | +0.082 | +0.146 | +0.107 | 0.45 | unresolved | +9.812 |
+| 7C | 76.4 ± 2.2 | 74.076 | 68.521 | 65.005 | 63.164 | -5.554 | -3.516 | -1.840 | 0.93 | 61.143 | -13.236 |
+
+The seven-case capture MAE rises from 3.98 to 4.79, 5.26, and 5.51 percentage
+points with refinement. The observed order on 6C is 0.45, below the
+specified 0.5–3 range, so its extrapolation remains unresolved. All listed
+Richardson estimates assume the observed order persists.
+
+### Enhancement-factor axial mesh refinement
+
+Each refined run starts from the checkpoint 3 case declaration on its own
+mesh. Cases 2C–7C converged at every mesh. The 20-iteration 2C attempt at
+33 nodes reached the cap. The 60-iteration settings gave converged 2C
+profiles in 33, 11, and 23 iterations at 33, 65, and 129 nodes, respectively.
+
+| Case | Measured ± SD | 17 | 33 | 65 | 129 | Δ33−17 | Δ65−33 | Δ129−65 | Order | Conditional limit | 129 error |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1C | 97.1 ± 0.7 | 99.406 | 99.254 | — | — | -0.152 | — | — | — | unresolved | — |
+| 2C | 92.3 ± 0.5 | 97.836 | 97.611 | 97.403 | 97.279 | -0.225 | -0.208 | -0.125 | 0.74 | 97.093 | +4.979 |
+| 3C | 89.5 ± 1.2 | 92.285 | 92.111 | 91.905 | 91.770 | -0.175 | -0.206 | -0.135 | 0.61 | 91.512 | +2.270 |
+| 4C | 88.9 ± 0.8 | 92.400 | 92.134 | 91.861 | 91.683 | -0.265 | -0.273 | -0.178 | 0.62 | 91.351 | +2.783 |
+| 5C | 86.4 ± 0.6 | 93.718 | 93.079 | 92.562 | 92.258 | -0.640 | -0.516 | -0.305 | 0.76 | 91.820 | +5.858 |
+| 6C | 60.2 ± 0.5 | 72.191 | 72.676 | 73.017 | 73.219 | +0.485 | +0.341 | +0.203 | 0.75 | 73.517 | +13.019 |
+| 7C | 76.4 ± 2.2 | 76.375 | 72.057 | 69.188 | 67.600 | -4.319 | -2.869 | -1.588 | 0.85 | 65.634 | -8.800 |
+
+The fresh 1C attempt at 65 nodes reached the 20-iteration cap. The
+60-iteration attempts at 65 and 129 nodes also reached the cap after
+1146 and 2755 s, with scaled IPOPT primal infeasibility remaining near
+0.154 and 0.320, respectively, throughout at least the last ten iterations.
+The initial ladder stopped at the 65-node failure, so the only retained
+129-node attempt used 60 iterations. The cause remains unresolved.
+The 65- and 129-node 1C candidates and the capped 2C 33-node candidate
+remain in the run records, outside the converged capture comparisons.
+[Ladder log](results/runs/finite_rate_film_cp7_2026-11-24/ladder.log) and [60-iteration retry log](results/runs/finite_rate_film_cp7_2026-11-24/retry_it60.log).
+
+The enhancement runner's subset certificate records the scaled infinity
+norms of the native-grid material and energy conservation residuals,
+interface residuals, and boundary residuals, with a declared limit of
+$10^{-7}$ for each. The table also gives the solver's maximum scaled
+violation of the original state bounds. Directly checking the saved
+profiles gives $0\leq\dot n_{\mathrm{CO_2},\mathrm{out}}\leq\dot n_{\mathrm{CO_2},\mathrm{in}}$
+for every returned enhancement
+profile, including the capped candidates. The preflight refusal returned
+no profile. The runner did not certify charge separately in these runs.
+The earlier 17-node replay is documented above.
+
+| Case | Nodes | Cap | Outcome | Material | Energy | Interface | Boundary | Bounds | CO₂ direction |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1C | 17 | 20 | [Converged](results/runs/finite_rate_film_cp3_2026-11-23/1C/enhancement/try1/attempt.json) | 3.30e-16 | 9.23e-13 | 4.18e-10 | 0.00e+00 | 0 | Pass |
+| 1C | 33 | 20 | [Preflight refusal](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n33/attempt.json) | — | — | — | — | — | — |
+| 1C | 33 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n33_fresh/attempt.json) | 3.62e-16 | 5.47e-14 | 1.03e-08 | 0.00e+00 | 0 | Pass |
+| 1C | 65 | 20 | [Iteration limit](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n65_fresh/attempt.json) | 3.78e-03 | 2.18e-05 | 4.13e-03 | 4.57e-09 | 0 | Pass |
+| 1C | 65 | 60 | [Iteration limit](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n65_fresh_it60/attempt.json) | 3.78e-03 | 1.04e-06 | 1.90e-04 | 9.05e-13 | 0 | Pass |
+| 1C | 129 | 60 | [Iteration limit](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n129_fresh_it60/attempt.json) | 3.93e-03 | 3.02e-08 | 5.65e-06 | 3.71e-12 | 0 | Pass |
+| 2C | 17 | 20 | [Converged](results/runs/finite_rate_film_cp3_2026-11-23/2C/enhancement/try1/attempt.json) | 3.28e-16 | 8.29e-13 | 2.35e-11 | 0.00e+00 | 0 | Pass |
+| 2C | 33 | 20 | [Iteration limit](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n33_fresh/attempt.json) | 7.02e-03 | 1.00e-03 | 1.12e-01 | 2.24e-01 | 0 | Pass |
+| 2C | 33 | 60 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n33_fresh_it60/attempt.json) | 2.13e-11 | 3.56e-12 | 1.49e-09 | 9.10e-12 | 0 | Pass |
+| 2C | 65 | 60 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n65_fresh_it60/attempt.json) | 3.54e-16 | 9.07e-13 | 2.24e-11 | 0.00e+00 | 0 | Pass |
+| 2C | 129 | 60 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n129_fresh_it60/attempt.json) | 3.35e-11 | 1.68e-12 | 4.64e-12 | 3.62e-11 | 0 | Pass |
+| 3C | 17 | 20 | [Converged](results/runs/finite_rate_film_cp3_2026-11-23/3C/enhancement/try1/attempt.json) | 1.85e-16 | 2.06e-12 | 1.75e-08 | 0.00e+00 | 0 | Pass |
+| 3C | 33 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_3C_n33_fresh/attempt.json) | 3.69e-16 | 8.68e-13 | 8.02e-08 | 0.00e+00 | 0 | Pass |
+| 3C | 65 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_3C_n65_fresh/attempt.json) | 3.65e-16 | 7.00e-13 | 8.05e-08 | 0.00e+00 | 0 | Pass |
+| 3C | 129 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_3C_n129_fresh/attempt.json) | 3.69e-16 | 8.68e-14 | 1.02e-11 | 0.00e+00 | 0 | Pass |
+| 4C | 17 | 20 | [Converged](results/runs/finite_rate_film_cp3_2026-11-23/4C/enhancement/try1/attempt.json) | 3.34e-16 | 9.46e-13 | 8.45e-09 | 0.00e+00 | 0 | Pass |
+| 4C | 33 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_4C_n33_fresh/attempt.json) | 2.25e-16 | 9.32e-13 | 1.59e-08 | 0.00e+00 | 0 | Pass |
+| 4C | 65 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_4C_n65_fresh/attempt.json) | 4.51e-16 | 6.36e-14 | 7.41e-11 | 0.00e+00 | 0 | Pass |
+| 4C | 129 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_4C_n129_fresh/attempt.json) | 4.46e-16 | 6.36e-14 | 3.03e-12 | 0.00e+00 | 0 | Pass |
+| 5C | 17 | 20 | [Converged](results/runs/finite_rate_film_cp3_2026-11-23/5C/enhancement/try1/attempt.json) | 2.53e-16 | 7.49e-14 | 1.57e-12 | 0.00e+00 | 0 | Pass |
+| 5C | 33 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_5C_n33_fresh/attempt.json) | 2.66e-16 | 7.08e-14 | 1.88e-10 | 0.00e+00 | 0 | Pass |
+| 5C | 65 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_5C_n65_fresh/attempt.json) | 5.05e-16 | 8.91e-13 | 9.02e-12 | 0.00e+00 | 0 | Pass |
+| 5C | 129 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_5C_n129_fresh/attempt.json) | 5.05e-16 | 9.57e-14 | 4.44e-10 | 0.00e+00 | 0 | Pass |
+| 6C | 17 | 20 | [Converged](results/runs/finite_rate_film_cp3_2026-11-23/6C/enhancement/try1/attempt.json) | 2.84e-16 | 4.09e-13 | 5.08e-09 | 5.68e-16 | 0 | Pass |
+| 6C | 33 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_6C_n33_fresh/attempt.json) | 5.67e-16 | 5.19e-14 | 2.93e-13 | 5.68e-16 | 0 | Pass |
+| 6C | 65 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_6C_n65_fresh/attempt.json) | 4.25e-16 | 4.61e-14 | 6.93e-13 | 5.68e-16 | 0 | Pass |
+| 6C | 129 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_6C_n129_fresh/attempt.json) | 4.25e-16 | 7.49e-14 | 7.91e-12 | 5.68e-16 | 0 | Pass |
+| 7C | 17 | 20 | [Converged](results/runs/finite_rate_film_cp3_2026-11-23/7C/enhancement/try1/attempt.json) | 1.96e-16 | 1.40e-12 | 2.60e-08 | 0.00e+00 | 0 | Pass |
+| 7C | 33 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_7C_n33_fresh/attempt.json) | 2.57e-16 | 6.51e-14 | 1.79e-12 | 0.00e+00 | 0 | Pass |
+| 7C | 65 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_7C_n65_fresh/attempt.json) | 3.92e-16 | 3.13e-12 | 2.00e-09 | 0.00e+00 | 0 | Pass |
+| 7C | 129 | 20 | [Converged](results/runs/finite_rate_film_cp7_2026-11-24/enhancement_7C_n129_fresh/attempt.json) | 3.92e-16 | 8.14e-14 | 3.10e-13 | 0.00e+00 | 0 | Pass |
+
+### Capture comparison on common axial meshes
+
+The comparison uses the same declared case inputs, solved-state liquid
+density, nine film quadrature points, and upwind balances on cosine-spaced
+axial meshes. Capture is $100(1-\dot n_{\mathrm{CO_2},\mathrm{out}}/\dot n_{\mathrm{CO_2},\mathrm{in}})$
+from the native profile endpoints.
+It agrees with the certificate endpoint calculation wherever the certificate
+contains a capture check. Mean absolute capture errors below are in
+percentage points. Dashes indicate an incomplete set of cases for that
+film and mesh.
+
+| Cases | Film | 17 | 33 | 65 | 129 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 2C–7C | Finite rate, N₂O Henry | 3.96 | 4.74 | 5.22 | 5.45 |
+| 2C–7C | Equilibrium manifold | 4.23 | 5.19 | 5.76 | 6.05 |
+| 2C–7C | Enhancement factor | 5.19 | 5.78 | 6.11 | 6.28 |
+| 2C–7C | Finite rate, ePC-SAFT Henry | 3.84 | — | — | — |
+| 1C–7C | Finite rate, N₂O Henry | 3.48 | 4.19 | 4.61 | 4.82 |
+| 1C–7C | Equilibrium manifold | 3.98 | 4.79 | 5.26 | 5.51 |
+| 1C–7C | Enhancement factor | 4.78 | 5.26 | — | — |
+| 1C–7C | Finite rate, ePC-SAFT Henry | 3.57 | — | — | — |
+
+![Mean absolute capture error by axial mesh for 2C–7C, against the capture means in Morgan et al. (2020), Table A1. Each point is a discrete mesh result.](results/runs/finite_rate_film_cp7_2026-11-24/capture_mae_by_axial_nodes.png)
+
+Refinement raises capture MAE for each of the three films with refined
+results. At 129 nodes, finite rate with N₂O Henry, the equilibrium manifold,
+and enhancement factor underpredict 7C by 17.4, 13.2, and 8.8 percentage
+points, respectively. They overpredict 6C by 1.5, 9.8, and 13.0 points.
+The observed capture standard deviations are 2.2 points for 7C and
+0.5 points for 6C. Refinement shows how the discretization changes the
+predictions and does not quantify uncertainty in the films or inputs.
+These are measurement comparisons and numerical solution checks.
+Physical validation and investigator promotion remain open, and these
+refinement results await independent review.
+[Machine-readable comparison and run records](results/runs/finite_rate_film_cp7_2026-11-24/summary.json).
 
 ### Wetted-wall measurement comparison
 

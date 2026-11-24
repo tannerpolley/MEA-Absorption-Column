@@ -1,0 +1,31 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/nccc_validation/inputs/joint_fit_f2/case_2c.json"
+  },
+  "dependencies": {
+    "thermodynamics_input": "analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+    "transport_input": "analyses/nccc_validation/inputs/joint_fit_f2/transport_2c.json"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "end_clustering": 1.0,
+      "liquid_density_source": "solved_state",
+      "max_iterations": 60,
+      "nodes": 129,
+      "quadrature_points": 9,
+      "tolerance": 1e-07
+    }
+  },
+  "initialization": {
+    "values": {}
+  },
+  "execution": {
+    "output_dir": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n129_fresh_it60",
+    "wall_limit_s": 7200
+  },
+  "model": {
+    "film_model": "enhancement_reference"
+  }
+}

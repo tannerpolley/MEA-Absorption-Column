@@ -1,0 +1,3118 @@
+{
+  "axial_nodes": [
+    17,
+    33,
+    65,
+    129
+  ],
+  "measurement_source": "Morgan et al. (2020), Table A1 as retained in checkpoint 6",
+  "checkpoint_6_summary": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/summary.json",
+  "films": {
+    "finite_rate_n2o": [
+      {
+        "case": "1C",
+        "measured_capture_pct": 97.1,
+        "measured_sd_pp": 0.7,
+        "capture_pct": [
+          97.70626104783891,
+          98.01130216916376,
+          98.11178411543582,
+          98.14898991472275
+        ],
+        "signed_mesh_changes_pp": [
+          0.30504112132484806,
+          0.10048194627206897,
+          0.037205799286923025
+        ],
+        "observed_order": 1.4333368961222492,
+        "conditional_richardson_capture_pct": 98.17086658652616,
+        "signed_error_pp": [
+          0.6062610478389132,
+          0.9113021691637613,
+          1.0117841154358302,
+          1.0489899147227533
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp4_2026-11-23/n2o/solve/attempt.json",
+            "nodes": 17,
+            "max_iterations": 60,
+            "wall_limit_s": 900.0,
+            "seconds": 521.7605119559994,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 33,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 97.70626104783891,
+            "inlet_vapor_co2_mol_s": 1.367627376012331,
+            "outlet_vapor_co2_mol_s": 0.03136980184401359,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/1C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 60,
+            "wall_limit_s": 3600.0,
+            "seconds": 168.41813947699848,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 98.01130216916376,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.027197975961848576,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/1C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 60,
+            "wall_limit_s": 3600.0,
+            "seconds": 338.9659257099993,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 98.11178411543582,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.025823757356622856,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/1C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 60,
+            "wall_limit_s": 7200.0,
+            "seconds": 553.0956223579997,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 98.14898991472275,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.025314920660088655,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "2C",
+        "measured_capture_pct": 92.3,
+        "measured_sd_pp": 0.5,
+        "capture_pct": [
+          90.97893906598343,
+          91.66857238426913,
+          92.0249820382149,
+          92.20685994531252
+        ],
+        "signed_mesh_changes_pp": [
+          0.6896333182857006,
+          0.35640965394577506,
+          0.18187790709761487
+        ],
+        "observed_order": 0.9705661072391474,
+        "conditional_richardson_capture_pct": 92.39639321755432,
+        "signed_error_pp": [
+          -1.3210609340165718,
+          -0.6314276157308711,
+          -0.2750179617850961,
+          -0.09314005468748121
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/2C/n2o/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 117.56580187899999,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 90.97893906598343,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.15458731184718832,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/2C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 166.60426707100123,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 91.66857238426913,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.14276957093912684,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/2C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 340.5259161849972,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 92.0249820382149,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.136662039826893,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/2C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 551.6096075029927,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 92.20685994531252,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.13354533138780092,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "3C",
+        "measured_capture_pct": 89.5,
+        "measured_sd_pp": 1.2,
+        "capture_pct": [
+          81.65900367324679,
+          81.78457183922015,
+          81.91120416281362,
+          81.99136081295637
+        ],
+        "signed_mesh_changes_pp": [
+          0.1255681659733625,
+          0.1266323235934692,
+          0.08015665014275442
+        ],
+        "observed_order": 0.6597515848919026,
+        "conditional_richardson_capture_pct": 82.12960708428629,
+        "signed_error_pp": [
+          -7.8409963267532135,
+          -7.715428160779851,
+          -7.588795837186382,
+          -7.508639187043627
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/3C/n2o/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 109.08803119099866,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 81.65900367324679,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.3033680604630874,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/3C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 171.030320277001,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 81.78457183922015,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.301291108355983,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/3C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 334.9997351849961,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 81.91120416281362,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.2991965546187662,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/3C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 552.4518233790004,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 81.99136081295637,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.2978707287446527,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "4C",
+        "measured_capture_pct": 88.9,
+        "measured_sd_pp": 0.8,
+        "capture_pct": [
+          82.84215955060318,
+          82.82174419157515,
+          82.8732668269408,
+          82.91428163477838
+        ],
+        "signed_mesh_changes_pp": [
+          -0.020415359028035596,
+          0.051522635365657266,
+          0.04101480783756983
+        ],
+        "observed_order": 0.3290615195434296,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          -6.057840449396821,
+          -6.078255808424856,
+          -6.026733173059199,
+          -5.985718365221629
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/4C/n2o/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 118.6761974100009,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 82.84215955060318,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.2443295741202962,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/4C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 170.34763372399902,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 82.82174419157515,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.2446202911246619,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/4C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 326.750397429998,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 82.8732668269408,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.2438866030131787,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/4C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 667.2601515269998,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 82.91428163477838,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.2433025475452932,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "5C",
+        "measured_capture_pct": 86.4,
+        "measured_sd_pp": 0.6,
+        "capture_pct": [
+          86.2317668468301,
+          86.18895112162501,
+          86.17572056320856,
+          86.17513530144164
+        ],
+        "signed_mesh_changes_pp": [
+          -0.04281572520508803,
+          -0.013230558416452709,
+          -0.0005852617669148685
+        ],
+        "observed_order": 4.498648108309175,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          -0.16823315316990772,
+          -0.21104887837499575,
+          -0.22427943679144846,
+          -0.22486469855836333
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/5C/n2o/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 113.10563915800049,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 86.2317668468301,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.1410701219135854,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/5C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 179.18206635800016,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 86.18895112162501,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.14150881433746465,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/5C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 327.4815383940004,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 86.17572056320856,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.1416443754125882,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/5C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 666.410183439999,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 86.17513530144164,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.14165037203887218,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "6C",
+        "measured_capture_pct": 60.2,
+        "measured_sd_pp": 0.5,
+        "capture_pct": [
+          61.13163355541935,
+          61.3776656853775,
+          61.59495875148865,
+          61.73063125584402
+        ],
+        "signed_mesh_changes_pp": [
+          0.24603212995815227,
+          0.21729306611114652,
+          0.13567250435536948
+        ],
+        "observed_order": 0.6795137673170053,
+        "conditional_richardson_capture_pct": 61.95615075781871,
+        "signed_error_pp": [
+          0.9316335554193458,
+          1.177665685377498,
+          1.3949587514886446,
+          1.530631255844014
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/6C/n2o/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 111.81178510100108,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 61.13163355541935,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.719001129926372,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/6C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 185.17114650899748,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 61.3776656853775,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.7144499384146235,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/6C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 259.6247424999965,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 61.59495875148865,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.7104303725220913,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/6C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 665.4721870520007,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 61.73063125584402,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.7079206533634398,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "7C",
+        "measured_capture_pct": 76.4,
+        "measured_sd_pp": 2.2,
+        "capture_pct": [
+          68.97992848850876,
+          63.776491303830454,
+          60.616816867390675,
+          59.03374243457371
+        ],
+        "signed_mesh_changes_pp": [
+          -5.203437184678307,
+          -3.1596744364397793,
+          -1.5830744328169644
+        ],
+        "observed_order": 0.9970468254623954,
+        "conditional_richardson_capture_pct": 57.44416698482107,
+        "signed_error_pp": [
+          -7.420071511491244,
+          -12.623508696169552,
+          -15.78318313260933,
+          -17.366257565426295
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/7C/n2o/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 102.78137327300101,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 5,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 68.97992848850876,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.27285786906546355,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp5_2026-11-24/7C_n33/try3/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 174.33263625899417,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 63.776491303830454,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.3186281949495081,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp5_2026-11-24/7C_n65/try2/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 342.08568306099914,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 60.616816867390675,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.3464212331876114,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp6_2026-11-24/7C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 711.5623560000022,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 59.03374243457371,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.36034622740145256,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      }
+    ],
+    "manifold": [
+      {
+        "case": "1C",
+        "measured_capture_pct": 97.1,
+        "measured_sd_pp": 0.7,
+        "capture_pct": [
+          99.57701425936017,
+          99.47860271560917,
+          99.40290878358795,
+          99.35641527829102
+        ],
+        "signed_mesh_changes_pp": [
+          -0.09841154375099848,
+          -0.07569393202122399,
+          -0.04649350529692242
+        ],
+        "observed_order": 0.7031484522410552,
+        "conditional_richardson_capture_pct": 99.28238738632888,
+        "signed_error_pp": [
+          2.4770142593601747,
+          2.3786027156091762,
+          2.3029087835879523,
+          2.25641527829103
+        ],
+        "runs": [
+          {
+            "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/retry/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 900.0,
+            "seconds": 94.95546355199986,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 99.57701425936017,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.005784868785867343,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_1C_n33_root_anchored/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 193.00445642600243,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 99.47860271560917,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.007130771999420318,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_1C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 401.73901768700307,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 99.40290878358795,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.008165982935767108,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_1C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 589.7521128340013,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 99.35641527829102,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.008801840842303022,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "2C",
+        "measured_capture_pct": 92.3,
+        "measured_sd_pp": 0.5,
+        "capture_pct": [
+          98.34598595170544,
+          98.18065268319515,
+          98.01260502666538,
+          97.90561541159249
+        ],
+        "signed_mesh_changes_pp": [
+          -0.16533326851029528,
+          -0.16804765652976528,
+          -0.10698961507289084
+        ],
+        "observed_order": 0.6513996555157057,
+        "conditional_richardson_capture_pct": 97.71814169870686,
+        "signed_error_pp": [
+          6.045985951705447,
+          5.8806526831951516,
+          5.712605026665386,
+          5.605615411592495
+        ],
+        "runs": [
+          {
+            "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/2C/17/cosine/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 900.0,
+            "seconds": 485.38097690700033,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 15,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 98.34598595170544,
+            "inlet_vapor_co2_mol_s": 1.713626733873809,
+            "outlet_vapor_co2_mol_s": 0.028343626913603835,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_2C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 181.5577334460031,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 98.18065268319515,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.03117682200335524,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_2C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 355.8827361099975,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 98.01260502666538,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.03405653157135061,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_2C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 601.6185121890012,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 97.90561541159249,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.03588993421774194,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "3C",
+        "measured_capture_pct": 89.5,
+        "measured_sd_pp": 1.2,
+        "capture_pct": [
+          89.41488041587351,
+          89.00784568428892,
+          88.83982638440519,
+          88.77134208919153
+        ],
+        "signed_mesh_changes_pp": [
+          -0.4070347315845879,
+          -0.16801929988373843,
+          -0.06848429521365063
+        ],
+        "observed_order": 1.294781867700709,
+        "conditional_richardson_capture_pct": 88.72422199604988,
+        "signed_error_pp": [
+          -0.08511958412648823,
+          -0.49215431571107615,
+          -0.6601736155948146,
+          -0.7286579108084652
+        ],
+        "runs": [
+          {
+            "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/3C/17/cosine/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 900.0,
+            "seconds": 100.67752595699994,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 5,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 89.41488041587351,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.17508248411359628,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_3C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 179.63773146199674,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 89.00784568428892,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.18181501569814346,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_3C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 375.8433632790038,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 88.83982638440519,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.18459412803304678,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_3C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 583.4770118350061,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 88.77134208919153,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.18572688807732218,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "4C",
+        "measured_capture_pct": 88.9,
+        "measured_sd_pp": 0.8,
+        "capture_pct": [
+          88.61744020086437,
+          88.09405668724787,
+          87.87536296485897,
+          87.78201221682514
+        ],
+        "signed_mesh_changes_pp": [
+          -0.5233835136164942,
+          -0.21869372238890605,
+          -0.09335074803382781
+        ],
+        "observed_order": 1.2281783202212673,
+        "conditional_richardson_capture_pct": 87.71248807952655,
+        "signed_error_pp": [
+          -0.28255979913564033,
+          -0.8059433127521345,
+          -1.0246370351410405,
+          -1.1179877831748684
+        ],
+        "runs": [
+          {
+            "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/4C/17/cosine/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 900.0,
+            "seconds": 114.15472951400079,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 5,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 88.61744020086437,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.16208892933372515,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_4C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 169.0854056590033,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 88.09405668724787,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.16954196932209975,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_4C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 327.19637421800144,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 87.87536296485897,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.17265619247924188,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_4C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 533.45025781,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 87.78201221682514,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.17398551761069916,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "5C",
+        "measured_capture_pct": 86.4,
+        "measured_sd_pp": 0.6,
+        "capture_pct": [
+          93.58434512001452,
+          92.90851558295508,
+          92.45142258332311,
+          92.19756409984763
+        ],
+        "signed_mesh_changes_pp": [
+          -0.6758295370594425,
+          -0.4570929996319677,
+          -0.2538584834754829
+        ],
+        "observed_order": 0.8484632512303711,
+        "conditional_richardson_capture_pct": 91.88047165486721,
+        "signed_error_pp": [
+          7.1843451200145125,
+          6.50851558295507,
+          6.051422583323102,
+          5.7975640998476194
+        ],
+        "runs": [
+          {
+            "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/5C/17/cosine/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 900.0,
+            "seconds": 114.25220822000028,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 5,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 93.58434512001452,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.06573517502256042,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_5C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 162.46851504900405,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 92.90851558295508,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.07265976397490732,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_5C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 327.47903690299427,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 92.45142258332311,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.0773431655752849,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_5C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 531.9254598109983,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 92.19756409984763,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.0799442144400362,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "6C",
+        "measured_capture_pct": 60.2,
+        "measured_sd_pp": 0.5,
+        "capture_pct": [
+          69.67676857841172,
+          69.75910888419983,
+          69.90504957692988,
+          70.01184853202204
+        ],
+        "signed_mesh_changes_pp": [
+          0.08234030578810803,
+          0.14594069273005061,
+          0.10679895509215953
+        ],
+        "observed_order": 0.45048467492007965,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          9.476768578411722,
+          9.55910888419983,
+          9.70504957692988,
+          9.81184853202204
+        ],
+        "runs": [
+          {
+            "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/6C/17/cosine/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 900.0,
+            "seconds": 89.32459227600066,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 69.67676857841172,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.5609301251758864,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_6C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 170.04401902000245,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 69.75910888419983,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.5594069643560318,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_6C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 270.92040562799957,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 69.90504957692988,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.5567073005272275,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_6C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 626.7309839469963,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 3,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 70.01184853202204,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.554731694747764,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      },
+      {
+        "case": "7C",
+        "measured_capture_pct": 76.4,
+        "measured_sd_pp": 2.2,
+        "capture_pct": [
+          74.07565986431919,
+          68.52118039220836,
+          65.00483450374112,
+          63.164419859277444
+        ],
+        "signed_mesh_changes_pp": [
+          -5.5544794721108275,
+          -3.5163458884672423,
+          -1.840414644463678
+        ],
+        "observed_order": 0.9340461480857933,
+        "conditional_richardson_capture_pct": 61.1433786765467,
+        "signed_error_pp": [
+          -2.3243401356808135,
+          -7.878819607791641,
+          -11.395165496258883,
+          -13.235580140722561
+        ],
+        "runs": [
+          {
+            "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/7C/17/cosine/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 900.0,
+            "seconds": 89.64091339799961,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 74.07565986431919,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.22803494194814253,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_7C_n33/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 175.93295623900485,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 68.52118039220836,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.2768930959974194,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_7C_n65/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 379.8075592930036,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 65.00483450374112,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.30782347749795363,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_7C_n129/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 724.3626305130019,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 4,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 63.164419859277444,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.3240120803481825,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          }
+        ]
+      }
+    ],
+    "enhancement": [
+      {
+        "case": "1C",
+        "measured_capture_pct": 97.1,
+        "measured_sd_pp": 0.7,
+        "capture_pct": [
+          99.40633573108487,
+          99.25424258292517,
+          null,
+          null
+        ],
+        "signed_mesh_changes_pp": [
+          -0.15209314815969321,
+          null,
+          null
+        ],
+        "observed_order": null,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          2.3063357310848716,
+          2.1542425829251783,
+          null,
+          null
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/1C/enhancement/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 45.16889751400049,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 10,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 99.40633573108487,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.008119115063635576,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 9.22667031451373e-13,
+              "interface": 4.184758206353986e-10,
+              "material": 3.296608058245434e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n33_fresh/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 167.42314368900406,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 14,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 99.25424258292517,
+            "inlet_vapor_co2_mol_s": 1.3676273760710997,
+            "outlet_vapor_co2_mol_s": 0.010199182594996208,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 5.4676564826748033e-14,
+              "interface": 1.0278357975867184e-08,
+              "material": 3.6224700774278853e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n65_fresh_it60/attempt.json",
+            "nodes": 65,
+            "max_iterations": 60,
+            "wall_limit_s": 3600.0,
+            "seconds": 1146.3713770219983,
+            "execution_status": "completed",
+            "solver_status": "Maximum_Iterations_Exceeded",
+            "iterations": 60,
+            "numerical_acceptance": "rejected",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "primal_infeasibility_last_10": [
+              0.15403343389254914,
+              0.15403114270451115,
+              0.15402874903547326,
+              0.1540262445848564,
+              0.15402362007813936,
+              0.15402086511503407,
+              0.15401796798809844,
+              0.15401491546428123,
+              0.1540116925202985,
+              0.15400828202028544
+            ],
+            "profile_endpoint_capture_pct": 99.91656202985288,
+            "inlet_vapor_co2_mol_s": 1.3676273760702873,
+            "outlet_vapor_co2_mol_s": 0.0011411205217693747,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 9.049472282640636e-13,
+              "energy": 1.0398204838727474e-06,
+              "interface": 0.00018954203767359933,
+              "material": 0.0037783935902424093
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n129_fresh_it60/attempt.json",
+            "nodes": 129,
+            "max_iterations": 60,
+            "wall_limit_s": 7200.0,
+            "seconds": 2755.151693685002,
+            "execution_status": "completed",
+            "solver_status": "Maximum_Iterations_Exceeded",
+            "iterations": 60,
+            "numerical_acceptance": "rejected",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "primal_infeasibility_last_10": [
+              0.32019583105088634,
+              0.32019569493139777,
+              0.32019555870348887,
+              0.3201954223668436,
+              0.3201952859208254,
+              0.32019514936521126,
+              0.3201950126994434,
+              0.3201948759230781,
+              0.32019473903570084,
+              0.3201946020367991
+            ],
+            "profile_endpoint_capture_pct": 99.91825794106884,
+            "inlet_vapor_co2_mol_s": 1.367627376068942,
+            "outlet_vapor_co2_mol_s": 0.001117926775704915,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 3.7147174225538034e-12,
+              "energy": 3.020827580484183e-08,
+              "interface": 5.6477283104390415e-06,
+              "material": 0.0039289847871559385
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          }
+        ]
+      },
+      {
+        "case": "2C",
+        "measured_capture_pct": 92.3,
+        "measured_sd_pp": 0.5,
+        "capture_pct": [
+          97.83605057602524,
+          97.61149522344493,
+          97.40341740305938,
+          97.27881692569002
+        ],
+        "signed_mesh_changes_pp": [
+          -0.22455535258031034,
+          -0.20807782038555445,
+          -0.12460047736935564
+        ],
+        "observed_order": 0.7398135966213293,
+        "conditional_richardson_capture_pct": 97.0928349765801,
+        "signed_error_pp": [
+          5.5360505760252465,
+          5.311495223444936,
+          5.103417403059382,
+          4.978816925690026
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/2C/enhancement/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 37.201044919000196,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 9,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 97.83605057602524,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.037082015837419546,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 8.293216517117556e-13,
+              "interface": 2.3510466139668835e-11,
+              "material": 3.2800312369597987e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n33_fresh_it60/attempt.json",
+            "nodes": 33,
+            "max_iterations": 60,
+            "wall_limit_s": 3600.0,
+            "seconds": 310.73301938499935,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 33,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 97.61149522344493,
+            "inlet_vapor_co2_mol_s": 1.7136267339030347,
+            "outlet_vapor_co2_mol_s": 0.04093005639159855,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 9.099494491238148e-12,
+              "energy": 3.5550254803377257e-12,
+              "interface": 1.491379183133765e-09,
+              "material": 2.134658514856272e-11
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n65_fresh_it60/attempt.json",
+            "nodes": 65,
+            "max_iterations": 60,
+            "wall_limit_s": 3600.0,
+            "seconds": 283.99790566299635,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 11,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 97.40341740305938,
+            "inlet_vapor_co2_mol_s": 1.7136267339052234,
+            "outlet_vapor_co2_mol_s": 0.044495733549105014,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 9.067250058715194e-13,
+              "interface": 2.2363430748928225e-11,
+              "material": 3.5377464428049153e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n129_fresh_it60/attempt.json",
+            "nodes": 129,
+            "max_iterations": 60,
+            "wall_limit_s": 7200.0,
+            "seconds": 1222.030157993002,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 23,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 97.27881692569002,
+            "inlet_vapor_co2_mol_s": 1.713626733932619,
+            "outlet_vapor_co2_mol_s": 0.046630920640625274,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 3.6226310839992945e-11,
+              "energy": 1.6807585474691579e-12,
+              "interface": 4.638822972381714e-12,
+              "material": 3.346372048981384e-11
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          }
+        ]
+      },
+      {
+        "case": "3C",
+        "measured_capture_pct": 89.5,
+        "measured_sd_pp": 1.2,
+        "capture_pct": [
+          92.28507177139996,
+          92.11051571420438,
+          91.90485746621125,
+          91.76986653259476
+        ],
+        "signed_mesh_changes_pp": [
+          -0.17455605719557354,
+          -0.20565824799312793,
+          -0.13499093361649273
+        ],
+        "observed_order": 0.6073864178307318,
+        "conditional_richardson_capture_pct": 91.51200259196824,
+        "signed_error_pp": [
+          2.7850717713999558,
+          2.610515714204382,
+          2.4048574662112543,
+          2.2698665325947616
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/3C/enhancement/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 30.50533894,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 7,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 92.28507177139996,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.12760827010844472,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 2.060189527508463e-12,
+              "interface": 1.7534610943264138e-08,
+              "material": 1.8461603345591976e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_3C_n33_fresh/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 77.21829740500107,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 8,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 92.11051571420438,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.1304955032538035,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 8.680573851861501e-13,
+              "interface": 8.02089917957266e-08,
+              "material": 3.692320669118395e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_3C_n65_fresh/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 159.4107398069973,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 8,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 91.90485746621125,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.13389718016929958,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 7.002329573834943e-13,
+              "interface": 8.050070446935836e-08,
+              "material": 3.6515681614094647e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_3C_n129_fresh/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 359.0703043879985,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 9,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 91.76986653259476,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.13612998895360764,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 8.6805738518615e-14,
+              "interface": 1.0169852887891888e-11,
+              "material": 3.692320669118395e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          }
+        ]
+      },
+      {
+        "case": "4C",
+        "measured_capture_pct": 88.9,
+        "measured_sd_pp": 0.8,
+        "capture_pct": [
+          92.39957101322732,
+          92.13419212447424,
+          91.86069258932463,
+          91.68275089076555
+        ],
+        "signed_mesh_changes_pp": [
+          -0.2653788887530766,
+          -0.273499535149611,
+          -0.17794169855908137
+        ],
+        "observed_order": 0.620133752000696,
+        "conditional_richardson_capture_pct": 91.35139922756528,
+        "signed_error_pp": [
+          3.4995710132273103,
+          3.2341921244742338,
+          2.9606925893246228,
+          2.7827508907655414
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/4C/enhancement/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 33.82941811300043,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 8,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 92.39957101322732,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.10823096198770202,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 9.462336232162474e-13,
+              "interface": 8.445037323664998e-09,
+              "material": 3.341985130192568e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_4C_n33_fresh/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 71.18681029599975,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 8,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 92.13419212447424,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.11200998715469707,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 9.321107333174973e-13,
+              "interface": 1.5936809343476136e-08,
+              "material": 2.252855070597645e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_4C_n65_fresh/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 160.98891952000122,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 9,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 91.86069258932463,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.11590465123799393,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 6.355300454437482e-14,
+              "interface": 7.408441850731915e-11,
+              "material": 4.50571014119529e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_4C_n129_fresh/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 368.568511382,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 10,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 91.68275089076555,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.11843856100102082,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 6.355300454437482e-14,
+              "interface": 3.03370981964682e-12,
+              "material": 4.455980173590091e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          }
+        ]
+      },
+      {
+        "case": "5C",
+        "measured_capture_pct": 86.4,
+        "measured_sd_pp": 0.6,
+        "capture_pct": [
+          93.71819780766971,
+          93.07863973801754,
+          92.5623693710763,
+          92.25778846579635
+        ],
+        "signed_mesh_changes_pp": [
+          -0.6395580696521677,
+          -0.5162703669412423,
+          -0.3045809052799484
+        ],
+        "observed_order": 0.7613012926488673,
+        "conditional_richardson_capture_pct": 91.81955442649597,
+        "signed_error_pp": [
+          7.318197807669705,
+          6.678639738017537,
+          6.162369371076295,
+          5.857788465796347
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/5C/enhancement/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 29.244039766999776,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 7,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 93.71819780766971,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.06436371255850175,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 7.493275623978958e-14,
+              "interface": 1.5695282712327274e-12,
+              "material": 2.525036754452369e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_5C_n33_fresh/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 67.86047984199831,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 8,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 93.07863973801754,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.07091666193500733,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 7.076982533757904e-14,
+              "interface": 1.8808956156638356e-10,
+              "material": 2.6553455354248187e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_5C_n65_fresh/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 156.79875754800014,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 9,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 92.5623693710763,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.07620639830092618,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 8.908672130730538e-13,
+              "interface": 9.020289616252618e-12,
+              "material": 5.050073508904738e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_5C_n129_fresh/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 331.373818166001,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 9,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 92.25778846579635,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.07932715206521732,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 9.574741075084224e-14,
+              "interface": 4.441888894559954e-10,
+              "material": 5.050073508904738e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          }
+        ]
+      },
+      {
+        "case": "6C",
+        "measured_capture_pct": 60.2,
+        "measured_sd_pp": 0.5,
+        "capture_pct": [
+          72.19134562692584,
+          72.6758904546507,
+          73.01665640005388,
+          73.219306800532
+        ],
+        "signed_mesh_changes_pp": [
+          0.48454482772486074,
+          0.3407659454031773,
+          0.20265040047812022
+        ],
+        "observed_order": 0.749788139950364,
+        "conditional_richardson_capture_pct": 73.51664613938937,
+        "signed_error_pp": [
+          11.991345626925835,
+          12.475890454650695,
+          12.816656400053873,
+          13.019306800531993
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/6C/enhancement/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 22.305601091000426,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 5,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 72.19134562692584,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.5144145675502156,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 5.684341886080802e-16,
+              "energy": 4.0913352418157936e-13,
+              "interface": 5.079476047723418e-09,
+              "material": 2.835101192503943e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_6C_n33_fresh/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 53.634992595005315,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 72.6758904546507,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.5054512817087359,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 5.684341886080802e-16,
+              "energy": 5.18619960230171e-14,
+              "interface": 2.933642175325677e-13,
+              "material": 5.670202385007886e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_6C_n65_fresh/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 113.37199977800628,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 73.01665640005388,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.499147669743601,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 5.684341886080802e-16,
+              "energy": 4.609955202045964e-14,
+              "interface": 6.927748023164476e-13,
+              "material": 4.2526517887559147e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_6C_n129_fresh/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 233.77229785000236,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 73.219306800532,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.4953989691870302,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 5.684341886080802e-16,
+              "energy": 7.491177203324692e-14,
+              "interface": 7.912875750321346e-12,
+              "material": 4.2526517887559147e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          }
+        ]
+      },
+      {
+        "case": "7C",
+        "measured_capture_pct": 76.4,
+        "measured_sd_pp": 2.2,
+        "capture_pct": [
+          76.37547512944816,
+          72.05694596690681,
+          69.18788745193883,
+          67.60034840353913
+        ],
+        "signed_mesh_changes_pp": [
+          -4.318529162541353,
+          -2.869058514967975,
+          -1.5875390483997052
+        ],
+        "observed_order": 0.8537853144131603,
+        "conditional_richardson_capture_pct": 65.63371403243372,
+        "signed_error_pp": [
+          -0.024524870551843492,
+          -4.343054033093196,
+          -7.212112548061171,
+          -8.799651596460876
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/7C/enhancement/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 22.187546458000725,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 5,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 76.37547512944816,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.207805372449734,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 1.4004211503790942e-12,
+              "interface": 2.5984702567804554e-08,
+              "material": 1.9593405127667358e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_7C_n33_fresh/attempt.json",
+            "nodes": 33,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 62.68540292399848,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 72.05694596690681,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.24579189560625156,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 6.513586745949275e-14,
+              "interface": 1.7948714081682508e-12,
+              "material": 2.5679422981988575e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_7C_n65_fresh/attempt.json",
+            "nodes": 65,
+            "max_iterations": 20,
+            "wall_limit_s": 3600.0,
+            "seconds": 122.80041232999793,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 69.18788745193883,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.27102862635744557,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 3.1265216380556517e-12,
+              "interface": 1.9970760401082147e-09,
+              "material": 3.9186810255334715e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          },
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_7C_n129_fresh/attempt.json",
+            "nodes": 129,
+            "max_iterations": 20,
+            "wall_limit_s": 7200.0,
+            "seconds": 296.42007384300086,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 7,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "rejected",
+            "failure_kind": "outer_solve_failure",
+            "failure_message": "Subset checks cannot establish physical certification",
+            "profile_endpoint_capture_pct": 67.60034840353913,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.2849928920956497,
+            "capture_direction_passed": true,
+            "capture_certificate_present": false,
+            "subset_certificate_scaled_residual_inf": {
+              "boundary": 0.0,
+              "energy": 8.141983432436593e-14,
+              "interface": 3.1034045698155167e-13,
+              "material": 3.9186810255334715e-16
+            },
+            "subset_certificate_criteria": {
+              "boundary": 1e-07,
+              "energy": 1e-07,
+              "interface": 1e-07,
+              "material": 1e-07
+            },
+            "scaled_bound_violation_inf": 0.0,
+            "charge_separately_certified_by_runner": false
+          }
+        ]
+      }
+    ],
+    "finite_rate_epcsaft": [
+      {
+        "case": "1C",
+        "measured_capture_pct": 97.1,
+        "measured_sd_pp": 0.7,
+        "capture_pct": [
+          99.0532685016178,
+          null,
+          null,
+          null
+        ],
+        "signed_mesh_changes_pp": [
+          null,
+          null,
+          null
+        ],
+        "observed_order": null,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          1.9532685016177993,
+          null,
+          null,
+          null
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp4_2026-11-23/epcsaft/solve/attempt.json",
+            "nodes": 17,
+            "max_iterations": 60,
+            "wall_limit_s": 900.0,
+            "seconds": 413.80606695799906,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 25,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 99.0532685016178,
+            "inlet_vapor_co2_mol_s": 1.3676273760725628,
+            "outlet_vapor_co2_mol_s": 0.012947759149776972,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "case": "2C",
+        "measured_capture_pct": 92.3,
+        "measured_sd_pp": 0.5,
+        "capture_pct": [
+          95.36387727444826,
+          null,
+          null,
+          null
+        ],
+        "signed_mesh_changes_pp": [
+          null,
+          null,
+          null
+        ],
+        "observed_order": null,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          3.0638772744482594,
+          null,
+          null,
+          null
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/2C/epcsaft/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 347.5277309060002,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 18,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 95.36387727444826,
+            "inlet_vapor_co2_mol_s": 1.713626733940355,
+            "outlet_vapor_co2_mol_s": 0.07944583844333875,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "case": "3C",
+        "measured_capture_pct": 89.5,
+        "measured_sd_pp": 1.2,
+        "capture_pct": [
+          85.86211633649842,
+          null,
+          null,
+          null
+        ],
+        "signed_mesh_changes_pp": [
+          null,
+          null,
+          null
+        ],
+        "observed_order": null,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          -3.637883663501583,
+          null,
+          null,
+          null
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/3C/epcsaft/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 110.5211349759993,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 85.86211633649842,
+            "inlet_vapor_co2_mol_s": 1.6540435157308098,
+            "outlet_vapor_co2_mol_s": 0.23384674799771338,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "case": "4C",
+        "measured_capture_pct": 88.9,
+        "measured_sd_pp": 0.8,
+        "capture_pct": [
+          86.16700682389518,
+          null,
+          null,
+          null
+        ],
+        "signed_mesh_changes_pp": [
+          null,
+          null,
+          null
+        ],
+        "observed_order": null,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          -2.732993176104827,
+          null,
+          null,
+          null
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/4C/epcsaft/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 111.85841249700024,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 86.16700682389518,
+            "inlet_vapor_co2_mol_s": 1.4240112258934405,
+            "outlet_vapor_co2_mol_s": 0.1969833757048062,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "case": "5C",
+        "measured_capture_pct": 86.4,
+        "measured_sd_pp": 0.6,
+        "capture_pct": [
+          89.96737841535396,
+          null,
+          null,
+          null
+        ],
+        "signed_mesh_changes_pp": [
+          null,
+          null,
+          null
+        ],
+        "observed_order": null,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          3.567378415353957,
+          null,
+          null,
+          null
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/5C/epcsaft/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 116.49317540599986,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 89.96737841535396,
+            "inlet_vapor_co2_mol_s": 1.0246058469826709,
+            "outlet_vapor_co2_mol_s": 0.10279482736192887,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "case": "6C",
+        "measured_capture_pct": 60.2,
+        "measured_sd_pp": 0.5,
+        "capture_pct": [
+          65.06201762945403,
+          null,
+          null,
+          null
+        ],
+        "signed_mesh_changes_pp": [
+          null,
+          null,
+          null
+        ],
+        "observed_order": null,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          4.86201762945403,
+          null,
+          null,
+          null
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/6C/epcsaft/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 105.64413021499968,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 6,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 65.06201762945403,
+            "inlet_vapor_co2_mol_s": 1.849836243958282,
+            "outlet_vapor_co2_mol_s": 0.6462954607981144,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "case": "7C",
+        "measured_capture_pct": 76.4,
+        "measured_sd_pp": 2.2,
+        "capture_pct": [
+          71.23489852080307,
+          null,
+          null,
+          null
+        ],
+        "signed_mesh_changes_pp": [
+          null,
+          null,
+          null
+        ],
+        "observed_order": null,
+        "conditional_richardson_capture_pct": null,
+        "signed_error_pp": [
+          -5.1651014791969345,
+          null,
+          null,
+          null
+        ],
+        "runs": [
+          {
+            "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/7C/epcsaft/try1/attempt.json",
+            "nodes": 17,
+            "max_iterations": 20,
+            "wall_limit_s": 600.0,
+            "seconds": 102.5614662400003,
+            "execution_status": "completed",
+            "solver_status": "Solve_Succeeded",
+            "iterations": 5,
+            "numerical_acceptance": "accepted",
+            "physical_acceptance": "accepted",
+            "failure_kind": null,
+            "failure_message": null,
+            "profile_endpoint_capture_pct": 71.23489852080307,
+            "inlet_vapor_co2_mol_s": 0.8796171503485564,
+            "outlet_vapor_co2_mol_s": 0.25302276592618245,
+            "capture_direction_passed": true,
+            "capture_certificate_present": true
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "mean_absolute_error_2C_to_7C_pp": {
+    "finite_rate_n2o": [
+      3.9566393217078506,
+      4.739555807476271,
+      5.215494715486684,
+      5.451541854463568
+    ],
+    "manifold": [
+      4.233186528179104,
+      5.187532397767484,
+      5.758175555652184,
+      6.049542313028009
+    ],
+    "enhancement": [
+      5.192460277633316,
+      5.775631214647497,
+      6.110017629631099,
+      6.284696868639924
+    ],
+    "finite_rate_epcsaft": [
+      3.838208606343265,
+      null,
+      null,
+      null
+    ]
+  },
+  "mean_absolute_error_1C_to_7C_pp": {
+    "finite_rate_n2o": [
+      3.4780138540122882,
+      4.192662430574484,
+      4.614964629765133,
+      4.822605863072023
+    ],
+    "manifold": [
+      3.9823047754906855,
+      4.786256728887726,
+      5.264566016785865,
+      5.507667022351297
+    ],
+    "enhancement": [
+      4.780156770983538,
+      5.2582899815443085,
+      null,
+      null
+    ],
+    "finite_rate_epcsaft": [
+      3.5689314485253414,
+      null,
+      null,
+      null
+    ]
+  },
+  "other_checkpoint_7_attempts": [
+    {
+      "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n33/attempt.json",
+      "nodes": 33,
+      "max_iterations": 20,
+      "wall_limit_s": 3600.0,
+      "seconds": 2.216006599002867,
+      "execution_status": "failed",
+      "solver_status": null,
+      "iterations": null,
+      "numerical_acceptance": "not_evaluated",
+      "physical_acceptance": "not_evaluated",
+      "failure_kind": "preflight_refusal",
+      "failure_message": "Retained profile source must be completed, numerically accepted, and physically accepted",
+      "subset_certificate_scaled_residual_inf": null,
+      "subset_certificate_criteria": null,
+      "scaled_bound_violation_inf": null,
+      "charge_separately_certified_by_runner": false
+    },
+    {
+      "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_1C_n65_fresh/attempt.json",
+      "nodes": 65,
+      "max_iterations": 20,
+      "wall_limit_s": 3600.0,
+      "seconds": 451.51690720699844,
+      "execution_status": "completed",
+      "solver_status": "Maximum_Iterations_Exceeded",
+      "iterations": 20,
+      "numerical_acceptance": "rejected",
+      "physical_acceptance": "rejected",
+      "failure_kind": "outer_solve_failure",
+      "failure_message": "Subset checks cannot establish physical certification",
+      "primal_infeasibility_last_10": [
+        0.2226062798370557,
+        0.06031418084871227,
+        0.08783519277062815,
+        0.05133770395555927,
+        0.054268406455610194,
+        0.11181660797431252,
+        0.1317296735944807,
+        0.15174216625751058,
+        0.1539163664420058,
+        0.15408426944443018
+      ],
+      "profile_endpoint_capture_pct": 99.91768014731711,
+      "inlet_vapor_co2_mol_s": 1.3676273724911865,
+      "outlet_vapor_co2_mol_s": 0.0011258288382855993,
+      "capture_direction_passed": true,
+      "capture_certificate_present": false,
+      "subset_certificate_scaled_residual_inf": {
+        "boundary": 4.565840185932757e-09,
+        "energy": 2.1837429081702936e-05,
+        "interface": 0.0041331027760300445,
+        "material": 0.0037806165375480955
+      },
+      "subset_certificate_criteria": {
+        "boundary": 1e-07,
+        "energy": 1e-07,
+        "interface": 1e-07,
+        "material": 1e-07
+      },
+      "scaled_bound_violation_inf": 0.0,
+      "charge_separately_certified_by_runner": false
+    },
+    {
+      "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/enhancement_2C_n33_fresh/attempt.json",
+      "nodes": 33,
+      "max_iterations": 20,
+      "wall_limit_s": 3600.0,
+      "seconds": 216.23429877300077,
+      "execution_status": "completed",
+      "solver_status": "Maximum_Iterations_Exceeded",
+      "iterations": 20,
+      "numerical_acceptance": "rejected",
+      "physical_acceptance": "rejected",
+      "failure_kind": "outer_solve_failure",
+      "failure_message": "Subset checks cannot establish physical certification",
+      "primal_infeasibility_last_10": [
+        0.012134526208738866,
+        111.3219666557121,
+        54.9858074985158,
+        17.741623486936707,
+        5.528986707515549,
+        1.4423923062576753,
+        1.0635186313092417,
+        0.768828119397018,
+        0.47527592723812984,
+        0.3128026976482097
+      ],
+      "profile_endpoint_capture_pct": 94.14732238533313,
+      "inlet_vapor_co2_mol_s": 1.765614130427584,
+      "outlet_vapor_co2_mol_s": 0.10333570297293022,
+      "capture_direction_passed": true,
+      "capture_certificate_present": false,
+      "subset_certificate_scaled_residual_inf": {
+        "boundary": 0.2243703997438419,
+        "energy": 0.0010033446882221173,
+        "interface": 0.11209767312601371,
+        "material": 0.007017192853076041
+      },
+      "subset_certificate_criteria": {
+        "boundary": 1e-07,
+        "energy": 1e-07,
+        "interface": 1e-07,
+        "material": 1e-07
+      },
+      "scaled_bound_violation_inf": 0.0,
+      "charge_separately_certified_by_runner": false
+    },
+    {
+      "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_1C_n33/attempt.json",
+      "nodes": 33,
+      "max_iterations": 20,
+      "wall_limit_s": 3600.0,
+      "seconds": 3.4909875029989053,
+      "execution_status": "failed",
+      "solver_status": null,
+      "iterations": null,
+      "numerical_acceptance": "not_evaluated",
+      "physical_acceptance": "not_evaluated",
+      "failure_kind": "preflight_refusal",
+      "failure_message": "Retained profile model, physical inputs, or solver settings do not match"
+    },
+    {
+      "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_1C_n65_interrupted/attempt.json",
+      "nodes": 65,
+      "max_iterations": 20,
+      "wall_limit_s": 3600.0,
+      "seconds": null,
+      "execution_status": "prepared",
+      "solver_status": null,
+      "iterations": null,
+      "numerical_acceptance": "not_evaluated",
+      "physical_acceptance": "not_evaluated",
+      "failure_kind": null,
+      "failure_message": null
+    },
+    {
+      "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_2C_n33_interrupted/attempt.json",
+      "nodes": 33,
+      "max_iterations": 20,
+      "wall_limit_s": 3600.0,
+      "seconds": null,
+      "execution_status": "prepared",
+      "solver_status": null,
+      "iterations": null,
+      "numerical_acceptance": "not_evaluated",
+      "physical_acceptance": "not_evaluated",
+      "failure_kind": null,
+      "failure_message": null
+    }
+  ]
+}

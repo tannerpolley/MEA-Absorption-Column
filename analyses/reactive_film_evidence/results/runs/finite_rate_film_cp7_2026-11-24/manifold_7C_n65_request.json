@@ -1,0 +1,33 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/nccc_validation/inputs/joint_fit_f2/case_7c.json"
+  },
+  "dependencies": {
+    "thermodynamics_input": "analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+    "transport_input": "analyses/nccc_validation/inputs/joint_fit_f2/transport_7c.json"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "end_clustering": 1.0,
+      "liquid_density_source": "solved_state",
+      "max_iterations": 20,
+      "nodes": 65,
+      "quadrature_points": 9,
+      "tolerance": 1e-07
+    }
+  },
+  "initialization": {
+    "values": {
+      "retained_profile": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_7C_n33/attempt.json"
+    }
+  },
+  "execution": {
+    "output_dir": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/manifold_7C_n65",
+    "wall_limit_s": 3600
+  },
+  "model": {
+    "film_model": "equilibrium_manifold"
+  }
+}
