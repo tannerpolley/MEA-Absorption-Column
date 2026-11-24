@@ -472,7 +472,7 @@ def _dependency_path(value: str) -> Path:
     return path if path.is_absolute() else _ROOT / path
 
 
-def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str, Any]):
+def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str, Any], *, finite_rate_multiplier=1.):
     """Build the native twelve-state graph and retain every callback owner."""
     import casadi as ca
 
@@ -533,7 +533,10 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         co2_model={
             "equilibrium_manifold": "reactive_film",
             "enhancement_reference": "enhancement_reference",
+            "finite_rate_film": "finite_rate_film",
         }[config.model.film_model],
+        henry_basis=config.model.henry_basis,
+        finite_rate_multiplier=finite_rate_multiplier,
         liquid_feed_mol_s=liquid_feed,
         vapor_feed_mol_s=vapor_feed,
         liquid_temperature_k=liquid_temperature,
@@ -624,7 +627,7 @@ def _prepare_conserved_column_in_process(config: ColumnConfig) -> dict[str, Any]
             "a1_equilibrium_values": "analytic_mathematical" if mathematical else "required_on_evaluation",
             "a2_equilibrium_actions": (
                 "analytic_mathematical_first_and_second" if mathematical else "required_on_outer_derivative"
-                if config.model.film_model == "equilibrium_manifold"
+                if config.model.film_model != "enhancement_reference"
                 else "not_required_by_selected_film"
             ),
             "caloric_actions": "analytic_mathematical_first_and_second" if mathematical else "required_on_outer_derivative",
@@ -860,17 +863,26 @@ def _initialize_conserved_column(config, prepared, bulk, bracket, tolerance, che
     liquid_water = liquid.output_index[f"fugacity:{liquid.roles['water']}"]
     gas_flux = [vapor.output_index[f"fugacity:{vapor.roles[r]}"] for r in ("co2", "water")]
     evaluations = []
+    finite_rate = config.model.film_model == "finite_rate_film"
+
+    def co2_flux_and_residual(value):
+        drive = gas[gas_flux[0]] - value[7]
+        liquid_flux = value[1] / value[2]
+        if finite_rate:
+            flux = drive / (value[10] + value[11])
+            return flux, liquid_flux - value[13] * flux
+        return liquid_flux, liquid_flux - value[3][0] * drive
 
     def interface_residual(loading):
         value = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])
-        residual = float(value[1] / value[2] - value[3][0] * (gas[gas_flux[0]] - value[7]))
+        residual = float(co2_flux_and_residual(value)[1])
         evaluations.append({"loading": float(loading), "original_co2_residual": residual})
         checkpoint.update(stage="interface_initialization", initialization_evaluations=evaluations)
         return residual
 
     loading, root = brentq(interface_residual, *bracket, full_output=True, disp=False)
     diagnostic = diagnostics(np.r_[bulk, 0.0, 0.0, 0.0, loading])
-    point = np.r_[bulk, float(diagnostic[1] / diagnostic[2]),
+    point = np.r_[bulk, float(co2_flux_and_residual(diagnostic)[0]),
                   float(diagnostic[3][1] * (gas[gas_flux[1]] - balance(bulk, [0.0, 0.0, 0.0])[3][liquid_water])), 0.0, loading]
     point[10] = float(diagnostic[4]) * (bulk[5] - bulk[4]) + point[8:10] @ np.asarray(diagnostic[6]).ravel()
     policy = _conserved_execution_policy(config)
@@ -1100,7 +1112,6 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint, *, design
     if not result.get("accepted") and solvent:
         result["failure_kind"] = checkpoint.get("evaluation_failure", {}).get("kind", "outer_solve_failure")
     checkpoint.update(stage="physical_verification", result=result)
-    missing_physical_checks = "film-quadrature charge and capture" if config.model.film_model == "equilibrium_manifold" else "capture"
     physical = ({"accepted": None, "reason": "Source homotopy did not reach full physics"}
                 if result.get("status") == "Source_Homotopy_Incomplete" else
                 {"accepted": False, "reason": "No completed candidate profile was returned"})
@@ -1111,7 +1122,7 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint, *, design
             liquid_feed = np.asarray(inlets).ravel()[:len(liquid_feed)]
             assembly = {**assembly, "node": lambda z, state: node(z, state, inlets),
                         "boundary": lambda bottom, top: boundary(bottom, top, inlets)}
-        if config.model.film_model == "equilibrium_manifold":
+        if config.model.film_model != "enhancement_reference":
             physical = _equilibrium_physical_certification(
                 result, assembly, liquid_feed, lower, upper, checkpoint["scaling"],
                 tolerance, settings["quadrature_points"],
@@ -1137,10 +1148,17 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint, *, design
                 "criteria": {key: tolerance for key in scaled},
                 "scope": (
                     "Subset: native grid conservation, interface, boundary, and original bounds; "
-                    f"{missing_physical_checks} checks remain unavailable"
+                    "capture checks remain unavailable"
                 ),
                 "reason": "Subset checks cannot establish physical certification"}
     result_record = {key: value for key, value in prepared.items() if key != "assembly"}
+    if config.model.film_model == "finite_rate_film" and result["profile"] is not None:
+        names = diagnostics.name_out()[8:13]
+        result_record["finite_rate_film"] = [
+            {name: None if name == "manifold_resistance" and state[8] == 0. else float(value)
+             for name, value in zip(names, diagnostics(state)[8:13], strict=True)}
+            for state in profile.T
+        ]
     if mathematical:
         result_record['mathematical_calls'] = checkpoint['mathematical_calls']
     result_record.update(stage="finished", execution_status="completed", initialization=checkpoint["initialization"],
@@ -1268,7 +1286,7 @@ def _run_conserved_preparation(config: ColumnConfig, *, worker_args=None) -> dic
             "exploratory numerical attempt only; no solution-verification, validation, or scientific-promotion claim",
             (
                 "species mobilities are case-estimated and use the declared harmonic-mean closure"
-                if config.model.film_model == "equilibrium_manifold"
+                if config.model.film_model != "enhancement_reference"
                 else "the enhancement reference retains its declared empirical kinetics and diffusivity basis"
             ),
             "native vapor caloric reference remains provisional for thermal interpretation",
@@ -1316,6 +1334,8 @@ def _run_conserved_preparation(config: ColumnConfig, *, worker_args=None) -> dic
                 "success": bool((prepared.get("result", {}).get("solver_statistics") or {}).get("success", False)),
                 "status": prepared.get("result", {}).get("status")}}},
         })
+        if "finite_rate_film" in prepared:
+            base["diagnostics"]["finite_rate_film"] = prepared["finite_rate_film"]
     except CapabilityRefusal as error:
         base["execution"].update(status="failed", runtime_s=time.perf_counter() - started)
         base["failure"] = {"kind": "capability_refusal", "phase": "preparation", "message": str(error)}

@@ -6,6 +6,15 @@ from mea_absorption_column.BVP.robust_core import record_domain_guard
 from .domain_guards import DomainGuardError, require_positive
 
 CO2_CONCENTRATION_DIVISOR = 1.04542981654115
+LUO_MEA_KINETICS = ((0., 0.), {"monoethanolamine": (2.003e4, 4742.), "water": (4.147, 3110.)})
+
+
+def amine_rate_coefficient(temperature, concentrations, kinetics, exponential=exp):
+    """Arrhenius uncatalyzed and base-catalyzed terms in k₁ / C_Am."""
+    (prefactor, activation_temperature), bases = kinetics
+    return prefactor * exponential(-activation_temperature / temperature) + sum(
+        a * exponential(-b / temperature) * concentrations[species] for species, (a, b) in bases.items()
+    )
 
 
 def enhancement_reference_expression(temperature_k, concentrations, liquid_coefficient, diffusivities):
@@ -19,7 +28,7 @@ def enhancement_reference_expression(temperature_k, concentrations, liquid_coeff
         ca.mmin(ca.logic_and(inputs > 0., inputs < ca.inf)),
         "Enhancement reference inputs must be finite positive")
     temperature, c, kl, d = inputs[0], inputs[1:6], inputs[6], inputs[7:]
-    k2 = 2.003e4 * ca.exp(-4742. / temperature) * c[1] + 4.147 * ca.exp(-3110. / temperature) * c[2]
+    k2 = amine_rate_coefficient(temperature, {"monoethanolamine": c[1], "water": c[2]}, LUO_MEA_KINETICS, ca.exp)
     hatta = ca.sqrt(k2 * c[1] * d[0]) / kl
     r_plus = d[1] * c[1] / (2. * d[2] * c[3])
     r_minus = d[1] * c[1] / (2. * d[2] * c[4])
@@ -126,7 +135,7 @@ def enhancement_factor(Tl, Cl_true, y_CO2, P,
 
 def hatta_expression(Tl, Cl_MEA_true, Cl_H2O_true, Dl_CO2, kl_CO2):
     # Luo kinetics used by the conventional film, m³/(mol s).
-    k2 = 2.003e4 * exp(-4742.0 / Tl) * Cl_MEA_true + 4.147 * exp(-3110 / Tl) * Cl_H2O_true
+    k2 = amine_rate_coefficient(Tl, {"monoethanolamine": Cl_MEA_true, "water": Cl_H2O_true}, LUO_MEA_KINETICS)
     return k2, (k2 * Cl_MEA_true * Dl_CO2) ** .5 / kl_CO2
 
 

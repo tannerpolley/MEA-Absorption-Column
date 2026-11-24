@@ -139,6 +139,7 @@ class ModelConfig:
     pressure_model: str
     layout: str
     coordinate: str
+    henry_basis: str | None = None
 
     def as_dict(self) -> dict[str, str]:
         return {
@@ -149,6 +150,7 @@ class ModelConfig:
             "pressure_model": self.pressure_model,
             "layout": self.layout,
             "coordinate": self.coordinate,
+            **({"henry_basis": self.henry_basis} if self.henry_basis is not None else {}),
         }
 
 
@@ -662,10 +664,10 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     case = _case(case_values)
     if preset == TWELVE_PRESET:
         film_model = model_values.get("film_model", "equilibrium_manifold")
-        if film_model not in {"equilibrium_manifold", "enhancement_reference"}:
+        if film_model not in {"equilibrium_manifold", "enhancement_reference", "finite_rate_film"}:
             raise ConfigurationError(
                 "twelve_state_conserved model.film_model must be "
-                "'equilibrium_manifold' or 'enhancement_reference'"
+                "'equilibrium_manifold', 'enhancement_reference', or 'finite_rate_film'"
             )
         if film_model == "enhancement_reference" and dependencies.mobility_law is not None:
             raise ConfigurationError(
@@ -681,14 +683,14 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
                 dependencies,
                 dataset=dependencies.dataset or _REACTIVE_DATASET,
                 mobility_law=(dependencies.mobility_law or "harmonic_mean_onsager_v1")
-                if film_model == "equilibrium_manifold" else None,
+                if film_model != "enhancement_reference" else None,
                 thermal_reference=dependencies.thermal_reference or f"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json",
                 references=dependencies.references or (
                     f"{_NEUTRAL_VAPOR_DATASET}/parameters.json",
                     f"{_REACTIVE_DATASET}/ideal-gas-thermochemistry.json",
                 ),
             )
-            if film_model == "equilibrium_manifold" and dependencies.mobility_law != "harmonic_mean_onsager_v1":
+            if film_model != "enhancement_reference" and dependencies.mobility_law != "harmonic_mean_onsager_v1":
                 raise ConfigurationError("twelve_state_conserved requires mobility_law='harmonic_mean_onsager_v1'")
             if len(dependencies.references) != 2:
                 raise ConfigurationError("twelve_state_conserved requires neutral-vapor parameter and reference assets")
@@ -701,6 +703,11 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             "layout": "twelve_conserved",
             "coordinate": "physical_height",
         }
+        if film_model == "finite_rate_film":
+            basis = model_values.get("henry_basis", "n2o_analogy")
+            if basis not in ("n2o_analogy", "epcsaft_free_co2"):
+                raise ConfigurationError("finite_rate_film requires n2o_analogy or epcsaft_free_co2")
+            expected["henry_basis"] = basis
     else:
         thermo_model = model_values.get("thermo_model", "ideal_henry")
         if thermo_model not in {"ideal_henry", "epcsaft_neutral", "epcsaft_ionic", "epcsaft_reactive_nine"}:

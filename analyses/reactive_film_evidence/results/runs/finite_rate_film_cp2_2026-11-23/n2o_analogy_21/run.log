@@ -1,0 +1,22 @@
+{
+  "basis": "n2o_analogy",
+  "nodes": 21,
+  "quadrature_points": 9,
+  "status": "Solve_Succeeded",
+  "runtime_s": 164.82867236599986,
+  "iterations": 6,
+  "numerical_acceptance": "accepted",
+  "physical_acceptance": "accepted",
+  "scaled_residual_inf": 2.7082749346175037e-10,
+  "scaled_invariant_drifts": {
+    "boundary": 0.0,
+    "charge": 2.3255482266862316e-14,
+    "energy": 1.0995393545691234e-13,
+    "interface": 2.7082749346175037e-10,
+    "material": 3.6515681614094647e-16
+  },
+  "failure": {},
+  "capture_percent": 81.68925404218103,
+  "C8_scaled_state_drift_inf": 0.8514269025310415,
+  "C8_capture_change_points": -0.02275151703712197
+}

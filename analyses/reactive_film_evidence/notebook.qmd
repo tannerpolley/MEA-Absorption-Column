@@ -60,6 +60,71 @@ Physical validation, independent review and investigator promotion remain open.
 [inputs and Engine identity](results/runs/finite_rate_film_cp1_2026-11-23_rf2_corrected/inputs.jsonl),
 [run log](results/runs/finite_rate_film_cp1_2026-11-23_rf2_corrected/run.log).
 
+## Finite-rate film in the twelve-state column
+
+The `finite_rate_film` option predicts 81.712% capture on the N₂O analogy
+basis and 86.004% on the ePC-SAFT free CO₂ basis at 11 nodes and 5 film
+quadrature points. Both use the retained 3C physical inputs, the conserved
+upwind method, and the same film transport correlations. The 4.292 percentage
+point separation measures sensitivity to the Henry basis on this mesh. The
+stage 1 enhancement and manifold results are retained comparators. In
+particular, the stage 1 manifold uses the case-estimated species diffusivity
+vector, so its difference includes a change in mobility as well as kinetics.
+
+| Film and Henry basis | Nodes / film points | CO₂ capture (%) | Iterations | Wall time (s) |
+|---|---:|---:|---:|---:|
+| Enhancement reference, stage 1 | 11 / 5 | 92.314 | 7 | 17.46 |
+| Equilibrium manifold, stage 1 | 11 / 5 | 90.024 | 6 | 43.13 |
+| Finite rate, N₂O analogy | 11 / 5 | 81.712 | 5 | 43.45 |
+| Finite rate, ePC-SAFT free CO₂ | 11 / 5 | 86.004 | 5 | 43.78 |
+| Finite rate, N₂O analogy | 21 / 9 | 81.689 | 6 | 164.83 |
+| Finite rate, ePC-SAFT free CO₂ | 21 / 9 | 85.854 | 6 | 163.70 |
+
+Set `model.henry_basis` to `n2o_analogy` (default for this film) or
+`epcsaft_free_co2`. Both cases use the Luo rate at the interface true
+concentrations. The conductance uses the correlated CO₂, MEA and ion
+diffusivities and the retained water coefficient. The node diagnostics give
+the interface Hatta number and $\theta$, and the three resistances in
+Pa m$^2$ s mol$^{-1}$. The manifold resistance is undefined at zero CO₂ flux.
+
+| Node check | N₂O analogy | ePC-SAFT free CO₂ |
+|---|---:|---:|
+| C1 zero-drive flux (mol m$^{-2}$ s$^{-1}$) | $1.80\times10^{-16}$ | $-2.59\times10^{-16}$ |
+| C2 flux at −10% drive (mol m$^{-2}$ s$^{-1}$) | $-1.394\times10^{-4}$ | $-1.916\times10^{-4}$ |
+| C2 flux at +10% drive (mol m$^{-2}$ s$^{-1}$) | $1.342\times10^{-4}$ | $1.807\times10^{-4}$ |
+| C3 relative flux error at rate $\times10^{-12}$ | $4.387\times10^{-8}$ | $4.386\times10^{-8}$ |
+| C4 worst relative flux error at rate $\times10^{16}$ | $3.283\times10^{-8}$ | $1.696\times10^{-8}$ |
+| Node Jacobian relative directional error vs centred difference | $4.840\times10^{-8}$ | $5.469\times10^{-8}$ |
+
+C1's absolute flux limit was $4.296\times10^{-10}$ mol m$^{-2}$ s$^{-1}$
+for both bases. C4 re-solved the two interface rows on 22 frozen 3C states
+per basis, with the same diffusivities, conductance and quadrature in both
+limits. The smallest margin to the $10^{-6}$ limit was $9.672\times10^{-7}$.
+
+C8 changed capture by −0.02275 and −0.15039 percentage points for the N₂O
+and ePC-SAFT bases. The maximum difference across the 12 states at common
+nodes, divided by the coarse solver state scales, was 0.8514 and 0.8409.
+Both maxima occurred in vapor water flow at 5.427 m, where the refined
+profiles changed by +1.330 and +1.314 mol s$^{-1}$. The largest scaled
+material and energy invariant drifts across the four runs were
+$3.70\times10^{-16}$ and $1.68\times10^{-12}$. C8 is report only.
+Axial profile convergence remains open.
+
+The node checks verify the numerical implementation. The 3C capture
+values are predictions and retain the reaction, transport and Henry-basis
+source limitations above. Physical validation and independent review of
+the column implementation remain open.
+[Limits and Jacobians](results/runs/finite_rate_film_cp2_2026-11-23/limits.log),
+[3C outcomes and C8](results/runs/finite_rate_film_cp2_2026-11-23/summary.json),
+[worker run log](results/runs/finite_rate_film_cp2_2026-11-23/cases.log).
+
+The full suite stopped at the MEA declared-input reproduction test after
+287 passes. The issue 85 transport declaration pins
+`Thermophysical_Properties.py` by SHA-256. The symbolic Henry change
+altered that file and the declaration rejected it. The final Engine
+integration check remains pending.
+[Full-suite failure](results/runs/finite_rate_film_cp2_2026-11-23/full_suite.log).
+
 ## Current selectable closures: Engine 1.0.0 (issue 16)
 
 The current twelve-state conserved route runs two CO2 closures on the same

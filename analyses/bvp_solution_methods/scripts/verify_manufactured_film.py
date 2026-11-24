@@ -95,7 +95,7 @@ def verify(declaration):
                            mobility=matrix.tolist(), g=float(conductance.item()), dg=float(slope.item())))
     quadratures = []
     for count in (9, 17, 33, 65, 129):
-        integral, conductances, interface = equilibrium_manifold_conductance_integral(
+        integral, conductances, interface, _ = equilibrium_manifold_conductance_integral(
             path, bulk, loading, ca.DM.ones(len(ids))*d, rows['C_total'], constraints, len(ids), count)
         film = ca.Function('manufactured_film', [bulk, loading], [integral, ca.vertcat(*conductances), interface])
         def residual(lam):

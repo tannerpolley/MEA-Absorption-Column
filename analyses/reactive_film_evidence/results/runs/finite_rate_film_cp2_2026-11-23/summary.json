@@ -1,0 +1,86 @@
+[
+  {
+    "basis": "n2o_analogy",
+    "nodes": 11,
+    "quadrature_points": 5,
+    "status": "Solve_Succeeded",
+    "runtime_s": 43.4482777459998,
+    "iterations": 5,
+    "numerical_acceptance": "accepted",
+    "physical_acceptance": "accepted",
+    "scaled_residual_inf": 9.850715829288381e-09,
+    "scaled_invariant_drifts": {
+      "boundary": 0.0,
+      "charge": 2.3264449381158424e-14,
+      "energy": 3.935193479510547e-13,
+      "interface": 9.850715829288381e-09,
+      "material": 3.692320669118395e-16
+    },
+    "failure": {},
+    "capture_percent": 81.71200555921816
+  },
+  {
+    "basis": "epcsaft_free_co2",
+    "nodes": 11,
+    "quadrature_points": 5,
+    "status": "Solve_Succeeded",
+    "runtime_s": 43.78308163799966,
+    "iterations": 5,
+    "numerical_acceptance": "accepted",
+    "physical_acceptance": "accepted",
+    "scaled_residual_inf": 9.167066924932693e-09,
+    "scaled_invariant_drifts": {
+      "boundary": 0.0,
+      "charge": 2.3267705799324143e-14,
+      "energy": 1.6724572287919825e-12,
+      "interface": 9.167066924932693e-09,
+      "material": 3.6515681614094647e-16
+    },
+    "failure": {},
+    "capture_percent": 86.00430803805135
+  },
+  {
+    "basis": "n2o_analogy",
+    "nodes": 21,
+    "quadrature_points": 9,
+    "status": "Solve_Succeeded",
+    "runtime_s": 164.82867236599986,
+    "iterations": 6,
+    "numerical_acceptance": "accepted",
+    "physical_acceptance": "accepted",
+    "scaled_residual_inf": 2.7082749346175037e-10,
+    "scaled_invariant_drifts": {
+      "boundary": 0.0,
+      "charge": 2.3255482266862316e-14,
+      "energy": 1.0995393545691234e-13,
+      "interface": 2.7082749346175037e-10,
+      "material": 3.6515681614094647e-16
+    },
+    "failure": {},
+    "capture_percent": 81.68925404218103,
+    "C8_scaled_state_drift_inf": 0.8514269025310415,
+    "C8_capture_change_points": -0.02275151703712197
+  },
+  {
+    "basis": "epcsaft_free_co2",
+    "nodes": 21,
+    "quadrature_points": 9,
+    "status": "Solve_Succeeded",
+    "runtime_s": 163.69519490899984,
+    "iterations": 6,
+    "numerical_acceptance": "accepted",
+    "physical_acceptance": "accepted",
+    "scaled_residual_inf": 6.969438878273561e-11,
+    "scaled_invariant_drifts": {
+      "boundary": 0.0,
+      "charge": 2.326168043045385e-14,
+      "energy": 6.365754158031767e-14,
+      "interface": 6.969438878273561e-11,
+      "material": 3.6515681614094647e-16
+    },
+    "failure": {},
+    "capture_percent": 85.85391836620906,
+    "C8_scaled_state_drift_inf": 0.8408516428172532,
+    "C8_capture_change_points": -0.1503896718422908
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "basis": "epcsaft_free_co2",
+  "nodes": 11,
+  "quadrature_points": 5,
+  "status": "Solve_Succeeded",
+  "runtime_s": 43.78308163799966,
+  "iterations": 5,
+  "numerical_acceptance": "accepted",
+  "physical_acceptance": "accepted",
+  "scaled_residual_inf": 9.167066924932693e-09,
+  "scaled_invariant_drifts": {
+    "boundary": 0.0,
+    "charge": 2.3267705799324143e-14,
+    "energy": 1.6724572287919825e-12,
+    "interface": 9.167066924932693e-09,
+    "material": 3.6515681614094647e-16
+  },
+  "failure": {},
+  "capture_percent": 86.00430803805135
+}

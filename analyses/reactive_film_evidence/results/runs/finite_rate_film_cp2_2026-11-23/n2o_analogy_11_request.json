@@ -1,0 +1,25 @@
+{
+  "preset": "twelve_state_conserved",
+  "model": {
+    "film_model": "finite_rate_film",
+    "henry_basis": "n2o_analogy"
+  },
+  "case": {
+    "physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "nodes": 11,
+      "quadrature_points": 5,
+      "end_clustering": 1.0,
+      "max_iterations": 20,
+      "tolerance": 1e-07,
+      "liquid_density_source": "solved_state"
+    }
+  },
+  "execution": {
+    "wall_limit_s": 600,
+    "output_dir": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp2_2026-11-23/n2o_analogy_11"
+  }
+}

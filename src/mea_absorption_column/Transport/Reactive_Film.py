@@ -211,7 +211,20 @@ def equilibrium_manifold_conductance_integral(
         conductances.append(conductance.attachAssert(conductance > 0., "Native loading-path conductance must be positive"))
     integral = loading / (quadrature_points - 1) * (
         .5 * (conductances[0] + conductances[-1]) + sum(conductances[1:-1]))
-    return integral, conductances, at_loading
+    return integral, conductances, at_loading, tangent
+
+
+def finite_rate_film_fractions(thickness, diffusivity, rate, conductance, free_co2_tangent):
+    """RF-2 Hatta number and complementary film fractions."""
+    rate = rate.attachAssert(rate > 0., "Finite-rate film k1 must be positive")
+    bound = conductance - diffusivity * free_co2_tangent
+    bound = bound.attachAssert(bound > 0., "Finite-rate film G - D m must be positive")
+    ha_squared = thickness**2 * rate / diffusivity * conductance / bound
+    ha = ca.sqrt(ha_squared)
+    remainder = ha_squared * (1. / 3. - 2. / 15. * ha_squared)
+    theta = ca.tanh(ha) / ha
+    small = ha_squared < 1.e-8
+    return ha, ca.if_else(small, 1. - remainder, theta), ca.if_else(small, remainder, 1. - theta)
 
 
 def solve_equilibrium_manifold_film(

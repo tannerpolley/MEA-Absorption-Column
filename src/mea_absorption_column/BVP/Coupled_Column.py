@@ -5,13 +5,15 @@ import casadi as ca
 import numpy as np
 
 from ..Properties.Thermophysical_Properties import surface_tension, thermal_conductivity, density_expression
+from ..Properties.Thermophysical_Properties import henrys_law
 from ..Properties.Transport_Properties import viscosity, diffusivity
 from ..Thermodynamics.casadi_reactive import build_loading_path_function, build_caloric_flow_function
 from ..Transport.Hydraulic_Variables_Correlations import holdup_expression, interfacial_area_expression
 from ..Transport.Pressure_Drop import pressure_drop_expression
 from ..Transport.Enhancement_Factor import enhancement_reference_expression
+from ..Transport.Enhancement_Factor import LUO_MEA_KINETICS, amine_rate_coefficient
 from ..Transport.Reactive_Film import (
-    equilibrium_manifold_conductance_integral, interface_balance_residuals,
+    equilibrium_manifold_conductance_integral, interface_balance_residuals, finite_rate_film_fractions,
 )
 from ..Transport.Transfer_Coefficients import (
     liquid_mass_transfer_expression, gas_mass_transfer_expression, heat_transfer_expression,
@@ -129,7 +131,8 @@ def build_column_balance_functions(
 
 def build_coupled_column_functions(
     liquid, vapor, *, species_diffusivities, quadrature_points=9,
-    co2_model="reactive_film", film_thickness_multiplier=1., inlet=None, **column_inputs,
+    co2_model="reactive_film", film_thickness_multiplier=1., inlet=None,
+    henry_basis=None, finite_rate_multiplier=1., **column_inputs,
 ):
     """Twelve-state native node, inlet residuals and physical diagnostics.
 
@@ -163,14 +166,17 @@ def build_coupled_column_functions(
     """
     if isinstance(quadrature_points, bool) or int(quadrature_points) != quadrature_points or quadrature_points < 2:
         raise ValueError("Film quadrature requires an integer point count >= 2")
-    if co2_model not in ("reactive_film", "enhancement_reference"):
-        raise ValueError("CO2 model must be reactive_film or enhancement_reference")
+    finite_rate = co2_model == "finite_rate_film"
+    if co2_model not in ("reactive_film", "enhancement_reference", "finite_rate_film"):
+        raise ValueError(f"Unsupported CO2 model: {co2_model}")
+    if finite_rate and henry_basis not in ("n2o_analogy", "epcsaft_free_co2"):
+        raise ValueError("Finite-rate film requires a declared Henry basis")
     if not np.isfinite(film_thickness_multiplier) or film_thickness_multiplier <= 0.:
         raise ValueError("Film thickness multiplier must be finite positive")
-    if co2_model == "enhancement_reference" and film_thickness_multiplier != 1.:
+    if co2_model != "reactive_film" and film_thickness_multiplier != 1.:
         raise ValueError("Film thickness perturbations apply only to reactive_film")
     balance, bulk_boundary = build_column_balance_functions(liquid, vapor, inlet=inlet, **column_inputs)
-    loading_path = build_loading_path_function(liquid) if co2_model == "reactive_film" else None
+    loading_path = build_loading_path_function(liquid) if co2_model != "enhancement_reference" else None
     roles = liquid.roles
     lf, vf = liquid.feed_index, vapor.feed_index
     lp = [lf[s] for s in (roles["co2"], *roles["amines"], roles["water"])]
@@ -219,10 +225,17 @@ def build_coupled_column_functions(
         cp = cp.attachAssert(cp > 0., "Native vapor Cp must be positive for heat transfer")
         heat = heat_transfer_expression(state[6], kg[0],
             thermal_conductivity(state[5], y[vp], species_viscosities), cp, v[vi["molar-density"]], dv[0])
-    conductances = []
-    if co2_model == "reactive_film":
-        integral, conductances, at_loading = equilibrium_manifold_conductance_integral(
-            loading_path, liquid_inputs, state[11], species_diffusivities(state[4]),
+    conductances, film_values, film_names = [], [], []
+    if loading_path is not None:
+        species_d = species_diffusivities(state[4])
+        if finite_rate:
+            # The common-property correlations supply no liquid water coefficient.
+            neutral_d = {roles["co2"]: dl, roles["amines"][0]: dl_mea,
+                         roles["water"]: species_d[liquid.component_ids.index(roles["water"])]}
+            species_d = ca.vertcat(*(dl_ion if charge else neutral_d[name]
+                for name, charge in zip(liquid.component_ids, liquid.charges, strict=True)))
+        integral, conductances, at_loading, tangent = equilibrium_manifold_conductance_integral(
+            loading_path, liquid_inputs, state[11], species_d,
             liquid.components["co2"], liquid.film_constraints, li["molar-density"], quadrature_points)
     else:
         at_loading = liquid(ca.vertcat(*[liquid_inputs[j] * ca.exp(state[11]) if j == liquid.co2_input else liquid_inputs[j]
@@ -231,18 +244,36 @@ def build_coupled_column_functions(
         interface_co2_concentration = at_loading[li["molar-density"]] * at_loading[liquid.component_ids.index(roles["co2"]) ] / ca.sum1(at_loading[:n])
         enhancement = enhancement_reference_expression(state[4], bulk_concentrations, kl, ca.vertcat(dl, dl_mea, dl_ion))
         integral = thickness * enhancement * kl * (interface_co2_concentration - bulk_concentrations[0])
+        film_values, film_names = [enhancement], ["enhancement_factor"]
+    co2_fugacity = li[f"fugacity:{roles['co2']}"]
+    interface_fugacity, loading_thickness = at_loading[co2_fugacity], thickness
+    if finite_rate:
+        co2_index = liquid.component_ids.index(roles["co2"])
+        bulk_free_co2 = l[li["molar-density"]] * l[co2_index] / ca.sum1(l[:n])
+        henry = henrys_law(state[4], x[lp]) if henry_basis == "n2o_analogy" else l[co2_fugacity] / bulk_free_co2
+        true_concentrations = at_loading[li["molar-density"]] * at_loading[:n] / ca.sum1(at_loading[:n])
+        concentrations = dict(zip(liquid.component_ids, ca.vertsplit(true_concentrations), strict=True))
+        rate = finite_rate_multiplier * concentrations[roles["amines"][0]] * amine_rate_coefficient(
+            state[4], concentrations, LUO_MEA_KINETICS, ca.exp)
+        ha, theta, remainder = finite_rate_film_fractions(
+            thickness, dl, rate, conductances[-1], interface_fugacity * tangent[co2_index] / henry)
+        kinetic_resistance = theta * henry / kl
+        manifold_resistance = ca.if_else(state[8] != 0., (interface_fugacity - l[co2_fugacity]) / state[8], np.nan)
+        film_values = [ha, theta, 1. / kg[0], kinetic_resistance, manifold_resistance, remainder]
+        film_names = ["hatta", "theta", "gas_resistance", "kinetic_resistance", "manifold_resistance", "one_minus_theta"]
+        loading_thickness = thickness * remainder
+        interface_fugacity += kinetic_resistance * state[8]
     interface = interface_balance_residuals(state[8:11], liquid_conductance_integral=integral,
-        film_thickness_m=thickness, vapor_fugacities_pa=v[[vi[f"fugacity:{roles[r]}"] for r in ("co2", "water")]],
-        interface_co2_fugacity_pa=at_loading[li[f"fugacity:{roles['co2']}"]], liquid_water_fugacity_pa=l[li[f"fugacity:{roles['water']}"]],
+        film_thickness_m=loading_thickness, vapor_fugacities_pa=v[[vi[f"fugacity:{roles[r]}"] for r in ("co2", "water")]],
+        interface_co2_fugacity_pa=interface_fugacity, liquid_water_fugacity_pa=l[li[f"fugacity:{roles['water']}"]],
         gas_coefficients_mol_m2_s_pa=kg, heat_coefficient_w_m2_k=heat,
         vapor_temperature_k=state[5], liquid_temperature_k=state[4], transfer_enthalpies_j_mol=partial_h[:2])
     node = ca.Function("coupled_column", [z, state, *inlet_args], [conserved, sources, ca.vertcat(holdup, interface)])
     diagnostics = ca.Function("coupled_column_diagnostics", [state, *inlet_args],
-        [ca.vertcat(*conductances), integral, thickness, kg, heat, cp, partial_h, at_loading[li[f"fugacity:{roles['co2']}"]]]
-        + ([enhancement] if co2_model == "enhancement_reference" else []),
+        [ca.vertcat(*conductances), integral, thickness, kg, heat, cp, partial_h, interface_fugacity] + film_values,
         ["state"] + (["inlet"] if inlet_args else []), ["conductances", "integral", "thickness", "gas_coefficients", "heat_coefficient",
                     "vapor_cp", "vapor_partial_enthalpies", "interface_fugacity"]
-        + (["enhancement_factor"] if co2_model == "enhancement_reference" else []))
+        + film_names)
     for function in (node, diagnostics):
         function._thermodynamic_callbacks = (balance, loading_path, vapor_caloric, liquid, vapor)
     bottom, top = ca.MX.sym("bottom", 12), ca.MX.sym("top", 12)
