@@ -16,7 +16,7 @@ resources:
   - results/runs/stage6_timing_*/run.log
 ---
 
-For the 6 m case 3C absorber, the 17-node model reaches 90% CO₂ capture at 2.13973 kg/s of loaded lean solvent, 2.4746% above the reference flow that gives 89.41488% capture. Independent column solves bracket the target, and three perturbation directions verify the first-order sensitivities on that mesh. The computed solvent scales are 1.0247, 1.0595 and 1.0925 at 17, 33 and 65 cosine nodes. Their observed order of 0.078 leaves the mesh-independent optimum unresolved. These are numerical verification results for one case and have no experimental design validation. The single flow decision and active capture constraint leave trade-offs unresolved. The model has no stripper or energy objective.
+For the 6 m case 3C absorber at 90% CO₂ capture, the mesh-independent solvent requirement remains unresolved. The computed local optimum rises from 2.47% above the reference flow at 17 nodes to 5.95% at 33 nodes and 9.25% at 65 nodes, with an observed order of 0.078. On the 17-node mesh, the optimum is 2.13973 kg/s of loaded lean solvent, against a reference flow that gives 89.41488% capture. Independent column solves bracket the target on that mesh, and three perturbation directions verify its first-order sensitivities. These are numerical verification results for one case and have no experimental design validation. The single flow decision and active capture constraint leave trade-offs unresolved. The model has no stripper or energy objective.
 
 ## Problem P
 
