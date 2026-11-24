@@ -21,7 +21,8 @@ fig.savefig(data / "capture_parity.png", dpi=240)
 fig, ax = plt.subplots(figsize=(6.1, 4.1), layout="constrained")
 profiles = pd.read_csv(data / "temperature_profiles.csv").query("case_id == '3C'")
 for arm, profile in profiles.groupby("arm"):
-    for phase, style in (("liquid", "-"), ("vapor", "--")):
+    phases = (("liquid", "-."),) if arm == "published" else (("liquid", "-"), ("vapor", "--"))
+    for phase, style in phases:
         ax.plot(profile.z_m, profile[f"{phase}_K"], linestyle=style, color=colors[arm], label=f"{labels[arm]} {phase}")
 taps = pd.read_csv(data / "temperature_taps.csv").query("case_id == '3C' and arm == 'bridge'")
 ax.scatter(taps.z_m, taps.measured_K, c="#222222", marker="x", label="Table C2 packing taps", zorder=4, clip_on=False)
