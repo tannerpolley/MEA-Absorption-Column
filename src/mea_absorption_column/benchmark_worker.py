@@ -19,7 +19,7 @@ from mea_absorption_column.benchmark import (
 from mea_absorption_column.config.column import CapabilityRefusal, ConfigurationError, verify_worker_identity
 
 
-def main(argv=None):
+def main(argv=None, **execution_options):
     argv = list(sys.argv[1:] if argv is None else argv)
     if len(argv) != 1:
         raise SystemExit("Usage: python -m mea_absorption_column.benchmark_worker INPUT_JSON")
@@ -69,7 +69,7 @@ def main(argv=None):
                 _record(output_path.parent, output_path.name, _json_clean({"last_checkpoint": self}))
         checkpoint = Checkpoint(stage="prepared")
         try:
-            result = _run_conserved_column_in_process(resolve_column_config(payload["config"]), checkpoint)
+            result = _run_conserved_column_in_process(resolve_column_config(payload["config"]), checkpoint, **execution_options)
             _record(output_path.parent, output_path.name, _json_clean(result))
         except CapabilityRefusal as exc:
             _record(output_path.parent, output_path.name, _json_clean({

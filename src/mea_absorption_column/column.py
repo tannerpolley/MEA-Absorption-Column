@@ -772,6 +772,7 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
     if not isinstance(source_settings, Mapping):
         raise ConfigurationError("Retained profile source solver settings are incomplete")
     current_settings = current_config["numerics"]["solver_settings"]
+    seed_overrides = ("nodes", "end_clustering", "max_iterations") if config.design else ("nodes", "end_clustering")
     identity_matches = (
         source.get("preset") == config.preset
         and source.get("formulation") == config.model.formulation
@@ -780,8 +781,8 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         and source_config.get("model") == current_config["model"]
         and source_config.get("dependencies") == current_config["dependencies"]
         and source.get("config_sha256") == source_config.get("resolved_config_sha256")
-        and {k: v for k, v in source_settings.items() if k not in ("nodes", "end_clustering")}
-        == {k: v for k, v in current_settings.items() if k not in ("nodes", "end_clustering")}
+        and {k: v for k, v in source_settings.items() if k not in seed_overrides}
+        == {k: v for k, v in current_settings.items() if k not in seed_overrides}
         and source_inputs.get("case_id") == current_inputs.get("case_id")
         and source_inputs.get("physical_input_sha256") == current_inputs.get("physical_input_sha256")
         and source_inputs.get("parameters") == current_inputs.get("parameters")
@@ -913,7 +914,7 @@ def _initialize_conserved_column(config, prepared, bulk, bracket, tolerance, che
     return initial, lower, upper
 
 
-def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[str, Any]:
+def _run_conserved_column_in_process(config: ColumnConfig, checkpoint, *, design_check=None) -> dict[str, Any]:
     """Run the case-owned twelve-state collocation path in the verified worker."""
     if config.numerics.method not in {"trapezoidal", "central", "upwind"}:
         raise CapabilityRefusal(
@@ -1041,6 +1042,8 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
                                 [top[2] - (1. - p[-1]) * p[n_liquid + vf[co2]]]),
             "row_scale": [boundary_scale[2]],
         }
+        if design_check is not None:
+            design["check"] = lambda *args: design_check(node._thermodynamic_callbacks[0], design["inlets"], *args)
 
     def solve(profile, multiplier=None):
         return solve_conservative_collocation(
@@ -1147,7 +1150,7 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     return result_record
 
 
-def execute_conserved_column(config: ColumnConfig | Mapping[str, Any]) -> dict[str, Any]:
+def execute_conserved_column(config: ColumnConfig | Mapping[str, Any], *, worker_args=("-m", "mea_absorption_column.benchmark_worker")) -> dict[str, Any]:
     """Execute one twelve-state case through its selected verified interpreter."""
     config = resolve_column_config(config.as_dict() if isinstance(config, ColumnConfig) else config)
     if config.preset != TWELVE_PRESET:
@@ -1165,7 +1168,7 @@ def execute_conserved_column(config: ColumnConfig | Mapping[str, Any]) -> dict[s
         cause = None
         try:
             completed = subprocess.run(
-                [config.engine.python, "-m", "mea_absorption_column.benchmark_worker", str(input_path)],
+                [config.engine.python, *worker_args, str(input_path)],
                 cwd=_ROOT, env=environment, capture_output=True, text=True,
                 timeout=config.execution.wall_limit_s, check=False,
             )
@@ -1236,7 +1239,7 @@ def _structured_solver_success(method: str, stages: Mapping[str, Any]) -> bool:
     )
 
 
-def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
+def _run_conserved_preparation(config: ColumnConfig, *, worker_args=None) -> dict[str, Any]:
     """Run the configured conserved column and retain the actual worker result."""
     output_dir = Path(config.execution.output_dir) if config.execution.output_dir else None
     if output_dir is not None:
@@ -1280,7 +1283,7 @@ def _run_conserved_preparation(config: ColumnConfig) -> dict[str, Any]:
     _record(output_dir, "resolved_config.json", config.as_dict())
     _record(output_dir, "attempt.json", base)
     try:
-        prepared = execute_conserved_column(config)
+        prepared = execute_conserved_column(config, worker_args=worker_args) if worker_args else execute_conserved_column(config)
         if prepared.get("failure_kind") or prepared.get("execution_status") in {"incomplete", "output_invalid", "interrupted"}:
             kind = prepared["failure_kind"]
             base["execution"].update(status=prepared.get("execution_status", "failed"), runtime_s=time.perf_counter() - started)

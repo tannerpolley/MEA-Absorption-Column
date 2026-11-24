@@ -724,6 +724,8 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     numerics = _conserved_numeric(numerics_request) if preset == TWELVE_PRESET else _numeric(numerics_request)
     design = dict(_section(request, "design"))
     if "design" in request:
+        if "source_homotopy_initial_step" in dict(numerics.settings):
+            raise ConfigurationError("Design does not support source homotopy")
         if preset != TWELVE_PRESET or model.film_model != "equilibrium_manifold" or numerics.method != "upwind":
             raise ConfigurationError("Design requires the twelve-state equilibrium-manifold upwind route")
         if set(design) - {"capture_target", "scale_bounds", "initial_scale", "inlet_parameters"}:

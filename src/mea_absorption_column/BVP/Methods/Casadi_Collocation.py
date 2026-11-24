@@ -179,7 +179,7 @@ def solve_conservative_collocation(
             "jac_g": jacobian,
             **({"calc_lam_p": True} if design is not None else {}),
             **({"iteration_callback": iteration_callback} if iteration_callback is not None else {}),
-            "ipopt.print_level": 0, "ipopt.max_iter": int(max_iterations),
+            "ipopt.print_level": 5 if design is not None and "check" in design else 0, "ipopt.max_iter": int(max_iterations),
             # Physical variables/equations are already scaled above. Automatic
             # gradient scaling repeats the costly initial constraint Jacobian.
             "ipopt.nlp_scaling_method": "none",
@@ -238,6 +238,8 @@ def solve_conservative_collocation(
         result["accepted"] = bool(stats["success"] and finite
                                   and result["scaled_residual_inf"] <= tolerance
                                   and result["scaled_bound_violation_inf"] <= tolerance)
+        if result["accepted"] and design is not None and "check" in design:
+            result["design_checks"] = design["check"](solver, candidate, lbx, ubx, parameter_values[0], profile)
         if not result["accepted"]:
             result["failure"] = "Solver termination or original residual/bound checks failed"
     except RuntimeError as error:
