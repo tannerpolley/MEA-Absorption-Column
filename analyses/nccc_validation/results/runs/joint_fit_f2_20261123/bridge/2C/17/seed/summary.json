@@ -1,0 +1,8 @@
+{
+  "case": "2C",
+  "stage": "seed",
+  "failure": {
+    "kind": "campaign_interrupted",
+    "message": "Interrupted because bridge 1C seed failed"
+  }
+}

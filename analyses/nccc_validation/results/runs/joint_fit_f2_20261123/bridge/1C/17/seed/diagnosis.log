@@ -1,0 +1,53 @@
+{
+  "case": "1C",
+  "scope": "Interface residual only on the unchanged declared bracket before column IPOPT",
+  "initial_bulk_state_after_holdup_balance": [
+    1.2259292702436502,
+    64.66125695314913,
+    1.3676273760710997,
+    1.5371230717018953,
+    318.15,
+    316.45,
+    110700.0,
+    0.04588869698990925
+  ],
+  "bracket": [
+    0.0,
+    1.0
+  ],
+  "points": [
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.0,
+      "liquid_co2_flux_mol_m2_s": 0.0,
+      "gas_co2_flux_mol_m2_s": 0.19246096014554034,
+      "residual_mol_m2_s": -0.19246096014554034
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.25,
+      "liquid_co2_flux_mol_m2_s": 0.0024136016701792004,
+      "gas_co2_flux_mol_m2_s": 0.19226271091099018,
+      "residual_mol_m2_s": -0.18984910924081097
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.5,
+      "liquid_co2_flux_mol_m2_s": 0.005723753614382242,
+      "gas_co2_flux_mol_m2_s": 0.19169111899170516,
+      "residual_mol_m2_s": -0.18596736537732292
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.75,
+      "liquid_co2_flux_mol_m2_s": 0.010246067417347064,
+      "gas_co2_flux_mol_m2_s": 0.1894941676349201,
+      "residual_mol_m2_s": -0.17924810021757304
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 1.0,
+      "liquid_co2_flux_mol_m2_s": 0.016234801650483653,
+      "gas_co2_flux_mol_m2_s": 0.1758182761463152,
+      "residual_mol_m2_s": -0.15958347449583155
+    }
+  ],
+  "cause": "Both endpoint liquid-minus-gas CO2 flux residuals are negative, so Brent initialization refuses the declared bracket.",
+  "limitation": "Five sampled values do not prove root absence between samples or outside the declared interval.",
+  "initialization_followup_issue": "https://github.com/tannerpolley/MEA-Absorption-Column/issues/19"
+}

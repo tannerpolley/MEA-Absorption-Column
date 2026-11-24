@@ -1,0 +1,13 @@
+1C seed 17 nodes, wall limit 900 s
+{
+  "case": "1C",
+  "stage": "seed",
+  "nodes": 17,
+  "measured_capture_pct": 97.1,
+  "runtime_s": 1.5002604189999147,
+  "solver_status": null,
+  "iterations": null,
+  "scaled_residual_inf": null,
+  "certification": null
+}
+Failure outer_solve_failure: f(a) and f(b) must have different signs

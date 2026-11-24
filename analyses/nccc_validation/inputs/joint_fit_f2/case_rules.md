@@ -1,0 +1,23 @@
+# One-bed NCCC case inputs
+
+The builder uses Morgan et al. (2020), *Applied Energy* 262, 114533, Table A1, pp. 18–19. All 23 Table A1 cells for each case 1C–7C agree with `NCCC_2017_cases.csv`, including the measured capture and standard deviation. The retained source hashes identify the compared CSV and PDF. The worked 3C basis is in [the 3C source reconciliation](../../../bvp_solution_methods/input/case_3c_source.md).
+
+| Field in the case input | Rule or source |
+|---|---|
+| `physical_inputs.case_id` | Use the Table A1 year and case label. |
+| `height_m`, `area_m2`, `packing` | Use the NCCC bed height times the Table A1 bed count, the area $\pi D^2/4$, and the MellapakPlus252Y coefficients from `config/Constants.py`. The packing order follows `misc/Convert_Data.py`. |
+| `liquid_temperature_k`, `vapor_temperature_k` | Add 273.15 to the reported °C. Impute 45 °C when the lean-liquid temperature is missing, as in the approved 3C basis. |
+| `bottom_pressure_pa`, `reported_top_pressure_pa` | Convert the inlet gas and top pressure columns, respectively, from kPa to Pa. |
+| `liquid_molar_masses_kg_mol`, `vapor_molar_masses_kg_mol` | Use the declared liquid feed formulas and atomic masses via `formula_masses` in `Thermodynamics/solvent_inputs.py`, and the vapor parameter document's molar masses in vapor feed order. |
+| `liquid_feed_mol_s` | Convert the loaded total mass rate from kg/h to kg/s. Divide by $1+\alpha w M_{\mathrm{CO_2}}/M_{\mathrm{MEA}}$ to obtain the unloaded rate, with dry-solvent MEA mass fraction $w$ and lean loading $\alpha$. Split the unloaded rate by $w$ and $1-w$, divide each by its molar mass, and multiply the MEA molar rate by $\alpha$ for the CO₂ rate. Use the declared CO₂, MEA and water order. |
+| `vapor_feed_mol_s` | Take $y_{\mathrm{H_2O}}=p_{\mathrm{sat}}(T_v)/P_{\mathrm{in}}$ from `Properties/Thermophysical_Properties.py:vapor_pressure`. Multiply each dry fraction by $1-y_{\mathrm{H_2O}}$, with N₂ the dry balance. Divide the reported gas mass rate in kg/s by the wet mixture molar mass and multiply by the wet fractions in declared order. |
+| `gas_mass_flow_basis`, `liquid_mass_flow_basis`, `humidity_assumption`, `assumptions` | Record the mass and saturation conventions above, the reported or imputed lean temperature, and the inlet pressure boundary. Table A1 leaves the reported gas-flow moisture basis unspecified. |
+| `liquid_branch_policy` | Replace the bridge continuation anchor with the case's Table A1 lean loading. Use the declared bridge step size and step count. |
+| `species_diffusivity_model`, `mobility_basis` | Use the law and species coefficients from the bridge declaration in declared species order, with the harmonic mean. The archived owner runner specifies the same law. |
+| `model_input_row` | Record the source mass flows in kg/s, lean loading, unloaded mass fraction, dry CO₂ and O₂ fractions, inlet temperatures in K, inlet pressure in Pa, Table A1 bed and intercooler counts, and measured capture. Record whether 45 °C was imputed. |
+| `initial_bulk_state` | Use the first seven values in the order validated by `column.py:_run_conserved_column_in_process`. The eighth is the archived owner's arbitrary holdup seed. At `column.py:857`, `_initialize_conserved_column` subtracts the holdup balance residual from that seed and substitutes the balance-consistent value before use. |
+| `initial_interface_bracket`, `physical_residual_tolerance` | Use the archived owner's interface bracket and full residual limit. The exact archived runner contains `brentq(root_residual, 0., 1.)` and `tolerance=1e-7`. |
+| `central_readiness_point` | The archived owner's direct equilibrium probe input for 3C, under `native_root_diagnosis.failed_input`. It is provenance only. No equivalent archived probe belongs to the other cases. |
+| `source_record`, `source_runner_sha256`, `claim_limits` | For 3C identify the archived owner input and verification code. For other cases identify the CSV row by its case ID and the CSV by SHA-256. Retain the shared caloric limitation and owner runner provenance. |
+
+The [provenance values](case_3c_provenance.json) were extracted from the archived owner records at `docs/coordination/casadi_3c_baseline.json` and `docs/coordination/casadi_3c_coupled_shared.json` in the commit named there. The baseline file SHA-256 and embedded verification code SHA-256 match the published 3C input provenance. The caloric status label omits the archived approval prefix, and the limitation carries forward the pure-water vapor heat-capacity discrepancy described in the [solution-method evidence](../../../bvp_solution_methods/README.md). The builder compares the regenerated 3C fields with the retained 3C JSON before writing any other case.

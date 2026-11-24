@@ -1,0 +1,29 @@
+{
+  "archive_commit": "8bf9b51bd45712cb2506b8e300fcd4065f517a6e",
+  "source_record": {
+    "path": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_baseline.json",
+    "sha256": "df1dcaf5fe5c617663f62b1e23325fdc1c732b9dae03161bdb8f02a8c362adb0"
+  },
+  "coupled_source_sha256": "f1575c34af590598628e1e1cdbe0d5a4af18be519722578a429748bf1734c093",
+  "source_runner_sha256": "2b6ff7c74450504e916284560dc006237d6a9f3a5027ccece0d446bbab93bf0d",
+  "holdup_seed": 0.052715134432693156,
+  "initial_interface_bracket": [
+    0.0,
+    1.0
+  ],
+  "physical_residual_tolerance": 1e-07,
+  "central_readiness_point": [
+    318.15,
+    110900.0,
+    5.277293318431409,
+    9.729282110481522,
+    76.97519250729157
+  ],
+  "claim_limits": {
+    "caloric_status": "provisional_shared_reference",
+    "caloric_limitation": "The coupled owner records an unresolved pure-water vapor Cp discrepancy. Thermal predictions remain provisional; comparisons assess numerical methods on the shared declared model.",
+    "source_record": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_coupled_shared.json"
+  },
+  "table_a1_pdf_sha256": "f0ac09b3978962b0a3eab52ef062ac942811192c982b201caaae499e1aaf2232",
+  "table_a1_csv_sha256": "165e974d53a90e0570955aea766642eb823f7865914dac6d8761f75f484f7834"
+}
