@@ -1,0 +1,77 @@
+Every row uses the following Engine and input identities. The row-specific CSV hashes and convergence diagnostics follow the table.
+
+- Engine 1.0.0 · commit `f4566b3d0c64d05822b41fe363de47ab5cfa6a0e` · wheel SHA-256 `57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a`
+- Retained reference Engine · commit `391dfe5d64ede5036bf160bc6ae037ad5e14af32` · wheel SHA-256 `0962e21d2fa7a8ba1ed4622f1110b3e8053bacd878fa41c999d85e8b9afab66b`
+- Amine-Thermodynamics commit `761e38ae866419bebb5895574e9c07645fbf6e34` · `declarations.toml` SHA-256 `1f39af2b9d9a0c744081ab2062a20d0ddb624113fae4447495b1134a1d629bb3`
+- `adoption-340/candidate/replay.json` SHA-256 `de81807113d7bf140a58834646febd6932b1d0e94ce388e92cc9f382388e5ee1`
+- `parameters.json` SHA-256 `ae17803e1bcb2ca0a1970e05c7cc235d615c4d8a3a349b5afef0b0401dedefed`
+- `engine-reactions.json` SHA-256 `309b4e75014be418cfa265a9658e14ae167c27555b120bbb918652c2c30d1fb0`
+- `ideal-gas-thermochemistry.json` SHA-256 `d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb`
+
+| Retained row | Template | Temperature (K) | Quantity and unit | Engine 1.0.0 | Amine F2 replay | Relative difference |
+|---|---|---:|---|---:|---:|---:|
+| `vle_obs_0134-pco2` | `15-problem` | 313.0 | CO₂ partial pressure, Pa | 118.89948112285451 | 118.8994811228556 | 9.2030327023875754e-15 |
+| `vle_obs_0202-pco2` | `46-problem` | 333.15 | CO₂ partial pressure, Pa | 319909.1196907274 | 319909.11969069036 | 1.1572059082516549e-13 |
+| `Bottinger2008_state_030::MEACOO-` | `48-problem` | 293.15 | Liquid carbamate mole fraction | 0.00827612798606119 | 0.008276127986061197 | 8.3842274015020515e-16 |
+| `Hartono2014_density_80C_alpha0.39` | `302-problem` | 353.15 | Liquid mass density, kg/m³ | 1052.8344198674056 | 1052.8344198674058 | 2.1596337577172633e-16 |
+| `Hilliard2008_Cp_318.15_0.358` | `304-problem` | 318.15 | Equilibrium isobaric heat capacity, J/(mol feed K) | 83.7782725848605 | 83.77827258486016 | 4.0709900388478792e-15 |
+| `vinjarapu2024_source_table4_01` | `141-initial`, `141-final` | 313.15 | Signed addition enthalpy, J/mol CO₂ added | -80852.36347366864 | -80852.36347368557 | 2.0949825828322064e-13 |
+
+## Equilibrium convergence by row
+
+`vle_obs_0134-pco2`
+
+- Input CSV · `inputs/15.csv` · SHA-256 `dfc6fa40e41cc28af108596af734bace2e89defde40bf7009032a24c1462daa2`
+- Reference diagnostic · Requested tolerance met True · SUCCESS: converged: residual 8.5265128291212022e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 2 iterations, contraction absent, floor 1.5271326531643639e-10, amplification 0
+- `15-problem` · 313.0 K, 6735.464581411895 Pa · Requested tolerance met · converged: residual 1.1368683772161603e-13 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 2 iterations, contraction absent, floor 1.527132653164365e-10, amplification 0
+
+`vle_obs_0202-pco2`
+
+- Input CSV · `inputs/46.csv` · SHA-256 `adbcfcdcccbe61f0eafc08d1c19f64fe0d2408555be7f5858c231fac5840f8af`
+- Reference diagnostic · Requested tolerance met True · SUCCESS: converged: residual 2.2737367544323206e-13 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 3 iterations, contraction absent, floor 1.3385288346824474e-10, amplification 0
+- `46-problem` · 333.15 K, 338272.1883695366 Pa · Requested tolerance met · converged: residual 1.5631940186722204e-13 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 3 iterations, contraction absent, floor 1.3385288346824476e-10, amplification 0
+
+`Bottinger2008_state_030::MEACOO-`
+
+- Input CSV · `inputs/48.csv` · SHA-256 `71c3d6eb6129f947b9d31434ba7b9c7bddef8c9f2fc1ac4ff2204637f3da6de3`
+- Reference diagnostic · Requested tolerance met True · SUCCESS: converged: residual 7.329442255580968e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 15 iterations, contraction absent, floor 1.7733792725567799e-10, amplification 0
+- `48-problem` · 293.15 K, 101325.0 Pa · Requested tolerance met · converged: residual 5.0035947097663585e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 15 iterations, contraction absent, floor 1.7733792725567778e-10, amplification 0
+
+`Hartono2014_density_80C_alpha0.39`
+
+- Input CSV · `inputs/302.csv` · SHA-256 `fab40bf074c2f7d81fafe0162b18a3392890647483cfafcd393da0f59043af01`
+- Reference diagnostic · Requested tolerance met True · SUCCESS: converged: residual 4.8142923645650574e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 14 iterations, contraction absent, floor 1.3618916469733743e-10, amplification 0
+- `302-problem` · 353.15 K, 100000.0 Pa · Requested tolerance met · converged: residual 2.9963193332843992e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 14 iterations, contraction absent, floor 1.3618916469733738e-10, amplification 0
+
+`Hilliard2008_Cp_318.15_0.358`
+
+- Input CSV · `inputs/304.csv` · SHA-256 `28cf31b80a1afc2a923c7122510b28e126c4475dae0ae31c8d0a9add08367f5b`
+- Reference diagnostic · Requested tolerance met True · SUCCESS: converged: residual 7.8533139359173612e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 14 iterations, contraction absent, floor 1.525002151814136e-10, amplification 0
+- `304-problem` · 318.15 K, 101325.0 Pa · Requested tolerance met · converged: residual 1.0139016414893246e-13 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 14 iterations, contraction absent, floor 1.525002151814135e-10, amplification 0
+- Observable availability · ObservationStatus.Available · SUCCESS: converged: residual 1.0139016414893246e-13 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 14 iterations, contraction absent, floor 1.525002151814135e-10, amplification 0
+
+`vinjarapu2024_source_table4_01`
+
+- Input CSV · `inputs/141.csv` · SHA-256 `8db4588125a5594423c45a62a82a3c359774c32fc7b67f5330d40dfe707dabec`
+- Reference diagnostic · Requested tolerance met True · SUCCESS: converged: residual 2.523066751395417e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 12 iterations, contraction absent, floor 1.7296661075006708e-10, amplification 0
+- `141-initial` · 313.15 K, 1734000.0 Pa · Requested tolerance met · converged: residual 1.6970253869924253e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 12 iterations, contraction absent, floor 1.7296661075006705e-10, amplification 0
+- `141-final` · 313.15 K, 1734000.0 Pa · Requested tolerance met · converged: residual 3.1096484997921777e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 14 iterations, contraction absent, floor 4.3494236820039488e-09, amplification 0
+- Observable availability · ObservationStatus.Available · SUCCESS: converged: residual 1.6970253869924253e-14 against EQUILIBRIUM_ROW_RESIDUAL 1e-10 after 12 iterations, contraction absent, floor 1.7296661075006705e-10, amplification 0
+
+## Solver bounds from the 3C declarations
+
+The actual solver bound builder was called after declaration validation for each record. The F2 declaration uses the 3C case with the F2 input triple and temperature interval. No F2 column solve was run.
+
+Array order is liquid CO₂ and water flows, vapor CO₂ and water flows (mol/s), liquid and vapor temperatures (K), pressure (Pa), holdup, CO₂ and water fluxes (mol/(m² s)), total energy flux (W/m²), and the natural logarithm of the interface-to-bulk CO₂ loading ratio.
+
+```text
+Bridge
+lower = [0.0, 0.0, 0.0, 0.0, 293.15, 293.15, 1.0, 2.1538326677728036e-16, -inf, -inf, -inf, -inf]
+upper = [inf, inf, inf, inf, 393.15, 393.15, 10000000.0, 0.9699999999999998, inf, inf, inf, inf]
+```
+
+```text
+F2
+lower = [0.0, 0.0, 0.0, 0.0, 298.0, 298.0, 1.0, 2.1538326677728036e-16, -inf, -inf, -inf, -inf]
+upper = [inf, inf, inf, inf, 393.15, 393.15, 10000000.0, 0.9699999999999998, inf, inf, inf, inf]
+```

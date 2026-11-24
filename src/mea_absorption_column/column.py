@@ -826,6 +826,22 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
     return initial, provenance
 
 
+def _conserved_execution_policy(config):
+    if config.solvent:
+        return config.solvent.transport["execution_policy"]
+    return dict(id="case_declared_native_inputs", temperature_bounds_k=[293.15, 393.15],
+                temperature_scale_k=300.0, temperature_span_k=100.0, void_fraction=.97)
+
+
+def _conserved_state_bounds(policy):
+    minimum, maximum = policy["temperature_bounds_k"]
+    void = policy["void_fraction"]
+    margin = void * np.finfo(float).eps
+    lower = np.r_[[0.0] * 4, minimum, minimum, 1.0, margin, [-np.inf] * 4]
+    upper = np.r_[[np.inf] * 4, maximum, maximum, 1e7, void-margin, [np.inf] * 4]
+    return lower, upper
+
+
 def _initialize_conserved_column(config, prepared, bulk, bracket, tolerance, checkpoint):
     """Feed-seeded algebraic state and scales consumed by the column solve."""
     from scipy.optimize import brentq
@@ -856,7 +872,9 @@ def _initialize_conserved_column(config, prepared, bulk, bracket, tolerance, che
     point = np.r_[bulk, float(diagnostic[1] / diagnostic[2]),
                   float(diagnostic[3][1] * (gas[gas_flux[1]] - balance(bulk, [0.0, 0.0, 0.0])[3][liquid_water])), 0.0, loading]
     point[10] = float(diagnostic[4]) * (bulk[5] - bulk[4]) + point[8:10] @ np.asarray(diagnostic[6]).ravel()
-    height, span = assembly["height_m"], 393.15 - 293.15
+    policy = _conserved_execution_policy(config)
+    height, span = assembly["height_m"], policy["temperature_span_k"]
+    temperature_scale, void = policy["temperature_scale_k"], policy["void_fraction"]
     capacity = np.array([
         liquid.enthalpy_temperature_derivative(np.r_[bulk[4], bulk[6], liquid_feed]),
         vapor.enthalpy_temperature_derivative(np.r_[bulk[5], bulk[6], vapor_feed]),
@@ -865,21 +883,19 @@ def _initialize_conserved_column(config, prepared, bulk, bracket, tolerance, che
         raise RuntimeError("Native capacity scales must be finite positive")
     flux_scale = np.asarray(diagnostic[3]).ravel() * gas[gas_flux]
     heat_scale = float(diagnostic[4]) * span + np.abs(np.asarray(diagnostic[6]).ravel()) @ flux_scale
-    state_scale = np.r_[bulk[:4], 300.0, 300.0, bulk[6], .97, flux_scale, heat_scale, 1.0]
+    state_scale = np.r_[bulk[:4], temperature_scale, temperature_scale, bulk[6], void, flux_scale, heat_scale, 1.0]
     balance_scale = np.r_[bulk[:4] / height, capacity * span / height, bulk[6] / height]
-    algebraic_scale = np.r_[.97, flux_scale[0] * float(diagnostic[2]), flux_scale, heat_scale]
+    algebraic_scale = np.r_[void, flux_scale[0] * float(diagnostic[2]), flux_scale, heat_scale]
     boundary_scale = np.r_[bulk[:4], span, span, bulk[6]]
     if any(np.any(~np.isfinite(scale)) or np.any(scale <= 0) for scale in (state_scale, balance_scale, algebraic_scale, boundary_scale)):
         raise RuntimeError("Conserved state, balance, algebraic and boundary scales must be finite positive")
-    margin = .97 * np.finfo(float).eps
-    lower = np.r_[[0.0] * 4, 293.15, 293.15, 1.0, margin, [-np.inf] * 4]
-    upper = np.r_[[np.inf] * 4, 393.15, 393.15, 1e7, .97-margin, [np.inf] * 4]
+    lower, upper = _conserved_state_bounds(policy)
     algebraic = np.asarray(node(0.0, point)[2]).ravel()
     initialized = bool(root.converged and np.max(abs(algebraic / algebraic_scale)) <= tolerance)
     checkpoint.update(stage="initialized", initialization={"state": point, "algebraic_residual": algebraic, "accepted": initialized},
                       scaling={"state_scale": state_scale, "balance_scale": balance_scale, "algebraic_scale": algebraic_scale,
                                "boundary_scale": boundary_scale, "capacity_rates_w_k": capacity,
-                               "policy": "case-specific 293.15--393.15 K (300 K scale, 100 K span) and 0.97 holdup bounds"})
+                               "policy": policy})
     if not initialized:
         raise RuntimeError("Full original algebraic initialization check failed")
     grid = assembly["coordinate"]
@@ -918,8 +934,8 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
     if not isinstance(tolerance, (int, float)) or not math.isfinite(tolerance) or tolerance <= 0:
         raise ConfigurationError("Conserved execution needs a positive physical_residual_tolerance")
     solvent = config.solvent
+    policy = _conserved_execution_policy(config)
     if solvent:
-        policy = solvent.transport["execution_policy"]
         bulk = np.asarray(policy["initial_bulk_state"], dtype=float)
         bracket, tolerance = np.asarray(policy["initial_interface_bracket"]), policy["physical_residual_tolerance"]
     canonical = (_resolved_inputs(config, _case_frame(config)[0])["parameters"][:2] if solvent else
@@ -932,16 +948,16 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint) -> dict[s
                           physical.get("liquid_temperature_k"), physical.get("vapor_temperature_k"),
                           physical.get("bottom_pressure_pa")]
     packing = np.asarray(physical.get("packing"), dtype=float)
+    minimum, maximum = policy["temperature_bounds_k"]
     if (liquid_feed.shape != (len(solvent.feeds) if solvent else 3,) or vapor_feed.shape != (len(solvent.gas) if solvent else 4,) or packing.shape != (7,)
             or not np.allclose(bulk[:7], expected_seed, rtol=0.0, atol=1e-12)
-            or packing[1] != .97 or not np.all((293.15 <= bulk[4:6]) & (bulk[4:6] <= 393.15))):
+            or packing[1] != policy["void_fraction"] or not np.all((minimum <= bulk[4:6]) & (bulk[4:6] <= maximum))):
         raise ConfigurationError(
-            "Only the case-declared 3C policy is supported: matching feed-seeded bulk state, "
-            "0.97 packing void fraction, and 293.15--393.15 K inlet/initial temperatures"
+            f"Seed must match feeds, packing void fraction {policy['void_fraction']:g}, and {minimum:g}–{maximum:g} K bounds"
         )
     checkpoint.update(stage="policy_checked", support_limits={
-        "policy": "case_declared_native_inputs: 3C fixed 293.15--393.15 K bounds, 300 K state scale, 100 K span, 0.97 holdup/packing void fraction",
-        "unsupported": "arbitrary packing void fractions, feed-seed mismatches, and temperature policies",
+        "policy": policy,
+        "unsupported": "feed-seed, packing, and temperature domain mismatches",
     })
     prepared = _prepare_conserved_column_in_process(config)
     assembly, inputs = prepared["assembly"], prepared["resolved_inputs"]
