@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/evaluate_finite_rate_cases.py", line 170, in <module>
+    if sys.argv[2] == "dugas": dugas(output)
+                               ~~~~~^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/evaluate_finite_rate_cases.py", line 131, in dugas
+    assert np.all(a * b > 0.)
+           ~~~~~~^^^^^^^^^^^^
+AssertionError

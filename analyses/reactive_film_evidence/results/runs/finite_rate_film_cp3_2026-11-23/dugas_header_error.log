@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/evaluate_finite_rate_cases.py", line 182, in <module>
+    dugas(output)
+    ~~~~~^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/evaluate_finite_rate_cases.py", line 138, in dugas
+    assert len(source) == 6 and float(source[0]["equilibrium_Pa"]) == p_obs
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

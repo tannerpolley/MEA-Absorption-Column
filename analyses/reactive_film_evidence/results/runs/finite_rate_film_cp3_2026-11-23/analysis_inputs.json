@@ -1,0 +1,55 @@
+{
+  "engine": {
+    "actual_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "archive_hash_status": "verified_from_installed_contents",
+    "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "commit_evidence": "not_available_from_installed_distribution",
+    "declared_archive_sha256": null,
+    "declared_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "declared_wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "expected_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+    "expected_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "installed_artifact_members": 39,
+    "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/lib/python3.13/site-packages",
+    "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+    "loaded_version": "1.0.0",
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python3",
+    "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv",
+    "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+    "python_implementation": "cpython",
+    "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv",
+    "python_version": "3.13.13",
+    "required": true,
+    "status": "verified",
+    "verified_commit": null,
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+  },
+  "thermodynamic_assets": {
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory": "0fdec0f8313e1d58d04b06c0c1455ed552d20d60f70a485bcfcdb0342e0b2262",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/src/mea_absorption_column/data/epcsaft_datasets/MEA_greenfield_exploratory/ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+  },
+  "files": {
+    "analyses/reactive_film_evidence/inputs/dugas2009_7m_mea_settings.csv": "532e953fc2bb7c1eb0607e4ecf2b36a5e7038ba8d93f0e3258641c25a5087739",
+    "analyses/reactive_film_evidence/inputs/dugas2011_table1_mea.csv": "a4d9e2a690f95905ff881aef5788207dc6615082b9a3b671148b5390825dad1a",
+    "analyses/reactive_film_evidence/scripts/evaluate_finite_rate_cases.py": "1e70ff2d7360973df44a310d204a2f2eef4916e164ef1ca522e5d91638a1f9b8",
+    "analyses/reactive_film_evidence/scripts/check_finite_rate_film.py": "26438d4e8b7a38ff6cbbc950956e313c7bd47c112e2c2c74f0dd7ad7faf8890f"
+  },
+  "dissertation": {
+    "source": "https://sites.utexas.edu/rochelle/wp-content/uploads/sites/3310/2015/02/Dugas-2009-Carbon-Dioxide-Absorption-Desorption-and-Diffusion-in-Aqueous-Piperazine-and-Monoethanolamine.pdf",
+    "sha256": "41bdeebf3af0e5617429f5a025664d3b505508f554692d5ca50186b5a19220f9",
+    "printed_pages": [
+      210,
+      211
+    ],
+    "pdf_pages": [
+      239,
+      240
+    ],
+    "tables": [
+      "C.1",
+      "C.2"
+    ]
+  }
+}

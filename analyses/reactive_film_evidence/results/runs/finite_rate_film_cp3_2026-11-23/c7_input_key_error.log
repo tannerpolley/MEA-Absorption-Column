@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/evaluate_finite_rate_cases.py", line 185, in <module>
+    c7(output, case, read(sorted((output / case / basis).glob("try*/attempt.json"))[-1]), basis)
+    ~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/evaluate_finite_rate_cases.py", line 63, in c7
+    at, d, _, henry = frozen(assembly, path, state[4], state[6], flow, flow.sum() / volume)
+                      ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/evaluate_finite_rate_cases.py", line 36, in frozen
+    np.r_[d, mea, assembly["diffusion_model"]["other_species_m2_s"][1], np.full(6, ion)])
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'other_species_m2_s'

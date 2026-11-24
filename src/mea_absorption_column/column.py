@@ -537,6 +537,7 @@ def _build_conserved_assembly(config: ColumnConfig, resolved_inputs: Mapping[str
         }[config.model.film_model],
         henry_basis=config.model.henry_basis,
         finite_rate_multiplier=finite_rate_multiplier,
+        mea_diffusivity_anchors=config.model.mea_diffusivity_anchors,
         liquid_feed_mol_s=liquid_feed,
         vapor_feed_mol_s=vapor_feed,
         liquid_temperature_k=liquid_temperature,

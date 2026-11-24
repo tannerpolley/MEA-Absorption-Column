@@ -1,0 +1,45 @@
+{
+  "request": {
+    "preset": "twelve_state_conserved",
+    "case": {
+      "physical_input_file": "analyses/nccc_validation/inputs/joint_fit_f2/case_1c.json"
+    },
+    "dependencies": {
+      "thermodynamics_input": "analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+      "transport_input": "analyses/nccc_validation/inputs/joint_fit_f2/transport_1c.json"
+    },
+    "numerics": {
+      "method": "upwind",
+      "solver_settings": {
+        "nodes": 17,
+        "quadrature_points": 9,
+        "tolerance": 1e-07,
+        "max_iterations": 20,
+        "liquid_density_source": "solved_state",
+        "end_clustering": 1.0
+      }
+    },
+    "initialization": {
+      "values": {}
+    },
+    "execution": {
+      "output_dir": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/1C/enhancement/try1",
+      "wall_limit_s": 600
+    },
+    "model": {
+      "film_model": "enhancement_reference"
+    }
+  },
+  "manifold_reference": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/retry/request.json",
+  "machine": {
+    "time_utc": "2026-11-24T02:05:39Z",
+    "load": [
+      5.4921875,
+      8.68896484375,
+      14.0224609375
+    ],
+    "cpu_ticks": "cpu  5993573 1286269 2312448 19673074 535556 0 7563 0 0 0",
+    "MemAvailable": 20327972,
+    "SwapFree": 9752432
+  }
+}

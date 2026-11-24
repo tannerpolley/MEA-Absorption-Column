@@ -143,6 +143,112 @@ with Engine 1.0.0 at `f4566b3d`.
 [Full suite](results/runs/finite_rate_film_cp2_2026-11-23_henry_pin/full_suite.log),
 [Engine integration](results/runs/finite_rate_film_cp2_2026-11-23_henry_pin/integration.log).
 
+## Seven one-bed cases and wetted-wall comparison
+
+### Numerical verification and column measurement comparison
+
+The twelve-state runs use `MEA_greenfield_exploratory`, solved-state liquid density,
+upwind differences, 17 cosine-spaced axial nodes, nine film quadrature points,
+and the case-declared $10^{-7}$ scaled residual limit. The 3C refinement from
+11 to 21 nodes and from five to nine quadrature points changed finite-rate
+capture by 0.023 and 0.150 percentage points for N₂O and ePC-SAFT Henry,
+respectively. Seventeen nodes permit reuse of the certified #91 comparison at
+the same resolution. The co-refinement in 3C also moved vapour-water flow, and
+the #91 manifold result for 7C changed by −5.55 points at 33 nodes. The
+seven-case results describe this discretization.
+
+The [#91 case rules](../nccc_validation/inputs/joint_fit_f2/case_rules.md)
+reproduce the 3C inputs within $10^{-12}$ absolute before generating 1C, 2C and
+4C–7C. The [regeneration check](results/runs/finite_rate_film_cp3_2026-11-23/case_3c_gate.json)
+has a maximum absolute deviation of $2.84\times10^{-14}$. The seven #91 manifold
+attempts are reused by reference. The new closures use the checked case brackets,
+including [0, 1.5] for 1C and [0, 1] elsewhere, and start from their own interface
+seed. New solves use a 600 s wall limit, `nice -n 10`, and at most two
+concurrent workers. Each launch record retains CPU load and memory.
+The [6C manifold](../nccc_validation/results/runs/joint_fit_f2_20261123/bridge/6C/17/cosine/summary.json)
+qualified the inputs on an existing closure before the first finite-rate solve.
+The enhancement results use numerically accepted profiles with the original
+native-grid material, energy, interface, and boundary checks. The enhancement
+route provides this subset of the physical certification available for the
+manifold and finite-rate films.
+
+Capture means and standard deviations come from Morgan et al. (2020), Table A1.
+The standard deviation is reported in percentage points. Liquid temperature
+RMSE uses linear interpolation at the five measured packing positions in Table
+C2 per case, with normalized bottom-to-top coordinate $z/H=1-x$. The source
+does not designate the sensor phase or supply temperature-tap standard
+deviations. Changes between Henry bases use ePC-SAFT free CO₂ minus the N₂O
+analogy. The peak temperature is the maximum at the native nodes. The submitted
+seven-state calculation and Morgan et al.'s reported model have capture MAE
+of 5.85 and 2.56 percentage points, respectively, on their reported bases.
+They use different models and are external comparison values for the
+twelve-state closure comparison.
+
+Both 1C finite-rate runs initialized successfully, then reached IPOPT's
+20-iteration limit. The final scaled residuals were 0.912 for N₂O and
+0.0107 for ePC-SAFT, above the case limit of $10^{-7}$. Neither run recorded
+a native callback failure. The 1C finite-rate cells are unavailable, and
+C7 has no accepted finite-rate profile to check for that case.
+[N₂O attempt](results/runs/finite_rate_film_cp3_2026-11-23/1C/n2o/try1/attempt.json)
+and [ePC-SAFT attempt](results/runs/finite_rate_film_cp3_2026-11-23/1C/epcsaft/try1/attempt.json).
+
+{{< include results/runs/finite_rate_film_cp3_2026-11-23/_column.qmd >}}
+
+Across 2C–7C, changing to ePC-SAFT Henry raised finite-rate capture by
+2.26–4.39 percentage points and the native-node peak liquid temperature
+by 0.24–0.71 K. The liquid tap RMSE moved by −0.18 to +0.32 K. On these
+six common cases, the capture MAE is 5.19 points for enhancement, 4.23 for
+the manifold, 3.96 for finite rate with N₂O, and 3.84 for finite rate with
+ePC-SAFT. The mean tap RMSE is lowest for finite rate with N₂O at 4.79 K.
+These are comparisons on the selected grid and measured cases.
+
+### Wetted-wall measurement comparison
+
+The [72 settings](inputs/dugas2009_7m_mea_settings.csv) are transcribed from
+Dugas (2009), Tables C.1–C.2, pp. 210–211 (PDF pp. 239–240). The dissertation
+PDF has SHA-256 `41bdeebf3af0e5617429f5a025664d3b505508f554692d5ca50186b5a19220f9`.
+The fit of the transcribed fluxes against the signed log-mean wet pressure
+drives reproduces the reported gas-corrected coefficients within 0.33% on the
+eleven rows where that mean is defined. The observed coefficients and their
+±10% uncertainty band come from Dugas and Rochelle (2011), p. 2189, Table 1.
+The source reports ±5% for loading and pressure and ±1 K for temperature.
+[Dugas dissertation](https://sites.utexas.edu/rochelle/wp-content/uploads/sites/3310/2015/02/Dugas-2009-Carbon-Dioxide-Absorption-Desorption-and-Diffusion-in-Aqueous-Piperazine-and-Monoethanolamine.pdf)
+and [Dugas and Rochelle article](https://doi.org/10.1021/je101234t).
+
+Each model bulk state uses 7 mol MEA, $7\alpha$ mol CO₂ and 1 kg water at the
+row temperature and gauge pressure plus 101325 Pa. The Eq. 8 thickness
+reconstruction uses a 0.091 m contact length, a 0.0126 m tube diameter and
+0.003852 m² wetted area, with the liquid flow and calculated loaded viscosity,
+density, and molecular CO₂ diffusivity. The signed wet pressure drive is applied
+about the modeled equilibrium fugacity with $\Delta f=\Delta P$.
+The retained bulk fugacity serves as the model's equilibrium-pressure proxy
+under the same pressure-to-fugacity approximation. The fitted overall
+coefficient $K_G$ is corrected using the reported apparatus $k_g$ to give
+$k_g'=(1/K_G-1/k_g)^{-1}$. Positive flux denotes absorption. Each reported
+coefficient requires a valid fit across all six settings, both flux signs,
+zero flux at zero force, positive interfacial fugacity, and positive liquid
+resistance.
+
+The thickness sensitivity uses $\delta=D/k_l^\circ$ at 0.9 and 1.1 times
+the article's $k_l^\circ$. Those two values set the displayed sensitivity
+range. The article and dissertation give different $k_l^\circ$ values and
+the assignment to molecular CO₂ remains unresolved. At 60 °C and loading
+0.252, wet inlet and outlet pressures of 110 and 107 Pa straddle the measured
+109 Pa equilibrium pressure in setting 3. The signed log mean is undefined
+there, so the six-setting coefficient is unavailable for both Henry bases.
+
+{{< include results/runs/finite_rate_film_cp3_2026-11-23/_dugas.qmd >}}
+
+The concentration supplied to Snijder's expression ranges from 5245 to
+5917 mol/m³, above its 5016 mol/m³ upper limit in all twelve rows. The
+80 and 100 °C rows also exceed the 343 K Luo kinetic ceiling. Four rows
+exceed Luo's loading range, and the eight rows at 60–100 °C exceed the
+323.15 K source range of R5. The Eq. 8 thicknesses are 22.59–35.51 µm.
+The equilibrium-pressure proxy differs from the observed equilibrium
+pressure by −39.8% to +83.5%. The discrepancy is retained alongside the
+coefficient comparison and was not used to adjust loading or to reset the
+model equilibrium state.
+
 ## Stage 1 comparison: Engine 1.0.0 (issue 16)
 
 The current twelve-state conserved route runs two CO2 closures on the same

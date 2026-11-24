@@ -132,7 +132,7 @@ def build_column_balance_functions(
 def build_coupled_column_functions(
     liquid, vapor, *, species_diffusivities, quadrature_points=9,
     co2_model="reactive_film", film_thickness_multiplier=1., inlet=None,
-    henry_basis=None, finite_rate_multiplier=1., **column_inputs,
+    henry_basis=None, finite_rate_multiplier=1., mea_diffusivity_anchors=False, **column_inputs,
 ):
     """Twelve-state native node, inlet residuals and physical diagnostics.
 
@@ -232,7 +232,10 @@ def build_coupled_column_functions(
             # The common-property correlations supply no liquid water coefficient.
             neutral_d = {roles["co2"]: dl, roles["amines"][0]: dl_mea,
                          roles["water"]: species_d[liquid.component_ids.index(roles["water"])]}
-            species_d = ca.vertcat(*(dl_ion if charge else neutral_d[name]
+            # Jerng and Gallant (2022), Fig. 7A: loaded MEA/MEAH+ and carbamate DOSY.
+            anchors = {"monoethanolamine": 8.4e-10, "protonated-monoethanolamine": 8.4e-10,
+                       "carbamate-anion": 6.8e-10} if mea_diffusivity_anchors else {}
+            species_d = ca.vertcat(*(anchors.get(name, dl_ion if charge else neutral_d[name])
                 for name, charge in zip(liquid.component_ids, liquid.charges, strict=True)))
         integral, conductances, at_loading, tangent = equilibrium_manifold_conductance_integral(
             loading_path, liquid_inputs, state[11], species_d,

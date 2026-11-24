@@ -1,0 +1,46 @@
+{
+  "request": {
+    "preset": "twelve_state_conserved",
+    "case": {
+      "physical_input_file": "analyses/nccc_validation/inputs/joint_fit_f2/case_4c.json"
+    },
+    "dependencies": {
+      "thermodynamics_input": "analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+      "transport_input": "analyses/nccc_validation/inputs/joint_fit_f2/transport_4c.json"
+    },
+    "numerics": {
+      "method": "upwind",
+      "solver_settings": {
+        "nodes": 17,
+        "quadrature_points": 9,
+        "tolerance": 1e-07,
+        "max_iterations": 20,
+        "liquid_density_source": "solved_state",
+        "end_clustering": 1.0
+      }
+    },
+    "initialization": {
+      "values": {}
+    },
+    "execution": {
+      "output_dir": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/4C/n2o/try1",
+      "wall_limit_s": 600
+    },
+    "model": {
+      "film_model": "finite_rate_film",
+      "henry_basis": "n2o_analogy"
+    }
+  },
+  "manifold_reference": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/4C/17/cosine/request.json",
+  "machine": {
+    "time_utc": "2026-11-24T02:32:52Z",
+    "load": [
+      13.28271484375,
+      11.82373046875,
+      11.02734375
+    ],
+    "cpu_ticks": "cpu  6981275 1605409 2426787 23443981 541141 0 8078 0 0 0",
+    "MemAvailable": 16835328,
+    "SwapFree": 9393312
+  }
+}

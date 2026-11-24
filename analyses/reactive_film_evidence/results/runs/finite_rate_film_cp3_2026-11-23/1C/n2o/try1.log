@@ -1,0 +1,2 @@
+1C n2o {'time_utc': '2026-11-24T02:12:59Z', 'load': (7.9306640625, 7.5986328125, 11.36083984375), 'cpu_ticks': 'cpu  6188378 1369909 2340287 20766890 536990 0 7679 0 0 0', 'MemAvailable': 18638028, 'SwapFree': 9762028}
+{'status': 'completed', 'started_at_utc': '2026-11-24T02:12:59Z', 'runtime_s': 359.3365305850002} {'kind': 'outer_solve_failure', 'phase': 'solve_or_certification', 'message': 'one or more physical criteria failed', 'native_cause': None}

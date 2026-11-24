@@ -1,0 +1,2 @@
+7C enhancement {'time_utc': '2026-11-24T02:08:38Z', 'load': (5.71484375, 7.55419921875, 12.64501953125), 'cpu_ticks': 'cpu  6067092 1321469 2322026 20126043 536325 0 7614 0 0 0', 'MemAvailable': 21093676, 'SwapFree': 9754424}
+{'status': 'completed', 'started_at_utc': '2026-11-24T02:08:38Z', 'runtime_s': 22.187546458000725} {'kind': 'outer_solve_failure', 'phase': 'solve_or_certification', 'message': 'Subset checks cannot establish physical certification', 'native_cause': None}

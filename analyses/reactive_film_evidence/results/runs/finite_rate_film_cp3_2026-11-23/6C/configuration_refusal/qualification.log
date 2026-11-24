@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/run_finite_rate_cases.py", line 62, in <module>
+    run(Path(sys.argv[1]), *sys.argv[2:])
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/analyses/reactive_film_evidence/scripts/run_finite_rate_cases.py", line 51, in run
+    attempt = run_column(request)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/src/mea_absorption_column/column.py", line 1380, in run_column
+    config = resolve_column_config(config)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/src/mea_absorption_column/config/column.py", line 642, in resolve_column_config
+    raise ConfigurationError("Declared inputs require the twelve-state equilibrium-manifold route")
+mea_absorption_column.config.column.ConfigurationError: Declared inputs require the twelve-state equilibrium-manifold route

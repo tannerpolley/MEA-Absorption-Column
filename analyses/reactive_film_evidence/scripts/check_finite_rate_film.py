@@ -196,4 +196,5 @@ def main(output):
                     if error is not None and abs(error) >= .02:
                         raise SystemExit("C7 reached or exceeded 2 %.")
 
-main(Path(sys.argv[1]))
+if __name__ == "__main__":
+    main(Path(sys.argv[1]))

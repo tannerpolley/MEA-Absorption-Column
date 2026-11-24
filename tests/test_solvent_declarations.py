@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 
 from mea_absorption_column.column import _prepare_conserved_column_in_process, run_column
-from mea_absorption_column.config.column import resolve_column_config
+from mea_absorption_column.config.column import ConfigurationError, resolve_column_config
 from mea_absorption_column.Thermodynamics.solvent_inputs import ROOT, SolventRefusal, StateDomainFailure, NativeEvaluationFailure
 
 INPUT = ROOT / 'analyses/bvp_solution_methods/input/issue85'
@@ -97,6 +97,20 @@ def test_mea_declared_reproduction_and_permutation(tmp_path):
     from runpy import run_path
     compare = run_path(str(ROOT / 'analyses/bvp_solution_methods/scripts/compare_solvent_declarations.py'))['compare']
     compare(attempts, assemblies, read(BASELINE), output)
+
+
+def test_declared_mea_film_selections(tmp_path):
+    canonical = request(INPUT / 'thermodynamics.json', INPUT / 'transport.json', tmp_path / 'canonical')
+    for model in ({'film_model': 'enhancement_reference'},
+                  {'film_model': 'finite_rate_film', 'henry_basis': 'epcsaft_free_co2'},
+                  {'film_model': 'finite_rate_film', 'mea_diffusivity_anchors': True}):
+        config = resolve_column_config(canonical | {'model': model})
+        assert {key: config.model.as_dict()[key] for key in model} == model
+        assert resolve_column_config(config.as_dict()).resolved_config_sha256 == config.resolved_config_sha256
+    thermo, transport = permuted_inputs(tmp_path)
+    permuted = request(thermo, transport, tmp_path / 'permuted')
+    with pytest.raises(ConfigurationError, match='original MEA species order'):
+        resolve_column_config(permuted | {'model': {'film_model': 'enhancement_reference'}})
 
 
 @pytest.mark.parametrize('defect, message', [

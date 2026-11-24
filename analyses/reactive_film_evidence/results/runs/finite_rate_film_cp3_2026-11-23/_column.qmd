@@ -1,0 +1,88 @@
+**Capture (%)**
+
+| Case | Measured mean ± SD | Enhancement | Manifold | Finite rate, N₂O | Finite rate, ePC-SAFT |
+|---|---:|---:|---:|---:|---:|
+| 1C | 97.1 ± 0.7 | 99.406 | 99.577 | — | — |
+| 2C | 92.3 ± 0.5 | 97.836 | 98.346 | 90.979 | 95.364 |
+| 3C | 89.5 ± 1.2 | 92.285 | 89.415 | 81.659 | 85.862 |
+| 4C | 88.9 ± 0.8 | 92.400 | 88.617 | 82.842 | 86.167 |
+| 5C | 86.4 ± 0.6 | 93.718 | 93.584 | 86.232 | 89.967 |
+| 6C | 60.2 ± 0.5 | 72.191 | 69.677 | 61.132 | 65.062 |
+| 7C | 76.4 ± 2.2 | 76.375 | 74.076 | 68.980 | 71.235 |
+
+**Liquid temperature-tap RMSE (K) and Henry-basis shifts**
+
+| Case | Enhancement | Manifold | Finite rate, N₂O | Finite rate, ePC-SAFT | Capture shift (pp) | Tap RMSE shift (K) | Peak $T_l$ shift (K) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 1C | 4.947 | 4.116 | — | — | — | — | — |
+| 2C | 4.760 | 3.581 | 3.511 | 3.475 | 4.385 | -0.035 | 0.712 |
+| 3C | 3.491 | 3.233 | 3.451 | 3.267 | 4.203 | -0.184 | 0.467 |
+| 4C | 5.466 | 4.511 | 4.454 | 4.575 | 3.325 | 0.121 | 0.311 |
+| 5C | 5.755 | 5.180 | 4.829 | 5.083 | 3.736 | 0.254 | 0.450 |
+| 6C | 3.774 | 3.556 | 3.142 | 3.311 | 3.930 | 0.169 | 0.534 |
+| 7C | 10.052 | 9.731 | 9.353 | 9.671 | 2.255 | 0.318 | 0.237 |
+
+
+The 3C sensitivity uses the loaded MEA/MEAH⁺ diffusivity anchor
+$8.4\times10^{-10}$ m²/s and carbamate anchor $6.8\times10^{-10}$ m²/s
+from Jerng and Gallant (2022), Fig. 7A, in the N₂O-basis film. Other
+diffusivities retain their baseline values. The anchors come from 0.1 M
+MEA/D₂O and describe a sensitivity at the column composition.
+Capture changed by -1.149 percentage points
+to 80.510%. The native-node peak liquid temperature moved
+by -0.283 K.
+[Jerng and Gallant](https://doi.org/10.1016/j.isci.2022.104558).
+
+**Finite-rate film diagnostic ranges across the 17 nodes**
+
+Each resistance is in Pa m² s/mol. The gas term is $1/k_G$,
+the kinetic term is $\theta_i H/k_L$, and the manifold term is
+$(f^*(\xi_i)-f_b)/N$. The manifold term is undefined at zero flux.
+
+| Case | Henry basis | $Ha_i$ | $\theta_i$ | Gas | Kinetic | Manifold |
+|---|---:|---:|---:|---:|---:|---:|
+| 2C | N₂O | 260.2–649.5 | 0.0015–0.0038 | 3.01e+04–3.48e+04 | 2.74e+05–7.79e+05 | 7.64e+03–5.57e+05 |
+| 2C | ePC-SAFT | 237.3–664.8 | 0.0015–0.0042 | 3e+04–3.48e+04 | 1.29e+05–3.89e+05 | 7.39e+03–7.7e+05 |
+| 3C | N₂O | 247.1–554.6 | 0.0018–0.0040 | 3.44e+04–4.02e+04 | 3.36e+05–8.48e+05 | 2.31e+04–1.07e+06 |
+| 3C | ePC-SAFT | 233.2–548.7 | 0.0018–0.0043 | 3.43e+04–4.02e+04 | 1.58e+05–3.95e+05 | 2.69e+04–1.33e+06 |
+| 3C | N₂O, anchors | 248.8–539.8 | 0.0019–0.0040 | 3.45e+04–4.02e+04 | 3.46e+05–8.41e+05 | 1.81e+04–1.06e+06 |
+| 4C | N₂O | 257.5–602.2 | 0.0017–0.0039 | 4.2e+04–5.05e+04 | 3.29e+05–8.76e+05 | 2.62e+04–1.49e+06 |
+| 4C | ePC-SAFT | 246.9–594.9 | 0.0017–0.0041 | 4.19e+04–5.04e+04 | 1.54e+05–3.96e+05 | 3.17e+04–1.77e+06 |
+| 5C | N₂O | 283.2–632.0 | 0.0016–0.0035 | 4.32e+04–4.95e+04 | 3.36e+05–8.36e+05 | 2.58e+04–1.04e+06 |
+| 5C | ePC-SAFT | 268.1–632.7 | 0.0016–0.0037 | 4.31e+04–4.95e+04 | 1.56e+05–3.89e+05 | 2.78e+04–1.28e+06 |
+| 6C | N₂O | 234.6–435.7 | 0.0023–0.0043 | 2.96e+04–3.27e+04 | 4.59e+05–9.33e+05 | 7.96e+04–1.22e+06 |
+| 6C | ePC-SAFT | 222.7–426.0 | 0.0023–0.0045 | 2.95e+04–3.27e+04 | 2.08e+05–4.07e+05 | 1.11e+05–1.5e+06 |
+| 7C | N₂O | 260.6–418.9 | 0.0024–0.0038 | 5.85e+04–6.99e+04 | 5.3e+05–8.92e+05 | 1.68e+05–2.29e+06 |
+| 7C | ePC-SAFT | 255.8–420.3 | 0.0024–0.0039 | 5.84e+04–6.99e+04 | 2.33e+05–3.96e+05 | 2.19e+05–2.49e+06 |
+
+
+**C7 at the finite-rate column states**
+
+Both Henry bases are evaluated at the bulk state and matched interfacial
+fugacity on each finite-rate profile. The independent resolved-film reference
+uses 17 and 33 tabulated loading points, with BVP tolerances of $2\times10^{-6}$
+and $2\times10^{-8}$. A score requires convergence at both resolutions,
+reference flux change at most $2\times10^{-4}$ relative, and a refined
+relative RF-1 defect at most $2\times10^{-7}$. The owner-set C7 flux error
+limit is 2% at each state. C7 checks the numerical reduction on these film
+states. The ratio does not quantify comparison error against column or
+wetted-wall measurements.
+
+| Case | Scored / planned | Worst profile | Worst Henry basis | $z$ (m) | Worst flux error (%) | $Ha_i$ | Max. relative refinement change | Min. $G-Dm$ (mol/(m s)) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1C | 0/68 | — | — | — | — | — | — | — |
+| 2C | 68/68 | epcsaft | n2o | 0.000 | 0.00804 | 289.2 | 4.66e-07 | 7.51e-07 |
+| 3C | 68/68 | epcsaft | n2o | 0.000 | 0.00593 | 262.2 | 1.50e-07 | 9.78e-07 |
+| 4C | 68/68 | n2o | n2o | 0.000 | 0.00473 | 287.3 | 1.89e-07 | 9.76e-07 |
+| 5C | 68/68 | epcsaft | n2o | 0.000 | 0.00495 | 300.6 | 1.14e-07 | 1.02e-06 |
+| 6C | 68/68 | epcsaft | n2o | 0.000 | 0.00504 | 245.0 | 3.32e-07 | 1.27e-06 |
+| 7C | 68/68 | epcsaft | epcsaft | 6.000 | 0.00514 | 346.5 | 3.54e-07 | 1.36e-06 |
+
+The [exact column metrics](results/runs/finite_rate_film_cp3_2026-11-23/column_comparison.json) link each profile and record
+its tap temperatures and retained solver outcome. The [C7 rows](results/runs/finite_rate_film_cp3_2026-11-23/C7.jsonl)
+give both resolutions, $Ha_i/E_\infty$, the refinement change and the
+conductance margin at each checked state. Reaction R5 remains a source
+extrapolation above 323.15 K, ion diffusivities remain estimated, and the
+solved-state density bias and provisional vapour caloric reference limit
+thermal interpretation. This comparison has not been independently reviewed
+or promoted for manuscript use.

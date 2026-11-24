@@ -140,6 +140,7 @@ class ModelConfig:
     layout: str
     coordinate: str
     henry_basis: str | None = None
+    mea_diffusivity_anchors: bool = False
 
     def as_dict(self) -> dict[str, str]:
         return {
@@ -151,6 +152,7 @@ class ModelConfig:
             "layout": self.layout,
             "coordinate": self.coordinate,
             **({"henry_basis": self.henry_basis} if self.henry_basis is not None else {}),
+            **({"mea_diffusivity_anchors": True} if self.mea_diffusivity_anchors else {}),
         }
 
 
@@ -638,8 +640,8 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     model_values = dict(_section(request, "model"))
     dependencies = _dependencies(_section(request, "dependencies"))
     solvent = None
-    if dependencies.thermodynamics_input and (preset != TWELVE_PRESET or model_values.get("film_model", "equilibrium_manifold") != "equilibrium_manifold"):
-        raise ConfigurationError("Declared inputs require the twelve-state equilibrium-manifold route")
+    if dependencies.thermodynamics_input and preset != TWELVE_PRESET:
+        raise ConfigurationError("Declared inputs require the twelve-state route")
     if dependencies.thermodynamics_input:
         from ..Thermodynamics.solvent_inputs import SolventInputs, SolventRefusal
         solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
@@ -674,6 +676,10 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
                 "enhancement_reference does not consume dependencies.mobility_law"
             )
         mathematical = solvent is not None and solvent.mathematical
+        if solvent and not mathematical and film_model == "enhancement_reference" and solvent.species[:5] != [
+            "carbon-dioxide", "monoethanolamine", "water", "protonated-monoethanolamine", "carbamate-anion",
+        ]:
+            raise ConfigurationError("The enhancement reference requires the original MEA species order")
         if mathematical:
             if film_model != 'equilibrium_manifold' or dependencies.mobility_law not in (None,'harmonic_mean_onsager_v1'):
                 raise SolventRefusal('Mathematical phase requires the declared harmonic-mean film')
@@ -708,6 +714,9 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             if basis not in ("n2o_analogy", "epcsaft_free_co2"):
                 raise ConfigurationError("finite_rate_film requires n2o_analogy or epcsaft_free_co2")
             expected["henry_basis"] = basis
+            if not isinstance(model_values.get("mea_diffusivity_anchors", False), bool):
+                raise ConfigurationError("model.mea_diffusivity_anchors must be boolean")
+            expected["mea_diffusivity_anchors"] = model_values.get("mea_diffusivity_anchors", False)
     else:
         thermo_model = model_values.get("thermo_model", "ideal_henry")
         if thermo_model not in {"ideal_henry", "epcsaft_neutral", "epcsaft_ionic", "epcsaft_reactive_nine"}:

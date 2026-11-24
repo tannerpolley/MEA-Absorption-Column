@@ -1,0 +1,1398 @@
+{
+  "capture_source": "src/mea_absorption_column/data/NCCC_2017_cases.csv",
+  "temperature_source": "analyses/nccc_validation/figures/reactive_parallel/inputs/morgan2020_table_c2.csv",
+  "cases": {
+    "1C": {
+      "measured_capture_percent": 97.1,
+      "capture_sd_pp": 0.7,
+      "taps": [
+        [
+          0.8,
+          346.65
+        ],
+        [
+          0.6,
+          346.75
+        ],
+        [
+          0.4,
+          342.54999999999995
+        ],
+        [
+          0.19999999999999996,
+          333.45
+        ],
+        [
+          0.0,
+          328.34999999999997
+        ]
+      ],
+      "closures": {
+        "enhancement": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/1C/enhancement/try1/attempt.json",
+          "runtime_s": 45.16889751400049,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 7.058352637322149e-10,
+          "iterations": 10,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "Subset checks cannot establish physical certification",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          },
+          "capture_percent": 99.40633573108487,
+          "T_liq_at_taps_K": [
+            341.42978890102574,
+            343.32563461559243,
+            343.464357973343,
+            342.428322664141,
+            329.7482449746809
+          ],
+          "T_liq_tap_error_K": [
+            -5.220211098974232,
+            -3.424365384407565,
+            0.9143579733430443,
+            8.97832266414099,
+            1.3982449746809493
+          ],
+          "T_liq_tap_RMSE_K": 4.947288137512244,
+          "capture_error_pp": 2.3063357310848716,
+          "peak_T_liq_native_K": 343.4860675267522
+        },
+        "manifold": {
+          "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/retry/attempt.json",
+          "runtime_s": 94.95546355199986,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 7.181693060709741e-10,
+          "iterations": 4,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 99.57701425936017,
+          "T_liq_at_taps_K": [
+            343.4188327479629,
+            344.860445982629,
+            344.6088368868928,
+            341.5049490001308,
+            327.10063495386123
+          ],
+          "T_liq_tap_error_K": [
+            -3.231167252037096,
+            -1.8895540173709833,
+            2.058836886892834,
+            8.054949000130819,
+            -1.2493650461387347
+          ],
+          "T_liq_tap_RMSE_K": 4.1156477481740845,
+          "capture_error_pp": 2.4770142593601747,
+          "peak_T_liq_native_K": 344.90035279185145
+        },
+        "n2o": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/1C/n2o/try1/attempt.json",
+          "runtime_s": 359.3365305850002,
+          "status": "completed",
+          "solver_status": "Maximum_Iterations_Exceeded",
+          "max_scaled_residual": 0.9118861337076847,
+          "iterations": 20,
+          "numerical_acceptance": "rejected",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "one or more physical criteria failed",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          }
+        },
+        "epcsaft": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/1C/epcsaft/try1/attempt.json",
+          "runtime_s": 365.2267553190013,
+          "status": "completed",
+          "solver_status": "Maximum_Iterations_Exceeded",
+          "max_scaled_residual": 0.010735973147554265,
+          "iterations": 20,
+          "numerical_acceptance": "rejected",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "one or more physical criteria failed",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          }
+        }
+      }
+    },
+    "2C": {
+      "measured_capture_percent": 92.3,
+      "capture_sd_pp": 0.5,
+      "taps": [
+        [
+          0.8,
+          347.04999999999995
+        ],
+        [
+          0.6,
+          345.84999999999997
+        ],
+        [
+          0.4,
+          340.84999999999997
+        ],
+        [
+          0.19999999999999996,
+          331.75
+        ],
+        [
+          0.0,
+          327.95
+        ]
+      ],
+      "closures": {
+        "enhancement": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/2C/enhancement/try1/attempt.json",
+          "runtime_s": 37.201044919000196,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 2.172496894584945e-10,
+          "iterations": 9,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "Subset checks cannot establish physical certification",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          },
+          "capture_percent": 97.83605057602524,
+          "T_liq_at_taps_K": [
+            342.6126698603883,
+            343.97558015380724,
+            343.4572052100379,
+            340.8598078108116,
+            327.42458329977956
+          ],
+          "T_liq_tap_error_K": [
+            -4.437330139611674,
+            -1.8744198461927226,
+            2.6072052100379324,
+            9.109807810811617,
+            -0.5254167002204326
+          ],
+          "T_liq_tap_RMSE_K": 4.759527888220661,
+          "capture_error_pp": 5.5360505760252465,
+          "peak_T_liq_native_K": 343.98060761236223
+        },
+        "manifold": {
+          "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/2C/17/cosine/attempt.json",
+          "runtime_s": 485.38097690700033,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 8.933393866968249e-11,
+          "iterations": 15,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 98.34598595170544,
+          "T_liq_at_taps_K": [
+            343.75169015358597,
+            344.2837415910581,
+            342.4212236162624,
+            338.26015225726024,
+            325.5146553316117
+          ],
+          "T_liq_tap_error_K": [
+            -3.2983098464139857,
+            -1.5662584089418488,
+            1.5712236162624436,
+            6.510152257260245,
+            -2.435344668388268
+          ],
+          "T_liq_tap_RMSE_K": 3.580886565234681,
+          "capture_error_pp": 6.045985951705447,
+          "peak_T_liq_native_K": 344.5014765082436
+        },
+        "n2o": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/2C/n2o/try1/attempt.json",
+          "runtime_s": 117.56580187899999,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 9.118415229792725e-11,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 90.97893906598343,
+          "T_liq_at_taps_K": [
+            342.8554724775153,
+            343.0514910115372,
+            340.9800520382284,
+            336.87199587462294,
+            324.7969508531314
+          ],
+          "T_liq_tap_error_K": [
+            -4.194527522484634,
+            -2.7985089884627428,
+            0.1300520382284276,
+            5.1219958746229395,
+            -3.153049146868568
+          ],
+          "T_liq_tap_RMSE_K": 3.510532378151731,
+          "capture_error_pp": -1.3210609340165718,
+          "peak_T_liq_native_K": 343.4359121115668,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              30107.219963628635,
+              34752.87422363427
+            ],
+            "hatta": [
+              260.15131113607515,
+              649.5305684408916
+            ],
+            "kinetic_resistance": [
+              273982.3964240551,
+              778834.7103981803
+            ],
+            "manifold_resistance": [
+              7642.625654545258,
+              557482.8929263654
+            ],
+            "theta": [
+              0.001539573422079829,
+              0.0038439168176128795
+            ]
+          }
+        },
+        "epcsaft": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/2C/epcsaft/try1/attempt.json",
+          "runtime_s": 347.5277309060002,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 2.1232992367169158e-08,
+          "iterations": 18,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 95.36387727444826,
+          "T_liq_at_taps_K": [
+            343.5011191220536,
+            343.83711869476383,
+            341.84644000531443,
+            337.62794991675133,
+            325.08648617034135
+          ],
+          "T_liq_tap_error_K": [
+            -3.548880877946374,
+            -2.012881305236135,
+            0.9964400053144686,
+            5.877949916751334,
+            -2.8635138296586433
+          ],
+          "T_liq_tap_RMSE_K": 3.4753171364782514,
+          "capture_error_pp": 3.0638772744482594,
+          "peak_T_liq_native_K": 344.1474312626951,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              29970.814290808852,
+              34752.554395577885
+            ],
+            "hatta": [
+              237.33365983327553,
+              664.7604027304257
+            ],
+            "kinetic_resistance": [
+              129052.07225875682,
+              388778.272159412
+            ],
+            "manifold_resistance": [
+              7393.650698443915,
+              769948.1982982164
+            ],
+            "theta": [
+              0.0015043013932427636,
+              0.0042134773495781834
+            ]
+          }
+        }
+      },
+      "henry_capture_shift_pp": 4.384938208464831,
+      "henry_tap_shift_K": [
+        0.6456466445382603,
+        0.7856276832266076,
+        0.866387967086041,
+        0.7559540421283941,
+        0.28953531720992487
+      ],
+      "henry_peak_liquid_T_shift_K": 0.7115191511283001,
+      "henry_tap_RMSE_shift_K": -0.03521524167347945
+    },
+    "3C": {
+      "measured_capture_percent": 89.5,
+      "capture_sd_pp": 1.2,
+      "taps": [
+        [
+          0.8,
+          348.04999999999995
+        ],
+        [
+          0.6,
+          346.84999999999997
+        ],
+        [
+          0.4,
+          341.84999999999997
+        ],
+        [
+          0.19999999999999996,
+          333.95
+        ],
+        [
+          0.0,
+          330.15
+        ]
+      ],
+      "closures": {
+        "enhancement": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/3C/enhancement/try1/attempt.json",
+          "runtime_s": 30.50533894,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 1.7534610943264138e-08,
+          "iterations": 7,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "Subset checks cannot establish physical certification",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          },
+          "capture_percent": 92.28507177139996,
+          "T_liq_at_taps_K": [
+            344.89840422244316,
+            345.58121108494925,
+            343.85904586358305,
+            340.079855209419,
+            327.35966994861803
+          ],
+          "T_liq_tap_error_K": [
+            -3.1515957775567927,
+            -1.2687889150507203,
+            2.009045863583083,
+            6.12985520941902,
+            -2.790330051381943
+          ],
+          "T_liq_tap_RMSE_K": 3.4911234072182653,
+          "capture_error_pp": 2.7850717713999558,
+          "peak_T_liq_native_K": 345.8003295885048
+        },
+        "manifold": {
+          "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/3C/17/cosine/attempt.json",
+          "runtime_s": 100.67752595699994,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 1.7860243639219501e-12,
+          "iterations": 5,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 89.41488041587351,
+          "T_liq_at_taps_K": [
+            344.3785530464893,
+            344.28593854858366,
+            342.0227582200327,
+            338.07934453363526,
+            326.26044049080343
+          ],
+          "T_liq_tap_error_K": [
+            -3.6714469535106673,
+            -2.5640614514163076,
+            0.17275822003273333,
+            4.129344533635276,
+            -3.8895595091965447
+          ],
+          "T_liq_tap_RMSE_K": 3.233077132229157,
+          "capture_error_pp": -0.08511958412648823,
+          "peak_T_liq_native_K": 344.8238879702493
+        },
+        "n2o": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/3C/n2o/try1/attempt.json",
+          "runtime_s": 109.08803119099866,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 8.319009556161396e-12,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 81.65900367324679,
+          "T_liq_at_taps_K": [
+            343.68119596342234,
+            343.91096348734976,
+            341.67135989965493,
+            337.66382481832136,
+            325.9082260335607
+          ],
+          "T_liq_tap_error_K": [
+            -4.368804036577615,
+            -2.9390365126502047,
+            -0.17864010034503508,
+            3.7138248183213705,
+            -4.241773966439268
+          ],
+          "T_liq_tap_RMSE_K": 3.45083867434283,
+          "capture_error_pp": -7.8409963267532135,
+          "peak_T_liq_native_K": 344.3751207955939,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              34435.77045664811,
+              40223.7756267108
+            ],
+            "hatta": [
+              247.08974052889016,
+              554.6046185991779
+            ],
+            "kinetic_resistance": [
+              336191.92078575195,
+              848382.2113082916
+            ],
+            "manifold_resistance": [
+              23079.68689245926,
+              1068590.4563116622
+            ],
+            "theta": [
+              0.0018030863185485241,
+              0.004047112590994357
+            ]
+          }
+        },
+        "epcsaft": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/3C/epcsaft/try1/attempt.json",
+          "runtime_s": 110.5211349759993,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 7.25885840359178e-12,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 85.86211633649842,
+          "T_liq_at_taps_K": [
+            344.28969803118855,
+            344.31847887441637,
+            341.9973595490377,
+            337.9199011315283,
+            326.0231291389893
+          ],
+          "T_liq_tap_error_K": [
+            -3.7603019688114045,
+            -2.5315211255835948,
+            0.14735954903773063,
+            3.9699011315283315,
+            -4.126870861010673
+          ],
+          "T_liq_tap_RMSE_K": 3.2668444419710116,
+          "capture_error_pp": -3.637883663501583,
+          "peak_T_liq_native_K": 344.84170065980163,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              34304.59417571143,
+              40222.40666509715
+            ],
+            "hatta": [
+              233.2158391498045,
+              548.6941468873546
+            ],
+            "kinetic_resistance": [
+              158157.06065238852,
+              394998.56457884866
+            ],
+            "manifold_resistance": [
+              26895.475273201424,
+              1326940.0452534433
+            ],
+            "theta": [
+              0.0018225089618193017,
+              0.004287873429375684
+            ]
+          }
+        },
+        "anchors": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/3C/anchors/try1/attempt.json",
+          "runtime_s": 125.32306796599914,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 9.632987456824879e-12,
+          "iterations": 7,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 80.50959821035426,
+          "T_liq_at_taps_K": [
+            343.3659988894294,
+            343.65104693395995,
+            341.47670650808584,
+            337.56800471564543,
+            325.9344131963388
+          ],
+          "T_liq_tap_error_K": [
+            -4.684001110570534,
+            -3.198953066040019,
+            -0.37329349191412575,
+            3.6180047156454407,
+            -4.215586803661154
+          ],
+          "T_liq_tap_RMSE_K": 3.554536407896056,
+          "capture_error_pp": -8.990401789645745,
+          "peak_T_liq_native_K": 344.0918965098344,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              34525.244282981876,
+              40224.43297014494
+            ],
+            "hatta": [
+              248.82284589812764,
+              539.8096710359388
+            ],
+            "kinetic_resistance": [
+              345846.5531594991,
+              841134.7780194172
+            ],
+            "manifold_resistance": [
+              18090.837420706106,
+              1059445.6662353012
+            ],
+            "theta": [
+              0.0018525047876243462,
+              0.004018923569459603
+            ]
+          }
+        }
+      },
+      "henry_capture_shift_pp": 4.2031126632516305,
+      "henry_tap_shift_K": [
+        0.6085020677662101,
+        0.40751538706660995,
+        0.3259996493827657,
+        0.256076313206961,
+        0.11490310542859561
+      ],
+      "henry_peak_liquid_T_shift_K": 0.4665798642077448,
+      "henry_tap_RMSE_shift_K": -0.18399423237181844
+    },
+    "4C": {
+      "measured_capture_percent": 88.9,
+      "capture_sd_pp": 0.8,
+      "taps": [
+        [
+          0.8,
+          343.65
+        ],
+        [
+          0.6,
+          344.15
+        ],
+        [
+          0.4,
+          341.84999999999997
+        ],
+        [
+          0.19999999999999996,
+          331.84999999999997
+        ],
+        [
+          0.0,
+          332.25
+        ]
+      ],
+      "closures": {
+        "enhancement": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/4C/enhancement/try1/attempt.json",
+          "runtime_s": 33.82941811300043,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 8.445037323664998e-09,
+          "iterations": 8,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "Subset checks cannot establish physical certification",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          },
+          "capture_percent": 92.39957101322732,
+          "T_liq_at_taps_K": [
+            347.0274343988964,
+            347.56200938252766,
+            345.6361558975979,
+            341.65817548658765,
+            328.27511115732915
+          ],
+          "T_liq_tap_error_K": [
+            3.377434398896412,
+            3.4120093825276854,
+            3.7861558975979506,
+            9.808175486587686,
+            -3.9748888426708504
+          ],
+          "T_liq_tap_RMSE_K": 5.465965519713974,
+          "capture_error_pp": 3.4995710132273103,
+          "peak_T_liq_native_K": 347.8695076282244
+        },
+        "manifold": {
+          "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/4C/17/cosine/attempt.json",
+          "runtime_s": 114.15472951400079,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 9.947815632216133e-11,
+          "iterations": 5,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 88.61744020086437,
+          "T_liq_at_taps_K": [
+            346.2475571709789,
+            346.1093264559662,
+            343.75683497722287,
+            339.71000333806705,
+            327.17521321967615
+          ],
+          "T_liq_tap_error_K": [
+            2.5975571709789165,
+            1.9593264559662202,
+            1.9068349772228999,
+            7.860003338067088,
+            -5.074786780323848
+          ],
+          "T_liq_tap_RMSE_K": 4.5112170505993,
+          "capture_error_pp": -0.28255979913564033,
+          "peak_T_liq_native_K": 346.68933306411935
+        },
+        "n2o": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/4C/n2o/try1/attempt.json",
+          "runtime_s": 118.6761974100009,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 1.0194730935948119e-10,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 82.84215955060318,
+          "T_liq_at_taps_K": [
+            345.9074004507255,
+            346.0374708342231,
+            343.6625032426386,
+            339.4935509526715,
+            326.87930031012894
+          ],
+          "T_liq_tap_error_K": [
+            2.2574004507255268,
+            1.8874708342231088,
+            1.812503242638627,
+            7.643550952671546,
+            -5.37069968987106
+          ],
+          "T_liq_tap_RMSE_K": 4.454477685978939,
+          "capture_error_pp": -6.057840449396821,
+          "peak_T_liq_native_K": 346.56646745532436,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              42004.602482862654,
+              50457.778737011795
+            ],
+            "hatta": [
+              257.4984474429726,
+              602.1580542494465
+            ],
+            "kinetic_resistance": [
+              329435.5653541288,
+              875828.1278641067
+            ],
+            "manifold_resistance": [
+              26191.780234266767,
+              1487418.3416559142
+            ],
+            "theta": [
+              0.0016606935553597124,
+              0.0038835185607146894
+            ]
+          }
+        },
+        "epcsaft": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/4C/epcsaft/try1/attempt.json",
+          "runtime_s": 111.85841249700024,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 9.218554153751893e-11,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 86.16700682389518,
+          "T_liq_at_taps_K": [
+            346.35863968242927,
+            346.2942530175387,
+            343.8535721430902,
+            339.64229261373714,
+            326.95785434818913
+          ],
+          "T_liq_tap_error_K": [
+            2.7086396824292933,
+            2.1442530175387446,
+            2.0035721430902527,
+            7.792292613737175,
+            -5.29214565181087
+          ],
+          "T_liq_tap_RMSE_K": 4.57548863058593,
+          "capture_error_pp": -2.732993176104827,
+          "peak_T_liq_native_K": 346.8771085308558,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              41886.79269929971,
+              50381.51702098445
+            ],
+            "hatta": [
+              246.8954845185547,
+              594.8843791387432
+            ],
+            "kinetic_resistance": [
+              153796.37932946187,
+              395966.78868481505
+            ],
+            "manifold_resistance": [
+              31709.04161996299,
+              1765320.8585833604
+            ],
+            "theta": [
+              0.0016809989219212175,
+              0.004050296836938903
+            ]
+          }
+        }
+      },
+      "henry_capture_shift_pp": 3.3248472732919936,
+      "henry_tap_shift_K": [
+        0.45123923170376656,
+        0.25678218331563585,
+        0.19106890045162572,
+        0.14874166106562825,
+        0.07855403806019012
+      ],
+      "henry_peak_liquid_T_shift_K": 0.31064107553146414,
+      "henry_tap_RMSE_shift_K": 0.12101094460699091
+    },
+    "5C": {
+      "measured_capture_percent": 86.4,
+      "capture_sd_pp": 0.6,
+      "taps": [
+        [
+          0.8,
+          338.04999999999995
+        ],
+        [
+          0.6,
+          339.54999999999995
+        ],
+        [
+          0.4,
+          337.45
+        ],
+        [
+          0.19999999999999996,
+          328.65
+        ],
+        [
+          0.0,
+          330.75
+        ]
+      ],
+      "closures": {
+        "enhancement": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/5C/enhancement/try1/attempt.json",
+          "runtime_s": 29.244039766999776,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 7.142785898646564e-12,
+          "iterations": 7,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "Subset checks cannot establish physical certification",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          },
+          "capture_percent": 93.71819780766971,
+          "T_liq_at_taps_K": [
+            341.88823301329825,
+            343.03554577397193,
+            341.8917499918543,
+            338.68502815505104,
+            326.4765159591333
+          ],
+          "T_liq_tap_error_K": [
+            3.838233013298293,
+            3.485545773971978,
+            4.441749991854294,
+            10.035028155051066,
+            -4.27348404086672
+          ],
+          "T_liq_tap_RMSE_K": 5.754557514130423,
+          "capture_error_pp": 7.318197807669705,
+          "peak_T_liq_native_K": 343.036015835163
+        },
+        "manifold": {
+          "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/5C/17/cosine/attempt.json",
+          "runtime_s": 114.25220822000028,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 2.417316996193529e-11,
+          "iterations": 5,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 93.58434512001452,
+          "T_liq_at_taps_K": [
+            342.1761202599281,
+            342.54429076904904,
+            340.6761820671236,
+            336.9803250031949,
+            325.42412335392135
+          ],
+          "T_liq_tap_error_K": [
+            4.126120259928143,
+            2.994290769049087,
+            3.2261820671236023,
+            8.3303250031949,
+            -5.325876646078655
+          ],
+          "T_liq_tap_RMSE_K": 5.17992612007801,
+          "capture_error_pp": 7.1843451200145125,
+          "peak_T_liq_native_K": 342.8625170524474
+        },
+        "n2o": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/5C/n2o/try1/attempt.json",
+          "runtime_s": 113.10563915800049,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 2.9078791385054425e-11,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 86.2317668468301,
+          "T_liq_at_taps_K": [
+            341.52334338956183,
+            341.97977013134766,
+            340.04595550042166,
+            336.2895385872222,
+            324.9590004822346
+          ],
+          "T_liq_tap_error_K": [
+            3.473343389561876,
+            2.429770131347709,
+            2.595955500421667,
+            7.639538587222205,
+            -5.7909995177653855
+          ],
+          "T_liq_tap_RMSE_K": 4.829184349216503,
+          "capture_error_pp": -0.16823315316990772,
+          "peak_T_liq_native_K": 342.30275599627964,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              43236.02844491822,
+              49524.32841311135
+            ],
+            "hatta": [
+              283.18213882264905,
+              631.9953221184
+            ],
+            "kinetic_resistance": [
+              335739.5853164737,
+              835543.9777736006
+            ],
+            "manifold_resistance": [
+              25812.91042028767,
+              1038213.2861964732
+            ],
+            "theta": [
+              0.0015822901926680032,
+              0.003531296162101095
+            ]
+          }
+        },
+        "epcsaft": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/5C/epcsaft/try1/attempt.json",
+          "runtime_s": 116.49317540599986,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 4.920070326118487e-11,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 89.96737841535396,
+          "T_liq_at_taps_K": [
+            342.02073330803154,
+            342.42441820586504,
+            340.4821884548089,
+            336.67127197275715,
+            325.1256807418128
+          ],
+          "T_liq_tap_error_K": [
+            3.9707333080315834,
+            2.8744182058650836,
+            3.0321884548089315,
+            8.021271972757177,
+            -5.6243192581871995
+          ],
+          "T_liq_tap_RMSE_K": 5.083245833719865,
+          "capture_error_pp": 3.567378415353957,
+          "peak_T_liq_native_K": 342.75289443718,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              43102.60846116076,
+              49523.648346807866
+            ],
+            "hatta": [
+              268.0649943981401,
+              632.6863590299585
+            ],
+            "kinetic_resistance": [
+              156242.6632712816,
+              389039.3661236861
+            ],
+            "manifold_resistance": [
+              27786.575578019154,
+              1276435.8153248199
+            ],
+            "theta": [
+              0.0015805619731286934,
+              0.003730438591003654
+            ]
+          }
+        }
+      },
+      "henry_capture_shift_pp": 3.735611568523865,
+      "henry_tap_shift_K": [
+        0.4973899184697075,
+        0.4446480745173744,
+        0.4362329543872647,
+        0.3817333855349716,
+        0.166680259578186
+      ],
+      "henry_peak_liquid_T_shift_K": 0.45013844090033217,
+      "henry_tap_RMSE_shift_K": 0.25406148450336197
+    },
+    "6C": {
+      "measured_capture_percent": 60.2,
+      "capture_sd_pp": 0.5,
+      "taps": [
+        [
+          0.8,
+          335.75
+        ],
+        [
+          0.6,
+          336.54999999999995
+        ],
+        [
+          0.4,
+          331.15
+        ],
+        [
+          0.19999999999999996,
+          325.95
+        ],
+        [
+          0.0,
+          325.54999999999995
+        ]
+      ],
+      "closures": {
+        "enhancement": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/6C/enhancement/try1/attempt.json",
+          "runtime_s": 22.305601091000426,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 2.110328032417658e-08,
+          "iterations": 5,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "Subset checks cannot establish physical certification",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          },
+          "capture_percent": 72.19134562692584,
+          "T_liq_at_taps_K": [
+            338.50003209080495,
+            337.79616294618245,
+            335.5190893572196,
+            332.01276087030067,
+            323.04699615225485
+          ],
+          "T_liq_tap_error_K": [
+            2.7500320908049503,
+            1.2461629461824941,
+            4.36908935721965,
+            6.062760870300679,
+            -2.5030038477451058
+          ],
+          "T_liq_tap_RMSE_K": 3.7742982932603812,
+          "capture_error_pp": 11.991345626925835,
+          "peak_T_liq_native_K": 338.6927814426416
+        },
+        "manifold": {
+          "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/6C/17/cosine/attempt.json",
+          "runtime_s": 89.32459227600066,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 1.0320009647642107e-11,
+          "iterations": 4,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 69.67676857841172,
+          "T_liq_at_taps_K": [
+            338.03607022644826,
+            337.4079656133794,
+            335.2047376299004,
+            331.78130310692575,
+            322.9393364061937
+          ],
+          "T_liq_tap_error_K": [
+            2.2860702264482597,
+            0.8579656133794629,
+            4.054737629900444,
+            5.831303106925759,
+            -2.610663593806237
+          ],
+          "T_liq_tap_RMSE_K": 3.5559184368090553,
+          "capture_error_pp": 9.476768578411722,
+          "peak_T_liq_native_K": 338.2382729068555
+        },
+        "n2o": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/6C/n2o/try1/attempt.json",
+          "runtime_s": 111.81178510100108,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 3.7110525740543687e-09,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 61.13163355541935,
+          "T_liq_at_taps_K": [
+            337.0519131778344,
+            336.73462602045936,
+            334.58030065745913,
+            331.1459895638859,
+            322.5718324681328
+          ],
+          "T_liq_tap_error_K": [
+            1.3019131778344217,
+            0.18462602045940457,
+            3.4303006574591564,
+            5.195989563885917,
+            -2.9781675318671432
+          ],
+          "T_liq_tap_RMSE_K": 3.1420953736795867,
+          "capture_error_pp": 0.9316335554193458,
+          "peak_T_liq_native_K": 337.32604891815885,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              29589.205537054073,
+              32720.90385995142
+            ],
+            "hatta": [
+              234.5938043034264,
+              435.663588622081
+            ],
+            "kinetic_resistance": [
+              458971.5971157977,
+              932968.7667685604
+            ],
+            "manifold_resistance": [
+              79555.33816896792,
+              1219083.064257976
+            ],
+            "theta": [
+              0.002295349040214274,
+              0.00426268717099872
+            ]
+          }
+        },
+        "epcsaft": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/6C/epcsaft/try1/attempt.json",
+          "runtime_s": 105.64413021499968,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 3.410311412296231e-11,
+          "iterations": 6,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 65.06201762945403,
+          "T_liq_at_taps_K": [
+            337.6257381066166,
+            337.0869589309094,
+            334.8333307124712,
+            331.3369658276685,
+            322.65025697633627
+          ],
+          "T_liq_tap_error_K": [
+            1.875738106616609,
+            0.5369589309094636,
+            3.683330712471218,
+            5.386965827668519,
+            -2.8997430236636887
+          ],
+          "T_liq_tap_RMSE_K": 3.3106360086027404,
+          "capture_error_pp": 4.86201762945403,
+          "peak_T_liq_native_K": 337.8597901808648,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              29508.8086837931,
+              32719.222216145325
+            ],
+            "hatta": [
+              222.71610105286948,
+              426.00193767696345
+            ],
+            "kinetic_resistance": [
+              207521.52116200133,
+              407331.09733953106
+            ],
+            "manifold_resistance": [
+              111468.20536712621,
+              1502288.6479380678
+            ],
+            "theta": [
+              0.002347407163106141,
+              0.004490021131263495
+            ]
+          }
+        }
+      },
+      "henry_capture_shift_pp": 3.9303840740346843,
+      "henry_tap_shift_K": [
+        0.5738249287821873,
+        0.352332910450059,
+        0.25303005501206144,
+        0.19097626378260202,
+        0.07842450820345448
+      ],
+      "henry_peak_liquid_T_shift_K": 0.5337412627059734,
+      "henry_tap_RMSE_shift_K": 0.16854063492315374
+    },
+    "7C": {
+      "measured_capture_percent": 76.4,
+      "capture_sd_pp": 2.2,
+      "taps": [
+        [
+          0.8,
+          324.34999999999997
+        ],
+        [
+          0.6,
+          331.34999999999997
+        ],
+        [
+          0.4,
+          327.84999999999997
+        ],
+        [
+          0.19999999999999996,
+          324.54999999999995
+        ],
+        [
+          0.0,
+          328.04999999999995
+        ]
+      ],
+      "closures": {
+        "enhancement": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/7C/enhancement/try1/attempt.json",
+          "runtime_s": 22.187546458000725,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 3.405808235564456e-08,
+          "iterations": 5,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "rejected",
+          "failure": {
+            "kind": "outer_solve_failure",
+            "message": "Subset checks cannot establish physical certification",
+            "native_cause": null,
+            "phase": "solve_or_certification"
+          },
+          "capture_percent": 76.37547512944816,
+          "T_liq_at_taps_K": [
+            336.0189806692249,
+            339.69017030757965,
+            339.4761530264614,
+            337.36139867104947,
+            327.59385859091213
+          ],
+          "T_liq_tap_error_K": [
+            11.668980669224936,
+            8.340170307579683,
+            11.626153026461452,
+            12.811398671049517,
+            -0.4561414090878202
+          ],
+          "T_liq_tap_RMSE_K": 10.052173752045194,
+          "capture_error_pp": -0.024524870551843492,
+          "peak_T_liq_native_K": 339.8417595683326
+        },
+        "manifold": {
+          "path": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/7C/17/cosine/attempt.json",
+          "runtime_s": 89.64091339799961,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 2.0375780374333647e-12,
+          "iterations": 4,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 74.07565986431919,
+          "T_liq_at_taps_K": [
+            335.3461871248811,
+            339.31950276235216,
+            339.2490985180299,
+            337.14623654040076,
+            327.3743039060313
+          ],
+          "T_liq_tap_error_K": [
+            10.996187124881146,
+            7.969502762352192,
+            11.399098518029916,
+            12.59623654040081,
+            -0.6756960939686678
+          ],
+          "T_liq_tap_RMSE_K": 9.731292748462826,
+          "capture_error_pp": -2.3243401356808135,
+          "peak_T_liq_native_K": 339.56600535556885
+        },
+        "n2o": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/7C/n2o/try1/attempt.json",
+          "runtime_s": 102.78137327300101,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 8.653837663321493e-12,
+          "iterations": 5,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 68.97992848850876,
+          "T_liq_at_taps_K": [
+            333.80235153012376,
+            338.9426623255521,
+            339.26832746005647,
+            337.1720553309027,
+            327.23984345463543
+          ],
+          "T_liq_tap_error_K": [
+            9.452351530123792,
+            7.592662325552112,
+            11.418327460056503,
+            12.622055330902754,
+            -0.8101565453645208
+          ],
+          "T_liq_tap_RMSE_K": 9.352500275630469,
+          "capture_error_pp": -7.420071511491244,
+          "peak_T_liq_native_K": 339.4601634775929,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              58458.10088778376,
+              69928.8458716545
+            ],
+            "hatta": [
+              260.6125658990536,
+              418.9116192452131
+            ],
+            "kinetic_resistance": [
+              530031.4347630666,
+              892391.7121529485
+            ],
+            "manifold_resistance": [
+              167853.0279792463,
+              2292133.7076768703
+            ],
+            "theta": [
+              0.002387138370145428,
+              0.0038371135196425747
+            ]
+          }
+        },
+        "epcsaft": {
+          "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/7C/epcsaft/try1/attempt.json",
+          "runtime_s": 102.5614662400003,
+          "status": "completed",
+          "solver_status": "Solve_Succeeded",
+          "max_scaled_residual": 1.5425640138785394e-12,
+          "iterations": 5,
+          "numerical_acceptance": "accepted",
+          "physical_acceptance": "accepted",
+          "failure": null,
+          "capture_percent": 71.23489852080307,
+          "T_liq_at_taps_K": [
+            334.75418321155473,
+            339.3456054109463,
+            339.411200146117,
+            337.2465487330154,
+            327.29760767170404
+          ],
+          "T_liq_tap_error_K": [
+            10.404183211554766,
+            7.995605410946325,
+            11.561200146117017,
+            12.696548733015447,
+            -0.7523923282959117
+          ],
+          "T_liq_tap_RMSE_K": 9.670641415658457,
+          "capture_error_pp": -5.1651014791969345,
+          "peak_T_liq_native_K": 339.69763157959653,
+          "diagnostic_ranges": {
+            "gas_resistance": [
+              58371.623109528344,
+              69879.2746807515
+            ],
+            "hatta": [
+              255.78196081158436,
+              420.30510653943946
+            ],
+            "kinetic_resistance": [
+              232949.96796733027,
+              395739.341058931
+            ],
+            "manifold_resistance": [
+              218745.74232816382,
+              2488773.4721425967
+            ],
+            "theta": [
+              0.0023792240076106826,
+              0.003909579850068574
+            ]
+          }
+        }
+      },
+      "henry_capture_shift_pp": 2.2549700322943096,
+      "henry_tap_shift_K": [
+        0.9518316814309742,
+        0.4029430853942131,
+        0.14287268606051384,
+        0.07449340211269373,
+        0.057764217068609014
+      ],
+      "henry_peak_liquid_T_shift_K": 0.2374681020036178,
+      "henry_tap_RMSE_shift_K": 0.3181411400279881
+    }
+  }
+}

@@ -1,0 +1,2 @@
+1C epcsaft {'time_utc': '2026-11-24T02:18:59Z', 'load': (8.3359375, 8.0703125, 10.35498046875), 'cpu_ticks': 'cpu  6383302 1435591 2362242 21630098 538082 0 7777 0 0 0', 'MemAvailable': 20040780, 'SwapFree': 9838988}
+{'status': 'completed', 'started_at_utc': '2026-11-24T02:18:59Z', 'runtime_s': 365.2267553190013} {'kind': 'outer_solve_failure', 'phase': 'solve_or_certification', 'message': 'one or more physical criteria failed', 'native_cause': None}
