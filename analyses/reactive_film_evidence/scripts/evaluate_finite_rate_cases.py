@@ -55,7 +55,7 @@ def c7(output, case, attempt, basis):
         volume = float(assembly["balance"](state[:8], state[8:11])[5][0])
         at, d, _, henry = frozen(assembly, path, state[4], state[6], flow, flow.sum() / volume)
         diagnostics = assembly["diagnostics"](state)
-        f_i, kl = float(diagnostics[7] - diagnostics[11] * state[8]), d / float(diagnostics[2])
+        f_i, kl = float(diagnostics[assembly["diagnostics"].index_out("interface_fugacity")]), d / float(diagnostics[2])
         fb, xi = at(0.)[0], state[11]
         sign = np.sign(f_i - fb)
         if sign == 0:

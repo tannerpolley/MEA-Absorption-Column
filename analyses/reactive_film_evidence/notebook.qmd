@@ -167,10 +167,15 @@ seed. New solves use a 600 s wall limit, `nice -n 10`, and at most two
 concurrent workers. Each launch record retains CPU load and memory.
 The [6C manifold](../nccc_validation/results/runs/joint_fit_f2_20261123/bridge/6C/17/cosine/summary.json)
 qualified the inputs on an existing closure before the first finite-rate solve.
-The enhancement results use numerically accepted profiles with the original
-native-grid material, energy, interface, and boundary checks. The enhancement
-route provides this subset of the physical certification available for the
-manifold and finite-rate films.
+The original enhancement attempts passed numerical acceptance and recorded a
+physical rejection because the runner supplied only a subset of the checks.
+Replaying the existing certificate on the seven saved profiles with their
+enhancement equations, inputs, and scales passed the native-grid material,
+energy, interface, boundary, state-bound, and CO₂ capture-direction checks,
+as well as charge balance at the sampled equilibrium states. The maximum
+scaled certificate residual was $2.60\times10^{-8}$ on 7C against $10^{-7}$.
+The original attempt records retain their original acceptance fields.
+[Saved-profile certificates](results/runs/finite_rate_film_cp3_2026-11-23/review_ee34295/enhancement_profile_certificates.json).
 
 Capture means and standard deviations come from Morgan et al. (2020), Table A1.
 The standard deviation is reported in percentage points. Liquid temperature
@@ -195,7 +200,7 @@ and [ePC-SAFT attempt](results/runs/finite_rate_film_cp3_2026-11-23/1C/epcsaft/t
 {{< include results/runs/finite_rate_film_cp3_2026-11-23/_column.qmd >}}
 
 Across 2C–7C, changing to ePC-SAFT Henry raised finite-rate capture by
-2.26–4.39 percentage points and the native-node peak liquid temperature
++2.25 to +4.38 percentage points and the native-node peak liquid temperature
 by 0.24–0.71 K. The liquid tap RMSE moved by −0.18 to +0.32 K. On these
 six common cases, the capture MAE is 5.19 points for enhancement, 4.23 for
 the manifold, 3.96 for finite rate with N₂O, and 3.84 for finite rate with

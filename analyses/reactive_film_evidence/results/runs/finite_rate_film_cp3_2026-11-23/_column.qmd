@@ -1,4 +1,4 @@
-**Capture (%)**
+**Capture (%) from certified profiles**
 
 | Case | Measured mean ± SD | Enhancement | Manifold | Finite rate, N₂O | Finite rate, ePC-SAFT |
 |---|---:|---:|---:|---:|---:|
@@ -59,7 +59,8 @@ $(f^*(\xi_i)-f_b)/N$. The manifold term is undefined at zero flux.
 **C7 at the finite-rate column states**
 
 Both Henry bases are evaluated at the bulk state and matched interfacial
-fugacity on each finite-rate profile. The independent resolved-film reference
+fugacity on each finite-rate profile. The column diagnostic supplies the full
+interfacial fugacity, including the kinetic drop. The independent resolved-film reference
 uses 17 and 33 tabulated loading points, with BVP tolerances of $2\times10^{-6}$
 and $2\times10^{-8}$. A score requires convergence at both resolutions,
 reference flux change at most $2\times10^{-4}$ relative, and a refined
@@ -68,20 +69,29 @@ limit is 2% at each state. C7 checks the numerical reduction on these film
 states. The ratio does not quantify comparison error against column or
 wetted-wall measurements.
 
-| Case | Scored / planned | Worst profile | Worst Henry basis | $z$ (m) | Worst flux error (%) | $Ha_i$ | Max. relative refinement change | Min. $G-Dm$ (mol/(m s)) |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1C | 0/68 | — | — | — | — | — | — | — |
-| 2C | 68/68 | epcsaft | n2o | 0.000 | 0.00804 | 289.2 | 4.66e-07 | 7.51e-07 |
-| 3C | 68/68 | epcsaft | n2o | 0.000 | 0.00593 | 262.2 | 1.50e-07 | 9.78e-07 |
-| 4C | 68/68 | n2o | n2o | 0.000 | 0.00473 | 287.3 | 1.89e-07 | 9.76e-07 |
-| 5C | 68/68 | epcsaft | n2o | 0.000 | 0.00495 | 300.6 | 1.14e-07 | 1.02e-06 |
-| 6C | 68/68 | epcsaft | n2o | 0.000 | 0.00504 | 245.0 | 3.32e-07 | 1.27e-06 |
-| 7C | 68/68 | epcsaft | epcsaft | 6.000 | 0.00514 | 346.5 | 3.54e-07 | 1.36e-06 |
+| Case | Scored / planned | Worst profile | Worst Henry basis | $z$ (m) | Worst flux error (%) | $Ha_i$ | $Ha_i/E_\infty$ | Max. relative refinement change | Min. $G-Dm$ (mol/(m s)) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1C | 0/68 | — | — | — | — | — | — | — | — |
+| 2C | 67/68 | n2o | n2o | 0.000 | 0.01019 | 260.2 | 1.203 | 1.09e-06 | 7.51e-07 |
+| 3C | 68/68 | n2o | epcsaft | 6.000 | 0.00975 | 361.3 | 0.522 | 1.95e-06 | 9.78e-07 |
+| 4C | 67/68 | n2o | epcsaft | 6.000 | 0.01000 | 373.0 | 0.569 | 2.24e-06 | 9.76e-07 |
+| 5C | 67/68 | n2o | epcsaft | 6.000 | 0.00600 | 436.9 | 0.453 | 8.48e-07 | 1.02e-06 |
+| 6C | 68/68 | n2o | epcsaft | 6.000 | 0.01226 | 280.7 | 0.894 | 1.54e-06 | 1.27e-06 |
+| 7C | 68/68 | n2o | n2o | 6.000 | 0.00976 | 309.6 | 0.639 | 1.06e-06 | 1.36e-06 |
+
+405 of 408 comparisons scored. The largest absolute flux error was 0.01226%
+(signed error −0.01226%) at 6.000 m in 6C, using ePC-SAFT Henry on the N₂O
+profile ($Ha_i=280.68$, $Ha_i/E_\infty=0.894$). The maximum relative
+reference refinement change was $2.24\times10^{-6}$. All scored errors were
+below 2%. Three refined references reached the mesh-node limit and remain
+unscored. They are the N₂O Henry checks on N₂O profiles for 2C at 3.000 m,
+4C at 5.494 m, and 5C at 4.667 m.
 
 The [exact column metrics](results/runs/finite_rate_film_cp3_2026-11-23/column_comparison.json) link each profile and record
-its tap temperatures and retained solver outcome. The [C7 rows](results/runs/finite_rate_film_cp3_2026-11-23/C7.jsonl)
+its tap temperatures and retained solver outcome. The [Corrected C7 rows](results/runs/finite_rate_film_cp3_2026-11-23/review_ee34295/C7.jsonl)
 give both resolutions, $Ha_i/E_\infty$, the refinement change and the
-conductance margin at each checked state. Reaction R5 remains a source
+conductance margin at each checked state. These rows supersede the original
+C7 rows, which used the manifold equilibrium fugacity. Reaction R5 remains a source
 extrapolation above 323.15 K, ion diffusivities remain estimated, and the
 solved-state density bias and provisional vapour caloric reference limit
 thermal interpretation. This comparison has not been independently reviewed
