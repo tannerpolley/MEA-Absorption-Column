@@ -44,8 +44,9 @@ wetted-wall-column agreement, or Maxwell--Stefan transport accuracy.
 
 The owner selected Amine-Thermodynamics film-input bundle 3 for the current
 Work Package A identity (issue #78, 2026-10-29). The bundle is pinned at
-`a6de0317333e9b4bbd65537d285bfe3a384101c7` by input, schema and receipt
-SHA-256. Amundsen2009 pp. 3096–3100 provides general loaded-system uncertainty
+`a6de0317333e9b4bbd65537d285bfe3a384101c7` by the SHA-256 hashes of
+`3/input.json`, `3/schema.json` and `3.receipt.json`.
+Amundsen2009 pp. 3096–3100 provides general loaded-system uncertainty
 estimates with unnamed exceptions at the highest temperatures and loadings;
 these estimates cannot be assigned to individual loaded rows. Bundle 3 splits
 viscosity admission by loading state. Version 2 remains reserved for the
@@ -79,7 +80,7 @@ recovers the exact parameter archive from Amine-Thermodynamics commit
 from the upstream checkout by `ca21408`. The existing `validate_bundle` check
 verifies outer SHA-256
 `4139fecd9b5192e7cadd12883d2ff1bff71c20d74950af5256e4f0447995f27b`,
-all 12 manifest members, and the wheel member. The correction run retains its
+all 12 listed archive members, and the wheel member. The correction run retains its
 120 s wall limit, acquisition identity and verification log.
 
 The issue33 input now makes loaded row-level combined density uncertainty
