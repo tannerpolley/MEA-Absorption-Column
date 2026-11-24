@@ -85,7 +85,7 @@ These comparisons support the multiplier derivatives for the tested directions o
 
 ## Scope and retained evidence
 
-The comparisons verify feasibility and first-order sensitivity for the numerical optimum on the 17-node grid.
+The comparisons verify feasibility and first-order sensitivity for the local numerical optimum on the 17-node grid.
 The mesh dependence of the optimum and sensitivities remains to be quantified.
 The attempt files preserve the solver settings, the inlet basis, and physical certification.
 The [summary](results/runs/stage3_3c_n17_summary.json) retains the calculated comparisons, individual perturbed optima, and wall times.

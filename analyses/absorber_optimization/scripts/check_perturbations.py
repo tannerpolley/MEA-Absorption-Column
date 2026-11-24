@@ -9,17 +9,16 @@ request = json.loads((base / "request.json").read_text())
 design = json.loads((base / "attempt.json").read_text())["result"]["design"]
 s, p = design["decision"][0], design["parameters"]
 prefix = base.parent / f"stage3_{label}"
+if any(base.parent.glob(f"{prefix.name}_*")):  # a reused label could pair new case files with old certified attempts
+    raise FileExistsError(f"{prefix}_* already exists; choose a new label")
 def run(tag, settings):
     output = prefix.with_name(f"{prefix.name}_{tag}")
-    if output.exists():
-        result = json.loads((output / "attempt.json").read_text())
-    else:
-        before = sum(resource.getrusage(resource.RUSAGE_CHILDREN)[:2])
-        execution = {**request["execution"], "output_dir": str(output), "wall_limit_s": 1800}
-        result = run_column({**settings, "execution": execution})
-        cpu_s = sum(resource.getrusage(resource.RUSAGE_CHILDREN)[:2]) - before
-        log = dict(execution=result["execution"], worker_cpu_s=cpu_s, solver=result["solver"], failure=result["failure"])
-        (output / "run.log").write_text(json.dumps(log, indent=2) + "\n")
+    before = sum(resource.getrusage(resource.RUSAGE_CHILDREN)[:2])
+    execution = {**request["execution"], "output_dir": str(output), "wall_limit_s": 1800}
+    result = run_column({**settings, "execution": execution})
+    cpu_s = sum(resource.getrusage(resource.RUSAGE_CHILDREN)[:2]) - before
+    log = dict(execution=result["execution"], worker_cpu_s=cpu_s, solver=result["solver"], failure=result["failure"])
+    (output / "run.log").write_text(json.dumps(log, indent=2) + "\n")
     if result["numerical_acceptance"] != "accepted" or result["physical_acceptance"] != "accepted":
         raise RuntimeError(f"{output}: {result['solver']} {result['failure']}")
 run("second_start", {**request, "design": {**request["design"], "initial_scale": 1.15}})
