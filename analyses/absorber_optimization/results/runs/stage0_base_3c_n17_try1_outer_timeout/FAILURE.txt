@@ -1,0 +1,1 @@
+exit=124: outer 'timeout 960s' guard expired before the 900 s solver wall limit; worker was blocked in disk I/O (state D) during startup on an overloaded machine (load ~37, 25/31 GB used).
