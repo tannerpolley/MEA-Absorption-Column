@@ -1,0 +1,25 @@
+ 17:16:36 up 47 min,  1 user,  load average: 17.84, 13.30, 12.51
+42664cf6542efd0c81685336f06670a386221d08
+{
+ "attempt_id": "20261124T001637-bdcc5e3d4cfc",
+ "method": "upwind",
+ "nodes": 17,
+ "end_clustering": 1.0,
+ "quadrature_points": 9,
+ "execution": "completed",
+ "runtime_s": 113.11663920599995,
+ "iterations": 5,
+ "scaled_residual_inf": 1.7860243639219501e-12,
+ "numerical_acceptance": "accepted",
+ "k1_accepted": true,
+ "k1_scaled_residual_inf": {
+  "boundary": 0.0,
+  "charge": 2.1045047723532075e-14,
+  "energy": 4.629639387659467e-14,
+  "interface": 4.3630861713088604e-13,
+  "material": 3.692320669118395e-16
+ },
+ "capture_pct": 89.41488041587351,
+ "failure": null
+}
+Replay and Stage 0 match bit-for-bit for the complete native grid and state matrix, cell profile, and capture.
