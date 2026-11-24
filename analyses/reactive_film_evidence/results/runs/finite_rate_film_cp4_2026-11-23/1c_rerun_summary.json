@@ -1,0 +1,98 @@
+{
+  "n2o": {
+    "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp4_2026-11-23/n2o/solve/attempt.json",
+    "prior_attempt": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/1C/n2o/try1/attempt.json",
+    "runtime_s": 521.7605119559994,
+    "status": "completed",
+    "solver_status": "Solve_Succeeded",
+    "max_scaled_residual": 3.9176138640715425e-08,
+    "iterations": 33,
+    "numerical_acceptance": "accepted",
+    "physical_acceptance": "accepted",
+    "failure": null,
+    "prefix_through_iter_20": {
+      "alpha_du": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "alpha_pr": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "d_norm": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "inf_du": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "inf_pr": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "mu": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "obj": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "regularization_size": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      }
+    },
+    "seed_identical": true,
+    "capture_percent": 97.70626104783891
+  },
+  "epcsaft": {
+    "path": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp4_2026-11-23/epcsaft/solve/attempt.json",
+    "prior_attempt": "analyses/reactive_film_evidence/results/runs/finite_rate_film_cp3_2026-11-23/1C/epcsaft/try1/attempt.json",
+    "runtime_s": 413.80606695799906,
+    "status": "completed",
+    "solver_status": "Solve_Succeeded",
+    "max_scaled_residual": 3.346015202513685e-11,
+    "iterations": 25,
+    "numerical_acceptance": "accepted",
+    "physical_acceptance": "accepted",
+    "failure": null,
+    "prefix_through_iter_20": {
+      "alpha_du": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "alpha_pr": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "d_norm": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "inf_du": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "inf_pr": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "mu": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "obj": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "regularization_size": {
+        "identical": true,
+        "max_absolute_difference": 0.0
+      }
+    },
+    "seed_identical": true,
+    "capture_percent": 99.0532685016178
+  }
+}

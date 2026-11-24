@@ -1,0 +1,42 @@
+2026-11-24T03:17:04Z
+ 20:17:04 up  3:47,  1 user,  load average: 2.52, 3.14, 4.71
+               total        used        free      shared  buff/cache   available
+Mem:        32776336    10493916     3883064       76880    18923024    22282420
+Swap:       16582644     6785564     9797080
+MemoryCurrent=430292992
+CPUUsageNSec=81812937000
+Id=issue16-cp4-n2o.service
+ActiveState=active
+
+MemoryCurrent=450187264
+CPUUsageNSec=81815758000
+Id=issue16-cp4-epcsaft.service
+ActiveState=active
+2026-11-24T03:18:54Z
+ 20:18:54 up  3:49,  1 user,  load average: 3.26, 3.22, 4.56
+               total        used        free      shared  buff/cache   available
+Mem:        32776336    11106332     3233252       77424    18960956    21670004
+Swap:       16582644     6783144     9799500
+MemoryCurrent=513839104
+CPUUsageNSec=192118591000
+Id=issue16-cp4-n2o.service
+ActiveState=active
+
+MemoryCurrent=516829184
+CPUUsageNSec=192123281000
+Id=issue16-cp4-epcsaft.service
+ActiveState=active
+2026-11-24T03:22:38Z
+ 20:22:38 up  3:53,  1 user,  load average: 3.73, 3.52, 4.39
+               total        used        free      shared  buff/cache   available
+Mem:        32776336    10076712     4204624       77392    19019164    22699624
+Swap:       16582644     6662932     9919712
+MemoryCurrent=523317248
+CPUUsageNSec=415884571000
+Id=issue16-cp4-n2o.service
+ActiveState=active
+
+MemoryCurrent=[not set]
+CPUUsageNSec=[not set]
+Id=issue16-cp4-epcsaft.service
+ActiveState=inactive

@@ -163,8 +163,12 @@ reproduce the 3C inputs within $10^{-12}$ absolute before generating 1C, 2C and
 has a maximum absolute deviation of $2.84\times10^{-14}$. The seven #91 manifold
 attempts are reused by reference. The new closures use the checked case brackets,
 including [0, 1.5] for 1C and [0, 1] elsewhere, and start from their own interface
-seed. New solves use a 600 s wall limit, `nice -n 10`, and at most two
-concurrent workers. Each launch record retains CPU load and memory.
+seed. The initial runs used a 600 s wall limit and a 20-iteration cap.
+The 1C reruns used a 900 s wall limit and raised the cap to 60, following
+the [#91 iteration-cap rule](../nccc_validation/results/runs/joint_fit_f2_20261123/f2/inputs/run_policy.json).
+They used the original requests and seeds with those two limits changed.
+The runs use `nice -n 10` and at most two concurrent workers. The rerun
+records include [CPU and memory samples](results/runs/finite_rate_film_cp4_2026-11-23/machine_samples.log).
 The [6C manifold](../nccc_validation/results/runs/joint_fit_f2_20261123/bridge/6C/17/cosine/summary.json)
 qualified the inputs on an existing closure before the first finite-rate solve.
 The original enhancement attempts passed numerical acceptance and recorded a
@@ -189,23 +193,34 @@ of 5.85 and 2.56 percentage points, respectively, on their reported bases.
 They use different models and are external comparison values for the
 twelve-state closure comparison.
 
-Both 1C finite-rate runs initialized successfully, then reached IPOPT's
+Both original 1C finite-rate runs initialized successfully, then reached IPOPT's
 20-iteration limit. The final scaled residuals were 0.912 for N₂O and
-0.0107 for ePC-SAFT, above the case limit of $10^{-7}$. Neither run recorded
-a native callback failure. The 1C finite-rate cells are unavailable, and
-C7 has no accepted finite-rate profile to check for that case.
+0.0107 for ePC-SAFT, above the case limit of $10^{-7}$. The rerun results
+below compare the retained IPOPT traces through iteration 20.
 [N₂O attempt](results/runs/finite_rate_film_cp3_2026-11-23/1C/n2o/try1/attempt.json)
 and [ePC-SAFT attempt](results/runs/finite_rate_film_cp3_2026-11-23/1C/epcsaft/try1/attempt.json).
 
-{{< include results/runs/finite_rate_film_cp3_2026-11-23/_column.qmd >}}
+{{< include results/runs/finite_rate_film_cp4_2026-11-23/_column.qmd >}}
+
+![CO₂ capture parity by closure on the 17-node grid. Each marker pairs a measured mean with a certified prediction. Horizontal bars show one measurement standard deviation, and the dashed line marks parity.](results/runs/finite_rate_film_cp4_2026-11-23/figures/capture_parity.png)
+
+![3C gas-film, kinetic, and manifold CO₂ transfer resistances for the two finite-rate profiles on the 17-node grid. Markers show the native axial samples, joined by segments as a visual aid. Both panels use the same logarithmic resistance scale.](results/runs/finite_rate_film_cp4_2026-11-23/figures/3c_film_resistances.png)
+
+On 3C, the gas-film resistance is smaller than the kinetic resistance at
+every saved node. The ePC-SAFT Henry profile has a smaller kinetic term
+than the N₂O profile at each corresponding height. The manifold term
+exceeds the kinetic term at the gas inlet and falls below it near the
+liquid inlet under both Henry conventions.
 
 Across 2C–7C, changing to ePC-SAFT Henry raised finite-rate capture by
 +2.25 to +4.38 percentage points and the native-node peak liquid temperature
-by 0.24–0.71 K. The liquid tap RMSE moved by −0.18 to +0.32 K. On these
-six common cases, the capture MAE is 5.19 points for enhancement, 4.23 for
-the manifold, 3.96 for finite rate with N₂O, and 3.84 for finite rate with
-ePC-SAFT. The mean tap RMSE is lowest for finite rate with N₂O at 4.79 K.
-These are comparisons on the selected grid and measured cases.
+by 0.24–0.71 K. The liquid tap RMSE moved by −0.18 to +0.32 K. On 1C the
+same change raised capture by 1.35 percentage points, peak liquid
+temperature by 0.29 K, and tap RMSE by 0.41 K. Across all seven cases,
+capture MAE is 4.78 points for enhancement, 3.98 for the manifold, 3.48
+for finite rate with N₂O, and 3.57 for finite rate with ePC-SAFT. The mean
+tap RMSE is lowest for finite rate with N₂O at 4.58 K. These are measurement
+comparisons on the selected grid.
 
 ### Wetted-wall measurement comparison
 
@@ -253,6 +268,45 @@ The equilibrium-pressure proxy differs from the observed equilibrium
 pressure by −39.8% to +83.5%. The discrepancy is retained alongside the
 coefficient comparison and was not used to adjust loading or to reset the
 model equilibrium state.
+
+### Claim limits for the finite-rate closure
+
+Here, *predictive* means that no input was adjusted to column or film-flux
+data in this repository. The Morgan and Dugas results are measurement
+comparisons. Physical validation would require independent evidence within
+the relevant input domains.
+The Dugas comparison put 3 of 11 admissible N₂O predictions and 0 of 11
+ePC-SAFT predictions within the reported ±10% uncertainty band. All twelve
+Dugas rows exceed the concentration range of the Snijder correlation.
+
+The enhancement factor's source-range restriction is removed only at column
+states where C7 passes at their own Hatta numbers. C7 checks the reduction
+against a resolved film. Five refined references reached the mesh-node limit
+and remain unscored, all on N₂O profiles. The N₂O Henry checks failed to
+converge at 3.000 m in 1C, 3.000 m in 2C, 5.494 m in 4C, and 4.667 m in
+5C. The ePC-SAFT Henry check failed to converge at 4.667 m in 1C.
+
+The Luo kinetics are used outside their source domain. For example, the
+1C ePC-SAFT profile reaches 344.9 K, above Luo's 343 K ceiling. The R5
+equilibrium relation is also extrapolated above its 323.15 K source limit.
+Ion mobilities are estimated, and the source of the N₂O-based Henry
+correlation remains unrecovered. The closure uses film theory. Gaspar and Fosbøl reported
+agreement within 10% between their general method and surface-renewal
+model for second-order reversible MEA chemistry under their test conditions.
+This comparison gives no error estimate for using film theory on the column states.
+The closure assumes bulk chemical equilibrium, so it cannot qualify
+a slow amine by itself. [Gaspar and Fosbøl](https://doi.org/10.1016/j.ces.2015.08.023).
+
+The solved-state liquid density is about 11% high against Amundsen et al.
+(2009). On 3C this lowers predicted liquid holdup by about 12–16%.
+The provisional vapour caloric reference also limits thermal interpretation.
+The 7C manifold capture changed by −5.55 percentage points when the
+axial grid grew from 17 to 33 nodes. The reported 7C capture comparison
+therefore describes the 17-node grid, with mesh sensitivity unresolved
+for the finite-rate profiles. [Liquid density assessment](../liquid_density/notebook.qmd).
+
+The checkpoint 4 figures and 1C reruns await independent review and
+investigator promotion.
 
 ## Stage 1 comparison: Engine 1.0.0 (issue 16)
 
