@@ -38,7 +38,7 @@ def checks(balance, inlet, solver, candidate, lower, upper, p, profile):
     active_jac = np.vstack((jac_x if capture_slack <= tol else jac_x[:-1], np.eye(x.size)[active]))
     inlets = inlet(x[-1], p)
     pressure_gradient = [float(balance(state[:8], state[8:11], inlets)[5][-1]) for state in profile.T]
-    return dict(relative_steps=steps, relative_errors=errors, derivative_pass=bool(np.all(np.min(errors, axis=0) <= 1e-5)),
+    return dict(relative_steps=steps, relative_errors=errors, derivative_pass=bool(np.all(np.asarray(errors) <= 1e-5)),
                 scale_identity=scale_identity, scale_identity_relative_error=abs(scale_identity + x[-1]) / abs(x[-1]),
                 peak_liquid_temperature_k=max(profile[4]), peak_holdup=max(profile[7]), max_pressure_gradient_pa_per_m=max(pressure_gradient),
                 capture_slack_scaled=capture_slack, bound_slacks_scaled=slacks, bound_multipliers_scaled=multipliers,
