@@ -1,0 +1,9 @@
+
+******************************************************************************
+This program contains Ipopt, a library for large-scale nonlinear optimization.
+ Ipopt is released as open source code under the Eclipse Public License (EPL).
+         For more information visit https://github.com/coin-or/Ipopt
+******************************************************************************
+
+
+{'arm': 'f2', 'case': '3C', 'stage': 'seed', 'nodes': 17, 'wall_limit_s': 900, 'runtime_s': 145.41306518099918, 'solver_status': 'Solve_Succeeded', 'iterations': 7, 'certification': True, 'predicted_capture_pct': 94.15791404227379, 'measured_capture_pct': 89.5, 'scaled_residual_inf': 2.6835560874394502e-08, 'temperature_k': {'minimum': 316.75, 'maximum': 345.1489608958255, 'allowed': [298.0, 393.15], 'native_callback_failures': 0}, 'balances': {'boundary': 0.0, 'charge': 2.5870398415321874e-14, 'energy': 5.210796185685357e-12, 'interface': 2.6835560874394502e-08, 'material': 1.8461603345591976e-16}, 'mea_balance': {'liquid_mea_feed_mol_s': 9.729282110481522, 'liquid_mea_outlet_mol_s': 9.729282110481522, 'gas_mea_mol_s': 0.0, 'drift_mol_s': 0.0}}

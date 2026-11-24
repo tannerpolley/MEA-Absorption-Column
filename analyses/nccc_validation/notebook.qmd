@@ -9,6 +9,7 @@ resources:
   - inputs/joint_fit_f2/*
   - results/runs/joint_fit_f2_20261123/**/*.json
   - results/runs/joint_fit_f2_20261123/**/*.log
+  - results/runs/joint_fit_f2_20261123/**/*.jsonl
 format:
   html: {}
   pdf:
@@ -122,21 +123,39 @@ The CO₂ partial-pressure replay ends at 333.15 K and leaves the hotter column 
 
 {{< include results/runs/f2_replay_20261123/_replay.qmd >}}
 
-# Bridge arm numerical verification and measurement comparison
+# Bridge and F2 numerical verification and measurement comparison
 
 The bridge runs use `MEA_greenfield_exploratory` with the twelve-state equilibrium-manifold film, solved-state density, upwind discretization, nine film points, and a scaled residual limit of $10^{-7}$. The 33-node cosine mesh uses the certified 17-node cosine profile as a warm start. The [case rules](inputs/joint_fit_f2/case_rules.md) reproduce the retained 3C input within $10^{-12}$ absolute before generating the six other declarations. The 3C calculations use the unchanged retained declaration.
 
 The 1C seed originally stopped before IPOPT with liquid-minus-gas CO₂ flux residuals of −0.192461 and −0.159583 mol/(m² s) at log interface-to-bulk loading ratios 0 and 1. The extended probe returned −0.011448 at 1.25 and +0.786466 mol/(m² s) at 1.50. The root near 1.257766 gives a seed interface loading of 0.527633 mol CO₂ per mol MEA. The selected bracket is `[0, 1.5]` for 1C. The other cases kept `[0, 1]`. [Original 1C diagnosis](results/runs/joint_fit_f2_20261123/bridge/1C/17/seed/diagnosis.json) · [Extended 1C probe](results/runs/joint_fit_f2_20261123/bridge/1C/17/seed/extended_probe.json) · [Initialization issue #19](https://github.com/tannerpolley/MEA-Absorption-Column/issues/19)
 
-Temperature span is the minimum and maximum over both phases at the native grid nodes. The bridge reaction and caloric interval is 293.15–393.15 K. Certification checks original bounds, balances, interface and boundary residuals, film-quadrature charge, and the direction of CO₂ removal. The measured capture and its steady-state standard deviation come from Morgan et al. (2020), Table A1. That standard deviation describes measurement variability. The signed mesh change in capture is given in percentage points.
+F2 uses the bound `MEA_F2_ae17803e` parameters, reactions and calorics with the same physical case inputs and baseline numerics as the bridge. All seven F2 interface initializations passed on the inherited brackets. The F2 1C root was 1.268921 on `[0, 1.5]`. At a matched mesh, F2 minus bridge is the record effect. It includes the joint change in parameters, reactions and calorics. [F2 thermodynamic inputs](results/runs/joint_fit_f2_20261123/f2/inputs/thermodynamics.json) · [1C F2 interface check](results/runs/joint_fit_f2_20261123/f2/1C/17/interface_sign_check.json)
 
-{{< include results/runs/joint_fit_f2_20261123/bridge/_capture.qmd >}}
+Temperature span is the minimum and maximum over both phases at the native grid nodes. The bridge reaction and caloric interval is 293.15–393.15 K and the F2 interval is 298–393.15 K. Certification checks original bounds, balances, interface and boundary residuals, film-quadrature charge, and the direction of CO₂ removal. The measured capture and its steady-state standard deviation come from Morgan et al. (2020), Table A1. That standard deviation describes measurement variability. The signed mesh change in capture is given in percentage points.
+
+{{< include results/runs/joint_fit_f2_20261123/_paired_capture.qmd >}}
 
 The 17-node cosine 3C result reproduces the retained prediction of 89.41488041587351% exactly. The 3C unclustered timing probe predicted 92.6700% after six IPOPT iterations in 116.19 s. [3C timing probe](results/runs/joint_fit_f2_20261123/bridge/3C/17/seed/summary.json)
 
-All fourteen profiles passed certification with native-grid temperatures spanning 316.25–348.71 K. The largest mesh change occurred on 7C, where refinement lowered capture by 5.55 percentage points to 68.52%, 7.88 points below the measured mean. At 33 nodes the predictions exceed the measured means by 5.88, 6.51 and 9.56 percentage points on 2C, 5C and 6C. On 6C, refinement raised capture by 0.08 points to 69.76%. The two meshes leave the discretization error at finer resolutions unresolved. The bridge comparison awaits independent review and manuscript promotion.
+All fourteen bridge reporting profiles passed certification with native-grid temperatures spanning 316.25–348.71 K. The largest mesh change occurred on 7C, where refinement lowered capture by 5.55 percentage points to 68.52%, 7.88 points below the measured mean. At 33 nodes the predictions exceed the measured means by 5.88, 6.51 and 9.56 percentage points on 2C, 5C and 6C. On 6C, refinement raised capture by 0.08 points to 69.76%. The two meshes leave the discretization error at finer resolutions unresolved.
 
 Four attempts hit their wall limits while other jobs were running on the machine. No contemporaneous CPU or memory measurement was retained, so the cause of the slowdown is undetermined. Each last checkpoint reached the global solve, with no native callback failure recorded at that checkpoint and no final IPOPT residual. The configured worker limit and the elapsed parent time are recorded separately. The 1C cosine and the 4C and 5C 33-node retries certified with the same settings and limits. The 2C cosine run started directly from its checked feed seed after the unclustered attempt timed out. [1C cosine log](results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/run.log) · [2C unclustered seed log](results/runs/joint_fit_f2_20261123/bridge/2C/17/seed_retry/run.log) · [4C 33-node log](results/runs/joint_fit_f2_20261123/bridge/4C/33/run.log) · [5C 33-node log](results/runs/joint_fit_f2_20261123/bridge/5C/33/run.log)
+
+{{< include results/runs/joint_fit_f2_20261123/_bridge_attempts.qmd >}}
+
+## F2 stopping point
+
+The 3C F2 unclustered seed passed certification in 145.41 s, with 94.1579% predicted capture and a scaled residual of $2.68\times10^{-8}$. The reporting profiles also certified. Refining from 17 to 33 nodes lowered F2 capture by 1.2041 percentage points. The 33-node F2 prediction is 0.8426 points above the bridge prediction and 0.3504 points above the measured mean of 89.5 ± 1.2%. The available record effect covers 3C at the two reporting meshes. [F2 3C timing seed](results/runs/joint_fit_f2_20261123/f2/3C/17/seed/summary.json)
+
+For 1C, IPOPT exhausted the planned 20 iterations in 369.57 s, inside the 900 s worker limit. The seed's interface check passed and the finite final iterate stayed within the F2 temperature bounds. All native calls returned. A direct evaluation of the final state at 3.1875 m reproduced the vapor-side CO₂ flux mismatch, the largest remaining scaled equation defect. This identifies the stopping point of the numerical solve. Convergence with a different initial profile or iteration limit remains unresolved. [1C diagnosis](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/diagnosis.json)
+
+The plan's stop rule halted 2C and 4C in the global solve. It left the remaining F2 reporting runs and the five 3C controls unstarted. The run files retain CPU and memory measurements at launch and through termination. No checkpoint 3 attempt reached a wall limit. The F2 evidence awaits independent review. HSL, a collection of Fortran codes for large-scale scientific computation. <https://www.hsl.rl.ac.uk/>
+
+{{< include results/runs/joint_fit_f2_20261123/_checkpoint3_attempts.qmd >}}
+
+## 3C controls
+
+{{< include results/runs/joint_fit_f2_20261123/_controls.qmd >}}
 
 # Retained evidence and identity
 

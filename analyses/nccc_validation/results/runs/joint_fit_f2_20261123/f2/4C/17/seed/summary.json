@@ -1,0 +1,723 @@
+{
+  "arm": "f2",
+  "case": "4C",
+  "stage": "seed",
+  "nodes": 17,
+  "runtime_s": 98.29274013699978,
+  "wall_limit_s": 900,
+  "failure": {
+    "kind": "stopped",
+    "phase": "global_solve",
+    "message": "Stopped after F2 checkpoint failure [(('f2', '1C', 'seed'), 'outer_solve_failure', 'solve_or_certification')]",
+    "last_checkpoint": {
+      "assets": {
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/data/epcsaft_datasets/MEA_F2_ae17803e": "6c2bd2f9d719263cf5eaf8ec2355725bc99cda74cebf98e841f01820aa63ff4e",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/data/epcsaft_datasets/MEA_F2_ae17803e/ideal-gas-thermochemistry.json": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+      },
+      "capabilities": {
+        "a1_equilibrium_values": "required_on_evaluation",
+        "a2_equilibrium_actions": "required_on_outer_derivative",
+        "caloric_actions": "required_on_outer_derivative",
+        "evidence_type": "native_Engine_evaluation",
+        "finite_difference_fallback": false
+      },
+      "engine": {
+        "actual_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+        "archive_hash_status": "verified_from_installed_contents",
+        "commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+        "commit_evidence": "not_available_from_installed_distribution",
+        "declared_archive_sha256": null,
+        "declared_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+        "declared_wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
+        "expected_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
+        "expected_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+        "installed_artifact_members": 39,
+        "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/lib/python3.13/site-packages",
+        "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+        "loaded_version": "1.0.0",
+        "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+        "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python3",
+        "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv",
+        "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+        "python_implementation": "cpython",
+        "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv",
+        "python_version": "3.13.13",
+        "required": true,
+        "status": "verified",
+        "verified_commit": null,
+        "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl"
+      },
+      "initial_profile": [
+        [
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844,
+          1.9932279433472844
+        ],
+        [
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362,
+          63.07931167286362
+        ],
+        [
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405,
+          1.4240112258934405
+        ],
+        [
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297,
+          1.1444634601305297
+        ],
+        [
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995,
+          318.04999999999995
+        ],
+        [
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45,
+          316.45
+        ],
+        [
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0,
+          110400.0
+        ],
+        [
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351,
+          0.0506038088419351
+        ],
+        [
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844,
+          0.012735013446518844
+        ],
+        [
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358,
+          0.006006599997386358
+        ],
+        [
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656,
+          -6572.208589465656
+        ],
+        [
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866,
+          0.7814993525038866
+        ]
+      ],
+      "initialization": {
+        "accepted": true,
+        "algebraic_residual": [
+          0.0,
+          0.0,
+          -2.411265631607762e-16,
+          0.0,
+          0.0
+        ],
+        "state": [
+          1.9932279433472844,
+          63.07931167286362,
+          1.4240112258934405,
+          1.1444634601305297,
+          318.04999999999995,
+          316.45,
+          110400.0,
+          0.0506038088419351,
+          0.012735013446518844,
+          0.006006599997386358,
+          -6572.208589465656,
+          0.7814993525038866
+        ]
+      },
+      "initialization_evaluations": [
+        {
+          "loading": 0.0,
+          "original_co2_residual": -0.21804340346965975
+        },
+        {
+          "loading": 1.0,
+          "original_co2_residual": 3.3322211987476194
+        },
+        {
+          "loading": 0.06141609933340831,
+          "original_co2_residual": -0.2172981614564506
+        },
+        {
+          "loading": 0.5307080496667042,
+          "original_co2_residual": -0.2038507362154623
+        },
+        {
+          "loading": 0.7653540248333521,
+          "original_co2_residual": -0.04733043610548235
+        },
+        {
+          "loading": 0.832407982287021,
+          "original_co2_residual": 0.24845475599080843
+        },
+        {
+          "loading": 0.7760837473944715,
+          "original_co2_residual": -0.017198547418608736
+        },
+        {
+          "loading": 0.7818115230608792,
+          "original_co2_residual": 0.0010350316868546709
+        },
+        {
+          "loading": 0.781486385068188,
+          "original_co2_residual": -4.2889463507929035e-05
+        },
+        {
+          "loading": 0.7814993220015323,
+          "original_co2_residual": -1.0089557172035524e-07
+        },
+        {
+          "loading": 0.7814993525038866,
+          "original_co2_residual": -2.411265631607762e-16
+        },
+        {
+          "loading": 0.7814993525048869,
+          "original_co2_residual": 3.2976746333623908e-12
+        }
+      ],
+      "layout": {
+        "algebraic_equations": 5,
+        "boundary_equations": 7,
+        "conserved_balances": 7,
+        "coordinate": "physical_height",
+        "states": 12
+      },
+      "native_calls": {
+        "liquid_actions": {
+          "failed": 0,
+          "returned": 414,
+          "started": 414,
+          "wall_s": 1.2607555289814627
+        },
+        "liquid_solve": {
+          "failed": 0,
+          "returned": 414,
+          "started": 414,
+          "wall_s": 1.0606629199955933
+        },
+        "vapor_actions": {
+          "failed": 0,
+          "returned": 92,
+          "started": 92,
+          "wall_s": 0.02833564100910735
+        }
+      },
+      "resolved_inputs": {
+        "case_id": "corrected published 2017 4C",
+        "conserved_policy": {
+          "loading_anchor": 0.25,
+          "max_loading_steps": 32,
+          "max_log_loading_step": 0.1,
+          "species_diffusivity_model": {
+            "bicarbonate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "carbamate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "carbon-dioxide": {
+              "activation_j_mol": 15230.0,
+              "gas_constant_j_mol_k": 8.314462618,
+              "model": "prefactor_exp_minus_E_over_RT",
+              "prefactor_m2_s": 3.14e-07
+            },
+            "carbonate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "hydronium-cation": {
+              "constant_m2_s": 1.8439088914585774e-09
+            },
+            "hydroxide-anion": {
+              "constant_m2_s": 1.8439088914585774e-09
+            },
+            "monoethanolamine": {
+              "constant_m2_s": 8.8e-10
+            },
+            "protonated-monoethanolamine": {
+              "constant_m2_s": 8.4e-10
+            },
+            "water": {
+              "constant_m2_s": 8.8e-10
+            }
+          }
+        },
+        "data_type": "mole",
+        "feed_ids": {
+          "liquid": [
+            "carbon-dioxide",
+            "monoethanolamine",
+            "water"
+          ],
+          "vapor": [
+            "carbon-dioxide",
+            "water",
+            "nitrogen",
+            "oxygen"
+          ]
+        },
+        "gas_flow_basis": "reported_total_wet",
+        "metadata": {
+          "beds": 1,
+          "case_id": "corrected published 2017 4C",
+          "diameter_m": 0.64,
+          "gas_flow_basis": "reported_total_wet",
+          "intercoolers": 0,
+          "physical_input_basis": "direct_canonical_SI",
+          "single_bed_height_m": 6.0,
+          "total_packed_height_m": 6.0,
+          "vapor_composition_mode": "legacy_ratio"
+        },
+        "parameters": [
+          [
+            1.9932279433472844,
+            7.9729117733891375,
+            63.07931167286362
+          ],
+          [
+            1.4240112258934405,
+            1.1444634601305297,
+            10.772381218101305,
+            0.9888966846482227
+          ],
+          318.04999999999995,
+          316.45,
+          [
+            0.0,
+            0.01,
+            0.02,
+            0.03,
+            0.04,
+            0.05,
+            0.06,
+            0.07,
+            0.08,
+            0.09,
+            0.1,
+            0.11,
+            0.12,
+            0.13,
+            0.14,
+            0.15,
+            0.16,
+            0.17,
+            0.18,
+            0.19,
+            0.2,
+            0.21,
+            0.22,
+            0.23,
+            0.24,
+            0.25,
+            0.26,
+            0.27,
+            0.28,
+            0.29,
+            0.3,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35000000000000003,
+            0.36,
+            0.37,
+            0.38,
+            0.39,
+            0.4,
+            0.41000000000000003,
+            0.42,
+            0.43,
+            0.44,
+            0.45,
+            0.46,
+            0.47000000000000003,
+            0.48,
+            0.49,
+            0.5,
+            0.51,
+            0.52,
+            0.53,
+            0.54,
+            0.55,
+            0.56,
+            0.5700000000000001,
+            0.58,
+            0.59,
+            0.6,
+            0.61,
+            0.62,
+            0.63,
+            0.64,
+            0.65,
+            0.66,
+            0.67,
+            0.68,
+            0.6900000000000001,
+            0.7000000000000001,
+            0.71,
+            0.72,
+            0.73,
+            0.74,
+            0.75,
+            0.76,
+            0.77,
+            0.78,
+            0.79,
+            0.8,
+            0.81,
+            0.8200000000000001,
+            0.8300000000000001,
+            0.84,
+            0.85,
+            0.86,
+            0.87,
+            0.88,
+            0.89,
+            0.9,
+            0.91,
+            0.92,
+            0.93,
+            0.9400000000000001,
+            0.9500000000000001,
+            0.96,
+            0.97,
+            0.98,
+            0.99,
+            1.0
+          ],
+          6.0,
+          0.3216990877275948,
+          110400.0,
+          [
+            250.0,
+            0.97,
+            0.203,
+            0.35,
+            0.017,
+            0.292,
+            0.119
+          ]
+        ],
+        "physical_input_sha256": "a8f1dbead2b3c1a099b729cb46c8b7abb2a2085e8e873f3bf1d3931ddfd7b0e6",
+        "raw_input": [
+          5.097467729263292,
+          14.329752588773498,
+          0.25,
+          0.2999967360887997,
+          0.09937444607446104,
+          318.04999999999995,
+          316.45,
+          110400.0,
+          1.0
+        ],
+        "solvent_identity": {
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/analyses/nccc_validation/inputs/joint_fit_f2/case_4c.json": "447a0e8c466adecee9ee3a2eec70338fe6ea652cb646d3077d152dcf2c4b57c6",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/analyses/nccc_validation/results/runs/joint_fit_f2_20261123/f2/inputs/thermodynamics.json": "70da05aa6d47cd23918fdbacb8f86c613b9b1b6706b2d2b08d86996d17756deb",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/analyses/nccc_validation/results/runs/joint_fit_f2_20261123/f2/inputs/transport_4c.json": "428901139a9aa41df1890b91543ba3771066b7a8caaac5c7c47bc8e61dc9bc5a",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/Properties/Thermophysical_Properties.py": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/Properties/Transport_Properties.py": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/Transport/Pressure_Drop.py": "3c5e82117033a744032f7d7d64155e9175143134195fd926432f0e0e4abaa707",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/data/epcsaft_datasets/MEA_F2_ae17803e/engine-reactions.json": "309b4e75014be418cfa265a9658e14ae167c27555b120bbb918652c2c30d1fb0",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/data/epcsaft_datasets/MEA_F2_ae17803e/ideal-gas-thermochemistry.json": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/data/epcsaft_datasets/MEA_F2_ae17803e/parameters.json": "ae17803e1bcb2ca0a1970e05c7cc235d615c4d8a3a349b5afef0b0401dedefed",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+        },
+        "source_lineage": {
+          "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/analyses/nccc_validation/inputs/joint_fit_f2/case_4c.json",
+          "physical_input_file_sha256": "447a0e8c466adecee9ee3a2eec70338fe6ea652cb646d3077d152dcf2c4b57c6",
+          "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/analyses/nccc_validation/inputs/joint_fit_f2/case_4c.json",
+          "source_file_sha256": "447a0e8c466adecee9ee3a2eec70338fe6ea652cb646d3077d152dcf2c4b57c6",
+          "source_row_sha256": "4c899ef45292ab2b2ca9ee90302cbd0bef9691c12bcace1d6bf88b151b2d5355"
+        },
+        "vapor_composition_mode": "legacy_ratio"
+      },
+      "scaling": {
+        "algebraic_scale": [
+          0.97,
+          1.847918978862303e-05,
+          0.21864005793360217,
+          0.22989047751966937,
+          148837.3886077541
+        ],
+        "balance_scale": [
+          0.3322046572245474,
+          10.513218612143936,
+          0.23733520431557342,
+          0.19074391002175495,
+          103800.60783953883,
+          7327.193440035927,
+          18400.0
+        ],
+        "boundary_scale": [
+          1.9932279433472844,
+          63.07931167286362,
+          1.4240112258934405,
+          1.1444634601305297,
+          100.0,
+          100.0,
+          110400.0
+        ],
+        "capacity_rates_w_k": [
+          6228.03647037233,
+          439.6316064021556
+        ],
+        "policy": {
+          "branch_policy": {
+            "loading_anchor": 0.25,
+            "max_loading_steps": 32,
+            "max_log_loading_step": 0.1
+          },
+          "id": "NCCC_4C",
+          "initial_bulk_state": [
+            1.9932279433472844,
+            63.07931167286362,
+            1.4240112258934405,
+            1.1444634601305297,
+            318.04999999999995,
+            316.45,
+            110400.0,
+            0.052715134432693156
+          ],
+          "initial_interface_bracket": [
+            0.0,
+            1.0
+          ],
+          "physical_residual_tolerance": 1e-07,
+          "temperature_bounds_k": [
+            298.0,
+            393.15
+          ],
+          "temperature_scale_k": 300.0,
+          "temperature_span_k": 100.0,
+          "void_fraction": 0.97
+        },
+        "state_scale": [
+          1.9932279433472844,
+          63.07931167286362,
+          1.4240112258934405,
+          1.1444634601305297,
+          300.0,
+          300.0,
+          110400.0,
+          0.97,
+          0.21864005793360217,
+          0.22989047751966937,
+          148837.3886077541,
+          1.0
+        ]
+      },
+      "stage": "global_solve",
+      "support_limits": {
+        "policy": {
+          "branch_policy": {
+            "loading_anchor": 0.25,
+            "max_loading_steps": 32,
+            "max_log_loading_step": 0.1
+          },
+          "id": "NCCC_4C",
+          "initial_bulk_state": [
+            1.9932279433472844,
+            63.07931167286362,
+            1.4240112258934405,
+            1.1444634601305297,
+            318.04999999999995,
+            316.45,
+            110400.0,
+            0.052715134432693156
+          ],
+          "initial_interface_bracket": [
+            0.0,
+            1.0
+          ],
+          "physical_residual_tolerance": 1e-07,
+          "temperature_bounds_k": [
+            298.0,
+            393.15
+          ],
+          "temperature_scale_k": 300.0,
+          "temperature_span_k": 100.0,
+          "void_fraction": 0.97
+        },
+        "unsupported": "feed-seed, packing, and temperature domain mismatches"
+      }
+    }
+  }
+}

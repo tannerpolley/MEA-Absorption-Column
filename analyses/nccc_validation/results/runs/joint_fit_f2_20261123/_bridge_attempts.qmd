@@ -1,0 +1,10 @@
+| Case | Nodes | Stage | Elapsed (s) | Stopping point | Record |
+|---|---:|---|---:|---|---|
+| 1C | 17 | Unclustered seed | 1.50 | Interface initialization: Brent bracket `[0, 1]` refused, endpoint residuals of equal sign | [summary](results/runs/joint_fit_f2_20261123/bridge/1C/17/seed/summary.json) |
+| 1C | 17 | Cosine | 2114.39 | Wall limit reached in the global solve | [summary](results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/summary.json) |
+| 2C | 17 | Unclustered seed | — | Campaign stopped after the 1C seed failure | [summary](results/runs/joint_fit_f2_20261123/bridge/2C/17/seed/summary.json) |
+| 2C | 17 | Unclustered seed retry | 2459.76 | Wall limit reached in the global solve | [summary](results/runs/joint_fit_f2_20261123/bridge/2C/17/seed_retry/summary.json) |
+| 4C | 17 | Unclustered seed | — | Campaign stopped after the 1C seed failure | [summary](results/runs/joint_fit_f2_20261123/bridge/4C/17/seed/summary.json) |
+| 4C | 33 | Warm start | 2202.06 | Wall limit reached in the global solve | [summary](results/runs/joint_fit_f2_20261123/bridge/4C/33/summary.json) |
+| 5C | 17 | Unclustered seed | — | Campaign stopped after the 1C seed failure | [summary](results/runs/joint_fit_f2_20261123/bridge/5C/17/seed/summary.json) |
+| 5C | 33 | Warm start | 2203.96 | Wall limit reached in the global solve | [summary](results/runs/joint_fit_f2_20261123/bridge/5C/33/summary.json) |

@@ -1,0 +1,5 @@
+| Arm | Case | Attempt | Stage | Outcome | Wall time (s) | Capture (%) | Scaled residual | Record | Resources |
+|---|---|---|---|---|---|---|---|---|---|
+| F2 | 1C | 17/seed | Global solve | IPOPT iteration limit | 369.57 | — | — | [Record](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/summary.json) | [CPU and memory](results/runs/joint_fit_f2_20261123/f2/1C/17/seed/resources.jsonl) |
+| F2 | 2C | 17/seed | global solve | Stopped | 371.01 | — | — | [Record](results/runs/joint_fit_f2_20261123/f2/2C/17/seed/summary.json) | [CPU and memory](results/runs/joint_fit_f2_20261123/f2/2C/17/seed/resources.jsonl) |
+| F2 | 4C | 17/seed | global solve | Stopped | 98.29 | — | — | [Record](results/runs/joint_fit_f2_20261123/f2/4C/17/seed/summary.json) | [CPU and memory](results/runs/joint_fit_f2_20261123/f2/4C/17/seed/resources.jsonl) |

@@ -1,0 +1,214 @@
+{
+  "classification": "IPOPT exhausted the 20 iterations with unresolved interface equations",
+  "limits": {
+    "max_iterations": 20,
+    "wall_s": 900,
+    "scaled_residual": 1e-07
+  },
+  "solver_status": "Maximum_Iterations_Exceeded",
+  "elapsed_s": 369.56616342800044,
+  "optimizer_cpu_s": 362.729675,
+  "optimizer_wall_s": 365.271633425,
+  "native_calls": {
+    "liquid_actions": {
+      "failed": 0,
+      "returned": 194556,
+      "started": 194556,
+      "wall_s": 321.55823675843385
+    },
+    "liquid_solve": {
+      "failed": 0,
+      "returned": 194556,
+      "started": 194556,
+      "wall_s": 83.12578847322038
+    },
+    "vapor_actions": {
+      "failed": 0,
+      "returned": 44552,
+      "started": 44552,
+      "wall_s": 39.07176709468513
+    }
+  },
+  "initialization": {
+    "f2": {
+      "accepted": true,
+      "scaled_algebraic_inf": 6.79405424823654e-14,
+      "log_interface_to_bulk_loading_ratio": 1.2689212736694044,
+      "ipopt_initial_inf_pr": 64.33508571962572
+    },
+    "bridge": {
+      "accepted": true,
+      "scaled_algebraic_inf": 9.769190172241784e-14,
+      "log_interface_to_bulk_loading_ratio": 1.257766278670837,
+      "ipopt_initial_inf_pr": 91.57132148096933
+    },
+    "F2 endpoint residuals mol/(m^2 s)": [
+      {
+        "loading": 0.0,
+        "original_co2_residual": -0.1926811279044127
+      },
+      {
+        "loading": 1.5,
+        "original_co2_residual": 3.7790464279702745
+      }
+    ]
+  },
+  "last_iterate": {
+    "note": "Diagnostic values from an uncertified iterate",
+    "scaled_groups": {
+      "algebraic": 0.0360861762601618,
+      "balances": 0.021105414398413156,
+      "boundary": 0.00041515179334475816
+    },
+    "largest_algebraic_equation": "vapor CO2 flux",
+    "largest_algebraic_location": "upwind cell",
+    "coordinate_m": 3.1875,
+    "native_node_and_cell_column": 25,
+    "original_residual": 0.006960157898394624,
+    "original_residual_units": "mol/(m^2 s)",
+    "directly_replayed_original_residual": 0.006960157898394624,
+    "temperature_bounds_k": [
+      298.0,
+      393.15
+    ],
+    "native_temperature_span_k": [
+      316.4527525510915,
+      347.47501375681003
+    ],
+    "scaled_bound_violation_inf": 0.0
+  },
+  "ipopt_scaled_primal_infeasibility": [
+    64.33508571962572,
+    8.188604035374562,
+    7.991735056567845,
+    7.989647904979595,
+    7.989647904979595,
+    1.7331074893182445,
+    0.8417000256367396,
+    0.9874806495465478,
+    1.2005327194121191,
+    0.8053420393776932,
+    0.376984970708837,
+    0.1572842623983819,
+    0.1632235255472176,
+    0.14668536487045564,
+    0.11402072077541281,
+    0.11981555987730846,
+    0.07766921217243847,
+    0.06584937040863355,
+    0.0457701605533349,
+    0.03980005785871806,
+    0.0360861762601618
+  ],
+  "ipopt_primal_step_fraction": [
+    0.0,
+    0.8735376679758251,
+    0.024059384410164007,
+    0.0002611658548491192,
+    3.5207423807367415e-07,
+    0.0011572132832363478,
+    0.0042011620910650345,
+    0.07737758019133675,
+    0.11938049332237967,
+    0.37235967518846574,
+    0.8985481225276726,
+    0.5648902181578561,
+    0.5479863299460279,
+    0.6133454023578554,
+    0.8980610512455974,
+    0.985277014353245,
+    0.2838868310272835,
+    0.13165742617281362,
+    0.2713052304717986,
+    0.1771223205692694,
+    0.176411805353339
+  ],
+  "resources": {
+    "launch": {
+      "utc": "2026-11-24T01:57:18.045728+00:00",
+      "cpu_count": 32,
+      "load_average": [
+        12.076171875,
+        12.2138671875,
+        17.97900390625
+      ],
+      "cpu_times_ticks": [
+        5641009,
+        1271457,
+        2270071,
+        18499600,
+        525343,
+        0,
+        7390,
+        0,
+        0,
+        0
+      ],
+      "memory_kib": {
+        "MemTotal": 32776336,
+        "MemFree": 5283504,
+        "MemAvailable": 19963884,
+        "SwapTotal": 16582644,
+        "SwapFree": 9576524
+      },
+      "pressure": {
+        "cpu": "some avg10=2.77 avg60=3.26 avg300=1.90 total=302658764\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.24 total=1701329967\nfull avg10=0.00 avg60=0.00 avg300=0.23 total=1650057964\n",
+        "io": "some avg10=0.01 avg60=0.10 avg300=0.19 total=219667536\nfull avg10=0.01 avg60=0.06 avg300=0.12 total=180624602\n"
+      },
+      "agents_slice": {
+        "cpu.stat": "usage_usec 72509243212\nuser_usec 54668450729\nsystem_usec 17840792482\nnice_usec 11702918000\ncore_sched.force_idle_usec 0\nnr_periods 88512\nnr_throttled 5496\nthrottled_usec 2527503127\nnr_bursts 0\nburst_usec 0\n",
+        "cpu.pressure": "some avg10=2.86 avg60=3.13 avg300=1.79 total=203913242\nfull avg10=2.25 avg60=2.38 avg300=1.19 total=109389593\n",
+        "memory.current": "12139544576\n",
+        "memory.high": "19327352832\n",
+        "memory.events": "low 0\nhigh 13410682\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 9503\n",
+        "memory.pressure": "some avg10=0.00 avg60=0.00 avg300=0.23 total=1701761881\nfull avg10=0.00 avg60=0.00 avg300=0.23 total=1694317902\n"
+      },
+      "event": "launch"
+    },
+    "returned": {
+      "utc": "2026-11-24T02:03:29.044883+00:00",
+      "cpu_count": 32,
+      "load_average": [
+        9.60498046875,
+        10.44140625,
+        15.294921875
+      ],
+      "cpu_times_ticks": [
+        5945806,
+        1283643,
+        2304966,
+        19320694,
+        531980,
+        0,
+        7527,
+        0,
+        0,
+        0
+      ],
+      "memory_kib": {
+        "MemTotal": 32776336,
+        "MemFree": 1295592,
+        "MemAvailable": 18726792,
+        "SwapTotal": 16582644,
+        "SwapFree": 9669992
+      },
+      "pressure": {
+        "cpu": "some avg10=0.02 avg60=0.06 avg300=0.83 total=306420431\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.06 total=1701518970\nfull avg10=0.00 avg60=0.01 avg300=0.06 total=1650244334\n",
+        "io": "some avg10=1.26 avg60=0.90 avg300=0.37 total=221637028\nfull avg10=1.11 avg60=0.87 avg300=0.33 total=182478019\n"
+      },
+      "agents_slice": {
+        "cpu.stat": "usage_usec 75170699411\nuser_usec 57130930482\nsystem_usec 18039768928\nnice_usec 11814178000\ncore_sched.force_idle_usec 0\nnr_periods 92222\nnr_throttled 5577\nthrottled_usec 2584921027\nnr_bursts 0\nburst_usec 0\n",
+        "cpu.pressure": "some avg10=0.01 avg60=0.05 avg300=0.78 total=207070608\nfull avg10=0.00 avg60=0.01 avg300=0.53 total=111744045\n",
+        "memory.current": "14532214784\n",
+        "memory.high": "19327352832\n",
+        "memory.events": "low 0\nhigh 13410682\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 9573\n",
+        "memory.pressure": "some avg10=0.00 avg60=0.00 avg300=0.04 total=1701768658\nfull avg10=0.00 avg60=0.00 avg300=0.04 total=1694323402\n"
+      },
+      "event": "returned"
+    }
+  },
+  "engine_equilibrium_linear_solver": "ma57",
+  "claim_limit": "The retained run identifies the stopping mechanism. Convergence with a different seed or iteration limit is unresolved."
+}

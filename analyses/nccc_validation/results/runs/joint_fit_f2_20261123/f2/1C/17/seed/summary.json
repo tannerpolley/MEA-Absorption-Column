@@ -1,0 +1,17 @@
+{
+  "arm": "f2",
+  "case": "1C",
+  "stage": "seed",
+  "nodes": 17,
+  "wall_limit_s": 900,
+  "runtime_s": 369.56616342800044,
+  "solver_status": "Maximum_Iterations_Exceeded",
+  "iterations": 20,
+  "certification": false,
+  "failure": {
+    "kind": "outer_solve_failure",
+    "phase": "solve_or_certification",
+    "message": "one or more physical criteria failed",
+    "native_cause": null
+  }
+}
