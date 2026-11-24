@@ -49,6 +49,13 @@ def ideal_gas_record(path: str | Path, component_ids):
         form_name = row.get("form", row.get("representation"))
         if form_name == "shomate":
             form = epcsaft.IdealShomate(row["coefficients"], row["formation_enthalpy_j_per_mol"])
+        elif form_name == "shomate_cp":
+            a, b, c, d, e = row["coefficients"]
+            # Inert-gas sensible properties use zero enthalpy and entropy at 298.15 K.
+            t = 298.15 / 1000
+            f = -(a*t + b*t**2/2 + c*t**3/3 + d*t**4/4 - e/t)
+            g = -(a*math.log(t) + b*t + c*t**2/2 + d*t**3/3 - e/(2*t**2))
+            form = epcsaft.IdealShomate([a, b, c, d, e, f, g, 0.], 0.)
         elif form_name == "cp_polynomial":
             form = epcsaft.IdealPolynomial(row["coefficients"], row["enthalpy_entropy_anchor_k"], 0., 0.)
         else:  # Cp = sum a_j T^j re-centred at T0, where h = s = 0 (moiety convention)

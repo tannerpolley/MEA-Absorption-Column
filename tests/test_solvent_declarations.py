@@ -101,7 +101,7 @@ def test_mea_declared_reproduction_and_permutation(tmp_path):
 
 @pytest.mark.parametrize('defect, message', [
     ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
-    ('policy', 'Only the retained 3C'), ('domain_field', 'unsupported fields in domain'),
+    ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
     ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
     ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
 def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
@@ -116,7 +116,7 @@ def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, d
     elif defect == 'hash':
         thermo['parameters']['sha256'] = '0' * 64
     elif defect == 'policy':
-        transport['execution_policy']['id'] = 'invented_policy'
+        transport['execution_policy']['temperature_bounds_k'][0] -= 1
     elif defect == 'domain_field':
         transport['domain']['invented_policy'] = True
     elif defect == 'dependent_row':

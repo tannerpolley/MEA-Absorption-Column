@@ -171,12 +171,14 @@ class SolventInputs:
         from epcsaft import equilibrium as q
         if len({r['name'] for r in self.reactions['reactions']}) != len(self.reactions['reactions']):
             raise SolventRefusal('Duplicate reactions')
+        intervals = []
         for row in self.reactions['reactions']:
             c = row['correlation']
             if (row['reference']['source_basis'] not in q.ReferenceSourceBasis.__members__ or
                     not 0 < c['temperature_min'] <= c['temperature_max'] or not c['standard_state_id'] or
                     any(not math.isfinite(c[k]) for k in ('a', 'b', 'c', 'd', 'reference_temperature'))):
                 raise SolventRefusal('Unsupported reaction correlation/reference declaration')
+            intervals.append((c['temperature_min'], c['temperature_max']))
             if not set(row['stoichiometry']) <= set(self.species):
                 raise SolventRefusal('Reaction contains an undeclared species')
             nu = np.array([row['stoichiometry'].get(s, 0.) for s in self.species])
@@ -191,10 +193,10 @@ class SolventInputs:
         normalized = constraints / np.linalg.norm(constraints, axis=1)[:, None]
         if not np.isfinite(normalized).all() or np.linalg.matrix_rank(normalized-normalized.mean(axis=1, keepdims=True)) != len(constraints):
             raise SolventRefusal('Film constraints must be independent modulo total flux')
-        expected = {'film': 'equilibrium_manifold', 'hydraulic_density': 'solved_state', 'pair_diffusivity': 'harmonic_mean',
+        expected = {'film': 'equilibrium_manifold', 'pair_diffusivity': 'harmonic_mean',
                     'kinetics': 'not_used_in_instantaneous_equilibrium_film', 'enhancement': 'not_used', 'zero_charge_flux': True,
                     'thickness': 'bulk_CO2_diffusivity / liquid_mass_transfer_coefficient'}
-        if any(u[k] != value for k, value in expected.items()):
+        if u['hydraulic_density'] not in ('solved_state', 'correlation') or any(u[k] != value for k, value in expected.items()):
             raise SolventRefusal('Unsupported film, kinetic, density or transport declaration')
         policy = u['execution_policy']
         physical = self.case['physical_inputs']
@@ -206,16 +208,22 @@ class SolventInputs:
         if t['qualification']['status'] != 'numerical_reproduction_only; no absorber qualification supplied':
             raise SolventRefusal('Stage 1 does not qualify a solvent prediction')
         domain = u['domain']
-        if (domain['temperature_k'] != [293.15, 393.15] or
+        calorics = read_json(self.paths['calorics'])['components']
+        intervals.extend(row.get('interval_k', row.get('range_k')) for row in calorics.values())
+        bounds = [max(lo for lo, _ in intervals), min(hi for _, hi in intervals)]
+        if (bounds[0] >= bounds[1] or domain['temperature_k'] != bounds or
+                any(not 0 < lo < hi or not math.isfinite(hi) for lo, hi in intervals) or
                 domain['pressure_pa'] != {'minimum_exclusive': 0., 'maximum_inclusive': 1e7} or
                 set(domain['unloaded_amine_mass_fraction']) != set(self.roles['amines']) or
                 domain['unloaded_amine_mass_fraction'][self.roles['amines'][0]]['value'] != self.case['model_input_row']['w_MEA'] or
                 domain['loading_mol_co2_per_mol_total_amine']['minimum_exclusive'] != 0. or
                 domain['loading_mol_co2_per_mol_total_amine']['maximum_inclusive'] is not None):
             raise SolventRefusal('Unsupported reproduction domain; no validated loading interval is asserted')
-        if (policy['id'] != 'retained_3c_only' or policy['temperature_bounds_k'] != [293.15, 393.15]
-                or policy['void_fraction'] != .97 or policy['temperature_scale_k'] != 300. or policy['temperature_span_k'] != 100.):
-            raise SolventRefusal('Only the retained 3C numerical policy is available')
+        if (not isinstance(policy['id'], str) or not policy['id'].strip() or policy['temperature_bounds_k'] != bounds
+                or not 0 < policy['void_fraction'] < 1 or policy['void_fraction'] != physical['packing'][1]
+                or any(isinstance(v, bool) or not math.isfinite(v) or v <= 0
+                       for v in (policy['temperature_scale_k'], policy['temperature_span_k']))):
+            raise SolventRefusal('Invalid case numerical policy or inconsistent temperature bounds or packing void fraction')
         selections = {'liquid_viscosity': ('Properties/Transport_Properties.py', 'viscosity:liquid'),
                       'gas_viscosity': ('Properties/Transport_Properties.py', 'viscosity:vapor'),
                       'bulk_diffusivity': ('Properties/Transport_Properties.py', 'diffusivity:liquid'),

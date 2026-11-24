@@ -752,8 +752,12 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
     init_payload = dict(init_payload)
     if solvent:
         supplied = numerics.as_dict()['solver_settings']
+        density = solvent.transport['hydraulic_density']
+        if density == 'correlation' and 'liquid_density_source' not in supplied:
+            supplied['liquid_density_source'] = density
+            numerics = replace(numerics, settings=_freeze(supplied))
         if (supplied['quadrature_points'] != solvent.transport['quadrature_points'] or
-                supplied.get('liquid_density_source', 'solved_state') != solvent.transport['hydraulic_density']):
+                supplied.get('liquid_density_source', 'solved_state') != density):
             raise SolventRefusal('Numerical quadrature/density selection disagrees with declared inputs')
         if any(k.startswith('reactive_') for k in supplied) or set(init_payload) - {'retained_profile'}:
             raise ConfigurationError('Declared continuation/initialization policy cannot be overridden')

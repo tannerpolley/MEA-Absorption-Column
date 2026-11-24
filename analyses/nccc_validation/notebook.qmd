@@ -103,6 +103,28 @@ below retain their stated input basis. The bundle-3 checks verify source
 identity and admission decisions; they do not provide physical validation.
 They have not been independently reviewed or promoted for manuscript use.
 
+# F2 equilibrium replay on Engine 1.0.0
+
+Six calculated observables agree with the Amine-Thermodynamics F2 replay within $2.10\times10^{-13}$ relative, below the $10^{-8}$ limit in [issue #91](https://github.com/tannerpolley/MEA-Absorption-Column/issues/91).
+Engine 1.0.0 at `f4566b3d` used the materialized F2 inputs and each dataset's own equilibrium template at Amine-Thermodynamics commit `761e38ae8`.
+All selected rows have a retained convergence floor at or below $10^{-9}$.
+Among the partial-pressure rows at the highest eligible temperature, 333.15 K, `vle_obs_0202-pco2` has the lowest retained floor.
+[Amine dataset declarations](https://github.com/tannerpolley/Amine-Thermodynamics/blob/761e38ae8/analyses/solvent_specification_mea/declarations.toml) and [retained F2 values](https://github.com/tannerpolley/Amine-Thermodynamics/blob/761e38ae8/analyses/mea_parameter_bundle/results/adoption-340/candidate/replay.json) identify the feeds, pressures and phase supports.
+
+| Retained row | Temperature (K) | Quantity and unit | Engine 1.0.0 | Amine F2 replay | Relative difference |
+|---|---:|---|---:|---:|---:|
+| `vle_obs_0134-pco2` | 313.000 | CO₂ partial pressure, Pa | 118.89948112285451 | 118.8994811228556 | $9.20\times10^{-15}$ |
+| `vle_obs_0202-pco2` | 333.15 | CO₂ partial pressure, Pa | 319909.1196907274 | 319909.11969069036 | $1.16\times10^{-13}$ |
+| `Bottinger2008_state_030::MEACOO-` | 293.15 | Liquid carbamate mole fraction | 0.00827612798606119 | 0.008276127986061197 | $8.38\times10^{-16}$ |
+| `Hartono2014_density_80C_alpha0.39` | 353.15 | Liquid mass density, kg/m³ | 1052.8344198674056 | 1052.8344198674058 | $2.16\times10^{-16}$ |
+| `Hilliard2008_Cp_318.15_0.358` | 318.15 | Equilibrium isobaric heat capacity, J/(mol feed K) | 83.7782725848605 | 83.77827258486016 | $4.07\times10^{-15}$ |
+| `vinjarapu2024_source_table4_01` | 313.15 | Signed addition enthalpy, J/mol CO₂ added | −80852.36347366864 | −80852.36347368557 | $2.09\times10^{-13}$ |
+
+The 293.15 K carbamate row is an isothermal equilibrium calculation with no caloric observable. The column declaration uses the common reaction and caloric interval of 298–393.15 K.
+The table reports six discrete observables with different units, so a plot would add no comparison.
+The replay verifies numerical agreement at these specified states. It provides no measurement uncertainty, physical validation or column result.
+The CO₂ partial-pressure replay ends at 333.15 K and leaves the hotter column states untested on that equilibrium route.
+
 # Retained evidence and identity
 
 The analysis reads the following retained files:
