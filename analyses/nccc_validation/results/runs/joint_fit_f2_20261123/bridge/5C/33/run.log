@@ -1,0 +1,13 @@
+5C 33 33 nodes, wall limit 1500 s
+{
+  "case": "5C",
+  "stage": "33",
+  "nodes": 33,
+  "measured_capture_pct": 86.4,
+  "runtime_s": 2203.961009457,
+  "solver_status": null,
+  "iterations": null,
+  "scaled_residual_inf": null,
+  "certification": null
+}
+Failure timed_out: Conserved execution worker exceeded its wall limit

@@ -1,0 +1,36 @@
+{
+  "case": "1C",
+  "stage": "seed",
+  "nodes": 17,
+  "measured_capture_pct": 97.1,
+  "runtime_s": 344.22245385399947,
+  "solver_status": "Solve_Succeeded",
+  "iterations": 17,
+  "scaled_residual_inf": 3.825071325163723e-09,
+  "certification": true,
+  "failure": null,
+  "predicted_capture_pct": 99.68224498339235,
+  "temperature_k": {
+    "minimum": 316.4499999994167,
+    "maximum": 343.9936239596098,
+    "allowed": [
+      293.15,
+      393.15
+    ],
+    "native_callback_failures": 0
+  },
+  "balances": {
+    "boundary": 1.9086264342089975e-11,
+    "charge": 2.0915364014692127e-14,
+    "energy": 7.244644839544115e-12,
+    "interface": 3.825071325163723e-09,
+    "material": 1.9324760392208847e-10
+  },
+  "mea_balance": {
+    "liquid_mea_feed_mol_s": 8.172861801624334,
+    "liquid_mea_outlet_mol_s": 8.172861801624334,
+    "gas_mea_mol_s": 0.0,
+    "drift_mol_s": 0.0,
+    "basis": "Conserved analytical amine flow fixed in EnginePhase.flow; vapor support excludes MEA"
+  }
+}

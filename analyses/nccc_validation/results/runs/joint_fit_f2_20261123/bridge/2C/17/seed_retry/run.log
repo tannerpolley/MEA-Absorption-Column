@@ -1,0 +1,13 @@
+2C seed 17 nodes, wall limit 900 s
+{
+  "case": "2C",
+  "stage": "seed",
+  "nodes": 17,
+  "measured_capture_pct": 92.3,
+  "runtime_s": 2459.761078386,
+  "solver_status": null,
+  "iterations": null,
+  "scaled_residual_inf": null,
+  "certification": null
+}
+Failure timed_out: Conserved execution worker exceeded its wall limit

@@ -96,6 +96,7 @@ def main():
     for case in ("1C","2C","4C","5C","6C","7C"):
         case_file = CASE_DIR / f"case_{case.lower()}.json"
         payload = build_case(rows[case], bridge, owner)
+        payload["initial_interface_bracket"] = [0.0, 1.5] if case == "1C" else payload["initial_interface_bracket"]
         case_file.write_text(json.dumps(payload, indent=2) + "\n")
         transport = read_json(TRANSPORT)
         transport.update(case=identity(case_file), thermodynamic_input=relpath(THERMO, CASE_DIR))

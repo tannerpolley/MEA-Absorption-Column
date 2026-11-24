@@ -1,0 +1,13 @@
+1C cosine 17 nodes, wall limit 900 s
+{
+  "case": "1C",
+  "stage": "cosine",
+  "nodes": 17,
+  "measured_capture_pct": 97.1,
+  "runtime_s": 2114.3947408510003,
+  "solver_status": null,
+  "iterations": null,
+  "scaled_residual_inf": null,
+  "certification": null
+}
+Failure timed_out: Conserved execution worker exceeded its wall limit

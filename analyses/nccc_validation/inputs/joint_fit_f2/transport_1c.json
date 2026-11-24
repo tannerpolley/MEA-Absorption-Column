@@ -3,7 +3,7 @@
   "thermodynamic_input": "../../../bvp_solution_methods/input/issue85/thermodynamics.json",
   "case": {
     "repository_path": "analyses/nccc_validation/inputs/joint_fit_f2/case_1c.json",
-    "sha256": "2fb34184c276927ef7da9c505587f8ecba168f6bb2b1cf46dbaa82ebe9c2f002"
+    "sha256": "fe7983947ffffc0ed8def4fdb7274bcd56c42b48cf9b3817c04c5851b1d66e47"
   },
   "film": "equilibrium_manifold",
   "kinetics": "not_used_in_instantaneous_equilibrium_film",
@@ -180,7 +180,7 @@
     ],
     "initial_interface_bracket": [
       0.0,
-      1.0
+      1.5
     ],
     "physical_residual_tolerance": 1e-07,
     "branch_policy": {

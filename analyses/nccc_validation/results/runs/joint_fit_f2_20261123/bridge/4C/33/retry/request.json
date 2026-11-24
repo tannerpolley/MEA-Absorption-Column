@@ -1,0 +1,30 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/nccc_validation/inputs/joint_fit_f2/case_4c.json"
+  },
+  "dependencies": {
+    "thermodynamics_input": "analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+    "transport_input": "analyses/nccc_validation/inputs/joint_fit_f2/transport_4c.json"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "nodes": 33,
+      "quadrature_points": 9,
+      "tolerance": 1e-07,
+      "max_iterations": 20,
+      "liquid_density_source": "solved_state",
+      "end_clustering": 1.0
+    }
+  },
+  "initialization": {
+    "values": {
+      "retained_profile": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/4C/17/cosine/attempt.json"
+    }
+  },
+  "execution": {
+    "output_dir": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/4C/33/retry",
+    "wall_limit_s": 1500
+  }
+}

@@ -5,6 +5,10 @@ author: "MEA Absorption Column project"
 date: 2026-08-26
 bibliography: ../../docs/scientific/latex/references.bib
 link-citations: true
+resources:
+  - inputs/joint_fit_f2/*
+  - results/runs/joint_fit_f2_20261123/**/*.json
+  - results/runs/joint_fit_f2_20261123/**/*.log
 format:
   html: {}
   pdf:
@@ -118,21 +122,21 @@ The CO₂ partial-pressure replay ends at 333.15 K and leaves the hotter column 
 
 {{< include results/runs/f2_replay_20261123/_replay.qmd >}}
 
-# Bridge arm 3C and 1C initialization
+# Bridge arm numerical verification and measurement comparison
 
-The 3C bridge runs used the twelve-state equilibrium-manifold film, solved-state density, nine film points and the upwind differences. The [case rules](inputs/joint_fit_f2/case_rules.md) reproduce the retained 3C input before generating the six other case declarations. The 3C solver ran on the unchanged retained declaration.
+The bridge runs use `MEA_greenfield_exploratory` with the twelve-state equilibrium-manifold film, solved-state density, upwind discretization, nine film points, and a scaled residual limit of $10^{-7}$. The 33-node cosine mesh uses the certified 17-node cosine profile as a warm start. The [case rules](inputs/joint_fit_f2/case_rules.md) reproduce the retained 3C input within $10^{-12}$ absolute before generating the six other declarations. The 3C calculations use the unchanged retained declaration.
 
-| 3C calculation | Capture (%) | IPOPT iterations | Wall time (s) | Scaled residual | Native-grid certification |
-|---|---:|---:|---:|---:|---|
-| [17-node unclustered seed](results/runs/joint_fit_f2_20261123/bridge/3C/17/seed/summary.json) | 92.67000465461173 | 6 | 116.19 | $9.75\times10^{-8}$ | Accepted |
-| [17-node cosine](results/runs/joint_fit_f2_20261123/bridge/3C/17/cosine/summary.json) | 89.41488041587351 | 5 | 100.68 | $1.79\times10^{-12}$ | Accepted |
-| [33-node warm start](results/runs/joint_fit_f2_20261123/bridge/3C/33/summary.json) | 89.00784568428892 | 4 | 181.10 | $1.88\times10^{-11}$ | Accepted |
+The 1C seed originally stopped before IPOPT with liquid-minus-gas CO₂ flux residuals of −0.192461 and −0.159583 mol/(m² s) at log interface-to-bulk loading ratios 0 and 1. The extended probe returned −0.011448 at 1.25 and +0.786466 mol/(m² s) at 1.50. The root near 1.257766 gives a seed interface loading of 0.527633 mol CO₂ per mol MEA. The selected bracket is `[0, 1.5]` for 1C. The other cases kept `[0, 1]`. [Original 1C diagnosis](results/runs/joint_fit_f2_20261123/bridge/1C/17/seed/diagnosis.json) · [Extended 1C probe](results/runs/joint_fit_f2_20261123/bridge/1C/17/seed/extended_probe.json) · [Initialization issue #19](https://github.com/tannerpolley/MEA-Absorption-Column/issues/19)
 
-The 17-node cosine solve reproduces the retained 3C prediction exactly. Refinement to 33 nodes lowers capture by 0.4070 percentage points and raises the native-grid peak liquid temperature from 344.82 to 346.73 K. The 33-node capture is 0.4922 percentage points below the Table A1 mean of 89.5%, whose steady-state standard deviation is 1.2 percentage points. The reported differences are numerical comparison and prediction evidence at this one case. The standard deviation describes the measured capture and supplies no uncertainty estimate for the predicted profile.
+Temperature span is the minimum and maximum over both phases at the native grid nodes. The bridge reaction and caloric interval is 293.15–393.15 K. Certification checks original bounds, balances, interface and boundary residuals, film-quadrature charge, and the direction of CO₂ removal. The measured capture and its steady-state standard deviation come from Morgan et al. (2020), Table A1. That standard deviation describes measurement variability. The signed mesh change in capture is given in percentage points.
 
-The 1C unclustered seed stopped before IPOPT. At log interface-to-bulk loading ratios of 0 and 1, the liquid-minus-gas CO₂ flux residuals were −0.192461 and −0.159583 mol/(m² s). Both endpoint evaluations returned without a native property failure. Brent initialization requires opposite endpoint signs, so it refused the declared bracket. The unchanged-bracket probe recorded three additional negative interior values. These samples establish why initialization refused and leave the existence of an interface root unresolved. [Retained 1C diagnosis](results/runs/joint_fit_f2_20261123/bridge/1C/17/seed/diagnosis.json) · [Initialization issue #19](https://github.com/tannerpolley/MEA-Absorption-Column/issues/19)
+{{< include results/runs/joint_fit_f2_20261123/bridge/_capture.qmd >}}
 
-The 1C failure triggered the study stop rule. The active 2C, 4C and 5C seeds were interrupted, and 6C and 7C remained unstarted. The bridge evidence awaits independent review and manuscript promotion.
+The 17-node cosine 3C result reproduces the retained prediction of 89.41488041587351% exactly. The 3C unclustered timing probe predicted 92.6700% after six IPOPT iterations in 116.19 s. [3C timing probe](results/runs/joint_fit_f2_20261123/bridge/3C/17/seed/summary.json)
+
+All fourteen profiles passed certification with native-grid temperatures spanning 316.25–348.71 K. The largest mesh change occurred on 7C, where refinement lowered capture by 5.55 percentage points to 68.52%, 7.88 points below the measured mean. On 6C, refinement raised capture by 0.08 points to 69.76%, 9.56 points above the measured mean. The two meshes leave the discretization error at finer resolutions unresolved. The bridge comparison awaits independent review and manuscript promotion.
+
+Four attempts hit their wall limits during heavy shared-machine memory pressure. Each last checkpoint reached the global solve, with no native callback failure recorded at that checkpoint and no final IPOPT residual. The configured worker limit and the elapsed parent time are recorded separately. The 1C cosine and the 4C and 5C 33-node retries certified with the same settings and limits. The 2C cosine run started directly from its checked feed seed after the unclustered attempt timed out. [1C cosine log](results/runs/joint_fit_f2_20261123/bridge/1C/17/cosine/run.log) · [2C unclustered seed log](results/runs/joint_fit_f2_20261123/bridge/2C/17/seed_retry/run.log) · [4C 33-node log](results/runs/joint_fit_f2_20261123/bridge/4C/33/run.log) · [5C 33-node log](results/runs/joint_fit_f2_20261123/bridge/5C/33/run.log)
 
 # Retained evidence and identity
 

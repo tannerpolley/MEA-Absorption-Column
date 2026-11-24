@@ -1,0 +1,138 @@
+{
+  "case": "7C",
+  "request": {
+    "preset": "twelve_state_conserved",
+    "case": {
+      "physical_input_file": "analyses/nccc_validation/inputs/joint_fit_f2/case_7c.json"
+    },
+    "dependencies": {
+      "thermodynamics_input": "analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+      "transport_input": "analyses/nccc_validation/inputs/joint_fit_f2/transport_7c.json"
+    },
+    "numerics": {
+      "method": "upwind",
+      "solver_settings": {
+        "nodes": 17,
+        "end_clustering": 1.0,
+        "quadrature_points": 9,
+        "liquid_density_source": "solved_state",
+        "tolerance": 1e-07,
+        "max_iterations": 20
+      }
+    },
+    "execution": {
+      "wall_limit_s": 900
+    }
+  },
+  "case_input_sha256": "f50f840a696f40993bbd9c6d16fe523a8f10357fb4ffa179edffb7a48872c4ac",
+  "transport_input_sha256": "564354167576413a0c359d61513e188b5ca1a50a8e572ec4b6b98bccf268dc37",
+  "thermodynamic_input_sha256": "2214f28b01d3bb3a1f260796d74740325d1c07879d7a8dfece93df4ef3327561",
+  "initial_bulk_state_after_holdup_balance": [
+    2.266523899018325,
+    55.33946274871296,
+    0.8796171503485564,
+    0.7843418531366985,
+    317.84999999999997,
+    316.45,
+    107700.0,
+    0.042816046117603604
+  ],
+  "declared_bracket": [
+    0.0,
+    1.0
+  ],
+  "extension_upper_candidates": [
+    1.5
+  ],
+  "crossing": [
+    0.0,
+    1.0
+  ],
+  "root": 0.47305964065840544,
+  "points": [
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.0,
+      "interface_loading_mol_co2_per_mol_mea": 0.34,
+      "liquid_co2_flux_mol_m2_s": 0.0,
+      "gas_co2_flux_mol_m2_s": 0.145579982086301,
+      "residual_mol_m2_s": -0.145579982086301
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.0494715725900414,
+      "interface_loading_mol_co2_per_mol_mea": 0.35724334570564825,
+      "liquid_co2_flux_mol_m2_s": 0.0009585255668828418,
+      "gas_co2_flux_mol_m2_s": 0.14453176695108913,
+      "residual_mol_m2_s": -0.1435732413842063
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.36473947429094533,
+      "interface_loading_mol_co2_per_mol_mea": 0.4896471804733418,
+      "liquid_co2_flux_mol_m2_s": 0.008095320752831573,
+      "gas_co2_flux_mol_m2_s": 0.09661765876216742,
+      "residual_mol_m2_s": -0.08852233800933584
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.45250021376353383,
+      "interface_loading_mol_co2_per_mol_mea": 0.5345609904151334,
+      "liquid_co2_flux_mol_m2_s": 0.010227953536929422,
+      "gas_co2_flux_mol_m2_s": 0.03304468498108861,
+      "residual_mol_m2_s": -0.02281673144415919
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.4697263205964984,
+      "interface_loading_mol_co2_per_mol_mea": 0.5438491650097053,
+      "liquid_co2_flux_mol_m2_s": 0.010642249478989773,
+      "gas_co2_flux_mol_m2_s": 0.014565300898898069,
+      "residual_mol_m2_s": -0.003923051419908296
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.47305895290433037,
+      "interface_loading_mol_co2_per_mol_mea": 0.5456646377789205,
+      "liquid_co2_flux_mol_m2_s": 0.010722142575333122,
+      "gas_co2_flux_mol_m2_s": 0.010722961171835793,
+      "residual_mol_m2_s": -8.185965026715619e-07
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.4730596405175107,
+      "interface_loading_mol_co2_per_mol_mea": 0.5456650129852464,
+      "liquid_co2_flux_mol_m2_s": 0.010722159050330225,
+      "gas_co2_flux_mol_m2_s": 0.010722159218030039,
+      "residual_mol_m2_s": -1.6769981410480472e-10
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.47305964065740524,
+      "interface_loading_mol_co2_per_mol_mea": 0.545665013061582,
+      "liquid_co2_flux_mol_m2_s": 0.010722159053682102,
+      "gas_co2_flux_mol_m2_s": 0.010722159054859955,
+      "residual_mol_m2_s": -1.1778529540595883e-12
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.47305964065840544,
+      "interface_loading_mol_co2_per_mol_mea": 0.5456650130621278,
+      "liquid_co2_flux_mol_m2_s": 0.01072215905370603,
+      "gas_co2_flux_mol_m2_s": 0.010722159053691994,
+      "residual_mol_m2_s": 1.4035647644128346e-14
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.4731203775365775,
+      "interface_loading_mol_co2_per_mol_mea": 0.5456981560580397,
+      "liquid_co2_flux_mol_m2_s": 0.010723614275355803,
+      "gas_co2_flux_mol_m2_s": 0.010651307471455458,
+      "residual_mol_m2_s": 7.230680390034501e-05
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 0.5247357862950207,
+      "interface_loading_mol_co2_per_mol_mea": 0.5746041700942102,
+      "liquid_co2_flux_mol_m2_s": 0.011948345432457208,
+      "gas_co2_flux_mol_m2_s": -0.06091409631950007,
+      "residual_mol_m2_s": 0.07286244175195727
+    },
+    {
+      "log_interface_to_bulk_co2_loading_ratio": 1.0,
+      "interface_loading_mol_co2_per_mol_mea": 0.9242158216760754,
+      "liquid_co2_flux_mol_m2_s": 0.02183247158394256,
+      "gas_co2_flux_mol_m2_s": -2.7752872517279665,
+      "residual_mol_m2_s": 2.797119723311909
+    }
+  ]
+}

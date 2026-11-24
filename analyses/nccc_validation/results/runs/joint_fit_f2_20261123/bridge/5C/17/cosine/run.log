@@ -1,0 +1,44 @@
+5C cosine 17 nodes, wall limit 900 s
+
+******************************************************************************
+This program contains Ipopt, a library for large-scale nonlinear optimization.
+ Ipopt is released as open source code under the Eclipse Public License (EPL).
+         For more information visit https://github.com/coin-or/Ipopt
+******************************************************************************
+
+
+{
+  "case": "5C",
+  "stage": "cosine",
+  "nodes": 17,
+  "measured_capture_pct": 86.4,
+  "runtime_s": 114.25220822000028,
+  "solver_status": "Solve_Succeeded",
+  "iterations": 5,
+  "scaled_residual_inf": 2.417316996193529e-11,
+  "certification": true,
+  "predicted_capture_pct": 93.58434512001452,
+  "temperature_k": {
+    "minimum": 316.45,
+    "maximum": 342.8625170524474,
+    "allowed": [
+      293.15,
+      393.15
+    ],
+    "native_callback_failures": 0
+  },
+  "balances": {
+    "boundary": 0.0,
+    "charge": 2.1160677885227654e-14,
+    "energy": 6.244396353315798e-14,
+    "interface": 2.417316996193529e-11,
+    "material": 5.050073508904738e-16
+  },
+  "mea_balance": {
+    "liquid_mea_feed_mol_s": 6.764398258712397,
+    "liquid_mea_outlet_mol_s": 6.764398258712397,
+    "gas_mea_mol_s": 0.0,
+    "drift_mol_s": 0.0,
+    "basis": "Conserved analytical amine flow fixed in EnginePhase.flow; vapor support excludes MEA"
+  }
+}

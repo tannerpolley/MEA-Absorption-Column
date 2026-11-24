@@ -1,0 +1,28 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/nccc_validation/inputs/joint_fit_f2/case_2c.json"
+  },
+  "dependencies": {
+    "thermodynamics_input": "analyses/bvp_solution_methods/input/issue85/thermodynamics.json",
+    "transport_input": "analyses/nccc_validation/inputs/joint_fit_f2/transport_2c.json"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "nodes": 17,
+      "quadrature_points": 9,
+      "tolerance": 1e-07,
+      "max_iterations": 20,
+      "liquid_density_source": "solved_state",
+      "end_clustering": 1.0
+    }
+  },
+  "initialization": {
+    "values": {}
+  },
+  "execution": {
+    "output_dir": "analyses/nccc_validation/results/runs/joint_fit_f2_20261123/bridge/2C/17/cosine",
+    "wall_limit_s": 900
+  }
+}
