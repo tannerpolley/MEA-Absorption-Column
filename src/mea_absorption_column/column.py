@@ -777,25 +777,26 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         raise ConfigurationError("Retained profile source solver settings are incomplete")
     current_settings = current_config["numerics"]["solver_settings"]
     seed_overrides = ("nodes", "end_clustering", "max_iterations") if config.design else ("nodes", "end_clustering")
-    root = _ROOT.parent.parent if _ROOT.parent.name == ".worktrees" else _ROOT
-    def checkout_relative(value):
+    source_root = (source.get("source_identity") or {}).get("repository_root")
+    def checkout_relative(value, root):
         if isinstance(value, Mapping):
-            return sorted((checkout_relative(k), checkout_relative(v)) for k, v in value.items())
+            pairs = [(checkout_relative(k, root), checkout_relative(v, root)) for k, v in value.items()]
+            if len({k for k, _ in pairs}) != len(pairs):
+                raise ConfigurationError("Retained profile contains duplicate normalized paths")
+            return sorted(pairs)
         if isinstance(value, list):
-            return [checkout_relative(v) for v in value]
-        if isinstance(value, str) and value.startswith(str(root) + "/"):
-            relative = value[len(str(root)) + 1:]
-            if relative.startswith(".worktrees/"):
-                relative = relative.split("/", 2)[-1]
-            return relative
+            return [checkout_relative(v, root) for v in value]
+        if root and isinstance(value, str) and value.startswith(str(root) + "/"):
+            return value[len(str(root)) + 1:]
         return value
+    current_root = _ROOT if source_root else None
     identity_matches = (
         source.get("preset") == config.preset
         and source.get("formulation") == config.model.formulation
         and source.get("native_layout") == config.model.layout
         and source.get("coordinate") == config.model.coordinate
         and source_config.get("model") == current_config["model"]
-        and checkout_relative(source_config.get("dependencies")) == checkout_relative(current_config["dependencies"])
+        and checkout_relative(source_config.get("dependencies"), source_root) == checkout_relative(current_config["dependencies"], current_root)
         and source.get("config_sha256") == source_config.get("resolved_config_sha256")
         and {k: v for k, v in source_settings.items() if k not in seed_overrides}
         == {k: v for k, v in current_settings.items() if k not in seed_overrides}
@@ -806,7 +807,7 @@ def _retained_initial_profile(path, config, prepared, scaling, lower, upper):
         and (source_inputs.get("metadata") or {}).get("physical_input_basis")
         == (current_inputs.get("metadata") or {}).get("physical_input_basis")
         and source_inputs.get("conserved_policy") == current_inputs.get("conserved_policy")
-        and checkout_relative(source_inputs.get("solvent_identity")) == checkout_relative(current_inputs.get("solvent_identity"))
+        and checkout_relative(source_inputs.get("solvent_identity"), source_root) == checkout_relative(current_inputs.get("solvent_identity"), current_root)
         and source_inputs.get("feed_ids") == current_inputs.get("feed_ids")
     )
     if not identity_matches:

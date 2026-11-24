@@ -350,10 +350,9 @@ def _retained_profile_context(tmp_path, mismatch=None):
 def test_retained_profile_checkout_paths_require_identical_hashes(tmp_path):
     config, prepared, scaling, lower, upper, _, path = _retained_profile_context(tmp_path)
     source = json.loads(path.read_text())
-    root = column_runner._ROOT
-    root = root.parent.parent if root.parent.name == ".worktrees" else root
-    old = str(root / ".worktrees" / "old-checkout")
-    current = str(root / ".worktrees" / "current-checkout")
+    old = "/tmp/x/checkout"
+    current = str(column_runner._ROOT)
+    source["source_identity"] = {"repository_root": old}
     source["config"]["dependencies"] = {"dataset": old + "/data", "input_hashes": {old + "/input": "abc"}}
     prepared["resolved_inputs"]["solvent_identity"] = {current + "/input": "abc"}
     source["resolved_inputs"]["solvent_identity"] = {old + "/input": "abc"}
@@ -366,6 +365,20 @@ def test_retained_profile_checkout_paths_require_identical_hashes(tmp_path):
         source["resolved_inputs"]["solvent_identity"][old + "/input"] = "changed"
         path.write_text(json.dumps(source))
         with pytest.raises(ConfigurationError, match="do not match"):
+            column_runner._retained_initial_profile(path, config, prepared, scaling, lower, upper)
+        source["resolved_inputs"]["solvent_identity"] = {old + "/other": "abc"}
+        path.write_text(json.dumps(source))
+        with pytest.raises(ConfigurationError, match="do not match"):
+            column_runner._retained_initial_profile(path, config, prepared, scaling, lower, upper)
+        source.pop("source_identity")
+        source["resolved_inputs"]["solvent_identity"] = {old + "/input": "abc"}
+        path.write_text(json.dumps(source))
+        with pytest.raises(ConfigurationError, match="do not match"):
+            column_runner._retained_initial_profile(path, config, prepared, scaling, lower, upper)
+        source["source_identity"] = {"repository_root": old}
+        source["resolved_inputs"]["solvent_identity"] = {old + "/input": "abc", "input": "abc"}
+        path.write_text(json.dumps(source))
+        with pytest.raises(ConfigurationError, match="duplicate normalized paths"):
             column_runner._retained_initial_profile(path, config, prepared, scaling, lower, upper)
 
 
