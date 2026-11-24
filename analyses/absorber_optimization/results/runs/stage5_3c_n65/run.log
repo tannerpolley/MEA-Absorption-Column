@@ -1,0 +1,36 @@
+2026-11-24T02:31:22+00:00
+ 19:31:22 up  3:02,  1 user,  load average: 13.04, 11.17, 10.75
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064 17111236608  3104423936   119267328 13927227392 16451731456
+Swap:    16980627456  7363260416  9617367040
+Command: uv run --frozen python -u analyses/absorber_optimization/scripts/check_resolution.py analyses/absorber_optimization/results/runs/stage2_3c_n17_problem_p/request.json analyses/absorber_optimization/results/runs/stage5_3c_n33 analyses/absorber_optimization/results/runs/stage5_3c_n65 65 9 1e-7 7200
+{'status': 'completed', 'started_at_utc': '2026-11-24T02:31:23Z', 'runtime_s': 616.7281666449999} {'method': 'upwind', 'stages': {'outer': {'success': True, 'status': 'Solve_Succeeded'}}}
+	Command being timed: "timeout --kill-after=20 7235 agent-heavy uv run --frozen python -u analyses/absorber_optimization/scripts/check_resolution.py analyses/absorber_optimization/results/runs/stage2_3c_n17_problem_p/request.json analyses/absorber_optimization/results/runs/stage5_3c_n33 analyses/absorber_optimization/results/runs/stage5_3c_n65 65 9 1e-7 7200"
+	User time (seconds): 610.06
+	System time (seconds): 6.70
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:17.62
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 481720
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 5
+	Minor (reclaiming a frame) page faults: 165162
+	Voluntary context switches: 93
+	Involuntary context switches: 13776
+	Swaps: 0
+	File system inputs: 2032
+	File system outputs: 4264
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+Exit status: 0
+2026-11-24T02:41:40+00:00
+ 19:41:40 up  3:12,  1 user,  load average: 12.45, 10.96, 10.85
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064 13115285504  5037477888    92352512 15963189248 20447682560
+Swap:    16980627456  7244546048  9736081408

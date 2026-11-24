@@ -236,6 +236,12 @@ class _ActionJacobian(ca.Callback):
         return ca.Sparsity.dense(self.parent.size1_out(0), self.parent.size1_in(0))
 
     def eval(self, arguments):
+        step = getattr(self.parent.phase, "fd_relative_step", None)
+        if step is not None:
+            inputs = np.asarray(arguments[0]).ravel()
+            base = self.parent.evaluate(inputs)
+            differences = [self.parent.evaluate(inputs + h) - base for h in np.diag(step * inputs)]
+            return [ca.DM(np.asarray(differences).T / (step * inputs))]
         count = self.parent.size1_in(0)
         return [ca.DM(np.column_stack([self.parent.evaluate(arguments[0], (j,)) for j in range(count)]))]
 

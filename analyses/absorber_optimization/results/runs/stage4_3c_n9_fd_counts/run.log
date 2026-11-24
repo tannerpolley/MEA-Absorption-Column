@@ -1,0 +1,340 @@
+2026-11-24T03:01:52+00:00
+ 20:01:52 up  3:32,  1 user,  load average: 5.08, 4.55, 5.90
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064 13383995392  4566495232    85512192 16158646272 20178972672
+Swap:    16980627456  7021305856  9959321600
+Command: uv run --frozen python -u analyses/absorber_optimization/scripts/check_derivative_cost.py .tmp_local/issue93-stages45/stage4_3c_n9_fd_counts.request.json \[\]
+Exit status: 0
+2026-11-24T03:05:37+00:00
+ 20:05:37 up  3:36,  1 user,  load average: 10.39, 6.85, 6.47
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064 14045396992  1067995136    83435520 19343675392 19517571072
+Swap:    16980627456  7031500800  9949126656
+Timing designation: counts
+2026-11-24T03:01:51+00:00
+Other running MEA services or column processes:
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1521243 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_dn747mhh/input.json
+1521850 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_u_d80z3f/input.json
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+Overlap check 2026-11-24T03:01:52+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1521243 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_dn747mhh/input.json
+1521850 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_u_d80z3f/input.json
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+Overlap check 2026-11-24T03:01:59+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1521243 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_dn747mhh/input.json
+1521850 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_u_d80z3f/input.json
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+Overlap check 2026-11-24T03:02:06+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1521243 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_dn747mhh/input.json
+1521850 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_u_d80z3f/input.json
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+Overlap check 2026-11-24T03:02:13+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1521243 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_dn747mhh/input.json
+1521850 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_u_d80z3f/input.json
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+Overlap check 2026-11-24T03:02:20+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1521243 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_dn747mhh/input.json
+1521850 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_u_d80z3f/input.json
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+Overlap check 2026-11-24T03:02:27+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1521243 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_dn747mhh/input.json
+1521850 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_u_d80z3f/input.json
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+Overlap check 2026-11-24T03:02:34+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1521850 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_u_d80z3f/input.json
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+Overlap check 2026-11-24T03:02:41+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+Overlap check 2026-11-24T03:02:48+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+Overlap check 2026-11-24T03:02:55+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+Overlap check 2026-11-24T03:03:02+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+Overlap check 2026-11-24T03:03:09+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+Overlap check 2026-11-24T03:03:16+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1523276 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_p3jarq54/input.json
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+Overlap check 2026-11-24T03:03:23+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+Overlap check 2026-11-24T03:03:30+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1505593 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1525598 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_ankfce1h/input.json
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+Overlap check 2026-11-24T03:03:37+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+Overlap check 2026-11-24T03:03:44+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+Overlap check 2026-11-24T03:03:51+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+Overlap check 2026-11-24T03:03:58+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+Overlap check 2026-11-24T03:04:05+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+1535514 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_prepare_jlhne8fv/input.json
+Overlap check 2026-11-24T03:04:12+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:04:19+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1526594 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute__2_9naq_/input.json
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:04:27+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:04:34+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:04:41+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:04:48+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:04:55+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1528705 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python -m mea_absorption_column.benchmark_worker /tmp/conserved_execute_7j8bn645/input.json
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:05:02+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:05:09+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:05:16+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:05:23+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+Overlap check 2026-11-24T03:05:30+00:00
+  mea-91-cp4-suite.service      loaded active running /home/tnnrpolley21/.local/bin/agent-heavy uv run --frozen pytest -q
+  mea-93-stages45-gates.service loaded active running /usr/bin/bash .tmp_local/issue93-stages45/gates.sh
+1506832 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-91-run-the-absorb-61b92a168267deb6/.venv/bin/pytest -q
+1510026 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/.venv/bin/pytest -q
+1535323 python          /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/python /home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-16-research-and-i-31cf55e8d2d9a83a/.venv/bin/pytest -q
+
+******************************************************************************
+This program contains Ipopt, a library for large-scale nonlinear optimization.
+ Ipopt is released as open source code under the Eclipse Public License (EPL).
+         For more information visit https://github.com/coin-or/Ipopt
+******************************************************************************
+
+This is Ipopt version 3.14.11, running with linear solver MUMPS 5.4.1.
+
+Number of nonzeros in equality constraint Jacobian...:     1244
+Number of nonzeros in inequality constraint Jacobian.:        1
+Number of nonzeros in Lagrangian Hessian.............:        0
+
+Total number of variables............................:      149
+                     variables with only lower bounds:       36
+                variables with lower and upper bounds:       45
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      148
+Total number of inequality constraints...............:        1
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        1
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  1.0000000e+00 2.85e+02 1.13e+00   0.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1  1.2223383e+00 1.17e+01 1.50e+01  -0.5 6.96e-01    -  9.93e-01 1.00e+00h  1
+   2  1.2114723e+00 9.16e-02 3.57e+00  -1.1 4.64e-01    -  1.00e+00 1.00e+00h  1
+   3  1.1720877e+00 2.61e-02 5.37e-01  -1.7 9.18e-02    -  1.00e+00 1.00e+00h  1
+   4  1.1459873e+00 1.86e-02 1.85e+00  -2.5 5.50e-02    -  9.96e-01 1.00e+00h  1
+   5  1.1153493e+00 2.43e-02 2.11e+00  -3.4 5.98e-02    -  1.00e+00 1.00e+00h  1
+   6  1.0897801e+00 1.52e-02 9.60e-02  -4.3 4.43e-02    -  1.00e+00 1.00e+00h  1
+   7  1.0637316e+00 1.51e-02 9.11e-02  -5.3 4.22e-02    -  1.00e+00 1.00e+00h  1
+   8  1.0373422e+00 1.44e-02 8.26e-02  -6.3 4.01e-02    -  1.00e+00 1.00e+00h  1
+   9  1.0107808e+00 1.34e-02 7.37e-02  -7.3 4.15e-02    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  10  9.8542617e-01 1.17e-02 6.55e-02  -5.3 4.26e-02    -  1.00e+00 9.54e-01h  1
+  11  9.8517854e-01 1.17e-02 2.87e+00  -4.8 1.09e+00    -  1.00e+00 3.71e-04h  1
+  12  9.8572790e-01 2.07e-05 8.38e-03  -6.5 2.45e-03    -  1.00e+00 1.00e+00h  1
+  13  9.8572910e-01 2.66e-11 1.88e-07  -8.4 3.23e-06    -  1.00e+00 1.00e+00h  1
+  14  9.8572910e-01 2.10e-12 9.94e-08 -11.0 6.00e-09    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 14
+
+                                   (scaled)                 (unscaled)
+Objective...............:   9.8572909945557408e-01    9.8572909945557408e-01
+Dual infeasibility......:   9.9444069340008090e-08    9.9444069340008090e-08
+Constraint violation....:   2.0954356927932121e-12    2.0954356927932121e-12
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   1.0000031626192869e-11    1.0000031626192869e-11
+Overall NLP error.......:   9.9444069340008090e-08    9.9444069340008090e-08
+
+
+Number of objective function evaluations             = 15
+Number of objective gradient evaluations             = 15
+Number of equality constraint evaluations            = 15
+Number of inequality constraint evaluations          = 15
+Number of equality constraint Jacobian evaluations   = 15
+Number of inequality constraint Jacobian evaluations = 15
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 216.733
+
+EXIT: Optimal Solution Found.
+
+

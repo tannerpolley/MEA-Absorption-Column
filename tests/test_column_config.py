@@ -493,7 +493,7 @@ def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch, 
             "last_checkpoint": {"stage": "global_solve", "result": {"profile": [[1.0, 2.0]]}}
         })
         (output.parent / f".{output.name}.tmp").write_text('{"incomplete":')
-        raise subprocess.TimeoutExpired(command, 1)
+        raise subprocess.TimeoutExpired(command, 1, output=b"IPOPT iteration 2\n")
 
     monkeypatch.setattr(column_runner.subprocess, "run", timeout)
     result = column_runner.run_column({
@@ -505,6 +505,7 @@ def test_conserved_preparation_timeout_retains_timed_out_execution(monkeypatch, 
     assert result["failure"]["kind"] == "timed_out"
     retained = json.loads((tmp_path / "attempt" / "attempt.json").read_text())
     assert retained["failure"]["phase"] == "global_solve"
+    assert retained["failure"]["transport"]["stdout"] == "IPOPT iteration 2\n"
     assert retained["failure"]["last_checkpoint"]["result"]["profile"] == [[1.0, 2.0]]
     assert retained["physical_acceptance"] == "not_evaluated"
     assert retained["physical_certification"]["accepted"] is None

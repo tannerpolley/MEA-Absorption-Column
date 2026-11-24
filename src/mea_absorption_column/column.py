@@ -1018,6 +1018,7 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint, *, design
         setattr(owner, name, observed)
 
     mathematical = solvent is not None and solvent.mathematical
+    phase_caches = (liquid.solve.cache_info, vapor.solve.cache_info) if config.design and not mathematical else ()
     if not mathematical:
         instrument(liquid, "solve", "liquid_solve")
     instrument(liquid, "actions", "liquid_actions")
@@ -1039,6 +1040,7 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint, *, design
         import casadi as ca
 
         requested = config.as_dict()["design"]
+        liquid.fd_relative_step = vapor.fd_relative_step = requested.get("fd_relative_step")
         base_inlets = assembly["inlet_values"]
         inlet_parameters = requested.get("inlet_parameters", base_inlets)
         scale, p = ca.MX.sym("s"), ca.MX.sym("p", len(base_inlets) + 1)
@@ -1152,6 +1154,9 @@ def _run_conserved_column_in_process(config: ColumnConfig, checkpoint, *, design
                     "capture checks remain unavailable"
                 ),
                 "reason": "Subset checks cannot establish physical certification"}
+    for phase, cache in zip((liquid, vapor), phase_caches):
+        native = phase._accepted[1] if phase._accepted else None
+        result.setdefault("engine_cost", {})[phase.kind] = dict(phase.stats, cache=cache()._asdict(), linear_solver=getattr(native, "linear_solver", None))
     result_record = {key: value for key, value in prepared.items() if key != "assembly"}
     if config.model.film_model == "finite_rate_film" and result["profile"] is not None:
         names = diagnostics.name_out()[8:13]
@@ -1201,6 +1206,7 @@ def execute_conserved_column(config: ColumnConfig | Mapping[str, Any], *, worker
             "cause": type(cause).__name__ if cause is not None else None,
             "message": str(cause) if cause is not None else None,
         }
+        transport = {key: value.decode(errors="replace") if isinstance(value, bytes) else value for key, value in transport.items()}
         parsed = None
         output_error = None
         if raw_output is not None:

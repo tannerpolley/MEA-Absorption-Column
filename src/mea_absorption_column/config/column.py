@@ -744,12 +744,14 @@ def resolve_column_config(request: Mapping[str, Any]) -> ColumnConfig:
             raise ConfigurationError("Design does not support source homotopy")
         if preset != TWELVE_PRESET or model.film_model != "equilibrium_manifold" or numerics.method != "upwind":
             raise ConfigurationError("Design requires the twelve-state equilibrium-manifold upwind route")
-        if set(design) - {"capture_target", "scale_bounds", "initial_scale", "inlet_parameters"}:
+        if set(design) - {"capture_target", "scale_bounds", "initial_scale", "inlet_parameters", "fd_relative_step"}:
             raise ConfigurationError("Unknown design settings")
         bounds = design.get("scale_bounds")
         target, start = design.get("capture_target"), design.get("initial_scale", 1.)
         def positive(value):
             return type(value) in (int, float) and math.isfinite(value) and value > 0.
+        if "fd_relative_step" in design and not positive(design["fd_relative_step"]):
+            raise ConfigurationError("Design fd_relative_step must be finite and positive")
         if not positive(target) or target >= 1. or not positive(start):
             raise ConfigurationError("Design needs 0 < capture_target < 1 and a positive initial_scale")
         if (not isinstance(bounds, (list, tuple)) or len(bounds) != 2

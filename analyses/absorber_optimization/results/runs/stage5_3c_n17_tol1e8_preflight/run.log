@@ -1,0 +1,44 @@
+2026-11-24T02:24:42+00:00
+ 19:24:42 up  2:55,  1 user,  load average: 9.43, 9.34, 10.27
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064 15437983744  1517027328    94539776 17162616832 18124984320
+Swap:    16980627456  6901538816 10079088640
+Command: uv run --frozen python -u analyses/absorber_optimization/scripts/check_resolution.py analyses/absorber_optimization/results/runs/stage2_3c_n17_problem_p analyses/absorber_optimization/results/runs/stage5_3c_n17_tol1e8 17 9 1e-8 3600
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/analyses/absorber_optimization/scripts/check_resolution.py", line 18, in <module>
+    result = run_column(request)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/src/mea_absorption_column/column.py", line 1380, in run_column
+    config = resolve_column_config(config)
+  File "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/issue-93-constrained-ab-557655f9e8ace513/src/mea_absorption_column/config/column.py", line 838, in resolve_column_config
+    raise ConfigurationError("resolved_config_sha256 does not match the canonical configuration")
+mea_absorption_column.config.column.ConfigurationError: resolved_config_sha256 does not match the canonical configuration
+Command exited with non-zero status 1
+	Command being timed: "timeout --kill-after=20 3635 agent-heavy uv run --frozen python -u analyses/absorber_optimization/scripts/check_resolution.py analyses/absorber_optimization/results/runs/stage2_3c_n17_problem_p analyses/absorber_optimization/results/runs/stage5_3c_n17_tol1e8 17 9 1e-8 3600"
+	User time (seconds): 0.60
+	System time (seconds): 0.11
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.73
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 147304
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 29645
+	Voluntary context switches: 26
+	Involuntary context switches: 8
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+Exit status: 1
+2026-11-24T02:24:43+00:00
+ 19:24:43 up  2:55,  1 user,  load average: 9.43, 9.34, 10.27
+               total        used        free      shared  buff/cache   available
+Mem:     33562968064 15679557632  1275432960    94539776 17162649600 17883410432
+Swap:    16980627456  6901538816 10079088640
