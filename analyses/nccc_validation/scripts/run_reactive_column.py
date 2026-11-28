@@ -1,4 +1,4 @@
-"""Current nine-species nonisothermal Case 3C; retain seed, progress and outputs.
+"""Current nine-species nonisothermal NCCC case; retain seed, progress and outputs.
 
 Run under an external timeout with stdout/stderr redirected to a retained log.
 The optional CSV is an accepted same-case scaled profile, initialization only.
@@ -25,9 +25,11 @@ def main():
     parser.add_argument('--dataset', type=Path, default=DATASET,
                         help='Legacy reactive bundle or Engine-native dataset directory')
     parser.add_argument('--inputs', type=Path, default=Path('src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv'))
+    parser.add_argument('--case', default='3C')
     parser.add_argument('--initial-profile', type=Path)
     parser.add_argument('--mesh', type=int, default=21)
     parser.add_argument('--tol', type=float, default=.5)
+    parser.add_argument('--verbose', type=int, choices=(0, 2), default=2)
     choice = parser.add_mutually_exclusive_group()
     choice.add_argument('--kij', help='Exact binary-interaction identity (a native coefficient selects the whole pair law)')
     choice.add_argument('--reaction', choices=['R4', 'R5'], help='Reaction equilibrium constant to perturb')
@@ -38,10 +40,11 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     inputs = args.inputs
     data = pd.read_csv(inputs, index_col=0)
+    case_index = data.index.get_loc(args.case)
     settings = dict(mesh_points=args.mesh, tol=args.tol, bc_tol=.001, max_nodes=1000,
                     thermal_state_mode='temperature', transform_mode='raw',
                     vapor_composition_mode='dry_saturated', gas_flow_basis='reported_dry_mass',
-                    return_internal_profile=True, return_profiles=True, verbose=2,
+                    return_internal_profile=True, return_profiles=True, verbose=args.verbose,
                     reactive_dataset=str(args.dataset))
     if args.kij is not None:
         settings['reactive_kij_scale'] = (args.kij, args.factor)
@@ -58,7 +61,7 @@ def main():
     paths += dataset_input_paths(args.dataset)
     if args.initial_profile:
         paths.append(args.initial_profile)
-    identity = dict(command=sys.argv, settings=settings, pid=os.getpid(),
+    identity = dict(command=sys.argv, case_id=args.case, settings=settings, pid=os.getpid(),
                     evaluated_parameter_fingerprint=hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest(),
                     # Wheel only: the contract's reactive_inputs_sha256 names the Engine qualification inputs, not this run's dataset.
                     engine_identity={k:v for k,v in json.loads(Path('integration/epcsaft_contract.json').read_text())['final_identity'].items()
@@ -69,18 +72,18 @@ def main():
     if args.initial_profile:
         seed = pd.read_csv(args.initial_profile).to_numpy().T
     else:
-        seed_result = run_model(data, method='scipy-bvp', data_type='mass', run=data.index.get_loc('3C'),
+        seed_result = run_model(data, method='scipy-bvp', data_type='mass', run=case_index,
                                 thermo_model='ideal_henry', solver_settings=settings,
                                 return_details=True, staged_beds=False)
+        (args.output/'seed_result.json').write_text(json.dumps(
+            {k:v for k,v in seed_result.items() if not k.startswith('_')}, indent=2, default=str)+'\n')
         if not seed_result['success']:
             raise RuntimeError('Henry initialization did not converge: '+seed_result['message'])
         seed = seed_result['_raw_solution_scaled']
-        (args.output/'seed_result.json').write_text(json.dumps(
-            {k:v for k,v in seed_result.items() if not k.startswith('_')}, indent=2, default=str)+'\n')
     pd.DataFrame(seed.T).to_csv(args.output/'initial_scaled.csv', index=False)
     print(f'accepted initialization available after {time.perf_counter()-started:.3f}s', flush=True)
     settings.update(initial_guess_scaled=seed, jacobian_mode='native', reactive_reuse_states=True)
-    result = run_model(data, method='scipy-bvp', data_type='mass', run=data.index.get_loc('3C'),
+    result = run_model(data, method='scipy-bvp', data_type='mass', run=case_index,
                        thermo_model='epcsaft_reactive_nine', solver_settings=settings,
                        return_details=True, staged_beds=False)
     for name, table in result['_profiles'].items():

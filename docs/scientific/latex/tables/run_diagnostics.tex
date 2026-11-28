@@ -1,20 +1,19 @@
 \begin{table*}[pos=t]
 \centering\footnotesize
-\caption{Grouped convergence diagnostics for the reported studies, with the two additional Case 3C refinements shown separately. Counts in parentheses identify the number of calculations in each group, except for the two numbered additional refinements.}
+\caption{Convergence and balance diagnostics for the fit-A calculations. Counts identify the calculations included in each group.}
 \label{tab:run-diagnostics}
 \setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\textwidth}{@{}Xrrrrrr@{}}
 \toprule
 Study & Initial nodes & Final nodes & Tolerance & Iterations & Max. RMS & Max. BC \\
 \midrule
-Campaign (7) & 21 & 21--22 & \num{0.5} & 1--2 & $<\num{1.26e-01}$ & $<\num{2.78e-17}$ \\
-Paired Case 3C (2) & 21--41 & 22--42 & \num{0.05}--\num{0.5} & 2 & $<\num{1.26e-01}$ & 0 \\
-Thermodynamic (8) & 41 & 42 & \num{0.05} & 2 & $<\num{4.40e-02}$ & 0 \\
-Transport (8) & 41 & 42 & \num{0.05} & 2 & $<\num{4.36e-02}$ & 0 \\
-Operating (6) & 21 & 22 & \num{0.5} & 2 & $<\num{1.84e-01}$ & 0 \\
-Timing (3) & 21 & 22 & \num{0.5} & 2 & $<\num{1.26e-01}$ & 0 \\
-Additional Case 3C (1) & 41 & 46 & \num{0.005} & 3 & $<\num{4.79e-03}$ & 0 \\
-Additional Case 3C (2) & 81 & 121 & \num{5e-05} & 4 & $<\num{4.97e-05}$ & 0 \\
+Campaign (6) & 21 & 21--22 & 0.5 & 1--2 & $\leq\num{1.55e-1}$ & $\leq\num{2.78e-17}$ \\
+Paired Case 3C (2) & 21--41 & 22--42 & 0.05--0.5 & 2 & $\leq\num{1.23e-1}$ & 0 \\
+Thermodynamic (8) & 41 & 41--42 & 0.05 & 1--2 & $\leq\num{5.00e-2}$ & 0 \\
+Transport (8) & 41 & 41--42 & 0.05 & 1--2 & $\leq\num{4.98e-2}$ & $\leq\num{4.34e-19}$ \\
+Operating (7) & 21 & 22 & 0.5 & 2 & $\leq\num{1.81e-1}$ & $\leq\num{1.74e-18}$ \\
+Timing (3) & 21 & 22 & 0.5 & 2 & $\leq\num{1.23e-1}$ & 0 \\
+Additional Case 3C refinements & \multicolumn{6}{l}{Original run inputs unavailable} \\
 \bottomrule
 \end{tabularx}
 \par\medskip
@@ -23,18 +22,17 @@ Additional Case 3C (2) & 81 & 121 & \num{5e-05} & 4 & $<\num{4.97e-05}$ & 0 \\
 Study & Component & Charge & \multicolumn{2}{c}{Net-enthalpy-flow range (\unit{W})} \\
  & \multicolumn{2}{c}{Discrepancy (\unit{mol.s^{-1}})} & 101 positions & 10,001 positions \\
 \midrule
-Campaign (7) & $<\num{1.54e-11}$ & $<\num{2.55e-15}$ & 106.49--325.13 & -- \\
-Paired Case 3C (2) & $<\num{1.37e-11}$ & $<\num{2.24e-15}$ & 273.01--293.22 & -- \\
-Thermodynamic (8) & $<\num{1.49e-11}$ & $<\num{2.39e-15}$ & 266.78--278.60 & -- \\
-Transport (8) & $<\num{1.51e-11}$ & $<\num{2.65e-15}$ & 272.08--273.14 & -- \\
-Operating (6) & $<\num{1.56e-11}$ & $<\num{2.21e-15}$ & 160.21--390.32 & -- \\
-Timing (3) & -- & -- & -- & -- \\
-Additional Case 3C (1) & $<\num{1.37e-11}$ & $<\num{2.17e-15}$ & 16.40 & 30.33 \\
-Additional Case 3C (2) & $<\num{1.37e-11}$ & $<\num{1.96e-15}$ & 0.0359 & 0.134 \\
+Campaign (6) & $\leq\num{1.71e-12}$ & $\leq\num{3.49e-12}$ & 128.00--589.60 & -- \\
+Paired Case 3C (2) & $\leq\num{1.43e-12}$ & $\leq\num{2.30e-12}$ & 267.57--286.44 & -- \\
+Thermodynamic (8) & $\leq\num{1.49e-12}$ & $\leq\num{3.55e-12}$ & 265.94--294.85 & -- \\
+Transport (8) & $\leq\num{1.48e-12}$ & $\leq\num{2.30e-12}$ & 267.20--296.04 & -- \\
+Operating (7) & $\leq\num{1.59e-12}$ & $\leq\num{2.69e-12}$ & 162.36--378.73 & -- \\
+Timing (3) & $\leq\num{1.38e-12}$ & $\leq\num{2.30e-12}$ & 286.44 & -- \\
+Additional Case 3C refinements & \multicolumn{4}{l}{Original run inputs unavailable} \\
 \bottomrule
 \end{tabularx}
 \par\smallskip
 \begin{minipage}{\textwidth}\footnotesize
-RMS is the maximum normalized differential residual; BC is the maximum scaled boundary residual. Ranges span the calculations in each group; upper bounds are rounded upward and energy ranges are rounded to the displayed precision. Shared Case 3C baselines occur in more than one group; thermodynamic rows exclude the shared reference, transport rows include the reference and factor-one control, and operating rows include the baseline. The unconverged lower liquid-to-gas condition is excluded. A dash means the quantity was not available in the corresponding summary or the denser grid was not evaluated. All calculations use boundary tolerance \num{0.001} and a 1000-node limit. Exact per-calculation records are available with the code.
+RMS is the maximum normalized differential residual. BC is the maximum scaled boundary residual. Discrepancies are rounded upward. Shared baselines occur in more than one group. Thermodynamic rows exclude the reference. Transport includes the factor-one control. Case 1C is excluded until its original equilibrium start can be reproduced. Dense energy diagnostics require the original additional-refinement runs.
 \end{minipage}
 \end{table*}

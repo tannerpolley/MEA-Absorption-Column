@@ -17,42 +17,56 @@ def main():
     parser.add_argument('--model-root', type=Path, required=True)
     parser.add_argument('--diffusivity-minus-run', default='diffusivity_090_seeded',
                         help='Explicit retained completion of the diagnosed -10%% case')
+    parser.add_argument('--runs', type=Path, help='Directory containing the fit-A transport runs')
+    parser.add_argument('--output', type=Path)
+    parser.add_argument('--refinement', type=Path, help='Paired Case 3C refinement summary')
     args = parser.parse_args()
     root = args.model_root.resolve()
     sys.path.insert(0, str(root/'analyses/nccc_validation/figures/reactive_column/scripts'))
     from render import read_run
     output = Path(__file__).resolve().parents[1]/'output'
+    output = (args.output or output).resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    runs = args.runs.resolve() if args.runs else output
     names = ['baseline'] + [f'{q}_{f}' for q in ('viscosity', 'diffusivity', 'kl') for f in ('090', '110')]
     rows, profiles, inputs = [], [], []
-    reference = json.loads((output/'baseline/identity.json').read_text())
-    for name in ('diffusivity_090_diagnostic', 'diffusivity_090_reinitialized'):
-        folder = output/name
-        records = [folder/p for p in ('identity.json', 'failure_trace.json', 'state_probe.json')]
-        identity, failure, probe = [json.loads(p.read_text()) for p in records]
-        assert identity['engine_identity'] == reference['engine_identity']
-        assert identity['parameter_fingerprint'] == reference['parameter_fingerprint']
-        assert identity['quantity'] == 'diffusivity' and identity['factor'] == .9
-        assert len(failure['failures']) == 2 and len(probe) == 4
-        assert [row['success'] for row in probe] == [False, True, True, True]
-        assert probe[-1]['temperature_K'] == failure['failures'][-1]['temperature_K']
-        assert probe[-1]['pressure_Pa'] == failure['failures'][-1]['pressure_Pa']
-        assert probe[-1]['apparent_amounts_mol'] == failure['failures'][-1]['apparent_amounts_mol']
-        for row in probe[2:]:
-            assert row['evidence']['local_stability_status'] == 'passed'
-            assert row['evidence']['sensitivity_status'] == 'available'
-        inputs.extend(records)
-    archived = set()
-    for archive in sorted((output.parent/'input').glob('*.tar.gz')):
-        inputs.append(archive)
-        with tarfile.open(archive) as source:
-            for member in source.getmembers():
-                path = str(root/member.name)
-                if member.isfile() and path in reference['input_sha256']:
-                    assert hashlib.sha256(source.extractfile(member).read()).hexdigest() == reference['input_sha256'][path]
-                    archived.add(path)
-    assert all(path in archived for path in reference['input_sha256'] if path.startswith(str(root/'src')))
+    reference_run = runs/('transport_baseline' if args.runs else 'baseline')
+    reference = json.loads((reference_run/'identity.json').read_text())
+    if not args.runs:
+        for name in ('diffusivity_090_diagnostic', 'diffusivity_090_reinitialized'):
+            folder = output/name
+            records = [folder/p for p in ('identity.json', 'failure_trace.json', 'state_probe.json')]
+            identity, failure, probe = [json.loads(p.read_text()) for p in records]
+            assert identity['engine_identity'] == reference['engine_identity']
+            assert identity['parameter_fingerprint'] == reference['parameter_fingerprint']
+            assert identity['quantity'] == 'diffusivity' and identity['factor'] == .9
+            assert len(failure['failures']) == 2 and len(probe) == 4
+            assert [row['success'] for row in probe] == [False, True, True, True]
+            assert probe[-1]['temperature_K'] == failure['failures'][-1]['temperature_K']
+            assert probe[-1]['pressure_Pa'] == failure['failures'][-1]['pressure_Pa']
+            assert probe[-1]['apparent_amounts_mol'] == failure['failures'][-1]['apparent_amounts_mol']
+            for row in probe[2:]:
+                assert row['evidence']['local_stability_status'] == 'passed'
+                assert row['evidence']['sensitivity_status'] == 'available'
+            inputs.extend(records)
+        archived = set()
+        for archive in sorted((output.parent/'input').glob('*.tar.gz')):
+            inputs.append(archive)
+            with tarfile.open(archive) as source:
+                for member in source.getmembers():
+                    path = str(root/member.name)
+                    if member.isfile() and path in reference['input_sha256']:
+                        assert hashlib.sha256(source.extractfile(member).read()).hexdigest() == reference['input_sha256'][path]
+                        archived.add(path)
+        assert all(path in archived for path in reference['input_sha256'] if path.startswith(str(root/'src')))
     for name in names:
-        run = output/(args.diffusivity_minus_run if name == 'diffusivity_090' else name)
+        if args.runs and name != 'baseline':
+            quantity, factor = name.rsplit('_', 1)
+            run = runs/f'transport_{quantity}_{int(factor)/100}'
+        elif name == 'baseline':
+            run = reference_run
+        else:
+            run = output/(args.diffusivity_minus_run if name == 'diffusivity_090' else name)
         with chdir(root):
             profile, row, identity, paths = read_run(run)
             inputs.extend(p.resolve() for p in paths)
@@ -115,18 +129,23 @@ def main():
     data = pd.DataFrame(rows)
     data['capture_change_pp'] = data.capture_pct-data.capture_pct.iloc[0]
     data['peak_temperature_change_K'] = data.peak_liquid_temperature_K-data.peak_liquid_temperature_K.iloc[0]
-    refinement_path = root/'analyses/nccc_validation/figures/reactive_column/output/summary.csv'
+    refinement_path = args.refinement or root/'analyses/nccc_validation/figures/reactive_column/output/summary.csv'
     refinement = pd.read_csv(refinement_path).set_index('mesh_points')
     capture_refinement = abs(refinement.loc[41, 'capture_pct']-refinement.loc[21, 'capture_pct'])
     temperature_refinement = abs(refinement.loc[41, 'peak_liquid_temperature_K']-refinement.loc[21, 'peak_liquid_temperature_K'])
+    control_run = runs/('transport_factor_one_control' if args.runs else 'baseline_seeded')
     with chdir(root):
-        control_profile, control, control_identity, control_paths = read_run(output/'baseline_seeded')
+        control_profile, control, control_identity, control_paths = read_run(control_run)
         inputs.extend(p.resolve() for p in control_paths)
-    control_result = json.loads((output/'baseline_seeded/result.json').read_text())
+    control_result = json.loads((control_run/'result.json').read_text())
     assert control_identity['factor'] == 1. and control_identity['settings'] == reference['settings']
-    assert control_identity['input_sha256'] == reference['input_sha256']
+    for path, digest in reference['input_sha256'].items():
+        assert control_identity['input_sha256'][path] == digest
+    assert control_identity['parameter_fingerprint'] == reference['parameter_fingerprint']
+    assert control_identity['engine_identity'] == reference['engine_identity']
     assert control_result['source_unchanged_during_run']
-    assert not json.loads((output/'baseline_seeded/failure_trace.json').read_text())['failures']
+    if not args.runs:
+        assert not json.loads((output/'baseline_seeded/failure_trace.json').read_text())['failures']
     control.update(capture_change_pp=control['capture_pct']-data.capture_pct.iloc[0],
                    peak_temperature_change_K=control['peak_liquid_temperature_K']-data.peak_liquid_temperature_K.iloc[0],
                    max_liquid_temperature_profile_change_K=float(np.max(np.abs(control_profile.Tl-profiles[0].Tl))),
@@ -134,8 +153,9 @@ def main():
     assert abs(control['capture_change_pp']) < capture_refinement
     assert abs(control['peak_temperature_change_K']) < temperature_refinement
     pd.DataFrame([control]).to_csv(output/'initialization_control.csv', index=False)
-    inputs.extend([output/'baseline_seeded/initialization.json', output/'baseline_seeded/failure_trace.json',
-                   output/'derivative_checks.json', output.parent/'input/engine_check.txt'])
+    if not args.runs:
+        inputs.extend([output/'baseline_seeded/initialization.json', output/'baseline_seeded/failure_trace.json',
+                       output/'derivative_checks.json', output.parent/'input/engine_check.txt'])
     data['capture_exceeds_previous_refinement_change'] = abs(data.capture_change_pp) > capture_refinement
     data['temperature_exceeds_previous_refinement_change'] = abs(data.peak_temperature_change_K) > temperature_refinement
     data.to_csv(output/'summary.csv', index=False)

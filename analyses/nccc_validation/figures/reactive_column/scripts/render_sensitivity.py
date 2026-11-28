@@ -9,12 +9,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from render import read_run
+from mea_absorption_column.Thermodynamics.reactive_bundle import parameter_fingerprint
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference', type=Path)
     parser.add_argument('runs', type=Path, nargs='+')
+    parser.add_argument('--output', type=Path, default=Path(__file__).resolve().parents[1]/'output'/'sensitivity')
     parser.add_argument('--initialization-check', type=Path,
                         help='Retained rejected state and fresh-loading-path comparison')
     args = parser.parse_args()
@@ -52,7 +54,8 @@ def main():
             paths.extend([document, run/'evaluated_parameters.json'])
         if scale is not None:
             native = json.loads(json.loads((run/'result.json').read_text())['epcsaft_chemistry_last_evidence'])
-            if native['parameter_fingerprint'] != identity['evaluated_parameter_fingerprint']:
+            evaluated = json.loads((run/'evaluated_parameters.json').read_text())
+            if native['parameter_fingerprint'] != parameter_fingerprint(evaluated):
                 raise ValueError('Final state did not use the declared perturbed parameters')
             if reaction is not None and native['parameter_fingerprint'] != reference_fingerprint:
                 raise ValueError('Reaction-only sensitivity changed the EOS parameters')
@@ -69,7 +72,7 @@ def main():
             or set(zip(data.parameter.iloc[1:], data.perturbation_pct.iloc[1:])) != {
                 (p, sign) for p in selected for sign in (-5.,5.)}):
         raise ValueError('Expected exactly both ±5% perturbations for each selected parameter')
-    output = Path(__file__).resolve().parents[1]/'output'/'sensitivity'
+    output = args.output
     output.mkdir(parents=True, exist_ok=True)
     data.to_csv(output/'summary.csv',index=False)
     pd.concat(profiles,ignore_index=True).to_csv(output/'profiles.csv',index=False)
