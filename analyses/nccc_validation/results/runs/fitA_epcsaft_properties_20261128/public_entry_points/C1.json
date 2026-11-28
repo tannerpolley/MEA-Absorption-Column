@@ -1,0 +1,26 @@
+{
+  "byte_identical": true,
+  "comparisons": {
+    "CO2.csv": true,
+    "Cl.csv": true,
+    "Cv.csv": true,
+    "Fl.csv": true,
+    "Fv.csv": true,
+    "H2O.csv": true,
+    "Hl.csv": true,
+    "Hv.csv": true,
+    "Prop_l.csv": true,
+    "Prop_v.csv": true,
+    "T.csv": true,
+    "enhance_factor.csv": true,
+    "initial_scaled.csv": true,
+    "reactive_density.csv": true,
+    "solution_scaled.csv": true,
+    "transport.csv": true,
+    "x.csv": true,
+    "y.csv": true
+  },
+  "reference": "analyses/nccc_validation/results/runs/fitA_article_20261128/coarse",
+  "seed_sha256": "c4f176886209763e032d317c42c18acf8304469f442feeb80bf825d0efb06bd0",
+  "wall_limit_s": 300
+}

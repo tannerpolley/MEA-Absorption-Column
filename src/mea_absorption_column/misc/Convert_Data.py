@@ -68,7 +68,7 @@ def convert_data(
         # Vapor Calculations
 
         # Find Vapor Mole Fractions
-        y_CO2, y_H2O, y_N2, y_O2 = _vapor_mole_fractions(
+        y_CO2, y_H2O, y_N2, y_O2, humidity_source = _vapor_mole_fractions(
             df,
             run,
             y_CO2,
@@ -141,7 +141,7 @@ def convert_data(
         # Vapor Calculations
 
         # Find Vapor Mole Fractions
-        y_CO2, y_H2O, y_N2, y_O2 = _vapor_mole_fractions(
+        y_CO2, y_H2O, y_N2, y_O2, humidity_source = _vapor_mole_fractions(
             df,
             run,
             y_CO2,
@@ -229,7 +229,7 @@ def convert_data(
             "diameter_m": float(D),
             "vapor_composition_mode": vapor_composition_mode,
             "gas_flow_basis": gas_flow_basis,
-            "inlet_humidity_source": inlet_humidity_source if vapor_composition_mode == "dry_saturated" else "specified",
+            "inlet_humidity_source": humidity_source,
         }
         return inputs, X, metadata
     return inputs, X
@@ -237,8 +237,10 @@ def convert_data(
 
 def _vapor_mole_fractions(df, run, y_CO2, Tv, P, alpha_H2O_CO2, alpha_O2_N2, vapor_composition_mode, inlet_humidity_source):
     y_H2O = _optional_fraction(df, run, "y_H2O")
+    humidity_source = "specified"
     if y_H2O is None:
         y_H2O = y_CO2 * alpha_H2O_CO2
+        humidity_source = "ratio"
 
     if vapor_composition_mode == "dry_saturated":
         dry_y_co2 = float(y_CO2)
@@ -255,6 +257,7 @@ def _vapor_mole_fractions(df, run, y_CO2, Tv, P, alpha_H2O_CO2, alpha_O2_N2, vap
             y_H2O = float(np.clip(vapor_pressure(Tv) / P, 0.0, 0.95))
         else:
             raise ValueError(f"Unknown inlet humidity source: {inlet_humidity_source}")
+        humidity_source = inlet_humidity_source
         wet_factor = 1.0 - y_H2O
         y_CO2 = dry_y_co2 * wet_factor
         y_O2 = dry_y_o2 * wet_factor
@@ -276,7 +279,7 @@ def _vapor_mole_fractions(df, run, y_CO2, Tv, P, alpha_H2O_CO2, alpha_O2_N2, vap
     total = y_CO2 + y_H2O + y_N2 + y_O2
     if not np.isclose(total, 1.0, rtol=0.0, atol=1.0e-8):
         raise ValueError(f"Vapor mole fractions do not sum to one: {total}")
-    return y_CO2, y_H2O, y_N2, y_O2
+    return y_CO2, y_H2O, y_N2, y_O2, humidity_source
 
 
 def _optional_fraction(df, run, column):

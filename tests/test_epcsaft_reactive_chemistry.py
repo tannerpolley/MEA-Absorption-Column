@@ -166,3 +166,60 @@ def test_coupled_run_reports_selected_dataset_and_unavailable_legacy_metrics(mon
     for quantity in ['mass', 'reaction', 'charge']:
         assert result[f'epcsaft_chemistry_max_{quantity}_residual'] is None
     assert result['epcsaft_chemistry_last_evidence'] == '{}'
+
+
+def test_nine_species_nccc_inlet_defaults_and_humidity_provenance(monkeypatch):
+    import importlib
+    driver = importlib.import_module('mea_absorption_column.Run_Model')
+    inlet = []
+
+    def stopped_solve(left, right, z, parameters, settings):
+        scales, _, (_, nitrogen, oxygen), *_ = parameters
+        carbon, water = left[2:4] * scales[2:4]
+        inlet.append((water / (carbon + water + nitrogen + oxygen), carbon + nitrogen + oxygen))
+        return np.linspace(left, right, len(z)).T, z, 'stopped test solve', False, 'not solved'
+
+    monkeypatch.setattr(driver, 'single_shoot_solve', stopped_solve)
+    cases = pd.read_csv('src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv', index_col=0).loc[['3C']]
+    result = driver.run_model(cases, thermo_model='epcsaft_reactive_nine', return_details=True)
+    assert result['inlet_humidity_source'] == 'epcsaft'
+    assert result['gas_flow_basis'] == 'reported_dry_mass'
+    # Inlet of the retained fit-A Engine saturation run, y.csv and Fv.csv.
+    assert inlet[-1] == pytest.approx((0.0814660575, 18.7280970579), abs=1e-9, rel=0.)
+
+    legacy = {'vapor_composition_mode': 'legacy_ratio', 'gas_flow_basis': 'reported_total_wet'}
+    for supplied_humidity, source in ((None, 'ratio'), (0.07, 'specified')):
+        inputs = cases.assign(y_H2O=supplied_humidity) if supplied_humidity is not None else cases
+        result = driver.run_model(inputs, thermo_model='epcsaft_reactive_nine', return_details=True,
+                                  solver_settings=legacy)
+        assert result['inlet_humidity_source'] == source
+        assert result['gas_flow_basis'] == 'reported_total_wet'
+        expected = supplied_humidity if supplied_humidity is not None else 0.08952189454
+        assert inlet[-1][0] == pytest.approx(expected, abs=1e-9, rel=0.)
+
+
+def test_explicit_nine_species_chemistry_uses_legacy_henry_seed(monkeypatch):
+    import importlib
+    driver = importlib.import_module('mea_absorption_column.Run_Model')
+    from mea_absorption_column.BVP.ABS_Column import abs_column
+
+    seen = []
+
+    def capture_solve(left, right, z, parameters, settings):
+        abs_column(0., left, parameters)
+        options = parameters[-1]
+        seen.append((options['thermo_model'], options['chemical_equilibrium_model']))
+        profile = np.linspace(left, right, len(z)).T
+        if options['thermo_model'] == 'ideal_henry':
+            return profile, z, 'Henry test seed', True, 'seed available'
+        np.testing.assert_array_equal(settings['initial_guess_scaled'], profile)
+        return profile, z, 'stopped test solve', False, 'not solved'
+
+    monkeypatch.setattr(driver, 'scipy_BVP_solve', capture_solve)
+    cases = pd.read_csv('src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv', index_col=0).loc[['3C']]
+    result = driver.run_model(
+        cases, method='scipy-bvp', thermo_model='epcsaft_reactive_nine', return_details=True,
+        solver_settings={'chemical_equilibrium_model': 'epcsaft_reactive_nine'},
+    )
+    assert seen == [('ideal_henry', 'legacy'), ('epcsaft_reactive_nine', 'epcsaft_reactive_nine')]
+    assert result['continuation_path'] == 'ideal_henry->epcsaft_reactive_nine'

@@ -1,0 +1,16 @@
+case_id                                             3C
+success                                          False
+message                        non-positive molar flow
+capture_pct                                        NaN
+runtime_s                                    12.555858
+liquid_density_source                              NaN
+energy_model                                       NaN
+water_transfer_source                              NaN
+inlet_humidity_source                              NaN
+co2_vapor_fugacity_basis                           NaN
+water_vaporization_enthalpy                        NaN
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/issue99-entry-points.JTPp9C/verify.py", line 51, in <module>
+    assert record['success'] and record['case_id'] == '3C'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
