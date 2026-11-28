@@ -35,7 +35,7 @@ np.set_printoptions(suppress=True)
 
 def run_model(df,
               method='single',
-              data_type='mole',
+              data_type=None,
               run=0,
               show_info=False,
               save_run_results=False,
@@ -49,6 +49,12 @@ def run_model(df,
 
     thermo_model = (thermo_model or 'ideal_henry').lower()
     solver_settings_for_run = dict(solver_settings or {})
+    # The 2017 NCCC mass table reports dry gas flow and dry CO2 and O2 fractions.
+    nccc_2017 = (thermo_model == REACTIVE_MODEL
+                 and {'L', 'G', 'y_O2', 'lean_solvent_temp_imputed'}.issubset(df.columns))
+    if data_type is None:
+        data_type = 'mass' if nccc_2017 else 'mole'
+    nccc_dry_mass = nccc_2017 and data_type == 'mass'
     reactive_dataset = solver_settings_for_run.get('reactive_dataset', FIT_A)
     if thermo_model == REACTIVE_MODEL:
         property_sources = reactive_property_sources(reactive_dataset, solver_settings_for_run)
@@ -63,13 +69,18 @@ def run_model(df,
         raise ValueError(f"Unknown nine-species property sources: {property_sources}")
     resolved_inputs = solver_settings_for_run.pop("_resolved_inputs", None)
     if resolved_inputs is None:
+        vapor_mode = solver_settings_for_run.get(
+            "vapor_composition_mode", "dry_saturated" if nccc_dry_mass else "legacy_ratio")
+        gas_basis = solver_settings_for_run.get(
+            "gas_flow_basis", "reported_dry_mass" if nccc_dry_mass and vapor_mode == "dry_saturated"
+            else "reported_total_wet")
         inputs, X, case_metadata = convert_data(
             df,
             run=run,
             type=data_type,
             return_metadata=True,
-            vapor_composition_mode=solver_settings_for_run.get("vapor_composition_mode", "legacy_ratio"),
-            gas_flow_basis=solver_settings_for_run.get("gas_flow_basis", "reported_total_wet"),
+            vapor_composition_mode=vapor_mode,
+            gas_flow_basis=gas_basis,
             inlet_humidity_source=property_sources["inlet_humidity_source"],
         )
     else:
@@ -339,7 +350,8 @@ def run_model(df,
             **solver_settings_for_run,
             "seed_from_henry": False,
             "jacobian_mode": "numerical",
-            "inlet_humidity_source": property_sources['inlet_humidity_source'],
+            "chemical_equilibrium_model": _default_chemical_equilibrium_model("ideal_henry"),
+            "_resolved_inputs": {"parameters": inputs, "raw_input": X, "metadata": case_metadata},
             "return_internal_profile": True,
         }
         henry_seed = run_model(

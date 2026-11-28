@@ -1,0 +1,43 @@
+{
+  "case_id": "3C",
+  "thermo_model": "epcsaft_reactive_nine",
+  "chemical_equilibrium_model": "epcsaft_reactive_nine",
+  "success": true,
+  "message": "The algorithm converged to the desired accuracy.",
+  "capture_pct": 92.90247831942744,
+  "runtime_s": 16.1837100982666,
+  "max_rms_residual": 0.1888734666026156,
+  "gas_flow_basis": "reported_dry_mass",
+  "continuation_path": "ideal_henry->epcsaft_reactive_nine",
+  "epcsaft_chemistry_last_evidence": "{\"iterations\": 16, \"linear_solver\": \"ma57\", \"maximum_residual\": 1.1368683772161603e-13, \"parameter_fingerprint\": \"sha256:7de7b2af02496e6b387c6b5506cd51ecfaec8bb172131d223b9d8c8ea89954cc\", \"reduced_hessian_minimum\": 1.4007493074639711e-11}",
+  "liquid_density_source": "epcsaft",
+  "energy_model": "epcsaft",
+  "water_transfer_source": "epcsaft",
+  "inlet_humidity_source": "epcsaft",
+  "co2_vapor_fugacity_basis": "CO2/MEA/H2O reduced composition, rescaled to wet CO2 mole fraction",
+  "water_vaporization_enthalpy": null,
+  "inlet_y_H2O": 0.08146605752136946,
+  "retained_y_H2O": 0.08146605752136946,
+  "inlet_mol_s": {
+    "Fv_CO2": 1.7417130263823342,
+    "Fv_H2O": 1.661021070234532,
+    "Fv_N2": 15.300855296283519,
+    "Fv_O2": 1.6855287352087105,
+    "Fv_T": 20.389118128109093
+  },
+  "retained_inlet_mol_s": {
+    "Fv_CO2": 1.7417130263823342,
+    "Fv_H2O": 1.661021070234532,
+    "Fv_N2": 15.30085529628352,
+    "Fv_O2": 1.6855287352087105,
+    "Fv_T": 20.389118128109093
+  },
+  "verification": {
+    "command": [
+      ".tmp_local/issue99-entry-points.JTPp9C/verify.py",
+      ".tmp_local/issue99-entry-points.JTPp9C",
+      "run_model"
+    ],
+    "wall_limit_s": 150
+  }
+}

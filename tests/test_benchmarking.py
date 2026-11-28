@@ -215,6 +215,30 @@ def test_benchmark_result_columns_round_trip_to_csv(tmp_path, monkeypatch):
     assert loaded.loc[0, "h2o_capture_guess_pct"] == -80.0
 
 
+def test_benchmark_exports_resolved_nine_species_properties(tmp_path, monkeypatch):
+    properties = {
+        "liquid_density_source": "correlation",
+        "energy_model": "correlation",
+        "water_transfer_source": "epcsaft",
+        "inlet_humidity_source": "ratio",
+        "co2_vapor_fugacity_basis": "CO2/MEA/H2O reduced composition, rescaled to wet CO2 mole fraction",
+        "water_vaporization_enthalpy": 43990.0,
+    }
+
+    def solved_case(df, run, method, thermo_model, **kwargs):
+        return dict(properties, case_id=df.index[run], method=method, thermo_model=thermo_model,
+                    success=True, runtime_s=0.1, capture_pct=92.83)
+
+    monkeypatch.setattr("mea_absorption_column.benchmark.run_model", solved_case)
+    run_benchmark(BenchmarkSettings(
+        methods=("scipy-bvp",), thermo_models=("epcsaft_reactive_nine",),
+        c_case_limit=0, nccc_dataset="2017", nccc_case_ids=("3C",), output_dir=tmp_path,
+    ))
+
+    row = pd.read_csv(tmp_path / "benchmark_results.csv").iloc[0]
+    assert row[list(properties)].to_dict() == properties
+
+
 def test_benchmark_schema_includes_staged_bed_metadata():
     for column in [
         "beds",

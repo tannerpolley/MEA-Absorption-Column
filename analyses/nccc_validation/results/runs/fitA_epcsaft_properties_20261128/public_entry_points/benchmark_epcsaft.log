@@ -1,0 +1,11 @@
+case_id                                                                       3C
+success                                                                     True
+message                         The algorithm converged to the desired accuracy.
+capture_pct                                                            92.902478
+runtime_s                                                              24.307856
+liquid_density_source                                                    epcsaft
+energy_model                                                             epcsaft
+water_transfer_source                                                    epcsaft
+inlet_humidity_source                                                    epcsaft
+co2_vapor_fugacity_basis       CO2/MEA/H2O reduced composition, rescaled to w...
+water_vaporization_enthalpy                                                  NaN
