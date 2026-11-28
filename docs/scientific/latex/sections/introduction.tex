@@ -17,7 +17,7 @@ A comparison must identify which measurements determined its inputs and which as
 A molecular equation of state (EOS) supplies physical nonideality, whereas reaction equilibrium determines the distribution among molecular and ionic species.
 Electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) represents molecular and ionic interactions through residual Helmholtz energy \cite{Gross2001,Cameretti2005,Bulow2021a}.
 Coupling its activities to reaction constants gives bulk speciation, and its fugacity coefficients provide a \COtwo{} driving force for interphase transfer.
-This thermodynamic description is distinct from the conventional reaction-enhancement approximation and empirical caloric properties used in the present column model.
+The same Helmholtz energy also gives phase densities, enthalpies and heat capacities, so one model can supply every bulk-phase thermodynamic property an absorber balance needs, while the interfacial film, transport and packing descriptions remain separate closures.
 
 % I4: physical parameter reuse and comparative rationale
 Available thermodynamic approaches differ in their physical representation and parameter requirements (\cref{tab:thermodynamic-model-comparison}).
@@ -45,12 +45,13 @@ Whether this reduces total fitting effort for reactive MEA has not been tested o
 
 % I5: scientific value of connecting thermodynamics to column response
 Column evaluation connects these thermodynamic choices to the quantities needed for absorber design: capture, axial temperature and response to operating conditions.
-Bulk speciation and fugacity profiles expose how the reactive EOS supplies the driving force, while separate thermodynamic and transport perturbations show how each set of inputs affects the coupled prediction.
+Bulk speciation and fugacity profiles expose how the reactive EOS supplies the driving force, comparison of interfacial film descriptions with the same bulk thermodynamics isolates the transfer model, and separate thermodynamic and transport perturbations show how each set of inputs affects the coupled prediction.
 Comparisons with measured capture and packing temperatures then assess that connection at the process scale.
 Together with numerical refinement and measured computational cost, this provides a basis for developing predictive transfer models and testing thermodynamic parameter reuse in process calculations.
 
 % I6: objective and reading order
-The model is evaluated against seven National Carbon Capture Center (NCCC) one-bed cases, with perturbation studies centered on Case 3C.
-A paired Case 3C refinement precedes thermodynamic and transport sensitivity studies and discrete changes in solvent flow, lean loading and inlet temperature.
-Computational cost is measured for the coarse Case 3C calculation.
+Two formulations are evaluated against seven National Carbon Capture Center (NCCC) one-bed cases.
+A twelve-state conserved formulation compares four interfacial film descriptions on four axial meshes and is used to locate the minimum Case 3C solvent flow for \qty{90}{\percent} capture.
+A nine-species boundary-value-problem (BVP) formulation with conventional reaction enhancement carries a paired Case 3C refinement, a property-source comparison, thermodynamic and transport sensitivity studies and discrete changes in solvent flow, lean loading and inlet temperature.
+Computational cost is measured for the coarse nine-species Case 3C calculation.
 The following sections define the model, describe its evaluation and interpret the resulting profiles and responses.

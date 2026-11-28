@@ -4,8 +4,8 @@
 Seven one-bed, no-intercooler cases from the 2017 NCCC C campaign provide the experimental comparison \cite{Morgan2020}.
 The modeled bed has diameter \qty{0.64}{m}, height \qty{6}{m} and MellapakPlus 252Y packing, with specific area \qty{250}{m^{-1}} and void fraction 0.970.
 \Cref{tab:nccc-one-bed-scope} gives the reported operating inputs; the missing lean-inlet temperatures in Cases 1C--3C are set to \qty{318.15}{K}.
-Reported dry gas mass flow and dry \COtwo{} fraction are converted to a wet feed by saturation at the gas-inlet temperature, with the remaining dry gas distributed between nitrogen and oxygen using $y_{\Otwo}/y_{\Ntwo}=0.08485753604$.
-These input assumptions apply to the physical comparison and to the Case 3C reference used below.
+In the nine-species model, reported dry gas mass flow and dry \COtwo{} fraction are converted to a wet feed by PC-SAFT water saturation at the gas-inlet temperature and pressure, with the remaining dry gas distributed between nitrogen and oxygen using $y_{\Otwo}/y_{\Ntwo}=0.08485753604$.
+These inputs apply to the nine-species comparison and to the Case 3C reference used below; the twelve-state input basis is given in \cref{subsec:twelve-state}.
 
 \input{tables/nccc_one_bed_case_scope}
 
@@ -19,7 +19,9 @@ For case $k$, capture is the percentage reduction in vapor \COtwo{} flow; signed
 \end{align}
 Capture is in percent, errors are in percentage points, and the mean absolute error weights the $N_c=7$ cases equally.
 Packing temperatures from Morgan et al.\ \cite{Morgan2020}, Table C2, are converted from Celsius to kelvin and from their top-to-bottom coordinate $x$ to normalized height $\zeta=1-x=z/H$.
-Both predicted phase temperatures are compared with the taps because the source does not designate a measured phase; the sampled model peak is the maximum liquid temperature at 101 equally spaced exported positions.
+Both predicted phase temperatures are compared with the taps because the source does not designate a measured phase.
+Temperature agreement is summarized by the root-mean-square deviation over the 35 taps of the seven cases.
+The sampled nine-species peak is the maximum liquid temperature at 101 equally spaced exported positions.
 
 \subsection{Numerical solution and verification}
 % E3: collocation method
@@ -33,6 +35,13 @@ The assembled Jacobian includes the thermodynamic, transport and nonisothermal d
 CppAD supplies automatic derivatives of the thermodynamic calculation, which are combined with differentiated transport and energy expressions, including the bulk-fugacity/free-concentration film relation.
 Repeated identical thermodynamic states reuse their values and derivatives.
 Scaled directional comparisons with centered finite differences at lean and rich states satisfy relative and absolute tolerances of \num{2e-5} and \num{2e-8}; finite differences are used only to verify the derivatives.
+
+% E3b: twelve-state solution
+The twelve-state cell equations are solved simultaneously by IPOPT \cite{Wachter2006} through CasADi \cite{anderssonCasADiSoftwareFramework2019}, with the MA57 linear solver, an upwind conservative discretization and a scaled tolerance of \num{1e-7} within 60 iterations.
+Each case is solved on 17, 33, 65 and 129 nodes clustered toward both ends, and each mesh starts from the solution on the previous one.
+A fresh 17-node start whose interface-loading root search fails on the bracket $[0,1]$ is repeated once on $[0,0.5]$ with otherwise unchanged inputs.
+The wall limit is \qty{3600}{s} per solve and \qty{7200}{s} at 129 nodes.
+Mesh dependence is judged from the change in capture between the 65- and 129-node solutions.
 
 % E4b: distinct initial guesses
 An initial axial column profile and an initial chemical composition at each position serve different numerical purposes.
@@ -57,7 +66,8 @@ Reported solutions must satisfy the solver stopping tests, positive species conc
 The norm uses six percentage-relative errors with positive specified values and temperatures in kelvin.
 It differs from the solver's scaled boundary residual and RMS differential residual; pressure is enforced by the boundary equations but excluded from this postprocessed norm.
 A calculation in which the reactive equilibrium cannot be solved is reported as unconverged; no substitute value is assigned.
-Every calculation reported in \cref{sec:results} satisfies these criteria; grouped convergence diagnostics are listed in \cref{tab:run-diagnostics}, and \cref{tab:reactive-numerical-verification} presents the paired Case 3C refinement.
+Every nine-species calculation reported in \cref{sec:results} satisfies these criteria; grouped convergence diagnostics are listed in \cref{tab:run-diagnostics}, and \cref{tab:reactive-numerical-verification} presents the paired Case 3C refinement.
+Every twelve-state solution reported there meets the IPOPT stopping test at the scaled tolerance above.
 
 % E6b: balance diagnostics
 Component and charge discrepancies quantify departures from the conservation and electroneutrality equations at each position, while axial ranges of $F_i^\vap-F_i^\liq$ test column component conservation.
@@ -72,11 +82,13 @@ The continuous equations predict zero variation; the nonzero numerical range is 
 
 \subsection{Thermodynamic, transport and operating perturbations}
 % E7: thermodynamic design
-One-at-a-time thermodynamic perturbations test two binary interactions and two reaction constants around refined Case 3C.
-The MEA--water and \COtwo--water binary coefficients, \num{-0.07352750} and \num{0.01326288}, are separately multiplied by 0.95 and 1.05 in both EOS phases; scaling the negative coefficient above one makes it more negative.
+One-at-a-time thermodynamic perturbations of the nine-species model test two binary interactions and two reaction constants around refined Case 3C.
+The MEA--water and \COtwo--water $k_{ij}(T)$ laws, with $k_{ij}(\qty{313.15}{K})=\num{-0.0883119}$ and \num{-0.0464169}, are separately multiplied by 0.95 and 1.05, including their temperature slopes.
+The scaled laws enter the liquid state and the reduced vapor \COtwo{} coefficient; the wet-gas vapor has no binary corrections to scale.
+Scaling a negative coefficient above one makes it more negative.
 For carbamate hydrolysis (R4) and protonated-MEA dissociation (R5), $\ln K_r^*(T)=\ln K_r(T)+\ln s$ with the same multipliers, preserving $d\ln K_r/dT$.
 Each calculation uses 41 initial nodes, tolerance 0.05, boundary tolerance 0.001 and the refined reference profile as its initial guess.
-Other thermodynamic, kinetic, transport and operating inputs remain fixed, including the empirical enthalpy formulas.
+Other thermodynamic, kinetic, transport and operating inputs remain fixed.
 
 % E8: transport design
 Separate multipliers of 0.9 and 1.1 test liquid viscosity, free molecular \COtwo{} diffusivity and the liquid-side \COtwo{} transfer coefficient on the same refined reference.
@@ -89,11 +101,13 @@ A factor-one calculation checks equivalence with the reference, and the lower-di
 Discrete Case 3C perturbations vary solvent circulation, lean loading and inlet temperature separately.
 The liquid-to-reported-dry-gas mass ratio $L/G$ changes by $\pm10\%$ through liquid flow at fixed dry gas flow; loading changes from 0.25 to 0.225 or 0.275 mol \COtwo{} per mol MEA, and liquid-inlet temperature from \qty{318.15}{K} to \qty{313.15}{K} or \qty{323.15}{K}.
 These calculations use the coarse campaign settings of 21 initial nodes, tolerance 0.5 and boundary tolerance 0.001, with a 1000-node limit.
-Each condition is initialized from a Henry-law profile; where that initialization did not converge (the two flow perturbations and the colder inlet), the calculation was restarted from the reactive Case 3C profile with unchanged equations and tolerances.
+Each condition is initialized from a Henry-law profile.
+That initialization did not converge for the higher flow and the colder inlet, and both were restarted from the reactive Case 3C profile with unchanged equations and tolerances.
+The lower-flow condition converged from both starts with capture differing by \num{4e-6} percentage points, and its restarted solution is reported.
 
 \paragraph{Computational-cost measurement.}
 % E10: timing protocol
 Three sequential fresh-initialization Case 3C runs characterize cost at the coarse mesh and tolerance settings.
-The shared Linux machine has an AMD Ryzen 5 5500 processor, six physical cores and approximately 32 GB RAM; the runs use CPython 3.13, NumPy 2.4.4 and SciPy 1.17.1, with BLAS, OpenMP and MKL thread settings fixed to one.
+The shared Linux machine has an AMD Ryzen 9 5900XT processor, 16 physical cores and approximately 31 GB RAM; the runs use CPython 3.13.13, NumPy 2.4.4 and SciPy 1.17.1, with BLAS, OpenMP and MKL thread settings fixed to one.
 BVP wall and process CPU times include the solver call and conversion of its returned solution; total wall time also includes Henry initialization, phase-profile evaluation and CSV export, but excludes program start-up, input loading and output writing.
 Peak resident memory includes imported libraries.

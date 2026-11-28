@@ -4,18 +4,23 @@
 The model describes steady countercurrent absorption in one packed bed.
 Vapor flows upward from $z=0$ to $z=H$, while lean solvent enters at $z=H$ and flows downward; $H$ is packed height and $A$ is column cross-sectional area.
 The apparent liquid components are \COtwo, MEA and water, and the wet gas contains \COtwo, water, nitrogen and oxygen.
-Only \COtwo{} and water transfer between phases, and the calculations assume zero pressure gradient.
+Only \COtwo{} and water transfer between phases.
+Two formulations of this system are evaluated.
+The nine-species model integrates the column balances at constant pressure and carries the sensitivity, operating and computational-cost studies.
+The twelve-state model (\cref{subsec:twelve-state}) solves conserved cell balances with a hydraulic pressure drop and leads the capture and temperature comparison.
 
 % M2: calculation sequence
 At each axial position, reactive equilibrium and transport calculations supply the fluxes used in the column balances (\cref{fig:absorber-calculation-sequence,tab:thermodynamic-responsibility}).
-Liquid temperature, pressure and apparent composition determine bulk speciation and the liquid \COtwo{} fugacity, while a reduced neutral vapor composition supplies its vapor fugacity coefficient.
-These quantities enter conventional enhancement and transfer resistances, together with empirical hydraulic and transport properties.
-The resulting material and enthalpy sources determine the phase-flow and temperature derivatives.
+ePC-SAFT supplies every bulk-phase thermodynamic property these balances use: liquid and vapor density, phase enthalpies and heat capacities, phase and reaction equilibrium, the \COtwo{} solubility and the water fugacities.
+Liquid temperature, pressure and apparent composition determine bulk speciation, density, enthalpy and the liquid \COtwo{} and water fugacities.
+A reduced neutral vapor composition supplies the vapor \COtwo{} fugacity coefficient, and the wet four-species vapor supplies the water fugacity coefficient, vapor density and vapor enthalpy.
+Surface tension, viscosity, diffusivity, reaction kinetics and packing performance remain correlations.
+These quantities enter conventional enhancement and transfer resistances, and the resulting material and enthalpy sources determine the phase-flow and temperature derivatives.
 
 \begin{figure}[pos=htbp]
 \centering
 \input{figures/tikz/model-framework-flowchart}
-\caption{Coupled absorber calculation. Arrows follow state evaluation through reactive speciation, phase driving forces, conventional enhancement and interphase sources to column balances; feedback updates the axial state. The reduced CO$_2$/trace-MEA/water vapor composition supplies an EOS coefficient that is mapped to wet-gas CO$_2$ fugacity. Water transfer and caloric/hydraulic properties use separate empirical descriptions.}
+\caption{Coupled nine-species absorber calculation. Arrows follow state evaluation through reactive speciation, phase driving forces, conventional enhancement and interphase sources to column balances; feedback updates the axial state. The reduced CO$_2$/trace-MEA/water vapor composition supplies an EOS coefficient that is mapped to wet-gas CO$_2$ fugacity. The wet four-species vapor supplies the water fugacity, density and enthalpy; transport properties and surface tension come from correlations.}
 \label{fig:absorber-calculation-sequence}
 \end{figure}
 
@@ -23,15 +28,15 @@ The resulting material and enthalpy sources determine the phase-flow and tempera
 \centering\small
 \caption{Quantities supplied by each part of the coupled absorber model.}
 \label{tab:thermodynamic-responsibility}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}XX@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
 Calculation & Supplied quantities & Assumption or boundary \\
 \midrule
-Reactive liquid equilibrium and ePC-SAFT & Nine-species amounts, activities, EOS density and liquid CO$_2$ fugacity & Five reaction constants, conserved components and electroneutrality \\
+Reactive liquid equilibrium and ePC-SAFT & Nine-species amounts, activities, density, enthalpy, apparent partial enthalpies and heat capacity; liquid CO$_2$ and water fugacities & Five reaction constants, conserved components and electroneutrality \\
 Reduced neutral vapor EOS & CO$_2$ fugacity coefficient at total pressure & N$_2$/O$_2$ excluded from EOS composition; original wet-gas fraction used in $f^v=y_{\COtwo}\phi^vP$ \\
-Water-transfer approximation & $f^v_{\HtwoO}=y_{\HtwoO}P$ and $f^\ell_{\HtwoO}=x^{\mathrm{true}}_{\HtwoO}P_{\mathrm{sat}}$ & Ideal vapor and pure-water vapor-pressure relation \\
+Wet four-species vapor PC-SAFT & Water fugacity coefficient, density, enthalpy, partial enthalpies and heat capacity; inlet water saturation & Published pure-component parameters, zero binary corrections and ideal-gas heat capacities \\
 Conventional film description & Enhancement and combined transfer resistance & $H_{\mathrm{bulk}}=f^\ell_{\COtwo}/C^{\ell,\mathrm{free}}_{\COtwo}$; bulk activity coefficient fixed across film \\
-Empirical properties and balances & Hydraulic density, transport properties and additive component enthalpies & Separate from EOS density and reactive thermodynamic calorics \\
+Correlations & Surface tension, viscosity, diffusivities, heat-transfer coefficient, kinetics and packing performance & Source ranges in \cref{tab:transport-applicability} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -76,17 +81,17 @@ Reaction constants and chemical potentials are converted consistently to the EOS
 Hereafter $K_r$ denotes the effective $K_r^{\mathrm{EOS}}(T,P)$, including its pressure-dependent reference conversion; temperature dependence is discussed at the fixed pressure of each column calculation.
 Appendix B distinguishes the adopted temperature-correlation inputs from these final EOS-coordinate constants.
 
-R1 and R3 use the source temperature correlations and their standard-state offsets.
-R2, R4 and R5 use the fitted correlations in \cref{sec:selected-reactive-inputs}, which replace the corresponding source coefficients in full and already include their standard-state offsets.
+All five constants are fixed literature correlations on their source bases: R1--R3 from Austgen et al.\ \cite{Austgen1991}, R4 from Tong et al.\ \cite{Tong2012} and R5 from Bates and Pinching \cite{batesAcidicDissociationConstant1951}.
+None was fitted with the parameter set.
 The thermodynamic calculation evaluates the pure-water solvent reference and applies the reference-transfer and pressure/density offsets needed by its EOS coordinates.
-The effective coefficients, source conventions and calculation domains are given in \cref{sec:selected-reactive-inputs}; their common temperature range is \qtyrange{293.15}{393.15}{K}.
+The coefficients, source conventions and calculation domains are given in \cref{sec:selected-reactive-inputs}; their common temperature range is \qtyrange{293.15}{393.15}{K}.
 
 The coupled liquid EOS supplies normalized true-species mole fractions and molar density, giving
 \begin{equation}
 C_i^{\mathrm{true}}=\rho_{\mathrm{EOS}}^{\liq}x_i^{\mathrm{true}}.
 \end{equation}
 These free and ionic concentrations enter reaction enhancement.
-The empirical liquid-density correlation instead supplies hydraulics and apparent-MEA concentrations for diffusivity; empirical enthalpies supply the column energy model.
+The same EOS density supplies the hydraulic calculation and the apparent-MEA concentrations used for diffusivity.
 
 
 % M5: EOS physical contributions
@@ -157,28 +162,31 @@ f_{\COtwo}^{\liq}&=x_{\COtwo}^{\mathrm{true}}\phi_{\COtwo}^{\liq}(T^\liq,P,\math
 \label{eq:co2-fugacity}
 \end{align}
 Both fugacities are in pascals; the liquid fraction is the true-species mole fraction of unreacted molecular \COtwo{}, not apparent absorbed carbon.
-Nitrogen and oxygen enter the gas balances and empirical properties but are excluded from this EOS coefficient calculation.
+Nitrogen and oxygen enter the gas balances but are excluded from this \COtwo{} coefficient calculation.
 
-The corresponding $\HtwoO$ fugacity expressions are
+Water fugacity is evaluated on the full phase compositions:
 \begin{align}
-f^{\:\vap}_{ \HtwoO} &= P y_{\HtwoO} && \left(\unit{Pa} \right)\\
-f^{\:\liq}_{ \HtwoO} &= P_{\text{sat}, \HtwoO} x_{\HtwoO, \text{true}} && \left(\unit{Pa} \right)
+f^{\:\vap}_{ \HtwoO} &= y_{\HtwoO}\phi^{\vap}_{\HtwoO}(T^\vap,P,\mathbf y)P && \left(\unit{Pa} \right)\\
+f^{\:\liq}_{ \HtwoO} &= x^{\mathrm{true}}_{\HtwoO}\phi^{\liq}_{\HtwoO}(T^\liq,P,\mathbf x^{\mathrm{true}})P && \left(\unit{Pa} \right)
 \end{align}
-These ideal-vapor and vapor-pressure-based water expressions are an approximation retained in the column closure.
+The liquid coefficient comes from the nine-species reactive state.
+The vapor coefficient comes from a wet four-species PC-SAFT vapor of \COtwo{}, water, nitrogen and oxygen with published pure-component parameters \cite{Gross2001,Schick2023} and zero binary corrections; the same vapor state supplies vapor density, enthalpy and heat capacity.
 The vapor--liquid fugacity difference supplies the driving force, while transfer coefficients, interfacial area and reaction enhancement determine the flux.
 
 % M7: parameter origin
-The calculation uses one specified thermodynamic parameterization assembled from literature, fitted, fixed and derived inputs (\cref{sec:selected-reactive-inputs}).
-These include component, binary, association, ionic and dielectric quantities together with reaction constants on the stated convention.
-No thermodynamic parameter was fitted to the NCCC cases; some of the thermodynamic measurements used in parameter selection are not independent of the parameterization (\cref{sec:selected-reactive-inputs}).
-The remaining constitutive choices determine transport, hydraulics and caloric properties.
+The liquid calculation uses the MEA parameter set of the authors' amine-thermodynamics study (\cref{sec:selected-reactive-inputs}).
+Water, the two MEA-derived ions and their binary interactions were fitted jointly to vapor--liquid equilibrium, \COtwo{} solubility, speciation, density and heat-capacity data; the remaining inputs are literature values.
+No thermodynamic parameter was fitted to the NCCC cases, and the column comparisons are therefore predictions of the parameter set.
+The liquid-density and heat-capacity data in the fit objective are not independent of the property comparisons in \cref{sec:properties}.
+Ideal-gas heat capacities and formation enthalpies of \COtwo{} and water \cite{chaseNISTJANAFThermochemicalTables1998,internationalassociationforthepropertiesofwaterandsteamRevisedReleaseIAPWS2018} and of MEA \cite{Zhang2011} complete the caloric description of both phases.
+Reaction enthalpies follow from the temperature derivatives of the five equilibrium constants.
 
 \subsection{Hydraulics, transfer coefficients and enhancement}\label{subsec:transport}
 % M8: hydraulic dependencies
 Flows and mixture properties at each axial position determine phase velocities, liquid holdup and effective interfacial area.
-The correlations below use empirical phase densities, viscosity, surface tension and diffusivity on the bases in \cref{sec:properties}; the EOS density is used separately for true-species concentrations.
+The correlations below use the EOS phase densities together with viscosity, surface tension and diffusivity correlations on the bases in \cref{sec:properties}.
 The hydraulic calculation requires positive properties and $0<h_L<\epsilon$, where $h_L$ and $\epsilon$ are liquid holdup and bed void fraction.
-A pressure-drop correlation is evaluated only to check the hydraulic operating range; pressure is held constant in the balances.
+In the nine-species model a pressure-drop correlation is evaluated only to check the hydraulic operating range, and pressure is held constant in the balances.
 
 
 \paragraph{Hydraulic quantities.}
@@ -317,7 +325,9 @@ q^{\liq} &= -U_T a_e A \left(T^{\liq}-T^{\vap}\right) && \left(\unit{J\,s^{-1}\,
 \enthalpyflow^{\liq}_{flux} &= -\left(\molarflux^{\vap}_{ \COtwo}H^{\vap}_{ \COtwo} + \molarflux^{\vap}_{ \HtwoO}H^{\vap}_{ \HtwoO}\right) +  q^{\liq} && \left(\unit{J\,s^{-1}\,m^{-1}}\right)
 \end{align}
 
+Here $H^{\vap}_i$ is the partial molar enthalpy of component $i$ in the wet vapor at $T^\vap$, so transferred \COtwo{} and water carry vapor-phase enthalpy across the interface.
 The liquid-side enthalpy source is written as the negative vapor-side transferred enthalpy plus heat transfer so that interphase enthalpy transfer is conservative.
+The heat of absorption therefore appears through the difference between these vapor partial enthalpies and the liquid partial enthalpies in the temperature equation below.
 
 \subsection{Column balances and boundary conditions}\label{subsec:governing-equations}
 \subsubsection{Material balance}\label{subsubsec:material-balance}
@@ -345,16 +355,18 @@ y_i &= \frac{\molarflow^{\vap}_{ i}}{\molarflow^{\vap}_{ T}}
 
 \subsubsection{Energy balance}\label{subsubsec:energy-balance}
 % M13: continuous energy equations
-Nonisothermal balances use the adopted empirical mixture-enthalpy and heat-transfer expressions.
+Nonisothermal balances use the ePC-SAFT phase enthalpies and the heat-transfer expression above.
 Interphase heat and material transfer supply the enthalpy-flow derivatives:
 \begin{align}
 \odv{\enthalpyflow^{\liq}}{z} &= -\enthalpyflow^{\liq}_{flux} && \left(\unit{J\,s^{-1}\,m^{-1}}\right)\\
 \odv{\enthalpyflow^{\vap}}{z} &= \enthalpyflow^{\vap}_{flux} && \left(\unit{J\,s^{-1}\,m^{-1}}\right)\label{eq:energy-balance}
 \end{align}
 The liquid sign follows its flow opposite increasing $z$, so the continuous equations give $\odv{(\enthalpyflow^{\vap}-\enthalpyflow^{\liq})}{z}=0$.
-For the additive component-enthalpy correlation, $\enthalpyflow^{j}=\sum_i\molarflow_i^{j}H_i^{j}(T)$, the full temperature chain rule is
+The liquid enthalpy flow is the enthalpy of the reacting nine-species liquid at fixed apparent \COtwo{}, MEA and water amounts, so speciation shifts with temperature and composition are included.
+The vapor enthalpy flow is that of the wet four-species vapor.
+With apparent partial molar enthalpies $H_i^j=(\partial\enthalpyflow^j/\partial\molarflow_i^j)_{T,P}$ of the phase-$j$ components, the temperature chain rule is
 \begin{align}
-\odv{\temperature^j}{z} &= \frac{\odv{\enthalpyflow^j}{z} - \sum_i H_i^j\odv{\molarflow_i^j}{z}}{\molarflow^j \left(\pdv{H^j}{\temperature^j}\right)_{\boldsymbol{x}^j}}
+\odv{\temperature^j}{z} &= \frac{\odv{\enthalpyflow^j}{z} - \sum_i H_i^j\odv{\molarflow_i^j}{z}}{\molarflow^j \left(\pdv{H^j}{\temperature^j}\right)_{P,\boldsymbol{x}^j}}
 && \left(\unit{K\,m^{-1}}\right)
 \end{align}
 For the transferring components \(\mathcal T=\{\COtwo,\HtwoO\}\), substitution gives
@@ -368,13 +380,14 @@ For the transferring components \(\mathcal T=\{\COtwo,\HtwoO\}\), substitution g
 {\molarflow^\vap C_{p,T}^\vap}
 &&\left(\unit{K\,m^{-1}}\right).
 \end{align}
-At fixed composition, the vapor derivative is $C_p^{\vap}$ and the liquid derivative is the composition-weighted solvent heat capacity given in the appendix; the liquid reference offsets and dissolved-\COtwo{} enthalpy are constant in this correlation.
-Numerical variation of the same quantity is measured separately in \cref{eq:energy-range}.
+At fixed apparent composition, the vapor derivative is the wet-gas heat capacity $C_p^{\vap}$ and the liquid derivative is the heat capacity of the reacting liquid, including the enthalpy of the speciation shift with temperature.
+The ePC-SAFT calculation supplies both enthalpies, their partial enthalpies and their temperature derivatives from the residual Helmholtz energy and the ideal-gas records.
+Numerical variation of the net enthalpy flow is measured separately in \cref{eq:energy-range}.
 
 \subsubsection{State vector and pressure}
 % M14: differential states
 The differential state comprises four transferring component flows, two phase temperatures and pressure.
-The pressure gradient is zero for the reported one-bed calculations:
+The nine-species model holds pressure constant over the bed:
 \begin{align}
 \odv{\pressure}{z} = 0
 && \left(\unit{Pa\,m^{-1}}\right).
@@ -454,6 +467,29 @@ or equivalently, the boundary residual is
 \right)^{\mathsf{T}}.\label{eq:boundary-residual}
 \end{align}
 
-The specified gas flows are reconstructed from reported dry inputs and saturated water vapor, while liquid flows follow reported mass flow, solvent composition and lean loading.
+The specified gas flows are reconstructed from reported dry inputs and water vapor saturated at the gas-inlet temperature and pressure, while liquid flows follow reported mass flow, solvent composition and lean loading.
+Saturation solves equality of the vapor water fugacity with that of pure liquid water at fixed dry-gas proportions, with both phases evaluated by the same PC-SAFT water parameters.
 MEA and inert-gas flows remain constant, and the outlet transferring flows and phase temperatures are calculated rather than imposed.
-The next section gives the experimental inputs, initial guesses and numerical checks used to evaluate this problem.
+
+\subsection{Twelve-state conserved formulation}\label{subsec:twelve-state}
+% M16: twelve-state states and balances
+The twelve-state model writes the same countercurrent bed as conservative cell balances solved simultaneously at all axial nodes.
+Its states at each node are four apparent component flows, the liquid and gas temperatures, pressure, liquid holdup, the \COtwo{} and water interphase fluxes, the total energy flux and the interface log-loading.
+Seven conserved balances and five algebraic relations close these states.
+Seven boundary equations specify the gas inlet at the bottom and the liquid inlet at the top.
+The phase enthalpies are the ePC-SAFT total enthalpies, the liquid density is the density of the solved reactive state, and pressure falls along the bed through a hydraulic pressure-drop correlation.
+
+% M17: twelve-state film descriptions
+Three descriptions of the liquid film are compared within this model.
+The finite-rate film combines the film conductance along the equilibrium manifold at each axial position with a kinetic resistance from a Hatta-number film solution, using the rate expression of \cref{subsec:transport}.
+Its interfacial \COtwo{} solubility is either the ePC-SAFT free-\COtwo{} coefficient $H_{\mathrm{bulk}}$ or the N$_2$O-analogy correlation of \cref{sec:properties}.
+The equilibrium-manifold film assumes chemical equilibrium throughout the film, and the enhancement-reference film uses the conventional enhancement factor of \cref{subsec:transport}.
+All three use nine-point film quadrature.
+
+% M18: twelve-state input basis
+The twelve-state inputs are not on the same basis as the nine-species inputs.
+They read the reported gas mass flow as wet gas, set the inlet water content from a pure-water vapor-pressure correlation and start from the reported gas-inlet pressure.
+In Case 3C the twelve-state dry-gas flow is therefore about \qty{5}{\percent} lower than the nine-species value.
+The twelve-state gas phase uses a separate PC-SAFT parameter set with a \COtwo{} dispersion energy of \qty{173.44}{K} and a constant \COtwo--water $k_{ij}$ of \num{0.01326}.
+Capture differences between the two models therefore combine formulation and input-basis effects.
+The next section gives the experimental inputs, initial guesses and numerical checks used to evaluate both models.

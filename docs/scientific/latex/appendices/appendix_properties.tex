@@ -1,12 +1,15 @@
 \section{Property and transport correlations}\label{sec:properties}
 % A1: apparent property basis
+In the reported calculations ePC-SAFT supplies the liquid and vapor densities, enthalpies and heat capacities (\cref{sec:model-framework}).
+The density, heat-capacity and enthalpy correlations below serve only as the comparison property source of \cref{sec:nine-species-results}; the surface-tension, conductivity, viscosity and diffusivity correlations enter every calculation.
 The auxiliary property correlations use apparent liquid components \COtwo, MEA and water and the full wet-gas composition \COtwo, water, nitrogen and oxygen.
 These bases differ from the nine true liquid species and the reduced neutral vapor EOS composition.
 Apparent liquid mass fractions are \(w_i=x_i\mathrm{MW}_i/\sum_jx_j\mathrm{MW}_j\), where \(x_i\) are apparent mole fractions and \(\mathrm{MW}_i\) are component molar masses.
 The property routines use liquid molar masses (0.04401, 0.06108, 0.01802) and vapor molar masses (0.04401, 0.01802, 0.02801, 0.032) in \unit{kg.mol^{-1}}; the separately specified EOS values are listed in \cref{tab:epcsaft-pure-parameters}.
-\subsection{Physical carbon dioxide solubility (initialization only)}
+\subsection{Physical carbon dioxide solubility}
 % A2: physical solubility
-The physical solubility correlation used for Henry-profile initialization follows the \NtwoO{} analogy \cite{Jiru2012}.
+The physical solubility correlation follows the \NtwoO{} analogy \cite{Jiru2012}.
+It initializes the Henry profile of the nine-species model and supplies the interfacial solubility of the twelve-state finite-rate film on the \NtwoO{}-analogy basis (\cref{subsec:twelve-state}).
 Here $\overline w_i=w_i/(w_{\MEA}+w_{\HtwoO})$ is a CO$_2$-free solvent mass fraction, and the resulting concentration-based Henry coefficient differs from the reactive bulk ratio in the main model.
 \begin{align}
 H_{\NtwoO,\MEA} &= \left(A_{\NtwoO,\MEA} \times 10^5\right) e^{\frac{-B_{\NtwoO,\MEA}}{T^{\liq}}} && \left(\unit{Pa\,m^3\,mol^{-1}}\right)\\
@@ -39,7 +42,7 @@ with $a_1$ and $b$ dimensionless, $a_2$ in \unit{K^{-1}} and $a_3$ in \unit{K^{-
 \subsection{Density and surface tension}
 % A3: density and surface tension
 The phase-mean molar masses are \(\mathrm{MW}_T^\liq=\sum_i x_i\mathrm{MW}_i\) and \(\mathrm{MW}_T^\vap=\sum_i y_i\mathrm{MW}_i\), using apparent phase compositions.
-The density correlations are taken from Morgan et al. \cite{Morgan2015}.
+The comparison density correlations are taken from Morgan et al. \cite{Morgan2015}, with an ideal-gas vapor density.
 Apparent liquid mole fractions are used.
 Component-volume correlations return \unit{mL\,mol^{-1}} before the factor $10^{-6}$ converts them to \unit{m^3\,mol^{-1}}; temperatures are in kelvin and molar masses in \unit{kg\,mol^{-1}}.
 \begin{align}
@@ -62,6 +65,8 @@ V^{\liq} &= V^{\liq}_{\COtwo}x_{\COtwo} + V^{\liq}_{\MEA}x_{\MEA} + V^{\liq}_{\H
 \rho ^{\vap}_{mass} &= \rho ^{\vap}_{mol}\text{MW}^{\vap}_{T}
 && \left(\unit{kg\,m^{-3}}\right)
 \end{align}
+For the 53 loaded-solution densities of Amundsen et al.\ \cite{Amundsen2009} that are outside the parameter-fit objective, the ePC-SAFT liquid density has a mean absolute deviation of \qty{0.51}{\percent}, against \qty{3.49}{\percent} for this correlation, which lies below every one of these points.
+For the 30 unloaded densities outside the fit objective the deviations are \qty{0.20}{\percent} and \qty{0.46}{\percent}.
 
 
 The surface-tension correlation is taken from Morgan et al. \cite{Morgan2015}.
@@ -110,6 +115,7 @@ The CO$_2$ contribution depends on solvent composition and is not a pure-compone
 
 \subsection{Heat capacity and enthalpy}
 % A4: empirical calorics
+The heat-capacity and enthalpy correlations of this subsection are the comparison caloric source.
 The solvent heat-capacity method follows Hilliard \cite{Hilliard2008}.
 The polynomial argument is Celsius temperature $T_C=T^{\liq}-273.15$, with $T^{\liq}$ in kelvin and molar masses in \unit{kg\,mol^{-1}}.
 \begin{align}
@@ -141,6 +147,9 @@ H^{\liq}_{T} &= \sum_{i} x_iH^{\liq}_{i}
 \left(\pdv{H^{\liq}_{T}}{T^{\liq}}\right)_{\boldsymbol{x}} &= x_{\MEA} C^{\liq}_{p,\MEA} + x_{\HtwoO} C^{\liq}_{p,\HtwoO}
 && \left(\unit{J\,mol^{-1}\,K^{-1}}\right)
 \end{align}
+With ideal-gas vapor enthalpies, the water offset of \qty{49.99}{kJ.mol^{-1}} sets the water vaporization enthalpy of this correlation at $T_{ref}$, against \qtyrange{42.7}{43.2}{kJ.mol^{-1}} for water transfer from ePC-SAFT at \qty{313.15}{K} and \qty{43.34}{kJ.mol^{-1}} for pure water.
+This difference causes most of the capture difference between the two property sources (\cref{sec:nine-species-results}).
+The ePC-SAFT calorics under-predict the differential \COtwo{} absorption enthalpies of Kim and Svendsen \cite{Kim2007}: the mean signed deviation is \qty{-2.43}{kJ.mol^{-1}} for 37 points at \qty{313.15}{K} and \qty{-9.30}{kJ.mol^{-1}} for 29 points at \qty{353.15}{K}, with 13 and 2 points within the stated \qty{2.2}{\percent} uncertainty.
 
 
 Vapor enthalpies use the same ideal-gas heat-capacity coefficients as the vapor heat-capacity model:
@@ -226,7 +235,7 @@ e&=0.00716025669867574,& f&=0.0106488402285381.
 
 \subsection{Diffusivity}
 % A7: molecular and ionic diffusion
-The liquid correlations use apparent MEA concentration from the empirical density.
+The liquid correlations use apparent MEA concentration from the liquid molar density of the calculation.
 The MEA source comparison covers \qtyrange{298}{333}{K}; this range does not establish the validity of the separately modified CO$_2$ or ionic expressions \cite{snijderDiffusionCoefficientsSeveral1993,Luo2015}.
 \paragraph{Liquid diffusivity.}
 \begin{align}
@@ -262,21 +271,21 @@ The vapor sums include CO$_2$, water, nitrogen and oxygen, with diffusion-volume
 The self term is excluded from each binary-diffusion sum.
 
 \subsection{Water vapor pressure}
-% A8: water transfer and wet-feed reconstruction
-Water transfer and saturated wet-feed reconstruction use the vapor-pressure correlation
+% A8: twelve-state humidity and comparison water transfer
+The twelve-state inlet humidity and the water transfer of the nine-species correlation comparison use the vapor-pressure correlation
 \begin{equation}
 \ln\left(\frac{P_{\mathrm{sat},\HtwoO}}{1\,\mathrm{Pa}}\right)
 =72.55-\frac{7206.70}{T}-7.1385\ln\left(\frac{T}{1\,\mathrm K}\right)
 +4.05\times10^{-6}T^2,\label{eq:water-vapor-pressure}
 \end{equation}
 where $T$ is numerically in kelvin and the coefficient of $T^2$ has units \unit{K^{-2}}.
-This pure-water relation supplies the approximate water fugacity in the column and is separate from EOS CO$_2$ fugacity.
+In the reported nine-species calculations the water fugacities and the saturated wet feed come from ePC-SAFT instead.
 The calibration source and range for this relation are not documented.
 
 \subsection{Correlation applicability}\label{sec:appendix-properties}
 % A9: ranges and modifications
 \Cref{tab:transport-applicability} distinguishes documented source ranges and errors from the adopted coefficients and calculated conditions.
-The refined baseline has Hatta numbers approximately 320--698 against the enhancement source comparison range 35--165, and peak temperature \qty{347.86}{K} against the MEA diffusivity source upper limit \qty{333}{K}.
+The refined baseline has Hatta numbers approximately 258--649 against the enhancement source comparison range 35--165, and peak temperature \qty{349.58}{K} against the MEA diffusivity source upper limit \qty{333}{K}.
 
 \input{tables/transport_applicability}
 \clearpage
