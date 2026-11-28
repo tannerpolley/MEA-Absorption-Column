@@ -8,11 +8,15 @@ from mea_absorption_column.Thermodynamics.solvent_inputs import ROOT
 from mea_absorption_column.Thermodynamics.thermo_models import ensure_epcsaft_importable
 
 
-def test_mea_f2_co2_partial_pressure():
-    """Amine-Thermodynamics 761e38ae8, template 15-problem, vle_obs_0134-pco2."""
+@pytest.mark.parametrize("dataset, expected", [
+    ("MEA_F2_ae17803e", 118.8994811228556),  # Amine-Thermodynamics 761e38ae8, template 15-problem
+    ("MEA_A_196faf11", 119.2512320828877),  # Amine-Thermodynamics a812493cc, reported fit A, replay row 15
+])
+def test_mea_co2_partial_pressure(dataset, expected):
+    """vle_obs_0134-pco2 against the Amine-Thermodynamics prediction for each parameter record."""
     engine = ensure_epcsaft_importable()
     equilibrium = import_module("epcsaft.equilibrium")
-    dataset = ROOT / "src/mea_absorption_column/data/epcsaft_datasets/MEA_F2_ae17803e"
+    dataset = ROOT / "src/mea_absorption_column/data/epcsaft_datasets" / dataset
     parameters = engine.Parameters.from_mapping(json.loads((dataset / "parameters.json").read_bytes()))
     species = parameters.component_ids
     thermo = ideal_gas_record(dataset / "ideal-gas-thermochemistry.json", species)
@@ -47,4 +51,4 @@ def test_mea_f2_co2_partial_pressure():
     result = equilibrium.solve_equilibrium(model, problem)
     assert result.success and result.requested_tolerance_met, result.message
     actual = result.pressure * result.phase_mole_fractions(1)[species.index("carbon-dioxide")]
-    assert actual == pytest.approx(118.8994811228556, rel=1e-8, abs=0.)
+    assert actual == pytest.approx(expected, rel=1e-8, abs=0.)

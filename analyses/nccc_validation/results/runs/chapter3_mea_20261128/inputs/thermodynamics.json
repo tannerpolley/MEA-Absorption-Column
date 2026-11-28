@@ -1,0 +1,211 @@
+{
+  "encoding": "issue85-proposed-stage1-json-v1",
+  "status": "input-driven MEA numerical reproduction; no second-solvent qualification",
+  "engine": {
+    "engine_commit": "10b6a052768833e38cb6ee24ebe2098fa1dd5834",
+    "wheel_filename": "epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "wheel_sha256": "dafe828427487b125a254012128ce63d0ad29452304bea52ee5d9c451f1e9875",
+    "reactive_inputs_sha256": {
+      "parameters.json": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db",
+      "engine-reactions.json": "74f6ce36760cef4f36dbd9ef385f025d9fca9ea469079ba42d7227cc910d7362",
+      "ideal-gas-thermochemistry.json": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb"
+    },
+    "release_tag": "main-10b6a052768833e38cb6ee24ebe2098fa1dd5834"
+  },
+  "parameters": {
+    "repository_path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/parameters.json",
+    "sha256": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db"
+  },
+  "reactions": {
+    "repository_path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/engine-reactions.json",
+    "sha256": "74f6ce36760cef4f36dbd9ef385f025d9fca9ea469079ba42d7227cc910d7362"
+  },
+  "calorics": {
+    "repository_path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json",
+    "sha256": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb"
+  },
+  "gas_parameters": {
+    "repository_path": "src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+    "sha256": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+  },
+  "species_order": [
+    "carbon-dioxide",
+    "monoethanolamine",
+    "water",
+    "protonated-monoethanolamine",
+    "carbamate-anion",
+    "bicarbonate-anion",
+    "carbonate-anion",
+    "hydronium-cation",
+    "hydroxide-anion"
+  ],
+  "roles": {
+    "co2": "carbon-dioxide",
+    "water": "water",
+    "amines": [
+      "monoethanolamine"
+    ],
+    "inert_gases": [
+      "nitrogen",
+      "oxygen"
+    ]
+  },
+  "liquid_support": [
+    "carbon-dioxide",
+    "monoethanolamine",
+    "water",
+    "protonated-monoethanolamine",
+    "carbamate-anion",
+    "bicarbonate-anion",
+    "carbonate-anion",
+    "hydronium-cation",
+    "hydroxide-anion"
+  ],
+  "liquid_feed_order": [
+    "carbon-dioxide",
+    "monoethanolamine",
+    "water"
+  ],
+  "vapor_support": [
+    "carbon-dioxide",
+    "water",
+    "nitrogen",
+    "oxygen"
+  ],
+  "vapor_feed_order": [
+    "carbon-dioxide",
+    "water",
+    "nitrogen",
+    "oxygen"
+  ],
+  "neutral_reference": {
+    "solvent": "water",
+    "solute_molality_ratios": {
+      "carbon-dioxide": 0.125,
+      "monoethanolamine": 0.125,
+      "protonated-monoethanolamine": 0.625,
+      "carbamate-anion": 0.25,
+      "bicarbonate-anion": 0.125,
+      "carbonate-anion": 0.125,
+      "hydronium-cation": 0.125,
+      "hydroxide-anion": 0.125
+    },
+    "standard_molality_mol_per_kg": 1.0
+  },
+  "species_reference_encoding": "absent means Engine default; future nonempty entries must use Engine SpeciesReference declarations",
+  "components": {
+    "order": [
+      "co2",
+      "amine:monoethanolamine",
+      "water"
+    ],
+    "rows": [
+      [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    ]
+  },
+  "charge_numbers": [
+    0,
+    0,
+    0,
+    1,
+    -1,
+    -1,
+    -2,
+    1,
+    -1
+  ],
+  "formulas": {
+    "carbon-dioxide": {
+      "C": 1,
+      "O": 2
+    },
+    "monoethanolamine": {
+      "C": 2,
+      "H": 7,
+      "N": 1,
+      "O": 1
+    },
+    "water": {
+      "H": 2,
+      "O": 1
+    },
+    "protonated-monoethanolamine": {
+      "C": 2,
+      "H": 8,
+      "N": 1,
+      "O": 1
+    },
+    "carbamate-anion": {
+      "C": 3,
+      "H": 6,
+      "N": 1,
+      "O": 3
+    },
+    "bicarbonate-anion": {
+      "H": 1,
+      "C": 1,
+      "O": 3
+    },
+    "carbonate-anion": {
+      "C": 1,
+      "O": 3
+    },
+    "hydronium-cation": {
+      "H": 3,
+      "O": 1
+    },
+    "hydroxide-anion": {
+      "H": 1,
+      "O": 1
+    }
+  },
+  "atomic_masses_kg_mol": {
+    "C": 0.012011,
+    "H": 0.001008,
+    "N": 0.014007,
+    "O": 0.015999
+  },
+  "mass_convention": {
+    "feed": "exact retained direct SI molar feeds; no reconversion",
+    "liquid_hydraulic": "formula masses using atomic_masses_kg_mol",
+    "vapor_hydraulic": "unchanged gas parameter JSON molar masses",
+    "engine": "unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol",
+    "legacy_property": "unchanged config.Constants MWs_l/MWs_v for retained named laws"
+  },
+  "qualification": {
+    "status": "numerical_reproduction_only; no absorber qualification supplied",
+    "assessment": "Adopted Amine-Thermodynamics F2 record; numerical comparison only."
+  }
+}

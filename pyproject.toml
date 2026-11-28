@@ -51,4 +51,4 @@ addopts = "-ra"
 testpaths = ["tests"]
 
 [tool.uv.sources]
-epcsaft = { path = "build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl" }
+epcsaft = { path = "build/engine-wheels/main-10b6a052768833e38cb6ee24ebe2098fa1dd5834/epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl" }

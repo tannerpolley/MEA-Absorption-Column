@@ -77,11 +77,18 @@ wheels = [
 
 [[package]]
 name = "epcsaft"
-version = "1.0.0"
-source = { path = "build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl" }
+version = "0.1.2"
+source = { path = "build/engine-wheels/main-10b6a052768833e38cb6ee24ebe2098fa1dd5834/epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl" }
 wheels = [
-    { filename = "epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl", hash = "sha256:57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a" },
+    { filename = "epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl", hash = "sha256:dafe828427487b125a254012128ce63d0ad29452304bea52ee5d9c451f1e9875" },
 ]
+
+[package.metadata]
+requires-dist = [
+    { name = "idaes-pse", marker = "extra == 'idaes'", specifier = "==2.12.0" },
+    { name = "pyomo", marker = "extra == 'idaes'", specifier = "==6.10.1" },
+]
+provides-extras = ["idaes"]
 
 [[package]]
 name = "et-xmlfile"
@@ -213,7 +220,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "casadi", specifier = "==3.7.2" },
-    { name = "epcsaft", path = "build/engine-wheels/main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e/epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl" },
+    { name = "epcsaft", path = "build/engine-wheels/main-10b6a052768833e38cb6ee24ebe2098fa1dd5834/epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl" },
     { name = "matplotlib", specifier = ">=3.8" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "openpyxl", specifier = ">=3.1" },
