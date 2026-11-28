@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 import re
 import runpy
+import shutil
+import subprocess
 import sys
 
 import numpy as np
@@ -139,8 +141,9 @@ def replace_table_rows(path, values):
     rows = path.read_text().splitlines()
     for number, line in enumerate(rows):
         key = line.split(' &', 1)[0].strip()
-        if key in values:
-            rows[number] = '    '+key+' & '+' & '.join(values[key])+r' \\'
+        label = 'Maximum RMS residual by iteration' if key == r'Maximum RMS residual, iterations 1 $\to$ 2' else key
+        if label in values:
+            rows[number] = '    '+label+' & '+' & '.join(values[label])+r' \\'
     path.write_text('\n'.join(rows)+'\n')
 
 
@@ -149,7 +152,7 @@ def verification(runs, figures, summary):
     pd.DataFrame(rows).to_csv(figures/'refinement/iteration_history.csv', index=False)
     formatted = {key: [] for key in (
         'Initial / final mesh nodes', 'Collocation tolerance', 'Mesh iterations',
-        r'Maximum RMS residual, iterations 1 $\to$ 2', 'Final maximum RMS residual',
+        'Maximum RMS residual by iteration', 'Final maximum RMS residual',
         'Maximum scaled boundary residual', 'Column RHS evaluation batches', 'Jacobian evaluation batches',
         'State Jacobian evaluations', 'Liquid equilibrium solves, including profile output',
         r'\COtwo{} capture (\unit{\percent})', r'Peak liquid temperature (\unit{K})',
@@ -226,6 +229,20 @@ def main():
     sys.path.insert(0, str(FIGURES/'reactive_column/scripts'))
     cases = campaign(runs, figures/'campaign')
     operating_sweep = operating(runs, figures/'operating')
+    reactive_scripts = FIGURES/'reactive_column/scripts'
+    transport_scripts = ANALYSIS.parent/'transport_sensitivity/figures/response/scripts'
+    subprocess.run([sys.executable, str(reactive_scripts/'render.py'),
+                    str(runs/'coarse'), str(runs/'refined'),
+                    '--output', str(figures/'refinement')], check=True)
+    perturbations = sorted(path for path in runs.glob('thermo_*') if path.is_dir())
+    subprocess.run([sys.executable, str(reactive_scripts/'render_sensitivity.py'),
+                    str(runs/'refined'), *map(str, perturbations),
+                    '--output', str(figures/'thermodynamics')], check=True)
+    transport_runs = runs/'transport_reproduction'
+    subprocess.run([sys.executable, str(transport_scripts/'render_figure.py'),
+                    '--model-root', '.', '--runs', str(transport_runs if transport_runs.is_dir() else runs),
+                    '--refinement', str(figures/'refinement/summary.csv'),
+                    '--output', str(figures/'transport')], check=True)
     paired = pd.read_csv(figures/'refinement/summary.csv')
     thermo = pd.read_csv(figures/'thermodynamics/summary.csv')
     transport = pd.concat([pd.read_csv(figures/'transport'/f'{stem}.csv')
@@ -243,11 +260,25 @@ def main():
     dense = []
     for name in ('energy_dense_41', 'energy_dense_81'):
         _, row, _ = verify_profile(runs/name)
-        row['dense_energy_range_W'] = json.loads((runs/name/'energy_check.json').read_text())['dense']['range_W']
+        energy = json.loads((runs/name/'energy_check.json').read_text())
+        row['dense_energy_range_W'] = energy.get('dense', energy)['range_W']
         dense.append(row)
     diagnostics({'Campaign':cases, 'Paired Case 3C':paired, 'Thermodynamic':thermo.iloc[1:],
                  'Transport':transport, 'Operating':operating_sweep, 'Timing':timing,
                  'Additional Case 3C refinements':pd.DataFrame(dense)})
+    destinations = {
+        'campaign': FIGURES/'reactive_parallel/output',
+        'operating': FIGURES/'reactive_operating/output',
+        'refinement': FIGURES/'reactive_column/output',
+        'thermodynamics': FIGURES/'reactive_column/output/sensitivity',
+        'transport': transport_scripts.parent/'output',
+    }
+    for study, destination in destinations.items():
+        for artifact in (figures/study).iterdir():
+            shutil.copyfile(artifact, destination/artifact.name)
+    scripts = LATEX.parent/'scripts'
+    sync = runpy.run_path(str(scripts/'latex_workflows.py'))['sync_figures']
+    sync(Path.cwd(), LATEX.parent)
 
 
 if __name__ == '__main__':

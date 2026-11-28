@@ -8,19 +8,19 @@
     \toprule
     Quantity & Coarser calculation & Refined calculation \\
     \midrule
-    Initial / final mesh nodes & 21 / 22 & 41 / 42 \\
+    Initial / final mesh nodes & 21 / 22 & 41 / 41 \\
     Collocation tolerance & 0.5 & 0.05 \\
-    Mesh iterations & 2 & 2 \\
-    Maximum RMS residual, iterations 1 $\to$ 2 & $1.64\to0.123$ & $0.0507\to0.0393$ \\
-    Final maximum RMS residual & 0.122785 & 0.039322 \\
+    Mesh iterations & 2 & 1 \\
+    Maximum RMS residual by iteration & $0.899\to0.189$ & $0.0409$ \\
+    Final maximum RMS residual & 0.188873 & 0.040876 \\
     Maximum scaled boundary residual & 0 & 0 \\
-    Column RHS evaluation batches & 27 & 17 \\
-    Jacobian evaluation batches & 6 & 4 \\
-    State Jacobian evaluations & 125 & 164 \\
-    Liquid equilibrium solves, including profile output & 608 & 551 \\
-    \COtwo{} capture (\unit{\percent}) & 94.19959 & 94.20397 \\
-    Peak liquid temperature (\unit{K}) & 347.9682 & 347.9399 \\
-    Net-enthalpy-flow range, 101 positions (\unit{W}) & 286.440 & 267.572 \\
+    Column RHS evaluation batches & 25 & 9 \\
+    Jacobian evaluation batches & 6 & 2 \\
+    State Jacobian evaluations & 125 & 81 \\
+    Liquid equilibrium solves, including profile output & 558 & 365 \\
+    \COtwo{} capture (\unit{\percent}) & 92.90248 & 92.90788 \\
+    Peak liquid temperature (\unit{K}) & 349.6036 & 349.5771 \\
+    Net-enthalpy-flow range, 101 positions (\unit{W}) & 244.307 & 243.165 \\
     \bottomrule
   \end{tabularx}
   \par\smallskip

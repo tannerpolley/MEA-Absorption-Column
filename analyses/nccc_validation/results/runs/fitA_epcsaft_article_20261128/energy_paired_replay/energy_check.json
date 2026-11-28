@@ -1,0 +1,18 @@
+{
+  "linear_solver": "ma57",
+  "points": 10001,
+  "range_W": 263.47784624248743,
+  "endpoint_difference_W": 19.99248367920518,
+  "min_C_L_W_K": 7440.5813463074655,
+  "min_position": 0.9626,
+  "max_position": 0.9875,
+  "capture_pct": 92.9078825930783,
+  "min_liquid_K": 318.1499999999999,
+  "max_liquid_K": 349.57786057973607,
+  "peak_liquid_z": 0.907,
+  "max_vapor_K": 349.5721222673686,
+  "peak_vapor_z": 0.914,
+  "co2_range_mol_s": 1.7763568394002505e-15,
+  "water_range_mol_s": 7.105427357601002e-14,
+  "temperature_equivalent_K": 0.03541092207442144
+}
