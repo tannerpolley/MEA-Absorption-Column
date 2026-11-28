@@ -302,7 +302,7 @@ python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_specie
   --bundle /home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
 ```
 
-After committing the generated result artifacts separately from the source
+After committing the generated result tables separately from the source
 revision, run the retained-output/source-lineage consistency validator:
 
 ```bash
@@ -338,7 +338,7 @@ uv run python analyses/nccc_validation/scripts/validate_results.py --issue41-onl
 ```
 
 This command reads the immutable bundle archive and the retained Issue 34/40
-artifacts without importing ePC-SAFT. It writes the fixed stoichiometric
+results without importing ePC-SAFT. It writes the fixed stoichiometric
 projections, five source-rate rows, 23-row raw/aggregate observation inventory,
 nine provider `K(T)` rows, five predeclared estimation/validation rows, and
 five packet comparison rows. The result is supported-negative: F3 has no
