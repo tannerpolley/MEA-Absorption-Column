@@ -1,0 +1,374 @@
+{
+  "engine": {
+    "engine_commit": "10b6a052768833e38cb6ee24ebe2098fa1dd5834",
+    "wheel_filename": "epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "wheel_sha256": "dafe828427487b125a254012128ce63d0ad29452304bea52ee5d9c451f1e9875",
+    "reactive_inputs_sha256": {
+      "parameters.json": "73fd46326c31fdd7c287566b1d8c68b6092e9b12894609fb76e0b8e441304e31",
+      "engine-reactions.json": "2ae0d64d85cb824c355b4896b80e5999bfaf310cb341cd2036e585167b1f0f60",
+      "ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607"
+    },
+    "release_tag": "main-10b6a052768833e38cb6ee24ebe2098fa1dd5834"
+  },
+  "fit_A_files": {
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/engine-reactions.json": "74f6ce36760cef4f36dbd9ef385f025d9fca9ea469079ba42d7227cc910d7362",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/parameters.json": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db"
+  },
+  "fit_A_provenance": {
+    "repository": "https://github.com/tannerpolley/Amine-Thermodynamics",
+    "commit": "a812493cc4a162c8d7df0fc73a0b1ce4bb20920d",
+    "selection": "analyses/amines/results/mea/reported/fit/selection.json",
+    "selected": "A",
+    "fit_record": {
+      "path": "analyses/amines/results/mea/reported/fit/A.json.gz",
+      "sha256": "59d1b48cee513a89b0cd9993f05be3637e227310c115c473d78925350a68299e"
+    },
+    "endpoint_fingerprint": "196faf11c956870b5ddfe0fcc24a36fcb8545b5f55ac3062b55da343cf766511",
+    "fit_wheel_sha256": "c9fbf898b14d004f915f01ed77675867908dd30d77dc28544b2860e9195c80bb",
+    "caloric": {
+      "path": "analyses/solvent_specification_mea/inputs/caloric.json",
+      "sha256": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb"
+    }
+  },
+  "pair_records_only_in_NCE": [],
+  "pair_records_only_in_fit_A": [],
+  "nonzero_kij_intercepts_only_in_NCE": [],
+  "nonzero_kij_intercepts_only_in_fit_A": [
+    [
+      "bicarbonate-anion",
+      "protonated-monoethanolamine"
+    ],
+    [
+      "bicarbonate-anion",
+      "water"
+    ],
+    [
+      "carbamate-anion",
+      "water"
+    ],
+    [
+      "protonated-monoethanolamine",
+      "water"
+    ]
+  ],
+  "fit_A_tested_pair_laws": {
+    "carbon-dioxide/water": [
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "family": "k_ij",
+        "identity": "pair/carbon-dioxide/water/k_ij",
+        "provenance": {
+          "domain_id": "mea-diagnostic-293-15-to-393-15-k",
+          "locator": "data/reference/epcsaft_datasets/MEA_CO2_H2O_phase2/mixed/binary_interaction/k_ij.csv:row=CO2:column=H2O:status=explicit-diagnostic",
+          "source_id": "mea-retained-phase-two-artifact"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": -0.046416901120577676,
+          "unit": "dimensionless"
+        }
+      },
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "family": "k_ij_reciprocal_temperature_slope",
+        "identity": "pair/carbon-dioxide/water/k_ij/reciprocal_temperature_slope",
+        "provenance": {
+          "locator": "https://github.com/tannerpolley/Amine-Thermodynamics/issues/170#issuecomment-6158787639",
+          "source_id": "joint-recalibration-170"
+        },
+        "qualification": "candidate_extrapolation",
+        "reference_temperature": {
+          "magnitude": 313.15,
+          "unit": "kelvin"
+        },
+        "source_sha256": "sha256:93cd60d21df030c36a4034d804dd02fe0fdc2dfd9af364b13cd749c906a95fca",
+        "value": {
+          "magnitude": -35.66505220645838,
+          "unit": "kelvin"
+        }
+      }
+    ],
+    "monoethanolamine/water": [
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "family": "k_ij",
+        "identity": "pair/monoethanolamine/water/k_ij",
+        "provenance": {
+          "locator": "https://github.com/tannerpolley/Amine-Thermodynamics/issues/170#issuecomment-6158000594",
+          "source_id": "joint-recalibration-170"
+        },
+        "qualification": "candidate_extrapolation",
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": -0.08831189850679369,
+          "unit": "dimensionless"
+        }
+      },
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "family": "k_ij_reciprocal_temperature_slope",
+        "identity": "pair/monoethanolamine/water/k_ij/reciprocal_temperature_slope",
+        "provenance": {
+          "locator": "tmp/joint-design/amendment-6-paper-candidate.md \u00a70b Revision 3, Stage 2b",
+          "source_id": "joint-recalibration-170"
+        },
+        "qualification": "candidate_extrapolation",
+        "reference_temperature": {
+          "magnitude": 313.15,
+          "unit": "kelvin"
+        },
+        "source_sha256": "sha256:670123adfda293c6bb60afe57b457534cabae65849d5731b5509d5723e69f38c",
+        "value": {
+          "magnitude": -5.382922478175561,
+          "unit": "kelvin"
+        }
+      }
+    ]
+  },
+  "reaction_correlation_input": {
+    "R1": {
+      "name": "R1",
+      "stoichiometry": {
+        "carbon-dioxide": 0.0,
+        "monoethanolamine": 0.0,
+        "water": -2.0,
+        "protonated-monoethanolamine": 0.0,
+        "carbamate-anion": 0.0,
+        "bicarbonate-anion": 0.0,
+        "carbonate-anion": 0.0,
+        "hydronium-cation": 1.0,
+        "hydroxide-anion": 1.0
+      },
+      "correlation": {
+        "a": 3.7290977365566675,
+        "b": -13445.9,
+        "c": -22.4773,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1",
+        "temperature_max": 498.15,
+        "temperature_min": 273.15
+      },
+      "reference": {
+        "source_basis": "RawMoleFractionInfiniteDilution",
+        "reference_pressure_pa": 100000.0
+      }
+    },
+    "R2": {
+      "name": "R2",
+      "stoichiometry": {
+        "carbon-dioxide": -1.0,
+        "monoethanolamine": 0.0,
+        "water": -2.0,
+        "protonated-monoethanolamine": 0.0,
+        "carbamate-anion": 0.0,
+        "bicarbonate-anion": 1.0,
+        "carbonate-anion": 0.0,
+        "hydronium-cation": 1.0,
+        "hydroxide-anion": 0.0
+      },
+      "correlation": {
+        "a": 24.109329984336796,
+        "b": -12092.1,
+        "c": -36.7816,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-molality-infinite-dilution-water-v1",
+        "temperature_max": 393.15,
+        "temperature_min": 293.15
+      },
+      "reference": {
+        "source_basis": "CommonMolalityInfiniteDilution",
+        "reference_pressure_pa": 100000.0
+      }
+    },
+    "R3": {
+      "name": "R3",
+      "stoichiometry": {
+        "carbon-dioxide": 0.0,
+        "monoethanolamine": 0.0,
+        "water": -1.0,
+        "protonated-monoethanolamine": 0.0,
+        "carbamate-anion": 0.0,
+        "bicarbonate-anion": -1.0,
+        "carbonate-anion": 1.0,
+        "hydronium-cation": 1.0,
+        "hydroxide-anion": 0.0
+      },
+      "correlation": {
+        "a": 12.145792981306897,
+        "b": -12431.7,
+        "c": -35.4819,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-mole-fraction-infinite-dilution-water-v1",
+        "temperature_max": 498.15,
+        "temperature_min": 273.15
+      },
+      "reference": {
+        "source_basis": "RawMoleFractionInfiniteDilution",
+        "reference_pressure_pa": 100000.0
+      }
+    },
+    "R4": {
+      "name": "R4",
+      "stoichiometry": {
+        "carbon-dioxide": 0.0,
+        "monoethanolamine": 1.0,
+        "water": -1.0,
+        "protonated-monoethanolamine": 0.0,
+        "carbamate-anion": -1.0,
+        "bicarbonate-anion": 1.0,
+        "carbonate-anion": 0.0,
+        "hydronium-cation": 0.0,
+        "hydroxide-anion": 0.0
+      },
+      "correlation": {
+        "a": 2.151,
+        "b": -1545.3,
+        "c": 0.0,
+        "d": 0.0,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-molality-infinite-dilution-water-v1",
+        "temperature_max": 393.15,
+        "temperature_min": 293.15
+      },
+      "reference": {
+        "reference_pressure_pa": 100000.0,
+        "source_basis": "CommonMolalityInfiniteDilution"
+      }
+    },
+    "R5": {
+      "name": "R5",
+      "stoichiometry": {
+        "carbon-dioxide": 0.0,
+        "monoethanolamine": 1.0,
+        "water": -1.0,
+        "protonated-monoethanolamine": -1.0,
+        "carbamate-anion": 0.0,
+        "bicarbonate-anion": 0.0,
+        "carbonate-anion": 0.0,
+        "hydronium-cation": 1.0,
+        "hydroxide-anion": 0.0
+      },
+      "correlation": {
+        "a": -0.8908701724793964,
+        "b": -6166.115646379685,
+        "c": 0.0,
+        "d": -0.0009848156442735533,
+        "reference_temperature": 313.15,
+        "standard_state_id": "aqueous-molality-infinite-dilution-water-v1",
+        "temperature_max": 393.15,
+        "temperature_min": 293.15
+      },
+      "reference": {
+        "reference_pressure_pa": 100000.0,
+        "source_basis": "CommonMolalityInfiniteDilution"
+      }
+    }
+  },
+  "neutral_reference": {
+    "solvent": "water",
+    "solute_molality_ratios": {
+      "carbon-dioxide": 0.125,
+      "monoethanolamine": 0.125,
+      "protonated-monoethanolamine": 0.625,
+      "carbamate-anion": 0.25,
+      "bicarbonate-anion": 0.125,
+      "carbonate-anion": 0.125,
+      "hydronium-cation": 0.125,
+      "hydroxide-anion": 0.125
+    },
+    "standard_molality_mol_per_kg": 1.0
+  },
+  "enhancement_CO2_concentration_divisor": 1.04542981654115,
+  "campaign": {
+    "nce_all_seven_MAE_pp": 5.854825845686891,
+    "paired_case_ids": [
+      "1C",
+      "2C",
+      "3C",
+      "4C",
+      "5C",
+      "6C",
+      "7C"
+    ],
+    "nce_paired_MAE_pp": 5.854825845686891,
+    "fit_a_paired_MAE_pp": 7.075321790475294,
+    "fit_a_all_seven_MAE_pp": 7.075321790475294,
+    "fit_a_1C_start": "Henry start, as for Cases 2C-7C. The NCE 1C run used a native reaction-extent start (0.0001) that the pinned Engine interface no longer takes; the legacy dataset from the same Henry start gives 99.10197377517115 %, against the retained 99.10198795955674 %, so the converged 1C solution does not depend on the start.",
+    "legacy_1C_henry_start_control": "analyses/nccc_validation/results/runs/fitA_article_20261128/legacy_1C_henry_start"
+  },
+  "paired_refinement": {
+    "capture_change_pp": 0.004379879414898369,
+    "peak_liquid_temperature_change_K": -0.02830927870331834
+  },
+  "thermo_capture_range_pct": [
+    93.478315949997,
+    94.8429791323449
+  ],
+  "transport_factor_one": {
+    "capture_change_pp": -3.396394276933279e-12,
+    "peak_liquid_temperature_change_K": -3.529976311256178e-11,
+    "nce_case_specific_anchor_start": "Legacy -10% diffusivity and the control were seeded at the diagnosed NCE anchor; the fit-A -10% run converged from the unmodified refined fit-A profile, so that legacy NCE state was unnecessary and was not supplied. The fit-A factor-one control uses the fit-A transport baseline profile.",
+    "Hatta_span": [
+      250.1763240405672,
+      640.2797433723177
+    ],
+    "max_Tl_difference_K": 3.998366082669236e-10,
+    "max_Tv_difference_K": 3.5953462429461064e-10
+  },
+  "timing": {
+    "nce_BVP_wall_median_s": 34.65691137313843,
+    "fit_A_BVP_wall_median_s": 7.813231229782104,
+    "fit_A_BVP_wall_range_s": [
+      7.708088397979736,
+      7.816001415252685
+    ],
+    "fastest_repeat": 3
+  },
+  "HSL_acknowledgement": "HSL, a collection of Fortran codes for large-scale scientific computation. https://www.hsl.rl.ac.uk/",
+  "same_engine_legacy_default_capture_pct": 91.54332138378032,
+  "checked_successful_run_count": 42,
+  "reactive_equilibrium_linear_solvers": [
+    "ma57"
+  ],
+  "original_basis_unavailable": {
+    "additional_Case_3C_refinements": {
+      "legacy_table": "docs/scientific/latex/tables/run_diagnostics.tex @ b1f5426",
+      "known_settings": [
+        {
+          "mesh": 41,
+          "tol": 0.005
+        },
+        {
+          "mesh": 81,
+          "tol": 5e-05
+        }
+      ],
+      "reason": "The source and archive retain the printed rows but no executable command, initialization profile identity or dense export record for either calculation."
+    }
+  },
+  "operating_Henry_failures": {
+    "LG_high": {
+      "cause": "Unphysical thermal iterates triggered guards. Adaptive subdivision would exceed the 1000-node limit.",
+      "retry_hypothesis": "The accepted Case 3C reactive profile places the initial state within the column solver basin at the same perturbed conditions.",
+      "initial_result": "analyses/nccc_validation/results/runs/fitA_article_20261128/operating_LG_high/seed_result.json",
+      "seeded_result": "analyses/nccc_validation/results/runs/fitA_article_20261128/operating_LG_high_seeded/result.json"
+    },
+    "temperature_low": {
+      "cause": "Unphysical thermal iterates triggered guards. Adaptive subdivision would exceed the 1000-node limit.",
+      "retry_hypothesis": "The accepted Case 3C reactive profile places the initial state within the column solver basin at the same perturbed conditions.",
+      "initial_result": "analyses/nccc_validation/results/runs/fitA_article_20261128/operating_temperature_low/seed_result.json",
+      "seeded_result": "analyses/nccc_validation/results/runs/fitA_article_20261128/operating_temperature_low_seeded/result.json"
+    }
+  },
+  "refined_profile": {
+    "fugacity_difference_min_Pa": 65.41274011490395,
+    "fugacity_difference_max_Pa": 8702.858785878901,
+    "fugacity_difference_at_gas_inlet_Pa": 8702.858785878901,
+    "fugacity_difference_at_gas_outlet_Pa": 509.8010135186364
+  }
+}

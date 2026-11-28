@@ -1,23 +1,28 @@
 \section{Conclusions}
 % C1: coupled formulation and physical evaluation
-The coupled formulation connects five-reaction, nine-species liquid equilibrium and ePC-SAFT fugacity to nonisothermal MEA absorber balances.
-It brings component-level thermodynamic descriptions into the calculation of bulk speciation, interphase driving force, capture and axial temperature.
-Evaluation across seven NCCC one-bed cases gives a capture mean absolute error of \num{5.85} percentage points and jointly characterizes outlet removal and case-dependent packing-temperature profiles.
+Two column models couple five-reaction, nine-species liquid equilibrium to nonisothermal MEA absorber balances, with ePC-SAFT supplying every bulk-phase thermodynamic property in those balances.
+The liquid uses the MEA parameter set of the authors' amine-thermodynamics study.
+In the nine-species model the wet vapor uses published four-species PC-SAFT parameters, a reduced vapor composition gives the \COtwo{} fugacity coefficient, and the \NtwoO{}-analogy Henry correlation only generates the starting profile.
+Surface tension, transport, kinetics and packing performance remain correlations, and no thermodynamic parameter is fitted to the seven NCCC one-bed cases, so the capture and temperature comparisons are predictions.
 
-% C2: numerical behavior and cost
-The refined Case 3C calculation predicts \qty{91.55}{\percent} capture against \qty{89.50}{\percent} observed; mesh refinement has little effect on calculated capture and peak temperature, and one coarse solution requires about \qty{35}{s} of BVP wall time.
+% C2: twelve-state film comparison
+In the twelve-state conserved model, the finite-rate film with the ePC-SAFT Henry coefficient predicts capture with a mean absolute error of \num{3.55} percentage points at 129 axial nodes, against \num{4.52} for the equilibrium-manifold film and \num{7.51} for the enhancement-factor film.
+With the \NtwoO{}-analogy Henry coefficient the finite-rate film gives \num{3.61} points, so these cases do not distinguish the two Henry coefficients.
+Every film overpredicts Case 6C, Case 7C capture is not resolved with respect to the axial mesh, and the calculated liquid temperatures exceed the Case 7C packing temperatures by up to \qty{24}{K}.
 
-% C3: thermodynamic, transport and operating insights
-The MEA--water interaction produces the largest capture response among the tested thermodynamic inputs and the liquid-side transfer coefficient the largest among the transport inputs, but neither closes the observed capture gap within the tested ranges.
-Lean loadings of 0.225 and 0.275 mol \COtwo{} per mol MEA change capture by \num{+3.75} and \num{-6.86} points relative to 0.25, identifying solvent loading as the most influential operating variable under the tested conditions.
+% C3: nine-species numerical behavior and property sources
+The nine-species BVP model with conventional enhancement overpredicts all seven cases, with a mean absolute error of \num{5.86} percentage points.
+Its refined Case 3C calculation predicts \qty{92.91}{\percent} capture against \qty{89.50}{\percent} observed; mesh refinement changes capture by \num{0.005} points, and one coarse solution requires about \qty{17}{s} of BVP wall time.
+Compared with empirical density and enthalpy correlations, the ePC-SAFT properties lower capture in every case and raise the packing-temperature error; in Case 3C the capture change comes mostly from the lower ePC-SAFT water vaporization enthalpy.
 
-The temperature comparison is qualitative because the source does not identify the measured phase; conventional enhancement and empirical caloric and transport correlations constrain predictive interpretation.
+% C4: thermodynamic, transport and operating insights
+The MEA--water interaction produces the largest capture response among the tested thermodynamic inputs, at most \num{0.8} points, and the liquid-side transfer coefficient the largest among the transport inputs, at most \num{0.3} points; both are much smaller than the \num{3.40}-point Case 3C error.
+Lean loadings of 0.225 and 0.275 mol \COtwo{} per mol MEA change capture by \num{+2.41} and \num{-3.92} points relative to 0.25, identifying solvent loading as the most influential operating variable under the tested conditions.
+The enhancement and MEA diffusivity correlations are used beyond their source ranges in these calculations.
 
-% C4: contribution and forward program
-The formulation gives a direct connection from component-level molecular and ionic descriptions to column-scale observables and operating response.
-In a twelve-state conserved formulation of the same absorber, a finite-rate reactive film without an empirical enhancement factor gives the lowest capture error of three tested films on every axial mesh, although all three underpredict Case 7C on the finest mesh.
-In that formulation, the jointly fitted MEA parameter set does not consistently improve capture prediction, and the minimum Case 3C solvent flow for \qty{90}{\percent} capture rises with mesh refinement, leaving its mesh-independent value unresolved.
-A direct ePC-SAFT/eNRTL comparison and tests with other amines would evaluate how thermodynamic parameter reuse contributes to solvent selection and absorber design.
+% C5: contribution and forward program
+The minimum Case 3C solvent flow for \qty{90}{\percent} capture from the twelve-state model is not mesh-independent: its reduction below the reference flow falls from \qty{7.37}{\percent} at 17 nodes to \qty{0.35}{\percent} at 129 nodes, so at the finest mesh the reference flow is close to the minimum.
+A direct comparison of ePC-SAFT and eNRTL and tests with other amines would evaluate how thermodynamic parameter reuse contributes to solvent selection and absorber design.
 
 \clearpage
 \nolinenumbers

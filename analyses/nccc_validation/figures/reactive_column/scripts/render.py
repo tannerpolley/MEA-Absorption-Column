@@ -10,6 +10,8 @@ import pandas as pd
 
 
 def read_run(run):
+    # Carbon, nitrogen and charge are fixed by the nine-species formulation.
+    # The adopted EOS parameters and reaction constants do not enter this check.
     reactions = Path('src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json')
     chemistry = json.loads(reactions.read_text())
     balances, charges = np.asarray(chemistry['balance_matrix']), np.asarray(chemistry['charges'])
@@ -17,6 +19,16 @@ def read_run(run):
     identity, result = [json.loads(p.read_text()) for p in paths]
     if not result['success']:
         raise ValueError(f'{run}: no accepted column result')
+    if result['max_rms_residual'] > result['tol'] or result['max_scaled_boundary_residual'] > result['bc_tol']:
+        raise ValueError(f'{run}: residual exceeds the declared tolerance')
+    if result.get('invalid_state_count') or result.get('guard_penalty_count'):
+        raise ValueError(f'{run}: invalid state or guard penalty recorded')
+    evaluated = run/'evaluated_parameters.json'
+    if evaluated.exists():
+        components = json.loads(evaluated.read_text())['components']
+        if [c['component_id'] for c in components] != chemistry['species_ids']:
+            raise ValueError(f'{run}: species order differs from the balance matrix')
+        paths.append(evaluated)
     tables = {}
     for name in ['Fl', 'Fv', 'Cl', 'x', 'T', 'CO2', 'Hl', 'Hv', 'enhance_factor']:
         p = run/f'{name}.csv'
@@ -40,7 +52,7 @@ def read_run(run):
            'runtime_s','solver_cpu_time_s','total_wall_including_seed_and_outputs_s','max_rms_residual',
            'max_scaled_boundary_residual','boundary_residual_norm','capture_pct','capture_error_pct',
            'invalid_state_count','guard_penalty_count']}
-    row.update(run=run.name, observed_capture_pct=result['capture_pct']-result['capture_error_pct'],
+    row.update(run=run.name, run_directory=str(run), observed_capture_pct=result['capture_pct']-result['capture_error_pct'],
                peak_liquid_temperature_K=frame.Tl.max(), peak_vapor_temperature_K=frame.Tv.max(),
                co2_conservation_range_mol_s=np.ptp(frame.Fv_CO2-frame.Fl_CO2),
                water_conservation_range_mol_s=np.ptp(frame.Fv_H2O-frame.Fl_H2O),
@@ -58,8 +70,9 @@ def read_run(run):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('runs', nargs='+', type=Path)
+    parser.add_argument('--output', type=Path, default=Path(__file__).resolve().parents[1]/'output')
     args = parser.parse_args()
-    output = Path(__file__).resolve().parents[1]/'output'
+    output = args.output
     output.mkdir(parents=True, exist_ok=True)
     frames, summary, sources, identities = [], [], [Path(__file__)], {}
     for run in args.runs:
@@ -101,12 +114,14 @@ def main():
         fig.savefig(output/f'comparison.{suffix}',dpi=180)
     plt.close(fig)
     timing = args.runs[0].parent/'reactive_jacobian_timing.json'
-    sources.append(timing)
-    provenance = dict(input_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
-                      run_identities=identities, local_jacobian_timing=json.loads(timing.read_text()),
+    provenance = dict(run_identities=identities,
                       scope='Current-parameter nine-species nonisothermal conventional-film Case 3C. '
                             'Temperature observations are not plotted without confirmed phase/coordinate mapping. '
                             'Numerical refinement is separate from experimental agreement.')
+    if timing.is_file():
+        sources.append(timing)
+        provenance['local_jacobian_timing'] = json.loads(timing.read_text())
+    provenance['input_sha256'] = {str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
     (output/'provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
     print(pd.DataFrame(summary).to_string(index=False))
 

@@ -1,0 +1,89 @@
+{
+  "attempt_id": "20261128T070732-94d3d57b6186",
+  "flow_definition": "L*(p) = s*(p) times the unscaled liquid feed total at p",
+  "baseline_liquid_flow_mol_s": 89.13679514539346,
+  "baseline_liquid_flow_kg_s": 2.088055555555556,
+  "minimum_liquid_flow_mol_s": 87.41426965111559,
+  "minimum_liquid_flow_kg_s": 2.047704890916489,
+  "capture_fraction": 0.9000000123349796,
+  "physical_capture_multiplier_per_mol_s": 3.5337770145282654,
+  "sensitivities": [
+    {
+      "parameter": "liquid_CO2",
+      "parameter_unit": "mol/s",
+      "ds_dp": 1.411114674924193,
+      "dL_mol_s_dp": 126.76291518858758,
+      "dL_kg_s_dp": 2.9896443838420796
+    },
+    {
+      "parameter": "liquid_MEA",
+      "parameter_unit": "mol/s",
+      "ds_dp": -0.542950069922538,
+      "dL_mol_s_dp": -47.41615367365103,
+      "dL_kg_s_dp": -1.0738063286745538
+    },
+    {
+      "parameter": "liquid_H2O",
+      "parameter_unit": "mol/s",
+      "ds_dp": 0.011296571961463624,
+      "dL_mol_s_dp": 1.987615703985481,
+      "dL_kg_s_dp": 0.04125473867291886
+    },
+    {
+      "parameter": "vapor_CO2",
+      "parameter_unit": "mol/s",
+      "ds_dp": 1.2533947600991497,
+      "dL_mol_s_dp": 111.7235919672675,
+      "dL_kg_s_dp": 2.617157892129253
+    },
+    {
+      "parameter": "vapor_H2O",
+      "parameter_unit": "mol/s",
+      "ds_dp": 0.07330782151209213,
+      "dL_mol_s_dp": 6.534424268678424,
+      "dL_kg_s_dp": 0.15307080397399905
+    },
+    {
+      "parameter": "vapor_N2",
+      "parameter_unit": "mol/s",
+      "ds_dp": -0.03691335489944195,
+      "dL_mol_s_dp": -3.290338153800763,
+      "dL_kg_s_dp": -0.07707713577197366
+    },
+    {
+      "parameter": "vapor_O2",
+      "parameter_unit": "mol/s",
+      "ds_dp": -0.036970059667157086,
+      "dL_mol_s_dp": -3.2953926350643545,
+      "dL_kg_s_dp": -0.07719553847722774
+    },
+    {
+      "parameter": "liquid_temperature",
+      "parameter_unit": "K",
+      "ds_dp": 0.00812360118849837,
+      "dL_mol_s_dp": 0.7241117749820541,
+      "dL_kg_s_dp": 0.01696253059276174
+    },
+    {
+      "parameter": "vapor_temperature",
+      "parameter_unit": "K",
+      "ds_dp": 0.0010460473576902212,
+      "dL_mol_s_dp": 0.09324130903481337,
+      "dL_kg_s_dp": 0.002184204996599276
+    },
+    {
+      "parameter": "bottom_pressure",
+      "parameter_unit": "Pa",
+      "ds_dp": 7.926136617520538e-06,
+      "dL_mol_s_dp": 0.00070651041597033,
+      "dL_kg_s_dp": 1.655021359830608e-05
+    },
+    {
+      "parameter": "capture_target",
+      "parameter_unit": "fraction",
+      "ds_dp": 5.845020956919057,
+      "dL_mol_s_dp": 521.0064356574256,
+      "dL_kg_s_dp": 12.204728481433488
+    }
+  ]
+}

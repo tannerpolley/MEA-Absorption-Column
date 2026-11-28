@@ -1,0 +1,30 @@
+{
+  "wall_limit_s": 900,
+  "returncode": null,
+  "session_returncode": 143,
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "timeout",
+    "900",
+    "uv",
+    "run",
+    "--frozen",
+    "python",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/capture_solver.py",
+    "--output",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/nce_dense_81",
+    "--dataset",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle",
+    "--mesh",
+    "81",
+    "--tol",
+    "5e-5",
+    "--initial-profile",
+    "analyses/nccc_validation/results/runs/reactive_native_41/solution_scaled.csv"
+  ],
+  "threads": 1,
+  "log": "analyses/nccc_validation/results/runs/fitA_article_20261128/nce_dense_81.log",
+  "observation": "The session returned 143 without recording the runner exit code. The log and result.json contain the complete solver result."
+}

@@ -1,0 +1,79 @@
+{
+  "fit_record": "Amine-Thermodynamics@a812493cc:analyses/amines/results/mea/reported/fit/A.json.gz",
+  "fit_density_rows": 52,
+  "match": "same T within 0.02 K, MEA mass fraction within 0.003, loading within 0.006",
+  "summary": [
+    {
+      "group": "loaded",
+      "rows": "fitted",
+      "model": "correlation",
+      "n": 15,
+      "mean_absolute_percent": 2.1819197761792535,
+      "bias_percent": -2.1819197761792535,
+      "max_absolute_percent": 3.536971836075364
+    },
+    {
+      "group": "loaded",
+      "rows": "fitted",
+      "model": "current",
+      "n": 15,
+      "mean_absolute_percent": 0.15414362048045577,
+      "bias_percent": -0.03224253263178135,
+      "max_absolute_percent": 0.4227878601724932
+    },
+    {
+      "group": "loaded",
+      "rows": "held_out",
+      "model": "correlation",
+      "n": 53,
+      "mean_absolute_percent": 3.4871750382080617,
+      "bias_percent": -3.4871750382080617,
+      "max_absolute_percent": 8.829481763477693
+    },
+    {
+      "group": "loaded",
+      "rows": "held_out",
+      "model": "current",
+      "n": 53,
+      "mean_absolute_percent": 0.5101520547330146,
+      "bias_percent": -0.46540952695356386,
+      "max_absolute_percent": 1.7260271158269611
+    },
+    {
+      "group": "unloaded",
+      "rows": "fitted",
+      "model": "correlation",
+      "n": 5,
+      "mean_absolute_percent": 0.11830312251000133,
+      "bias_percent": -0.11830312251000133,
+      "max_absolute_percent": 0.1559672999431749
+    },
+    {
+      "group": "unloaded",
+      "rows": "fitted",
+      "model": "current",
+      "n": 5,
+      "mean_absolute_percent": 0.03302427432217648,
+      "bias_percent": -0.009960275699032278,
+      "max_absolute_percent": 0.07082055074605989
+    },
+    {
+      "group": "unloaded",
+      "rows": "held_out",
+      "model": "correlation",
+      "n": 30,
+      "mean_absolute_percent": 0.46238676480408436,
+      "bias_percent": -0.44515191867186943,
+      "max_absolute_percent": 1.1253376670910327
+    },
+    {
+      "group": "unloaded",
+      "rows": "held_out",
+      "model": "current",
+      "n": 30,
+      "mean_absolute_percent": 0.20002920082746872,
+      "bias_percent": -0.16873739309055188,
+      "max_absolute_percent": 0.6642359764961342
+    }
+  ]
+}

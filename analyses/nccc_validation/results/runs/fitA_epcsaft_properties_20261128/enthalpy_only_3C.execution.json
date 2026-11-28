@@ -1,0 +1,27 @@
+{
+  "command": [
+    "timeout",
+    "300",
+    "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.venv/bin/python3",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/capture_solver.py",
+    "--output",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_properties_20261128/enthalpy_only_3C",
+    "--dataset",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+    "--case",
+    "3C",
+    "--mesh",
+    "21",
+    "--tol",
+    "0.5",
+    "--wall-limit",
+    "300",
+    "--energy-model",
+    "epcsaft"
+  ],
+  "wall_limit_s": 300,
+  "elapsed_s": 30.60431323602097,
+  "returncode": 0,
+  "log": "analyses/nccc_validation/results/runs/fitA_epcsaft_properties_20261128/enthalpy_only_3C.log",
+  "threads": 1
+}

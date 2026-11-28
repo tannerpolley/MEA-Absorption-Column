@@ -1,0 +1,27 @@
+{
+  "returncode": 0,
+  "wall_limit_s": 900,
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "analyses/nccc_validation/scripts/run_reactive_column.py",
+    "--output",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/thermo_co2_water_0.95",
+    "--dataset",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+    "--mesh",
+    "41",
+    "--tol",
+    "0.05",
+    "--initial-profile",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/refined/solution_scaled.csv",
+    "--kij",
+    "pair/carbon-dioxide/water/k_ij",
+    "--factor",
+    "0.95"
+  ],
+  "threads": 1,
+  "log": "analyses/nccc_validation/results/runs/fitA_article_20261128/thermo_co2_water_0.95.log"
+}

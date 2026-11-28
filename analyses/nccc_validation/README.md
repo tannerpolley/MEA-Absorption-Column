@@ -16,6 +16,33 @@ This analysis owns the reviewer-response validation evidence for the MEA absorbe
 
 ## Commands
 
+### Fit-A density, enthalpy and water transfer
+
+`scripts/run_reactive_column.py` runs the nine-species model on the reported
+dry-gas mass and saturated inlet basis. Its default fit-A case uses Engine
+density and caloric properties in both phases, Engine water fugacities for
+transfer, and Engine water saturation at the inlet. Use `correlation` with
+`--liquid-density-source`, `--energy-model`, `--water-transfer-source` or
+`--inlet-humidity-source` to reproduce each earlier closure. The density
+selector controls both phases. The older `seven_state_legacy` preset preserves
+its original enthalpy state layout and property choices.
+
+Issue #99 evidence is under
+`results/runs/fitA_epcsaft_properties_20261128/`. The pooled metrics and
+refinement are in `comparison.json`, with per-case and per-tap values in
+`case_comparison.csv` and `temperature_taps.csv`. The record includes the
+solver commands, wall limits, logs, Engine identity, and raw profiles.
+`run_epcsaft_properties.py` dispatches the comparisons and refinement.
+`check_epcsaft_properties.py` runs the phase enthalpy and Jacobian checks.
+`measure_epcsaft_energy.py` reads one refinement directory and evaluates the
+net enthalpy over its dense collocation polynomial.
+`compare_absorption_enthalpy.py` reads a clean Amine-Thermodynamics checkout
+and compares the published calorimeter doses.
+`summarize_epcsaft_properties.py` collates the results.
+Use the retained execution commands with fresh output paths. The Ipopt
+solver was MA57. HSL, a collection of Fortran codes for large-scale scientific
+computation. https://www.hsl.rl.ac.uk/
+
 When running from a Git worktree with the shared Codex venv, set the source path first so subprocess benchmark workers import this worktree:
 
 ```bash
@@ -34,7 +61,7 @@ export PYTHONPATH="src"
 | `render_c_case_campaign_temperature_gallery.py` | Renders the corrected one-bed C-case temperature overlay gallery from a completed campaign-input benchmark run. | No. | No direct dependency; the source run may include ePC-SAFT rows. |
 | `probe_reactive_epcsaft_speciation.py` | Archived probe for the superseded reactive package interface. | No supported current run. | Retained for provenance pending typed-equilibrium migration. |
 | `generate_epcsaft_v02_validation.py` | Writes the current neutral-versus-ionic contribution table and exactly one fixed-chemistry Case 3C column row. | Yes, one column row. | Requires the locked ePC-SAFT 0.2 wheel and `MEA_CO2_H2O_ionic_fit` parameter document. |
-| `validate_results.py` | Checks final tables, figures, profile indexes, and stale path regressions. | No. | No direct dependency. |
+| `validate_results.py` | Checks final tables, figures, profile indexes, and paths that previously went stale. | No. | No direct dependency. |
 | `analyze_retained_reactive_case3c.py` | Builds the controlled retained-versus-prior Case 3C fugacity, speciation, parameter, mesh, and transfer-sensitivity tables. | Reads completed column runs and evaluates bounded liquid states. | Requires the retained ePC-SAFT wheel and parameter documents. |
 | `render_retained_reactive_case3c_diagnosis.py` | Renders the reviewed Case 3C diagnostic figure from retained tables. | No. | No direct dependency. |
 | `analyze_enhancement_consistency.py` | Compares explicit and complete Gaspar-style enhancement calculations at retained Case 3C states under fixed thermodynamic parameters. | Evaluates 21 retained liquid states. | Requires the retained ePC-SAFT wheel, parameter document, and reactive table. |
@@ -49,7 +76,7 @@ export PYTHONPATH="src"
 | `resolve_issue36_film_input_release.py` | Retains the packet-bound Work Package B release decision and five typed state-level blockers. | No physical calculation. | Verifies the immutable handoff archive; no package import is used. |
 | `resolve_issue30_film_validation_gate.py` | Retains the supported-negative Issue 30 no-run gate across seven predeclared film-validation case classes. | No physical calculation. | Verifies the accepted Issue 36 result and no-run boundary; no package import is used. |
 
-Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel, while the MEA parameter inputs remain vendored under `src/mea_absorption_column/data/epcsaft_datasets/` and are converted to the strict parameter-document API by the absorber adapter.
+Henry-only validation does not evaluate ePC-SAFT. The project dependency pins an immutable ePC-SAFT 0.2 wheel. The absorber adapter converts the MEA inputs stored under `src/mea_absorption_column/data/epcsaft_datasets/` into typed Engine parameter documents.
 
 Typical ePC-SAFT diagnostic environment:
 
@@ -57,7 +84,7 @@ Typical ePC-SAFT diagnostic environment:
 export MEA_EPCSAFT_DATASET_NAME="MEA_CO2_H2O_ionic_fit"
 ```
 
-Runtime derivative and Born-model option matrices are not supported by API 0.2. CppAD is the sole production derivative authority; alternative model families require separately identified parameter documents.
+The ePC-SAFT 0.2 model constructor lacks runtime options for derivative and Born-model selection. CppAD provides production derivatives. Alternative model families require separately identified parameter documents.
 
 Regenerate the current ePC-SAFT 0.2 fixed-state table and one bounded ionic/fixed-chemistry column row:
 
@@ -69,7 +96,7 @@ This command writes `epcsaft_v02_contribution_table.csv` and
 `epcsaft_v02_column_row.csv`. The provider parameter fingerprint is labeled
 checkout-path-local; the dataset and generated parameter-document SHA-256
 values are the portable identities. `run_directory_at_generation` records the
-disposable run path used by the command; it is not a retained artifact. The
+temporary run directory used by the command. The
 final CSVs and their immutable identities are retained. The two current tables
 validate fixed chemistry and configuration plumbing only. They do not
 establish predictive reactive chemistry, predictive absorber performance, or
@@ -275,7 +302,7 @@ python3.13 analyses/nccc_validation/scripts/resolve_issue40_apparent_true_specie
   --bundle /home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/analyses/mea_parameter_bundle/results/handoff/mea-reactive-epcsaft-parameter-bundle.zip
 ```
 
-After committing the generated result artifacts separately from the source
+After committing the generated result tables separately from the source
 revision, run the retained-output/source-lineage consistency validator:
 
 ```bash
@@ -311,7 +338,7 @@ uv run python analyses/nccc_validation/scripts/validate_results.py --issue41-onl
 ```
 
 This command reads the immutable bundle archive and the retained Issue 34/40
-artifacts without importing ePC-SAFT. It writes the fixed stoichiometric
+results without importing ePC-SAFT. It writes the fixed stoichiometric
 projections, five source-rate rows, 23-row raw/aggregate observation inventory,
 nine provider `K(T)` rows, five predeclared estimation/validation rows, and
 five packet comparison rows. The result is supported-negative: F3 has no

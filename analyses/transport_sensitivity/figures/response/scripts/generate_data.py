@@ -97,6 +97,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--model-root', required=True, type=Path)
     parser.add_argument('--reference', required=True, type=Path)
+    parser.add_argument('--dataset', required=True, type=Path)
+    parser.add_argument('--initial-profile', type=Path,
+                        help='Column start for a separate initialization control')
     parser.add_argument('--output', type=Path)
     parser.add_argument('--quantity', choices=['viscosity', 'diffusivity', 'kl'], default='viscosity')
     parser.add_argument('--factor', type=float, default=1.)
@@ -107,16 +110,22 @@ def main():
     import numpy as np
     import pandas as pd
     from mea_absorption_column.Run_Model import run_model
-    from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET, parameter_document, parameter_fingerprint, reaction_system, validate_reactive_bundle
+    from mea_absorption_column.Thermodynamics.reactive_bundle import (
+        dataset_input_paths, parameter_document, parameter_fingerprint, reaction_system,
+    )
     assert Path(importlib.import_module('mea_absorption_column').__file__).is_relative_to(root)
     self_check()
     inputs = root/'src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv'
     prior = json.loads((reference/'identity.json').read_text())
     contract = json.loads((root/'integration/epcsaft_contract.json').read_text())['final_identity']
-    assert prior['engine_identity'] == contract, 'Reference and current wheel/bundle declarations differ'
+    assert all(contract[key] == value for key, value in prior['engine_identity'].items())
     assert sha(inputs) == prior['input_sha256'][str(inputs.relative_to(root))]
-    validate_reactive_bundle(str(DATASET))
-    parameters = parameter_document(str(DATASET))
+    dataset = (root/args.dataset).resolve()
+    assert (root/prior['settings'].get('reactive_dataset', args.dataset)).resolve() == dataset
+    for path in dataset_input_paths(dataset):
+        expected = prior['input_sha256'].get(str(path.relative_to(root)), prior['input_sha256'].get(str(path)))
+        assert sha(path) == expected, path
+    parameters = parameter_document(str(dataset))
     fingerprint = parameter_fingerprint(parameters)
     if args.check_only:
         print('Reference wheel identity and reactive bundle hashes passed', flush=True)
@@ -126,24 +135,29 @@ def main():
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     settings = dict(prior['settings'])
-    assert not any(k.startswith('reactive_') for k in settings), 'Expected unperturbed reference'
+    assert not {'reactive_kij_scale', 'reactive_reaction_scale'} & settings.keys(), 'Expected unperturbed reference'
+    settings['reactive_dataset'] = str(dataset)
     paths = sorted((root/'src/mea_absorption_column').rglob('*.py'))
-    paths += sorted(DATASET.glob('*.json'))
-    paths += [inputs, root/'uv.lock', root/'integration/epcsaft_contract.json', Path(__file__).resolve(),
+    paths += dataset_input_paths(dataset)
+    paths += [inputs, inputs.with_name('fitted_coefficients.csv'), root/'uv.lock', root/'integration/epcsaft_contract.json', Path(__file__).resolve(),
               reference/'identity.json', reference/'result.json', reference/'solution_scaled.csv']
+    initial_profile = args.initial_profile or reference/'solution_scaled.csv'
+    if args.initial_profile:
+        paths.append(initial_profile)
     hashes = {str(p): sha(p) for p in paths}
     changed = [str(p.relative_to(root)) for p in paths if p.is_relative_to(root)
                and str(p.relative_to(root)) in prior['input_sha256']
                and sha(p) != prior['input_sha256'][str(p.relative_to(root))]]
-    identity = dict(model_root=str(root), settings=settings.copy(), engine_identity=contract,
-                    quantity=args.quantity, factor=args.factor, input_sha256=hashes,
+    identity = dict(model_root=str(root), settings=settings.copy(), engine_identity=prior['engine_identity'],
+                    quantity=args.quantity, factor=args.factor, initial_profile=str(initial_profile),
+                    input_sha256=hashes,
                     source_changes_since_reference=changed,
                     parameter_fingerprint=fingerprint,
                     command=sys.argv, scope='OAT exploratory ±10% transport correlation sensitivity, not confidence intervals')
     (output/'identity.json').write_text(json.dumps(identity, indent=2)+'\n')
     (output/'evaluated_parameters.json').write_text(json.dumps(parameters, indent=2)+'\n')
-    (output/'evaluated_reactions.json').write_text(json.dumps(reaction_system(str(DATASET)), indent=2)+'\n')
-    seed = pd.read_csv(reference/'solution_scaled.csv').to_numpy().T
+    (output/'evaluated_reactions.json').write_text(json.dumps(reaction_system(str(dataset)), indent=2)+'\n')
+    seed = pd.read_csv(initial_profile).to_numpy().T
     settings.update(initial_guess_scaled=seed, jacobian_mode='native', reactive_reuse_states=True)
     started = time.perf_counter()
     with transport_scale(args.quantity, args.factor) as calls:

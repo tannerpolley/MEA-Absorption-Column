@@ -114,7 +114,20 @@ def main():
     summary['peak_liquid_temperature_change_K']=summary.peak_liquid_temperature_K-base.peak_liquid_temperature_K
     summary.to_csv(output/'summary.csv',index=False)
     pd.concat(profiles,ignore_index=True).to_csv(output/'temperature_profiles.csv',index=False)
+    render_figures(output)
+    (output/'provenance.json').write_text(json.dumps(dict(
+        input_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
+        output_sha256={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in output.iterdir()
+                       if p.name in ('summary.csv','temperature_profiles.csv','operating_response.pdf',
+                                     'operating_response.png','operating_response.svg')},
+        scope='Discrete perturbations around 3C, coarse numerics. No parameter uncertainty, '
+              'experimental validation of perturbed conditions, interaction study or optimum.'),indent=2)+'\n')
+    print(summary.to_string(index=False))
+
+
+def render_figures(output):
     summary=pd.read_csv(output/'summary.csv')
+    base=summary.loc[summary.scenario=='baseline'].iloc[0]
     assert summary.loc[summary.success==True,'parameter_sha256'].nunique()==1
     plt.rcParams.update({'font.size':10,'axes.spines.top':False,'axes.spines.right':False})
     fig,axes=plt.subplots(2,3,figsize=(10,6),layout='constrained',sharey='row')
@@ -141,18 +154,11 @@ def main():
         names = {'LG_low':'lower liquid/dry-gas ratio', 'LG_high':'higher liquid/dry-gas ratio',
                  'loading_low':'lower loading', 'loading_high':'higher loading',
                  'temperature_low':'colder inlet', 'temperature_high':'warmer inlet'}
-        fig.supxlabel('Not converged (omitted): '+', '.join(names.get(n,n) for n in missing)+'.',fontsize=8)
+        fig.supxlabel('Conditions without a prediction: '+', '.join(names.get(n,n) for n in missing)+'.',fontsize=8)
     for extension in ('svg','png','pdf'):
         fig.savefig(output/f'operating_response.{extension}',dpi=180)
     plt.close(fig)
-    (output/'provenance.json').write_text(json.dumps(dict(
-        input_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
-        output_sha256={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in output.iterdir()
-                       if p.name in ('summary.csv','temperature_profiles.csv','operating_response.pdf',
-                                     'operating_response.png','operating_response.svg')},
-        scope='Discrete perturbations around 3C, coarse numerics. No parameter uncertainty, '
-              'experimental validation of perturbed conditions, interaction study or optimum.'),indent=2)+'\n')
-    print(summary.to_string(index=False))
+
 
 
 if __name__=='__main__':

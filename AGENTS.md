@@ -17,8 +17,8 @@ and numerical evidence before changing a calculation. Reuse accepted decisions.
 Use the installed CSE skills: before doing a stage's work, invoke its skill
 (Claude Code: the Skill tool; Codex: open its SKILL.md). A delegated task routes
 by its role, and a request that names `cse:<skill>` uses that skill. Read
-`docs/scientific/README.md` and `docs/scientific/CONTEXT.md` before selecting the
-evidence-justified route.
+`docs/scientific/README.md` and the sections of `docs/scientific/CONTEXT.md`
+the task needs before selecting the evidence-justified route.
 
 - cse:setup — set up or reconcile the repository's scientific records, roles, and hooks
 - cse:research — find or judge sources, equations, correlations, data, or methods
@@ -26,16 +26,15 @@ evidence-justified route.
 - cse:design — plan a study, model change, or tool fix and write its issue
 - cse:build — implement an agreed model, method, data transformation, or correction
 - cse:analyze — run an accepted study and interpret its numbers
-- cse:summarize — write retained results into the analysis notebook
 - cse:review — independently check a plan, a delivered result, or a change
 - cse:write — turn accepted evidence into manuscript or report prose
 - cse:prose — inspect scientific writing without editing it
 - cse:zotero, cse:data, cse:digitize — sources, datasets, figure values, and PDF transcription
-- cse:plot, cse:tikz, cse:latex, cse:quarto, cse:beamer — figures, diagrams, and documents
+- cse:plot, cse:tikz, cse:latex, cse:quarto, cse:beamer — figures, diagrams, and documents. For PowerPoint .pptx/.potx decks, read the CSE reference `references/visualize/slide-decks.md` first, then use pptx.
 - cse:audit — inspect software ceremony, duplicated values, misplaced records, or untraced numerical limits read-only
-- delegated roles — review: cse:review; implementation: cse:build; design: cse:design; research: cse:research; diagnosis: cse:diagnose; analysis: cse:analyze; writing: cse:write
+- delegated roles — review: cse:review; implementation: cse:build; design: cse:design; research: cse:research; diagnosis: cse:diagnose; test: cse:analyze; analysis: cse:analyze; writing: cse:write
 
-For a requested retrospective, invoke `cse:audit` and use its retrospective reference.
+For a writing retrospective, invoke the skill for the work under review (`cse:write`, `cse:prose`, or `cse:review`) and read the installed `references/workflow/retrospective.md`. For other retrospectives, invoke `cse:audit` and use the same reference.
 
 Report the engineering result or capability, supporting evidence, meaning,
 and limits before software provenance. Do not invent physical results.
@@ -49,7 +48,7 @@ CSE execution mode: direct.
 ## Repository Workflow
 
 - A new checkout or worktree needs only `bash scripts/setup_environment.sh` (fetches and hash-checks the pinned Engine wheel, then `uv sync --frozen --group test`; about 8 s first time). Run everything through `uv run --frozen`.
-- Regression checks and the current Engine qualification: see `README.md`.
+- Previous-failure checks and the current Engine qualification: see `README.md`.
 - Tests write scratch under `.tmp_local/` and column runs default to `.tmp_column_runs/`; both are git-ignored. A new study result goes in a new `analyses/<study>/results/runs/<label>/` directory.
 - Do not accept slow or broken solver runs as normal: give each case a wall limit (`execution.wall_limit_s`) and a log, stop stale runs you started, and report the root cause with a faster bounded alternative.
 - Preserve existing dirty work and inspect overlapping files before editing.
@@ -59,9 +58,9 @@ CSE execution mode: direct.
 ## Standing Decisions
 
 - The submitted revision stays unchanged on `codex/fallback-manuscript`. Do not edit its manuscript prose here or rerun its results for consolidation (2026-09-08).
-- `$HOME/Documents/Papers/references.bib` is owned by Zotero/Better BibTeX. Never hand-edit it or its snapshot `docs/scientific/latex/references.bib` (2026-08-12).
+- `$HOME/Zotero/exports/references.bib` (the Better BibTeX auto-export; `$HOME/Documents/Papers/references.bib` stopped updating in September 2026) is owned by Zotero/Better BibTeX. Never hand-edit it or its snapshot `docs/scientific/latex/references.bib` (2026-08-12).
 - On this machine `EPCSAFT_HSL_LIBRARY` makes Engine Ipopt use MA57 (results report `linear_solver`). Never copy or bundle HSL. A paper or report with MA57 results must acknowledge "HSL, a collection of Fortran codes for large-scale scientific computation. https://www.hsl.rl.ac.uk/" (Engine #605, 2026-10-19).
-- Twelve-state hydraulic density stays the ePC-SAFT solved-state density (`density_source` default `solved_state`), so the column stays one predictive model. Its loaded density reads about 11 % high against Amundsen 2009, which lowers holdup by about 12–16 % on 3C. State this in any holdup or hydraulic claim. Evidence: `analyses/liquid_density/` (#83, 2026-10-29).
+- Twelve-state hydraulic density stays the ePC-SAFT solved-state density (`density_source` default `solved_state`), so the column stays one predictive model. With the Chapter 3 set (fit A) its loaded density misses Amundsen 2009 by 0.51 % on the 53 rows outside the fit objective (correlation 3.49 %) and changes 3C capture by 0.0001 points against the correlation; the earlier parameter set read about 11 % high. Evidence: `analyses/liquid_density/results/runs/fit_a/` (#83 method, 2026-11-28).
 - Manuscript prose: keep `local`, `history`, `historical` and `histories` out of it, and keep software-build chronology outside the article (2026-09-04). For LaTeX, apply `cse:latex` and run the build loop until the edit adds no warnings (2026-05-06).
 
 ## ePC-SAFT Cross-Repo Integration

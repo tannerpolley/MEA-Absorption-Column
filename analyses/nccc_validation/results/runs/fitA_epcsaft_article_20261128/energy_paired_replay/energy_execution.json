@@ -1,0 +1,17 @@
+{
+  "command": [
+    "timeout",
+    "600",
+    "uv",
+    "run",
+    "--frozen",
+    "python",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/measure_energy.py",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/energy_paired_replay"
+  ],
+  "wall_limit_s": 600,
+  "elapsed_s": 176.0673231999972,
+  "returncode": 0,
+  "log": "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/energy_paired_replay.energy.log",
+  "threads": 1
+}

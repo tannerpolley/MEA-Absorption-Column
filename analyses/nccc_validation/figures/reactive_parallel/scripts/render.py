@@ -131,14 +131,14 @@ def render_figures(output):
     taps = pd.read_csv(output/'temperature_observations.csv')
     accepted = summary[summary.success == True]
     assert accepted.parameter_sha256.nunique() == 1
-    assert len(taps) == 5*len(accepted)
+    assert len(taps[taps.case_id.isin(accepted.case_id)]) == 5*len(accepted)
     np.testing.assert_allclose(taps.Position+taps.source_position_top_to_bottom, 1, atol=1e-15)
     plt.rcParams.update({'font.size':10, 'axes.spines.top':False, 'axes.spines.right':False})
     fig, ax = plt.subplots(figsize=(8,4.3), layout='constrained')
-    x = np.arange(len(accepted))
-    ax.plot(x-.07, accepted.observed_capture_pct, 'kx', ms=8, label='NCCC observation')
-    ax.plot(x+.07, accepted.capture_pct, 'o', color='#0072B2', ms=6, label='Nine-species ePC-SAFT')
-    ax.set(xticks=x, xticklabels=accepted.case_id, xlabel='NCCC one-bed case',
+    x = np.arange(len(summary))
+    ax.plot(x-.07, summary.observed_capture_pct, 'kx', ms=8, label='NCCC observation')
+    ax.plot(x+.07, summary.capture_pct.where(summary.success), 'o', color='#0072B2', ms=6, label='Nine-species ePC-SAFT')
+    ax.set(xticks=x, xticklabels=summary.case_id, xlabel='NCCC one-bed case',
            ylabel='CO₂ capture (%)', ylim=(0,103), title='Conventional enhancement-factor column')
     ax.grid(axis='y', alpha=.2)
     ax.legend(frameon=False)
@@ -149,21 +149,21 @@ def render_figures(output):
     for ax, case in zip(axes.flat, (f'{i}C' for i in range(1,8))):
         frame = profiles[profiles.case_id == case]
         ax.set_title(case, loc='left')
+        points = taps[taps.case_id == case]
+        ax.scatter(points.Position, points.reported_temperature_K, marker='x', color='black',
+                   s=28, zorder=4, label='NCCC packing temperature')
         if frame.empty:
-            ax.text(.5,.5,'No converged column result', transform=ax.transAxes, ha='center')
+            ax.text(.5,.15,'No accepted column prediction', transform=ax.transAxes, ha='center')
         else:
             ax.plot(frame.Position,frame.Tl,color='#0072B2',label='Predicted liquid')
             ax.plot(frame.Position,frame.Tv,'--',color='#D55E00',label='Predicted vapor')
-            points = taps[taps.case_id == case]
-            ax.scatter(points.Position, points.reported_temperature_K, marker='x', color='black',
-                       s=28, zorder=4, label='NCCC packing temperature')
             metrics = accepted.set_index('case_id').loc[case]
             ax.text(.04,.07,f'Capture: {metrics.capture_pct:.1f}% model / {metrics.observed_capture_pct:.1f}% measured',
                     transform=ax.transAxes,fontsize=8)
         ax.set(xlim=(0,1), ylabel='Temperature (K)')
         ax.grid(alpha=.2)
     axes.flat[-1].axis('off')
-    axes.flat[-1].legend(*axes[0,0].get_legend_handles_labels(),loc='upper left',frameon=False,fontsize=9)
+    axes.flat[-1].legend(*axes.flat[2].get_legend_handles_labels(),loc='upper left',frameon=False,fontsize=9)
     axes.flat[-1].text(0,.56,'Measurements: Morgan et al. (2020), Table C2.\nSource coordinate transformed: ζ = 1 − x.\n\nBottom: vapor inlet (0)\nTop: liquid inlet (1)\n\nNine-species reactive ePC-SAFT;\nconventional enhancement-factor transport.',va='top',linespacing=1.5,fontsize=9,transform=axes.flat[-1].transAxes)
     axes[3,0].set_xlabel('Normalized packed height')
     axes[2,1].set_xlabel('Normalized packed height')

@@ -1,7 +1,7 @@
 {
   "package": {
     "name": "epcsaft",
-    "minimum_version": "0.2.0",
+    "minimum_version": "0.1.2",
     "default_mode": "stable",
     "allowed_sources": {
       "stable": [
@@ -16,15 +16,15 @@
     }
   },
   "final_identity": {
-    "engine_commit": "f4566b3d0c64d05822b41fe363de47ab5cfa6a0e",
-    "wheel_filename": "epcsaft-1.0.0-cp313-cp313-manylinux_2_39_x86_64.whl",
-    "wheel_sha256": "57bdf6c4277722fdf378107fa940fd321a4e9caeed8875165a27c318239dbd4a",
+    "engine_commit": "10b6a052768833e38cb6ee24ebe2098fa1dd5834",
+    "wheel_filename": "epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl",
+    "wheel_sha256": "dafe828427487b125a254012128ce63d0ad29452304bea52ee5d9c451f1e9875",
     "reactive_inputs_sha256": {
       "parameters.json": "73fd46326c31fdd7c287566b1d8c68b6092e9b12894609fb76e0b8e441304e31",
       "engine-reactions.json": "2ae0d64d85cb824c355b4896b80e5999bfaf310cb341cd2036e585167b1f0f60",
       "ideal-gas-thermochemistry.json": "b0af93ab2650b7aec9c8214ca2a8c187ad7462e7681af466d17bb2d1a499e607"
     },
-    "release_tag": "main-f4566b3d0c64d05822b41fe363de47ab5cfa6a0e"
+    "release_tag": "main-10b6a052768833e38cb6ee24ebe2098fa1dd5834"
   },
   "required_public_symbols": [
     "Parameters",

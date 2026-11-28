@@ -1,0 +1,17 @@
+{
+  "command": [
+    "timeout",
+    "600",
+    "uv",
+    "run",
+    "--frozen",
+    "python",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/measure_energy.py",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/energy_dense_41"
+  ],
+  "wall_limit_s": 600,
+  "elapsed_s": 176.60977821296547,
+  "returncode": 0,
+  "log": "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/energy_dense_41.energy.log",
+  "threads": 1
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "group": "unloaded",
+    "model": "correlation",
+    "n": 35,
+    "bias_g_cm3": -0.0039946314414239445,
+    "rmse_g_cm3": 0.005551867407855488,
+    "mean_absolute_percent": 0.41323195876207247,
+    "rmse_over_uncertainty": 11.103734815710977,
+    "within_uncertainty": 7
+  },
+  {
+    "group": "unloaded",
+    "model": "current",
+    "n": 35,
+    "bias_g_cm3": -0.0014747729745830116,
+    "rmse_g_cm3": 0.0024626409785262426,
+    "mean_absolute_percent": 0.17617135418385552,
+    "rmse_over_uncertainty": 4.925281957052485,
+    "within_uncertainty": 9
+  },
+  {
+    "group": "loaded",
+    "model": "correlation",
+    "n": 68,
+    "bias_g_cm3": -0.03434282859944643,
+    "rmse_g_cm3": 0.04118072824804937,
+    "mean_absolute_percent": 3.1992510833487655,
+    "rmse_over_uncertainty": null,
+    "within_uncertainty": null
+  },
+  {
+    "group": "loaded",
+    "model": "current",
+    "n": 68,
+    "bias_g_cm3": -0.004040320071767002,
+    "rmse_g_cm3": 0.006809810238373413,
+    "mean_absolute_percent": 0.43162078247142066,
+    "rmse_over_uncertainty": null,
+    "within_uncertainty": null
+  }
+]

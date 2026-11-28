@@ -26,14 +26,16 @@ from mea_absorption_column.misc.Get_Temperature_Enthalpy import (
 )
 from mea_absorption_column.misc.Scaling import scaling
 from mea_absorption_column.Thermodynamics.thermo_models import MEA_THERMODYNAMICS_EPCSAFT_DATASET, epcsaft_cache_stats
-from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET as REACTIVE_DATASET, MODEL as REACTIVE_MODEL, ReactiveLiquid
+from mea_absorption_column.Thermodynamics.reactive_bundle import (
+    CORRELATION_SOURCES, FIT_A, MODEL as REACTIVE_MODEL, ReactiveLiquid, reactive_property_sources,
+)
 
 np.set_printoptions(suppress=True)
 
 
 def run_model(df,
               method='single',
-              data_type='mole',
+              data_type=None,
               run=0,
               show_info=False,
               save_run_results=False,
@@ -47,15 +49,39 @@ def run_model(df,
 
     thermo_model = (thermo_model or 'ideal_henry').lower()
     solver_settings_for_run = dict(solver_settings or {})
+    # The 2017 NCCC mass table reports dry gas flow and dry CO2 and O2 fractions.
+    nccc_2017 = (thermo_model == REACTIVE_MODEL
+                 and {'L', 'G', 'y_O2', 'lean_solvent_temp_imputed'}.issubset(df.columns))
+    if data_type is None:
+        data_type = 'mass' if nccc_2017 else 'mole'
+    nccc_dry_mass = nccc_2017 and data_type == 'mass'
+    reactive_dataset = solver_settings_for_run.get('reactive_dataset', FIT_A)
+    if thermo_model == REACTIVE_MODEL:
+        property_sources = reactive_property_sources(reactive_dataset, solver_settings_for_run)
+        if property_sources['energy_model'] == 'epcsaft':
+            solver_settings_for_run.setdefault('thermal_state_mode', 'temperature')
+            solver_settings_for_run.setdefault('reactive_reuse_states', True)
+    else:
+        property_sources = dict(CORRELATION_SOURCES)
+        # A Henry initialization uses the same inlet conditions and scales.
+        property_sources['inlet_humidity_source'] = solver_settings_for_run.get('inlet_humidity_source', 'correlation')
+    if set(property_sources.values()) - {'correlation', 'epcsaft'}:
+        raise ValueError(f"Unknown nine-species property sources: {property_sources}")
     resolved_inputs = solver_settings_for_run.pop("_resolved_inputs", None)
     if resolved_inputs is None:
+        vapor_mode = solver_settings_for_run.get(
+            "vapor_composition_mode", "dry_saturated" if nccc_dry_mass else "legacy_ratio")
+        gas_basis = solver_settings_for_run.get(
+            "gas_flow_basis", "reported_dry_mass" if nccc_dry_mass and vapor_mode == "dry_saturated"
+            else "reported_total_wet")
         inputs, X, case_metadata = convert_data(
             df,
             run=run,
             type=data_type,
             return_metadata=True,
-            vapor_composition_mode=solver_settings_for_run.get("vapor_composition_mode", "legacy_ratio"),
-            gas_flow_basis=solver_settings_for_run.get("gas_flow_basis", "reported_total_wet"),
+            vapor_composition_mode=vapor_mode,
+            gas_flow_basis=gas_basis,
+            inlet_humidity_source=property_sources["inlet_humidity_source"],
         )
     else:
         inputs = resolved_inputs["parameters"]
@@ -84,6 +110,14 @@ def run_model(df,
     )
     if use_staged_beds and solver_settings_for_run.get('co2_mass_transfer_model') == 'reactive_film_linearization':
         raise ValueError('reactive_film_linearization requires unstaged beds; per-bed profile coordinates are not implemented')
+    if (thermo_model == REACTIVE_MODEL and property_sources['energy_model'] == 'epcsaft'
+            and method == 'scipy-bvp' and not use_staged_beds
+            and solver_settings_for_run.get('transform_mode', 'raw') in ('raw', 'bounded_guarded_raw_state')
+            and solver_settings_for_run.get('co2_mass_transfer_model', 'enhancement_factor') == 'enhancement_factor'
+            and solver_settings_for_run.get('enhancement_type', 'explicit') == 'explicit'
+            and solver_settings_for_run.get('co2_flux_mode', 'bidirectional') == 'bidirectional'
+            and not solver_settings_for_run.get('gas_velocity_area_exponent', 0)):
+        solver_settings_for_run.setdefault('jacobian_mode', 'native')
     if solver_settings_for_run.get('jacobian_mode') == 'native' and (method != 'scipy-bvp' or use_staged_beds):
         raise ValueError('Native Jacobian is implemented only for unstaged scipy-bvp')
     intercooler_settings = dict(intercooler_settings or {})
@@ -251,8 +285,13 @@ def run_model(df,
     }
     solver_diagnostics["_strict_domain_guards"] = bool(model_options["strict_domain_guards"])
     if thermo_model == REACTIVE_MODEL:
+        model_options.update(property_sources)
+        if 'water_vaporization_enthalpy' in solver_settings_for_run:
+            if property_sources['energy_model'] != 'correlation' or thermal_state_mode != 'temperature':
+                raise ValueError('The correlation water enthalpy control requires correlation energy and temperature states')
+            model_options['water_vaporization_enthalpy'] = solver_settings_for_run['water_vaporization_enthalpy']
         model_options['reactive_liquid'] = ReactiveLiquid(
-            solver_settings_for_run.get('reactive_dataset', REACTIVE_DATASET),
+            reactive_dataset,
             loading_anchor=solver_settings_for_run.get('reactive_loading_anchor', .25),
             water_per_mea_anchor=Fl_H2O_b/Fl_MEA_b,
             reuse_states=bool(solver_settings_for_run.get('reactive_reuse_states', False)),
@@ -302,14 +341,17 @@ def run_model(df,
             solver_settings_for_run.setdefault("continuation_path", "collapsed_henry->staged_henry")
     if (
         method == "scipy-bvp"
-        and use_staged_beds
-        and thermo_model == "epcsaft_neutral"
+        and ((use_staged_beds and thermo_model == "epcsaft_neutral")
+             or (thermo_model == REACTIVE_MODEL and property_sources['energy_model'] == 'epcsaft'))
         and solver_settings_for_run.get("seed_from_henry", True)
         and "initial_guess_scaled" not in solver_settings_for_run
     ):
         seed_settings = {
             **solver_settings_for_run,
             "seed_from_henry": False,
+            "jacobian_mode": "numerical",
+            "chemical_equilibrium_model": _default_chemical_equilibrium_model("ideal_henry"),
+            "_resolved_inputs": {"parameters": inputs, "raw_input": X, "metadata": case_metadata},
             "return_internal_profile": True,
         }
         henry_seed = run_model(
@@ -329,7 +371,7 @@ def run_model(df,
         if henry_seed.get("success") and henry_seed.get("_raw_solution_scaled") is not None:
             solver_settings_for_run["initial_guess_scaled"] = henry_seed["_raw_solution_scaled"]
             solver_settings_for_run["continuation_stage"] = "henry_seeded_epcsaft"
-            solver_settings_for_run["continuation_path"] = "ideal_henry->epcsaft_neutral"
+            solver_settings_for_run["continuation_path"] = f"ideal_henry->{thermo_model}"
 
     if show_info:
         print(f'''
@@ -560,6 +602,10 @@ Run #{run + 1:03d}:
         )
         cache_stats = _epcsaft_cache_delta(epcsaft_cache_start, epcsaft_cache_stats())
         result = {
+            **({**property_sources, 'inlet_humidity_source': case_metadata.get('inlet_humidity_source', 'specified'),
+                'water_vaporization_enthalpy': model_options.get('water_vaporization_enthalpy'),
+                'co2_vapor_fugacity_basis': 'CO2/MEA/H2O reduced composition, rescaled to wet CO2 mole fraction'}
+               if thermo_model == REACTIVE_MODEL else {}),
             'case_id': str(df.index[run]),
             'method': method,
             'thermo_model': thermo_model,

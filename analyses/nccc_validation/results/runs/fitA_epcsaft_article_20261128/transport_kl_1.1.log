@@ -1,0 +1,30 @@
+Transport expression value/gradient scaling and vapor isolation passed
+column rhs_batches=1 nodes=41 elapsed=0.00s thermodynamics={'queries': 0, 'cache_hits': 0, 'native_solves': 0, 'native_seconds': 0.0, 'warm_starts': 0}
+   Iteration    Max residual  Max BC residual  Total nodes    Nodes added  
+column rhs_batches=2 nodes=41 elapsed=0.96s thermodynamics={'queries': 41, 'cache_hits': 0, 'native_solves': 47, 'native_seconds': 0.3854573869612068, 'warm_starts': 40}
+column rhs_batches=3 nodes=40 elapsed=0.99s thermodynamics={'queries': 82, 'cache_hits': 41, 'native_solves': 47, 'native_seconds': 0.3854573869612068, 'warm_starts': 40}
+column jacobian_batches=1 nodes=41 elapsed=1.97s thermodynamics={'queries': 122, 'cache_hits': 41, 'native_solves': 92, 'native_seconds': 0.7685887387488037, 'warm_starts': 79}
+column jacobian_batches=2 nodes=40 elapsed=4.01s thermodynamics={'queries': 163, 'cache_hits': 82, 'native_solves': 92, 'native_seconds': 0.7685887387488037, 'warm_starts': 79}
+column rhs_batches=4 nodes=41 elapsed=5.87s thermodynamics={'queries': 203, 'cache_hits': 122, 'native_solves': 92, 'native_seconds': 0.7685887387488037, 'warm_starts': 79}
+column rhs_batches=5 nodes=40 elapsed=7.08s thermodynamics={'queries': 244, 'cache_hits': 122, 'native_solves': 139, 'native_seconds': 1.2631803157855757, 'warm_starts': 119}
+column rhs_batches=6 nodes=41 elapsed=8.32s thermodynamics={'queries': 284, 'cache_hits': 122, 'native_solves': 184, 'native_seconds': 1.74964378279401, 'warm_starts': 158}
+column rhs_batches=7 nodes=40 elapsed=9.25s thermodynamics={'queries': 325, 'cache_hits': 123, 'native_solves': 230, 'native_seconds': 2.111832647875417, 'warm_starts': 197}
+column rhs_batches=8 nodes=41 elapsed=10.40s thermodynamics={'queries': 365, 'cache_hits': 123, 'native_solves': 275, 'native_seconds': 2.547144169046078, 'warm_starts': 236}
+column rhs_batches=9 nodes=40 elapsed=10.45s thermodynamics={'queries': 406, 'cache_hits': 164, 'native_solves': 275, 'native_seconds': 2.547144169046078, 'warm_starts': 236}
+column rhs_batches=10 nodes=40 elapsed=10.53s thermodynamics={'queries': 446, 'cache_hits': 204, 'native_solves': 275, 'native_seconds': 2.547144169046078, 'warm_starts': 236}
+column rhs_batches=11 nodes=40 elapsed=11.83s thermodynamics={'queries': 486, 'cache_hits': 204, 'native_solves': 320, 'native_seconds': 3.049531013937667, 'warm_starts': 275}
+       1          4.07e-02       0.00e+00          41              0       
+Solved in 1 iterations, number of nodes 41. 
+Maximum relative residual: 4.07e-02 
+Maximum boundary residual: 0.00e+00
+{
+  "success": true,
+  "capture_pct": 93.13809038004571,
+  "max_rms_residual": 0.040736810112182754,
+  "runtime_s": 13.180669784545898,
+  "transport_expression_calls": {
+    "numeric": 628,
+    "symbolic": 1
+  },
+  "source_unchanged_during_run": true
+}

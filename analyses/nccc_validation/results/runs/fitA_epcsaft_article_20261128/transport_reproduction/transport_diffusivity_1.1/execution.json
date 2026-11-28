@@ -1,0 +1,32 @@
+{
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "timeout",
+    "900",
+    "uv",
+    "run",
+    "--frozen",
+    "python",
+    "analyses/transport_sensitivity/figures/response/scripts/generate_data.py",
+    "--output",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/transport_reproduction/transport_diffusivity_1.1",
+    "--dataset",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+    "--model-root",
+    ".",
+    "--reference",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/refined",
+    "--quantity",
+    "diffusivity",
+    "--factor",
+    "1.1"
+  ],
+  "wall_limit_s": 900,
+  "elapsed_s": 11.890371849003714,
+  "returncode": 0,
+  "log": "analyses/nccc_validation/results/runs/fitA_epcsaft_article_20261128/transport_reproduction/transport_diffusivity_1.1.log",
+  "threads": 1,
+  "retained_command_source": "analyses/nccc_validation/results/runs/fitA_article_20261128/transport_reproduction/transport_diffusivity_1.1/execution.json"
+}

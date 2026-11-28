@@ -1,0 +1,483 @@
+{
+  "attempt_id": "20261128T070456-671e90c191b4",
+  "config": {
+    "acceptance": {
+      "boundary_residual_max": null,
+      "capture_error_max_pct": null,
+      "numerical": "conserved_original_equations",
+      "physical": "not_evaluated"
+    },
+    "case": {
+      "data_type": "mole",
+      "gas_flow_basis": "reported_total_wet",
+      "id": "corrected published 2017 6C",
+      "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_6c.json",
+      "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_6c.json",
+      "vapor_composition_mode": "legacy_ratio"
+    },
+    "dependencies": {
+      "dataset": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+      "input_hashes": {
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_6c.json": "ffb63b2548a757c41a9360733abc51372582f163ca10bd62806c64c45ffec84a",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/thermodynamics.json": "d5d42e711e345db0b36da893e0129ba003f4319c7b06236298168d69452901be",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/transport_6c.json": "9c9b07d2b67009b63db0ae368f997a5c92d9c03057a8b8c22e469732f271a4d7",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Properties/Thermophysical_Properties.py": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Properties/Transport_Properties.py": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Pressure_Drop.py": "3c5e82117033a744032f7d7d64155e9175143134195fd926432f0e0e4abaa707",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/engine-reactions.json": "74f6ce36760cef4f36dbd9ef385f025d9fca9ea469079ba42d7227cc910d7362",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/parameters.json": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+      },
+      "mobility_law": "harmonic_mean_onsager_v1",
+      "references": [
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json"
+      ],
+      "thermal_reference": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json",
+      "thermodynamics_input": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/thermodynamics.json",
+      "transport_input": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/transport_6c.json"
+    },
+    "engine": {
+      "commit": "10b6a052768833e38cb6ee24ebe2098fa1dd5834",
+      "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/.venv/bin/python3",
+      "required": true,
+      "sha256": "dafe828427487b125a254012128ce63d0ad29452304bea52ee5d9c451f1e9875",
+      "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/build/engine-wheels/main-10b6a052768833e38cb6ee24ebe2098fa1dd5834/epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl"
+    },
+    "execution": {
+      "cache_policy": "legacy_explicit",
+      "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/finite_rate_6C_n17_fresh",
+      "process_isolation": false,
+      "resume": false,
+      "retry": false,
+      "threads": 1,
+      "wall_limit_s": 3600.0
+    },
+    "initialization": {
+      "policy": "case_declared_native_inputs",
+      "values": {}
+    },
+    "model": {
+      "coordinate": "physical_height",
+      "energy_model": "native_total_enthalpy",
+      "film_model": "finite_rate_film",
+      "formulation": "twelve_state_conserved",
+      "henry_basis": "n2o_analogy",
+      "layout": "twelve_conserved",
+      "pressure_model": "hydraulic_pressure_drop",
+      "thermo_model": "reactive_epcsaft"
+    },
+    "numerics": {
+      "method": "upwind",
+      "solver_settings": {
+        "end_clustering": 1.0,
+        "liquid_density_source": "solved_state",
+        "max_iterations": 60,
+        "nodes": 17,
+        "quadrature_points": 9,
+        "tolerance": 1e-07
+      }
+    },
+    "preset": "twelve_state_conserved",
+    "resolved_config_sha256": "4b63ee120319ca2ba474e58de238c53cee6b990aa066d26cc2e95120417e5737",
+    "schema_version": 1
+  },
+  "config_sha256": "4b63ee120319ca2ba474e58de238c53cee6b990aa066d26cc2e95120417e5737",
+  "coordinate": "physical_height",
+  "execution": {
+    "runtime_s": 1.7781095140380785,
+    "started_at_utc": "2026-11-28T07:04:56Z",
+    "status": "failed"
+  },
+  "failure": {
+    "completed_payload": null,
+    "kind": "outer_solve_failure",
+    "last_checkpoint": {
+      "assets": {
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11": "3a11f5c29b6dd9177afdbd917c787aefe4593d88c2e741163d554a90af44b0eb",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb",
+        "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+      },
+      "capabilities": {
+        "a1_equilibrium_values": "required_on_evaluation",
+        "a2_equilibrium_actions": "required_on_outer_derivative",
+        "caloric_actions": "required_on_outer_derivative",
+        "evidence_type": "native_Engine_evaluation",
+        "finite_difference_fallback": false
+      },
+      "engine": {
+        "actual_sha256": "dafe828427487b125a254012128ce63d0ad29452304bea52ee5d9c451f1e9875",
+        "archive_hash_status": "verified_from_installed_contents",
+        "commit": "10b6a052768833e38cb6ee24ebe2098fa1dd5834",
+        "commit_evidence": "not_available_from_installed_distribution",
+        "declared_archive_sha256": null,
+        "declared_commit": "10b6a052768833e38cb6ee24ebe2098fa1dd5834",
+        "declared_wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/build/engine-wheels/main-10b6a052768833e38cb6ee24ebe2098fa1dd5834/epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl",
+        "expected_commit": "10b6a052768833e38cb6ee24ebe2098fa1dd5834",
+        "expected_sha256": "dafe828427487b125a254012128ce63d0ad29452304bea52ee5d9c451f1e9875",
+        "installed_artifact_members": 41,
+        "loaded_distribution_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/.venv/lib/python3.13/site-packages",
+        "loaded_module": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/.venv/lib/python3.13/site-packages/epcsaft/__init__.py",
+        "loaded_version": "0.1.2",
+        "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+        "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/.venv/bin/python3",
+        "python_exec_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/.venv",
+        "python_executable": "/home/tnnrpolley21/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+        "python_implementation": "cpython",
+        "python_prefix": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/.venv",
+        "python_version": "3.13.13",
+        "required": true,
+        "status": "verified",
+        "verified_commit": null,
+        "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/build/engine-wheels/main-10b6a052768833e38cb6ee24ebe2098fa1dd5834/epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl"
+      },
+      "initialization_evaluations": [
+        {
+          "loading": 0.0,
+          "original_co2_residual": -0.014705191214757591
+        }
+      ],
+      "layout": {
+        "algebraic_equations": 5,
+        "boundary_equations": 7,
+        "conserved_balances": 7,
+        "coordinate": "physical_height",
+        "states": 12
+      },
+      "native_calls": {
+        "liquid_actions": {
+          "failed": 0,
+          "returned": 62,
+          "started": 62,
+          "wall_s": 0.1499280699645169
+        },
+        "liquid_solve": {
+          "failed": 0,
+          "returned": 62,
+          "started": 62,
+          "wall_s": 0.11880129261408001
+        },
+        "vapor_actions": {
+          "failed": 0,
+          "returned": 16,
+          "started": 16,
+          "wall_s": 0.007836716889869422
+        }
+      },
+      "resolved_inputs": {
+        "case_id": "corrected published 2017 6C",
+        "conserved_policy": {
+          "loading_anchor": 0.31,
+          "max_loading_steps": 32,
+          "max_log_loading_step": 0.1,
+          "species_diffusivity_model": {
+            "bicarbonate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "carbamate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "carbon-dioxide": {
+              "activation_j_mol": 15230.0,
+              "gas_constant_j_mol_k": 8.314462618,
+              "model": "prefactor_exp_minus_E_over_RT",
+              "prefactor_m2_s": 3.14e-07
+            },
+            "carbonate-anion": {
+              "constant_m2_s": 6.8e-10
+            },
+            "hydronium-cation": {
+              "constant_m2_s": 1.8439088914585774e-09
+            },
+            "hydroxide-anion": {
+              "constant_m2_s": 1.8439088914585774e-09
+            },
+            "monoethanolamine": {
+              "constant_m2_s": 8.8e-10
+            },
+            "protonated-monoethanolamine": {
+              "constant_m2_s": 8.4e-10
+            },
+            "water": {
+              "constant_m2_s": 8.8e-10
+            }
+          }
+        },
+        "data_type": "mole",
+        "feed_ids": {
+          "liquid": [
+            "carbon-dioxide",
+            "monoethanolamine",
+            "water"
+          ],
+          "vapor": [
+            "carbon-dioxide",
+            "water",
+            "nitrogen",
+            "oxygen"
+          ]
+        },
+        "gas_flow_basis": "reported_total_wet",
+        "metadata": {
+          "beds": 1,
+          "case_id": "corrected published 2017 6C",
+          "diameter_m": 0.64,
+          "gas_flow_basis": "reported_total_wet",
+          "intercoolers": 0,
+          "physical_input_basis": "direct_canonical_SI",
+          "single_bed_height_m": 6.0,
+          "total_packed_height_m": 6.0,
+          "vapor_composition_mode": "legacy_ratio"
+        },
+        "parameters": [
+          [
+            3.1327926567435562,
+            10.105782763688891,
+            76.26943992777503
+          ],
+          [
+            1.849836243958282,
+            2.056535546897226,
+            19.555411721844695,
+            2.618599358330555
+          ],
+          317.95,
+          316.54999999999995,
+          [
+            0.0,
+            0.01,
+            0.02,
+            0.03,
+            0.04,
+            0.05,
+            0.06,
+            0.07,
+            0.08,
+            0.09,
+            0.1,
+            0.11,
+            0.12,
+            0.13,
+            0.14,
+            0.15,
+            0.16,
+            0.17,
+            0.18,
+            0.19,
+            0.2,
+            0.21,
+            0.22,
+            0.23,
+            0.24,
+            0.25,
+            0.26,
+            0.27,
+            0.28,
+            0.29,
+            0.3,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35000000000000003,
+            0.36,
+            0.37,
+            0.38,
+            0.39,
+            0.4,
+            0.41000000000000003,
+            0.42,
+            0.43,
+            0.44,
+            0.45,
+            0.46,
+            0.47000000000000003,
+            0.48,
+            0.49,
+            0.5,
+            0.51,
+            0.52,
+            0.53,
+            0.54,
+            0.55,
+            0.56,
+            0.5700000000000001,
+            0.58,
+            0.59,
+            0.6,
+            0.61,
+            0.62,
+            0.63,
+            0.64,
+            0.65,
+            0.66,
+            0.67,
+            0.68,
+            0.6900000000000001,
+            0.7000000000000001,
+            0.71,
+            0.72,
+            0.73,
+            0.74,
+            0.75,
+            0.76,
+            0.77,
+            0.78,
+            0.79,
+            0.8,
+            0.81,
+            0.8200000000000001,
+            0.8300000000000001,
+            0.84,
+            0.85,
+            0.86,
+            0.87,
+            0.88,
+            0.89,
+            0.9,
+            0.91,
+            0.92,
+            0.93,
+            0.9400000000000001,
+            0.9500000000000001,
+            0.96,
+            0.97,
+            0.98,
+            0.99,
+            1.0
+          ],
+          6.0,
+          0.3216990877275948,
+          112400.0,
+          [
+            250.0,
+            0.97,
+            0.203,
+            0.35,
+            0.017,
+            0.292,
+            0.119
+          ]
+        ],
+        "physical_input_sha256": "bc9dbfc733387a6fd8ec46b38470c36c854f1f4fdf74b7d09bbb5b7a4c1f883e",
+        "raw_input": [
+          3.43200541920073,
+          26.08038287103076,
+          0.31,
+          0.30999667547278925,
+          0.07092826256063212,
+          317.95,
+          316.54999999999995,
+          112400.0,
+          1.0
+        ],
+        "solvent_identity": {
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_6c.json": "ffb63b2548a757c41a9360733abc51372582f163ca10bd62806c64c45ffec84a",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/thermodynamics.json": "d5d42e711e345db0b36da893e0129ba003f4319c7b06236298168d69452901be",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/transport_6c.json": "9c9b07d2b67009b63db0ae368f997a5c92d9c03057a8b8c22e469732f271a4d7",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Properties/Thermophysical_Properties.py": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Properties/Transport_Properties.py": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Pressure_Drop.py": "3c5e82117033a744032f7d7d64155e9175143134195fd926432f0e0e4abaa707",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/engine-reactions.json": "74f6ce36760cef4f36dbd9ef385f025d9fca9ea469079ba42d7227cc910d7362",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/parameters.json": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db",
+          "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+        },
+        "source_lineage": {
+          "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_6c.json",
+          "physical_input_file_sha256": "ffb63b2548a757c41a9360733abc51372582f163ca10bd62806c64c45ffec84a",
+          "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_6c.json",
+          "source_file_sha256": "ffb63b2548a757c41a9360733abc51372582f163ca10bd62806c64c45ffec84a",
+          "source_row_sha256": "eec1d73d6d9a6c657db0f88b65571b3c739c4fb4771b5c20fbd8452114e4700b"
+        },
+        "vapor_composition_mode": "legacy_ratio"
+      },
+      "stage": "interface_initialization",
+      "support_limits": {
+        "policy": {
+          "branch_policy": {
+            "loading_anchor": 0.31,
+            "max_loading_steps": 32,
+            "max_log_loading_step": 0.1
+          },
+          "id": "NCCC_6C",
+          "initial_bulk_state": [
+            3.1327926567435562,
+            76.26943992777503,
+            1.849836243958282,
+            2.056535546897226,
+            317.95,
+            316.54999999999995,
+            112400.0,
+            0.052715134432693156
+          ],
+          "initial_interface_bracket": [
+            0.0,
+            1.0
+          ],
+          "physical_residual_tolerance": 1e-07,
+          "temperature_bounds_k": [
+            298.0,
+            393.15
+          ],
+          "temperature_scale_k": 300.0,
+          "temperature_span_k": 100.0,
+          "void_fraction": 0.97
+        },
+        "unsupported": "feed-seed, packing, and temperature domain mismatches"
+      }
+    },
+    "message": "Error in Function::call for 'coupled_column_diagnostics' [MXFunction] at .../casadi/core/function.cpp:362:\n.../casadi/core/assertion.cpp:70: Assertion error: Finite-rate film G - D m must be positive",
+    "phase": "interface_initialization",
+    "raw_output": null,
+    "transport": {
+      "cause": null,
+      "message": null,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "transport_failure": null,
+    "worker_failure_kind": "outer_solve_failure"
+  },
+  "formulation": "twelve_state_conserved",
+  "limitations": [
+    "exploratory numerical attempt only; no solution-verification, validation, or scientific-promotion claim",
+    "species mobilities are case-estimated and use the declared harmonic-mean closure",
+    "native vapor caloric reference remains provisional for thermal interpretation",
+    "physical certification is limited to the native grid and configured film quadrature",
+    "the case-declared 3C policy does not establish continuous-profile or peak behavior"
+  ],
+  "native_layout": "twelve_conserved",
+  "native_profile": {
+    "available": false,
+    "reason": "worker has not returned a native profile"
+  },
+  "numerical_acceptance": "not_evaluated",
+  "physical_acceptance": "not_evaluated",
+  "physical_certification": {
+    "accepted": null,
+    "reason": "worker has not returned a candidate"
+  },
+  "preset": "twelve_state_conserved",
+  "schema_version": 1,
+  "scientific_acceptance": "not_evaluated",
+  "solver": {
+    "method": "upwind",
+    "stages": {}
+  },
+  "source_identity": {
+    "commit": "ded5b23df816b04385ac89603e8b798b95941d5d",
+    "dirty": false,
+    "dirty_patch": "",
+    "dirty_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "dirty_paths": [],
+    "repository_root": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state",
+    "source_tree_sha256": "4c6192ef30dbf8b60f574dc708e625b5be9593e10e6da9b8fd7ba54c8c243139"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "preset": "twelve_state_conserved",
+  "case": {
+    "physical_input_file": "analyses/bvp_solution_methods/input/case_3c.json"
+  },
+  "dependencies": {
+    "thermodynamics_input": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/thermodynamics.json",
+    "transport_input": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/transport_3c.json"
+  },
+  "model": {
+    "film_model": "equilibrium_manifold"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "nodes": 65,
+      "end_clustering": 1.0,
+      "quadrature_points": 9,
+      "tolerance": 1e-07,
+      "max_iterations": 60,
+      "liquid_density_source": "solved_state"
+    }
+  },
+  "initialization": {
+    "values": {
+      "retained_profile": "analyses/absorber_optimization/results/runs/fitA_3c/n33/attempt.json"
+    }
+  },
+  "design": {
+    "capture_target": 0.9,
+    "scale_bounds": [
+      0.5,
+      2.0
+    ],
+    "initial_scale": 0.9570895739263957
+  },
+  "execution": {
+    "wall_limit_s": 7200,
+    "threads": 1
+  }
+}

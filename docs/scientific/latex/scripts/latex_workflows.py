@@ -34,6 +34,10 @@ FIGURE_COPIES = (
         Path("reactive-seven-case-capture.pdf"),
     ),
     (
+        Path("analyses/nccc_validation/figures/twelve_state/output/twelve-state-capture-temperatures.pdf"),
+        Path("twelve-state-capture-temperatures.pdf"),
+    ),
+    (
         Path("analyses/nccc_validation/figures/reactive_operating/output/operating_response.pdf"),
         Path("reactive-operating-response.pdf"),
     ),
@@ -42,7 +46,7 @@ FIGURE_COPIES = (
 DEFAULT_MIRROR = Path(
     "/home/tnnrpolley21/Workspaces/Engineering/Publications/MEA-Absorption-Column-LaTeX"
 )
-DEFAULT_BIBLIOGRAPHY_SOURCE = Path.home() / "Documents" / "Papers" / "references.bib"
+DEFAULT_BIBLIOGRAPHY_SOURCE = Path.home() / "Zotero" / "exports" / "references.bib"
 PROJECTION_EXCLUDES = frozenset({"scripts", "builds", "mdea-companion", "QA_REPORT.md", "main.log"})
 BUILD_SUFFIXES = {
     ".abs",

@@ -1,0 +1,257 @@
+FFFFFFFFFFFFFF                                                           [100%]
+=================================== FAILURES ===================================
+________________ test_mea_declared_reproduction_and_permutation ________________
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:90: in test_mea_declared_reproduction_and_permutation
+    seeded = run_column(request(thermo, transport, seed))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/column.py:1400: in run_column
+    config = resolve_column_config(config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+______________________ test_declared_mea_film_selections _______________________
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:107: in test_declared_mea_film_selections
+    config = resolve_column_config(canonical | {'model': model})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_ test_declaration_refuses_before_native_construction[missing_law-Incomplete property laws] _
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:125: in test_declaration_refuses_before_native_construction
+    assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+__ test_declaration_refuses_before_native_construction[hash-SHA-256 mismatch] __
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:125: in test_declaration_refuses_before_native_construction
+    assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_ test_declaration_refuses_before_native_construction[policy-Invalid case numerical policy] _
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:125: in test_declaration_refuses_before_native_construction
+    assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_ test_declaration_refuses_before_native_construction[domain_field-unsupported fields in domain] _
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:125: in test_declaration_refuses_before_native_construction
+    assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_ test_declaration_refuses_before_native_construction[dependent_row-independent modulo total flux] _
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:125: in test_declaration_refuses_before_native_construction
+    assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_ test_declaration_refuses_before_native_construction[duplicate_id-Duplicate analytical-component] _
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:125: in test_declaration_refuses_before_native_construction
+    assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_ test_declaration_refuses_before_native_construction[quadrature-quadrature/density] _
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:125: in test_declaration_refuses_before_native_construction
+    assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_ test_declaration_refuses_before_native_construction[density-quadrature/density] _
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:125: in test_declaration_refuses_before_native_construction
+    assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+___ test_terminal_interface_callback_keeps_failure_class[StateDomainFailure] ___
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:167: in test_terminal_interface_callback_keeps_failure_class
+    'config': resolve_column_config(request(INPUT / 'thermodynamics.json', INPUT / 'transport.json', tmp_path / 'unused')).as_dict()})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_ test_terminal_interface_callback_keeps_failure_class[NativeEvaluationFailure] _
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: in __init__
+    self.validate()
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: in validate
+    raise SolventRefusal('Solvent Engine identity differs from column pin')
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+The above exception was the direct cause of the following exception:
+tests/test_solvent_declarations.py:167: in test_terminal_interface_callback_keeps_failure_class
+    'config': resolve_column_config(request(INPUT / 'thermodynamics.json', INPUT / 'transport.json', tmp_path / 'unused')).as_dict()})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: in __init__
+    raise SolventRefusal(f'Solvent declarations: {error}') from error
+E   mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+_______ test_mdea_frozen_state_distinguishes_reference_pressures[False] ________
+tests/test_mdea_thermodynamic_references.py:16: in test_mdea_frozen_state_distinguishes_reference_pressures
+    result = verifier['verify'](tmp_path,'reference','B',permuted)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py:62: in verify
+    h, declaration, phase = construct(root,permuted)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^
+analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py:49: in construct
+    phase = engine_liquid(source, source/'caloric.json', 'mdea_reordered' if permuted else 'mdea',
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:101: in engine_liquid
+    record = _engine_reaction_record(parameter_path, reaction_path or dataset / _ENGINE_REACTIONS)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:75: in _engine_reaction_record
+    if record["schema"] != "absorber-engine-reactions-v1":
+       ^^^^^^^^^^^^^^^^
+E   KeyError: 'schema'
+________ test_mdea_frozen_state_distinguishes_reference_pressures[True] ________
+tests/test_mdea_thermodynamic_references.py:16: in test_mdea_frozen_state_distinguishes_reference_pressures
+    result = verifier['verify'](tmp_path,'reference','B',permuted)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py:62: in verify
+    h, declaration, phase = construct(root,permuted)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^
+analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py:49: in construct
+    phase = engine_liquid(source, source/'caloric.json', 'mdea_reordered' if permuted else 'mdea',
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:101: in engine_liquid
+    record = _engine_reaction_record(parameter_path, reaction_path or dataset / _ENGINE_REACTIONS)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:75: in _engine_reaction_record
+    if record["schema"] != "absorber-engine-reactions-v1":
+       ^^^^^^^^^^^^^^^^
+E   KeyError: 'schema'
+=========================== short test summary info ============================
+FAILED tests/test_solvent_declarations.py::test_mea_declared_reproduction_and_permutation
+FAILED tests/test_solvent_declarations.py::test_declared_mea_film_selections
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[missing_law-Incomplete property laws]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[hash-SHA-256 mismatch]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[policy-Invalid case numerical policy]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[domain_field-unsupported fields in domain]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[dependent_row-independent modulo total flux]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[duplicate_id-Duplicate analytical-component]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[quadrature-quadrature/density]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[density-quadrature/density]
+FAILED tests/test_solvent_declarations.py::test_terminal_interface_callback_keeps_failure_class[StateDomainFailure]
+FAILED tests/test_solvent_declarations.py::test_terminal_interface_callback_keeps_failure_class[NativeEvaluationFailure]
+FAILED tests/test_mdea_thermodynamic_references.py::test_mdea_frozen_state_distinguishes_reference_pressures[False]
+FAILED tests/test_mdea_thermodynamic_references.py::test_mdea_frozen_state_distinguishes_reference_pressures[True]
+14 failed in 3.93s

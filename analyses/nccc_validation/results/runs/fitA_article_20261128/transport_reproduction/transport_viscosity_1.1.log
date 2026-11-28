@@ -1,0 +1,39 @@
+Transport expression value/gradient scaling and vapor isolation passed
+column rhs_batches=1 nodes=41 elapsed=0.00s thermodynamics={'queries': 0, 'cache_hits': 0, 'native_solves': 0, 'native_seconds': 0.0, 'warm_starts': 0}
+   Iteration    Max residual  Max BC residual  Total nodes    Nodes added
+column rhs_batches=2 nodes=41 elapsed=0.68s thermodynamics={'queries': 41, 'cache_hits': 0, 'native_solves': 47, 'native_seconds': 0.36810785805573687, 'warm_starts': 40}
+column rhs_batches=3 nodes=40 elapsed=0.71s thermodynamics={'queries': 82, 'cache_hits': 41, 'native_solves': 47, 'native_seconds': 0.36810785805573687, 'warm_starts': 40}
+column jacobian_batches=1 nodes=41 elapsed=1.39s thermodynamics={'queries': 122, 'cache_hits': 41, 'native_solves': 92, 'native_seconds': 0.7228936230530962, 'warm_starts': 79}
+column jacobian_batches=2 nodes=40 elapsed=1.44s thermodynamics={'queries': 163, 'cache_hits': 82, 'native_solves': 92, 'native_seconds': 0.7228936230530962, 'warm_starts': 79}
+column rhs_batches=4 nodes=41 elapsed=1.49s thermodynamics={'queries': 203, 'cache_hits': 122, 'native_solves': 92, 'native_seconds': 0.7228936230530962, 'warm_starts': 79}
+column rhs_batches=5 nodes=40 elapsed=2.20s thermodynamics={'queries': 244, 'cache_hits': 123, 'native_solves': 138, 'native_seconds': 1.095378966012504, 'warm_starts': 118}
+column rhs_batches=6 nodes=41 elapsed=2.87s thermodynamics={'queries': 284, 'cache_hits': 123, 'native_solves': 183, 'native_seconds': 1.4503899883129634, 'warm_starts': 157}
+column rhs_batches=7 nodes=40 elapsed=2.90s thermodynamics={'queries': 325, 'cache_hits': 164, 'native_solves': 183, 'native_seconds': 1.4503899883129634, 'warm_starts': 157}
+column rhs_batches=8 nodes=40 elapsed=2.95s thermodynamics={'queries': 365, 'cache_hits': 204, 'native_solves': 183, 'native_seconds': 1.4503899883129634, 'warm_starts': 157}
+column rhs_batches=9 nodes=40 elapsed=3.60s thermodynamics={'queries': 405, 'cache_hits': 204, 'native_solves': 228, 'native_seconds': 1.7992134402156807, 'warm_starts': 196}
+       1          5.15e-02       4.34e-19          41              1
+column rhs_batches=10 nodes=42 elapsed=4.28s thermodynamics={'queries': 445, 'cache_hits': 204, 'native_solves': 274, 'native_seconds': 2.161737934919074, 'warm_starts': 235}
+column rhs_batches=11 nodes=41 elapsed=4.36s thermodynamics={'queries': 487, 'cache_hits': 244, 'native_solves': 276, 'native_seconds': 2.181733845965937, 'warm_starts': 237}
+column jacobian_batches=3 nodes=42 elapsed=4.44s thermodynamics={'queries': 528, 'cache_hits': 282, 'native_solves': 279, 'native_seconds': 2.212431523948908, 'warm_starts': 240}
+column jacobian_batches=4 nodes=41 elapsed=4.49s thermodynamics={'queries': 570, 'cache_hits': 324, 'native_solves': 279, 'native_seconds': 2.212431523948908, 'warm_starts': 240}
+column rhs_batches=12 nodes=42 elapsed=4.54s thermodynamics={'queries': 611, 'cache_hits': 365, 'native_solves': 279, 'native_seconds': 2.212431523948908, 'warm_starts': 240}
+column rhs_batches=13 nodes=41 elapsed=5.23s thermodynamics={'queries': 653, 'cache_hits': 366, 'native_solves': 326, 'native_seconds': 2.588724780071061, 'warm_starts': 280}
+column rhs_batches=14 nodes=42 elapsed=5.91s thermodynamics={'queries': 694, 'cache_hits': 366, 'native_solves': 372, 'native_seconds': 2.9552491491194814, 'warm_starts': 320}
+column rhs_batches=15 nodes=41 elapsed=5.94s thermodynamics={'queries': 736, 'cache_hits': 408, 'native_solves': 372, 'native_seconds': 2.9552491491194814, 'warm_starts': 320}
+column rhs_batches=16 nodes=41 elapsed=5.98s thermodynamics={'queries': 777, 'cache_hits': 449, 'native_solves': 372, 'native_seconds': 2.9552491491194814, 'warm_starts': 320}
+column rhs_batches=17 nodes=41 elapsed=6.69s thermodynamics={'queries': 818, 'cache_hits': 449, 'native_solves': 418, 'native_seconds': 3.3317134710378014, 'warm_starts': 360}
+       2          3.98e-02       0.00e+00          42              0
+Solved in 2 iterations, number of nodes 42.
+Maximum relative residual: 3.98e-02
+Maximum boundary residual: 0.00e+00
+{
+  "success": true,
+  "capture_pct": 94.08609697203254,
+  "max_rms_residual": 0.03980312286373708,
+  "runtime_s": 7.3762526512146,
+  "transport_expression_calls": {
+    "numeric": 961,
+    "symbolic": 1
+  },
+  "source_unchanged_during_run": true
+}

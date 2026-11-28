@@ -1,0 +1,22 @@
+{
+  "returncode": 0,
+  "wall_limit_s": 900,
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "/usr/bin/time",
+    "-f",
+    "peak_rss_kib=%M",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.venv/bin/python3",
+    "analyses/nccc_validation/scripts/run_reactive_column.py",
+    "--output",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/timing_3",
+    "--dataset",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+    "--verbose",
+    "0"
+  ],
+  "threads": 1,
+  "log": "analyses/nccc_validation/results/runs/fitA_article_20261128/timing_3.log"
+}

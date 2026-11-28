@@ -188,12 +188,15 @@ def heat_of_vaporization(Tl, species):
     return (A * (1 - Tr) ** (B + C * Tr + D * Tr ** 2)) / 1000
 
 
-def enthalpy(T, z, phase='liquid'):
+WATER_VAPORIZATION_ENTHALPY = 49.99e3  # J/mol, empirical reference offset
+
+
+def enthalpy(T, z, phase='liquid', *, water_vaporization_enthalpy=WATER_VAPORIZATION_ENTHALPY):
     T = float(np.asarray(T, dtype=float).reshape(-1)[0])
-    return enthalpy_expression(T, z, phase)
+    return enthalpy_expression(T, z, phase, water_vaporization_enthalpy=water_vaporization_enthalpy)
 
 
-def enthalpy_expression(T, z, phase='liquid'):
+def enthalpy_expression(T, z, phase='liquid', *, water_vaporization_enthalpy=WATER_VAPORIZATION_ENTHALPY):
 
     if phase == 'liquid':
         Tl = T
@@ -205,7 +208,6 @@ def enthalpy_expression(T, z, phase='liquid'):
         P = 109180.0
 
         dh_vap_MEA = 58000
-        dh_vap_H2O = 49.99e3
         t = Tl - 273.15
         Hl_CO2 = CO2_HEAT_OF_ABSORPTION_J_PER_MOL
 
@@ -217,7 +219,7 @@ def enthalpy_expression(T, z, phase='liquid'):
         Hl_MEA = MWs_l[1] * 1000 * sum([coefficients['MEA'][i] / (i + 1) * (t ** (i + 1) - Tr ** (i + 1)) for i in
                                         range(len(coefficients['MEA']))]) - dh_vap_MEA # + (P - Pref) / rho_mol_l
         Hl_H2O = MWs_l[2] * 1000 * sum([coefficients['H2O'][i] / (i + 1) * (t ** (i + 1) - Tr ** (i + 1)) for i in
-                                        range(len(coefficients['H2O']))]) - dh_vap_H2O # + (P - Pref) / rho_mol_l
+                                        range(len(coefficients['H2O']))]) - water_vaporization_enthalpy # + (P - Pref) / rho_mol_l
 
         Hl = np.array([Hl_CO2, Hl_MEA, Hl_H2O])
         Hl_T = sum([x[i] * Hl[i] for i in range(len(x))])

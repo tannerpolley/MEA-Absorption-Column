@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "nodes": 121,
+  "iterations": 4,
+  "max_rms_residual": 4.9629948325713044e-05,
+  "mesh": {
+    "range_W": 0.0029715048149228096,
+    "endpoint_difference_W": 0.002399694174528122,
+    "minimum_z": 0.8625,
+    "maximum_z": 0.9770833333333333,
+    "capture_pct": 91.54834732343818,
+    "peak_liquid_K": 347.8651498881018
+  },
+  "export_grid": {
+    "range_W": 0.03585011884570122,
+    "endpoint_difference_W": 0.002399694174528122,
+    "minimum_z": 0.97,
+    "maximum_z": 0.99,
+    "capture_pct": 91.54834732343818,
+    "peak_liquid_K": 347.8652461816571
+  },
+  "dense": {
+    "range_W": 0.13384025543928146,
+    "endpoint_difference_W": 0.002399694174528122,
+    "minimum_z": 0.9703,
+    "maximum_z": 0.9922000000000001,
+    "capture_pct": 91.54834732343818,
+    "peak_liquid_K": 347.86525071740033
+  }
+}

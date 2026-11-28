@@ -4,13 +4,13 @@
     {Flows, apparent composition, temperatures and pressure};
   \node[cse stage,below=12mm of state] (thermo) {Reactive liquid state};
   \node[cse detail,right=of thermo] (thermo-detail)
-    {Five reactions and EOS activities give nine species, density and liquid CO$_2$ fugacity};
-  \node[cse stage,below=12mm of thermo] (vapor) {Vapor driving force};
+    {Five reactions and EOS activities give nine species, density, enthalpy and liquid CO$_2$ and water fugacities};
+  \node[cse stage,below=12mm of thermo] (vapor) {Vapor state};
   \node[cse detail,right=of vapor] (vapor-detail)
-    {Normalize CO$_2$/trace-MEA/water for EOS $\phi^v$; use wet-gas $y_{\mathrm{CO_2}}$ in $f^v=y_{\mathrm{CO_2}}\phi^vP$};
-  \node[cse stage,below=12mm of vapor] (properties) {Auxiliary properties};
+    {Reduced CO$_2$/trace-MEA/water EOS $\phi^v$ with wet-gas $y_{\mathrm{CO_2}}$; wet-gas EOS water fugacity, density and enthalpy};
+  \node[cse stage,below=12mm of vapor] (properties) {Transport properties};
   \node[cse detail,right=of properties] (properties-detail)
-    {Empirical hydraulic density, transport and enthalpy; water vapor-pressure approximation};
+    {Surface tension, viscosity, diffusivities and heat-transfer coefficient from correlations};
   \node[cse stage,below=12mm of properties] (transport) {Interphase sources};
   \node[cse detail,right=of transport] (transport-detail)
     {Conventional enhancement, fixed-bulk-activity film resistance, mass and heat transfer};

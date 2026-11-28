@@ -8,8 +8,6 @@ Their joint interpretation is needed to assess how solvent and gas conditions af
 % I2: established absorber capabilities
 Rate-based MEA models already couple chemistry, equilibrium, transport and energy balances to pilot-scale observations \cite{Razi2013,Chinen2018,Morgan2018,Morgan2020}.
 The studies in \cref{tab:absorber-literature-comparison} include resolved liquid-film calculations, enhancement approximations and experimental evaluations over multiple operating conditions.
-Their calibration measurements, evaluation cases and numerical settings differ, so agreement reported for one formulation does not directly rank another.
-A comparison must identify which measurements determined its inputs and which assess the coupled prediction.
 
 \input{tables/absorber_literature_comparison}
 
@@ -17,14 +15,13 @@ A comparison must identify which measurements determined its inputs and which as
 A molecular equation of state (EOS) supplies physical nonideality, whereas reaction equilibrium determines the distribution among molecular and ionic species.
 Electrolyte perturbed-chain statistical associating fluid theory (ePC-SAFT) represents molecular and ionic interactions through residual Helmholtz energy \cite{Gross2001,Cameretti2005,Bulow2021a}.
 Coupling its activities to reaction constants gives bulk speciation, and its fugacity coefficients provide a \COtwo{} driving force for interphase transfer.
-This thermodynamic description is distinct from the conventional reaction-enhancement approximation and empirical caloric properties used in the present column model.
+The same Helmholtz energy also gives phase densities, enthalpies and heat capacities, so one model can supply every bulk-phase thermodynamic property an absorber balance needs, while surface tension, the interfacial film, transport and packing remain separate closures.
 
 % I4: physical parameter reuse and comparative rationale
 Available thermodynamic approaches differ in their physical representation and parameter requirements (\cref{tab:thermodynamic-model-comparison}).
 eNRTL represents liquid excess Gibbs energy, Kent--Eisenberg uses simplified activities with effective reaction constants, and the cubic-plus-association EOS (CPA) and ePC-SAFT include association contributions.
 An attraction of ePC-SAFT is that component-level segment, association and ionic descriptions enter explicit physical contributions, while combining rules supply cross interactions from reusable component inputs.
 This offers a route to reducing additional mixture-specific binary fitting when extending a thermodynamic description to new solvents.
-Whether this reduces total fitting effort for reactive MEA has not been tested on a common column model; the parameter counts of the present ePC-SAFT set and of a published eNRTL set \cite{Akula2023a} do not by themselves establish an advantage (\cref{sec:selected-reactive-inputs}). A comparison within the same column model would test how much component reuse reduces new data and fitting requirements while retaining capture and temperature accuracy.
 
 \begin{table*}
     \centering
@@ -45,12 +42,12 @@ Whether this reduces total fitting effort for reactive MEA has not been tested o
 
 % I5: scientific value of connecting thermodynamics to column response
 Column evaluation connects these thermodynamic choices to the quantities needed for absorber design: capture, axial temperature and response to operating conditions.
-Bulk speciation and fugacity profiles expose how the reactive EOS supplies the driving force, while separate thermodynamic and transport perturbations show how each set of inputs affects the coupled prediction.
+Bulk speciation and fugacity profiles expose how the reactive EOS supplies the driving force, comparison of interfacial film descriptions with the same bulk thermodynamics isolates the transfer model, and separate thermodynamic and transport perturbations show how each set of inputs affects the coupled prediction.
 Comparisons with measured capture and packing temperatures then assess that connection at the process scale.
 Together with numerical refinement and measured computational cost, this provides a basis for developing predictive transfer models and testing thermodynamic parameter reuse in process calculations.
 
 % I6: objective and reading order
-The model is evaluated against seven National Carbon Capture Center (NCCC) one-bed cases, with perturbation studies centered on Case 3C.
-A paired Case 3C refinement precedes thermodynamic and transport sensitivity studies and discrete changes in solvent flow, lean loading and inlet temperature.
-Computational cost is measured for the coarse Case 3C calculation.
-The following sections define the model, describe its evaluation and interpret the resulting profiles and responses.
+Two column models are evaluated against seven National Carbon Capture Center (NCCC) one-bed cases.
+A twelve-state conserved model compares three liquid-film descriptions, one of them with two interfacial \COtwo{} solubilities, on four axial meshes and locates the minimum Case 3C solvent flow for \qty{90}{\percent} capture.
+A nine-species boundary-value-problem (BVP) model with conventional reaction enhancement \cite{polleyReactiveEPCSAFTModeling2026}, evaluated here with ePC-SAFT bulk-phase properties, carries a paired Case 3C refinement, a property-source comparison, thermodynamic and transport sensitivity studies and discrete changes in solvent flow, lean loading and inlet temperature.
+Computational cost is measured for the coarse nine-species Case 3C calculation.
