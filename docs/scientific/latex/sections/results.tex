@@ -1,7 +1,7 @@
 \section{Results and discussion}\label{sec:results}
 \subsection{Twelve-state capture and temperature comparison}\label{sec:twelve-state-results}
 % T1: headline capture comparison
-With the finite-rate film and the ePC-SAFT Henry coefficient, the twelve-state model predicts capture in Cases 1C--7C with a mean absolute error of \num{3.55} percentage points at 129 axial nodes (\cref{tab:twelve-state-capture}).
+With the finite-rate film and the ePC-SAFT Henry coefficient, the twelve-state model predicts capture in Cases 1C--7C with a mean absolute error of \num{3.55} percentage points at 129 axial nodes (\cref{tab:twelve-state-capture,fig:twelve-state}).
 The same film with the \NtwoO{}-analogy Henry coefficient gives \num{3.61} points, the equilibrium-manifold film \num{4.52} points and the enhancement-factor film \num{7.51} points.
 At all four meshes both finite-rate variants have lower errors than the manifold film, which in turn has lower errors than the enhancement-factor film.
 The two Henry coefficients exchange rank between meshes and differ by at most \num{0.66} points, so this comparison does not distinguish them.
@@ -27,7 +27,14 @@ At the 35 packing-temperature taps, the finite-rate film with the ePC-SAFT Henry
 The finite-rate and manifold films agree within \qty{0.3}{K} on these measures, and the enhancement-factor film is about \qty{1.2}{K} higher.
 At $\zeta=0$ the calculated vapor temperature is the gas-feed temperature, so the vapor comparison there tests the feed specification rather than the bed.
 Case 7C dominates the temperature error: its liquid root-mean-square error is \qty{17.26}{K}, against \qty{5.61}{K} for the other 30 taps.
-In Case 7C between $\zeta=0.2$ and 0.8 the calculated liquid temperature is \qtyrange{342}{349}{K}, while the reported taps there lie between \qty{324}{K} and \qty{332}{K}; the largest deviation is \qty{24.3}{K}.
+In Case 7C between $\zeta=0.2$ and 0.8 the calculated liquid temperature is \qtyrange{342}{349}{K}, while the reported taps there lie between \qty{324}{K} and \qty{332}{K}; the largest deviation is \qty{24.3}{K} (\cref{fig:twelve-state}d).
+
+\begin{figure}[pos=htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/twelve-state-capture-temperatures.pdf}
+\caption{Twelve-state model at 129 axial nodes. (a) Calculated against observed \COtwo{} capture for Cases 1C--7C with the four film variants; the dotted line is parity, and Case 7C (*) is not resolved with respect to the axial mesh. (b--d) Finite-rate liquid temperature with both Henry coefficients against measured packing temperatures (crosses); $z/H$ is the packed height from the bottom.}
+\label{fig:twelve-state}
+\end{figure}
 
 % T5: basis and numerical scope
 All 112 twelve-state solutions (four film variants, seven cases and four meshes) met the IPOPT stopping test; each 129-node solution took \qtyrange{148}{585}{s}.
@@ -184,7 +191,7 @@ The lean-inlet temperature assumed for Cases 1C--3C is a bounded input uncertain
 
 % R15: solvent-flow optimum
 Constrained optimization of the twelve-state model with exact first derivatives finds the minimum solvent flow that gives \qty{90}{\percent} capture in Case 3C with the equilibrium-manifold film.
-The calculated optimum lies \qty{7.37}{\percent}, \qty{4.29}{\percent} and \qty{1.93}{\percent} below the reference solvent flow at 17, 33 and 65 nodes, so the optimum is not mesh-independent.
+The calculated optimum lies \qty{7.37}{\percent}, \qty{4.29}{\percent}, \qty{1.93}{\percent} and \qty{0.35}{\percent} below the reference solvent flow at 17, 33, 65 and 129 nodes; the last refinement still changes it by \num{1.58} points, so the optimum is not mesh-independent.
 The reduction shrinks because the capture calculated at the reference flow falls toward \qty{90}{\percent} with refinement, from \qty{92.13}{\percent} at 17 nodes to \qty{90.05}{\percent} at 129 nodes.
 
 % R16: remaining outlook
