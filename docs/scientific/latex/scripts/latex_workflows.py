@@ -34,6 +34,10 @@ FIGURE_COPIES = (
         Path("reactive-seven-case-capture.pdf"),
     ),
     (
+        Path("analyses/nccc_validation/figures/twelve_state/output/twelve-state-capture-temperatures.pdf"),
+        Path("twelve-state-capture-temperatures.pdf"),
+    ),
+    (
         Path("analyses/nccc_validation/figures/reactive_operating/output/operating_response.pdf"),
         Path("reactive-operating-response.pdf"),
     ),
