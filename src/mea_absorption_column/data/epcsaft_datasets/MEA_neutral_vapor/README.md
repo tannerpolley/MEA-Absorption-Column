@@ -1,4 +1,14 @@
-# Experimental four-species vapor input
+# Four-species vapor inputs
+
+`pc-saft.json` supplies the nine-species column's wet vapor density, enthalpy
+and water fugacity. It uses CO₂ and N₂ from [Gross and Sadowski (2001), Table 2](https://doi.org/10.1021/ie0003887),
+O₂ from [Tihic (2008), Chapter 4](https://orbit.dtu.dk/files/5470724/AmraTihic_Ph%20D_Thesis.pdf),
+and H₂O from [Schick et al. (2023), Table 1 and note a](https://doi.org/10.1016/j.fluid.2022.113714).
+Water self-associates. All binary interaction corrections are zero.
+The wet gas uses the same ideal-gas thermochemical records as the reacting liquid.
+The input used by the twelve-state column is described below.
+
+## `parameters.json` experimental input
 
 This is an unaccepted PC-SAFT candidate, not the default column gas model.
 Species order is CO2, water, nitrogen, oxygen. No electrolyte, permittivity,

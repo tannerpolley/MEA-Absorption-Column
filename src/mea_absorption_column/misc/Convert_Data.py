@@ -33,6 +33,7 @@ def convert_data(
         return_metadata=False,
         vapor_composition_mode='legacy_ratio',
         gas_flow_basis='reported_total_wet',
+        inlet_humidity_source='correlation',
 ):
 
     X = df.iloc[run, :].to_numpy()
@@ -76,6 +77,7 @@ def convert_data(
             alpha_H2O_CO2,
             alpha_O2_N2,
             vapor_composition_mode,
+            inlet_humidity_source,
         )
 
         # Find Vapor Molar Flow Rates
@@ -148,6 +150,7 @@ def convert_data(
             alpha_H2O_CO2,
             alpha_O2_N2,
             vapor_composition_mode,
+            inlet_humidity_source,
         )
         if gas_flow_basis == "reported_dry_mass":
             wet_factor = 1.0 - y_H2O
@@ -226,24 +229,32 @@ def convert_data(
             "diameter_m": float(D),
             "vapor_composition_mode": vapor_composition_mode,
             "gas_flow_basis": gas_flow_basis,
+            "inlet_humidity_source": inlet_humidity_source if vapor_composition_mode == "dry_saturated" else "specified",
         }
         return inputs, X, metadata
     return inputs, X
 
 
-def _vapor_mole_fractions(df, run, y_CO2, Tv, P, alpha_H2O_CO2, alpha_O2_N2, vapor_composition_mode):
+def _vapor_mole_fractions(df, run, y_CO2, Tv, P, alpha_H2O_CO2, alpha_O2_N2, vapor_composition_mode, inlet_humidity_source):
     y_H2O = _optional_fraction(df, run, "y_H2O")
     if y_H2O is None:
         y_H2O = y_CO2 * alpha_H2O_CO2
 
     if vapor_composition_mode == "dry_saturated":
-        y_H2O = float(np.clip(vapor_pressure(Tv) / P, 0.0, 0.95))
         dry_y_co2 = float(y_CO2)
         dry_y_o2 = float(df.iloc[run]["y_O2"]) if "y_O2" in df.columns else None
         if dry_y_o2 is None:
             dry_y_N2 = (1.0 - dry_y_co2) / (1.0 + alpha_O2_N2)
             dry_y_o2 = dry_y_N2 * alpha_O2_N2
         dry_y_N2 = 1.0 - dry_y_co2 - dry_y_o2
+        if inlet_humidity_source == "epcsaft":
+            from ..Thermodynamics.reactive_bundle import saturated_water_fraction
+
+            y_H2O = saturated_water_fraction(Tv, P, dry_y_co2, dry_y_N2, dry_y_o2)
+        elif inlet_humidity_source == "correlation":
+            y_H2O = float(np.clip(vapor_pressure(Tv) / P, 0.0, 0.95))
+        else:
+            raise ValueError(f"Unknown inlet humidity source: {inlet_humidity_source}")
         wet_factor = 1.0 - y_H2O
         y_CO2 = dry_y_co2 * wet_factor
         y_O2 = dry_y_o2 * wet_factor

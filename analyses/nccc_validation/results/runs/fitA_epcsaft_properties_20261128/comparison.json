@@ -1,0 +1,289 @@
+{
+  "C1": {
+    "byte_identical": true,
+    "archived_seed": "analyses/nccc_validation/results/runs/fitA_article_20261128/coarse/initial_scaled.csv",
+    "archived_seed_sha256": "c4f176886209763e032d317c42c18acf8304469f442feeb80bf825d0efb06bd0",
+    "comparisons": {
+      "CO2.csv": true,
+      "Cl.csv": true,
+      "Cv.csv": true,
+      "Fl.csv": true,
+      "Fv.csv": true,
+      "H2O.csv": true,
+      "Hl.csv": true,
+      "Hv.csv": true,
+      "Prop_l.csv": true,
+      "Prop_v.csv": true,
+      "T.csv": true,
+      "enhance_factor.csv": true,
+      "initial_scaled.csv": true,
+      "reactive_density.csv": true,
+      "solution_scaled.csv": true,
+      "transport.csv": true,
+      "x.csv": true,
+      "y.csv": true
+    }
+  },
+  "C2_partial_enthalpy_tolerance_basis": {
+    "case": "3C",
+    "input_nodes": 81,
+    "co2_transferred_mol_s": 1.6182240610532475,
+    "absolute_water_transferred_mol_s": 12.425505763829833,
+    "min_C_L_W_K": 7440.488568515039,
+    "partial_H_tolerance_per_phase_J_mol": 10.0,
+    "max_liquid_temperature_equivalent_K": 0.03774948296892796,
+    "basis": "Integrated absolute liquid component flow changes. Allow both phases equal-magnitude partial-enthalpy errors of opposite sign. The resulting heat-flow bound is divided by the minimum liquid heat-capacity rate."
+  },
+  "C4": {
+    "passed": true,
+    "limit_K": 0.05,
+    "runs": [
+      {
+        "label": "inlet_humidity_3C",
+        "linear_solver": "ma57",
+        "points": 10001,
+        "range_W": 264.317350640893,
+        "endpoint_difference_W": 30.07368127629161,
+        "min_C_L_W_K": 7440.497918427404,
+        "min_position": 0.9625,
+        "max_position": 0.9875,
+        "capture_pct": 92.90247831942744,
+        "min_liquid_K": 318.15,
+        "max_liquid_K": 349.61825641487326,
+        "peak_liquid_z": 0.9261,
+        "max_vapor_K": 349.5999087089997,
+        "peak_vapor_z": 0.9269000000000001,
+        "co2_range_mol_s": 2.220446049250313e-15,
+        "water_range_mol_s": 5.684341886080802e-14,
+        "temperature_equivalent_K": 0.03552414818721676
+      },
+      {
+        "label": "3C_41_from_21",
+        "linear_solver": "ma57",
+        "points": 10001,
+        "range_W": 264.2106086537242,
+        "endpoint_difference_W": 22.049177940934896,
+        "min_C_L_W_K": 7440.576335841604,
+        "min_position": 0.9625,
+        "max_position": 0.9875,
+        "capture_pct": 92.90796454564479,
+        "min_liquid_K": 318.15000000000003,
+        "max_liquid_K": 349.577833627927,
+        "peak_liquid_z": 0.907,
+        "max_vapor_K": 349.57211429304664,
+        "peak_vapor_z": 0.914,
+        "co2_range_mol_s": 2.220446049250313e-15,
+        "water_range_mol_s": 5.684341886080802e-14,
+        "temperature_equivalent_K": 0.035509427862598406,
+        "capture_change_pp": 0.00548622621734296,
+        "peak_liquid_change_K": -0.040422786946237466,
+        "peak_vapor_change_K": -0.02779441595305343
+      },
+      {
+        "label": "3C_81_from_41",
+        "linear_solver": "ma57",
+        "points": 10001,
+        "range_W": 0.0773962028324604,
+        "endpoint_difference_W": 0.002501249313354492,
+        "min_C_L_W_K": 7440.488568515039,
+        "min_position": 0.9672000000000001,
+        "max_position": 0.9891000000000001,
+        "capture_pct": 92.90991320277472,
+        "min_liquid_K": 318.1499999999999,
+        "max_liquid_K": 349.5795867207594,
+        "peak_liquid_z": 0.9056000000000001,
+        "max_vapor_K": 349.5727575429242,
+        "peak_vapor_z": 0.9155000000000001,
+        "co2_range_mol_s": 2.6645352591003757e-15,
+        "water_range_mol_s": 7.105427357601002e-14,
+        "temperature_equivalent_K": 1.0402032355774052e-05,
+        "capture_change_pp": 0.001948657129929643,
+        "peak_liquid_change_K": 0.0017530928323594708,
+        "peak_vapor_change_K": 0.0006432498775552631
+      }
+    ]
+  },
+  "overall": {
+    "correlation": {
+      "cases": 7,
+      "capture_mae_pp": 7.075321790475294,
+      "matched_taps": 35,
+      "liquid_rmse_K": 8.53935118842423,
+      "vapor_rmse_K": 9.869312531786704,
+      "min_liquid_K": 317.85,
+      "max_liquid_K": 349.8201302307453,
+      "phi_CO2_reduced": [
+        0.9961771005314488,
+        0.9987364232579538
+      ]
+    },
+    "density_enthalpy": {
+      "cases": 7,
+      "capture_mae_pp": 5.739975842030499,
+      "matched_taps": 35,
+      "liquid_rmse_K": 9.318036753594209,
+      "vapor_rmse_K": 10.608410332383087,
+      "min_liquid_K": 317.85,
+      "max_liquid_K": 351.5188016269646,
+      "phi_CO2": [
+        0.9967267528194496,
+        0.9999629717938452
+      ],
+      "phi_H2O": [
+        0.9835264473069137,
+        0.9876887190464787
+      ],
+      "phi_N2": [
+        1.0001556736007424,
+        1.0030558029515173
+      ],
+      "phi_O2": [
+        0.9997192014089834,
+        1.002679584151885
+      ],
+      "phi_CO2_reduced": [
+        0.9961771005314488,
+        0.9987364919762897
+      ]
+    },
+    "water_fugacity": {
+      "cases": 7,
+      "capture_mae_pp": 5.854679042791192,
+      "matched_taps": 35,
+      "liquid_rmse_K": 9.240918248184045,
+      "vapor_rmse_K": 10.509141912147127,
+      "min_liquid_K": 317.85,
+      "max_liquid_K": 351.38825219711003,
+      "phi_CO2": [
+        0.9967267528194496,
+        0.9999896854519384
+      ],
+      "phi_H2O": [
+        0.9834444847901262,
+        0.9874367226451374
+      ],
+      "phi_N2": [
+        1.0001556736007424,
+        1.0030887154990236
+      ],
+      "phi_O2": [
+        0.9997192014089834,
+        1.0027121987899512
+      ],
+      "phi_CO2_reduced": [
+        0.9961771005314488,
+        0.9987373132668416
+      ]
+    },
+    "inlet_humidity": {
+      "cases": 7,
+      "capture_mae_pp": 5.860183755905218,
+      "matched_taps": 35,
+      "liquid_rmse_K": 9.242052024460335,
+      "vapor_rmse_K": 10.50752484664962,
+      "min_liquid_K": 317.85,
+      "max_liquid_K": 351.38521245388176,
+      "phi_CO2": [
+        0.9967247875201443,
+        0.9999891618478296
+      ],
+      "phi_H2O": [
+        0.9834448068343251,
+        0.9874679133591207
+      ],
+      "phi_N2": [
+        1.000152926960668,
+        1.00308814993885
+      ],
+      "phi_O2": [
+        0.9997164782212857,
+        1.0027116312944009
+      ],
+      "phi_CO2_reduced": [
+        0.9961735257429497,
+        0.9987375395856641
+      ]
+    },
+    "density_only": {
+      "cases": 1,
+      "capture_mae_pp": 4.67918006872776,
+      "matched_taps": 5,
+      "liquid_rmse_K": 4.674569340299393,
+      "vapor_rmse_K": 7.03789148865675,
+      "min_liquid_K": 318.15,
+      "max_liquid_K": 347.96996977118755,
+      "phi_CO2": [
+        0.9967267528194496,
+        0.999309422850664
+      ],
+      "phi_H2O": [
+        0.9838654292572256,
+        0.9873099201342016
+      ],
+      "phi_N2": [
+        1.0001803750021834,
+        1.0024001091390968
+      ],
+      "phi_O2": [
+        0.9997428441645971,
+        1.0020154052933996
+      ],
+      "phi_CO2_reduced": [
+        0.9962506629253505,
+        0.9985612637169612
+      ]
+    },
+    "enthalpy_only": {
+      "cases": 1,
+      "capture_mae_pp": 3.3413805837818558,
+      "matched_taps": 5,
+      "liquid_rmse_K": 5.379001851146561,
+      "vapor_rmse_K": 7.637852811773017,
+      "min_liquid_K": 318.15,
+      "max_liquid_K": 349.7374314635509,
+      "phi_CO2": [
+        0.9967267528194496,
+        0.999581282554637
+      ],
+      "phi_H2O": [
+        0.9836316615470504,
+        0.9873099201342016
+      ],
+      "phi_N2": [
+        1.0001803750021834,
+        1.0026917517835812
+      ],
+      "phi_O2": [
+        0.9997428441645971,
+        1.0023083893074387
+      ],
+      "phi_CO2_reduced": [
+        0.9962506629253505,
+        0.998529651924512
+      ]
+    },
+    "water_enthalpy_43990": {
+      "cases": 1,
+      "capture_mae_pp": 3.3265370775861953,
+      "matched_taps": 5,
+      "liquid_rmse_K": 5.38842672850833,
+      "vapor_rmse_K": 7.6390428595574615,
+      "min_liquid_K": 318.15,
+      "max_liquid_K": 349.7270114242971,
+      "phi_CO2_reduced": [
+        0.9962506629253505,
+        0.9985295039475505
+      ]
+    }
+  },
+  "missing": [],
+  "humidity_trial": {
+    "max_abs_y_H2O_change": 0.0003300336767528278,
+    "max_abs_capture_change_pp": 0.013136006128931399,
+    "max_abs_dry_flow_change_mol_s": 1.0658141036401503e-14
+  },
+  "source_sha256": {
+    "analyses/nccc_validation/figures/reactive_parallel/inputs/morgan2020_table_c2.csv": "42097684c0ac53e4ee094ee90dd5009cf3136b63e452ce6d53d1d12626fe8812",
+    "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv": "5cfb1ab670adcfbdb90a003c5e163262470d85e1467aa250ff6e50ab7a79785f"
+  }
+}

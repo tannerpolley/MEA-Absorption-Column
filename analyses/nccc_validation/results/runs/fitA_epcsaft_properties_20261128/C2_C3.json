@@ -1,0 +1,96 @@
+{
+  "linear_solver": {
+    "liquid": "ma57",
+    "vapor": "ma57"
+  },
+  "C2": {
+    "H_L_W": {
+      "max_error": 6.966292858123779e-07,
+      "limit": 10.0
+    },
+    "H_V_W": {
+      "max_error": 6.984919309616089e-10,
+      "limit": 10.0
+    },
+    "h_L_CO2_J_mol": {
+      "max_error": 2.671731635928154e-08,
+      "limit": 10.0
+    },
+    "h_L_water_J_mol": {
+      "max_error": 1.7113052308559418e-08,
+      "limit": 10.0
+    },
+    "h_V_CO2_J_mol": {
+      "max_error": 1.7462298274040222e-10,
+      "limit": 10.0
+    },
+    "h_V_water_J_mol": {
+      "max_error": 8.731149137020111e-11,
+      "limit": 10.0
+    },
+    "C_L_W_K": {
+      "max_error": 2.9326756519193635e-13,
+      "limit": 0.0001
+    },
+    "V_L_m3_s": {
+      "max_error": 1.0968360298162317e-13,
+      "limit": 0.0001
+    },
+    "cp_V_J_mol_K": {
+      "max_error": 4.445168504321626e-16,
+      "limit": 0.0001
+    },
+    "rho_V_mol_m3": {
+      "max_error": 5.725127078566765e-16,
+      "limit": 0.0001
+    }
+  },
+  "A1": {
+    "liquid_water_fugacity_Pa": 11933.067340793074,
+    "vapor_water_fugacity_Pa": 8841.983456105334,
+    "water_flux": -7.834714288500606,
+    "expected_water_flux": -7.834714287316547,
+    "phase_energy": [
+      1480770.2456967195,
+      1480770.2456967195
+    ],
+    "expected_phase_energy": 1480770.2454108654,
+    "liquid_components": [
+      -355058.36636064725,
+      1891451.1654598166
+    ],
+    "expected_liquid_components": [
+      -355058.36636064725,
+      1891451.1651739622
+    ],
+    "max_error_W_m": 0.00028585433028638363,
+    "limit_W_m": 10.0
+  },
+  "A2": {
+    "liquid_water_fugacity_Pa": 8523.091134215092,
+    "vapor_water_fugacity_Pa": 7044.970806549963,
+    "water_flux": -4.465198947345875,
+    "expected_water_flux": -4.465198947966858,
+    "phase_energy": [
+      87570.04499798399,
+      87570.04499798399
+    ],
+    "expected_phase_energy": 87570.04514787835,
+    "liquid_components": [
+      -978408.9767130899,
+      1077820.4211185707
+    ],
+    "expected_liquid_components": [
+      -978408.97671309,
+      1077820.4212684652
+    ],
+    "abs_flux_error_mol_s_m": 6.209832648096381e-10,
+    "limit_mol_s_m": 1e-06
+  },
+  "C3": {
+    "max_error_ratio": 0.25440708550378427,
+    "rtol": 2e-05,
+    "atol": 2e-08,
+    "rows": 126
+  }
+}

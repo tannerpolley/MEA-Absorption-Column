@@ -1,0 +1,1895 @@
+........................................................................ [ 20%]
+........................................................................ [ 41%]
+.............................FF......................................... [ 62%]
+........................................................................ [ 83%]
+.......FFFFFFFFFFFF......................................                [100%]
+=================================== FAILURES ===================================
+_______ test_mdea_frozen_state_distinguishes_reference_pressures[False] ________
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_mdea_thermodynamic_references.py_test_mdea_frozen_state_distinguishes_reference_pressures_False_')
+permuted = False
+
+    @pytest.mark.parametrize('permuted', [False, True])
+    def test_mdea_frozen_state_distinguishes_reference_pressures(tmp_path, permuted):
+        source = ROOT/'analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/inputs'
+        shutil.copytree(source,tmp_path/'inputs')
+        verifier = runpy.run_path(str(ROOT/'analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py'))
+>       result = verifier['verify'](tmp_path,'reference','B',permuted)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mdea_thermodynamic_references.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py:62: in verify
+    h, declaration, phase = construct(root,permuted)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^
+analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py:49: in construct
+    phase = engine_liquid(source, source/'caloric.json', 'mdea_reordered' if permuted else 'mdea',
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:101: in engine_liquid
+    record = _engine_reaction_record(parameter_path, reaction_path or dataset / _ENGINE_REACTIONS)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+parameter_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...ea_thermodynamic_references.py_test_mdea_frozen_state_distinguishes_reference_pressures_False_/inputs/parameters.json')
+reaction_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...a_thermodynamic_references.py_test_mdea_frozen_state_distinguishes_reference_pressures_False_/declared/reactions.json')
+
+    def _engine_reaction_record(parameter_path, reaction_path):
+        record = _json(Path(reaction_path))
+>       if record["schema"] != "absorber-engine-reactions-v1":
+           ^^^^^^^^^^^^^^^^
+E       KeyError: 'schema'
+
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:75: KeyError
+________ test_mdea_frozen_state_distinguishes_reference_pressures[True] ________
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_mdea_thermodynamic_references.py_test_mdea_frozen_state_distinguishes_reference_pressures_True_')
+permuted = True
+
+    @pytest.mark.parametrize('permuted', [False, True])
+    def test_mdea_frozen_state_distinguishes_reference_pressures(tmp_path, permuted):
+        source = ROOT/'analyses/bvp_solution_methods/results/runs/issue85_stage4_20261030/inputs'
+        shutil.copytree(source,tmp_path/'inputs')
+        verifier = runpy.run_path(str(ROOT/'analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py'))
+>       result = verifier['verify'](tmp_path,'reference','B',permuted)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_mdea_thermodynamic_references.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py:62: in verify
+    h, declaration, phase = construct(root,permuted)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^
+analyses/bvp_solution_methods/scripts/verify_mdea_thermodynamics.py:49: in construct
+    phase = engine_liquid(source, source/'caloric.json', 'mdea_reordered' if permuted else 'mdea',
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:101: in engine_liquid
+    record = _engine_reaction_record(parameter_path, reaction_path or dataset / _ENGINE_REACTIONS)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+parameter_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...dea_thermodynamic_references.py_test_mdea_frozen_state_distinguishes_reference_pressures_True_/inputs/parameters.json')
+reaction_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...ea_thermodynamic_references.py_test_mdea_frozen_state_distinguishes_reference_pressures_True_/permuted/reactions.json')
+
+    def _engine_reaction_record(parameter_path, reaction_path):
+        record = _json(Path(reaction_path))
+>       if record["schema"] != "absorber-engine-reactions-v1":
+           ^^^^^^^^^^^^^^^^
+E       KeyError: 'schema'
+
+src/mea_absorption_column/Thermodynamics/reactive_bundle.py:75: KeyError
+________________ test_mea_declared_reproduction_and_permutation ________________
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be9089b9c50>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be9089b9c50>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_mea_declared_reproduction_and_permutation')
+
+    def test_mea_declared_reproduction_and_permutation(tmp_path):
+        output = Path(os.environ.get('ISSUE85_RUN_ROOT', tmp_path))
+        output.mkdir(parents=True, exist_ok=True)
+        directory = output / 'permuted_inputs'
+        directory.mkdir()
+        pairs = [(INPUT / 'thermodynamics.json', INPUT / 'transport.json'), permuted_inputs(directory)]
+        attempts, assemblies = [], []
+        for label, (thermo, transport) in zip(('declared', 'permuted'), pairs):
+            seed = output / (label + '_seed')
+>           seeded = run_column(request(thermo, transport, seed))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/column.py:1400: in run_column
+    config = resolve_column_config(config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be9089b9c50>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+______________________ test_declared_mea_film_selections _______________________
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90c143a10>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90c143a10>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declared_mea_film_selections')
+
+    def test_declared_mea_film_selections(tmp_path):
+        canonical = request(INPUT / 'thermodynamics.json', INPUT / 'transport.json', tmp_path / 'canonical')
+        for model in ({'film_model': 'enhancement_reference'},
+                      {'film_model': 'finite_rate_film', 'henry_basis': 'epcsaft_free_co2'},
+                      {'film_model': 'finite_rate_film', 'mea_diffusivity_anchors': True}):
+>           config = resolve_column_config(canonical | {'model': model})
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90c143a10>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+_ test_declaration_refuses_before_native_construction[missing_law-Incomplete property laws] _
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90c196f70>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...tions.py_test_declaration_refuses_before_native_construction_missing_law-Incomplete_property_laws_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...clarations.py_test_declaration_refuses_before_native_construction_missing_law-Incomplete_property_laws_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90c196f70>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...est_solvent_declarations.py_test_declaration_refuses_before_native_construction_missing_law-Incomplete_property_laws_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be90e18b770>
+defect = 'missing_law', message = 'Incomplete property laws'
+
+    @pytest.mark.parametrize('defect, message', [
+        ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+        ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
+        ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+        ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+    def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
+        t, u = permuted_inputs(tmp_path)
+        implicit_case = request(t, u, tmp_path / 'never_run')
+        implicit_case.pop('case')
+>       assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90c196f70>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...tions.py_test_declaration_refuses_before_native_construction_missing_law-Incomplete_property_laws_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...clarations.py_test_declaration_refuses_before_native_construction_missing_law-Incomplete_property_laws_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+__ test_declaration_refuses_before_native_construction[hash-SHA-256 mismatch] __
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be909fbd710>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_hash-SHA-256_mismatch_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_hash-SHA-256_mismatch_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be909fbd710>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_hash-SHA-256_mismatch_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be908980b40>
+defect = 'hash', message = 'SHA-256 mismatch'
+
+    @pytest.mark.parametrize('defect, message', [
+        ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+        ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
+        ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+        ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+    def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
+        t, u = permuted_inputs(tmp_path)
+        implicit_case = request(t, u, tmp_path / 'never_run')
+        implicit_case.pop('case')
+>       assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be909fbd710>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_hash-SHA-256_mismatch_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_hash-SHA-256_mismatch_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+_ test_declaration_refuses_before_native_construction[policy-Invalid case numerical policy] _
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be908882ea0>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...tions.py_test_declaration_refuses_before_native_construction_policy-Invalid_case_numerical_policy_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...clarations.py_test_declaration_refuses_before_native_construction_policy-Invalid_case_numerical_policy_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be908882ea0>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...est_solvent_declarations.py_test_declaration_refuses_before_native_construction_policy-Invalid_case_numerical_policy_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be9088cf5b0>
+defect = 'policy', message = 'Invalid case numerical policy'
+
+    @pytest.mark.parametrize('defect, message', [
+        ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+        ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
+        ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+        ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+    def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
+        t, u = permuted_inputs(tmp_path)
+        implicit_case = request(t, u, tmp_path / 'never_run')
+        implicit_case.pop('case')
+>       assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be908882ea0>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...tions.py_test_declaration_refuses_before_native_construction_policy-Invalid_case_numerical_policy_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...clarations.py_test_declaration_refuses_before_native_construction_policy-Invalid_case_numerical_policy_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+_ test_declaration_refuses_before_native_construction[domain_field-unsupported fields in domain] _
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be9089ce4e0>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_....py_test_declaration_refuses_before_native_construction_domain_field-unsupported_fields_in_domain_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...tions.py_test_declaration_refuses_before_native_construction_domain_field-unsupported_fields_in_domain_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be9089ce4e0>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...olvent_declarations.py_test_declaration_refuses_before_native_construction_domain_field-unsupported_fields_in_domain_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be9088ce6d0>
+defect = 'domain_field', message = 'unsupported fields in domain'
+
+    @pytest.mark.parametrize('defect, message', [
+        ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+        ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
+        ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+        ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+    def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
+        t, u = permuted_inputs(tmp_path)
+        implicit_case = request(t, u, tmp_path / 'never_run')
+        implicit_case.pop('case')
+>       assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be9089ce4e0>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_....py_test_declaration_refuses_before_native_construction_domain_field-unsupported_fields_in_domain_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...tions.py_test_declaration_refuses_before_native_construction_domain_field-unsupported_fields_in_domain_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+_ test_declaration_refuses_before_native_construction[dependent_row-independent modulo total flux] _
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90dd65710>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...y_test_declaration_refuses_before_native_construction_dependent_row-independent_modulo_total_flux_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...ons.py_test_declaration_refuses_before_native_construction_dependent_row-independent_modulo_total_flux_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90dd65710>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...vent_declarations.py_test_declaration_refuses_before_native_construction_dependent_row-independent_modulo_total_flux_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be908b27e70>
+defect = 'dependent_row', message = 'independent modulo total flux'
+
+    @pytest.mark.parametrize('defect, message', [
+        ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+        ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
+        ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+        ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+    def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
+        t, u = permuted_inputs(tmp_path)
+        implicit_case = request(t, u, tmp_path / 'never_run')
+        implicit_case.pop('case')
+>       assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90dd65710>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...y_test_declaration_refuses_before_native_construction_dependent_row-independent_modulo_total_flux_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...ons.py_test_declaration_refuses_before_native_construction_dependent_row-independent_modulo_total_flux_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+_ test_declaration_refuses_before_native_construction[duplicate_id-Duplicate analytical-component] _
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90ae08050>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...y_test_declaration_refuses_before_native_construction_duplicate_id-Duplicate_analytical-component_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...ons.py_test_declaration_refuses_before_native_construction_duplicate_id-Duplicate_analytical-component_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90ae08050>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/t...vent_declarations.py_test_declaration_refuses_before_native_construction_duplicate_id-Duplicate_analytical-component_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be908b6faf0>
+defect = 'duplicate_id', message = 'Duplicate analytical-component'
+
+    @pytest.mark.parametrize('defect, message', [
+        ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+        ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
+        ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+        ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+    def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
+        t, u = permuted_inputs(tmp_path)
+        implicit_case = request(t, u, tmp_path / 'never_run')
+        implicit_case.pop('case')
+>       assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90ae08050>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...y_test_declaration_refuses_before_native_construction_duplicate_id-Duplicate_analytical-component_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...ons.py_test_declaration_refuses_before_native_construction_duplicate_id-Duplicate_analytical-component_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+_ test_declaration_refuses_before_native_construction[quadrature-quadrature/density] _
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9c0fc0>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...declarations.py_test_declaration_refuses_before_native_construction_quadrature-quadrature_density_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_quadrature-quadrature_density_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9c0fc0>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_quadrature-quadrature_density_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be908b27a80>
+defect = 'quadrature', message = 'quadrature/density'
+
+    @pytest.mark.parametrize('defect, message', [
+        ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+        ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
+        ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+        ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+    def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
+        t, u = permuted_inputs(tmp_path)
+        implicit_case = request(t, u, tmp_path / 'never_run')
+        implicit_case.pop('case')
+>       assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9c0fc0>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...declarations.py_test_declaration_refuses_before_native_construction_quadrature-quadrature_density_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_quadrature-quadrature_density_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+_ test_declaration_refuses_before_native_construction[density-quadrature/density] _
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9de9c0>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...nt_declarations.py_test_declaration_refuses_before_native_construction_density-quadrature_density_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_density-quadrature_density_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9de9c0>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_density-quadrature_density_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be909b24520>
+defect = 'density', message = 'quadrature/density'
+
+    @pytest.mark.parametrize('defect, message', [
+        ('missing_law', 'Incomplete property laws'), ('hash', 'SHA-256 mismatch'),
+        ('policy', 'Invalid case numerical policy'), ('domain_field', 'unsupported fields in domain'),
+        ('dependent_row', 'independent modulo total flux'), ('duplicate_id', 'Duplicate analytical-component'),
+        ('quadrature', 'quadrature/density'), ('density', 'quadrature/density')])
+    def test_declaration_refuses_before_native_construction(tmp_path, monkeypatch, defect, message):
+        t, u = permuted_inputs(tmp_path)
+        implicit_case = request(t, u, tmp_path / 'never_run')
+        implicit_case.pop('case')
+>       assert resolve_column_config(implicit_case).case.physical_input_file == str(tmp_path / 'case.json')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:125: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9de9c0>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_...nt_declarations.py_test_declaration_refuses_before_native_construction_density-quadrature_density_/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_declaration_refuses_before_native_construction_density-quadrature_density_/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+___ test_terminal_interface_callback_keeps_failure_class[StateDomainFailure] ___
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9eb450>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9eb450>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_terminal_interface_callback_keeps_failure_class_StateDomainFailure_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be90af1e4a0>
+failure = <class 'mea_absorption_column.Thermodynamics.solvent_inputs.StateDomainFailure'>
+
+    @pytest.mark.parametrize('failure', [StateDomainFailure, NativeEvaluationFailure])
+    def test_terminal_interface_callback_keeps_failure_class(tmp_path, monkeypatch, failure):
+        from mea_absorption_column import benchmark_worker
+        from mea_absorption_column.Thermodynamics.casadi_reactive import EnginePhase
+        original = EnginePhase.actions
+        def forced(self, inputs, *args):
+            if self.kind == 'liquid' and float(np.asarray(inputs).ravel()[self.co2_input]) > 2.6:
+                raise failure('forced interface evaluation failure')
+            return original(self, inputs, *args)
+        monkeypatch.setattr(EnginePhase, 'actions', forced)
+        directory = Path(os.environ['ISSUE85_RUN_ROOT']) / failure.kind if 'ISSUE85_RUN_ROOT' in os.environ else tmp_path
+        directory.mkdir(parents=True, exist_ok=True)
+        payload, output = directory / 'payload.json', directory / 'worker.json'
+        save(payload, {'task': 'conserved_execution', 'output_path': str(output),
+>                      'config': resolve_column_config(request(INPUT / 'thermodynamics.json', INPUT / 'transport.json', tmp_path / 'unused')).as_dict()})
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9eb450>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+_ test_terminal_interface_callback_keeps_failure_class[NativeEvaluationFailure] _
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9bd160>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+>           self.validate()
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9bd160>
+
+    def validate(self):
+        t, u = self.thermo, self.transport
+        fields = "encoding status engine parameters reactions calorics gas_parameters species_order roles liquid_support liquid_feed_order vapor_support vapor_feed_order neutral_reference species_reference_encoding components charge_numbers formulas atomic_masses_kg_mol mass_convention qualification".split()
+        transport_fields = "encoding thermodynamic_input case film kinetics enhancement hydraulic_density species_diffusivities pair_diffusivity stationary_film_components zero_charge_flux quadrature_points thickness property_laws execution_policy domain thermodynamic_input_sha256".split()
+        if set(t) != set(fields) or set(u) != set(transport_fields):
+            raise SolventRefusal('Missing or unknown input declarations')
+        nested = [
+            ('roles', t['roles'], 'co2 water amines inert_gases'),
+            ('engine', t['engine'], 'engine_commit wheel_filename wheel_sha256 reactive_inputs_sha256 release_tag'),
+            ('engine.reactive_inputs_sha256', t['engine']['reactive_inputs_sha256'], 'parameters.json engine-reactions.json ideal-gas-thermochemistry.json'),
+            ('components', t['components'], 'order rows'),
+            ('qualification', t['qualification'], 'status assessment'),
+            ('execution_policy', u['execution_policy'], 'id temperature_bounds_k void_fraction temperature_scale_k temperature_span_k initial_bulk_state initial_interface_bracket physical_residual_tolerance branch_policy'),
+            ('execution_policy.branch_policy', u['execution_policy']['branch_policy'], 'loading_anchor max_log_loading_step max_loading_steps'),
+            ('domain', u['domain'], 'representation temperature_k pressure_pa unloaded_amine_mass_fraction loading_mol_co2_per_mol_total_amine status predicates'),
+            ('domain.pressure_pa', u['domain']['pressure_pa'], 'minimum_exclusive maximum_inclusive'),
+            ('domain.loading', u['domain']['loading_mol_co2_per_mol_total_amine'], 'minimum_exclusive maximum_inclusive status'),
+            ('atomic_masses_kg_mol', t['atomic_masses_kg_mol'], 'C H N O')]
+        nested += [('domain.unloaded_amine_mass_fraction.' + s, row, 'kind value source')
+                   for s, row in u['domain']['unloaded_amine_mass_fraction'].items()]
+        for name, row, keys in nested:
+            if not isinstance(row, dict) or set(row) != set(keys.split()):
+                raise SolventRefusal(f'Missing or unsupported fields in {name}')
+        if set(t['formulas']) != set(self.species) or any(set(row) - set(t['atomic_masses_kg_mol']) for row in t['formulas'].values()):
+            raise SolventRefusal('Missing species formula or unsupported elements')
+        mass_convention = {'feed': 'exact retained direct SI molar feeds; no reconversion',
+                           'liquid_hydraulic': 'formula masses using atomic_masses_kg_mol',
+                           'vapor_hydraulic': 'unchanged gas parameter JSON molar masses',
+                           'engine': 'unchanged native parameter JSON; formula/native absolute allowance 1e-5 kg/mol',
+                           'legacy_property': 'unchanged config.Constants MWs_l/MWs_v for retained named laws'}
+        if t['mass_convention'] != mass_convention:
+            raise SolventRefusal('Unsupported hydraulic/feed/property mass convention')
+        if t['encoding'] != 'issue85-proposed-stage1-json-v1' or u['encoding'] != t['encoding']:
+            raise SolventRefusal('Unsupported declaration encoding')
+        identity = read_json(ROOT / 'integration/epcsaft_contract.json')['final_identity']
+        if any(t['engine'][k] != identity[k] for k in ('engine_commit', 'wheel_sha256')):
+>           raise SolventRefusal('Solvent Engine identity differs from column pin')
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:134: SolventRefusal
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.tmp_local/pytest_tmp/tests_test_solvent_declarations.py_test_terminal_interface_callback_keeps_failure_class_NativeEvaluationFailure_')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7be90e1faeb0>
+failure = <class 'mea_absorption_column.Thermodynamics.solvent_inputs.NativeEvaluationFailure'>
+
+    @pytest.mark.parametrize('failure', [StateDomainFailure, NativeEvaluationFailure])
+    def test_terminal_interface_callback_keeps_failure_class(tmp_path, monkeypatch, failure):
+        from mea_absorption_column import benchmark_worker
+        from mea_absorption_column.Thermodynamics.casadi_reactive import EnginePhase
+        original = EnginePhase.actions
+        def forced(self, inputs, *args):
+            if self.kind == 'liquid' and float(np.asarray(inputs).ravel()[self.co2_input]) > 2.6:
+                raise failure('forced interface evaluation failure')
+            return original(self, inputs, *args)
+        monkeypatch.setattr(EnginePhase, 'actions', forced)
+        directory = Path(os.environ['ISSUE85_RUN_ROOT']) / failure.kind if 'ISSUE85_RUN_ROOT' in os.environ else tmp_path
+        directory.mkdir(parents=True, exist_ok=True)
+        payload, output = directory / 'payload.json', directory / 'worker.json'
+        save(payload, {'task': 'conserved_execution', 'output_path': str(output),
+>                      'config': resolve_column_config(request(INPUT / 'thermodynamics.json', INPUT / 'transport.json', tmp_path / 'unused')).as_dict()})
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_solvent_declarations.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/mea_absorption_column/config/column.py:647: in resolve_column_config
+    solvent = SolventInputs(dependencies.thermodynamics_input, dependencies.transport_input)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mea_absorption_column.Thermodynamics.solvent_inputs.SolventInputs object at 0x7be90a9bd160>
+thermodynamics = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/thermodynamics.json'
+transport = '/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/bvp_solution_methods/input/issue85/transport.json'
+
+    def __init__(self, thermodynamics, transport):
+        try:
+            self.thermo, self.transport = read_json(thermodynamics), read_json(transport)
+            linked = Path(transport).parent / self.transport['thermodynamic_input']
+            if linked.resolve() != Path(thermodynamics).resolve():
+                raise SolventRefusal('Transport thermodynamic input path disagrees')
+            self.hashes = {str(Path(p).resolve()): hashlib.sha256(Path(p).read_bytes()).hexdigest()
+                           for p in (thermodynamics, transport)}
+            if self.transport['thermodynamic_input_sha256'] != self.hashes[str(Path(thermodynamics).resolve())]:
+                raise SolventRefusal('Transport belongs to another thermodynamic input')
+            self.paths = {}
+            self.mathematical = self.thermo.get('equations') == 'neutral_two_amine_column'
+            if self.mathematical:
+                self.case_path = self.verify(self.transport['case'])
+                self.case = read_json(self.case_path)
+                self.validate_mathematical()
+                return
+            for key in ('parameters', 'reactions', 'calorics', 'gas_parameters'):
+                self.paths[key] = self.verify(self.thermo[key])
+            self.case_path = self.verify(self.transport['case'])
+            self.case = read_json(self.case_path)
+            self.mapping, self.reactions = (read_json(self.paths[k]) for k in ('parameters', 'reactions'))
+            self.roles = self.thermo['roles']
+            self.species = self.thermo['species_order']
+            self.feeds = self.thermo['liquid_feed_order']
+            self.gas = self.thermo['vapor_feed_order']
+            order = self.thermo['components']['order']
+            if len(order) != len(set(order)):
+                raise SolventRefusal('Duplicate analytical-component IDs')
+            self.components = dict(zip(self.thermo['components']['order'], self.thermo['components']['rows'], strict=True))
+            self.validate()
+        except (KeyError, TypeError, ValueError, OSError) as error:
+>           raise SolventRefusal(f'Solvent declarations: {error}') from error
+E           mea_absorption_column.Thermodynamics.solvent_inputs.SolventRefusal: Solvent declarations: Solvent Engine identity differs from column pin
+
+src/mea_absorption_column/Thermodynamics/solvent_inputs.py:85: SolventRefusal
+=============================== warnings summary ===============================
+tests/test_mea_f2.py::test_mea_co2_partial_pressure[MEA_A_196faf11-119.2512320828877]
+  /home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/tests/test_mea_f2.py:52: DomainWarning: joint-recalibration-170-stage5-smaller-dV/mea-working-313-15-to-353-15-k: temperature=313 below 313.15 kelvin; joint-recalibration-170-stage5-smaller-dV/mea-working-313-15-to-353-15-k: temperature=313 below 313.15 kelvin
+    result = equilibrium.solve_equilibrium(model, problem)
+
+tests/test_transport_domain_guards.py::test_domain_guards_can_record_without_raising_for_legacy_timing_probe
+  /home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py:44: RuntimeWarning: invalid value encountered in log
+    np.log(rho_mass_l) - np.log(sigma) + np.log(g) / 3
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_mdea_thermodynamic_references.py::test_mdea_frozen_state_distinguishes_reference_pressures[False]
+FAILED tests/test_mdea_thermodynamic_references.py::test_mdea_frozen_state_distinguishes_reference_pressures[True]
+FAILED tests/test_solvent_declarations.py::test_mea_declared_reproduction_and_permutation
+FAILED tests/test_solvent_declarations.py::test_declared_mea_film_selections
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[missing_law-Incomplete property laws]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[hash-SHA-256 mismatch]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[policy-Invalid case numerical policy]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[domain_field-unsupported fields in domain]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[dependent_row-independent modulo total flux]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[duplicate_id-Duplicate analytical-component]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[quadrature-quadrature/density]
+FAILED tests/test_solvent_declarations.py::test_declaration_refuses_before_native_construction[density-quadrature/density]
+FAILED tests/test_solvent_declarations.py::test_terminal_interface_callback_keeps_failure_class[StateDomainFailure]
+FAILED tests/test_solvent_declarations.py::test_terminal_interface_callback_keeps_failure_class[NativeEvaluationFailure]
+14 failed, 331 passed, 2 warnings in 96.54s (0:01:36)

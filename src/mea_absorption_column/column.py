@@ -437,6 +437,11 @@ def _record(path: Path | None, name: str, value: Any) -> None:
 
 def _settings(config: ColumnConfig, output_dir: Path | None, resolved_inputs: dict[str, Any] | None = None) -> BenchmarkSettings:
     solver = dict(config.numerics.as_dict()["solver_settings"])
+    if config.preset == "seven_state_legacy" and config.model.thermo_model == "epcsaft_reactive_nine":
+        from .Thermodynamics.reactive_bundle import CORRELATION_SOURCES, DATASET
+
+        solver.update(CORRELATION_SOURCES)
+        solver.setdefault("reactive_dataset", str(DATASET))
     init_values = dict(config.initialization.as_dict()["values"])
     solver.update(init_values)
     if config.acceptance.boundary_residual_max is not None:

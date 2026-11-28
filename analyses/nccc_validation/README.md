@@ -16,6 +16,33 @@ This analysis owns the reviewer-response validation evidence for the MEA absorbe
 
 ## Commands
 
+### Fit-A density, enthalpy and water transfer
+
+`scripts/run_reactive_column.py` runs the nine-species model on the reported
+dry-gas mass and saturated inlet basis. Its default fit-A case uses Engine
+density and caloric properties in both phases, Engine water fugacities for
+transfer, and Engine water saturation at the inlet. Use `correlation` with
+`--liquid-density-source`, `--energy-model`, `--water-transfer-source` or
+`--inlet-humidity-source` to reproduce each earlier closure. The density
+selector controls both phases. The older `seven_state_legacy` preset preserves
+its original enthalpy state layout and property choices.
+
+Issue #99 evidence is under
+`results/runs/fitA_epcsaft_properties_20261128/`. The pooled metrics and
+refinement are in `comparison.json`, with per-case and per-tap values in
+`case_comparison.csv` and `temperature_taps.csv`. The record includes the
+solver commands, wall limits, logs, Engine identity, and raw profiles.
+`run_epcsaft_properties.py` dispatches the comparisons and refinement.
+`check_epcsaft_properties.py` runs the phase enthalpy and Jacobian checks.
+`measure_epcsaft_energy.py` reads one refinement directory and evaluates the
+net enthalpy over its dense collocation polynomial.
+`compare_absorption_enthalpy.py` reads a clean Amine-Thermodynamics checkout
+and compares the published calorimeter doses.
+`summarize_epcsaft_properties.py` collates the results.
+Use the retained execution commands with fresh output paths. The Ipopt
+solver was MA57. HSL, a collection of Fortran codes for large-scale scientific
+computation. https://www.hsl.rl.ac.uk/
+
 When running from a Git worktree with the shared Codex venv, set the source path first so subprocess benchmark workers import this worktree:
 
 ```bash

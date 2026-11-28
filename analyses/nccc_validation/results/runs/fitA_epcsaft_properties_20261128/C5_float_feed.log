@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/scripts/compare_absorption_enthalpy.py", line 135, in <module>
+    compare(args.amine, args.output)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/scripts/compare_absorption_enthalpy.py", line 69, in compare
+    record[label] = (gas_h(temperature, pressure)-(h1-h0)/(end-previous))/1000.
+                                                           ~~~^~~~~~~~~
+TypeError: unsupported operand type(s) for -: 'str' and 'float'

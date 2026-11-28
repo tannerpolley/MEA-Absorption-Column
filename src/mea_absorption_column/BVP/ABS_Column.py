@@ -1,14 +1,15 @@
 import numpy as np
 import time
 
-from ..config.Constants import MWs_l
+from ..config.Constants import MWs_l, MWs_v
 from ..Properties.Thermophysical_Properties import (density, surface_tension, heat_capacity,
-                                                      thermal_conductivity, henrys_law, enthalpy, vapor_pressure)
+                                                      thermal_conductivity, henrys_law, enthalpy, vapor_pressure,
+                                                      WATER_VAPORIZATION_ENTHALPY)
 from ..Properties.Transport_Properties import viscosity, diffusivity
 from ..Thermodynamics.Fugacity import fugacity
 from ..Thermodynamics.Chemical_Equilibrium import chemical_equilibrium_with_model, record_coupled_result
 from ..Thermodynamics.reactive_bundle import (MODEL as REACTIVE_MODEL, reactive_liquid,
-                                              neutral_vapor_state)
+                                              neutral_vapor_state, bulk_vapor_state)
 from ..Thermodynamics.thermo_models import neutral_vapor_composition
 from ..Transport.Hydraulic_Variables_Correlations import velocity, holdup, interfacial_area, flooding_fraction
 from ..Transport.Transfer_Coefficients import mass_transfer_coeff, heat_transfer_coeff
@@ -41,6 +42,11 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     reactive = str(thermo_model).lower() == REACTIVE_MODEL
     if reactive != (str(chemical_equilibrium_model).lower() == REACTIVE_MODEL):
         raise ValueError("Coupled nine-species chemistry and fugacity must be selected together")
+    engine_density = reactive and model_options.get('liquid_density_source') == 'epcsaft'
+    engine_energy = reactive and model_options.get('energy_model') == 'epcsaft'
+    engine_water = reactive and model_options.get('water_transfer_source') == 'epcsaft'
+    if engine_energy and thermal_state_mode != 'temperature':
+        raise ValueError("ePC-SAFT phase enthalpies require temperature states")
     gas_velocity_area_exponent = float(model_options.get('gas_velocity_area_exponent', 0.0) or 0.0)
     gas_velocity_area_reference_m_s = model_options.get('gas_velocity_area_reference_m_s')
     gas_velocity_area_bounds = model_options.get('gas_velocity_area_bounds', (0.1, 3.0))
@@ -85,6 +91,22 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     w_H2O = w[2]
     # endregion
 
+    # region -- Chemical Equilibrium
+    native_state = None
+    wet_vapor = None
+    if reactive:
+        liquid = model_options.get('reactive_liquid') or reactive_liquid()
+        started = time.perf_counter()
+        native_state = liquid.solve(Tl, P, Fl, state_input_derivatives=True, caloric=engine_energy,
+                                   water=engine_water, caloric_jacobian=engine_energy and jacobian is not None)
+        if engine_density or engine_energy or engine_water:
+            wet_vapor = bulk_vapor_state(Tv, float(P), tuple(Fv), liquid.dataset, engine_energy)
+        record_coupled_result(solver_diagnostics, native_state, time.perf_counter()-started)
+        x_true = native_state['composition']
+        Cl_true = x_true * native_state['density_mol_m3']
+        if solver_diagnostics is not None:
+            solver_diagnostics['reactive_evaluations'] = dict(liquid.stats)
+
     # region - Properties
 
     # region -- Thermophysical Properties
@@ -94,32 +116,45 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     # endregion
 
     # region --- Density
-    rho_mol_l, rho_mass_l, volume = density(Tl, x, P, phase='liquid')
-    rho_mol_v, rho_mass_v = density(Tv, y, P, phase='vapor')
+    if engine_density:
+        V_l = sum(native_state['amounts_mol']) / native_state['density_mol_m3']
+        rho_mol_l = 1. / V_l
+        rho_mass_l = rho_mol_l * sum(x[i]*MWs_l[i] for i in range(3))
+        volume = [V_l, np.nan, np.nan, np.nan]
+        rho_mol_v = wet_vapor['density']
+        rho_mass_v = rho_mol_v * sum(y[i]*MWs_v[i] for i in range(4))
+    else:
+        rho_mol_l, rho_mass_l, volume = density(Tl, x, P, phase='liquid')
+        rho_mol_v, rho_mass_v = density(Tv, y, P, phase='vapor')
     # endregion
 
     # region --- Surface Tension
     sigma = surface_tension(Tl, x, w_MEA, w_H2O)
     # endregion
 
-    # region --- Heat Capacity
-    Cpl, Cpl_T = heat_capacity(Tl, x, phase='liquid')
-    Cpv, Cpv_T = heat_capacity(Tv, y, phase='vapor')
-    # endregion
+    if engine_energy:
+        dHl_dT, Hl_CO2, Hl_H2O = native_state['enthalpy_partials']
+        vapor_capacity, Hv_CO2, Hv_H2O = wet_vapor['enthalpy_partials']
+        Cpv_T = vapor_capacity/Fv_T
+        Hl_T, Hlf = native_state['enthalpy'], native_state['enthalpy']*Fl_T
+        Hvf = wet_vapor['enthalpy']
+        Hv_T = Hvf/Fv_T
+        Cpl, Cpv = [np.nan]*3, [np.nan]*4
+        Hl_MEA = Hv_N2 = Hv_O2 = np.nan
+    else:
+        Cpl, Cpl_T = heat_capacity(Tl, x, phase='liquid')
+        Cpv, Cpv_T = heat_capacity(Tv, y, phase='vapor')
+        Hl, Hl_T = enthalpy(Tl, x, phase='liquid', water_vaporization_enthalpy=model_options.get(
+            'water_vaporization_enthalpy', WATER_VAPORIZATION_ENTHALPY))
+        Hl_CO2, Hl_MEA, Hl_H2O = Hl
+        Hv, Hv_T = enthalpy(Tv, y, phase='vapor')
+        Hv_CO2, Hv_H2O, Hv_N2, Hv_O2 = Hv
+        if thermal_state_mode == 'temperature':
+            Hlf = Hl_T * Fl_T
+            Hvf = Hv_T * Fv_T
+        dHl_dT = f_dHl_dT(Tl, x)
 
-    # region --- Enthalpy
-    Hl, Hl_T = enthalpy(Tl, x, phase='liquid') # J/mol
-    Hl_CO2, Hl_MEA, Hl_H2O = Hl
-    Hv, Hv_T = enthalpy(Tv, y, phase='vapor')  # J/mol
-    Hv_CO2, Hv_H2O, Hv_N2, Hv_O2 = Hv
-    if thermal_state_mode == 'temperature':
-        Hlf = Hl_T * Fl_T
-        Hvf = Hv_T * Fv_T
-    # endregion
-
-    #region --- Vapor Pressure
-
-    P_sat_H2O = vapor_pressure(Tl)
+    P_sat_H2O = np.nan if engine_water else vapor_pressure(Tl)
 
     # endregion
 
@@ -147,18 +182,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # region - Thermodynamics
 
-    # region -- Chemical Equilibrium
-    native_state = None
-    if reactive:
-        liquid = model_options.get('reactive_liquid') or reactive_liquid()
-        started = time.perf_counter()
-        native_state = liquid.solve(Tl, P, Fl, state_input_derivatives=True)
-        record_coupled_result(solver_diagnostics, native_state, time.perf_counter()-started)
-        x_true = native_state['composition']
-        Cl_true = x_true * native_state['density_mol_m3']
-        if solver_diagnostics is not None:
-            solver_diagnostics['reactive_evaluations'] = dict(liquid.stats)
-    else:
+    if not reactive:
         Cl_true, x_true = chemical_equilibrium_with_model(
             Fl.copy(), Tl, model=chemical_equilibrium_model, P=P, diagnostics=solver_diagnostics)
 
@@ -178,7 +202,10 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
             float(Tv), float(P), tuple(vapor_x), liquid.dataset, liquid.kij_scale)
         fl_CO2 = float(native_state['fugacities_pa'][0])
         fv_CO2 = vapor_fugacity * y[0] / vapor_x[0]
-        fl_H2O, fv_H2O = float(x_true[2])*P_sat_H2O, y[1]*P
+        if engine_water:
+            fl_H2O, fv_H2O = native_state['fugacities_pa'][2], wet_vapor['fugacities'][1]
+        else:
+            fl_H2O, fv_H2O = float(x_true[2])*P_sat_H2O, y[1]*P
         # Frozen bulk activity coefficient: f_i = H_bulk*C_i, not df/dC.
         # Use free molecular CO2, not total absorbed carbon or the E-only divisor.
         H_CO2_mix = fl_CO2 / Cl_true[0]
@@ -307,7 +334,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
 
     # region --- Enthalpy Flux
 
-    Hv_flux, Hl_flux, qv, ql, Hv_trn, Hl_trn, Hv_CO2_trn, Hv_H2O_trn, Hl_CO2_trn, Hl_H2O_trn = enthalpy_flux(Nl_CO2, Hl_CO2, Nl_H2O, Hl_H2O, Nv_CO2, Hv_CO2, Nv_H2O, Hv_H2O, UT * heat_transfer_factor, a_eA, Tv, Tl)
+    Hv_flux, Hl_flux, qv, ql, Hv_trn, Hl_trn, Hv_CO2_trn, Hv_H2O_trn, Hl_CO2_trn, Hl_H2O_trn = enthalpy_flux(Nl_CO2, Hv_CO2 if engine_energy else Hl_CO2,
+        Nl_H2O, Hv_H2O if engine_energy else Hl_H2O, Nv_CO2, Hv_CO2, Nv_H2O, Hv_H2O, UT * heat_transfer_factor, a_eA, Tv, Tl)
 
     # endregion
 
@@ -331,7 +359,6 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
     dHvf_dz = Hv_flux
 
 
-    dHl_dT = f_dHl_dT(Tl, x)
     dHv_dT = Cpv_T
 
     # Differentiate sum(F_i*h_i(T)), including each actual flow derivative.
@@ -366,7 +393,7 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
             # eq_scales = np.array([1, 1, 50, 50, 200000, 200000, P])
             diffeqs_scaled = diffeqs / scales * H
         if jacobian is not None:
-            return jacobian(Y_scaled, diffeqs_scaled, native_state, vapor_fugacity, vapor_derivatives)
+            return jacobian(Y_scaled, diffeqs_scaled, native_state, vapor_fugacity, vapor_derivatives, wet_vapor)
         return diffeqs_scaled
 
     elif run_type == 'saving':
@@ -394,7 +421,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
         Cpl_CO2, Cpl_MEA, Cpl_H2O = Cpl
         Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2 = Cpv
         V_l, V_CO2, V_MEA, V_H2O = volume
-        Hl_CO2 = Hl_CO2 + 1e-5
+        if not engine_energy:
+            Hl_CO2 = Hl_CO2 + 1e-5
         Clp, Cvp, eps, a_p, A, Lp, d_h = const
         muv_CO2, muv_H2O, muv_N2, muv_O2 = muv
 
@@ -422,6 +450,8 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
             'Prop_v': [rho_mol_v, rho_mass_v, muv_CO2, muv_H2O, muv_N2, muv_O2, muv_mix, Dv_CO2, Dv_H2O,
                        Cpv_CO2, Cpv_H2O, Cpv_N2, Cpv_O2, kt_vap],
         }
+        if wet_vapor is not None:
+            output_dict['vapor_fugacity'] = list(wet_vapor['fugacities'])
         if reactive:
             for key, values in [('Fl', Fl_true), ('Cl', Cl_true), ('x', x_true)]:
                 output_dict[key].extend(values[6:])
@@ -466,6 +496,16 @@ def abs_column(zi, Y_scaled, parameters, run_type='simulating', column_names=Fal
                 'Lp',
                 'd_h',
             ]
+            if engine_density or engine_energy:
+                keys_dict['Prop_l'] = ['rho_mol_l', 'rho_mass_l', 'V_l', 'V_CO2', 'V_MEA', 'V_H2O',
+                                      'mul_mix', 'sigma', 'Dl_CO2', 'Dl_MEA', 'Dl_ion',
+                                      'Cpl_CO2', 'Cpl_MEA', 'Cpl_H2O']
+                keys_dict['Prop_v'] = ['rho_mol_v', 'rho_mass_v', 'muv_CO2', 'muv_H2O', 'muv_N2', 'muv_O2',
+                                      'muv_mix', 'Dv_CO2', 'Dv_H2O', 'Cpv_CO2', 'Cpv_H2O', 'Cpv_N2', 'Cpv_O2', 'kt_vap']
+            if engine_water:
+                keys_dict['H2O'] = ['Nl_H2O', 'Nv_H2O', 'kv_H2O', 'a_eA', 'DF_H2O', 'fv_H2O', 'fl_H2O', 'P_sat_H2O']
+            if wet_vapor is not None:
+                keys_dict['vapor_fugacity'] = ['f_CO2_Pa', 'f_H2O_Pa', 'f_N2_Pa', 'f_O2_Pa']
             if reactive:
                 species = ['CO2', 'MEA', 'H2O', 'MEAH', 'MEACOO', 'HCO3', 'CO3', 'H3O', 'OH']
                 for key in ['Fl', 'Cl', 'x']:
@@ -495,7 +535,7 @@ def _temperatures_in_bounds(Tl, Tv, bounds):
 def temperature_gradients(height, liquid_energy, vapor_energy, hl_co2, hl_water,
                           hv_co2, hv_water, dl_co2, dl_water, dv_co2, dv_water,
                           liquid_flow, vapor_flow, liquid_dhdt, vapor_dhdt):
-    """Full empirical-enthalpy chain rule in the normalized axial coordinate."""
+    """Full phase-enthalpy chain rule in the normalized axial coordinate."""
     return (height*(liquid_energy-hl_co2*dl_co2-hl_water*dl_water)/(liquid_flow*liquid_dhdt),
             height*(vapor_energy-hv_co2*dv_co2-hv_water*dv_water)/(vapor_flow*vapor_dhdt))
 
