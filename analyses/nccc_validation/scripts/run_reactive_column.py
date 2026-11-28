@@ -52,14 +52,17 @@ def main():
     parameter_path.write_text(json.dumps(parameters, indent=2)+'\n')
     reaction_path = args.output/'evaluated_reactions.json'
     reaction_path.write_text(json.dumps(reaction_system(settings['reactive_dataset'], settings.get('reactive_reaction_scale')), indent=2)+'\n')
-    paths = [inputs, Path(__file__), Path('uv.lock'), Path('integration/epcsaft_contract.json'), parameter_path, reaction_path]
+    paths = [inputs, Path('src/mea_absorption_column/data/fitted_coefficients.csv'), Path(__file__), Path('uv.lock'),
+             Path('integration/epcsaft_contract.json'), parameter_path, reaction_path]
     paths += sorted(Path('src/mea_absorption_column').rglob('*.py'))
     paths += dataset_input_paths(args.dataset)
     if args.initial_profile:
         paths.append(args.initial_profile)
     identity = dict(command=sys.argv, settings=settings, pid=os.getpid(),
                     evaluated_parameter_fingerprint=hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest(),
-                    engine_identity=json.loads(Path('integration/epcsaft_contract.json').read_text())['final_identity'],
+                    # Wheel only: the contract's reactive_inputs_sha256 names the Engine qualification inputs, not this run's dataset.
+                    engine_identity={k:v for k,v in json.loads(Path('integration/epcsaft_contract.json').read_text())['final_identity'].items()
+                                     if k != 'reactive_inputs_sha256'},
                     input_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
     (args.output/'identity.json').write_text(json.dumps(identity, indent=2)+'\n')
     started = time.perf_counter()
