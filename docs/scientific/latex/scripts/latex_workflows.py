@@ -42,7 +42,7 @@ FIGURE_COPIES = (
 DEFAULT_MIRROR = Path(
     "/home/tnnrpolley21/Workspaces/Engineering/Publications/MEA-Absorption-Column-LaTeX"
 )
-DEFAULT_BIBLIOGRAPHY_SOURCE = Path.home() / "Documents" / "Papers" / "references.bib"
+DEFAULT_BIBLIOGRAPHY_SOURCE = Path.home() / "Zotero" / "exports" / "references.bib"
 PROJECTION_EXCLUDES = frozenset({"scripts", "builds", "mdea-companion", "QA_REPORT.md", "main.log"})
 BUILD_SUFFIXES = {
     ".abs",

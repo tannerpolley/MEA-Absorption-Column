@@ -58,7 +58,7 @@ CSE execution mode: direct.
 ## Standing Decisions
 
 - The submitted revision stays unchanged on `codex/fallback-manuscript`. Do not edit its manuscript prose here or rerun its results for consolidation (2026-09-08).
-- `$HOME/Documents/Papers/references.bib` is owned by Zotero/Better BibTeX. Never hand-edit it or its snapshot `docs/scientific/latex/references.bib` (2026-08-12).
+- `$HOME/Zotero/exports/references.bib` (the Better BibTeX auto-export; `$HOME/Documents/Papers/references.bib` stopped updating in September 2026) is owned by Zotero/Better BibTeX. Never hand-edit it or its snapshot `docs/scientific/latex/references.bib` (2026-08-12).
 - On this machine `EPCSAFT_HSL_LIBRARY` makes Engine Ipopt use MA57 (results report `linear_solver`). Never copy or bundle HSL. A paper or report with MA57 results must acknowledge "HSL, a collection of Fortran codes for large-scale scientific computation. https://www.hsl.rl.ac.uk/" (Engine #605, 2026-10-19).
 - Twelve-state hydraulic density stays the ePC-SAFT solved-state density (`density_source` default `solved_state`), so the column stays one predictive model. With the Chapter 3 set (fit A) its loaded density misses Amundsen 2009 by 0.51 % on the 53 rows outside the fit objective (correlation 3.49 %) and changes 3C capture by 0.0001 points against the correlation; the earlier parameter set read about 11 % high. Evidence: `analyses/liquid_density/results/runs/fit_a/` (#83 method, 2026-11-28).
 - Manuscript prose: keep `local`, `history`, `historical` and `histories` out of it, and keep software-build chronology outside the article (2026-09-04). For LaTeX, apply `cse:latex` and run the build loop until the edit adds no warnings (2026-05-06).
