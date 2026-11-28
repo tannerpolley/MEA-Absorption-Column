@@ -5,10 +5,12 @@ from pathlib import Path
 import numpy as np
 T = Path("analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state")
 ARTICLE = json.loads(Path("analyses/reactive_film_evidence/results/runs/finite_rate_film_cp7_2026-11-24/summary.json").read_text())
-FILMS = {"finite_rate": "finite_rate_n2o", "manifold": "manifold", "enhancement": "enhancement"}
+FILMS = {"finite_rate": "finite_rate_n2o", "finite_rate_epcsaft_henry": "finite_rate_n2o", "manifold": "manifold", "enhancement": "enhancement"}
 NODES = (17, 33, 65, 129)
 def attempt(film, case, nodes):
-    if film == "finite_rate" and case in ("6C", "7C"):  # fresh [0, 1] bracket start failed; see bracket_probe/probe.py
+    if film == "finite_rate_epcsaft_henry":  # henry_basis epcsaft_free_co2; ladder_epcsaft_henry*.py chose the 17-node bracket per case
+        names = [f"epcsaft_henry/{case}_n{nodes}" + s for s in ("", "_fresh", "_fresh_b0.5", "_fresh_b0.9")]
+    elif film == "finite_rate" and case in ("6C", "7C"):  # fresh [0, 1] bracket start failed; see bracket_probe/probe.py
         names = [f"bracket_probe/finite_rate_{case}_n{nodes}_b0.5"]
     else:
         names = [f"{film}_{case}_n{nodes}", f"{film}_{case}_n{nodes}_fresh"]
@@ -29,7 +31,7 @@ for film, key in FILMS.items():
         runs = [attempt(film, ref["case"], n) for n in NODES]
         cap = [r and r["capture_pct"] for r in runs]
         row = dict(case=ref["case"], measured_capture_pct=ref["measured_capture_pct"], capture_pct=cap,
-                   signed_error_pp=[c and c - ref["measured_capture_pct"] for c in cap], earlier_set_capture_pct=ref["capture_pct"], runs=runs)
+                   signed_error_pp=[c and c - ref["measured_capture_pct"] for c in cap], earlier_set_capture_pct=None if film == "finite_rate_epcsaft_henry" else ref["capture_pct"], runs=runs)
         if all(cap):
             d = np.diff(cap)
             row["signed_mesh_changes_pp"] = d.tolist()
@@ -45,4 +47,4 @@ for film, key in FILMS.items():
 for film, rows in out["films"].items():
     print(film, "MAE 2C-7C", out["mean_absolute_error_2C_to_7C_pp"][film], "1C-7C", out["mean_absolute_error_1C_to_7C_pp"][film])
     for r in rows:
-        print("  ", r["case"], r["measured_capture_pct"], ["%.2f" % c if c else "-" for c in r["capture_pct"]], "earlier", ["%.2f" % c if c else "-" for c in r["earlier_set_capture_pct"]], "order", r.get("observed_order"))
+        print("  ", r["case"], r["measured_capture_pct"], ["%.2f" % c if c else "-" for c in r["capture_pct"]], "earlier", ["%.2f" % c if c else "-" for c in r["earlier_set_capture_pct"] or []], "order", r.get("observed_order"))

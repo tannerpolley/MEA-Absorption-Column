@@ -507,6 +507,470 @@
     "conditional_richardson_capture_pct": 67.3091856803045
    }
   ],
+  "finite_rate_epcsaft_henry": [
+   {
+    "case": "1C",
+    "measured_capture_pct": 97.1,
+    "capture_pct": [
+     98.6960125325203,
+     98.6141815581203,
+     98.50786162710996,
+     98.43935582888595
+    ],
+    "signed_error_pp": [
+     1.5960125325203052,
+     1.514181558120299,
+     1.4078616271099662,
+     1.3393558288859566
+    ],
+    "earlier_set_capture_pct": null,
+    "runs": [
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/1C_n17_fresh/attempt.json",
+      "nodes": 17,
+      "iterations": 23,
+      "seconds": 248.37094623298617,
+      "scaled_residual_inf": 6.501357497264207e-09,
+      "inlet_vapor_co2_mol_s": 1.367627376125134,
+      "outlet_vapor_co2_mol_s": 0.017833689586493107,
+      "capture_pct": 98.6960125325203
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/1C_n33/attempt.json",
+      "nodes": 33,
+      "iterations": 4,
+      "seconds": 102.66433226998197,
+      "scaled_residual_inf": 5.197778915427263e-10,
+      "inlet_vapor_co2_mol_s": 1.3676273760710997,
+      "outlet_vapor_co2_mol_s": 0.018952832393788782,
+      "capture_pct": 98.6141815581203
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/1C_n65/attempt.json",
+      "nodes": 65,
+      "iterations": 4,
+      "seconds": 201.70929197699297,
+      "scaled_residual_inf": 1.0680899667369636e-10,
+      "inlet_vapor_co2_mol_s": 1.3676273760710997,
+      "outlet_vapor_co2_mol_s": 0.020406892876505992,
+      "capture_pct": 98.50786162710996
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/1C_n129/attempt.json",
+      "nodes": 129,
+      "iterations": 3,
+      "seconds": 304.30248378496617,
+      "scaled_residual_inf": 3.92650319825405e-08,
+      "inlet_vapor_co2_mol_s": 1.3676273760710997,
+      "outlet_vapor_co2_mol_s": 0.021343796927213634,
+      "capture_pct": 98.43935582888595
+     }
+    ],
+    "signed_mesh_changes_pp": [
+     -0.08183097440000608,
+     -0.10631993101033288,
+     -0.0685057982240096
+    ],
+    "observed_order": 0.6341140677666411,
+    "conditional_richardson_capture_pct": 98.31524761736547
+   },
+   {
+    "case": "2C",
+    "measured_capture_pct": 92.3,
+    "capture_pct": [
+     94.67150161282494,
+     94.74297463039034,
+     94.75222687745072,
+     94.7526727164396
+    ],
+    "signed_error_pp": [
+     2.371501612824943,
+     2.4429746303903386,
+     2.4522268774507268,
+     2.452672716439608
+    ],
+    "earlier_set_capture_pct": null,
+    "runs": [
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/2C_n17_fresh/attempt.json",
+      "nodes": 17,
+      "iterations": 10,
+      "seconds": 101.13837728998624,
+      "scaled_residual_inf": 4.44272973124765e-11,
+      "inlet_vapor_co2_mol_s": 1.7136267339052234,
+      "outlet_vapor_co2_mol_s": 0.09131057287834052,
+      "capture_pct": 94.67150161282494
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/2C_n33/attempt.json",
+      "nodes": 33,
+      "iterations": 4,
+      "seconds": 99.44387155899312,
+      "scaled_residual_inf": 2.496133260640671e-10,
+      "inlet_vapor_co2_mol_s": 1.7136267339052234,
+      "outlet_vapor_co2_mol_s": 0.09008579214181123,
+      "capture_pct": 94.74297463039034
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/2C_n65/attempt.json",
+      "nodes": 65,
+      "iterations": 4,
+      "seconds": 201.44840311497683,
+      "scaled_residual_inf": 9.444018058944664e-11,
+      "inlet_vapor_co2_mol_s": 1.7136267339052234,
+      "outlet_vapor_co2_mol_s": 0.08992724316269732,
+      "capture_pct": 94.75222687745072
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/2C_n129/attempt.json",
+      "nodes": 129,
+      "iterations": 3,
+      "seconds": 315.95218463998754,
+      "scaled_residual_inf": 2.9877226376149024e-08,
+      "inlet_vapor_co2_mol_s": 1.7136267339052234,
+      "outlet_vapor_co2_mol_s": 0.08991960314659353,
+      "capture_pct": 94.7526727164396
+     }
+    ],
+    "signed_mesh_changes_pp": [
+     0.07147301756539548,
+     0.009252247060388186,
+     0.0004458389888810643
+    ],
+    "observed_order": 4.375209098650675,
+    "conditional_richardson_capture_pct": 94.75269528777656
+   },
+   {
+    "case": "3C",
+    "measured_capture_pct": 89.5,
+    "capture_pct": [
+     87.8383459969587,
+     87.26810912733193,
+     87.02467254154172,
+     86.91943649988958
+    ],
+    "signed_error_pp": [
+     -1.6616540030413063,
+     -2.2318908726680746,
+     -2.475327458458281,
+     -2.580563500110415
+    ],
+    "earlier_set_capture_pct": null,
+    "runs": [
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/3C_n17_fresh_b0.9/attempt.json",
+      "nodes": 17,
+      "iterations": 7,
+      "seconds": 77.02899335301481,
+      "scaled_residual_inf": 3.5574768045205563e-12,
+      "inlet_vapor_co2_mol_s": 1.6540435157308098,
+      "outlet_vapor_co2_mol_s": 0.20115904944292134,
+      "capture_pct": 87.8383459969587
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/3C_n33/attempt.json",
+      "nodes": 33,
+      "iterations": 4,
+      "seconds": 101.209045149968,
+      "scaled_residual_inf": 3.5845198166343915e-09,
+      "inlet_vapor_co2_mol_s": 1.6540435157308098,
+      "outlet_vapor_co2_mol_s": 0.2105910154092891,
+      "capture_pct": 87.26810912733193
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/3C_n65/attempt.json",
+      "nodes": 65,
+      "iterations": 4,
+      "seconds": 202.2299134269706,
+      "scaled_residual_inf": 8.623305869076124e-11,
+      "inlet_vapor_co2_mol_s": 1.6540435157308098,
+      "outlet_vapor_co2_mol_s": 0.21461756247146851,
+      "capture_pct": 87.02467254154172
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/3C_n129/attempt.json",
+      "nodes": 129,
+      "iterations": 4,
+      "seconds": 381.3025220379932,
+      "scaled_residual_inf": 2.1188785028326629e-10,
+      "inlet_vapor_co2_mol_s": 1.6540435157308098,
+      "outlet_vapor_co2_mol_s": 0.21635821239462738,
+      "capture_pct": 86.91943649988958
+     }
+    ],
+    "signed_mesh_changes_pp": [
+     -0.5702368696267683,
+     -0.24343658579020655,
+     -0.10523604165213385
+    ],
+    "observed_order": 1.2099171161258748,
+    "conditional_richardson_capture_pct": 86.8393020508418
+   },
+   {
+    "case": "4C",
+    "measured_capture_pct": 88.9,
+    "capture_pct": [
+     88.8832156225255,
+     88.12495455695247,
+     87.7824629802307,
+     87.62668270496381
+    ],
+    "signed_error_pp": [
+     -0.016784377474508005,
+     -0.7750454430475315,
+     -1.1175370197693013,
+     -1.2733172950361933
+    ],
+    "earlier_set_capture_pct": null,
+    "runs": [
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/4C_n17_fresh_b0.9/attempt.json",
+      "nodes": 17,
+      "iterations": 7,
+      "seconds": 77.58544720901409,
+      "scaled_residual_inf": 6.6339235412450225e-09,
+      "inlet_vapor_co2_mol_s": 1.4240112258934405,
+      "outlet_vapor_co2_mol_s": 0.15830425749360505,
+      "capture_pct": 88.8832156225255
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/4C_n33/attempt.json",
+      "nodes": 33,
+      "iterations": 4,
+      "seconds": 102.35606667294633,
+      "scaled_residual_inf": 1.722671310141378e-08,
+      "inlet_vapor_co2_mol_s": 1.4240112258934405,
+      "outlet_vapor_co2_mol_s": 0.1691019801889443,
+      "capture_pct": 88.12495455695247
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/4C_n65/attempt.json",
+      "nodes": 65,
+      "iterations": 4,
+      "seconds": 201.28768931003287,
+      "scaled_residual_inf": 4.966302866530232e-11,
+      "inlet_vapor_co2_mol_s": 1.4240112258934405,
+      "outlet_vapor_co2_mol_s": 0.17397909868920175,
+      "capture_pct": 87.7824629802307
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/4C_n129/attempt.json",
+      "nodes": 129,
+      "iterations": 4,
+      "seconds": 382.0812428740319,
+      "scaled_residual_inf": 1.1507301032624554e-10,
+      "inlet_vapor_co2_mol_s": 1.4240112258934405,
+      "outlet_vapor_co2_mol_s": 0.17619742729673,
+      "capture_pct": 87.62668270496381
+     }
+    ],
+    "signed_mesh_changes_pp": [
+     -0.7582610655730235,
+     -0.3424915767217698,
+     -0.15578027526689198
+    ],
+    "observed_order": 1.1365559342487817,
+    "conditional_richardson_capture_pct": 87.49670935052231
+   },
+   {
+    "case": "5C",
+    "measured_capture_pct": 86.4,
+    "capture_pct": [
+     92.51991698107379,
+     91.72477633709804,
+     91.24840367812487,
+     90.99984016818364
+    ],
+    "signed_error_pp": [
+     6.119916981073786,
+     5.324776337098029,
+     4.848403678124868,
+     4.599840168183633
+    ],
+    "earlier_set_capture_pct": null,
+    "runs": [
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/5C_n17_fresh_b0.9/attempt.json",
+      "nodes": 17,
+      "iterations": 7,
+      "seconds": 76.72786928497953,
+      "scaled_residual_inf": 4.341333879589909e-12,
+      "inlet_vapor_co2_mol_s": 1.0246058469826709,
+      "outlet_vapor_co2_mol_s": 0.07664136797107586,
+      "capture_pct": 92.51991698107379
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/5C_n33/attempt.json",
+      "nodes": 33,
+      "iterations": 4,
+      "seconds": 102.50815521302866,
+      "scaled_residual_inf": 1.1176153102539572e-09,
+      "inlet_vapor_co2_mol_s": 1.0246058469826709,
+      "outlet_vapor_co2_mol_s": 0.08478842550098709,
+      "capture_pct": 91.72477633709804
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/5C_n65/attempt.json",
+      "nodes": 65,
+      "iterations": 4,
+      "seconds": 200.8864804370096,
+      "scaled_residual_inf": 6.43461380274655e-11,
+      "inlet_vapor_co2_mol_s": 1.0246058469826709,
+      "outlet_vapor_co2_mol_s": 0.08966936761825288,
+      "capture_pct": 91.24840367812487
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/5C_n129/attempt.json",
+      "nodes": 129,
+      "iterations": 3,
+      "seconds": 310.8770138719701,
+      "scaled_residual_inf": 8.157430833272704e-08,
+      "inlet_vapor_co2_mol_s": 1.0246058469826709,
+      "outlet_vapor_co2_mol_s": 0.09221616387457608,
+      "capture_pct": 90.99984016818364
+     }
+    ],
+    "signed_mesh_changes_pp": [
+     -0.7951406439757562,
+     -0.47637265897316183,
+     -0.24856350994123488
+    ],
+    "observed_order": 0.9384760943798206,
+    "conditional_richardson_capture_pct": 90.72863148873921
+   },
+   {
+    "case": "6C",
+    "measured_capture_pct": 60.2,
+    "capture_pct": [
+     68.94548517383127,
+     68.89003519226013,
+     68.951440538303,
+     69.00736568428336
+    ],
+    "signed_error_pp": [
+     8.74548517383127,
+     8.690035192260126,
+     8.751440538303001,
+     8.807365684283354
+    ],
+    "earlier_set_capture_pct": null,
+    "runs": [
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/6C_n17_fresh_b0.5/attempt.json",
+      "nodes": 17,
+      "iterations": 6,
+      "seconds": 65.08326118200785,
+      "scaled_residual_inf": 5.417548701584921e-12,
+      "inlet_vapor_co2_mol_s": 1.849836243958282,
+      "outlet_vapor_co2_mol_s": 0.5744576706398674,
+      "capture_pct": 68.94548517383127
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/6C_n33/attempt.json",
+      "nodes": 33,
+      "iterations": 4,
+      "seconds": 97.20737833401654,
+      "scaled_residual_inf": 2.8420026042648588e-11,
+      "inlet_vapor_co2_mol_s": 1.849836243958282,
+      "outlet_vapor_co2_mol_s": 0.5754834044962386,
+      "capture_pct": 68.89003519226013
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/6C_n65/attempt.json",
+      "nodes": 65,
+      "iterations": 4,
+      "seconds": 202.2466231980361,
+      "scaled_residual_inf": 5.428534306936183e-11,
+      "inlet_vapor_co2_mol_s": 1.849836243958282,
+      "outlet_vapor_co2_mol_s": 0.5743475061494095,
+      "capture_pct": 68.951440538303
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/6C_n129/attempt.json",
+      "nodes": 129,
+      "iterations": 3,
+      "seconds": 317.4742191049736,
+      "scaled_residual_inf": 7.510243123242978e-09,
+      "inlet_vapor_co2_mol_s": 1.849836243958282,
+      "outlet_vapor_co2_mol_s": 0.5733129825295782,
+      "capture_pct": 69.00736568428336
+     }
+    ],
+    "signed_mesh_changes_pp": [
+     -0.05544998157114378,
+     0.06140534604287495,
+     0.055925145980353363
+    ],
+    "observed_order": 0.13486714716021786,
+    "conditional_richardson_capture_pct": 69.5780787818422
+   },
+   {
+    "case": "7C",
+    "measured_capture_pct": 76.4,
+    "capture_pct": [
+     84.47618790260549,
+     78.92151598865792,
+     74.80030492678686,
+     72.61392942336539
+    ],
+    "signed_error_pp": [
+     8.076187902605483,
+     2.52151598865791,
+     -1.599695073213141,
+     -3.7860705766346143
+    ],
+    "earlier_set_capture_pct": null,
+    "runs": [
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/7C_n17_fresh_b0.5/attempt.json",
+      "nodes": 17,
+      "iterations": 5,
+      "seconds": 55.72767165803816,
+      "scaled_residual_inf": 4.945899985314195e-08,
+      "inlet_vapor_co2_mol_s": 0.8796171503485564,
+      "outlet_vapor_co2_mol_s": 0.13655011359656602,
+      "capture_pct": 84.47618790260549
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/7C_n33/attempt.json",
+      "nodes": 33,
+      "iterations": 4,
+      "seconds": 95.15101764799329,
+      "scaled_residual_inf": 2.5003659270895064e-08,
+      "inlet_vapor_co2_mol_s": 0.8796171503485564,
+      "outlet_vapor_co2_mol_s": 0.18540996039724325,
+      "capture_pct": 78.92151598865792
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/7C_n65/attempt.json",
+      "nodes": 65,
+      "iterations": 4,
+      "seconds": 203.17776414297987,
+      "scaled_residual_inf": 9.417176994030864e-08,
+      "inlet_vapor_co2_mol_s": 0.8796171503485564,
+      "outlet_vapor_co2_mol_s": 0.22166083969952288,
+      "capture_pct": 74.80030492678686
+     },
+     {
+      "path": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/epcsaft_henry/7C_n129/attempt.json",
+      "nodes": 129,
+      "iterations": 4,
+      "seconds": 398.7599815680296,
+      "scaled_residual_inf": 9.953680812316471e-09,
+      "inlet_vapor_co2_mol_s": 0.8796171503485564,
+      "outlet_vapor_co2_mol_s": 0.24089257359863775,
+      "capture_pct": 72.61392942336539
+     }
+    ],
+    "signed_mesh_changes_pp": [
+     -5.554671913947573,
+     -4.121211061871051,
+     -2.1863755034214734
+    ],
+    "observed_order": 0.9145271502257977,
+    "conditional_richardson_capture_pct": 70.14331231015088
+   }
+  ],
   "manifold": [
    {
     "case": "1C",
@@ -1513,6 +1977,12 @@
    3.8261221968061037,
    4.192038452757967
   ],
+  "finite_rate_epcsaft_henry": [
+   4.498588341808549,
+   3.6643730773536682,
+   3.5407717742198863,
+   3.9166383234479696
+  ],
   "manifold": [
    7.818606408200584,
    6.056111997316883,
@@ -1532,6 +2002,12 @@
    2.702143191028255,
    3.2898514728490227,
    3.610389180408792
+  ],
+  "finite_rate_epcsaft_henry": [
+   4.083934654767371,
+   3.35720286032033,
+   3.236070324632755,
+   3.5484551099391104
   ],
   "manifold": [
    7.055471576782332,
