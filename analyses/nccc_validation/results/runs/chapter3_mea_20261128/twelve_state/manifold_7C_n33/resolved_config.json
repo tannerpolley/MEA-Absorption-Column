@@ -1,0 +1,86 @@
+{
+  "acceptance": {
+    "boundary_residual_max": null,
+    "capture_error_max_pct": null,
+    "numerical": "conserved_original_equations",
+    "physical": "not_evaluated"
+  },
+  "case": {
+    "data_type": "mole",
+    "gas_flow_basis": "reported_total_wet",
+    "id": "corrected published 2017 7C",
+    "physical_input_file": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_7c.json",
+    "source": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_7c.json",
+    "vapor_composition_mode": "legacy_ratio"
+  },
+  "dependencies": {
+    "dataset": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+    "input_hashes": {
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/inputs/joint_fit_f2/case_7c.json": "f50f840a696f40993bbd9c6d16fe523a8f10357fb4ffa179edffb7a48872c4ac",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/thermodynamics.json": "d5d42e711e345db0b36da893e0129ba003f4319c7b06236298168d69452901be",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/transport_7c.json": "f68671363f239866f89c04b9395d38c810cf855ca517c77d8cccca71cbcd0926",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Properties/Thermophysical_Properties.py": "861ab559654d572fe0fad7f628f6dfaedeec624cff1559395e08023a1c04c8f3",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Properties/Transport_Properties.py": "8986aae6db5e9298b14e662cb3fca19c2476b1876b3d93ae5b3a5495685426f5",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Hydraulic_Variables_Correlations.py": "17c650879b88b98b53250d1fc392bb155db5c2382e7e9d6806d3dc57338a16fa",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Pressure_Drop.py": "3c5e82117033a744032f7d7d64155e9175143134195fd926432f0e0e4abaa707",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/Transport/Transfer_Coefficients.py": "e0fe29fe8c98d3c4ad8013865478e3c001bf7428e35a1733d8ef2552d10f43aa",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/engine-reactions.json": "74f6ce36760cef4f36dbd9ef385f025d9fca9ea469079ba42d7227cc910d7362",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json": "d371e5102e6368a51e7db0def4010ac67fa26875b31ee358077ebb904de41efb",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/parameters.json": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json": "a5ff7a3a5865bfb6688e8e160f854886b9a740408281a3335388ad6c3299fd55"
+    },
+    "mobility_law": "harmonic_mean_onsager_v1",
+    "references": [
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_neutral_vapor/parameters.json",
+      "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json"
+    ],
+    "thermal_reference": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/ideal-gas-thermochemistry.json",
+    "thermodynamics_input": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/thermodynamics.json",
+    "transport_input": "analyses/nccc_validation/results/runs/chapter3_mea_20261128/inputs/transport_7c.json"
+  },
+  "engine": {
+    "commit": "10b6a052768833e38cb6ee24ebe2098fa1dd5834",
+    "python": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/.venv/bin/python3",
+    "required": true,
+    "sha256": "dafe828427487b125a254012128ce63d0ad29452304bea52ee5d9c451f1e9875",
+    "wheel": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/build/engine-wheels/main-10b6a052768833e38cb6ee24ebe2098fa1dd5834/epcsaft-0.1.2-cp313-cp313-manylinux_2_39_x86_64.whl"
+  },
+  "execution": {
+    "cache_policy": "legacy_explicit",
+    "output_dir": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/manifold_7C_n33",
+    "process_isolation": false,
+    "resume": false,
+    "retry": false,
+    "threads": 1,
+    "wall_limit_s": 3600.0
+  },
+  "initialization": {
+    "policy": "case_declared_native_inputs",
+    "values": {
+      "retained_profile": "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/analyses/nccc_validation/results/runs/chapter3_mea_20261128/twelve_state/manifold_7C_n17_fresh/attempt.json"
+    }
+  },
+  "model": {
+    "coordinate": "physical_height",
+    "energy_model": "native_total_enthalpy",
+    "film_model": "equilibrium_manifold",
+    "formulation": "twelve_state_conserved",
+    "layout": "twelve_conserved",
+    "pressure_model": "hydraulic_pressure_drop",
+    "thermo_model": "reactive_epcsaft"
+  },
+  "numerics": {
+    "method": "upwind",
+    "solver_settings": {
+      "end_clustering": 1.0,
+      "liquid_density_source": "solved_state",
+      "max_iterations": 60,
+      "nodes": 33,
+      "quadrature_points": 9,
+      "tolerance": 1e-07
+    }
+  },
+  "preset": "twelve_state_conserved",
+  "resolved_config_sha256": "6aede1d5ad03592d432d10b4981089b1bc8825f3e357c129e9b975c144372028",
+  "schema_version": 1
+}

@@ -1,0 +1,116 @@
+{
+  "physical_inputs": {
+    "case_id": "corrected published 2017 7C",
+    "height_m": 6.0,
+    "area_m2": 0.3216990877275948,
+    "packing": [
+      250.0,
+      0.97,
+      0.203,
+      0.35,
+      0.017,
+      0.292,
+      0.119
+    ],
+    "liquid_feed_mol_s": [
+      2.266523899018325,
+      6.666246761818602,
+      55.33946274871296
+    ],
+    "vapor_feed_mol_s": [
+      0.8796171503485564,
+      0.7843418531366985,
+      7.116102746319821,
+      0.8004516068171862
+    ],
+    "liquid_temperature_k": 317.84999999999997,
+    "vapor_temperature_k": 316.45,
+    "bottom_pressure_pa": 107700.0,
+    "gas_mass_flow_basis": "reported_total_wet; paper moisture basis unspecified",
+    "liquid_mass_flow_basis": "loaded liquid mass; unloaded-solvent MEA mass fraction 0.29",
+    "humidity_assumption": "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+    "reported_top_pressure_pa": 107300.0,
+    "liquid_branch_policy": {
+      "loading_anchor": 0.34,
+      "max_log_loading_step": 0.1,
+      "max_loading_steps": 32
+    },
+    "species_diffusivity_model": {
+      "co2_prefactor_m2_s": 3.14e-07,
+      "co2_activation_j_mol": 15230.0,
+      "gas_constant_j_mol_k": 8.314462618,
+      "other_species_m2_s": [
+        8.8e-10,
+        8.8e-10,
+        8.4e-10,
+        6.8e-10,
+        6.8e-10,
+        6.8e-10,
+        1.8439088914585774e-09,
+        1.8439088914585774e-09
+      ],
+      "pair_closure": "harmonic mean, common Reactive_Film.binary_diffusivities_from_species"
+    }
+  },
+  "source_record": {
+    "repository_path": "src/mea_absorption_column/data/NCCC_2017_cases.csv",
+    "sha256": "165e974d53a90e0570955aea766642eb823f7865914dac6d8761f75f484f7834"
+  },
+  "model_input_row": {
+    "L": 1.5038888888888888,
+    "G": 0.2777777777777778,
+    "alpha": 0.34,
+    "w_MEA": 0.29,
+    "y_CO2": 0.1,
+    "Tl": 317.84999999999997,
+    "Tv": 316.45,
+    "P": 107700.0,
+    "Beds": 1,
+    "Intercoolers": 0,
+    "lean_solvent_temp_imputed": false,
+    "lean_solvent_temp_imputed_C": null,
+    "y_O2": 0.091,
+    "CO2  %": 76.4
+  },
+  "assumptions": [
+    "Measured lean solvent inlet temperature",
+    "Water saturated at inlet Tv/P using existing repository vapor_pressure correlation",
+    "Reported gasmass interpreted as totalwet mass; source moisture basis unspecified",
+    "Loaded liquid mass and unloaded wMEA basis; molar conversion uses current native molar masses",
+    "Pressure boundary is bottom/inlet107700Pa; measured top107300Pa reserved for comparison"
+  ],
+  "initial_bulk_state": [
+    2.266523899018325,
+    55.33946274871296,
+    0.8796171503485564,
+    0.7843418531366985,
+    317.84999999999997,
+    316.45,
+    107700.0,
+    0.052715134432693156
+  ],
+  "liquid_molar_masses_kg_mol": [
+    0.044009,
+    0.061084,
+    0.018015
+  ],
+  "vapor_molar_masses_kg_mol": [
+    0.04401,
+    0.01801528,
+    0.02801,
+    0.031999
+  ],
+  "mobility_basis": "Same nine species diffusivity estimates and harmonic-mean pair closure as the retained owner runner",
+  "central_readiness_point": null,
+  "initial_interface_bracket": [
+    0.0,
+    0.15
+  ],
+  "physical_residual_tolerance": 1e-07,
+  "source_runner_sha256": "2b6ff7c74450504e916284560dc006237d6a9f3a5027ccece0d446bbab93bf0d",
+  "claim_limits": {
+    "caloric_status": "provisional_shared_reference",
+    "caloric_limitation": "The coupled owner records an unresolved pure-water vapor Cp discrepancy. Thermal predictions remain provisional; comparisons assess numerical methods on the shared declared model.",
+    "source_record": "/home/tnnrpolley21/.codex/worktrees/6c99/MEA-Absorption-Column/docs/coordination/casadi_3c_coupled_shared.json"
+  }
+}
