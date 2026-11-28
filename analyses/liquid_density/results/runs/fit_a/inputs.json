@@ -1,0 +1,12 @@
+{
+  "bundle": "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/data/reference/MEA/film_chemistry_inputs/3/input.json",
+  "source": "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/data/reference/MEA/observations/density_viscosity/Amundsen_2009_density_viscosity.csv",
+  "pressure_assumption_Pa": 101325,
+  "sha256": {
+    "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/data/reference/MEA/film_chemistry_inputs/3/input.json": "5ceab9845b1fc73395c0ff8c3a4f1700eb052befd418225a4fd16e3b8ab58e25",
+    "/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics/data/reference/MEA/observations/density_viscosity/Amundsen_2009_density_viscosity.csv": "7322b7dc7f0c961d09dbfb356dccde00851c0de20ba589d150d9c3834900f70c",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/.worktrees/fitA-twelve-state/src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11/parameters.json": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db"
+  },
+  "unloaded_basis": "exact zero CO2, neutral binary pressure root; no positive loading proxy",
+  "candidate": "native state plus candidate-owned ion-volume translation; no thermodynamic fitting"
+}

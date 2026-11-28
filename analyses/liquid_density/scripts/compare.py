@@ -12,6 +12,9 @@ OUT = ROOT / 'analyses/liquid_density/results/runs/current_pin'
 AMINE = Path('/home/tnnrpolley21/Workspaces/Engineering/Amine-Thermodynamics')
 BUNDLE = AMINE / 'data/reference/MEA/film_chemistry_inputs/3/input.json'
 DATA = ROOT / 'src/mea_absorption_column/data/epcsaft_datasets'
+DATASETS = [('current', 'MEA_greenfield_exploratory'), ('candidate', 'MEA_amine160_density_candidate')]
+QUADRATURE = 5
+DEPENDENCIES = {}  # column request dependencies; empty keeps the preset's thermodynamics
 
 
 def save(name, value):
@@ -34,7 +37,7 @@ def properties():
     assert hashlib.sha256(source.read_bytes()).hexdigest() == item['data_sha256']
     records = [r for r in csv.DictReader(source.open()) if r['property'] == 'density']
     models, failures = {}, {}
-    for name, dataset in [('current', 'MEA_greenfield_exploratory'), ('candidate', 'MEA_amine160_density_candidate')]:
+    for name, dataset in DATASETS:
         try:
             models[name] = engine_liquid(DATA / dataset, DATA / dataset / 'ideal-gas-thermochemistry.json', name,
                 loading_policy={'loading_anchor': .25, 'max_log_loading_step': .1, 'max_loading_steps': 256})
@@ -73,7 +76,7 @@ def properties():
     table('density.csv', rows)
     save('inputs.json', {'bundle': str(BUNDLE), 'source': str(source), 'pressure_assumption_Pa': 101325,
         'sha256': {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in
-                   [BUNDLE, source, *[DATA / v / 'parameters.json' for v in ('MEA_greenfield_exploratory', 'MEA_amine160_density_candidate')]]},
+                   [BUNDLE, source, *[DATA / v / 'parameters.json' for _, v in DATASETS]]},
         'unloaded_basis': 'exact zero CO2, neutral binary pressure root; no positive loading proxy',
         'candidate': 'native state plus candidate-owned ion-volume translation; no thermodynamic fitting'})
 
@@ -82,7 +85,8 @@ def column(source):
     from mea_absorption_column.column import run_column
     request = {'preset': 'twelve_state_conserved',
         'case': {'physical_input_file': 'analyses/bvp_solution_methods/input/case_3c.json'},
-        'numerics': {'method': 'upwind', 'solver_settings': {'nodes': 11, 'quadrature_points': 5,
+        **({'dependencies': DEPENDENCIES} if DEPENDENCIES else {}),
+        'numerics': {'method': 'upwind', 'solver_settings': {'nodes': 11, 'quadrature_points': QUADRATURE,
             'end_clustering': 1., 'max_iterations': 20, 'tolerance': 1e-7, 'liquid_density_source': source}},
         'execution': {'wall_limit_s': 1450, 'output_dir': str(OUT / source)}}
     save(source + '_request.json', request)

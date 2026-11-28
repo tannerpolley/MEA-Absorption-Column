@@ -1,12 +1,13 @@
 """Render retained issue 83 values; no thermodynamic or column calculations."""
 import csv
 import json
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-OUT = Path(__file__).resolve().parents[1] / 'results/runs/current_pin'
+OUT = Path(__file__).resolve().parents[1] / 'results/runs' / (sys.argv[1] if len(sys.argv) > 1 else 'current_pin')
 rows = list(csv.DictReader((OUT / 'density.csv').open()))
 summary = []
 for loaded in (False, True):
