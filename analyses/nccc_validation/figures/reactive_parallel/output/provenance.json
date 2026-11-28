@@ -2,8 +2,20 @@
   "input_sha256": {
     "analyses/nccc_validation/figures/reactive_parallel/inputs/morgan2020_table_c2.csv": "42097684c0ac53e4ee094ee90dd5009cf3136b63e452ce6d53d1d12626fe8812",
     "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv": "5cfb1ab670adcfbdb90a003c5e163262470d85e1467aa250ff6e50ab7a79785f",
-    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/nccc_validation/scripts/render_fit_a_article.py": "c39e7e58a595ec920e837ba53590dbac6e2738f577ca68ce2fbf84493e85b927",
+    "/home/tnnrpolley21/Workspaces/Engineering/MEA-Absorption-Column/analyses/nccc_validation/scripts/render_fit_a_article.py": "1f3a930572c16cdb600f7a151decd9d1932c2fa7b8d08ee2fd07da2c1ffcb0d6",
     "src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle/reaction-system.json": "810dfec15760cf74451df91743d6e63684cee93ddaf3e1ff4e42bf4a686afe29",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/identity.json": "79864adc27c41d2a559426efcdf2dd6ff86179e3686bbd0ab73b2097080a5eb2",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/result.json": "4c71c24ebdd8fb5d6159d39cdab3761cec0b8cce7bcf40c9377325518e22c207",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/evaluated_parameters.json": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/Fl.csv": "dfad8627f3d9b0606e41f581deeea8b924f3545cb1d52a4a360810d36cd77ff5",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/Fv.csv": "efe271aac46a665171d52ba8916d74d4dcad53c520add66ee3b718a85ddcd6b5",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/Cl.csv": "e3250a946f128365dcc661b728c904d3a4f53447119a7c7babb00407644c4885",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/x.csv": "9b6f94cbb5e4e1620138b27a9e57b93055bf9dbe3866a42f949d51002af51823",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/T.csv": "7d58b433b63795f3901bf1bfaf7406a9f965175c768e772e1f0347a516aa5c4a",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/CO2.csv": "f4be1f1db36a39226027046e34ceb65e62ddcb32481350694b23cf27da2f62c0",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/Hl.csv": "1781cb81b5045d20628cd43fad4ba033858b18a430889add72699a89e871f11c",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/Hv.csv": "d0d83bb7e26ac32f0952e8aa936c6a0fa3fae2cfd6c7539fb8b873fd84375cf2",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_1C/enhance_factor.csv": "badb08d1db4a00046f9df8b8370bb2e5d53bd05505cb909acc48a58b73519093",
     "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_2C/identity.json": "e3dca56e2804aa1f28656131ef15e0f3be88166a544dac636f1d41c75cd97c98",
     "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_2C/result.json": "71569bfabd2c3229a22cd3d1a4f49e415d1700068792c901c77cd1a2bf8b6c3f",
     "analyses/nccc_validation/results/runs/fitA_article_20261128/campaign_2C/evaluated_parameters.json": "c046138b97c80da7a6d8eeefed2dc7da71d4d14c3eb8f239e8491803ab3717db",
@@ -79,6 +91,7 @@
     "analyses/nccc_validation/figures/reactive_parallel/scripts/render.py": "83f381c43c650a9a9f3acf496378445c171827f0951e22175725c191ecf4284b"
   },
   "cases_used": [
+    "1C",
     "2C",
     "3C",
     "4C",
@@ -87,5 +100,5 @@
     "7C"
   ],
   "observed_capture_source": "src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv",
-  "mean_absolute_capture_error_pp": 7.948848064528465
+  "mean_absolute_capture_error_pp": 7.075321790475294
 }

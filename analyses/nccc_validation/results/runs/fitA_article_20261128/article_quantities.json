@@ -287,6 +287,7 @@
   "campaign": {
     "nce_all_seven_MAE_pp": 5.854825845686891,
     "paired_case_ids": [
+      "1C",
       "2C",
       "3C",
       "4C",
@@ -294,9 +295,11 @@
       "6C",
       "7C"
     ],
-    "nce_paired_MAE_pp": 6.496965493375249,
-    "fit_a_paired_MAE_pp": 7.948848064528465,
-    "fit_a_all_seven_MAE_pp": null
+    "nce_paired_MAE_pp": 5.854825845686891,
+    "fit_a_paired_MAE_pp": 7.075321790475294,
+    "fit_a_all_seven_MAE_pp": 7.075321790475294,
+    "fit_a_1C_start": "Henry start, as for Cases 2C-7C. The NCE 1C run used a native reaction-extent start (0.0001) that the pinned Engine interface no longer takes; the legacy dataset from the same Henry start gives 99.10197377517115 %, against the retained 99.10198795955674 %, so the converged 1C solution does not depend on the start.",
+    "legacy_1C_henry_start_control": "analyses/nccc_validation/results/runs/fitA_article_20261128/legacy_1C_henry_start"
   },
   "paired_refinement": {
     "capture_change_pp": 0.004379879414898369,
@@ -333,11 +336,6 @@
     "ma57"
   ],
   "original_basis_unavailable": {
-    "campaign_1C": {
-      "legacy_record": "analyses/nccc_validation/results/runs/reactive_confirmed_20260904/declared_start/1C/identity.json",
-      "legacy_cold_start_reaction_extent_fraction": 0.0001,
-      "reason": "The retained column initial profile does not encode the native equilibrium start. The historical runner is absent and the current solve_equilibrium interface takes a prior result instead of a seed fraction."
-    },
     "additional_Case_3C_refinements": {
       "legacy_table": "docs/scientific/latex/tables/run_diagnostics.tex @ b1f5426",
       "known_settings": [

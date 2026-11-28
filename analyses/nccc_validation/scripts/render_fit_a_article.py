@@ -203,7 +203,6 @@ def diagnostics(groups):
             line = ('RMS is the maximum normalized differential residual. BC is the maximum scaled boundary residual. '
                     'Discrepancies are rounded upward. Shared baselines occur in more than one group. '
                     'Thermodynamic rows exclude the reference. Transport includes the factor-one control. '
-                    'Case 1C is excluded until its original equilibrium start can be reproduced. '
                     'Dense energy diagnostics require the original additional-refinement runs.')
         if line.startswith(r'\caption{'):
             line = r'\caption{Convergence and balance diagnostics for the fit-A calculations. Counts identify the calculations included in each group.}'
