@@ -1,0 +1,28 @@
+{
+  "wall_limit_s": 300,
+  "returncode": 0,
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "timeout",
+    "300",
+    "uv",
+    "run",
+    "--frozen",
+    "python",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/capture_solver.py",
+    "--output",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/energy_dense_41",
+    "--dataset",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+    "--mesh",
+    "41",
+    "--tol",
+    "0.005",
+    "--initial-profile",
+    "analyses/nccc_validation/results/runs/fitA_article_20261128/refined/solution_scaled.csv"
+  ],
+  "threads": 1,
+  "log": "analyses/nccc_validation/results/runs/fitA_article_20261128/energy_dense_41.log"
+}
