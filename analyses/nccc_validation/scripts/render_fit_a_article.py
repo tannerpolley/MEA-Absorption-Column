@@ -197,16 +197,16 @@ def diagnostics(groups):
     blocks = iter((data, balance))
     lines = []
     for line in original:
-        if line.startswith(('Campaign (','Paired Case','Thermodynamic (','Transport (','Operating (','Timing (','Additional Case')):
+        if line.startswith(('Seven-case comparison (','Paired Case','Thermodynamic (','Transport (','Operating (','Timing (','Additional Case')):
             continue
         if line == r'\bottomrule':
             lines.extend(next(blocks))
         if line.startswith('RMS is'):
             line = ('RMS is the maximum normalized differential residual. BC is the maximum scaled boundary residual. '
                     'Discrepancies are rounded upward. Shared baselines occur in more than one group. '
-                    'Thermodynamic rows exclude the reference. Transport includes the factor-one control.')
+                    'Thermodynamic rows exclude the reference. Transport includes the calculation with unit multipliers.')
         if line.startswith(r'\caption{'):
-            line = r'\caption{Convergence and balance diagnostics for the fit-A calculations. Counts identify the calculations included in each group.}'
+            line = r'\caption{Convergence and balance diagnostics for the nine-species calculations. Counts identify the calculations included in each group.}'
         lines.append(line)
     path.write_text('\n'.join(lines)+'\n')
 
@@ -263,7 +263,7 @@ def main():
         energy = json.loads((runs/name/'energy_check.json').read_text())
         row['dense_energy_range_W'] = energy.get('dense', energy)['range_W']
         dense.append(row)
-    diagnostics({'Campaign':cases, 'Paired Case 3C':paired, 'Thermodynamic':thermo.iloc[1:],
+    diagnostics({'Seven-case comparison':cases, 'Paired Case 3C':paired, 'Thermodynamic':thermo.iloc[1:],
                  'Transport':transport, 'Operating':operating_sweep, 'Timing':timing,
                  'Additional Case 3C refinements':pd.DataFrame(dense)})
     destinations = {

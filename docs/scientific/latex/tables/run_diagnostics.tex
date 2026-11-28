@@ -1,13 +1,13 @@
 \begin{table*}[pos=t]
 \centering\footnotesize
-\caption{Convergence and balance diagnostics for the fit-A calculations. Counts identify the calculations included in each group.}
+\caption{Convergence and balance diagnostics for the nine-species calculations. Counts identify the calculations included in each group.}
 \label{tab:run-diagnostics}
 \setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\textwidth}{@{}Xrrrrrr@{}}
 \toprule
 Study & Initial nodes & Final nodes & Tolerance & Iterations & Max. RMS & Max. BC \\
 \midrule
-Campaign (7) & 21 & 21--22 & 0.5 & 1--2 & $\leq\num{4.76e-1}$ & $\leq\num{4.34e-19}$ \\
+Seven-case comparison (7) & 21 & 21--22 & 0.5 & 1--2 & $\leq\num{4.76e-1}$ & $\leq\num{4.34e-19}$ \\
 Paired Case 3C (2) & 21--41 & 22--41 & 0.05--0.5 & 1--2 & $\leq\num{1.89e-1}$ & 0 \\
 Thermodynamic (8) & 41 & 41 & 0.05 & 1 & $\leq\num{4.12e-2}$ & $\leq\num{4.34e-19}$ \\
 Transport (8) & 41 & 41 & 0.05 & 1 & $\leq\num{4.14e-2}$ & $\leq\num{4.34e-19}$ \\
@@ -22,7 +22,7 @@ Additional Case 3C refinements (2) & 41--81 & 47--126 & 5e-05--0.005 & 3--4 & $\
 Study & Component & Charge & \multicolumn{2}{c}{Net-enthalpy-flow range (\unit{W})} \\
  & \multicolumn{2}{c}{Discrepancy (\unit{mol.s^{-1}})} & 101 positions & 10,001 positions \\
 \midrule
-Campaign (7) & $\leq\num{1.66e-12}$ & $\leq\num{4.12e-12}$ & 138.24--451.47 & -- \\
+Seven-case comparison (7) & $\leq\num{1.66e-12}$ & $\leq\num{4.12e-12}$ & 138.24--451.47 & -- \\
 Paired Case 3C (2) & $\leq\num{1.43e-12}$ & $\leq\num{2.28e-12}$ & 243.16--244.31 & -- \\
 Thermodynamic (8) & $\leq\num{1.47e-12}$ & $\leq\num{2.44e-12}$ & 234.92--253.03 & -- \\
 Transport (8) & $\leq\num{1.43e-12}$ & $\leq\num{2.28e-12}$ & 241.49--246.44 & -- \\
@@ -33,6 +33,6 @@ Additional Case 3C refinements (2) & $\leq\num{1.43e-12}$ & $\leq\num{2.28e-12}$
 \end{tabularx}
 \par\smallskip
 \begin{minipage}{\textwidth}\footnotesize
-RMS is the maximum normalized differential residual. BC is the maximum scaled boundary residual. Discrepancies are rounded upward. Shared baselines occur in more than one group. Thermodynamic rows exclude the reference. Transport includes the factor-one control.
+RMS is the maximum normalized differential residual. BC is the maximum scaled boundary residual. Discrepancies are rounded upward. Shared baselines occur in more than one group. Thermodynamic rows exclude the reference. Transport includes the calculation with unit multipliers.
 \end{minipage}
 \end{table*}

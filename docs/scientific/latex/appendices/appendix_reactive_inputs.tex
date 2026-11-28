@@ -1,4 +1,4 @@
-\section{Reactive thermodynamic inputs and parameter provenance}\label{sec:selected-reactive-inputs}
+\section{Reactive thermodynamic inputs}\label{sec:selected-reactive-inputs}
 The inputs in the following tables define the baseline parameterization for all seven cases and the Case 3C verification; the perturbation studies vary them around this baseline.
 The tables give component, pair, association and reaction coefficients; full precision and sources are provided with the code.
 
@@ -29,8 +29,8 @@ R5 & -0.890870 & -6166.116 & 0 & -0.000984816 & Molality & \cite{batesAcidicDiss
 \end{table}
 The R5 coefficients are the Bates and Pinching relation $-\log_{10}K_5=2677.91/T+0.3869+0.0004277T$ written in natural logarithms.
 Each source constant refers to infinite dilution in water on its stated basis, with standard molality \qty{1}{mol\,kg^{-1}} for the molality basis.
-The Engine converts it to the EOS fugacity basis by evaluating the pure-water solvent reference at the current temperature and the reference pressure \qty{100000}{Pa}, and adds the resulting reference-transfer and pressure offsets to $\ln K_r$.
-The effective constants therefore depend on the EOS and reference state as well as on these correlations, and none is inferred from the initial composition.
+The thermodynamic calculation converts it to the EOS fugacity basis by evaluating the pure-water solvent reference at the current temperature and the reference pressure \qty{100000}{Pa}, and adds the resulting reference-transfer and pressure offsets to $\ln K_r$.
+The effective constants therefore depend on the EOS and reference state as well as on these correlations.
 The common calculation range is \qtyrange{293.15}{393.15}{K}; R4 and R5 are extrapolated above \qty{323.15}{K}.
 The enhancement concentration divisor is $s_{\COtwo}=1.04542981654115$.
 

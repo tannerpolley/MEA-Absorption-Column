@@ -2,9 +2,9 @@
 \subsection{Twelve-state capture and temperature comparison}\label{sec:twelve-state-results}
 % T1: headline capture comparison
 With the finite-rate film and the ePC-SAFT Henry coefficient, the twelve-state model predicts capture in Cases 1C--7C with a mean absolute error of \num{3.55} percentage points at 129 axial nodes (\cref{tab:twelve-state-capture}).
-The same film with the \NtwoO{}-analogy Henry coefficient gives \num{3.61} points, the equilibrium-manifold film \num{4.52} points and the enhancement-reference film \num{7.51} points.
-At all four meshes both finite-rate variants have lower errors than the manifold film, which in turn has lower errors than the enhancement-reference film.
-The two Henry bases exchange rank between meshes and differ by at most \num{0.66} points, so this comparison does not distinguish them.
+The same film with the \NtwoO{}-analogy Henry coefficient gives \num{3.61} points, the equilibrium-manifold film \num{4.52} points and the enhancement-factor film \num{7.51} points.
+At all four meshes both finite-rate variants have lower errors than the manifold film, which in turn has lower errors than the enhancement-factor film.
+The two Henry coefficients exchange rank between meshes and differ by at most \num{0.66} points, so this comparison does not distinguish them.
 
 \input{tables/twelve_state_capture}
 
@@ -16,32 +16,30 @@ The \NtwoO{}-analogy coefficient gives lower capture than the ePC-SAFT coefficie
 It reduces the Case 6C error to \num{3.47} points but increases the Case 3C and 4C underpredictions to \num{7.28} and \num{4.94} points.
 
 % T3: axial mesh
-Between 65 and 129 nodes, the ePC-SAFT-Henry capture changes by at most \num{0.25} points in Cases 1C--6C.
+Between 65 and 129 nodes, capture with the ePC-SAFT Henry coefficient changes by at most \num{0.25} points in Cases 1C--6C.
 Case 7C is not resolved with respect to the axial mesh.
 Its capture falls from \qty{84.48}{\percent} at 17 nodes through \qty{78.92}{\percent} and \qty{74.80}{\percent} to \qty{72.61}{\percent} at 129 nodes, and the last refinement still changes it by \num{-2.19} points; the other three films change by \num{-1.85} to \num{-2.39} points there.
 The observed convergence order is about 0.9; if it holds, Richardson extrapolation gives \qty{70.1}{\percent}, about 6 points below the observed \qty{76.4}{\percent}.
 This continued decrease in Case 7C is why the finite-rate mean absolute errors rise from 65 to 129 nodes.
 
 % T4: packing temperatures
-At the 35 packing-temperature taps, the ePC-SAFT-Henry calculation has liquid and vapor root-mean-square errors of \qty{8.34}{K} and \qty{9.59}{K}, with mean deviations of \qty{+4.48}{K} and \qty{+2.58}{K}.
-The finite-rate and manifold films agree within \qty{0.3}{K} on these measures, and the enhancement-reference film is about \qty{1.2}{K} higher.
+At the 35 packing-temperature taps, the finite-rate film with the ePC-SAFT Henry coefficient gives liquid and vapor root-mean-square errors of \qty{8.34}{K} and \qty{9.59}{K}, with mean deviations of \qty{+4.48}{K} and \qty{+2.58}{K}.
+The finite-rate and manifold films agree within \qty{0.3}{K} on these measures, and the enhancement-factor film is about \qty{1.2}{K} higher.
 At $\zeta=0$ the calculated vapor temperature is the gas-feed temperature, so the vapor comparison there tests the feed specification rather than the bed.
 Case 7C dominates the temperature error: its liquid root-mean-square error is \qty{17.26}{K}, against \qty{5.61}{K} for the other 30 taps.
 In Case 7C between $\zeta=0.2$ and 0.8 the calculated liquid temperature is \qtyrange{342}{349}{K}, while the reported taps there lie between \qty{324}{K} and \qty{332}{K}; the largest deviation is \qty{24.3}{K}.
 
 % T5: basis and numerical scope
-All 112 twelve-state solutions (four films, seven cases and four meshes) met the IPOPT stopping test; each 129-node solution took \qtyrange{148}{585}{s}.
+All 112 twelve-state solutions (four film variants, seven cases and four meshes) met the IPOPT stopping test; each 129-node solution took \qtyrange{148}{585}{s}.
 The vapor enthalpy reference of the twelve-state model has not been verified, so its temperature differences are compared with the taps but not attributed to thermal mechanisms.
-Its input basis differs from the nine-species basis (\cref{subsec:twelve-state}), so capture differences between the two models combine formulation and input effects.
 \FloatBarrier
 
 \subsection{Nine-species reference solution and seven-case comparison}\label{sec:nine-species-results}
 % R1: reference profiles
 The refined nine-species Case 3C solution links \COtwo{} uptake to the predicted fugacity, speciation and temperature profiles (\cref{fig:reactive-case3c-profiles}).
-It predicts \qty{92.91}{\percent} capture against \qty{89.50}{\percent} observed, with peak liquid temperature \qty{349.58}{K} (\cref{tab:reactive-numerical-verification} gives full precision).
+It predicts \qty{92.91}{\percent} capture against \qty{89.50}{\percent} observed, with peak liquid temperature \qty{349.58}{K}.
 The vapor-to-liquid \COtwo{} fugacity difference remains positive but narrows through most of the bed as cumulative capture flattens.
 Toward the lean inlet, free MEA increases while protonated MEA and carbamate decrease, showing the changing bulk composition supplied to the film calculation.
-These profiles show the bulk quantities supplied to the film approximation; they are not independent measurements of speciation.
 
 
 \begin{figure}[pos=htbp]
@@ -55,8 +53,7 @@ These profiles show the bulk quantities supplied to the film approximation; they
 \subsubsection*{Numerical verification and computational cost}
 % R2: observed refinement
 The joint mesh/tolerance refinement changes Case 3C capture by \num{0.005} percentage points and peak liquid temperature by \qty{-0.026}{K} (\cref{tab:reactive-numerical-verification}).
-The maximum normalized RMS residual decreases from \num{0.189} to \num{0.041}, with zero maximum scaled boundary residual.
-All nine species remain positive, and net \COtwo{} and water flows vary by less than \qty{5e-14}{mol.s^{-1}} over the exported positions.
+The maximum normalized RMS residual decreases from \num{0.189} to \num{0.041}.
 At 10,001 sampled positions the axial net-enthalpy-flow range of both calculations is about \qty{264}{W}, equivalent to \qty{0.035}{K} at the minimum liquid heat-capacity flow of \qty{7440}{W.K^{-1}}.
 The finest additional Case 3C refinement (81 to 126 nodes, tolerance \num{5e-5}) reduces this range to \qty{0.077}{W}, and its capture differs from the refined calculation by \num{0.002} percentage points (\cref{tab:run-diagnostics}).
 
@@ -70,7 +67,7 @@ Their median process CPU time is \qty{17.07}{s}, median total wall time \qty{26.
 % R4: capture agreement
 The nine-species model overpredicts capture in all seven NCCC cases (\cref{fig:reactive-seven-case-capture}).
 The mean absolute error is \num{5.86} percentage points; signed errors range from \num{+0.57} points in Case 7C to \num{+19.43} points in Case 6C, and Case 5C is overpredicted by \num{7.14} points.
-In Case 3C the nine-species model overpredicts by \num{3.40} points where the twelve-state finite-rate model underpredicts by \num{2.58} points.
+In Case 3C the nine-species model overpredicts by \num{3.40} points, whereas the twelve-state model with the finite-rate film underpredicts by \num{2.58} points.
 
 
 \begin{figure}[pos=htbp]
@@ -82,12 +79,12 @@ In Case 3C the nine-species model overpredicts by \num{3.40} points where the tw
 
 
 % R4b: property-source attribution
-Replacing the ePC-SAFT density and enthalpies of the nine-species model with the correlations of \cref{sec:properties} raises the capture mean absolute error to \num{7.08} points; the ePC-SAFT properties lower capture in every case, by \num{0.20} to \num{2.45} points.
+With the density and enthalpy correlations of \cref{sec:properties} in place of the ePC-SAFT properties, the nine-species capture mean absolute error is \num{7.08} points; the ePC-SAFT properties lower capture in every case, by \num{0.20} to \num{2.45} points.
 In Case 3C they lower capture by \num{1.30} points.
 The density alone changes Case 3C capture by \num{-0.02} points and the enthalpies alone by \num{-1.36} points.
-The correlation calculation with its water vaporization enthalpy changed from \qty{49.99}{kJ.mol^{-1}} to \qty{43.99}{kJ.mol^{-1}} reproduces the change (\num{-1.37} points), so the capture change comes mostly from the water vaporization enthalpy.
+Lowering only the water vaporization enthalpy of the correlation calculation from \qty{49.99}{kJ.mol^{-1}} to \qty{43.99}{kJ.mol^{-1}} reproduces the enthalpy effect (\num{-1.37} points), so the capture change comes mostly from the water vaporization enthalpy.
 ePC-SAFT gives a water transfer enthalpy of \qtyrange{42.7}{43.2}{kJ.mol^{-1}} at \qty{313.15}{K}, close to the \qty{43.34}{kJ.mol^{-1}} of pure water.
-The same change raises peak liquid temperatures by \qtyrange{0.7}{1.9}{K} and increases the packing-temperature error, because the calculated profiles already lie above most taps.
+The ePC-SAFT properties also raise peak liquid temperatures by \qtyrange{0.7}{1.9}{K} and increases the packing-temperature error, because the calculated profiles already lie above most taps.
 Liquid and vapor root-mean-square errors rise from \qty{8.54}{K} and \qty{9.87}{K} with the correlations to \qty{9.24}{K} and \qty{10.51}{K} with ePC-SAFT, and the mean liquid deviation rises from \qty{+4.26}{K} to \qty{+5.54}{K}.
 
 % R5: specific thermal observations
@@ -100,13 +97,15 @@ As in the twelve-state model, Case 7C predicts a broad elevated-temperature regi
 \begin{figure}[pos=htbp]
 \centering
 \includegraphics[width=0.98\textwidth]{figures/reactive-seven-case-temperatures.pdf}
-\caption{Temperature profiles for the seven one-bed NCCC 2017 C cases. Solid and dashed curves denote liquid and vapor temperatures calculated with coupled nine-species reactive ePC-SAFT and conventional reaction enhancement. Crosses are reported packing temperatures from Table C2 of Morgan et al.\ \cite{Morgan2020}, converted to kelvin and normalized bottom-to-top height $\zeta=1-x$, where $x$ is the source coordinate. The vapor inlet is at zero and liquid inlet at one. The source does not specify a phase-specific sensor designation. Cases 1C--3C use the \qty{318.15}{K} lean-inlet assumption in \cref{tab:nccc-one-bed-scope}.}
+\caption{Temperature profiles for the seven one-bed NCCC 2017 C cases. Solid and dashed curves denote liquid and vapor temperatures calculated with coupled nine-species reactive ePC-SAFT and conventional reaction enhancement. Crosses are reported packing temperatures from Table C2 of Morgan et al.\ \cite{Morgan2020}, converted to kelvin and normalized bottom-to-top height $\zeta=1-x$, where $x$ is the source coordinate. The vapor inlet is at zero and liquid inlet at one. Cases 1C--3C use the \qty{318.15}{K} lean-inlet assumption in \cref{tab:nccc-one-bed-scope}.}
 \label{fig:generated-temperature-profiles}
 \end{figure}
 
 
 % R6: campaign numerical scope
-All seven calculations converge at the campaign settings (\cref{tab:run-diagnostics}), while physical agreement remains uneven. Only Case 3C has the paired refinement, which provides a comparison magnitude for the perturbation responses that follow.
+All seven calculations converge at the coarse settings (\cref{tab:run-diagnostics}).
+Only Case 3C has the paired refinement, and its changes of \num{0.005} points in capture and \qty{-0.026}{K} in peak liquid temperature set the numerical resolution of the perturbation responses that follow.
+Every capture response below exceeds this resolution except the diffusivity responses, which are comparable with it; the peak-temperature changes from the transport and inlet-temperature perturbations lie within it.
 \FloatBarrier
 
 \subsection{Thermodynamic and transport sensitivity}
@@ -114,33 +113,30 @@ All seven calculations converge at the campaign settings (\cref{tab:run-diagnost
 Among the tested equal relative thermodynamic changes in the nine-species model, the MEA--water interaction produces the largest capture response (\cref{fig:reactive-parameter-sensitivity}).
 Its 0.95 and 1.05 multipliers change capture by \num{-0.79} and \num{+0.71} percentage points from the refined \qty{92.91}{\percent} baseline.
 The paired capture changes are \num{+0.42}/\num{-0.42} points for R5, \num{+0.35}/\num{-0.35} for R4 and \num{-0.35}/\num{+0.33} for \COtwo--water.
-Every capture change exceeds the \num{0.005}-point reference refinement difference, and the perturbed range of \qtyrange{92.12}{93.61}{\percent} remains above the observed \qty{89.50}{\percent}.
+The perturbed range of \qtyrange{92.12}{93.61}{\percent} remains above the observed \qty{89.50}{\percent}.
 
 
 \begin{figure}[pos=htbp]
 \centering
 \includegraphics[width=0.98\textwidth]{figures/reactive-parameter-sensitivity.pdf}
-\caption{Thermodynamic sensitivity of the coupled nine-species Case 3C model. Points represent separate calculations with one binary interaction coefficient or equilibrium constant multiplied by 0.95 or 1.05; crosses denote the unperturbed reference. R4 denotes carbamate hydrolysis and R5 protonated-MEA dissociation. The reference uses 41 initial nodes and tolerance 0.05, with capture \qty{92.90788}{\percent} and peak liquid temperature \qty{349.57711}{K}. Capture changes are in percentage points and peak liquid-temperature changes are in kelvin.}
+\caption{Thermodynamic sensitivity of the coupled nine-species Case 3C model. Points represent separate calculations with one binary interaction coefficient or equilibrium constant multiplied by 0.95 or 1.05; crosses denote the unperturbed reference. R4 denotes carbamate hydrolysis and R5 protonated-MEA dissociation. The reference uses 41 initial nodes and tolerance 0.05, with capture \qty{92.91}{\percent} and peak liquid temperature \qty{349.58}{K}. Capture changes are in percentage points and peak liquid-temperature changes are in kelvin.}
 \label{fig:reactive-parameter-sensitivity}
 \end{figure}
 
 
 % R8: thermodynamic temperature response
-The corresponding peak-temperature changes are small but all exceed the \qty{0.026}{K} refinement difference.
-MEA--water gives \qty{-0.19}{K} and \qty{+0.17}{K}.
+The corresponding peak liquid-temperature changes are small; MEA--water gives \qty{-0.19}{K} and \qty{+0.17}{K}.
 The corresponding \COtwo--water changes are \qty{-0.058}{K} and \qty{+0.055}{K}, R4 changes are \qty{+0.046}{K} and \qty{-0.046}{K}, and R5 changes are \qty{+0.038}{K} and \qty{-0.040}{K}.
 
 % R9: transport capture response
 The liquid-side transfer coefficient has the largest capture effect among the three tested transport inputs (\cref{fig:transport-sensitivity}).
 Multipliers of 0.9 and 1.1 give capture changes of \num{-0.31}/\num{+0.23} percentage points, compared with \num{+0.16}/\num{-0.17} for viscosity and \num{-0.011}/\num{-0.001} for free molecular \COtwo{} diffusivity.
-The factor-one control reproduces the reference.
-The four $k_L$ and viscosity responses exceed the reference capture refinement difference; the diffusivity responses are comparable with it.
 
 
 \begin{figure}[pos=htbp]
 \centering
 \includegraphics[width=0.98\textwidth]{figures/transport-sensitivity.pdf}
-\caption{Transport sensitivity of the coupled nine-species Case 3C model. Points denote separate calculations with liquid viscosity, free liquid \COtwo{} diffusivity or the liquid-side \COtwo{} transfer coefficient multiplied by 0.9 or 1.1, including recalculation of dependent transport and enhancement quantities. The cross denotes the refined reference, with capture \qty{92.90788}{\percent}; capture changes are in percentage points and peak liquid-temperature changes in kelvin. Shading shows the magnitude of the joint mesh/tolerance refinement change.}
+\caption{Transport sensitivity of the coupled nine-species Case 3C model. Points denote separate calculations with liquid viscosity, free liquid \COtwo{} diffusivity or the liquid-side \COtwo{} transfer coefficient multiplied by 0.9 or 1.1, including recalculation of dependent transport and enhancement quantities. The cross denotes the refined reference, with capture \qty{92.91}{\percent}; capture changes are in percentage points and peak liquid-temperature changes in kelvin. Shading shows the magnitude of the joint mesh/tolerance refinement change.}
 \label{fig:transport-sensitivity}
 \end{figure}
 
@@ -148,13 +144,12 @@ The four $k_L$ and viscosity responses exceed the reference capture refinement d
 % R10: coupled transport interpretation
 The small capture response to molecular \COtwo{} diffusivity follows from compensating changes in the recalculated enhancement and transfer resistances.
 For the 1.1 multiplier, median perturbed/reference ratios at matched axial positions are \num{1.048} for $k_L$, \num{0.946} for enhancement and \num{0.991} for their product.
-These ratios compare separately solved profiles at matched axial positions.
-All transport peak-temperature changes are below \qty{0.017}{K}, smaller than the \qty{0.026}{K} refinement difference; their signs and ordering are not resolved by that comparison.
+All transport peak-temperature changes are below \qty{0.017}{K}.
 
 % R10b: actual applicability
 The baseline calculation extends beyond the documented source ranges of two adopted transport descriptions (\cref{tab:transport-applicability}).
 Its Hatta numbers of approximately 258--649 exceed the enhancement source comparison range of 35--165 throughout the profile.
-Its peak temperature of \qty{349.58}{K} also exceeds the MEA diffusivity source's \qty{333}{K} upper temperature; the other diffusivity correlations have no documented upper temperature limit.
+Its peak temperature of \qty{349.58}{K} also exceeds the \qty{333}{K} upper temperature of the MEA diffusivity source.
 \FloatBarrier
 
 \subsection{Operating response}\label{sec:operating-response}
@@ -176,23 +171,22 @@ Lean loadings 0.225 and 0.275 mol \COtwo{} per mol MEA give changes of \num{+2.4
 Lower lean loading increases available solvent capacity and gives the largest positive capture response among these specified changes.
 Lower loading raises free MEA and lowers the liquid \COtwo{} fugacity; near the gas inlet, this increases the modeled driving force.
 Peak liquid-temperature changes are \qty{-0.59}{K} and \qty{+0.55}{K} for the lower and higher liquid flows and \qty{+0.07}{K}/\qty{-0.33}{K} for the two loading changes.
-The colder and warmer liquid inlets give peak changes of \qty{-0.014}{K} and \qty{-0.012}{K}, both below the refinement difference.
+The colder and warmer liquid inlets give peak changes of \qty{-0.014}{K} and \qty{-0.012}{K}.
 
 \FloatBarrier
 
 \subsection{Interpretation and future work}
 % R14: integrated interpretation
-With every bulk-phase property from ePC-SAFT, the twelve-state finite-rate model reproduces capture in Cases 1C--4C within \num{2.6} percentage points, but both formulations overpredict Case 6C and neither reproduces the Case 7C temperature profile.
-The Case 3C errors of \num{-2.58} points (twelve-state finite-rate film) and \num{+3.40} points (nine-species) are much larger than the corresponding refinement changes of \num{0.11} and \num{0.005} points.
-The reduced vapor-EOS composition, the extrapolated enhancement and transport correlations and the different input bases of the two formulations limit interpretation; their individual contributions to the error are not resolved.
+With every bulk-phase property from ePC-SAFT, the twelve-state model with the finite-rate film reproduces capture in Cases 1C--4C within \num{2.6} percentage points, but both models overpredict Case 6C and neither reproduces the Case 7C temperature profile.
+The Case 3C errors of \num{-2.58} points (twelve-state model, finite-rate film) and \num{+3.40} points (nine-species model) far exceed the corresponding refinement changes of \num{0.11} and \num{0.005} points, so they arise from the models rather than their discretization.
+Candidate sources are the reduced vapor composition of the \COtwo{} fugacity coefficient, the enhancement and transport correlations used beyond their source ranges, and the different inputs of the two models.
 The lean-inlet temperature assumed for Cases 1C--3C is a bounded input uncertainty: in the nine-species Case 3C calculation, liquid-inlet temperatures of \qty{313.15}{K} and \qty{323.15}{K} change capture by \num{+0.21} and \num{-0.16} percentage points relative to \qty{318.15}{K} (\cref{sec:operating-response}), small against either Case 3C error.
-No thermodynamic parameter was fitted to these cases, so all capture and temperature results are predictions compared with measurements.
 
 % R15: solvent-flow optimum
-Constrained optimization of the twelve-state model with exact first derivatives was verified for the minimum solvent flow that gives \qty{90}{\percent} capture in Case 3C with the equilibrium-manifold film.
-The calculated optimum lies \qty{7.37}{\percent}, \qty{4.29}{\percent} and \qty{1.93}{\percent} below the reference solvent flow at 17, 33 and 65 nodes.
-The reduction shrinks because the capture calculated at the reference flow falls toward \qty{90}{\percent} with refinement, from \qty{92.13}{\percent} at 17 nodes to \qty{90.05}{\percent} at 129 nodes, so the mesh-independent solvent requirement remains unresolved.
+Constrained optimization of the twelve-state model with exact first derivatives finds the minimum solvent flow that gives \qty{90}{\percent} capture in Case 3C with the equilibrium-manifold film.
+The calculated optimum lies \qty{7.37}{\percent}, \qty{4.29}{\percent} and \qty{1.93}{\percent} below the reference solvent flow at 17, 33 and 65 nodes, so the optimum is not mesh-independent.
+The reduction shrinks because the capture calculated at the reference flow falls toward \qty{90}{\percent} with refinement, from \qty{92.13}{\percent} at 17 nodes to \qty{90.05}{\percent} at 129 nodes.
 
 % R16: remaining outlook
-A matched ePC-SAFT versus eNRTL comparison in this column model, with fixed configuration, inlet conditions and transport assumptions and internally consistent parameterizations \cite{Akula2023a,Zhang2011}, would quantify the calibration data and effort each model requires.
+A matched comparison of ePC-SAFT and eNRTL in this column model, with fixed configuration, inlet conditions and transport assumptions and internally consistent parameterizations \cite{Akula2023a,Zhang2011}, would quantify the calibration data and effort each model requires.
 Tests with diethanolamine (DEA), methyldiethanolamine (MDEA), 2-amino-2-methyl-1-propanol (AMP), piperazine (PZ) and blends would show which component, association and ionic inputs transfer and which require solvent-specific calibration.
