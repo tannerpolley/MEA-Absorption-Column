@@ -1,0 +1,172 @@
+{
+ "source_taps": "analyses/nccc_validation/results/runs/fitA_article_20261128/temperature_tap_comparison.csv",
+ "nodes": 129,
+ "all_taps": {
+  "nine_species_liquid_K": {
+   "taps": 30,
+   "rmse_K": 9.035361919120408,
+   "bias_K": 4.909043472164869,
+   "max_abs_K": 24.239522794428183
+  },
+  "finite_rate_liquid_K": {
+   "taps": 35,
+   "rmse_K": 8.074453916964499,
+   "bias_K": 3.998053325117074,
+   "max_abs_K": 23.781897937292513
+  },
+  "finite_rate_vapor_K": {
+   "taps": 35,
+   "rmse_K": 9.376236577485106,
+   "bias_K": 2.132619454242625,
+   "max_abs_K": 24.014358563061478
+  },
+  "finite_rate_epcsaft_henry_liquid_K": {
+   "taps": 35,
+   "rmse_K": 8.341071121285886,
+   "bias_K": 4.479442243151209,
+   "max_abs_K": 24.32185126804353
+  },
+  "finite_rate_epcsaft_henry_vapor_K": {
+   "taps": 35,
+   "rmse_K": 9.585706977046378,
+   "bias_K": 2.576895928729211,
+   "max_abs_K": 24.353274711075414
+  },
+  "manifold_liquid_K": {
+   "taps": 35,
+   "rmse_K": 8.32937833479991,
+   "bias_K": 4.63827485770647,
+   "max_abs_K": 23.96822117442707
+  },
+  "manifold_vapor_K": {
+   "taps": 35,
+   "rmse_K": 9.593096359466367,
+   "bias_K": 2.701181429878607,
+   "max_abs_K": 23.977745532969095
+  },
+  "enhancement_liquid_K": {
+   "taps": 35,
+   "rmse_K": 9.517334014866874,
+   "bias_K": 6.282640784143601,
+   "max_abs_K": 24.43860990238022
+  },
+  "enhancement_vapor_K": {
+   "taps": 35,
+   "rmse_K": 10.76717020097587,
+   "bias_K": 4.042732541131433,
+   "max_abs_K": 24.4342476229084
+  }
+ },
+ "taps_with_nine_species_prediction": {
+  "nine_species_liquid_K": {
+   "taps": 30,
+   "rmse_K": 9.035361919120408,
+   "bias_K": 4.909043472164869,
+   "max_abs_K": 24.239522794428183
+  },
+  "finite_rate_liquid_K": {
+   "taps": 30,
+   "rmse_K": 8.598592890139539,
+   "bias_K": 4.518981802205813,
+   "max_abs_K": 23.781897937292513
+  },
+  "finite_rate_vapor_K": {
+   "taps": 30,
+   "rmse_K": 9.842575064739766,
+   "bias_K": 2.642497834824055,
+   "max_abs_K": 24.014358563061478
+  },
+  "finite_rate_epcsaft_henry_liquid_K": {
+   "taps": 30,
+   "rmse_K": 8.851743177663787,
+   "bias_K": 4.959978266470216,
+   "max_abs_K": 24.32185126804353
+  },
+  "finite_rate_epcsaft_henry_vapor_K": {
+   "taps": 30,
+   "rmse_K": 10.042009178743628,
+   "bias_K": 3.048827082697151,
+   "max_abs_K": 24.353274711075414
+  },
+  "manifold_liquid_K": {
+   "taps": 30,
+   "rmse_K": 8.813644681206315,
+   "bias_K": 5.080626736802276,
+   "max_abs_K": 23.96822117442707
+  },
+  "manifold_vapor_K": {
+   "taps": 30,
+   "rmse_K": 10.026206769331774,
+   "bias_K": 3.1384358328961337,
+   "max_abs_K": 23.977745532969095
+  },
+  "enhancement_liquid_K": {
+   "taps": 30,
+   "rmse_K": 10.054506521044752,
+   "bias_K": 6.926642018902913,
+   "max_abs_K": 24.43860990238022
+  },
+  "enhancement_vapor_K": {
+   "taps": 30,
+   "rmse_K": 11.238359655694719,
+   "bias_K": 4.7177991930728655,
+   "max_abs_K": 24.4342476229084
+  }
+ },
+ "taps_with_nine_species_prediction_without_7C": {
+  "nine_species_liquid_K": {
+   "taps": 25,
+   "rmse_K": 6.1928259987224346,
+   "bias_K": 2.9166630451318794,
+   "max_abs_K": 12.090629897544034
+  },
+  "finite_rate_liquid_K": {
+   "taps": 25,
+   "rmse_K": 5.551425600937684,
+   "bias_K": 2.4495725095762304,
+   "max_abs_K": 9.487794048382398
+  },
+  "finite_rate_vapor_K": {
+   "taps": 25,
+   "rmse_K": 7.3622324954997085,
+   "bias_K": 0.6675859493364737,
+   "max_abs_K": 15.800000000000011
+  },
+  "finite_rate_epcsaft_henry_liquid_K": {
+   "taps": 25,
+   "rmse_K": 5.86755803584227,
+   "bias_K": 2.935242432460466,
+   "max_abs_K": 9.993503568095718
+  },
+  "finite_rate_epcsaft_henry_vapor_K": {
+   "taps": 25,
+   "rmse_K": 7.593711761925798,
+   "bias_K": 1.1225693450265157,
+   "max_abs_K": 15.800000000000011
+  },
+  "manifold_liquid_K": {
+   "taps": 25,
+   "rmse_K": 5.951214806701631,
+   "bias_K": 3.1247676880776725,
+   "max_abs_K": 10.304290875680351
+  },
+  "manifold_vapor_K": {
+   "taps": 25,
+   "rmse_K": 7.683683807961356,
+   "bias_K": 1.2760497421380046,
+   "max_abs_K": 15.800000000000011
+  },
+  "enhancement_liquid_K": {
+   "taps": 25,
+   "rmse_K": 7.627221510340879,
+   "bias_K": 5.163458615000803,
+   "max_abs_K": 14.869800923330615
+  },
+  "enhancement_vapor_K": {
+   "taps": 25,
+   "rmse_K": 9.19869710362286,
+   "bias_K": 3.023771907238886,
+   "max_abs_K": 15.800000000114608
+  }
+ }
+}
