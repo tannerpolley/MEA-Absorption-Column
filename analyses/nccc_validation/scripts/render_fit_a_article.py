@@ -188,10 +188,9 @@ def diagnostics(groups):
         ]
         data.append(label+' & '+' & '.join(fields)+r' \\')
         fields = [bound(group.species_balance_max_mol_s), bound(group.charge_max_mol_s),
-                  span(group.net_energy_range_W, '.2f'), '--']
+                  span(group.net_energy_range_W, '.2f'),
+                  span(group.dense_energy_range_W, '.3f') if 'dense_energy_range_W' in group else '--']
         balance.append(label+' & '+' & '.join(fields)+r' \\')
-    for rows in (data, balance):
-        rows.append(r'Additional Case 3C refinements & \multicolumn{'+str(6 if rows is data else 4)+r'}{l}{Original run inputs unavailable} \\')
     blocks = iter((data, balance))
     lines = []
     for line in original:
@@ -202,8 +201,7 @@ def diagnostics(groups):
         if line.startswith('RMS is'):
             line = ('RMS is the maximum normalized differential residual. BC is the maximum scaled boundary residual. '
                     'Discrepancies are rounded upward. Shared baselines occur in more than one group. '
-                    'Thermodynamic rows exclude the reference. Transport includes the factor-one control. '
-                    'Dense energy diagnostics require the original additional-refinement runs.')
+                    'Thermodynamic rows exclude the reference. Transport includes the factor-one control.')
         if line.startswith(r'\caption{'):
             line = r'\caption{Convergence and balance diagnostics for the fit-A calculations. Counts identify the calculations included in each group.}'
         lines.append(line)
@@ -242,8 +240,14 @@ def main():
     timing = pd.DataFrame(timing)
     timing.to_csv(runs/'timing.csv', index=False)
     verification(runs, figures, paired)
+    dense = []
+    for name in ('energy_dense_41', 'energy_dense_81'):
+        _, row, _ = verify_profile(runs/name)
+        row['dense_energy_range_W'] = json.loads((runs/name/'energy_check.json').read_text())['dense']['range_W']
+        dense.append(row)
     diagnostics({'Campaign':cases, 'Paired Case 3C':paired, 'Thermodynamic':thermo.iloc[1:],
-                 'Transport':transport, 'Operating':operating_sweep, 'Timing':timing})
+                 'Transport':transport, 'Operating':operating_sweep, 'Timing':timing,
+                 'Additional Case 3C refinements':pd.DataFrame(dense)})
 
 
 if __name__ == '__main__':
