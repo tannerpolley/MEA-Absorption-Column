@@ -48,7 +48,7 @@ CSE execution mode: direct.
 ## Repository Workflow
 
 - A new checkout or worktree needs only `bash scripts/setup_environment.sh` (fetches and hash-checks the pinned Engine wheel, then `uv sync --frozen --group test`; about 8 s first time). Run everything through `uv run --frozen`.
-- Regression checks and the current Engine qualification: see `README.md`.
+- Previous-failure checks and the current Engine qualification: see `README.md`.
 - Tests write scratch under `.tmp_local/` and column runs default to `.tmp_column_runs/`; both are git-ignored. A new study result goes in a new `analyses/<study>/results/runs/<label>/` directory.
 - Do not accept slow or broken solver runs as normal: give each case a wall limit (`execution.wall_limit_s`) and a log, stop stale runs you started, and report the root cause with a faster bounded alternative.
 - Preserve existing dirty work and inspect overlapping files before editing.
