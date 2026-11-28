@@ -146,7 +146,7 @@ def test_coupled_fugacity_rejects_inconsistent_composition(composition):
 @pytest.mark.parametrize('mode', ['epcsaft_reactive_nine', 'EPCSAFT_REACTIVE_NINE'])
 def test_coupled_run_reports_selected_dataset_and_unavailable_legacy_metrics(monkeypatch, mode):
     import importlib
-    from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET
+    from mea_absorption_column.Thermodynamics.reactive_bundle import FIT_A
     driver = importlib.import_module('mea_absorption_column.Run_Model')
 
     # Stop at the driver/output boundary; this is not a converged column.
@@ -162,7 +162,7 @@ def test_coupled_run_reports_selected_dataset_and_unavailable_legacy_metrics(mon
                               solver_settings={'return_internal_profile': True})
     assert result['success'] is False
     assert result['thermo_model'] == mode.lower()
-    assert result['epcsaft_dataset'] == str(DATASET)
+    assert result['epcsaft_dataset'] == str(FIT_A)
     for quantity in ['mass', 'reaction', 'charge']:
         assert result[f'epcsaft_chemistry_max_{quantity}_residual'] is None
     assert result['epcsaft_chemistry_last_evidence'] == '{}'

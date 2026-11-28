@@ -1,0 +1,31 @@
+{
+  "command": [
+    "timeout",
+    "300",
+    "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.venv/bin/python3",
+    "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/scripts/run_reactive_column.py",
+    "--output",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_properties_20261128/water_fugacity_4C",
+    "--dataset",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+    "--case",
+    "4C",
+    "--mesh",
+    "21",
+    "--tol",
+    "0.5",
+    "--wall-limit",
+    "300",
+    "--liquid-density-source",
+    "epcsaft",
+    "--energy-model",
+    "epcsaft",
+    "--water-transfer-source",
+    "epcsaft"
+  ],
+  "wall_limit_s": 300,
+  "elapsed_s": 21.881070416013245,
+  "returncode": 0,
+  "log": "analyses/nccc_validation/results/runs/fitA_epcsaft_properties_20261128/water_fugacity_4C.log",
+  "threads": 1
+}

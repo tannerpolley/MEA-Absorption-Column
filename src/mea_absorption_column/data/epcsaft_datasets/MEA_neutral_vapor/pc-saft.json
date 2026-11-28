@@ -1,0 +1,712 @@
+{
+  "schema": "epcsaft.parameters",
+  "schema_version": 1,
+  "document_version": 1,
+  "purpose": "Four-species PC-SAFT vapor with published pure-component parameters and zero binary interaction corrections",
+  "document_id": "absorber-pc-saft-vapor",
+  "sources": [
+    {
+      "source_id": "gross-sadowski-2001",
+      "citation": "Gross, J.; Sadowski, G. PC-SAFT: An Equation of State Based on a Perturbation Theory for Chain Molecules. Industrial & Engineering Chemistry Research 2001, 40, 1244-1260.",
+      "doi": "10.1021/ie0003887",
+      "use_basis": "source-complete installed parameter catalog"
+    },
+    {
+      "source_id": "schick-et-al-2023",
+      "citation": "Schick et al. (2023), Fluid Phase Equilibria 565, 113714, Table 1 and note a.",
+      "doi": "10.1016/j.fluid.2022.113714"
+    },
+    {
+      "source_id": "tihic-2008",
+      "citation": "Amra Tihic (2008), Group Contribution sPC-SAFT Equation of State, Chapter 4, original PC-SAFT table, oxygen row. https://orbit.dtu.dk/files/5470724/AmraTihic_Ph%20D_Thesis.pdf"
+    },
+    {
+      "source_id": "absorber-pc-saft-vapor",
+      "citation": "MEA absorber issue #99, owner decision 4",
+      "use_basis": "Neutral species, water self-association, zero binary interaction corrections."
+    }
+  ],
+  "domains": [
+    {
+      "domain_id": "mea-candidate-293-15-to-393-15-k",
+      "kind": "fit-range",
+      "pressure_max": {
+        "magnitude": 10000000,
+        "unit": "pascal"
+      },
+      "pressure_min": {
+        "magnitude": 1,
+        "unit": "pascal"
+      },
+      "temperature_max": {
+        "magnitude": 393.15,
+        "unit": "kelvin"
+      },
+      "temperature_min": {
+        "magnitude": 293.15,
+        "unit": "kelvin"
+      }
+    },
+    {
+      "domain_id": "nitrogen-fit-range",
+      "kind": "fit-range",
+      "temperature_min": {
+        "magnitude": 63,
+        "unit": "kelvin"
+      },
+      "temperature_max": {
+        "magnitude": 126,
+        "unit": "kelvin"
+      }
+    },
+    {
+      "domain_id": "carbon-dioxide-fit-range",
+      "kind": "fit-range",
+      "temperature_min": {
+        "magnitude": 216,
+        "unit": "kelvin"
+      },
+      "temperature_max": {
+        "magnitude": 304,
+        "unit": "kelvin"
+      }
+    },
+    {
+      "domain_id": "oxygen-fit-range",
+      "kind": "fit-range",
+      "temperature_min": {
+        "magnitude": 55,
+        "unit": "kelvin"
+      },
+      "temperature_max": {
+        "magnitude": 154,
+        "unit": "kelvin"
+      }
+    },
+    {
+      "domain_id": "water-fit-range-unreported",
+      "kind": "unknown"
+    }
+  ],
+  "model_families": [
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "choice": "pc-saft",
+      "family_id": "model/base",
+      "kind": "base",
+      "provenance": {
+        "source_id": "gross-sadowski-2001",
+        "locator": "PC-SAFT base equation",
+        "domain_id": "mea-candidate-293-15-to-393-15-k"
+      },
+      "qualification": "candidate_extrapolation"
+    },
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "choice": "general-site",
+      "family_id": "model/association",
+      "kind": "association",
+      "provenance": {
+        "source_id": "absorber-pc-saft-vapor",
+        "locator": "Selected neutral wet-gas closure",
+        "domain_id": "mea-candidate-293-15-to-393-15-k"
+      },
+      "qualification": "candidate_extrapolation"
+    },
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "choice": "none",
+      "family_id": "model/electrolyte",
+      "kind": "electrolyte",
+      "provenance": {
+        "source_id": "absorber-pc-saft-vapor",
+        "locator": "Selected neutral wet-gas closure",
+        "domain_id": "mea-candidate-293-15-to-393-15-k"
+      },
+      "qualification": "candidate_extrapolation"
+    },
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "choice": "none",
+      "family_id": "model/relative_permittivity",
+      "kind": "permittivity",
+      "provenance": {
+        "source_id": "absorber-pc-saft-vapor",
+        "locator": "Selected neutral wet-gas closure",
+        "domain_id": "mea-candidate-293-15-to-393-15-k"
+      },
+      "qualification": "candidate_extrapolation"
+    }
+  ],
+  "model_coefficients": [],
+  "reaction_correlations": [],
+  "components": [
+    {
+      "aliases": [
+        "CO2"
+      ],
+      "coefficients": [
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "dispersion_energy_over_k",
+          "identity": "component/carbon-dioxide/dispersion_energy_over_k",
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, carbon dioxide row",
+            "domain_id": "carbon-dioxide-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 169.21,
+            "unit": "kelvin"
+          }
+        },
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "segment_count",
+          "identity": "component/carbon-dioxide/segment_count",
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, carbon dioxide row",
+            "domain_id": "carbon-dioxide-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 2.0729,
+            "unit": "dimensionless"
+          }
+        },
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "segment_diameter",
+          "identity": "component/carbon-dioxide/segment_diameter",
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, carbon dioxide row",
+            "domain_id": "carbon-dioxide-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 2.7852,
+            "unit": "angstrom"
+          }
+        }
+      ],
+      "component_id": "carbon-dioxide",
+      "fixed": {
+        "charge_number": {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Neutral molecule",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 0,
+            "unit": "elementary-charge"
+          }
+        },
+        "molar_mass": {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, carbon dioxide row",
+            "domain_id": "carbon-dioxide-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 0.04401,
+            "unit": "kilogram / mole"
+          }
+        }
+      },
+      "name": "CO2"
+    },
+    {
+      "aliases": [
+        "H2O"
+      ],
+      "coefficients": [
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "dispersion_energy_over_k",
+          "identity": "component/water/dispersion_energy_over_k",
+          "provenance": {
+            "source_id": "schick-et-al-2023",
+            "locator": "Table 1, water row",
+            "domain_id": "water-fit-range-unreported"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 353.95,
+            "unit": "kelvin"
+          }
+        },
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "segment_count",
+          "identity": "component/water/segment_count",
+          "provenance": {
+            "source_id": "schick-et-al-2023",
+            "locator": "Table 1, water row",
+            "domain_id": "water-fit-range-unreported"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 1.2047,
+            "unit": "dimensionless"
+          }
+        }
+      ],
+      "component_id": "water",
+      "fixed": {
+        "charge_number": {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Neutral molecule",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 0,
+            "unit": "elementary-charge"
+          }
+        },
+        "molar_mass": {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "schick-et-al-2023",
+            "locator": "H2O molecular mass, NIST Chemistry WebBook",
+            "domain_id": "water-fit-range-unreported"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 0.01801528,
+            "unit": "kilogram / mole"
+          }
+        }
+      },
+      "name": "H2O"
+    },
+    {
+      "component_id": "nitrogen",
+      "aliases": [],
+      "fixed": {
+        "molar_mass": {
+          "value": {
+            "magnitude": 0.02801,
+            "unit": "kg / mol"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, nitrogen row",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k"
+        },
+        "charge_number": {
+          "value": {
+            "magnitude": 0,
+            "unit": "elementary-charge"
+          },
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Neutral molecule",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k"
+        }
+      },
+      "coefficients": [
+        {
+          "identity": "component/nitrogen/dispersion_energy_over_k",
+          "family": "dispersion_energy_over_k",
+          "value": {
+            "magnitude": 90.96,
+            "unit": "kelvin"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, nitrogen row",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k"
+        },
+        {
+          "identity": "component/nitrogen/segment_count",
+          "family": "segment_count",
+          "value": {
+            "magnitude": 1.2053,
+            "unit": "dimensionless"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, nitrogen row",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k"
+        },
+        {
+          "identity": "component/nitrogen/segment_diameter",
+          "family": "segment_diameter",
+          "value": {
+            "magnitude": 3.313,
+            "unit": "angstrom"
+          },
+          "provenance": {
+            "source_id": "gross-sadowski-2001",
+            "locator": "Table 2, nitrogen row",
+            "domain_id": "nitrogen-fit-range"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k"
+        }
+      ],
+      "name": "nitrogen"
+    },
+    {
+      "component_id": "oxygen",
+      "aliases": [
+        "O2"
+      ],
+      "name": "oxygen",
+      "fixed": {
+        "molar_mass": {
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "tihic-2008",
+            "locator": "Chapter 4, original PC-SAFT table, oxygen row",
+            "domain_id": "oxygen-fit-range"
+          },
+          "value": {
+            "magnitude": 0.032,
+            "unit": "kilogram / mole"
+          }
+        },
+        "charge_number": {
+          "value": {
+            "magnitude": 0,
+            "unit": "elementary-charge"
+          },
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Neutral molecule",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k"
+        }
+      },
+      "coefficients": [
+        {
+          "identity": "component/oxygen/segment_count",
+          "family": "segment_count",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "tihic-2008",
+            "locator": "Chapter 4, original PC-SAFT table, oxygen row",
+            "domain_id": "oxygen-fit-range"
+          },
+          "value": {
+            "magnitude": 1.1217,
+            "unit": "dimensionless"
+          }
+        },
+        {
+          "identity": "component/oxygen/segment_diameter",
+          "family": "segment_diameter",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "tihic-2008",
+            "locator": "Chapter 4, original PC-SAFT table, oxygen row",
+            "domain_id": "oxygen-fit-range"
+          },
+          "value": {
+            "magnitude": 3.2098,
+            "unit": "angstrom"
+          }
+        },
+        {
+          "identity": "component/oxygen/dispersion_energy_over_k",
+          "family": "dispersion_energy_over_k",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "tihic-2008",
+            "locator": "Chapter 4, original PC-SAFT table, oxygen row",
+            "domain_id": "oxygen-fit-range"
+          },
+          "value": {
+            "magnitude": 114.96,
+            "unit": "kelvin"
+          }
+        }
+      ]
+    }
+  ],
+  "correlations": [
+    {
+      "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+      "component_id": "water",
+      "constant": {
+        "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/constant",
+        "value": {
+          "magnitude": 2.7927,
+          "unit": "angstrom"
+        }
+      },
+      "correlation_id": "component/water/segment_diameter/constant-plus-sum-of-exponentials",
+      "family": "segment_diameter",
+      "form": "constant-plus-sum-of-exponentials",
+      "independent_variables": [
+        "temperature"
+      ],
+      "provenance": {
+        "source_id": "schick-et-al-2023",
+        "locator": "Table 1 note a",
+        "domain_id": "water-fit-range-unreported"
+      },
+      "qualification": "candidate_extrapolation",
+      "terms": [
+        {
+          "amplitude": {
+            "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/term-0/amplitude",
+            "value": {
+              "magnitude": 10.11,
+              "unit": "angstrom"
+            }
+          },
+          "exponent_coefficient": {
+            "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/term-0/exponent_coefficient",
+            "value": {
+              "magnitude": -0.01775,
+              "unit": "1 / kelvin"
+            }
+          }
+        },
+        {
+          "amplitude": {
+            "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/term-1/amplitude",
+            "value": {
+              "magnitude": -1.417,
+              "unit": "angstrom"
+            }
+          },
+          "exponent_coefficient": {
+            "identity": "component/water/segment_diameter/constant-plus-sum-of-exponentials/term-1/exponent_coefficient",
+            "value": {
+              "magnitude": -0.01146,
+              "unit": "1 / kelvin"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "pairs": [
+    {
+      "coefficients": [
+        {
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "family": "k_ij",
+          "identity": "pair/carbon-dioxide/water/k_ij",
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Predictive zero binary correction",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "qualification": "candidate_extrapolation",
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ],
+      "component_id_a": "carbon-dioxide",
+      "component_id_b": "water"
+    },
+    {
+      "component_id_a": "carbon-dioxide",
+      "component_id_b": "nitrogen",
+      "coefficients": [
+        {
+          "identity": "pair/carbon-dioxide/nitrogen/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Predictive zero binary correction",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    },
+    {
+      "component_id_a": "carbon-dioxide",
+      "component_id_b": "oxygen",
+      "coefficients": [
+        {
+          "identity": "pair/carbon-dioxide/oxygen/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Predictive zero binary correction",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    },
+    {
+      "component_id_a": "nitrogen",
+      "component_id_b": "water",
+      "coefficients": [
+        {
+          "identity": "pair/nitrogen/water/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Predictive zero binary correction",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    },
+    {
+      "component_id_a": "oxygen",
+      "component_id_b": "water",
+      "coefficients": [
+        {
+          "identity": "pair/oxygen/water/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Predictive zero binary correction",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    },
+    {
+      "component_id_a": "nitrogen",
+      "component_id_b": "oxygen",
+      "coefficients": [
+        {
+          "identity": "pair/nitrogen/oxygen/k_ij",
+          "family": "k_ij",
+          "qualification": "candidate_extrapolation",
+          "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+          "provenance": {
+            "source_id": "absorber-pc-saft-vapor",
+            "locator": "Predictive zero binary correction",
+            "domain_id": "mea-candidate-293-15-to-393-15-k"
+          },
+          "value": {
+            "magnitude": 0,
+            "unit": "dimensionless"
+          }
+        }
+      ]
+    }
+  ],
+  "topology": {
+    "presets": [],
+    "sites": [
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "component_id": "water",
+        "multiplicity": 1,
+        "provenance": {
+          "source_id": "schick-et-al-2023",
+          "locator": "Table 1 and water 2B association scheme",
+          "domain_id": "water-fit-range-unreported"
+        },
+        "qualification": "candidate_extrapolation",
+        "site_id": "a",
+        "site_role": "donor"
+      },
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "component_id": "water",
+        "multiplicity": 1,
+        "provenance": {
+          "source_id": "schick-et-al-2023",
+          "locator": "Table 1 and water 2B association scheme",
+          "domain_id": "water-fit-range-unreported"
+        },
+        "qualification": "candidate_extrapolation",
+        "site_id": "b",
+        "site_role": "acceptor"
+      }
+    ],
+    "edges": [
+      {
+        "candidate_domain_id": "mea-candidate-293-15-to-393-15-k",
+        "endpoint_a": {
+          "component_id": "water",
+          "site_id": "a"
+        },
+        "endpoint_b": {
+          "component_id": "water",
+          "site_id": "b"
+        },
+        "energy_over_k": {
+          "identity": "association/water/a/water/b/energy_over_k",
+          "value": {
+            "magnitude": 2425.7,
+            "unit": "kelvin"
+          }
+        },
+        "qualification": "candidate_extrapolation",
+        "source": {
+          "kind": "explicit",
+          "provenance": [
+            {
+              "source_id": "schick-et-al-2023",
+              "locator": "Table 1, water self-association",
+              "domain_id": "water-fit-range-unreported"
+            }
+          ]
+        },
+        "volume": {
+          "identity": "association/water/a/water/b/volume",
+          "value": {
+            "magnitude": 0.04509,
+            "unit": "dimensionless"
+          }
+        }
+      }
+    ]
+  }
+}

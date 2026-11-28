@@ -1,0 +1,53 @@
+accepted initialization available after 0.037s
+column rhs_batches=1 nodes=41 elapsed=0.00s thermodynamics={'queries': 0, 'cache_hits': 0, 'native_solves': 0, 'native_seconds': 0.0, 'warm_starts': 0}
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/results/runs/fitA_article_20261128/capture_solver.py", line 19, in <module>
+    runpy.run_path('analyses/nccc_validation/scripts/run_reactive_column.py', run_name='__main__')
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "analyses/nccc_validation/scripts/run_reactive_column.py", line 120, in <module>
+    main()
+    ~~~~^^
+  File "analyses/nccc_validation/scripts/run_reactive_column.py", line 103, in main
+    result = run_model(data, method='scipy-bvp', data_type='mass', run=case_index,
+                       thermo_model='epcsaft_reactive_nine', solver_settings=settings,
+                       return_details=True, staged_beds=False)
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/src/mea_absorption_column/Run_Model.py", line 366, in run_model
+    Y_scaled, z_new, solving_type, success, message = solving_function(
+                                                      ~~~~~~~~~~~~~~~~^
+        Y_a_scaled, Y_b_scaled, z, parameters, settings=solver_settings_for_run
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 181, in scipy_BVP_solve
+    sol = solve_bvp(column_odes, boundary_conditions, z_2, w_guess_solver,
+                    max_nodes=int(settings['max_nodes']),
+    ...<3 lines>...
+                    **jacobian_kwargs,
+                    )
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/results/runs/fitA_article_20261128/capture_solver.py", line 13, in capture
+    sol = original(*args, **kwargs)
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 1070, in solve_bvp
+    f = fun_wrapped(x, y, p)
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.venv/lib/python3.13/site-packages/scipy/integrate/_bvp.py", line 649, in fun_p
+    return np.asarray(fun(x, y), dtype)
+                      ~~~^^^^^^
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 103, in column_odes
+    _column_rhs(
+    ~~~~~~~~~~~^
+        z[i],
+        ^^^^^
+    ...<3 lines>...
+        guard_rhs=guard_rhs,
+        ^^^^^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/src/mea_absorption_column/BVP/Methods/Scipy_BVP_Solve.py", line 236, in _column_rhs
+    return guard_column_rhs(zi, y_scaled, parameters, evaluator=abs_column)
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/src/mea_absorption_column/BVP/robust_core.py", line 242, in guard_column_rhs
+    rhs = evaluator(zi, sanitized_scaled, parameters, run_type=run_type, column_names=column_names)
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/src/mea_absorption_column/BVP/ABS_Column.py", line 85, in abs_column
+    raise ValueError("thermal_state: temperature outside absorber correlation bounds")
+ValueError: thermal_state: temperature outside absorber correlation bounds

@@ -1,0 +1,31 @@
+{
+  "command": [
+    "timeout",
+    "300",
+    "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.venv/bin/python3",
+    "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/scripts/run_reactive_column.py",
+    "--output",
+    "analyses/nccc_validation/results/runs/fitA_epcsaft_properties_20261128/density_enthalpy_7C",
+    "--dataset",
+    "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+    "--case",
+    "7C",
+    "--mesh",
+    "21",
+    "--tol",
+    "0.5",
+    "--wall-limit",
+    "300",
+    "--liquid-density-source",
+    "epcsaft",
+    "--energy-model",
+    "epcsaft",
+    "--initial-profile",
+    "analyses/nccc_validation/results/runs/reactive_parallel_20260904/7C_native_seed/initial_scaled.csv"
+  ],
+  "wall_limit_s": 300,
+  "elapsed_s": 13.741921145003289,
+  "returncode": 0,
+  "log": "analyses/nccc_validation/results/runs/fitA_epcsaft_properties_20261128/density_enthalpy_7C.log",
+  "threads": 1
+}

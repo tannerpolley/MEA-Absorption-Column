@@ -1,0 +1,151 @@
+accepted initialization available after 0.002s
+column rhs_batches=1 nodes=81 elapsed=0.00s thermodynamics={'queries': 0, 'cache_hits': 0, 'native_solves': 0, 'native_seconds': 0.0, 'warm_starts': 0}
+   Iteration    Max residual  Max BC residual  Total nodes    Nodes added  
+column rhs_batches=2 nodes=81 elapsed=1.84s thermodynamics={'queries': 81, 'cache_hits': 0, 'native_solves': 87, 'native_seconds': 0.6810905919992365, 'warm_starts': 80}
+column rhs_batches=3 nodes=80 elapsed=1.91s thermodynamics={'queries': 162, 'cache_hits': 81, 'native_solves': 87, 'native_seconds': 0.6810905919992365, 'warm_starts': 80}
+column jacobian_batches=1 nodes=81 elapsed=3.80s thermodynamics={'queries': 242, 'cache_hits': 81, 'native_solves': 173, 'native_seconds': 1.3874098107917234, 'warm_starts': 159}
+column jacobian_batches=2 nodes=80 elapsed=7.73s thermodynamics={'queries': 323, 'cache_hits': 162, 'native_solves': 173, 'native_seconds': 1.3874098107917234, 'warm_starts': 159}
+column rhs_batches=4 nodes=81 elapsed=11.31s thermodynamics={'queries': 403, 'cache_hits': 242, 'native_solves': 173, 'native_seconds': 1.3874098107917234, 'warm_starts': 159}
+column rhs_batches=5 nodes=80 elapsed=13.34s thermodynamics={'queries': 484, 'cache_hits': 242, 'native_solves': 260, 'native_seconds': 2.139612849219702, 'warm_starts': 239}
+column rhs_batches=6 nodes=81 elapsed=15.48s thermodynamics={'queries': 564, 'cache_hits': 242, 'native_solves': 346, 'native_seconds': 2.9646435716422275, 'warm_starts': 318}
+column rhs_batches=7 nodes=80 elapsed=17.87s thermodynamics={'queries': 645, 'cache_hits': 243, 'native_solves': 432, 'native_seconds': 3.825566872721538, 'warm_starts': 397}
+column rhs_batches=8 nodes=81 elapsed=19.74s thermodynamics={'queries': 725, 'cache_hits': 243, 'native_solves': 518, 'native_seconds': 4.532134535489604, 'warm_starts': 476}
+column rhs_batches=9 nodes=80 elapsed=19.80s thermodynamics={'queries': 806, 'cache_hits': 324, 'native_solves': 518, 'native_seconds': 4.532134535489604, 'warm_starts': 476}
+column rhs_batches=10 nodes=80 elapsed=19.91s thermodynamics={'queries': 886, 'cache_hits': 404, 'native_solves': 518, 'native_seconds': 4.532134535489604, 'warm_starts': 476}
+column rhs_batches=11 nodes=80 elapsed=22.05s thermodynamics={'queries': 966, 'cache_hits': 404, 'native_solves': 603, 'native_seconds': 5.365303984435741, 'warm_starts': 555}
+       1          5.80e-03       0.00e+00          81             17       
+column rhs_batches=12 nodes=98 elapsed=24.40s thermodynamics={'queries': 1046, 'cache_hits': 404, 'native_solves': 689, 'native_seconds': 6.2617953711305745, 'warm_starts': 634}
+column rhs_batches=13 nodes=97 elapsed=24.98s thermodynamics={'queries': 1144, 'cache_hits': 488, 'native_solves': 710, 'native_seconds': 6.5036897421232425, 'warm_starts': 646}
+column jacobian_batches=3 nodes=98 elapsed=25.81s thermodynamics={'queries': 1241, 'cache_hits': 553, 'native_solves': 749, 'native_seconds': 6.810064978897572, 'warm_starts': 676}
+column jacobian_batches=4 nodes=97 elapsed=30.56s thermodynamics={'queries': 1339, 'cache_hits': 651, 'native_solves': 749, 'native_seconds': 6.810064978897572, 'warm_starts': 676}
+column rhs_batches=14 nodes=98 elapsed=35.35s thermodynamics={'queries': 1436, 'cache_hits': 748, 'native_solves': 749, 'native_seconds': 6.810064978897572, 'warm_starts': 676}
+column rhs_batches=15 nodes=97 elapsed=37.31s thermodynamics={'queries': 1534, 'cache_hits': 748, 'native_solves': 853, 'native_seconds': 7.54266169492621, 'warm_starts': 773}
+column rhs_batches=16 nodes=98 elapsed=39.32s thermodynamics={'queries': 1631, 'cache_hits': 748, 'native_solves': 956, 'native_seconds': 8.28969853912713, 'warm_starts': 869}
+column rhs_batches=17 nodes=97 elapsed=39.40s thermodynamics={'queries': 1729, 'cache_hits': 846, 'native_solves': 956, 'native_seconds': 8.28969853912713, 'warm_starts': 869}
+column rhs_batches=18 nodes=97 elapsed=39.48s thermodynamics={'queries': 1826, 'cache_hits': 943, 'native_solves': 956, 'native_seconds': 8.28969853912713, 'warm_starts': 869}
+column rhs_batches=19 nodes=97 elapsed=41.45s thermodynamics={'queries': 1923, 'cache_hits': 943, 'native_solves': 1059, 'native_seconds': 9.027403597952798, 'warm_starts': 965}
+       2          8.09e-04       0.00e+00          98             19       
+column rhs_batches=20 nodes=117 elapsed=43.37s thermodynamics={'queries': 2020, 'cache_hits': 943, 'native_solves': 1162, 'native_seconds': 9.740856857737526, 'warm_starts': 1061}
+column rhs_batches=21 nodes=116 elapsed=43.85s thermodynamics={'queries': 2137, 'cache_hits': 1043, 'native_solves': 1186, 'native_seconds': 9.934097946970724, 'warm_starts': 1076}
+column jacobian_batches=5 nodes=117 elapsed=44.77s thermodynamics={'queries': 2253, 'cache_hits': 1121, 'native_solves': 1231, 'native_seconds': 10.288994363916572, 'warm_starts': 1112}
+column jacobian_batches=6 nodes=116 elapsed=49.84s thermodynamics={'queries': 2370, 'cache_hits': 1238, 'native_solves': 1231, 'native_seconds': 10.288994363916572, 'warm_starts': 1112}
+column rhs_batches=22 nodes=117 elapsed=54.79s thermodynamics={'queries': 2486, 'cache_hits': 1354, 'native_solves': 1231, 'native_seconds': 10.288994363916572, 'warm_starts': 1112}
+column rhs_batches=23 nodes=116 elapsed=57.19s thermodynamics={'queries': 2603, 'cache_hits': 1355, 'native_solves': 1353, 'native_seconds': 11.186098346952349, 'warm_starts': 1227}
+column rhs_batches=24 nodes=117 elapsed=59.51s thermodynamics={'queries': 2719, 'cache_hits': 1355, 'native_solves': 1475, 'native_seconds': 12.05754666327266, 'warm_starts': 1342}
+column rhs_batches=25 nodes=116 elapsed=59.59s thermodynamics={'queries': 2836, 'cache_hits': 1472, 'native_solves': 1475, 'native_seconds': 12.05754666327266, 'warm_starts': 1342}
+column rhs_batches=26 nodes=116 elapsed=59.68s thermodynamics={'queries': 2952, 'cache_hits': 1588, 'native_solves': 1475, 'native_seconds': 12.05754666327266, 'warm_starts': 1342}
+column rhs_batches=27 nodes=116 elapsed=61.90s thermodynamics={'queries': 3068, 'cache_hits': 1588, 'native_solves': 1597, 'native_seconds': 12.88962020946201, 'warm_starts': 1457}
+       3          1.12e-04       0.00e+00          117             9       
+column rhs_batches=28 nodes=126 elapsed=64.21s thermodynamics={'queries': 3184, 'cache_hits': 1588, 'native_solves': 1719, 'native_seconds': 13.755332714761607, 'warm_starts': 1572}
+column rhs_batches=29 nodes=125 elapsed=64.49s thermodynamics={'queries': 3310, 'cache_hits': 1705, 'native_solves': 1728, 'native_seconds': 13.828012173820753, 'warm_starts': 1581}
+column jacobian_batches=7 nodes=126 elapsed=65.12s thermodynamics={'queries': 3435, 'cache_hits': 1812, 'native_solves': 1746, 'native_seconds': 14.014680410793517, 'warm_starts': 1599}
+column jacobian_batches=8 nodes=125 elapsed=70.60s thermodynamics={'queries': 3561, 'cache_hits': 1938, 'native_solves': 1746, 'native_seconds': 14.014680410793517, 'warm_starts': 1599}
+column rhs_batches=30 nodes=126 elapsed=75.99s thermodynamics={'queries': 3686, 'cache_hits': 2063, 'native_solves': 1746, 'native_seconds': 14.014680410793517, 'warm_starts': 1599}
+column rhs_batches=31 nodes=125 elapsed=78.94s thermodynamics={'queries': 3812, 'cache_hits': 2064, 'native_solves': 1877, 'native_seconds': 15.080802447977476, 'warm_starts': 1723}
+column rhs_batches=32 nodes=126 elapsed=81.61s thermodynamics={'queries': 3937, 'cache_hits': 2064, 'native_solves': 2008, 'native_seconds': 16.079329886997584, 'warm_starts': 1847}
+column rhs_batches=33 nodes=125 elapsed=81.71s thermodynamics={'queries': 4063, 'cache_hits': 2190, 'native_solves': 2008, 'native_seconds': 16.079329886997584, 'warm_starts': 1847}
+column rhs_batches=34 nodes=125 elapsed=81.82s thermodynamics={'queries': 4188, 'cache_hits': 2315, 'native_solves': 2008, 'native_seconds': 16.079329886997584, 'warm_starts': 1847}
+column rhs_batches=35 nodes=125 elapsed=84.51s thermodynamics={'queries': 4313, 'cache_hits': 2315, 'native_solves': 2139, 'native_seconds': 17.079922596225515, 'warm_starts': 1971}
+       4          4.94e-05       0.00e+00          126             0       
+Solved in 4 iterations, number of nodes 126. 
+Maximum relative residual: 4.94e-05 
+Maximum boundary residual: 0.00e+00
+{
+  "liquid_density_source": "epcsaft",
+  "energy_model": "epcsaft",
+  "water_transfer_source": "epcsaft",
+  "inlet_humidity_source": "epcsaft",
+  "water_vaporization_enthalpy": null,
+  "co2_vapor_fugacity_basis": "CO2/MEA/H2O reduced composition, rescaled to wet CO2 mole fraction",
+  "case_id": "3C",
+  "method": "scipy-bvp",
+  "thermo_model": "epcsaft_reactive_nine",
+  "co2_mass_transfer_model": "enhancement_factor",
+  "enhancement_type": "explicit",
+  "chemical_equilibrium_model": "epcsaft_reactive_nine",
+  "success": true,
+  "message": "The algorithm converged to the desired accuracy.",
+  "runtime_s": 87.1899664402008,
+  "solver_cpu_time_s": 86.076576729,
+  "solver_iterations": 4,
+  "final_mesh_nodes": 126,
+  "max_rms_residual": 4.9412718330832026e-05,
+  "max_scaled_boundary_residual": 0.0,
+  "capture_pct": 92.90991320277472,
+  "capture_error_pct": 3.4099132027747174,
+  "temperature_rmse_K": null,
+  "boundary_residual_norm": 3.121835483529044e-14,
+  "boundary_residual_components": "{\"Fl_CO2_pct\": 1.8256727777818438e-14, \"Fl_H2O_pct\": 0.0, \"Fv_CO2_pct\": 0.0, \"Fv_H2O_pct\": 0.0, \"Tl_pct\": 1.7866861185229615e-14, \"Tv_pct\": 1.7945830737429523e-14}",
+  "mesh_points": 81,
+  "tol": 5e-05,
+  "bc_tol": 0.001,
+  "max_nodes": 1000,
+  "co2_capture_guess_pct": 95.0,
+  "h2o_capture_guess_pct": -100.0,
+  "epcsaft_fugacity_blend": 1.0,
+  "epcsaft_dataset": "src/mea_absorption_column/data/epcsaft_datasets/MEA_A_196faf11",
+  "eta_psi": 1.0,
+  "gas_flow_basis": "reported_dry_mass",
+  "beds": 1,
+  "intercoolers": 0,
+  "staged_beds": false,
+  "intercooler_model": "none",
+  "thermal_state_mode": "temperature",
+  "intercooler_assumption": "none",
+  "shooting_seed_jacobian_mode": null,
+  "continuation_stage": "direct",
+  "continuation_success": true,
+  "invalid_state_count": 0,
+  "guard_penalty_count": 0,
+  "domain_guard_counts": "",
+  "first_failed_domain": "",
+  "jacobian_status": "0",
+  "solver_stage_status": {
+    "outer": {
+      "status": "converged",
+      "success": true,
+      "message": "The algorithm converged to the desired accuracy.",
+      "status_code": 0,
+      "iterations": 4,
+      "grid_points": 126
+    }
+  },
+  "scaling_mode": "legacy_flow_enthalpy",
+  "transform_mode": "raw",
+  "continuation_path": "none",
+  "epcsaft_cache_hits": 0,
+  "epcsaft_cache_misses": 0,
+  "epcsaft_direct_density_solve_s": 0.0,
+  "epcsaft_rho_guess_hits": 0,
+  "epcsaft_rho_guess_misses": 0,
+  "epcsaft_chemistry_cache_hits": 0,
+  "epcsaft_chemistry_cache_misses": 0,
+  "epcsaft_chemistry_solve_s": 64.9608115403098,
+  "epcsaft_chemistry_max_mass_residual": null,
+  "epcsaft_chemistry_max_reaction_residual": null,
+  "epcsaft_chemistry_max_charge_residual": null,
+  "epcsaft_chemistry_last_evidence": "{\"iterations\": 16, \"linear_solver\": \"ma57\", \"maximum_residual\": 1.5631940186722204e-13, \"parameter_fingerprint\": \"sha256:7de7b2af02496e6b387c6b5506cd51ecfaec8bb172131d223b9d8c8ea89954cc\", \"reduced_hessian_minimum\": 1.4007493075399186e-11}",
+  "reactive_evaluations": {
+    "queries": 4540,
+    "cache_hits": 2333,
+    "native_solves": 2359,
+    "native_seconds": 18.701896767306607,
+    "warm_starts": 2178
+  },
+  "reactive_kij_scale": null,
+  "reactive_reaction_scale": null,
+  "epcsaft_chemistry_accepted_best_effort_count": 0,
+  "epcsaft_chemistry_failed_count": 0,
+  "epcsaft_chemistry_last_iterations": 16,
+  "epcsaft_chemistry_last_native_success": true,
+  "epcsaft_chemistry_last_message": "",
+  "profile_png": "",
+  "profile_csv_dir": "",
+  "profile_csv_status": "",
+  "profile_csv_files": "",
+  "python_version": "3.13.13",
+  "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+  "package_versions": "mea-absorption-column=0.1.0;numpy=2.4.4;pandas=3.0.2;scipy=1.17.1;matplotlib=3.10.9",
+  "total_wall_including_seed_and_outputs_s": 89.09624304401223,
+  "runtime_files_changed": []
+}

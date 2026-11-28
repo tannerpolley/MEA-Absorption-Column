@@ -175,22 +175,66 @@ def _neutral_reference(reactions):
                               standard_molality_mol_per_kg=standard['standard_molality_mol_per_kg'])
 
 
-def _first_actions(model, problem, result, observables, feed_count):
-    """Exact columns with respect to T [K], P [Pa] and neutral feed amounts [mol]."""
+def _action_directions(component_count, feed_count):
     from epcsaft import equilibrium as q
 
     directions = []
     for j in range(2+feed_count):
-        feed = [0.] * len(model.component_ids)
+        feed = [0.] * component_count
         if j >= 2:
             feed[j-2] = 1.
         directions.append(q.SolvedStateActionDirection(float(j == 0), float(j == 1), feed, []))
-    batches = q.solved_state_first_actions(q.compile_problem(model, problem), result, observables, directions)
-    for batch in batches:
-        for item in batch.results:
-            if item.status.name != 'Available' or item.action is None or not math.isfinite(item.action):
-                raise RuntimeError(f'Native equilibrium action unavailable: {item.status}: {item.diagnostic_message}')
-    return np.array([[item.action for item in batch.results] for batch in batches]).T
+    return directions
+
+
+def _action_values(results, field):
+    values = []
+    for item in results:
+        value = getattr(item, field)
+        if item.status.name != 'Available' or value is None or not math.isfinite(value):
+            raise RuntimeError(f'Native {item.observable.kind.name} {field} unavailable: '
+                               f'{item.status}: {item.diagnostic_message}')
+        values.append(value)
+    return values
+
+
+def _first_actions(model, problem, result, observables, feed_count):
+    """Exact columns with respect to T [K], P [Pa] and neutral feed amounts [mol]."""
+    from epcsaft import equilibrium as q
+
+    compiled = q.compile_problem(model, problem)
+    directions = _action_directions(len(model.component_ids), feed_count)
+    batches = q.solved_state_first_actions(compiled, result, observables, directions)
+    return np.array([_action_values(batch.results, 'action') for batch in batches]).T
+
+
+def _system_enthalpy(compiled, result, observable, direction):
+    from epcsaft import equilibrium as q
+
+    request = q.SolvedStateActionRequest([observable], [direction])
+    value, = _action_values(q.solved_state_actions(compiled, result, request).results, 'value')
+    return value
+
+
+def _enthalpy_rows(compiled, result, directions, indices, first, second):
+    """Extensive enthalpy, its selected first actions, and optionally their Jacobian."""
+    from epcsaft import equilibrium as q
+
+    observable = q.SolvedStateObservable(q.SolvedStateObservableKind.SystemEnthalpy)
+    value = _system_enthalpy(compiled, result, observable, directions[0])
+    if not second:
+        return value, first[list(indices)], None
+    rows = np.empty((len(indices), len(directions)))
+    evaluated = {}
+    for row, i in enumerate(indices):
+        for j in range(len(directions)):
+            pair = tuple(sorted((i, j)))
+            if pair not in evaluated:
+                request = q.SolvedStateActionRequest([observable], [directions[k] for k in pair])
+                evaluated[pair], = _action_values(q.solved_state_actions(compiled, result, request).results, 'action')
+            rows[row, j] = evaluated[pair]
+    return value, first[list(indices)], rows
+
 
 
 class ReactiveLiquid:
@@ -249,7 +293,18 @@ class ReactiveLiquid:
             raise RuntimeError(f'Reactive equilibrium failed: {result.message}')
         return result
 
-    def solve(self, temperature_k, pressure_pa, apparent_amounts, *, state_input_derivatives=False):
+    def system_enthalpy(self, temperature, pressure, apparent_amounts):
+        """Extensive enthalpy [J] for an absolute feed [mol], including zero carbon."""
+        from epcsaft import equilibrium as q
+
+        problem = self._problem(float(temperature), float(pressure), tuple(map(float, apparent_amounts)))
+        result = self._solve(problem)
+        compiled = q.compile_problem(self.model, problem)
+        observable = q.SolvedStateObservable(q.SolvedStateObservableKind.SystemEnthalpy)
+        direction = _action_directions(len(self.model.component_ids), len(apparent_amounts))[0]
+        return _system_enthalpy(compiled, result, observable, direction), result.linear_solver
+
+    def solve(self, temperature_k, pressure_pa, apparent_amounts, *, state_input_derivatives=False, caloric=False, water=False, caloric_jacobian=False):
         from epcsaft import equilibrium as q
 
         inputs = tuple(float(v) for v in (temperature_k, pressure_pa, *apparent_amounts))
@@ -258,12 +313,15 @@ class ReactiveLiquid:
         for name, lower, upper in self._temperature_domains:
             if not lower <= temperature_k <= upper:
                 raise ValueError(f"{name} temperature {temperature_k} K is outside [{lower}, {upper}] K")
-        key = (inputs, state_input_derivatives)
+        key = (inputs, state_input_derivatives, caloric, water)
         self.stats['queries'] += 1
         if self.reuse_states and key in self._states:
             self.stats['cache_hits'] += 1
             self._states.move_to_end(key)
-            return deepcopy(self._states[key])
+            resolved, compiled, result = self._states[key]
+            if caloric_jacobian and resolved['enthalpy_jacobian'] is None:
+                self._liquid_enthalpy_jacobian(resolved, compiled, result)
+            return deepcopy(resolved)
         feed = np.array(inputs[2:])/sum(inputs[2:])
         problem = self._problem(temperature_k, pressure_pa, feed)
         start = None
@@ -298,21 +356,128 @@ class ReactiveLiquid:
             density_mol_m3=density, fugacities_pa=fugacities, parameter_fingerprint=self.parameter_fingerprint,
             evidence=dict(iterations=result.iterations, maximum_residual=max(map(abs, result.residuals)),
                           reduced_hessian_minimum=result.reduced_hessian_minimum, linear_solver=result.linear_solver))
-        if state_input_derivatives:
+        compiled = None
+        if state_input_derivatives or caloric:
             kind = q.SolvedStateObservableKind
-            observables = [q.SolvedStateObservable(kind.PhaseComponentAmount, 0, i) for i in range(9)]
-            observables += [q.SolvedStateObservable(kind.PhaseMolarDensity, 0), q.SolvedStateObservable(kind.PhaseLogActivity, 0, 0)]
-            derivative = _first_actions(self.model, problem, result, observables, 3)
-            derivative[-1] *= fugacities[0]
-            derivative[-1, 0] += fugacities[0]/temperature_k
-            resolved['amount_density_fugacity_jacobian'] = derivative
+            observables = []
+            if state_input_derivatives:
+                observables = [q.SolvedStateObservable(kind.PhaseComponentAmount, 0, i) for i in range(9)]
+                observables += [q.SolvedStateObservable(kind.PhaseMolarDensity, 0),
+                                q.SolvedStateObservable(kind.PhaseLogActivity, 0, 0)]
+                if water:
+                    observables.append(q.SolvedStateObservable(kind.PhaseLogActivity, 0, 2))
+            if caloric:
+                observables.append(q.SolvedStateObservable(kind.SystemEnthalpy))
+            compiled = q.compile_problem(self.model, problem)
+            directions = _action_directions(9, 3)
+            batches = q.solved_state_first_actions(compiled, result, observables, directions)
+            derivative = np.array([_action_values(batch.results, 'action') for batch in batches]).T
+            if caloric:
+                value, partials, _ = _enthalpy_rows(compiled, result, directions, (0, 2, 4), derivative[-1], False)
+                resolved.update(enthalpy=value, enthalpy_partials=partials, enthalpy_jacobian=None)
+                derivative = derivative[:-1]
+                if caloric_jacobian:
+                    self._liquid_enthalpy_jacobian(resolved, compiled, result)
+            if state_input_derivatives:
+                for row, i in ((10, 0), (11, 2)) if water else ((10, 0),):
+                    derivative[row] *= fugacities[i]
+                    derivative[row, 0] += fugacities[i]/temperature_k
+                resolved['amount_density_fugacity_jacobian'] = derivative
         if self.reuse_states:
             if self.warm_starts:
                 self._accepted, self._native_accepted = deepcopy(resolved), result
-            self._states[key] = deepcopy(resolved)
+            self._states[key] = (deepcopy(resolved), compiled if caloric else None, result if caloric else None)
             if len(self._states) > 2048:
                 self._states.popitem(last=False)
         return resolved
+
+    @staticmethod
+    def _liquid_enthalpy_jacobian(resolved, compiled, result):
+        _, _, resolved['enthalpy_jacobian'] = _enthalpy_rows(
+            compiled, result, _action_directions(9, 3), (0, 2, 4), np.zeros(5), True)
+
+
+FIT_A = Path(__file__).resolve().parents[1] / "data/epcsaft_datasets/MEA_A_196faf11"
+BULK_VAPOR = FIT_A.with_name("MEA_neutral_vapor") / "pc-saft.json"
+CORRELATION_SOURCES = dict(liquid_density_source='correlation', energy_model='correlation',
+                           water_transfer_source='correlation', inlet_humidity_source='correlation')
+ENGINE_SOURCES = dict.fromkeys(CORRELATION_SOURCES, 'epcsaft')
+
+
+def reactive_property_sources(dataset, settings):
+    # Explicit pre-thermochemistry bundles remain usable with the correlation closures.
+    defaults = ENGINE_SOURCES if (Path(dataset) / _IDEAL_GAS).is_file() else CORRELATION_SOURCES
+    return {name: settings.get(name, default) for name, default in defaults.items()}
+
+
+@lru_cache(maxsize=4)
+def bulk_vapor_phase(dataset):
+    return engine_vapor(BULK_VAPOR, Path(dataset) / _IDEAL_GAS, name="bulk_vapor")
+
+
+@lru_cache(maxsize=2048)
+def bulk_vapor_state(temperature, pressure, feed, dataset, caloric):
+    """One four-species wet-gas state, with native first actions in absolute-feed coordinates."""
+    from epcsaft import equilibrium as q
+
+    phase = bulk_vapor_phase(dataset)
+    compiled, result = phase.solve((temperature, pressure, *feed))
+    composition = np.asarray(result.mole_fractions)
+    density = result.molar_densities[0]
+    state = phase.model.state(temperature, rho=density, x=composition)
+    fugacities = np.exp(state.log_fugacity_coefficient)*composition*pressure
+    observables = [phase.state_observables[-1], phase.log_activities[1]]
+    if caloric:
+        observables.append(q.SolvedStateObservable(q.SolvedStateObservableKind.SystemEnthalpy))
+    directions = _action_directions(4, 4)
+    batches = q.solved_state_first_actions(compiled, result, observables, directions)
+    derivative = np.array([_action_values(batch.results, 'action') for batch in batches]).T
+    derivative[1] *= fugacities[1]
+    derivative[1, 0] += fugacities[1]/temperature
+    resolved = dict(density=density, fugacities=fugacities, derivative=derivative[:2],
+                    linear_solver=result.linear_solver)
+    if caloric:
+        value, partials, _ = _enthalpy_rows(compiled, result, directions, (0, 2, 3), derivative[2], False)
+        resolved.update(enthalpy=value, enthalpy_partials=partials)
+    return resolved
+
+
+@lru_cache(maxsize=2048)
+def bulk_vapor_enthalpy_jacobian(temperature, pressure, feed, dataset):
+    compiled, result = bulk_vapor_phase(dataset).solve((temperature, pressure, *feed))
+    return _enthalpy_rows(compiled, result, _action_directions(4, 4), (0, 2, 3), np.zeros(6), True)[2]
+
+
+@lru_cache(maxsize=2)
+def _pure_vapor_component(component, dataset=None):
+    import epcsaft
+
+    components = (component,)
+    parameters = epcsaft.Parameters.from_mapping(_json(BULK_VAPOR), components=components)
+    thermochemistry = ideal_gas_record(Path(dataset) / _IDEAL_GAS, components) if dataset else None
+    return epcsaft.Pure(parameters, thermochemistry=thermochemistry)
+
+
+def pure_vapor_enthalpy(temperature, pressure, component, dataset):
+    """Molar enthalpy [J/mol] at the pure-gas reference for an apparent feed."""
+    return _pure_vapor_component(component, dataset).state(temperature, P=pressure, phase='vapor').total_enthalpy
+
+
+def saturated_water_fraction(temperature, pressure, dry_co2, dry_n2, dry_o2):
+    """Water fugacity equality at inlet T/P, holding dry-gas proportions fixed."""
+    from scipy.optimize import brentq
+
+    liquid = _pure_vapor_component('water').state(temperature, P=pressure, x=[1.], phase='liquid')
+    target = math.exp(liquid.log_fugacity_coefficient[0])*pressure
+    model = bulk_vapor_phase(str(FIT_A)).model
+
+    def residual(water):
+        wet = 1.-water
+        vapor = model.state(temperature, P=pressure, x=[wet*dry_co2, water, wet*dry_n2, wet*dry_o2],
+                            phase='vapor')
+        return water*pressure*math.exp(vapor.log_fugacity_coefficient[1])-target
+
+    return brentq(residual, 1e-10, .95)
 
 
 @lru_cache(maxsize=2048)

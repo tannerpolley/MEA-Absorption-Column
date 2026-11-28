@@ -15,18 +15,24 @@ import pandas as pd
 
 from mea_absorption_column.Run_Model import run_model
 from mea_absorption_column.Thermodynamics.reactive_bundle import (
-    DATASET, dataset_input_paths, parameter_document, reaction_system,
+    BULK_VAPOR, CORRELATION_SOURCES, FIT_A, dataset_input_paths, parameter_document, reaction_system,
+    reactive_property_sources,
 )
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True, type=Path)
-    parser.add_argument('--dataset', type=Path, default=DATASET,
+    parser.add_argument('--dataset', type=Path, default=FIT_A,
                         help='Legacy reactive bundle or Engine-native dataset directory')
     parser.add_argument('--inputs', type=Path, default=Path('src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv'))
     parser.add_argument('--case', default='3C')
     parser.add_argument('--initial-profile', type=Path)
+    parser.add_argument('--wall-limit', type=int, default=300, help='External timeout limit in seconds')
+    for name in CORRELATION_SOURCES:
+        parser.add_argument('--'+name.replace('_', '-'), choices=('correlation', 'epcsaft'))
+    parser.add_argument('--water-vaporization-enthalpy', type=float, help='Correlation offset in J/mol')
+
     parser.add_argument('--mesh', type=int, default=21)
     parser.add_argument('--tol', type=float, default=.5)
     parser.add_argument('--verbose', type=int, choices=(0, 2), default=2)
@@ -45,7 +51,11 @@ def main():
                     thermal_state_mode='temperature', transform_mode='raw',
                     vapor_composition_mode='dry_saturated', gas_flow_basis='reported_dry_mass',
                     return_internal_profile=True, return_profiles=True, verbose=args.verbose,
-                    reactive_dataset=str(args.dataset))
+                    reactive_dataset=str(args.dataset),
+                    **reactive_property_sources(args.dataset, {name:getattr(args, name)
+                        for name in CORRELATION_SOURCES if getattr(args, name) is not None}))
+    if args.water_vaporization_enthalpy is not None:
+        settings['water_vaporization_enthalpy'] = args.water_vaporization_enthalpy
     if args.kij is not None:
         settings['reactive_kij_scale'] = (args.kij, args.factor)
     if args.reaction is not None:
@@ -59,9 +69,12 @@ def main():
              Path('integration/epcsaft_contract.json'), parameter_path, reaction_path]
     paths += sorted(Path('src/mea_absorption_column').rglob('*.py'))
     paths += dataset_input_paths(args.dataset)
+    if any(settings[key] == 'epcsaft' for key in CORRELATION_SOURCES):
+        paths.append(BULK_VAPOR.relative_to(Path.cwd()))
     if args.initial_profile:
         paths.append(args.initial_profile)
     identity = dict(command=sys.argv, case_id=args.case, settings=settings, pid=os.getpid(),
+                    execution=dict(wall_limit_s=args.wall_limit),
                     evaluated_parameter_fingerprint=hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest(),
                     # Wheel only: the contract's reactive_inputs_sha256 names the Engine qualification inputs, not this run's dataset.
                     engine_identity={k:v for k,v in json.loads(Path('integration/epcsaft_contract.json').read_text())['final_identity'].items()

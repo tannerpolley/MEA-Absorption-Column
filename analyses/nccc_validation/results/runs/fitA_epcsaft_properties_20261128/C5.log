@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/scripts/compare_absorption_enthalpy.py", line 135, in <module>
+    compare(args.amine, args.output)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/scripts/compare_absorption_enthalpy.py", line 68, in compare
+    h1, _ = liquid_h(temperature, pressure, end)
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/analyses/nccc_validation/scripts/compare_absorption_enthalpy.py", line 44, in liquid_h
+    result = runtime._solve(problem)
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/src/mea_absorption_column/Thermodynamics/reactive_bundle.py", line 281, in _solve
+    result = q.solve_equilibrium(self.model, problem, start)
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.venv/lib/python3.13/site-packages/epcsaft/equilibrium/problem.py", line 982, in solve_equilibrium
+    native = problem._native(model) if isinstance(problem, Problem) else problem
+             ~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/tnnrpolley21/.t3/worktrees/MEA-Absorption-Column/t3-ef44c7c7-30bbd704980d3b3b/.venv/lib/python3.13/site-packages/epcsaft/equilibrium/problem.py", line 671, in _native
+    native.feed.values = _vector(self.feed.values, model.component_ids)
+    ^^^^^^^^^^^^^^^^^^
+TypeError: (): incompatible function arguments. The following argument types are supported:
+    1. (self, arg: collections.abc.Sequence[float], /) -> None
+
+Invoked with types: epcsaft._core.FeedSpec, list
