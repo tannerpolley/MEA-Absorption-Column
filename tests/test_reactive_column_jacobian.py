@@ -1,4 +1,6 @@
 """Independent directional check of the nonisothermal conventional-film RHS."""
+import json
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -11,6 +13,33 @@ from mea_absorption_column.Thermodynamics.reactive_bundle import (
 from mea_absorption_column.misc.Convert_Data import convert_data
 from mea_absorption_column.Transport.Enhancement_Factor import film_resistance_expression
 from mea_absorption_column.Transport.Flux import molar_flux
+
+
+FIT_A = DATASET.with_name("MEA_A_196faf11")
+
+
+def test_fit_a_reactions_require_matching_parameters(tmp_path):
+    for name in ("parameters.json", "engine-reactions.json"):
+        (tmp_path / name).write_bytes((FIT_A / name).read_bytes())
+    parameters = tmp_path / "parameters.json"
+    parameters.write_bytes(parameters.read_bytes() + b"\n")
+    with pytest.raises(ValueError, match="do not belong to this parameter record"):
+        ReactiveLiquid(tmp_path)
+
+
+def test_fit_a_kij_coefficient_selects_all_temperature_law_terms():
+    identity, factor = "pair/bicarbonate-anion/water/k_ij", 1.05
+
+    def salt_water_law(document):
+        return next(c["temperature_law"] for pair in document["pairs"] for c in pair["coefficients"]
+                    if c["identity"] == identity)
+
+    original = salt_water_law(json.loads((FIT_A / "parameters.json").read_bytes()))
+    scaled = salt_water_law(parameter_document(str(FIT_A), (identity + "/a0", factor)))
+    assert scaled["reference_temperature"] == original["reference_temperature"]
+    for source, changed in zip(original["terms"], scaled["terms"], strict=True):
+        assert changed["power"] == source["power"]
+        assert changed["coefficient"]["value"]["magnitude"] == factor * source["coefficient"]["value"]["magnitude"]
 
 
 @pytest.mark.parametrize('rich,kij_scale,reaction_scale', [

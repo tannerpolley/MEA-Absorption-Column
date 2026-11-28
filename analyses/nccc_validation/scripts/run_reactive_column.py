@@ -14,20 +14,24 @@ import time
 import pandas as pd
 
 from mea_absorption_column.Run_Model import run_model
-from mea_absorption_column.Thermodynamics.reactive_bundle import DATASET, parameter_document, reaction_system
+from mea_absorption_column.Thermodynamics.reactive_bundle import (
+    DATASET, dataset_input_paths, parameter_document, reaction_system,
+)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--dataset', type=Path, default=DATASET,
+                        help='Legacy reactive bundle or Engine-native dataset directory')
     parser.add_argument('--inputs', type=Path, default=Path('src/mea_absorption_column/data/NCCC_2017_model_inputs_mass.csv'))
     parser.add_argument('--initial-profile', type=Path)
     parser.add_argument('--mesh', type=int, default=21)
     parser.add_argument('--tol', type=float, default=.5)
     choice = parser.add_mutually_exclusive_group()
-    choice.add_argument('--kij', help='Exact binary-interaction identity for a sensitivity run')
+    choice.add_argument('--kij', help='Exact binary-interaction identity (a native coefficient selects the whole pair law)')
     choice.add_argument('--reaction', choices=['R4', 'R5'], help='Reaction equilibrium constant to perturb')
-    parser.add_argument('--factor', type=float, help='Multiplier for the selected coefficient or K(T)')
+    parser.add_argument('--factor', type=float, help='Multiplier for the selected k_ij or K(T)')
     args = parser.parse_args()
     if (args.kij is None and args.reaction is None) != (args.factor is None):
         parser.error('--kij or --reaction requires --factor, and vice versa')
@@ -37,19 +41,20 @@ def main():
     settings = dict(mesh_points=args.mesh, tol=args.tol, bc_tol=.001, max_nodes=1000,
                     thermal_state_mode='temperature', transform_mode='raw',
                     vapor_composition_mode='dry_saturated', gas_flow_basis='reported_dry_mass',
-                    return_internal_profile=True, return_profiles=True, verbose=2)
+                    return_internal_profile=True, return_profiles=True, verbose=2,
+                    reactive_dataset=str(args.dataset))
     if args.kij is not None:
         settings['reactive_kij_scale'] = (args.kij, args.factor)
     if args.reaction is not None:
         settings['reactive_reaction_scale'] = (args.reaction, args.factor)
-    parameters = parameter_document(str(DATASET), settings.get('reactive_kij_scale'))
+    parameters = parameter_document(settings['reactive_dataset'], settings.get('reactive_kij_scale'))
     parameter_path = args.output/'evaluated_parameters.json'
     parameter_path.write_text(json.dumps(parameters, indent=2)+'\n')
     reaction_path = args.output/'evaluated_reactions.json'
-    reaction_path.write_text(json.dumps(reaction_system(str(DATASET), settings.get('reactive_reaction_scale')), indent=2)+'\n')
+    reaction_path.write_text(json.dumps(reaction_system(settings['reactive_dataset'], settings.get('reactive_reaction_scale')), indent=2)+'\n')
     paths = [inputs, Path(__file__), Path('uv.lock'), Path('integration/epcsaft_contract.json'), parameter_path, reaction_path]
     paths += sorted(Path('src/mea_absorption_column').rglob('*.py'))
-    paths += sorted(Path('src/mea_absorption_column/data/epcsaft_datasets/MEA_reactive_epcsaft_bundle').glob('*.json'))
+    paths += dataset_input_paths(args.dataset)
     if args.initial_profile:
         paths.append(args.initial_profile)
     identity = dict(command=sys.argv, settings=settings, pid=os.getpid(),

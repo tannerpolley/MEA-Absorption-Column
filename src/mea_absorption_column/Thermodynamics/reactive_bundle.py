@@ -25,6 +25,7 @@ _FORMULAS = {
     "hydronium-cation": {"H": 3, "O": 1},
     "hydroxide-anion": {"H": 1, "O": 1},
 }
+_CHARGES = (0, 0, 0, 1, -1, -1, -2, 1, -1)
 
 
 def _json(path: Path) -> dict:
@@ -33,6 +34,8 @@ def _json(path: Path) -> dict:
 
 _CORRELATION_FIELDS = ("a", "b", "c", "d", "reference_temperature", "temperature_min", "temperature_max",
                       "standard_state_id")
+_ENGINE_REACTIONS = "engine-reactions.json"
+_IDEAL_GAS = "ideal-gas-thermochemistry.json"
 
 
 def ideal_gas_record(path: str | Path, component_ids):
@@ -67,24 +70,37 @@ def ideal_gas_record(path: str | Path, component_ids):
     return epcsaft.ThermochemistryRecord(pressure, intervals)
 
 
-def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="reactive_liquid", *, loading_policy=None, declarations=None, reaction_path=None, domain=None, parameter_path=None, row_tolerance=None):
-    """Declared reactive liquid with native reactions, reference and absolute analytical feed."""
-    from epcsaft import equilibrium as q
-
-    from .casadi_reactive import EnginePhase
-
-    from .solvent_inputs import formula_masses
-    dataset = Path(dataset)
-    parameter_path = Path(parameter_path or dataset / "parameters.json")
-    record, mapping = _json(reaction_path or dataset / "engine-reactions.json"), _json(parameter_path)
+def _engine_reaction_record(parameter_path, reaction_path):
+    record = _json(Path(reaction_path))
+    if record["schema"] != "absorber-engine-reactions-v1":
+        raise ValueError("Unsupported Engine reaction record")
     if hashlib.sha256(parameter_path.read_bytes()).hexdigest() != record["parameter_sha256"]:
         raise ValueError("Engine reaction records do not belong to this parameter record")
+    return record
+
+
+def _engine_reactions(record):
+    from epcsaft import equilibrium as q
+
     reactions = [q.Reaction(
         row["stoichiometry"], name=row["name"],
         correlation=q.ReactionLogPolynomial(*(row["correlation"][key] for key in _CORRELATION_FIELDS)),
         reference=q.ReactionReference(getattr(q.ReferenceSourceBasis, row["reference"]["source_basis"]),
                                       reference_pressure_pa=row["reference"].get("reference_pressure_pa")),
     ) for row in record["reactions"]]
+    return reactions, q.NeutralReference(**record["neutral_reference"])
+
+
+def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="reactive_liquid", *, loading_policy=None, declarations=None, reaction_path=None, domain=None, parameter_path=None, row_tolerance=None):
+    """Declared reactive liquid with native reactions, reference and absolute analytical feed."""
+    from .casadi_reactive import EnginePhase
+    from .solvent_inputs import formula_masses
+
+    dataset = Path(dataset)
+    parameter_path = Path(parameter_path or dataset / "parameters.json")
+    record = _engine_reaction_record(parameter_path, reaction_path or dataset / _ENGINE_REACTIONS)
+    mapping = _json(parameter_path)
+    reactions, neutral_reference = _engine_reactions(record)
     ids = declarations["species_order"] if declarations is not None else [c["component_id"] for c in mapping["components"]]
     masses = formula_masses(declarations, ids, mapping) if declarations is not None else _molar_masses(dataset, ids)
     if declarations is None:
@@ -99,7 +115,7 @@ def engine_liquid(dataset: str | Path, thermochemistry_path: str | Path, name="r
     # Formula masses (checked against the declared ones) conserve mass exactly through the reactions.
     phase = EnginePhase(name, mapping, ideal_gas_record(thermochemistry_path, ids), kind="liquid",
                         feed_ids=declarations["liquid_feed_order"], molar_masses=masses,
-                        reactions=reactions, neutral_reference=q.NeutralReference(**record["neutral_reference"]),
+                        reactions=reactions, neutral_reference=neutral_reference,
                         loading_policy=loading_policy, roles=declarations["roles"], support=declarations["liquid_support"], domain=domain,
                         component_order=ids, row_tolerance=row_tolerance)
     phase.components = dict(zip(declarations["components"]["order"], declarations["components"]["rows"], strict=True))
@@ -186,14 +202,23 @@ class ReactiveLiquid:
 
     def __init__(self, dataset, *, loading_anchor=None, max_log_loading_step=.1, max_loading_steps=32,
                  water_per_mea_anchor=None, reuse_states=False, warm_starts=True, kij_scale=None, reaction_scale=None):
-        import epcsaft
-
+        dataset = Path(dataset)
         self.dataset, self.kij_scale = str(dataset), None if kij_scale is None else tuple(kij_scale)
-        self._reactions = reaction_system(self.dataset, reaction_scale)
+        record = reaction_system(self.dataset, reaction_scale)
+        if record.get("schema") == "absorber-engine-reactions-v1":
+            self._reactions, self._neutral_reference = _engine_reactions(record)
+        else:
+            self._reactions, self._neutral_reference = _native_reactions(record), _neutral_reference(record)
+        self._temperature_domains = [
+            (r.name, r.correlation.temperature_min, r.correlation.temperature_max) for r in self._reactions
+        ]
         document = parameter_document(self.dataset, self.kij_scale)
         self.parameter_fingerprint = parameter_fingerprint(document)
-        self.model = epcsaft.Mixture(epcsaft.Parameters.from_mapping(document))
-        self.molar_masses = tuple(_molar_masses(Path(dataset), self.model.component_ids))
+        self.model = _mixture(dataset, document)
+        charges = tuple(c["fixed"]["charge_number"]["value"]["magnitude"] for c in document["components"])
+        if tuple(self.model.component_ids) != tuple(_FORMULAS) or charges != _CHARGES:
+            raise ValueError("Reactive ePC-SAFT species order or charges changed")
+        self.molar_masses = tuple(_molar_masses(dataset, self.model.component_ids))
         self.loading_anchor, self.max_log_loading_step = loading_anchor, max_log_loading_step
         self.max_loading_steps, self.water_per_mea_anchor = max_loading_steps, water_per_mea_anchor
         self.reuse_states, self.warm_starts = reuse_states, warm_starts
@@ -209,7 +234,7 @@ class ReactiveLiquid:
 
         return q.Problem(phases=[q.Phase('liquid', kind='liquid')], T=temperature, P=pressure,
             feed=q.Amounts(dict(zip(self.model.component_ids[:3], feed))),
-            reactions=_native_reactions(self._reactions), neutral_reference=_neutral_reference(self._reactions))
+            reactions=self._reactions, neutral_reference=self._neutral_reference)
 
     def _solve(self, problem, start=None):
         from epcsaft import equilibrium as q
@@ -230,10 +255,9 @@ class ReactiveLiquid:
         inputs = tuple(float(v) for v in (temperature_k, pressure_pa, *apparent_amounts))
         if len(inputs) != 5 or not all(math.isfinite(v) and v > 0 for v in inputs):
             raise ValueError('Reactive inputs require finite positive T, P and three apparent amounts')
-        for reaction in self._reactions['reactions']:
-            lower, upper = reaction['temperature_domain_k']
+        for name, lower, upper in self._temperature_domains:
             if not lower <= temperature_k <= upper:
-                raise ValueError(f"{reaction['reaction_id']} temperature {temperature_k} K is outside [{lower}, {upper}] K")
+                raise ValueError(f"{name} temperature {temperature_k} K is outside [{lower}, {upper}] K")
         key = (inputs, state_input_derivatives)
         self.stats['queries'] += 1
         if self.reuse_states and key in self._states:
@@ -310,15 +334,26 @@ def neutral_vapor_state(temperature_k, pressure_pa, composition, dataset_text=No
     return fugacity, derivative
 
 
-def validate_reactive_bundle(dataset_text: str) -> dict:
-    dataset = Path(dataset_text)
-    bundle = _json(dataset / "bundle.json")
-    expected = {
+def _bundle_file_hashes(bundle):
+    return {
         Path(item["path"]).name: item["sha256"]
         for item in bundle["files"]
         if item["path"] in {"parameters/parameters.json", "chemistry/reaction-system.json",
                             "anchored-reference-thermochemistry.json", "adoption-receipt.json"}
     }
+
+
+def dataset_input_paths(dataset: Path):
+    if (dataset / _ENGINE_REACTIONS).is_file():
+        return [dataset / name for name in ("parameters.json", _ENGINE_REACTIONS, _IDEAL_GAS)]
+    bundle_path = dataset / "bundle.json"
+    return [bundle_path, *(dataset / name for name in _bundle_file_hashes(_json(bundle_path)))]
+
+
+def validate_reactive_bundle(dataset_text: str) -> dict:
+    dataset = Path(dataset_text)
+    bundle = _json(dataset / "bundle.json")
+    expected = _bundle_file_hashes(bundle)
     if not {"parameters.json", "reaction-system.json"} <= expected.keys():
         raise ValueError("Reactive bundle must identify parameters and reaction-system files")
     for name, digest in expected.items():
@@ -334,17 +369,7 @@ def validate_reactive_bundle(dataset_text: str) -> dict:
         if receipt["adopted_parameter_sha256"] != expected["parameters.json"]:
             raise ValueError("Adoption receipt does not match verified parameters")
     reactions = _json(dataset / "reaction-system.json")
-    if reactions["species_ids"] != [
-        "carbon-dioxide",
-        "monoethanolamine",
-        "water",
-        "protonated-monoethanolamine",
-        "carbamate-anion",
-        "bicarbonate-anion",
-        "carbonate-anion",
-        "hydronium-cation",
-        "hydroxide-anion",
-    ] or reactions["charges"] != [0, 0, 0, 1, -1, -1, -2, 1, -1]:
+    if tuple(reactions["species_ids"]) != tuple(_FORMULAS) or tuple(reactions["charges"]) != _CHARGES:
         raise RuntimeError("Reactive ePC-SAFT species order or charges changed")
     if reactions["reaction_sign_convention"] != "products_positive":
         raise RuntimeError("Reactive ePC-SAFT reaction sign convention changed")
@@ -380,15 +405,21 @@ def validate_reactive_bundle(dataset_text: str) -> dict:
 
 def reaction_system(dataset_text: str, reaction_scale=None):
     """Selected chemistry, with an explicit one-at-a-time K(T) study multiplier."""
-    reactions = validate_reactive_bundle(dataset_text)["reactions"]
+    dataset = Path(dataset_text)
+    native = (dataset / _ENGINE_REACTIONS).is_file()
+    reactions = (_engine_reaction_record(dataset / "parameters.json", dataset / _ENGINE_REACTIONS)
+                 if native else validate_reactive_bundle(dataset_text)["reactions"])
     if reaction_scale is None:
         return reactions
     identity, factor = reaction_scale
     if identity not in ('R4', 'R5') or not math.isfinite(factor) or factor <= 0:
         raise ValueError('Reaction sensitivity requires R4/R5 and a positive finite K multiplier')
     reactions = deepcopy(reactions)
-    row = next(r for r in reactions['reactions'] if r['reaction_id'] == identity)
-    if identity == 'R4' and row['ln_k_form'] == 'a + b_k / T':
+    id_key = 'name' if native else 'reaction_id'
+    row = next(r for r in reactions['reactions'] if r[id_key] == identity)
+    if native:
+        row['correlation']['a'] += math.log(factor)
+    elif identity == 'R4' and row['ln_k_form'] == 'a + b_k / T':
         row['coefficients']['a'] += math.log(factor)
     elif identity == 'R5' and row['ln_k_form'] == '-ln(10) * (a_k / T + b + c_per_k * T)':
         row['coefficients']['b'] -= math.log(factor)/math.log(10.)
@@ -431,37 +462,63 @@ def reactive_liquid():
 
 def parameter_document(dataset_text: str, kij_scale=None):
     """Selected inputs or one declared multiplicative binary-interaction perturbation."""
-    validate_reactive_bundle(dataset_text)
-    document = _json(Path(dataset_text) / 'parameters.json')
+    dataset = Path(dataset_text)
+    native = (dataset / _ENGINE_REACTIONS).is_file()
+    if not native:
+        validate_reactive_bundle(dataset_text)
+    document = _json(dataset / 'parameters.json')
     if kij_scale is None:
         return document
     identity, factor = kij_scale
     factor = float(factor)
     if not math.isfinite(factor) or factor <= 0:
         raise ValueError('Binary-interaction scale must be finite and positive')
-    matches = [c for pair in document['pairs'] for c in pair['coefficients']
-               if c['identity'] == identity and c['family'] == 'k_ij']
+    matches = []
+    for pair in document['pairs']:
+        for coefficient in pair['coefficients']:
+            if coefficient['family'] != 'k_ij':
+                continue
+            values = [coefficient]
+            if native:
+                law = coefficient.get('temperature_law')
+                if law is not None:
+                    values = [term['coefficient'] for term in law['terms']]
+                    if 'reciprocal_temperature_slope' in law:
+                        values.append(law['reciprocal_temperature_slope'])
+                values.extend(c for c in pair['coefficients'] if c['family'] == 'k_ij_reciprocal_temperature_slope')
+            if identity == coefficient['identity'] or any(c['identity'] == identity for c in values):
+                matches.append((coefficient, values))
     if len(matches) != 1:
-        raise ValueError('Expected exactly one existing k_ij coefficient: '+str(identity))
-    coefficient = matches[0]
-    coefficient['value']['magnitude'] *= factor
+        raise ValueError('Expected exactly one existing k_ij law: '+str(identity))
+    coefficient, values = matches[0]
     source_id = 'absorber-one-at-a-time-kij-screen'
     document['sources'].append(dict(source_id=source_id,
         citation='Declared multiplicative sensitivity perturbation of selected MEA parameters.',
         use_basis='Local sensitivity screen; not a fit or an uncertainty interval.'))
-    coefficient['provenance'] = dict(coefficient['provenance'], source_id=source_id,
-        locator=f'{identity}: selected coefficient multiplied by {factor:.17g}')
+    for row in values:
+        row['value']['magnitude'] *= factor
+    meaning = 'all selected k_ij law coefficients' if native else 'selected coefficient'
+    for row in (coefficient, *(c for c in values if c is not coefficient and 'provenance' in c)):
+        row['provenance'] = dict(row['provenance'], source_id=source_id,
+            locator=f'{identity}: {meaning} multiplied by {factor:.17g}')
     return document
+
+
+def _mixture(dataset, document, components=None):
+    import epcsaft
+
+    parameters = epcsaft.Parameters.from_mapping(document, components=components)
+    thermochemistry = (ideal_gas_record(dataset / _IDEAL_GAS, parameters.component_ids)
+                       if (dataset / _ENGINE_REACTIONS).is_file() else None)
+    return epcsaft.Mixture(parameters, thermochemistry=thermochemistry)
 
 
 @lru_cache(maxsize=2)
 def mixture(dataset_text: str, components=None, kij_scale=None):
-    import epcsaft
-    parameters = epcsaft.Parameters.from_mapping(parameter_document(dataset_text, kij_scale), components=components)
-    return epcsaft.Mixture(parameters)
+    return _mixture(Path(dataset_text), parameter_document(dataset_text, kij_scale), components)
 
 
-def reactive_fugacity(y, x_true, concentrations, Tl, Tv, P, P_sat_H2O):
+def reactive_fugacity(y, x_true, concentrations, Tl, Tv, P, P_sat_H2O, *, dataset_text=None, kij_scale=None):
     """Use the solved liquid density and the selected EOS; retain legacy water closure."""
     from .epcsaft_v02 import fugacity_coefficients, state, state_at_density
     from .thermo_models import neutral_vapor_composition
@@ -476,11 +533,12 @@ def reactive_fugacity(y, x_true, concentrations, Tl, Tv, P, P_sat_H2O):
             or not np.allclose(concentrations / concentrations.sum(), composition,
                                rtol=1e-10, atol=1e-14)):
         raise ValueError("Reactive fugacity requires normalized composition matching concentrations")
-    liquid = state_at_density(mixture(str(DATASET)), temperature_k=Tl,
+    dataset_text = str(dataset_text or DATASET)
+    liquid = state_at_density(mixture(dataset_text, kij_scale=kij_scale), temperature_k=Tl,
                               density_mol_m3=float(concentrations.sum()), composition=composition)
     # Same neutral vapor approximation as the August fugacity formulation.
     vapor_x = neutral_vapor_composition(y)
-    vapor = state(mixture(str(DATASET), ("carbon-dioxide", "monoethanolamine", "water")),
+    vapor = state(mixture(dataset_text, ("carbon-dioxide", "monoethanolamine", "water"), kij_scale),
                   temperature_k=Tv, pressure_pa=P, composition=vapor_x, phase="vapor")
     return (float(composition[0]) * fugacity_coefficients(liquid)[0] * P,
             float(y[0]) * fugacity_coefficients(vapor)[0] * P,
